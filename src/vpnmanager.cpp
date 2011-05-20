@@ -122,6 +122,31 @@ void VPNManager::VPNStateChanged(VPNState newState)
     {
     case VPN_STATE_CONNECTED:
         OpenBrowser(m_currentSessionInfo.GetHomepages());
+
+        {
+        // !!!
+        // TODO: this request will block the caller, but need to rework the whole architecture of this code anyway
+        // !!!
+
+        // Make "/connected" request, which the server logs to generate
+        // successful-connect-to-VPN stats.
+        // There's no content in the response. Also, failure is ignored since
+        // it just means the server didn't log a stat.
+        tstring connectedRequestPath = tstring(HTTP_CONNECTED_REQUEST_PATH) + 
+                                       _T("?client_id=") + NarrowToTString(CLIENT_ID) +
+                                       _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+                                       _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+                                       _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+        HTTPSRequest httpsRequest;
+        string response;
+        httpsRequest.GetRequest(
+                            m_userSignalledStop,
+                            NarrowToTString(m_currentSessionInfo.GetServerAddress()).c_str(),
+                            m_currentSessionInfo.GetWebPort(),
+                            m_currentSessionInfo.GetWebServerCertificate().c_str(),
+                            connectedRequestPath.c_str(),
+                            response);
+        }
         break;
 
     case VPN_STATE_FAILED:
