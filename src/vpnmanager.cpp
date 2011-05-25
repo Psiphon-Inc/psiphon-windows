@@ -192,7 +192,6 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
         {
             // Download new binary
 
-            HTTPSRequest httpsRequest;
             if (!httpsRequest.GetRequest(
                         manager->GetUserSignalledStop(),
                         serverAddress.c_str(),

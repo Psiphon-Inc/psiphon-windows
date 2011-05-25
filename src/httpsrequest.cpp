@@ -24,14 +24,170 @@
 #include <WinCrypt.h>
 #include "embeddedvalues.h"
 
+// TODO: how to export restrictions impact general availability of crypto services?
+// http://technet.microsoft.com/en-us/library/cc962093.aspx
+// (Also a concern for VPN services)
+
 #pragma comment (lib, "crypt32.lib")
+
 
 HTTPSRequest::HTTPSRequest(void)
 {
+    m_mutex = CreateMutex(NULL, FALSE, 0);
+    m_closedEvent = CreateEvent(NULL, FALSE, FALSE, 0);
 }
 
 HTTPSRequest::~HTTPSRequest(void)
 {
+    CloseHandle(m_mutex);
+}
+
+void CALLBACK WinHttpStatusCallback(
+                HINTERNET hRequest,
+                DWORD_PTR dwContext,
+                DWORD dwInternetStatus,
+                LPVOID lpvStatusInformation,
+                DWORD dwStatusInformationLength)
+{
+    HTTPSRequest* httpRequest = (HTTPSRequest*)dwContext;
+    CERT_CONTEXT *pCert = {0};
+    DWORD dwStatusCode;
+    DWORD dwLen;
+    LPVOID pBuffer = NULL;
+
+    my_print(false, _T("HTTPS request... (%d)"), dwInternetStatus);
+
+    switch (dwInternetStatus)
+    {
+    case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
+        httpRequest->SetClosedEvent();
+        break;
+    case WINHTTP_CALLBACK_STATUS_SENDING_REQUEST:
+
+        // TODO: is this really the earliest we can inject out custom server cert validation?
+        // WinHttpQueryOption(WINHTTP_OPTION_SERVER_CERT_CONTEXT) gives ERROR_WINHTTP_INCORRECT_HANDLE_STATE
+        // during WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER...
+
+        // Validate server certificate (before requesting)
+
+        dwLen = sizeof(pCert);
+        if (!WinHttpQueryOption(
+	                hRequest,
+	                WINHTTP_OPTION_SERVER_CERT_CONTEXT,
+	                &pCert,
+	                &dwLen)
+            || NULL == pCert)
+        {
+	        my_print(false, _T("WinHttpQueryOption failed (%d)"), GetLastError());
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+
+        if (!httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert))
+        {
+            CertFreeCertificateContext(pCert);
+            my_print(false, _T("ValidateServerCert failed"));
+            // Close request handle immediately to prevent sending of data
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+        break;
+    case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
+
+        // Start downloding response
+
+        if (!WinHttpReceiveResponse(hRequest, NULL))
+        {
+    	    my_print(false, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+        break;
+    case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
+
+        // Check for HTTP status 200 OK
+
+        dwLen = sizeof(dwStatusCode);
+        if (!WinHttpQueryHeaders(
+                        hRequest, 
+                        WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                        NULL, 
+                        &dwStatusCode, 
+                        &dwLen, 
+                        NULL))
+        {
+	        my_print(false, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+
+        if (200 != dwStatusCode)
+        {
+	        my_print(false, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+
+        if (!WinHttpQueryDataAvailable(hRequest, 0))
+        {
+	        my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+        break;
+    case WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE:
+
+        if (dwStatusInformationLength == 0)
+        {
+            // Read response is complete
+
+            httpRequest->SetRequestSuccess();
+            return;
+        }
+
+        // Read available response data
+
+        pBuffer = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwStatusInformationLength);
+
+        if (!pBuffer)
+        {
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+    
+        if (!WinHttpReadData(hRequest, pBuffer, dwStatusInformationLength, &dwLen))
+        {
+	        my_print(false, _T("WinHttpReadData failed (%d)"), GetLastError());
+            HeapFree(GetProcessHeap(), 0, pBuffer);
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+
+        // NOTE: response data may be binary; some relevant comments here...
+        // http://stackoverflow.com/questions/441203/proper-way-to-store-binary-data-with-c-stl
+
+        httpRequest->AppendResponse(string(string::const_pointer(pBuffer), string::const_pointer((char*)pBuffer + dwLen)));
+
+        HeapFree(GetProcessHeap(), 0, pBuffer);
+
+        // Check for more data
+
+        if (!WinHttpQueryDataAvailable(hRequest, 0))
+        {
+	        my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            WinHttpCloseHandle(hRequest);
+            return;
+        }
+        break;
+    case WINHTTP_CALLBACK_FLAG_REQUEST_ERROR:
+    case WINHTTP_CALLBACK_FLAG_SECURE_FAILURE:
+        my_print(false, _T("WinHttpStatusCallback invalid status (%d)"), dwInternetStatus);
+        WinHttpCloseHandle(hRequest);
+        break;
+    default:
+        // TODO: handle all events sent for notification mask
+        break;
+    }
 }
 
 bool HTTPSRequest::GetRequest(
@@ -42,23 +198,9 @@ bool HTTPSRequest::GetRequest(
         const TCHAR* requestPath,
         string& response)
 {
-    // TODO:
-    // Use asynchronous mode for cleaner and more effectively cancel functionality:
-    // http://msdn.microsoft.com/en-us/magazine/cc716528.aspx
-    // http://msdn.microsoft.com/en-us/library/aa383138%28v=vs.85%29.aspx
-    // http://msdn.microsoft.com/en-us/library/aa384115%28v=VS.85%29.aspx
-
-    response = "";
-
-    BOOL bRet = FALSE;
-    CERT_CONTEXT *pCert = {0};
-    DWORD dwRet = 0;
-    DWORD dwLen = 0;
-    DWORD dwStatusCode;
     DWORD dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
 				    SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
 				    SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-    LPVOID pBuffer = NULL;
 
     AutoHINTERNET hSession =
                 WinHttpOpen(
@@ -66,16 +208,11 @@ bool HTTPSRequest::GetRequest(
 	                WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 	                WINHTTP_NO_PROXY_NAME,
 	                WINHTTP_NO_PROXY_BYPASS,
-                    0 );
+                    WINHTTP_FLAG_ASYNC);
 
     if (NULL == hSession)
     {
 	    my_print(false, _T("WinHttpOpen failed (%d)"), GetLastError());
-        return false;
-    }
-
-    if (cancel)
-    {
         return false;
     }
 
@@ -89,11 +226,6 @@ bool HTTPSRequest::GetRequest(
     if (NULL == hConnect)
     {
 	    my_print(false, _T("WinHttpConnect failed (%d)"), GetLastError());
-        return false;
-    }
-
-    if (cancel)
-    {
         return false;
     }
 
@@ -113,173 +245,101 @@ bool HTTPSRequest::GetRequest(
         return false;
     }
 
-    if (cancel)
-    {
-        return false;
-    }
+    // TODO: need?
 
-    bRet = WinHttpSetOption(
-	            hRequest,
-	            WINHTTP_OPTION_SECURITY_FLAGS,
-	            &dwFlags,
-	            sizeof(DWORD));
-
-    if (FALSE == bRet)
+    if (FALSE == WinHttpSetOption(
+	                hRequest,
+	                WINHTTP_OPTION_SECURITY_FLAGS,
+	                &dwFlags,
+	                sizeof(DWORD)))
     {
 	    my_print(false, _T("WinHttpSetOption failed (%d)"), GetLastError());
         return false;
     }
 
-    if (cancel)
+    DWORD notificationFlags =
+            WINHTTP_CALLBACK_STATUS_CONNECTING_TO_SERVER |
+            WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER |
+            WINHTTP_CALLBACK_STATUS_SENDING_REQUEST |
+            WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE |
+            WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE |
+            WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE |
+            WINHTTP_CALLBACK_FLAG_REQUEST_ERROR |
+            WINHTTP_CALLBACK_FLAG_SECURE_FAILURE |
+            WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING;
+
+    if (WINHTTP_INVALID_STATUS_CALLBACK == WinHttpSetStatusCallback(
+                                                hRequest,
+                                                WinHttpStatusCallback,
+                                                notificationFlags,    
+                                                NULL))
     {
+	    my_print(false, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
         return false;
     }
 
-    bRet = WinHttpSendRequest(
-                hRequest,
-	            WINHTTP_NO_ADDITIONAL_HEADERS,
-	            0,
-	            WINHTTP_NO_REQUEST_DATA,
-	            0,
-	            0,
-	            0);
+    // Kick off the asynchronous processing
 
-    if (FALSE == bRet)
+    ResetEvent(m_closedEvent);
+    m_expectedServerCertificate = webServerCertificate;
+    m_requestSuccess = false;
+    m_response = "";
+
+    if (FALSE == WinHttpSendRequest(
+                    hRequest,
+	                WINHTTP_NO_ADDITIONAL_HEADERS,
+	                0,
+	                WINHTTP_NO_REQUEST_DATA,
+	                0,
+	                0,
+	                (DWORD_PTR)this))
     {
 	    my_print(false, _T("WinHttpSendRequest failed (%d)"), GetLastError());
         return false;
     }
 
-    if (cancel)
-    {
-        return false;
-    }
-
-    // TODO: Should validate cert *before* sending request.
-
-    dwLen = sizeof(pCert);
-
-    bRet = WinHttpQueryOption(
-	            hRequest,
-	            WINHTTP_OPTION_SERVER_CERT_CONTEXT,
-	            &pCert,
-	            &dwLen);
-
-    if (NULL == pCert)
-    {
-	    my_print(false, _T("WinHttpQueryOption failed (%d)"), GetLastError());
-        return false;
-    }
-
-    if (!ValidateServerCert((PCCERT_CONTEXT)pCert, webServerCertificate))
-    {
-        CertFreeCertificateContext(pCert);
-
-        my_print(false, _T("ValidateServerCert failed"));
-        return false;
-    }
-
-    CertFreeCertificateContext(pCert);
-
-    if (cancel)
-    {
-        return false;
-    }
-
-    bRet = WinHttpReceiveResponse(hRequest, NULL);
-
-    if (FALSE == bRet)
-    {
-	    my_print(false, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
-        return false;
-    }
-
-    if (cancel)
-    {
-        return false;
-    }
-
-    dwLen = sizeof(dwStatusCode);
-
-    bRet = WinHttpQueryHeaders(
-                    hRequest, 
-                    WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-                    NULL, 
-                    &dwStatusCode, 
-                    &dwLen, 
-                    NULL);
-
-    if (FALSE == bRet)
-    {
-	    my_print(false, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
-        return false;
-    }
-
-    if (200 != dwStatusCode)
-    {
-	    my_print(false, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
-        return false;
-    }
-
-    if (cancel)
-    {
-        return false;
-    }
+    // Wait for asynch callback to close, or timeout (to check cancel/termination)
 
     while (true)
     {
-        bRet = WinHttpQueryDataAvailable(hRequest, &dwLen);
+        DWORD result = WaitForSingleObject(m_closedEvent, 100);
 
-        if (FALSE == bRet)
+        if (result == WAIT_TIMEOUT)
         {
-	        my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            if (cancel)
+            {
+                WinHttpCloseHandle(hRequest);
+                return false;
+            }
+        }
+        else if (result != WAIT_OBJECT_0)
+        {
+            // internal error
+            WinHttpCloseHandle(hRequest);
             return false;
         }
+    } 
 
-        if (dwLen == 0)
-        {
-            // End of response body
-            break;
-        }
-
-        if (cancel)
-        {
-            return false;
-        }
-
-        pBuffer = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwLen);
-
-        if (!pBuffer)
-        {
-            my_print(false, _T("HeapAlloc failed"));
-            return false;
-        }
-    
-        bRet = WinHttpReadData(hRequest, pBuffer, dwLen, &dwLen);
-
-        if (FALSE == bRet)
-        {
-	        my_print(false, _T("WinHttpReadData failed (%d)"), GetLastError());
-            HeapFree(GetProcessHeap(), 0, pBuffer);
-            return false;
-        }
-
-        // NOTE: response data may be binary; some relevant comments here...
-        // http://stackoverflow.com/questions/441203/proper-way-to-store-binary-data-with-c-stl
-
-        response.append(string(string::const_pointer(pBuffer), string::const_pointer((char*)pBuffer + dwLen)));
-
-        // TODO: remove this or set DEBUG to true
-        my_print(false, _T("got: %s"), NarrowToTString(response).c_str());
-
-        HeapFree(GetProcessHeap(), 0, pBuffer);
+    if (m_requestSuccess)
+    {
+        response = m_response;
+        return true;
     }
 
-    return true;
+    return false;
 }
 
-bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert, const string& expectedServerCertificate)
+void HTTPSRequest::AppendResponse(const string& responseData)
 {
+    AutoMUTEX lock(m_mutex);
+
+    m_response.append(responseData);
+}
+
+bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
+{
+    AutoMUTEX lock(m_mutex);
+
     BYTE* pbBinary = NULL; //base64 decoded pem
     DWORD cbBinary; //base64 decoded pem size
     bool bResult = false;
@@ -287,7 +347,9 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert, const string& expect
     //Base64 decode pem string to BYTE*
     
     //Get the expected pbBinary length
-    CryptStringToBinaryA( (LPCSTR)expectedServerCertificate.c_str(), expectedServerCertificate.length(), CRYPT_STRING_BASE64, NULL, &cbBinary, NULL, NULL);
+    CryptStringToBinaryA(
+        (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
+        CRYPT_STRING_BASE64, NULL, &cbBinary, NULL, NULL);
 
     pbBinary = new (std::nothrow) BYTE[cbBinary];
     if (!pbBinary)
@@ -297,7 +359,9 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert, const string& expect
     }
 
     //Perform base64 decode
-    CryptStringToBinaryA( (LPCSTR)expectedServerCertificate.c_str(), expectedServerCertificate.length(), CRYPT_STRING_BASE64, pbBinary, &cbBinary, NULL, NULL);
+    CryptStringToBinaryA(
+        (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
+        CRYPT_STRING_BASE64, pbBinary, &cbBinary, NULL, NULL);
     
     // Check if the certificate in pCert matches the expectedServerCertificate
     if (pCert->cbCertEncoded == cbBinary)

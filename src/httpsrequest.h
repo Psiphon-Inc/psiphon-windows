@@ -22,8 +22,8 @@
 #include <string>
 #include <WinCrypt.h>
 
-
 using namespace std;
+
 
 class HTTPSRequest
 {
@@ -37,5 +37,17 @@ public:
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response);
-	bool ValidateServerCert(PCCERT_CONTEXT pCert, const string& expectedServerCertificate);
+
+    // TODO: private
+    void SetClosedEvent(void) {SetEvent(m_closedEvent);}
+    void SetRequestSuccess(void) {m_requestSuccess = true;}
+  	bool ValidateServerCert(PCCERT_CONTEXT pCert);
+    void AppendResponse(const string& responseData);
+
+private:
+    HANDLE m_mutex;
+    HANDLE m_closedEvent;
+    bool m_requestSuccess;
+    string m_expectedServerCertificate;
+    string m_response;
 };
