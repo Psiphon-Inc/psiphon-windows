@@ -34,7 +34,9 @@
 HTTPSRequest::HTTPSRequest(void)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
-    m_closedEvent = CreateEvent(NULL, FALSE, FALSE, 0);
+
+    // Must use a manual event: multiple things wait on the same event
+    m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
 }
 
 HTTPSRequest::~HTTPSRequest(void)
@@ -189,7 +191,7 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_FLAG_REQUEST_ERROR:
     case WINHTTP_CALLBACK_FLAG_SECURE_FAILURE:
-        my_print(false, _T("WinHttpStatusCallback invalid status (%d)"), dwInternetStatus);
+        my_print(false, _T("WinHttpStatusCallback request failed (%x)"), dwInternetStatus);
         WinHttpCloseHandle(hRequest);
         break;
     default:

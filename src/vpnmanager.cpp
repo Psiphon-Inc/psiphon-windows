@@ -49,7 +49,7 @@ VPNManager::~VPNManager(void)
 
 void VPNManager::Toggle()
 {
-    AutoMUTEX lock(m_mutex);
+    // NOTE: no lock, to allow thread to access object
 
     if (m_state == VPN_MANAGER_STATE_STOPPED)
     {
@@ -68,14 +68,16 @@ void VPNManager::Stop(void)
     // Cancel flag is also termination flag
     m_userSignalledStop = true;
 
-    // Wait for TryNextServer thread to exit (otherwise can get access violation when app terminates)
+    // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
     {
         WaitForSingleObject(m_thread, 10000);
         m_thread = 0;
     }
 
-    m_vpnConnection.Remove();
+    // TODO: confirm don't need second Remove() here as thread will still be
+    // running and will call Remove()
+    // m_vpnConnection.Remove();
 }
 
 void VPNManager::Start(void)
@@ -117,6 +119,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
     // [3] Wait for VPN connection to succeed or fail
     // [4] Launch home pages (failure is acceptable)
     // [5] Make Connected HTTPS request (failure is acceptable)
+    // [6] Wait for VPN connection to stop
     //
     // When any of 1-3 fail, the server is marked as failed
     // in the local server list and the next server from the
@@ -127,7 +130,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
     // NOTE: this function doesn't hold the VPNManager
     // object lock to allow for cancel etc.
 
-    while(true)
+    while (true) // Try servers loop
     {
         //
         // [1] Handshake HTTPS request
@@ -247,13 +250,15 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             continue;
         }
 
+        // NOTE: After this point, be sure to call RemoveVPNConnection() on errors
+
         //
         // [3] Monitor VPN connection and wait for CONNECTED or FAILED
         //
 
         bool retry = false;
 
-        while (true)
+        while (true) // Wait for connected state loop
         {
             HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
 
@@ -290,6 +295,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
                     // FAILED or STOPPED: Retry next server
 
                     retry = true;
+                    manager->RemoveVPNConnection();
                     manager->MarkCurrentServerFailed();
                     break;
                 }
@@ -300,6 +306,8 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
         {
             continue;
         }
+
+        manager->SetState(VPN_MANAGER_STATE_CONNECTED);
 
         //
         // [4] Open home pages in browser
@@ -328,7 +336,52 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             // Ignore failure
         }
 
-        manager->SetState(VPN_MANAGER_STATE_CONNECTED);
+        //
+        // [6] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
+        //
+
+        // TODO: refactor -- make wait helper
+
+        while (true) // Wait for disconnected state loop
+        {
+            HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
+
+            // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
+            DWORD result = WaitForSingleObject(stateChangeEvent, 100);
+
+            if (result == WAIT_TIMEOUT)
+            {
+                if (manager->GetUserSignalledStop())
+                {
+                    manager->RemoveVPNConnection();
+                    manager->SetState(VPN_MANAGER_STATE_STOPPED);
+                    return 0;
+                }
+            }
+            else if (result != WAIT_OBJECT_0)
+            {
+                // internal error
+                manager->RemoveVPNConnection();
+                manager->SetState(VPN_MANAGER_STATE_STOPPED);
+                return 0;
+            }
+            else
+            {
+                VPNConnectionState state = manager->GetVPNConnectionState();
+
+                if (state != VPN_CONNECTION_STATE_CONNECTED)
+                {
+                    // Go on to next step
+                    break;
+                }
+            }
+        }
+
+        // Exit server try loop here, since we got a successful connection
+
+        manager->SetState(VPN_MANAGER_STATE_STOPPED);
+
+        break;
     }
 
     return 0;
