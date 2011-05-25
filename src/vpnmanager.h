@@ -25,13 +25,11 @@
 #include "psiclient.h"
 
 
-enum VPNState
+enum VPNManagerState
 {
-    VPN_STATE_STOPPED = 0,
-    VPN_STATE_INITIALIZING,
-    VPN_STATE_STARTING,
-    VPN_STATE_CONNECTED,
-    VPN_STATE_FAILED
+    VPN_MANAGER_STATE_STOPPED = 0,
+    VPN_MANAGER_STATE_STARTING,
+    VPN_MANAGER_STATE_CONNECTED
 };
 
 
@@ -42,48 +40,36 @@ public:
     virtual ~VPNManager(void);
     void Toggle(void);
     void Stop(void);
-    void VPNStateChanged(VPNState newState);
-
-    VPNState GetVPNState(void)
-        {AutoMUTEX lock(m_mutex); return m_vpnState;}
-
-    bool GetUserSignalledStop(void)
-        {AutoMUTEX lock(m_mutex); return m_userSignalledStop;}
+    void SetState(VPNManagerState newState) {m_state = newState;}
+    VPNManagerState GetState(void) {return m_state;}
+    const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
 
 private:
-    void TryNextServer(void);
-    static DWORD WINAPI TryNextServerThread(void* object);
+    void Start(void);
+    static DWORD WINAPI VPNManagerStartThread(void* object);
 
-    // NOTE: LoadNextServer, DoHandshake, Establish, HandleHandshakeResponse
-    // are only to be called from TryNextServerThread.
+    void MarkCurrentServerFailed(void);
+    VPNConnectionState GetVPNConnectionState(void);
+    HANDLE GetVPNConnectionStateChangeEvent(void);
+    void RemoveVPNConnection(void);
+    void OpenHomePages(void);
+    tstring GetConnectRequestPath(void);
     bool LoadNextServer(
         tstring& serverAddress,
         int& webPort,
         string& webServerCertificate,
         tstring& handshakeRequestPath);
-    bool DoHandshake(
-        const TCHAR* serverAddress,
-        int webPort,
-        const string& webServerCertificate,
-        const TCHAR* handshakeRequestPath,
-        string& handshakeResponse);
     bool HandleHandshakeResponse(
         const char* handshakeResponse);
     bool RequireUpgrade(tstring& downloadRequestPath);
-    bool DoDownload(
-        const TCHAR* serverAddress,
-        int webPort,
-        const string& webServerCertificate,
-        const TCHAR* downloadRequestPath,
-        string& downloadResponse);
     bool DoUpgrade(const string& download);
     bool Establish(void);
 
     HANDLE m_mutex;
+    VPNManagerState m_state;
     VPNList m_vpnList;
     VPNConnection m_vpnConnection;
-    VPNState m_vpnState;
     bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
-    HANDLE m_tryNextServerThreadHandle;
+    HANDLE m_thread;
 };

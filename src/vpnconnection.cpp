@@ -25,18 +25,23 @@
 #include "ras.h"
 #include "raserror.h"
 
-// RAS callback sends messages to our main window.  Since there's only one main
-// window, we use a global variable.
-extern HWND g_hWnd;
 
-void CALLBACK RasDialCallback(HRASCONN rasConnection, UINT, RASCONNSTATE rasConnState, DWORD dwError, DWORD)
+void CALLBACK RasDialCallback(
+    DWORD userData,
+    DWORD,
+    HRASCONN rasConnection,
+    UINT,
+    RASCONNSTATE rasConnState,
+    DWORD dwError,
+    DWORD)
 {
+    VPNConnection* vpnConnection = (VPNConnection*)userData;
+
     my_print(true, _T("RasDialCallback (%d %d)"), rasConnState, dwError);
     if (0 != dwError)
     {
         my_print(false, _T("Connection failed (%d)"), dwError);
-
-        ::SendMessage(g_hWnd, WM_PSIPHON_VPN_STATE_CHANGE, VPN_STATE_FAILED, 0);
+        vpnConnection->SetState(VPN_CONNECTION_STATE_FAILED);
     }
     else if (RASCS_Connected == rasConnState)
     {
@@ -51,7 +56,7 @@ void CALLBACK RasDialCallback(HRASCONN rasConnection, UINT, RASCONNSTATE rasConn
 
         my_print(false, _T("Successfully connected."));
 
-        ::SendMessage(g_hWnd, WM_PSIPHON_VPN_STATE_CHANGE, VPN_STATE_CONNECTED, 0);
+        vpnConnection->SetState(VPN_CONNECTION_STATE_CONNECTED);
 
         if (WAIT_FAILED == WaitForSingleObject(rasEvent, INFINITE))
         {
@@ -60,29 +65,41 @@ void CALLBACK RasDialCallback(HRASCONN rasConnection, UINT, RASCONNSTATE rasConn
             // Otherwise we'd be stuck in a connected state.
         }
 
-        // NOTE: Don't my_print here.
-        //       The disconnect event may have been invoked on application shutdown, so
-        //       the main thread may be gone by now.
-
-        ::SendMessage(g_hWnd, WM_PSIPHON_VPN_STATE_CHANGE, VPN_STATE_STOPPED, 0);
+        my_print(false, _T("Disconnected."));
+        vpnConnection->SetState(VPN_CONNECTION_STATE_STOPPED);
     }
     else
     {
         my_print(false, _T("Establishing connection... (%d)"), rasConnState);
-
-        ::SendMessage(g_hWnd, WM_PSIPHON_VPN_STATE_CHANGE, VPN_STATE_STARTING, 0);
+        vpnConnection->SetState(VPN_CONNECTION_STATE_STARTING);
     }
 }
 
 VPNConnection::VPNConnection(void) :
+    m_state(VPN_CONNECTION_STATE_STOPPED),
     m_rasConnection(0),
     m_suspendTeardownForUpgrade(false)
 {
+    m_stateChangeEvent = CreateEvent(NULL, FALSE, FALSE, 0);
 }
 
 VPNConnection::~VPNConnection(void)
 {
     Remove();
+    CloseHandle(m_stateChangeEvent);
+}
+
+void VPNConnection::SetState(VPNConnectionState newState)
+{
+    // "Simple reads and writes to properly-aligned 32-bit variables are atomic operations."
+    // http://msdn.microsoft.com/en-us/library/ms684122%28v=vs.85%29.aspx
+    m_state = newState;
+    SetEvent(m_stateChangeEvent);
+}
+
+VPNConnectionState VPNConnection::GetState(void)
+{
+    return m_state;
 }
 
 bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
@@ -90,6 +107,12 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
     DWORD returnCode = ERROR_SUCCESS;
 
     Remove();
+
+    if (m_state != VPN_CONNECTION_STATE_STOPPED)
+    {
+        my_print(false, _T("Invalid VPN connection state in Establish (%d)"), m_state);
+        return false;
+    }
 
     // The RasValidateEntryName function validates the format of a connection
     // entry name. The name must contain at least one non-white-space alphanumeric character.
@@ -156,8 +179,12 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
     lstrcpy(vpnParams.szPassword, _T("password")); // This can also be hardcoded because
                                                    // the server authentication (which we
                                                    // really care about) is in IPSec using PSK
+
+    // Pass pointer to this object to callback for state change updates
+    vpnParams.dwCallbackId = (ULONG_PTR)this;
+
     m_rasConnection = 0;
-    returnCode = RasDial(0, 0, &vpnParams, 1, &RasDialCallback, &m_rasConnection);
+    returnCode = RasDial(0, 0, &vpnParams, 2, &RasDialCallback, &m_rasConnection);
     if (ERROR_SUCCESS != returnCode)
     {
         my_print(false, _T("RasDial failed (%d)"), returnCode);
@@ -183,7 +210,7 @@ bool VPNConnection::Remove(void)
     // Based on sample code in:
     // http://msdn.microsoft.com/en-us/library/aa377284%28v=vs.85%29.aspx
 
-    HRASCONN rasConnection = getActiveRasConnection();
+    HRASCONN rasConnection = GetActiveRasConnection();
 
     if (!rasConnection)
     {
@@ -207,6 +234,8 @@ bool VPNConnection::Remove(void)
         // Don't delete entry when in this state -- Windows gets confused
         return false;
     }
+
+    // NOTE: no explicit state change to STOPPED; we're assuming RasDialCallback will set it
 
     RASCONNSTATUS status;
     memset(&status, 0, sizeof(status));
@@ -245,7 +274,7 @@ bool VPNConnection::Remove(void)
     return true;
 }
 
-HRASCONN VPNConnection::getActiveRasConnection()
+HRASCONN VPNConnection::GetActiveRasConnection()
 {
     if (m_rasConnection)
     {

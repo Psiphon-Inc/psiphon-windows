@@ -23,17 +23,34 @@
 #include "tstring.h"
 
 
+enum VPNConnectionState
+{
+    VPN_CONNECTION_STATE_STOPPED = 0,
+    VPN_CONNECTION_STATE_STARTING,
+    VPN_CONNECTION_STATE_CONNECTED,
+    VPN_CONNECTION_STATE_FAILED
+};
+
+
 class VPNConnection
 {
 public:
     VPNConnection(void);
     virtual ~VPNConnection(void);
+
+    void SetState(VPNConnectionState newState);
+    VPNConnectionState GetState(void);
+    HANDLE GetStateChangeEvent(void) {return m_stateChangeEvent;}
+
     bool Establish(const tstring& serverAddress, const tstring& PSK);
     bool Remove(void);
     void SuspendTeardownForUpgrade(void) {m_suspendTeardownForUpgrade = true;}
 
 private:
-    HRASCONN getActiveRasConnection(void);
+    HANDLE m_stateChangeEvent;
+    VPNConnectionState m_state;
     HRASCONN m_rasConnection;
     bool m_suspendTeardownForUpgrade;
+
+    HRASCONN GetActiveRasConnection(void);
 };

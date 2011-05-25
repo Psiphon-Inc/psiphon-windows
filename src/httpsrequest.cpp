@@ -35,7 +35,7 @@ HTTPSRequest::~HTTPSRequest(void)
 }
 
 bool HTTPSRequest::GetRequest(
-        bool& cancel,
+        const bool& cancel,
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,

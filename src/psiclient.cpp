@@ -229,10 +229,19 @@ void UpdateButton(void)
     static int g_nextAnimationIndex = 0;
     int image = 0;
 
-    VPNState state = g_vpnManager.GetVPNState();
-    if (state == VPN_STATE_STOPPED) image = 0;
-    else if (state == VPN_STATE_CONNECTED) image = 1;
-    else image = 2 + (g_nextAnimationIndex++)%4;
+    VPNManagerState state = g_vpnManager.GetState();
+    if (state == VPN_MANAGER_STATE_STOPPED)
+    {
+        image = 0;
+    }
+    else if (state == VPN_MANAGER_STATE_CONNECTED)
+    {
+        image = 1;
+    }
+    else /* if VPN_MANAGER_STATE_STARTING */
+    {
+        image = 2 + (g_nextAnimationIndex++)%4;
+    }
 
     SendMessage(g_hToolBar, TB_GETBUTTONINFO, IDM_TOGGLE, (LPARAM)&info);
 
@@ -390,17 +399,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         free(myPrintMessage);
         SendMessage(g_hListBox, LB_SETCURSEL,
         SendMessage(g_hListBox, LB_GETCOUNT, NULL, NULL)-1, NULL);
-        break;
-
-    case WM_PSIPHON_VPN_STATE_CHANGE:
-        g_vpnManager.VPNStateChanged((VPNState)wParam);
-        UpdateButton();
-        if (VPN_STATE_STOPPED == g_vpnManager.GetVPNState())
-        {
-            // This is printed here to avoid printing in the vpnconnection's callback thread
-            // in case it is called after my_print is already gone (when the app quits).
-            my_print(false, _T("Disconnected."));
-        }
         break;
 
     case WM_PAINT:

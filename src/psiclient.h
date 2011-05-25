@@ -26,7 +26,6 @@
 //==== global constants ================================================
 
 #define WM_PSIPHON_MY_PRINT            WM_USER + 100
-#define WM_PSIPHON_VPN_STATE_CHANGE    WM_USER + 101
 
 
 //==== logging =========================================================
