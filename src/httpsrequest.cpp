@@ -39,6 +39,9 @@ HTTPSRequest::HTTPSRequest(void)
 
 HTTPSRequest::~HTTPSRequest(void)
 {
+    // In case object is destroyed while callback is outstanding, wait
+    WaitForSingleObject(m_closedEvent, INFINITE);
+
     CloseHandle(m_mutex);
 }
 
@@ -55,7 +58,7 @@ void CALLBACK WinHttpStatusCallback(
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    my_print(false, _T("HTTPS request... (%d)"), dwInternetStatus);
+    //my_print(false, _T("HTTPS request... (%d)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {
