@@ -37,7 +37,7 @@ void CALLBACK RasDialCallback(
 {
     VPNConnection* vpnConnection = (VPNConnection*)userData;
 
-    my_print(true, _T("RasDialCallback (%d %d)"), rasConnState, dwError);
+    my_print(true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
     if (0 != dwError)
     {
         my_print(false, _T("Connection failed (%d)"), dwError);
@@ -70,7 +70,7 @@ void CALLBACK RasDialCallback(
     }
     else
     {
-        my_print(false, _T("Establishing connection... (%d)"), rasConnState);
+        my_print(false, _T("Establishing connection... (%x)"), rasConnState);
         vpnConnection->SetState(VPN_CONNECTION_STATE_STARTING);
     }
 }

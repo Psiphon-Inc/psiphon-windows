@@ -58,11 +58,13 @@ void CALLBACK WinHttpStatusCallback(
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    //my_print(false, _T("HTTPS request... (%d)"), dwInternetStatus);
+    my_print(false, _T("HTTPS request... (%x)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {
     case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
+        // This is ALWAYS the last notification; once it sets closed signal
+        // it's safe to deallocate the parent httpRequest
         httpRequest->SetClosedEvent();
         break;
     case WINHTTP_CALLBACK_STATUS_SENDING_REQUEST:
@@ -140,17 +142,20 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE:
 
-        if (dwStatusInformationLength == 0)
+        // Read available response data
+
+        dwLen = *((DWORD*)lpvStatusInformation);
+
+        if (dwLen == 0)
         {
             // Read response is complete
 
             httpRequest->SetRequestSuccess();
+            WinHttpCloseHandle(hRequest);
             return;
         }
 
-        // Read available response data
-
-        pBuffer = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwStatusInformationLength);
+        pBuffer = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwLen);
 
         if (!pBuffer)
         {
@@ -158,7 +163,7 @@ void CALLBACK WinHttpStatusCallback(
             return;
         }
     
-        if (!WinHttpReadData(hRequest, pBuffer, dwStatusInformationLength, &dwLen))
+        if (!WinHttpReadData(hRequest, pBuffer, dwLen, &dwLen))
         {
 	        my_print(false, _T("WinHttpReadData failed (%d)"), GetLastError());
             HeapFree(GetProcessHeap(), 0, pBuffer);
@@ -248,8 +253,6 @@ bool HTTPSRequest::GetRequest(
         return false;
     }
 
-    // TODO: need?
-
     if (FALSE == WinHttpSetOption(
 	                hRequest,
 	                WINHTTP_OPTION_SECURITY_FLAGS,
@@ -274,7 +277,8 @@ bool HTTPSRequest::GetRequest(
     if (WINHTTP_INVALID_STATUS_CALLBACK == WinHttpSetStatusCallback(
                                                 hRequest,
                                                 WinHttpStatusCallback,
-                                                notificationFlags,    
+                                                // TODO: use notificationFlags?
+                                                WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
                                                 NULL))
     {
 	    my_print(false, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
@@ -312,6 +316,7 @@ bool HTTPSRequest::GetRequest(
             if (cancel)
             {
                 WinHttpCloseHandle(hRequest);
+                WaitForSingleObject(m_closedEvent, INFINITE);
                 return false;
             }
         }
@@ -319,9 +324,15 @@ bool HTTPSRequest::GetRequest(
         {
             // internal error
             WinHttpCloseHandle(hRequest);
+            WaitForSingleObject(m_closedEvent, INFINITE);
             return false;
         }
-    } 
+        else
+        {
+            // callback has closed
+            break;
+        }
+    }
 
     if (m_requestSuccess)
     {
