@@ -273,7 +273,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
 
             // There's no content in the response. Also, failure is ignored since
             // it just means the server didn't log a stat.
-        
+
             tstring connectedRequestPath = manager->GetConnectRequestPath();
         
             string response;
@@ -371,7 +371,8 @@ tstring VPNManager::GetConnectRequestPath(void)
            _T("?client_id=") + NarrowToTString(CLIENT_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&vpn_client_ip_address=") + m_vpnConnection.GetPPPIPAddress();
 }
 
 bool VPNManager::LoadNextServer(

@@ -41,6 +41,7 @@ public:
     void SetState(VPNConnectionState newState);
     VPNConnectionState GetState(void);
     HANDLE GetStateChangeEvent(void) {return m_stateChangeEvent;}
+    tstring GetPPPIPAddress(void);
 
     bool Establish(const tstring& serverAddress, const tstring& PSK);
     bool Remove(void);

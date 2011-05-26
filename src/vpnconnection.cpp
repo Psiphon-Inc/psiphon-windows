@@ -102,6 +102,28 @@ VPNConnectionState VPNConnection::GetState(void)
     return m_state;
 }
 
+tstring VPNConnection::GetPPPIPAddress(void)
+{
+    tstring IPAddress;
+
+    if (m_rasConnection && VPN_CONNECTION_STATE_CONNECTED == GetState())
+    {
+        RASPPPIP projectionInfo;
+        memset(&projectionInfo, 0, sizeof(projectionInfo));
+        projectionInfo.dwSize = sizeof(projectionInfo);
+        DWORD projectionInfoSize = sizeof(projectionInfo);
+        DWORD returnCode = RasGetProjectionInfo(m_rasConnection, RASP_PppIp, &projectionInfo, &projectionInfoSize);
+        if (ERROR_SUCCESS != returnCode)
+        {
+            my_print(false, _T("RasGetProjectionInfo failed (%d)"), returnCode);
+        }
+
+        IPAddress = projectionInfo.szIpAddress;
+    }
+
+    return IPAddress;
+}
+
 bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
 {
     DWORD returnCode = ERROR_SUCCESS;
