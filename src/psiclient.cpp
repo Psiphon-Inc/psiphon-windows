@@ -254,8 +254,11 @@ void UpdateButton(void)
 
 
 //==== my_print (logging) =====================================================
-
+#ifdef _DEBUG
+bool g_bShowDebugMessages = true;
+#else
 bool g_bShowDebugMessages = false;
+#endif
 
 void my_print(bool bDebugMessage, const TCHAR* format, ...)
 {
