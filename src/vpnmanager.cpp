@@ -259,7 +259,6 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
                 throw TryNextServer();
             }
 
-
             manager->SetState(VPN_MANAGER_STATE_CONNECTED);
 
             //
@@ -292,8 +291,6 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             //
             // [6] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
             //
-
-            // TODO: refactor -- make wait helper
 
             while (VPN_CONNECTION_STATE_CONNECTED == manager->GetVPNConnectionState())
             {
