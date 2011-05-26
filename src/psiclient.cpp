@@ -28,14 +28,14 @@
 
 // TODO: Calculate instead of using magic constants
 
-const int BUTTON_SIZE = 80;
+const int BUTTON_SIZE = 48;
 const int BANNER_X = BUTTON_SIZE + 10;
 const int BANNER_Y = 3;
 const int BANNER_WIDTH = 200;
-const int BANNER_HEIGHT = 80;
+const int BANNER_HEIGHT = 48;
 const int TOOLBAR_HEIGHT = BUTTON_SIZE + 16;
 const int WINDOW_WIDTH = BUTTON_SIZE + BANNER_WIDTH + 30;
-const int WINDOW_HEIGHT = 160;
+const int WINDOW_HEIGHT = 130;
 
 
 //==== Win32 boilerplate ======================================================
