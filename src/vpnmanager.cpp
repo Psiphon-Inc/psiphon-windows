@@ -65,19 +65,21 @@ void VPNManager::Stop(void)
 {
     // NOTE: no lock, to allow thread to access object
 
+    // The assumption is that signalling stop will cause any current operations to
+    // stop (such as making HTTPS requests, or establishing a connection), and
+    // cause the connection to hang up if it is connected.
+    // While a connection is active, there is a thread running waiting for the
+    // connection to terminate.
+
     // Cancel flag is also termination flag
     m_userSignalledStop = true;
 
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
     {
-        WaitForSingleObject(m_thread, 10000);
+        WaitForSingleObject(m_thread, INFINITE);
         m_thread = 0;
     }
-
-    // TODO: confirm don't need second Remove() here as thread will still be
-    // running and will call Remove()
-    // m_vpnConnection.Remove();
 }
 
 void VPNManager::Start(void)
