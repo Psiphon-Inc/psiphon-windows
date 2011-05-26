@@ -108,7 +108,7 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
 
     Remove();
 
-    if (m_state != VPN_CONNECTION_STATE_STOPPED)
+    if (m_state != VPN_CONNECTION_STATE_STOPPED && m_state != VPN_CONNECTION_STATE_FAILED)
     {
         my_print(false, _T("Invalid VPN connection state in Establish (%d)"), m_state);
         return false;
