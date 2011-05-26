@@ -184,10 +184,12 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
     vpnParams.dwCallbackId = (ULONG_PTR)this;
 
     m_rasConnection = 0;
+    SetState(VPN_CONNECTION_STATE_STARTING);
     returnCode = RasDial(0, 0, &vpnParams, 2, &RasDialCallback, &m_rasConnection);
     if (ERROR_SUCCESS != returnCode)
     {
         my_print(false, _T("RasDial failed (%d)"), returnCode);
+        SetState(VPN_CONNECTION_STATE_FAILED);
         return false;
     }
 

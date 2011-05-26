@@ -134,256 +134,198 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
 
     while (true) // Try servers loop
     {
-        //
-        // [1] Handshake HTTPS request
-        //
-
-        tstring serverAddress;
-        int webPort;
-        string webServerCertificate;
-        tstring handshakeRequestPath;
-        string handshakeResponse;
-
-        if (!manager->LoadNextServer(
-                            serverAddress,
-                            webPort,
-                            webServerCertificate,
-                            handshakeRequestPath))
+        try
         {
-            // No retry here, it's an internal error
+            //
+            // [1] Handshake HTTPS request
+            //
 
-            manager->SetState(VPN_MANAGER_STATE_STOPPED);
-            return 0;
-        }
+            tstring serverAddress;
+            int webPort;
+            string webServerCertificate;
+            tstring handshakeRequestPath;
+            string handshakeResponse;
 
-        HTTPSRequest httpsRequest;
-        if (!httpsRequest.GetRequest(
-                            manager->GetUserSignalledStop(),
-                            serverAddress.c_str(),
-                            webPort,
-                            webServerCertificate,
-                            handshakeRequestPath.c_str(),
-                            handshakeResponse))
-        {
-            if (manager->GetUserSignalledStop())
+            if (!manager->LoadNextServer(
+                                serverAddress,
+                                webPort,
+                                webServerCertificate,
+                                handshakeRequestPath))
             {
-                manager->SetState(VPN_MANAGER_STATE_STOPPED);
-                return 0;
+                throw Abort();
             }
 
-            // Retry next server
-
-            manager->MarkCurrentServerFailed();
-            continue;
-        }
-
-        if (!manager->HandleHandshakeResponse(handshakeResponse.c_str()))
-        {
-            // No retry here, it's an internal error
-            // (TODO: or corrupt server data, so retry...?)
-
-            manager->SetState(VPN_MANAGER_STATE_STOPPED);
-            return 0;
-        }
-
-        //
-        // [1a] Upgrade
-        //
-
-        // Upgrade now if handshake notified of new version
-        tstring downloadRequestPath;
-        string downloadResponse;
-        if (manager->RequireUpgrade(downloadRequestPath))
-        {
-            // Download new binary
-
+            HTTPSRequest httpsRequest;
             if (!httpsRequest.GetRequest(
-                        manager->GetUserSignalledStop(),
-                        serverAddress.c_str(),
-                        webPort,
-                        webServerCertificate,
-                        downloadRequestPath.c_str(),
-                        downloadResponse))
+                                manager->GetUserSignalledStop(),
+                                serverAddress.c_str(),
+                                webPort,
+                                webServerCertificate,
+                                handshakeRequestPath.c_str(),
+                                handshakeResponse))
             {
                 if (manager->GetUserSignalledStop())
                 {
-                    manager->SetState(VPN_MANAGER_STATE_STOPPED);
-                    return 0;
+                    throw Abort();
                 }
-
-                // Retry next server
-
-                manager->MarkCurrentServerFailed();
-                continue;
-            }
-
-            // Perform upgrade.
-        
-            // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
-            // If it fails, we DO proceed with Establish -- using the old (current) version.  One scenario
-            // in this case is if the binary is on read-only media.
-            // NOTE: means the server should always support old versions... which for now just means
-            // supporting Establish() etc. as we're already past the handshake.
-
-            if (manager->DoUpgrade(downloadResponse))
-            {
-                // NOTE: state will remain INITIALIZING.  The app is terminating.
-                return 0;
-            }
-
-            // Fall through to Establish()
-        }
-
-        //
-        // [2] Start VPN connection
-        //
-
-        if (!manager->Establish())
-        {
-            if (manager->GetUserSignalledStop())
-            {
-                manager->SetState(VPN_MANAGER_STATE_STOPPED);
-                return 0;
-            }
-
-            // Retry next server
-
-            manager->MarkCurrentServerFailed();
-            continue;
-        }
-
-        // NOTE: After this point, be sure to call RemoveVPNConnection() on errors
-
-        //
-        // [3] Monitor VPN connection and wait for CONNECTED or FAILED
-        //
-
-        bool retry = false;
-
-        while (true) // Wait for connected state loop
-        {
-            HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
-
-            // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-            DWORD result = WaitForSingleObject(stateChangeEvent, 100);
-
-            if (result == WAIT_TIMEOUT)
-            {
-                if (manager->GetUserSignalledStop())
+                else
                 {
-                    manager->RemoveVPNConnection();
-                    manager->SetState(VPN_MANAGER_STATE_STOPPED);
-                    return 0;
+                    throw TryNextServer();
                 }
             }
-            else if (result != WAIT_OBJECT_0)
+
+            if (!manager->HandleHandshakeResponse(handshakeResponse.c_str()))
             {
-                // internal error
-                manager->RemoveVPNConnection();
-                manager->SetState(VPN_MANAGER_STATE_STOPPED);
-                return 0;
+                throw TryNextServer();
             }
-            else
+
+            //
+            // [1a] Upgrade
+            //
+
+            // Upgrade now if handshake notified of new version
+            tstring downloadRequestPath;
+            string downloadResponse;
+            if (manager->RequireUpgrade(downloadRequestPath))
             {
-                VPNConnectionState state = manager->GetVPNConnectionState();
+                // Download new binary
 
-                if (state == VPN_CONNECTION_STATE_CONNECTED)
-                {
-                    // Go on to next step
-                    break;
-                }
-                else if (state != VPN_CONNECTION_STATE_STARTING)
-                {
-                    // FAILED or STOPPED: Retry next server
-
-                    retry = true;
-                    manager->RemoveVPNConnection();
-                    manager->MarkCurrentServerFailed();
-                    break;
-                }
-            }
-        }
-
-        if (retry)
-        {
-            continue;
-        }
-
-        manager->SetState(VPN_MANAGER_STATE_CONNECTED);
-
-        //
-        // [4] Open home pages in browser
-        //
-
-        manager->OpenHomePages();
-
-        //
-        // [5] "Connected" HTTPS request for server stats (not critical to succeed)
-        //
-
-        // There's no content in the response. Also, failure is ignored since
-        // it just means the server didn't log a stat.
-        
-        tstring connectedRequestPath = manager->GetConnectRequestPath();
-        
-        string response;
-        if (!httpsRequest.GetRequest(
+                if (!httpsRequest.GetRequest(
                             manager->GetUserSignalledStop(),
                             serverAddress.c_str(),
                             webPort,
                             webServerCertificate,
-                            connectedRequestPath.c_str(),
-                            response))
-        {
-            // Ignore failure
-        }
-
-        //
-        // [6] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
-        //
-
-        // TODO: refactor -- make wait helper
-
-        while (true) // Wait for disconnected state loop
-        {
-            HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
-
-            // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-            DWORD result = WaitForSingleObject(stateChangeEvent, 100);
-
-            if (result == WAIT_TIMEOUT)
-            {
-                if (manager->GetUserSignalledStop())
+                            downloadRequestPath.c_str(),
+                            downloadResponse))
                 {
-                    manager->RemoveVPNConnection();
-                    manager->SetState(VPN_MANAGER_STATE_STOPPED);
+                    if (manager->GetUserSignalledStop())
+                    {
+                        throw Abort();
+                    }
+                    else
+                    {
+                        // TODO: Proceed with the connection if the download fails?
+                        throw TryNextServer();
+                    }
+                }
+
+                // Perform upgrade.
+        
+                // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
+                // If it fails, we DO proceed with Establish -- using the old (current) version.  One scenario
+                // in this case is if the binary is on read-only media.
+                // NOTE: means the server should always support old versions... which for now just means
+                // supporting Establish() etc. as we're already past the handshake.
+
+                if (manager->DoUpgrade(downloadResponse))
+                {
+                    // NOTE: state will remain INITIALIZING.  The app is terminating.
                     return 0;
                 }
-            }
-            else if (result != WAIT_OBJECT_0)
-            {
-                // internal error
-                manager->RemoveVPNConnection();
-                manager->SetState(VPN_MANAGER_STATE_STOPPED);
-                return 0;
-            }
-            else
-            {
-                VPNConnectionState state = manager->GetVPNConnectionState();
 
-                if (state != VPN_CONNECTION_STATE_CONNECTED)
+                // Fall through to Establish()
+            }
+
+            //
+            // [2] Start VPN connection
+            //
+
+            if (!manager->Establish())
+            {
+                // This is a local error, we should not try the next server because
+                // we'll likely end up in an infinite loop.
+                throw Abort();
+            }
+
+            //
+            // [3] Monitor VPN connection and wait for CONNECTED or FAILED
+            //
+
+            while (VPN_CONNECTION_STATE_STARTING == manager->GetVPNConnectionState())
+            {
+                HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
+
+                // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
+                DWORD result = WaitForSingleObject(stateChangeEvent, 100);
+
+                if (manager->GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
                 {
-                    // Go on to next step
-                    break;
+                    throw Abort();
                 }
             }
+
+            if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
+            {
+                throw TryNextServer();
+            }
+
+
+            manager->SetState(VPN_MANAGER_STATE_CONNECTED);
+
+            //
+            // [4] Open home pages in browser
+            //
+
+            manager->OpenHomePages();
+
+            //
+            // [5] "Connected" HTTPS request for server stats (not critical to succeed)
+            //
+
+            // There's no content in the response. Also, failure is ignored since
+            // it just means the server didn't log a stat.
+        
+            tstring connectedRequestPath = manager->GetConnectRequestPath();
+        
+            string response;
+            if (!httpsRequest.GetRequest(
+                                manager->GetUserSignalledStop(),
+                                serverAddress.c_str(),
+                                webPort,
+                                webServerCertificate,
+                                connectedRequestPath.c_str(),
+                                response))
+            {
+                // Ignore failure
+            }
+
+            //
+            // [6] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
+            //
+
+            // TODO: refactor -- make wait helper
+
+            while (VPN_CONNECTION_STATE_CONNECTED == manager->GetVPNConnectionState())
+            {
+                HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
+
+                // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
+                DWORD result = WaitForSingleObject(stateChangeEvent, 100);
+
+                if (manager->GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
+                {
+                    throw Abort();
+                }
+            }
+
+            // Exit server try loop here, since we got a successful connection
+
+            manager->SetState(VPN_MANAGER_STATE_STOPPED);
+
+            break;
         }
-
-        // Exit server try loop here, since we got a successful connection
-
-        manager->SetState(VPN_MANAGER_STATE_STOPPED);
-
-        break;
+        catch (Abort&)
+        {
+            manager->RemoveVPNConnection();
+            manager->SetState(VPN_MANAGER_STATE_STOPPED);
+            break;
+        }
+        catch (TryNextServer&)
+        {
+            manager->RemoveVPNConnection();
+            manager->MarkCurrentServerFailed();
+            // Continue while loop to try next server
+        }
     }
 
     return 0;
@@ -488,6 +430,7 @@ bool VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
     
     if (!m_currentSessionInfo.ParseHandshakeResponse(handshakeResponse))
     {
+        my_print(false, _T("HandleHandshakeResponse: ParseHandshakeResponse failed."));
         return false;
     }
 

@@ -48,6 +48,10 @@ private:
     void Start(void);
     static DWORD WINAPI VPNManagerStartThread(void* object);
 
+    // Exception classes to help with the VPNManagerStartThread control flow
+    class TryNextServer { };
+    class Abort { };
+
     void MarkCurrentServerFailed(void);
     VPNConnectionState GetVPNConnectionState(void);
     HANDLE GetVPNConnectionStateChangeEvent(void);
