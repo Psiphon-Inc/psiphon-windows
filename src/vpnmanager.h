@@ -58,16 +58,17 @@ private:
     void RemoveVPNConnection(void);
     void OpenHomePages(void);
     tstring GetConnectRequestPath(void);
-    bool LoadNextServer(
+    void LoadNextServer(
         tstring& serverAddress,
         int& webPort,
         string& webServerCertificate,
         tstring& handshakeRequestPath);
-    bool HandleHandshakeResponse(
+    void HandleHandshakeResponse(
         const char* handshakeResponse);
     bool RequireUpgrade(tstring& downloadRequestPath);
     bool DoUpgrade(const string& download);
-    bool Establish(void);
+    void Establish(void);
+    void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
 
     HANDLE m_mutex;
     VPNManagerState m_state;

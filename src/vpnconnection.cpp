@@ -61,7 +61,7 @@ void CALLBACK RasDialCallback(
         if (WAIT_FAILED == WaitForSingleObject(rasEvent, INFINITE))
         {
             my_print(false, _T("WaitForSingleObject failed (%d)"), GetLastError());
-            // Fall through to VPN_STATE_CHANGE.
+            // Fall through to VPN_CONNECTION_STATE_STOPPED.
             // Otherwise we'd be stuck in a connected state.
         }
 

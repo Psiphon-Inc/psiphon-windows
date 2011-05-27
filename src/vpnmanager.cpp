@@ -146,14 +146,11 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             tstring handshakeRequestPath;
             string handshakeResponse;
 
-            if (!manager->LoadNextServer(
-                                serverAddress,
-                                webPort,
-                                webServerCertificate,
-                                handshakeRequestPath))
-            {
-                throw Abort();
-            }
+            manager->LoadNextServer(
+                            serverAddress,
+                            webPort,
+                            webServerCertificate,
+                            handshakeRequestPath);
 
             HTTPSRequest httpsRequest;
             if (!httpsRequest.GetRequest(
@@ -174,10 +171,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
                 }
             }
 
-            if (!manager->HandleHandshakeResponse(handshakeResponse.c_str()))
-            {
-                throw TryNextServer();
-            }
+            manager->HandleHandshakeResponse(handshakeResponse.c_str());
 
             //
             // [1a] Upgrade
@@ -230,29 +224,13 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             // [2] Start VPN connection
             //
 
-            if (!manager->Establish())
-            {
-                // This is a local error, we should not try the next server because
-                // we'll likely end up in an infinite loop.
-                throw Abort();
-            }
+            manager->Establish();
 
             //
             // [3] Monitor VPN connection and wait for CONNECTED or FAILED
             //
 
-            while (VPN_CONNECTION_STATE_STARTING == manager->GetVPNConnectionState())
-            {
-                HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
-
-                // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-                DWORD result = WaitForSingleObject(stateChangeEvent, 100);
-
-                if (manager->GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
-                {
-                    throw Abort();
-                }
-            }
+            manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_STARTING);
 
             if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
             {
@@ -292,20 +270,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             // [6] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
             //
 
-            while (VPN_CONNECTION_STATE_CONNECTED == manager->GetVPNConnectionState())
-            {
-                HANDLE stateChangeEvent = manager->GetVPNConnectionStateChangeEvent();
-
-                // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-                DWORD result = WaitForSingleObject(stateChangeEvent, 100);
-
-                if (manager->GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
-                {
-                    throw Abort();
-                }
-            }
-
-            // Exit server try loop here, since we got a successful connection
+            manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_CONNECTED);
 
             manager->SetState(VPN_MANAGER_STATE_STOPPED);
 
@@ -375,7 +340,7 @@ tstring VPNManager::GetConnectRequestPath(void)
            _T("&vpn_client_ip_address=") + m_vpnConnection.GetPPPIPAddress();
 }
 
-bool VPNManager::LoadNextServer(
+void VPNManager::LoadNextServer(
         tstring& serverAddress,
         int& webPort,
         string& serverCertificate,
@@ -395,7 +360,7 @@ bool VPNManager::LoadNextServer(
     catch (std::exception &ex)
     {
         my_print(false, string("LoadNextServer caught exception: ") + ex.what());
-        return false;
+        throw Abort();
     }
 
     // Current session holds server entry info and will also be loaded
@@ -413,11 +378,9 @@ bool VPNManager::LoadNextServer(
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
-
-    return true;
 }
 
-bool VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
+void VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
 {
     // Parse handshake response
     // - get PSK, which we use to connect to VPN
@@ -429,7 +392,7 @@ bool VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
     if (!m_currentSessionInfo.ParseHandshakeResponse(handshakeResponse))
     {
         my_print(false, _T("HandleHandshakeResponse: ParseHandshakeResponse failed."));
-        return false;
+        throw TryNextServer();
     }
 
     try
@@ -441,11 +404,9 @@ bool VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
         my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
         // This isn't fatal.  The VPN connection can still be established.
     }
-
-    return true;
 }
 
-bool VPNManager::Establish(void)
+void VPNManager::Establish(void)
 {
     // Kick off the VPN connection establishment
 
@@ -454,12 +415,30 @@ bool VPNManager::Establish(void)
     if (!m_vpnConnection.Establish(NarrowToTString(m_currentSessionInfo.GetServerAddress()),
                                    NarrowToTString(m_currentSessionInfo.GetPSK())))
     {
-        return false;
+        // This is a local error, we should not try the next server because
+        // we'll likely end up in an infinite loop.
+        throw Abort();
     }
-
-    return true;
 }
 
+void VPNManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state)
+{
+    AutoMUTEX lock(m_mutex);
+
+    while (VPN_CONNECTION_STATE_STARTING == GetVPNConnectionState())
+    {
+        HANDLE stateChangeEvent = GetVPNConnectionStateChangeEvent();
+
+        // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
+        DWORD result = WaitForSingleObject(stateChangeEvent, 100);
+
+        if (GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
+        {
+            throw Abort();
+        }
+    }
+}
+    
 bool VPNManager::RequireUpgrade(tstring& downloadRequestPath)
 {
     AutoMUTEX lock(m_mutex);
