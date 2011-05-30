@@ -423,9 +423,9 @@ void VPNManager::Establish(void)
 
 void VPNManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state)
 {
-    AutoMUTEX lock(m_mutex);
+    // NOTE: no lock, as in VPNManagerStartThread
 
-    while (VPN_CONNECTION_STATE_STARTING == GetVPNConnectionState())
+    while (state == GetVPNConnectionState())
     {
         HANDLE stateChangeEvent = GetVPNConnectionStateChangeEvent();
 
