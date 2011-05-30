@@ -70,6 +70,10 @@ void CALLBACK RasDialCallback(
     }
     else
     {
+        if (rasConnState == 0)
+        {
+            my_print(false, _T("Connecting..."));
+        }
         my_print(true, _T("Establishing connection... (%x)"), rasConnState);
         vpnConnection->SetState(VPN_CONNECTION_STATE_STARTING);
     }
