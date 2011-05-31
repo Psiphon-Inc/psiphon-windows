@@ -210,9 +210,10 @@ void CreateToolbar(HWND hWndParent)
     // Add banner child control.
     HWND hWndBanner = CreateWindow(
                             L"Static", 0,
-                            WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP,
+                            WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP | SS_NOTIFY,
                             BANNER_X, BANNER_Y, BANNER_WIDTH, BANNER_HEIGHT,
                             g_hToolBar, NULL, hInst, NULL);
+    EnableWindow(hWndBanner, TRUE);
     HBITMAP hBanner = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BANNER));
     SendMessage(hWndBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBanner);
 
@@ -371,6 +372,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Parse the menu selections:
         switch (wmId)
         {
+        case STN_CLICKED:
+            // Banner static control was clicked, so open home pages
+            if (VPN_MANAGER_STATE_CONNECTED == g_vpnManager.GetState())
+            {
+                g_vpnManager.OpenHomePages();
+            }
+            break;
         case IDM_TOGGLE:
             g_vpnManager.Toggle();
             break;

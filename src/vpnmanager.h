@@ -43,6 +43,7 @@ public:
     void SetState(VPNManagerState newState) {m_state = newState;}
     VPNManagerState GetState(void) {return m_state;}
     const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
+    void OpenHomePages(void);
 
 private:
     void Start(void);
@@ -56,7 +57,6 @@ private:
     VPNConnectionState GetVPNConnectionState(void);
     HANDLE GetVPNConnectionStateChangeEvent(void);
     void RemoveVPNConnection(void);
-    void OpenHomePages(void);
     tstring GetConnectRequestPath(void);
     void LoadNextServer(
         tstring& serverAddress,
