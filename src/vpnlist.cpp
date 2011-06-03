@@ -102,32 +102,62 @@ ServerEntry VPNList::GetNextServer(void)
 
 ServerEntries VPNList::GetList(void)
 {
-    ServerEntries serverEntryList;
+    // Load persistent list of servers from system (registry)
+
+    ServerEntries systemServerEntryList;
     try
     {
-        serverEntryList = GetListFromSystem();
+        systemServerEntryList = GetListFromSystem();
     }
     catch (std::exception &ex)
     {
-        my_print(false, string("Using Embedded Server List because the System Server List is corrupt: ") + ex.what());
+        my_print(false, string("Not using corrupt System Server List: ") + ex.what());
     }
 
-    if (serverEntryList.size() < 1)
+    // Add embedded list to system list.
+    // Cases:
+    // - This may be a new client run on a system with an existing registry entry; we want the new embedded values
+    // - This may be the first run, in which case the system list is empty
+
+    ServerEntries embeddedServerEntryList;
+    try
     {
-        try
-        {
-            serverEntryList = GetListFromEmbeddedValues();
-        }
-        catch (std::exception &ex)
-        {
-            string message = string("Bad Embedded Server List.  This application is possibly corrupt: ") + ex.what();
-            throw std::exception(message.c_str());
-        }
-        // Write this out immediately, so the next time we'll get it from the system
-        WriteListToSystem(serverEntryList);
+        embeddedServerEntryList = GetListFromEmbeddedValues();
+    }
+    catch (std::exception &ex)
+    {
+        string message = string("Corrupt Embedded Server List: ") + ex.what();
+        throw std::exception(message.c_str());
     }
 
-    return serverEntryList;
+    for (ServerEntries::iterator embeddedServerEntry = embeddedServerEntryList.begin();
+         embeddedServerEntry != embeddedServerEntryList.end(); ++embeddedServerEntry)
+    {
+        // Check if we already know about this server
+        // We prioritize discovery information, so skip embedded entry entirely when already known
+        bool alreadyKnown = false;
+        for (ServerEntries::iterator systemServerEntry = systemServerEntryList.begin();
+             systemServerEntry != systemServerEntryList.end(); ++systemServerEntry)
+        {
+            if (embeddedServerEntry->serverAddress == systemServerEntry->serverAddress)
+            {
+                alreadyKnown = true;
+                break;
+            }
+        }
+
+        if (!alreadyKnown)
+        {
+            // Insert the new entry at the top
+            systemServerEntryList.insert(systemServerEntryList.begin(), *embeddedServerEntry);
+        }
+    }
+
+    // Write this out immediately, so the next time we'll get it from the system
+    // (Also so MarkCurrentServerFailed reads the same list we're returning)
+    WriteListToSystem(systemServerEntryList);
+
+    return systemServerEntryList;
 }
 
 ServerEntries VPNList::GetListFromEmbeddedValues(void)
