@@ -30,7 +30,6 @@
 #define IDM_ABOUT				104
 #define IDM_EXIT				105
 #define IDI_PSICLIENT			107
-#define IDI_SMALL				108
 #define IDC_PSICLIENT			109
 #define IDM_TOGGLE              110
 #define IDM_SHOW_DEBUG_MESSAGES 112
