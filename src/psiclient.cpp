@@ -332,7 +332,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         font = GetStockObject(DEFAULT_GUI_FONT);
         SendMessage(g_hListBox, WM_SETFONT, (WPARAM)font, NULL);
 
-        // TODO: kill the timer when connected, restart when re-connecting
+        // NOTE: we leave the connection animation timer running even after fully connected
+        // when the icon no longer animates -- since the timer handler also updates the UI
+        // when unexpectedly disconnected.
         g_hTimer = SetTimer(hWnd, IDT_BUTTON_ROTATION, 250, NULL);
 
         g_vpnManager.Toggle();
@@ -386,9 +388,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             g_bShowDebugMessages = !g_bShowDebugMessages;
             my_print(false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
             break;
-        // TODO: remove about and exit?  The menu is currently hidden
+        // TODO: remove help, about, and exit?  The menu is currently hidden
         case IDM_HELP:
-            // TODO: help?
             break;
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);

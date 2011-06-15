@@ -25,7 +25,8 @@ static const char* CLIENT_ID =
 static const char* SPONSOR_ID = 
     "8BB28C1A8E8A9ED9";
 
-// TODO: put this in resources instead
+// NOTE: if we put this in resources instead/as well, it would show up
+//       in Explorer properties tab, etc.
 static const char* CLIENT_VERSION = "2";
 
 static const char* EMBEDDED_SERVER_LIST =

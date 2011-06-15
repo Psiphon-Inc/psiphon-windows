@@ -24,9 +24,10 @@
 #include <WinCrypt.h>
 #include "embeddedvalues.h"
 
-// TODO: how to export restrictions impact general availability of crypto services?
+// NOTE: this code depends on built-in Windows crypto services
+// How do export restrictions impact general availability of crypto services?
 // http://technet.microsoft.com/en-us/library/cc962093.aspx
-// (Also a concern for VPN services)
+// (This is also a concern for the VPN client we configure.)
 
 #pragma comment (lib, "crypt32.lib")
 
@@ -71,7 +72,9 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_STATUS_SENDING_REQUEST:
 
-        // TODO: is this really the earliest we can inject out custom server cert validation?
+        // NOTE: from experimentation, this is really the earliest we can inject our custom server cert validation.
+        // As far as we know, this is before any data is sent over the SSL connection, so it's soon enough.
+        // E.g., we tried to verify the cert earlier but:
         // WinHttpQueryOption(WINHTTP_OPTION_SERVER_CERT_CONTEXT) gives ERROR_WINHTTP_INCORRECT_HANDLE_STATE
         // during WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER...
 
@@ -195,7 +198,7 @@ void CALLBACK WinHttpStatusCallback(
         WinHttpCloseHandle(hRequest);
         break;
     default:
-        // TODO: handle all events sent for notification mask
+        // No action on other events
         break;
     }
 }
@@ -265,21 +268,9 @@ bool HTTPSRequest::GetRequest(
         return false;
     }
 
-    DWORD notificationFlags =
-            WINHTTP_CALLBACK_STATUS_CONNECTING_TO_SERVER |
-            WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER |
-            WINHTTP_CALLBACK_STATUS_SENDING_REQUEST |
-            WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE |
-            WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE |
-            WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE |
-            WINHTTP_CALLBACK_FLAG_REQUEST_ERROR |
-            WINHTTP_CALLBACK_FLAG_SECURE_FAILURE |
-            WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING;
-
     if (WINHTTP_INVALID_STATUS_CALLBACK == WinHttpSetStatusCallback(
                                                 hRequest,
                                                 WinHttpStatusCallback,
-                                                // TODO: use notificationFlags?
                                                 WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
                                                 NULL))
     {

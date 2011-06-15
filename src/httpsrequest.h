@@ -38,7 +38,8 @@ public:
         const TCHAR* requestPath,
         string& response);
 
-    // TODO: private
+    // NOTE: these member functions could be private if the WinHttpStatusCallback
+    // function is a static member or friend
     void SetClosedEvent(void) {SetEvent(m_closedEvent);}
     void SetRequestSuccess(void) {m_requestSuccess = true;}
   	bool ValidateServerCert(PCCERT_CONTEXT pCert);

@@ -196,28 +196,34 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
                     {
                         throw Abort();
                     }
-                    else
-                    {
-                        // TODO: Proceed with the connection if the download fails?
-                        throw TryNextServer();
-                    }
+                    // else fall through to Establish()
+
+                    // If the download failed, we simply proceed with the connection.
+                    // Rationale:
+                    // - The server is (and hopefully will remain) backwards compatible.
+                    // - The failure is likely a configuration one, as the handshake worked.
+                    // - A configuration failure could be common across all servers, so the
+                    //   client will never connect.
+                    // - Fail-over exposes new server IPs to hostile networks, so we don't
+                    //   like doing it in the case where we know the handshake already succeeded.
                 }
-
-                // Perform upgrade.
-        
-                // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
-                // If it fails, we DO proceed with Establish -- using the old (current) version.  One scenario
-                // in this case is if the binary is on read-only media.
-                // NOTE: means the server should always support old versions... which for now just means
-                // supporting Establish() etc. as we're already past the handshake.
-
-                if (manager->DoUpgrade(downloadResponse))
+                else
                 {
-                    // NOTE: state will remain INITIALIZING.  The app is terminating.
-                    return 0;
-                }
+                    // Perform upgrade.
+        
+                    // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
+                    // If it fails, we DO proceed with Establish -- using the old (current) version.  One scenario
+                    // in this case is if the binary is on read-only media.
+                    // NOTE: means the server should always support old versions... which for now just means
+                    // supporting Establish() etc. as we're already past the handshake.
 
-                // Fall through to Establish()
+                    if (manager->DoUpgrade(downloadResponse))
+                    {
+                        // NOTE: state will remain INITIALIZING.  The app is terminating.
+                        return 0;
+                    }
+                    // else fall through to Establish()
+                }
             }
 
             //
