@@ -46,9 +46,9 @@ public:
     void AddEntriesToList(const vector<string>& newServerEntryList);
     void MarkCurrentServerFailed(void);
     ServerEntry GetNextServer(void);
+    ServerEntries GetList(void);
 
 private:
-    ServerEntries GetList(void);
     ServerEntries GetListFromEmbeddedValues(void);
     ServerEntries GetListFromSystem(void);
     ServerEntries ParseServerEntries(const char* serverEntryListString);

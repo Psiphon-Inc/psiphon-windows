@@ -146,6 +146,8 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             tstring handshakeRequestPath;
             string handshakeResponse;
 
+            // Send list of known server IP addresses (used for stats logging on the server)
+
             manager->LoadNextServer(
                             serverAddress,
                             webPort,
@@ -255,11 +257,11 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             // [5] "Connected" HTTPS request for server stats (not critical to succeed)
             //
 
+            tstring connectedRequestPath = manager->GetConnectRequestPath();
+
             // There's no content in the response. Also, failure is ignored since
             // it just means the server didn't log a stat.
 
-            tstring connectedRequestPath = manager->GetConnectRequestPath();
-        
             string response;
             if (!httpsRequest.GetRequest(
                                 manager->GetUserSignalledStop(),
@@ -384,6 +386,15 @@ void VPNManager::LoadNextServer(
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+
+    // Include a list of known server IP addresses in the request query string as required by /handshake
+
+    ServerEntries serverEntries =  m_vpnList.GetList();
+    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
+    {
+        handshakeRequestPath += _T("&known_server=");
+        handshakeRequestPath += NarrowToTString(ii->serverAddress);
+    }
 }
 
 void VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
