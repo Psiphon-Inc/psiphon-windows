@@ -253,6 +253,24 @@ void UpdateButton(void)
     }
 }
 
+void UpdateAlpha(HWND hWnd)
+{
+    // Make window transparent when connected
+
+    static VPNManagerState g_lastState = g_vpnManager.GetState();
+    VPNManagerState state = g_vpnManager.GetState();
+    if (state == VPN_MANAGER_STATE_CONNECTED)
+    {
+        // Can also animate a fade out: http://msdn.microsoft.com/en-us/library/ms997507.aspx
+        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+        SetLayeredWindowAttributes(hWnd, 0, (255 * 75) / 100, LWA_ALPHA);
+    }
+    else
+    {
+        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+        SetLayeredWindowAttributes(hWnd, 0, (255 * 100) / 100, LWA_ALPHA);
+    }
+}
 
 //==== my_print (logging) =====================================================
 #ifdef _DEBUG
@@ -343,6 +361,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_TIMER:
         UpdateButton();
+        // DISABLED: UpdateAlpha(hWnd);
         break;
 
     case WM_SIZE:
