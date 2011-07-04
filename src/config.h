@@ -21,8 +21,8 @@
 
 #include <tchar.h>
 
-static const TCHAR* VPN_CONNECTION_NAME = _T("PsiphonV");
-static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\PsiphonV");
+static const TCHAR* VPN_CONNECTION_NAME = _T("Psiphon3");
+static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");

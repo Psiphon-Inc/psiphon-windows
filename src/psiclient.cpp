@@ -124,11 +124,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
 
    hWnd = CreateWindowEx(
-            //WS_EX_TOPMOST|WS_EX_TOOLWINDOW,
-            WS_EX_TOPMOST|WS_EX_TOOLWINDOW,
+            WS_EX_APPWINDOW,
             szWindowClass,
             szTitle,
-            //WS_OVERLAPPEDWINDOW & ~WS_SYSMENU,
             WS_OVERLAPPEDWINDOW,
             // CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
             rect.right - WINDOW_WIDTH, rect.bottom - WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -222,8 +220,10 @@ void CreateToolbar(HWND hWndParent)
     ShowWindow(g_hToolBar, TRUE);
 }
 
-void UpdateButton(void)
+void UpdateButton(HWND hWnd)
 {
+    static VPNManagerState g_lastState = g_vpnManager.GetState();
+
     TBBUTTONINFO info;
     info.cbSize = sizeof(info);
     info.dwMask = TBIF_IMAGE;
@@ -231,6 +231,24 @@ void UpdateButton(void)
     int image = 0;
 
     VPNManagerState state = g_vpnManager.GetState();
+
+    // Flash the taskbar after disconnected
+
+    if (state == VPN_MANAGER_STATE_STOPPED && state != g_lastState)
+    {
+        FLASHWINFO info;
+        info.cbSize = sizeof(FLASHWINFO);
+        info.hwnd = hWnd;
+        info.dwFlags = FLASHW_ALL|FLASHW_TIMERNOFG;
+        info.uCount = 1;
+        info.dwTimeout = 0;
+        FlashWindowEx(&info);
+    }
+
+    g_lastState = state;
+
+    // Update the button
+
     if (state == VPN_MANAGER_STATE_STOPPED)
     {
         image = 0;
@@ -257,7 +275,6 @@ void UpdateAlpha(HWND hWnd)
 {
     // Make window transparent when connected
 
-    static VPNManagerState g_lastState = g_vpnManager.GetState();
     VPNManagerState state = g_vpnManager.GetState();
     if (state == VPN_MANAGER_STATE_CONNECTED)
     {
@@ -273,6 +290,7 @@ void UpdateAlpha(HWND hWnd)
 }
 
 //==== my_print (logging) =====================================================
+
 #ifdef _DEBUG
 bool g_bShowDebugMessages = true;
 #else
@@ -360,7 +378,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_TIMER:
-        UpdateButton();
+        UpdateButton(hWnd);
         // DISABLED: UpdateAlpha(hWnd);
         break;
 
