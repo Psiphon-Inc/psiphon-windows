@@ -341,7 +341,7 @@ tstring VPNManager::GetConnectRequestPath(void)
     AutoMUTEX lock(m_mutex);
 
     return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
-           _T("?client_id=") + NarrowToTString(CLIENT_ID) +
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -382,7 +382,7 @@ void VPNManager::LoadNextServer(
     webPort = serverEntry.webServerPort;
     serverCertificate = serverEntry.webServerCertificate;
     handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_id=") + NarrowToTString(CLIENT_ID) +
+                           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
@@ -463,7 +463,7 @@ bool VPNManager::RequireUpgrade(tstring& downloadRequestPath)
     if (m_currentSessionInfo.GetUpgradeVersion().size() > 0)
     {
         downloadRequestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
-                              _T("?client_id=") + NarrowToTString(CLIENT_ID) +
+                              _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                               _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                               _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
                               _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());

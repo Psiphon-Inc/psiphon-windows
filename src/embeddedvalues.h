@@ -19,7 +19,7 @@
 
 #pragma once
 
-static const char* CLIENT_ID = 
+static const char* PROPAGATION_CHANNEL_ID = 
     "3A885577DD84EF13";
 
 static const char* SPONSOR_ID = 
