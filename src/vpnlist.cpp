@@ -105,13 +105,17 @@ ServerEntries VPNList::GetList(void)
     // Load persistent list of servers from system (registry)
 
     ServerEntries systemServerEntryList;
-    try
+
+    if (!IGNORE_SYSTEM_SERVER_LIST)
     {
-        systemServerEntryList = GetListFromSystem();
-    }
-    catch (std::exception &ex)
-    {
-        my_print(false, string("Not using corrupt System Server List: ") + ex.what());
+        try
+        {
+            systemServerEntryList = GetListFromSystem();
+        }
+        catch (std::exception &ex)
+        {
+            my_print(false, string("Not using corrupt System Server List: ") + ex.what());
+        }
     }
 
     // Add embedded list to system list.
