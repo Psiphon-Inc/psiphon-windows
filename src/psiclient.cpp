@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "psiclient.h"
 #include "vpnmanager.h"
+#include "embeddedvalues.h"
 
 
 //==== layout =================================================================
@@ -367,6 +368,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                                 hWnd, NULL, NULL, NULL);
         font = GetStockObject(DEFAULT_GUI_FONT);
         SendMessage(g_hListBox, WM_SETFONT, (WPARAM)font, NULL);
+
+        // Display client version number 
+
+        SendMessage(g_hListBox, LB_ADDSTRING, NULL,
+            (LPARAM)(tstring(_T("Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // NOTE: we leave the connection animation timer running even after fully connected
         // when the icon no longer animates -- since the timer handler also updates the UI
