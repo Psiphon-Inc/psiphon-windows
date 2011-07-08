@@ -119,6 +119,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
     // [1a] Perform download HTTPS request and upgrade, if applicable
     // [2] Create and dial VPN connection
     // [3] Wait for VPN connection to succeed or fail
+    // [3] Flush DNS
     // [4] Launch home pages (failure is acceptable)
     // [5] Make Connected HTTPS request (failure is acceptable)
     // [6] Wait for VPN connection to stop
@@ -248,13 +249,21 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             manager->SetState(VPN_MANAGER_STATE_CONNECTED);
 
             //
-            // [4] Open home pages in browser
+            // [4] Flush DNS to ensure domains are resolved with VPN's DNS server
+            //
+
+            // Note: we proceed even if the call fails. This means some domains
+            // may not resolve properly.
+            manager->FlushDNS();
+
+            //
+            // [5] Open home pages in browser
             //
 
             manager->OpenHomePages();
 
             //
-            // [5] "Connected" HTTPS request for server stats (not critical to succeed)
+            // [6] "Connected" HTTPS request for server stats (not critical to succeed)
             //
 
             tstring connectedRequestPath = manager->GetConnectRequestPath();
@@ -275,7 +284,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             }
 
             //
-            // [6] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
+            // [7] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
             //
 
             manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_CONNECTED);
@@ -327,6 +336,44 @@ void VPNManager::RemoveVPNConnection(void)
     AutoMUTEX lock(m_mutex);
 
     m_vpnConnection.Remove();
+}
+
+typedef BOOL (CALLBACK* DNSFLUSHPROC)();
+
+bool VPNManager::FlushDNS(void)
+{
+    // Note: no lock
+
+    // Adapted code from: http://www.codeproject.com/KB/cpp/Setting_DNS.aspx
+
+    bool result = false;
+	HINSTANCE hDnsDll;
+	DNSFLUSHPROC pDnsFlushProc;
+
+	if ((hDnsDll = LoadLibrary(_T("dnsapi"))) == NULL)
+    {
+        my_print(false, _T("LoadLibrary DNSAPI failed"));
+        return result;
+    }
+
+	if ((pDnsFlushProc = (DNSFLUSHPROC)GetProcAddress(hDnsDll, "DnsFlushResolverCache")) != NULL)
+	{
+		if (FALSE == (pDnsFlushProc)())
+		{
+            my_print(false, _T("DnsFlushResolverCache failed: %d"), GetLastError());
+        }
+        else
+        {
+            result = true;
+        }
+	}
+    else
+    {
+        my_print(false, _T("GetProcAddress DnsFlushResolverCache failed"));
+    }
+
+	FreeLibrary(hDnsDll);
+	return result;
 }
 
 void VPNManager::OpenHomePages(void)
