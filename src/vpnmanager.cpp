@@ -249,12 +249,13 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             manager->SetState(VPN_MANAGER_STATE_CONNECTED);
 
             //
-            // [4] Flush DNS to ensure domains are resolved with VPN's DNS server
+            // [4] Patch DNS bug on Windowx XP; and flush DNS
+            //     to ensure domains are resolved with VPN's DNS server
             //
 
             // Note: we proceed even if the call fails. This means some domains
             // may not resolve properly.
-            manager->FlushDNS();
+            manager->TweakDNS();
 
             //
             // [5] Open home pages in browser
@@ -338,12 +339,199 @@ void VPNManager::RemoveVPNConnection(void)
     m_vpnConnection.Remove();
 }
 
+// memmem.c from gnulib. Used for short buffers -- quadratic performance not an issue.
+
+/* Copyright (C) 1991,92,93,94,96,97,98,2000,2004,2007 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+
+/* Return the first occurrence of NEEDLE in HAYSTACK.  */
+static const void* memmem(
+    const void* haystack,
+    size_t haystack_len,
+    const void* needle,
+    size_t needle_len)
+{
+    const char *begin;
+    const char *const last_possible = (const char *) haystack + haystack_len - needle_len;
+
+    if (needle_len == 0)
+    {
+        /* The first occurrence of the empty string is deemed to occur at
+           the beginning of the string.  */
+        return (void *) haystack;
+    }
+
+    /* Sanity check, otherwise the loop might search through the whole
+       memory.  */
+    if (haystack_len < needle_len)
+    {
+        return NULL;
+    }
+
+    for (begin = (const char *) haystack; begin <= last_possible; ++begin)
+    {
+        if (begin[0] == ((const char *) needle)[0] &&
+            !memcmp((const void *) &begin[1],
+                    (const void *) ((const char *) needle + 1),
+                    needle_len - 1))
+        {
+            return (void *) begin;
+        }
+    }
+
+    return NULL;
+}
+
+static void PatchDNS(void)
+{
+    // Programmatically apply Window XP fix that ensures
+    // VPN's DNS server is used (http://support.microsoft.com/kb/311218)
+
+    OSVERSIONINFO versionInfo;
+    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+
+    // Version 5.1 is Windows XP (not 64-bit)
+    if (GetVersionEx(&versionInfo) &&
+        versionInfo.dwMajorVersion == 5 &&
+        versionInfo.dwMinorVersion == 1)
+    {
+        HKEY key = 0;
+        char *buffer = 0;
+
+        try
+        {
+            const char* keyName = "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Linkage";
+            const char* valueName = "Bind";
+
+            LONG returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_READ, &key);
+
+            if (ERROR_SUCCESS != returnCode)
+            {
+                std::stringstream s;
+                s << "Open Registry Key failed (" << returnCode << ")";
+                throw std::exception(s.str().c_str());
+            }
+
+            // RegQueryValueExA on Windows XP wants at least 1 byte
+            buffer = new char [1];
+            DWORD bufferLength = 1;
+            DWORD type;
+            
+            // Using the ANSI version explicitly so we can manipulate narrow strings.
+            returnCode = RegQueryValueExA(key, valueName, 0, &type, (LPBYTE)buffer, &bufferLength);
+            if (ERROR_MORE_DATA == returnCode)
+            {
+                delete [] buffer;
+                buffer = new char [bufferLength];
+                returnCode = RegQueryValueExA(key, valueName, 0, 0, (LPBYTE)buffer, &bufferLength);
+            }
+
+            if (ERROR_SUCCESS != returnCode || type != REG_MULTI_SZ)
+            {
+                std::stringstream s;
+                s << "Query Registry Value failed (" << returnCode << ")";
+                throw std::exception(s.str().c_str());
+            }
+
+            // We must ensure that the string is double null terminated, as per MSDN
+            // 2 bytes for 2 NULLs as it's a MULTI_SZ.
+            int extraNulls = 0;
+            if (buffer[bufferLength-1] != '\0')
+            {
+                extraNulls = 2;
+            }
+            else if (buffer[bufferLength-2] != '\0')
+            {
+                extraNulls = 1;
+            }
+            if (extraNulls)
+            {
+                char *newBuffer = new char [bufferLength + extraNulls];
+                memset(newBuffer, bufferLength + extraNulls, 0);
+                memcpy(newBuffer, buffer, bufferLength);
+                bufferLength += extraNulls;
+                delete [] buffer;
+                buffer = newBuffer;
+            }
+
+            // Find the '\Device\NdisWanIp' string and move it to the first position.
+            // (If it's already first, don't modify the registry).
+
+            const char* target = "\\Device\\NdisWanIp";
+            size_t target_length = strlen(target) + 1; // include '\0' terminator
+            const char* found = (const char*)memmem(buffer, bufferLength, target, target_length);
+
+            if (found && found != buffer)
+            {
+                // make new buffer = target || start of buffer to target || buffer after target
+                char *newBuffer = new char [bufferLength];
+                memcpy(newBuffer, found, target_length);
+                memcpy(newBuffer + target_length, buffer, found - buffer);
+                memcpy(newBuffer + target_length + (found - buffer),
+                       found + target_length,
+                       bufferLength - (target_length + (found - buffer)));
+                delete [] buffer;
+                buffer = newBuffer;
+
+                // Re-open the registry key with write privileges
+
+                RegCloseKey(key);
+                returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_WRITE, &key);
+
+                if (ERROR_SUCCESS != returnCode)
+                {
+                    std::stringstream s;
+
+                    // If the user isn't Admin, this will fail as HKLM isn't writable by limited users
+                    if (ERROR_ACCESS_DENIED == returnCode)
+                    {
+                        s << "insufficient privileges (See KB311218)";
+                    }
+                    else
+                    {
+                        s << "Open Registry Key failed (" << returnCode << ")";
+                    }
+                    throw std::exception(s.str().c_str());
+                }
+
+                returnCode = RegSetValueExA(key, valueName, 0, REG_MULTI_SZ, (PBYTE)buffer, bufferLength);
+                if (ERROR_SUCCESS != returnCode)
+                {
+                    std::stringstream s;
+                    s << "Set Registry Value failed (" << returnCode << ")";
+                    throw std::exception(s.str().c_str());
+                }
+            }
+        }
+        catch(std::exception& ex)
+        {
+            my_print(false, string("Fix DNS failed: ") + ex.what());
+        }
+
+        // cleanup
+        delete [] buffer;
+        RegCloseKey(key);
+    }
+}
+
 typedef BOOL (CALLBACK* DNSFLUSHPROC)();
 
-bool VPNManager::FlushDNS(void)
+static bool FlushDNS(void)
 {
-    // Note: no lock
-
     // Adapted code from: http://www.codeproject.com/KB/cpp/Setting_DNS.aspx
 
     bool result = false;
@@ -374,6 +562,22 @@ bool VPNManager::FlushDNS(void)
 
 	FreeLibrary(hDnsDll);
 	return result;
+}
+
+bool VPNManager::TweakDNS(void)
+{
+    // Note: no lock
+
+    // Patch tries to fix a bug on XP where the non-VPN's DNS server is still consulted
+
+    PatchDNS();
+
+    // Flush is to clear cached lookups from non-VPN DNS
+    // Note: this only affects system cache, not application caches (e.g., browsers)
+
+    // ignore return code: flush even if can't patch
+
+    return FlushDNS();
 }
 
 void VPNManager::OpenHomePages(void)
