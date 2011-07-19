@@ -243,6 +243,17 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
 
             if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
             {
+                // Wait between 1 and 5 seconds before retrying. This is a quick
+                // fix to deal with the following problem: when a client can
+                // make an HTTPS connection but not a VPN connection, it ends
+                // up spamming "handshake" requests, resulting in PSK race conditions
+                // with other clients that are trying to connect. This is starving
+                // clients that are able to establish the VPN connection.
+                // TODO: a more optimal solution would only wait when re-trying
+                // a server where this condition (HTTPS ok, VPN failed) previously
+                // occurred.
+                Sleep(1000 + rand()%4000);
+
                 throw TryNextServer();
             }
 
