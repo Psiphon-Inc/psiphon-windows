@@ -372,7 +372,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Display client version number 
 
         SendMessage(g_hListBox, LB_ADDSTRING, NULL,
-            (LPARAM)(tstring(_T("Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
+            (LPARAM)(tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // NOTE: we leave the connection animation timer running even after fully connected
         // when the icon no longer animates -- since the timer handler also updates the UI
