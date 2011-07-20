@@ -59,6 +59,7 @@ private:
     HANDLE GetVPNConnectionStateChangeEvent(void);
     void RemoveVPNConnection(void);
     tstring GetConnectRequestPath(void);
+    tstring GetFailedRequestPath(void);
     void LoadNextServer(
         tstring& serverAddress,
         int& webPort,

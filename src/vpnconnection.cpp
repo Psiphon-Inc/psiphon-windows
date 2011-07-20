@@ -42,6 +42,7 @@ void CALLBACK RasDialCallback(
     {
         my_print(false, _T("Connection failed (%d)"), dwError);
         vpnConnection->SetState(VPN_CONNECTION_STATE_FAILED);
+        vpnConnection->SetLastVPNErrorCode(dwError);
     }
     else if (RASCS_Connected == rasConnState)
     {
@@ -82,7 +83,8 @@ void CALLBACK RasDialCallback(
 VPNConnection::VPNConnection(void) :
     m_state(VPN_CONNECTION_STATE_STOPPED),
     m_rasConnection(0),
-    m_suspendTeardownForUpgrade(false)
+    m_suspendTeardownForUpgrade(false),
+    m_lastVPNErrorCode(0)
 {
     m_stateChangeEvent = CreateEvent(NULL, FALSE, FALSE, 0);
 }
@@ -95,6 +97,7 @@ VPNConnection::~VPNConnection(void)
 
 void VPNConnection::SetState(VPNConnectionState newState)
 {
+    // No lock:
     // "Simple reads and writes to properly-aligned 32-bit variables are atomic operations."
     // http://msdn.microsoft.com/en-us/library/ms684122%28v=vs.85%29.aspx
     m_state = newState;

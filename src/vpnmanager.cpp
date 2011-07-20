@@ -243,6 +243,26 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
 
             if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
             {
+                // Note: WaitForVPNConnectionStateToChangeFrom throws Abort if user
+                // cancelled, so if we're here it's a FAILED case.
+
+                // Report error code to server for logging/trouble-shooting.
+                // The request line includes the last VPN error code.
+                
+                tstring requestPath = manager->GetFailedRequestPath();
+
+                string response;
+                if (!httpsRequest.GetRequest(
+                                    manager->GetUserSignalledStop(),
+                                    serverAddress.c_str(),
+                                    webPort,
+                                    webServerCertificate,
+                                    requestPath.c_str(),
+                                    response))
+                {
+                    // Ignore failure
+                }
+
                 // Wait between 1 and 5 seconds before retrying. This is a quick
                 // fix to deal with the following problem: when a client can
                 // make an HTTPS connection but not a VPN connection, it ends
@@ -608,6 +628,21 @@ tstring VPNManager::GetConnectRequestPath(void)
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&vpn_client_ip_address=") + m_vpnConnection.GetPPPIPAddress();
+}
+
+tstring VPNManager::GetFailedRequestPath(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    std::stringstream s;
+    s << m_vpnConnection.GetLastVPNErrorCode();
+
+    return tstring(HTTP_FAILED_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&error_code=") + NarrowToTString(s.str());
 }
 
 void VPNManager::LoadNextServer(

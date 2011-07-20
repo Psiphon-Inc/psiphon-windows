@@ -47,11 +47,15 @@ public:
     bool Remove(void);
     void SuspendTeardownForUpgrade(void) {m_suspendTeardownForUpgrade = true;}
 
+    void SetLastVPNErrorCode(unsigned int lastErrorCode) {m_lastVPNErrorCode = lastErrorCode;}
+    unsigned int GetLastVPNErrorCode(void) {return m_lastVPNErrorCode;}
+
 private:
     HANDLE m_stateChangeEvent;
     VPNConnectionState m_state;
     HRASCONN m_rasConnection;
     bool m_suspendTeardownForUpgrade;
+    unsigned int m_lastVPNErrorCode;
 
     HRASCONN GetActiveRasConnection(void);
 };
