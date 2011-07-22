@@ -158,6 +158,7 @@ VPNManager g_vpnManager;
 
 
 HWND g_hToolBar = NULL;
+HWND g_hBanner = NULL;
 HIMAGELIST g_hToolbarImageList = NULL;
 
 void CreateToolbar(HWND hWndParent)
@@ -207,14 +208,14 @@ void CreateToolbar(HWND hWndParent)
         (LPARAM)&tbButtons);
 
     // Add banner child control.
-    HWND hWndBanner = CreateWindow(
-                            L"Static", 0,
-                            WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP | SS_NOTIFY,
-                            BANNER_X, BANNER_Y, BANNER_WIDTH, BANNER_HEIGHT,
-                            g_hToolBar, NULL, hInst, NULL);
-    EnableWindow(hWndBanner, TRUE);
+    g_hBanner = CreateWindow(
+                        L"Static", 0,
+                        WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP | SS_NOTIFY,
+                        BANNER_X, BANNER_Y, BANNER_WIDTH, BANNER_HEIGHT,
+                        g_hToolBar, NULL, hInst, NULL);
+    EnableWindow(g_hBanner, TRUE);
     HBITMAP hBanner = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BANNER));
-    SendMessage(hWndBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBanner);
+    SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBanner);
 
     // Tell the toolbar to resize itself, and show it.
     SendMessage(g_hToolBar, TB_AUTOSIZE, 0, 0); 
@@ -418,10 +419,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wmId)
         {
         case STN_CLICKED:
-            // Banner static control was clicked, so open home pages
-            if (VPN_MANAGER_STATE_CONNECTED == g_vpnManager.GetState())
+            if (lParam == (LPARAM)g_hBanner)
             {
-                g_vpnManager.OpenHomePages();
+                // Banner static control was clicked, so open home pages
+                if (VPN_MANAGER_STATE_CONNECTED == g_vpnManager.GetState())
+                {
+                    g_vpnManager.OpenHomePages();
+                }
             }
             break;
         case IDM_TOGGLE:
