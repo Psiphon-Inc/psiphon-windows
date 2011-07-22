@@ -249,12 +249,9 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             // [1c] Check VPN services and fix if required/possible
             //
 
-            if (!manager->TweakVPN())
-            {
-                // Failed to fix a known-bad configuration, so abort
-                // (TODO: once we add SSH, fail over to SSH)
-                throw Abort();
-            }
+            // Note: we proceed even if the call fails. Testing is inconsistent -- don't
+            // always need all tweaks to connect.
+            manager->TweakVPN();
 
             //
             // [2] Start VPN connection
@@ -404,8 +401,8 @@ void FixProhibitIpsec(void)
     // In testing, we've found the setting of 1 *sometimes* results in a failed connection, so
     // we try to change it to 0 but we don't abort the VPN connection attempt if it's 1 and we can't change it.
 
+    std::stringstream error;
     HKEY key = 0;
-    char *buffer = 0;
 
     try
     {
@@ -416,9 +413,8 @@ void FixProhibitIpsec(void)
 
         if (ERROR_SUCCESS != returnCode)
         {
-            std::stringstream s;
-            s << "Open Registry Key failed (" << returnCode << ")";
-            throw std::exception(s.str().c_str());
+            error << "Open Registry Key failed (" << returnCode << ")";
+            throw std::exception(error.str().c_str());
         }
 
         DWORD value;
@@ -437,9 +433,8 @@ void FixProhibitIpsec(void)
             }
             else
             {
-                std::stringstream s;
-                s << "Query Registry Value failed (" << returnCode << ")";
-                throw std::exception(s.str().c_str());
+                error << "Query Registry Value failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
             }
         }
 
@@ -454,28 +449,25 @@ void FixProhibitIpsec(void)
 
             if (ERROR_SUCCESS != returnCode)
             {
-                std::stringstream s;
-
                 // If the user isn't Admin, this will fail as HKLM isn't writable by limited users
                 if (ERROR_ACCESS_DENIED == returnCode)
                 {
-                    s << "insufficient privileges to set HKLM\\SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters\\ProhibitIpSec to 0";
+                    error << "insufficient privileges to set HKLM\\SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters\\ProhibitIpSec to 0";
                 }
                 else
                 {
-                    s << "Open Registry Key failed (" << returnCode << ")";
+                    error << "Open Registry Key failed (" << returnCode << ")";
                 }
 
-                throw std::exception(s.str().c_str());
+                throw std::exception(error.str().c_str());
             }
 
             returnCode = RegSetValueExA(key, valueName, 0, REG_DWORD, (PBYTE)&value, bufferLength);
             if (ERROR_SUCCESS != returnCode)
             {
                 // TODO: add descriptive case for ACCESS_DENIED as above(?)
-                std::stringstream s;
-                s << "Set Registry Value failed (" << returnCode << ")";
-                throw std::exception(s.str().c_str());
+                error << "Set Registry Value failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
             }
         }
     }
@@ -488,12 +480,156 @@ void FixProhibitIpsec(void)
     RegCloseKey(key);
 }
 
-bool FixVPNServices(void)
+void FixVPNServices(void)
 {
-    return true;
+    // Check for disabled IPSec services and attempt to restore to
+    // default (enabled, auto-start) config and start
+
+    std::stringstream error;
+    SC_HANDLE manager = 0;
+    SC_HANDLE service = 0;
+
+    // The start configuration for the "Policy Agent" service
+    // is different for Windows 7.
+
+    DWORD policyAgentStartType = SERVICE_AUTO_START;
+    OSVERSIONINFO versionInfo;
+    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+    // Version 6.1 is Windows 7
+    if (GetVersionEx(&versionInfo) &&
+        versionInfo.dwMajorVersion > 6 ||
+        (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion >= 1))
+    {
+        policyAgentStartType = SERVICE_DEMAND_START;
+    }
+
+    struct serviceConfig
+    {
+        const TCHAR* name;
+        DWORD startType;
+    } serviceConfigs[] =
+    {
+        {_T("IKEEXT"), SERVICE_AUTO_START},
+        {_T("PolicyAgent"), policyAgentStartType},
+        {_T("RasMan"), SERVICE_DEMAND_START},
+        {_T("TapiSrv"), SERVICE_DEMAND_START}
+    };
+
+    for (int i = 0; i < sizeof(serviceConfigs)/sizeof(serviceConfig); i++)
+    {
+        try
+        {
+            CloseServiceHandle(manager);
+            manager = OpenSCManager(NULL, NULL, GENERIC_READ);
+            if (NULL == manager)
+            {
+                error << "OpenSCManager failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            CloseServiceHandle(service);
+            service = OpenService(manager, serviceConfigs[i].name, SERVICE_QUERY_CONFIG|SERVICE_QUERY_STATUS);
+            if (NULL == service)
+            {
+                if (ERROR_SERVICE_DOES_NOT_EXIST == GetLastError())
+                {
+                    // Service doesn't exist, which is expected; e.g., Windows XP doesn't have IKEEXT
+                    // In the case where the service *should* exist, there's nothing we can do
+                    continue;
+                }
+
+                error << "OpenService failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            BYTE buffer[8192]; // Max size is 8K: http://msdn.microsoft.com/en-us/library/ms684932%28v=vs.85%29.aspx
+            DWORD bufferLength = sizeof(buffer);
+            QUERY_SERVICE_CONFIG* serviceConfig = (QUERY_SERVICE_CONFIG*)buffer;
+            if (!QueryServiceConfig(service, serviceConfig, bufferLength, &bufferLength))
+            {
+                error << "QueryServiceConfig failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            SERVICE_STATUS serviceStatus;
+            if (!QueryServiceStatus(service, &serviceStatus))
+            {
+                error << "QueryServiceStatus failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            // Note: won't downgrade from SERVICE_AUTO_START to SERVICE_DEMAND_START
+            bool needConfigChange = (SERVICE_AUTO_START != serviceConfig->dwStartType &&
+                                     serviceConfigs[i].startType != serviceConfig->dwStartType);
+
+            // Automatic services are started at login, but we're not re-logging in, so start if
+            // it should've been started at login.
+            // Note: only start if "required" start type is auto, not current config start type
+            bool needStart = (serviceConfigs[i].startType == SERVICE_AUTO_START &&
+                              serviceStatus.dwCurrentState != SERVICE_RUNNING);
+
+            if (needConfigChange || needStart)
+            {
+                CloseServiceHandle(manager);
+                manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+                if (NULL == manager)
+                {
+                    // If the user isn't Admin, this will fail
+                    if (ERROR_ACCESS_DENIED == GetLastError())
+                    {
+                        error << "insufficient privileges to configure or start service " <<
+                                    TStringToNarrow(serviceConfigs[i].name);
+                    }
+                    else
+                    {
+                        error << "OpenSCManager failed (" << GetLastError() << ")";
+                    }
+                    throw std::exception(error.str().c_str());
+                }
+
+                CloseServiceHandle(service);
+                service = OpenService(manager, serviceConfigs[i].name, SERVICE_CHANGE_CONFIG|SERVICE_START);
+                if (NULL == service)
+                {
+                    // TODO: add descriptive case for ACCESS_DENIED as above(?)
+                    error << "OpenService failed (" << GetLastError() << ")";
+                    throw std::exception(error.str().c_str());
+                }
+
+                if (needConfigChange)
+                {
+                    if (!ChangeServiceConfig(
+                            service,
+                            SERVICE_NO_CHANGE, serviceConfigs[i].startType, SERVICE_NO_CHANGE,
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL))
+                    {
+                        error << "ChangeServiceConfig failed (" << GetLastError() << ")";
+                        throw std::exception(error.str().c_str());
+                    }
+                }
+
+                if (needStart)
+                {
+                    if (!StartService(service, 0, 0))
+                    {
+                        error << "StartService failed (" << GetLastError() << ")";
+                        throw std::exception(error.str().c_str());
+                    }
+                }
+            }
+        }
+        catch(std::exception& ex)
+        {
+            my_print(false, string("Fix VPN Services failed: ") + ex.what());
+        }
+    }
+
+    // cleanup
+    CloseServiceHandle(service); 
+    CloseServiceHandle(manager);
 }
 
-bool VPNManager::TweakVPN(void)
+void VPNManager::TweakVPN(void)
 {
     // Note: no lock
 
@@ -501,11 +637,11 @@ bool VPNManager::TweakVPN(void)
     // will prevent standard IPSec VPN, such as ours, from running.  We check for the issues
     // and try to fix if required/possible (needs admin privs).
 
-    // Proceed regardless of what FixProhibitIpSec does, as we're not sure
-    // the fix is always required.
-    FixProhibitIpsec();
+    // Proceed regardless of FixProhibitIpSec/FixVPNServices success, as we're not sure
+    // the fixes are always required.
 
-    return FixVPNServices();
+    FixProhibitIpsec();
+    FixVPNServices();
 }
 
 // memmem.c from gnulib. Used for short buffers -- quadratic performance not an issue.
@@ -578,6 +714,7 @@ static void PatchDNS(void)
         versionInfo.dwMajorVersion == 5 &&
         versionInfo.dwMinorVersion == 1)
     {
+        std::stringstream error;
         HKEY key = 0;
         char *buffer = 0;
 
@@ -590,9 +727,8 @@ static void PatchDNS(void)
 
             if (ERROR_SUCCESS != returnCode)
             {
-                std::stringstream s;
-                s << "Open Registry Key failed (" << returnCode << ")";
-                throw std::exception(s.str().c_str());
+                error << "Open Registry Key failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
             }
 
             // RegQueryValueExA on Windows XP wants at least 1 byte
@@ -611,9 +747,8 @@ static void PatchDNS(void)
 
             if (ERROR_SUCCESS != returnCode || type != REG_MULTI_SZ)
             {
-                std::stringstream s;
-                s << "Query Registry Value failed (" << returnCode << ")";
-                throw std::exception(s.str().c_str());
+                error << "Query Registry Value failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
             }
 
             // We must ensure that the string is double null terminated, as per MSDN
@@ -663,27 +798,24 @@ static void PatchDNS(void)
 
                 if (ERROR_SUCCESS != returnCode)
                 {
-                    std::stringstream s;
-
                     // If the user isn't Admin, this will fail as HKLM isn't writable by limited users
                     if (ERROR_ACCESS_DENIED == returnCode)
                     {
-                        s << "insufficient privileges (See KB311218)";
+                        error << "insufficient privileges (See KB311218)";
                     }
                     else
                     {
-                        s << "Open Registry Key failed (" << returnCode << ")";
+                        error << "Open Registry Key failed (" << returnCode << ")";
                     }
-                    throw std::exception(s.str().c_str());
+                    throw std::exception(error.str().c_str());
                 }
 
                 returnCode = RegSetValueExA(key, valueName, 0, REG_MULTI_SZ, (PBYTE)buffer, bufferLength);
                 if (ERROR_SUCCESS != returnCode)
                 {
                     // TODO: add descriptive case for ACCESS_DENIED as above(?)
-                    std::stringstream s;
-                    s << "Set Registry Value failed (" << returnCode << ")";
-                    throw std::exception(s.str().c_str());
+                    error << "Set Registry Value failed (" << returnCode << ")";
+                    throw std::exception(error.str().c_str());
                 }
             }
         }
@@ -734,20 +866,16 @@ static bool FlushDNS(void)
 	return result;
 }
 
-bool VPNManager::TweakDNS(void)
+void VPNManager::TweakDNS(void)
 {
     // Note: no lock
 
     // Patch tries to fix a bug on XP where the non-VPN's DNS server is still consulted
-
     PatchDNS();
 
     // Flush is to clear cached lookups from non-VPN DNS
     // Note: this only affects system cache, not application caches (e.g., browsers)
-
-    // ignore return code: flush even if can't patch
-
-    return FlushDNS();
+    FlushDNS();
 }
 
 void VPNManager::OpenHomePages(void)

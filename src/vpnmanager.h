@@ -43,8 +43,8 @@ public:
     void SetState(VPNManagerState newState) {m_state = newState;}
     VPNManagerState GetState(void) {return m_state;}
     const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
-    bool TweakVPN();
-    bool TweakDNS();
+    void TweakVPN();
+    void TweakDNS();
     void OpenHomePages(void);
 
 private:

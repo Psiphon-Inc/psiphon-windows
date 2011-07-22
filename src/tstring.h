@@ -39,3 +39,12 @@ static tstring NarrowToTString(const string& narrowString)
     return narrowString;
 #endif
 }
+
+static string TStringToNarrow(const tstring& tString)
+{
+#ifdef _UNICODE
+    return string(tString.begin(), tString.end());
+#else
+    return tString;
+#endif
+}
