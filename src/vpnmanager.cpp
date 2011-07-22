@@ -528,7 +528,9 @@ void FixVPNServices(void)
             }
 
             CloseServiceHandle(service);
-            service = OpenService(manager, serviceConfigs[i].name, SERVICE_QUERY_CONFIG|SERVICE_QUERY_STATUS);
+            service = OpenService(manager,
+                                  serviceConfigs[i].name,
+                                  SERVICE_QUERY_CONFIG|SERVICE_QUERY_STATUS);
             if (NULL == service)
             {
                 if (ERROR_SERVICE_DOES_NOT_EXIST == GetLastError())
@@ -588,7 +590,9 @@ void FixVPNServices(void)
                 }
 
                 CloseServiceHandle(service);
-                service = OpenService(manager, serviceConfigs[i].name, SERVICE_CHANGE_CONFIG|SERVICE_START);
+                service = OpenService(manager,
+                                      serviceConfigs[i].name,
+                                      SERVICE_CHANGE_CONFIG|SERVICE_START|SERVICE_QUERY_STATUS);
                 if (NULL == service)
                 {
                     // TODO: add descriptive case for ACCESS_DENIED as above(?)
