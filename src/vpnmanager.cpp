@@ -485,10 +485,6 @@ void FixVPNServices(void)
     // Check for disabled IPSec services and attempt to restore to
     // default (enabled, auto-start) config and start
 
-    std::stringstream error;
-    SC_HANDLE manager = 0;
-    SC_HANDLE service = 0;
-
     // The start configuration for the "Policy Agent" service
     // is different for Windows 7.
 
@@ -517,6 +513,10 @@ void FixVPNServices(void)
 
     for (int i = 0; i < sizeof(serviceConfigs)/sizeof(serviceConfig); i++)
     {
+        std::stringstream error;
+        SC_HANDLE manager = 0;
+        SC_HANDLE service = 0;
+
         try
         {
             CloseServiceHandle(manager);
@@ -622,11 +622,11 @@ void FixVPNServices(void)
         {
             my_print(false, string("Fix VPN Services failed: ") + ex.what());
         }
-    }
 
-    // cleanup
-    CloseServiceHandle(service); 
-    CloseServiceHandle(manager);
+        // cleanup
+        CloseServiceHandle(service); 
+        CloseServiceHandle(manager);
+    }
 }
 
 void VPNManager::TweakVPN(void)
