@@ -230,6 +230,21 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             }
 
             //
+            // [1b] Minimum version check for VPN (TODO: once we add SSH, fail over to SSH)
+            //      L2TP/IPSec/PSK not supported on Windows 2000
+            //
+
+            OSVERSIONINFO versionInfo;
+            versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+            if (!GetVersionEx(&versionInfo) ||
+                    versionInfo.dwMajorVersion < 5 ||
+                    (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
+            {
+                my_print(false, _T("Windows XP or greater required"));
+                throw Abort();
+            }
+
+            //
             // [2] Start VPN connection
             //
 
