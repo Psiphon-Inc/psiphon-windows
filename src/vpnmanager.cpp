@@ -472,7 +472,7 @@ bool FixProhibitIpsec(void)
                 throw std::exception(s.str().c_str());
             }
 
-            returnCode = RegSetValueExA(key, valueName, 0, REG_MULTI_SZ, (PBYTE)value, bufferLength);
+            returnCode = RegSetValueExA(key, valueName, 0, REG_DWORD, (PBYTE)&value, bufferLength);
             if (ERROR_SUCCESS != returnCode)
             {
                 std::stringstream s;
