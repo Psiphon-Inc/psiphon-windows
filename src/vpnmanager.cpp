@@ -397,12 +397,13 @@ void VPNManager::RemoveVPNConnection(void)
     m_vpnConnection.Remove();
 }
 
-bool FixProhibitIpsec(void)
+void FixProhibitIpsec(void)
 {
     // Check for non-default HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RasMan\Parameters\ProhibitIpSec = 1
     // If found, try to set to 0
+    // In testing, we've found the setting of 1 *sometimes* results in a failed connection, so
+    // we try to change it to 0 but we don't abort the VPN connection attempt if it's 1 and we can't change it.
 
-    bool result = true;
     HKEY key = 0;
     char *buffer = 0;
 
@@ -446,10 +447,6 @@ bool FixProhibitIpsec(void)
         {
             value = 0;
 
-            // If we fail in this block, we'll return false so we don't try
-            // to connect -- we know it won't work.
-            result = false;
-
             // Re-open the registry key with write privileges
 
             RegCloseKey(key);
@@ -475,12 +472,11 @@ bool FixProhibitIpsec(void)
             returnCode = RegSetValueExA(key, valueName, 0, REG_DWORD, (PBYTE)&value, bufferLength);
             if (ERROR_SUCCESS != returnCode)
             {
+                // TODO: add descriptive case for ACCESS_DENIED as above(?)
                 std::stringstream s;
                 s << "Set Registry Value failed (" << returnCode << ")";
                 throw std::exception(s.str().c_str());
             }
-
-            result = true;
         }
     }
     catch(std::exception& ex)
@@ -490,8 +486,6 @@ bool FixProhibitIpsec(void)
 
     // cleanup
     RegCloseKey(key);
-
-    return result;
 }
 
 bool FixVPNServices(void)
@@ -507,11 +501,9 @@ bool VPNManager::TweakVPN(void)
     // will prevent standard IPSec VPN, such as ours, from running.  We check for the issues
     // and try to fix if required/possible (needs admin privs).
 
-    if (!FixProhibitIpsec())
-    {
-        // VPN won't run
-        return false;
-    }
+    // Proceed regardless of what FixProhibitIpSec does, as we're not sure
+    // the fix is always required.
+    FixProhibitIpsec();
 
     return FixVPNServices();
 }
@@ -688,6 +680,7 @@ static void PatchDNS(void)
                 returnCode = RegSetValueExA(key, valueName, 0, REG_MULTI_SZ, (PBYTE)buffer, bufferLength);
                 if (ERROR_SUCCESS != returnCode)
                 {
+                    // TODO: add descriptive case for ACCESS_DENIED as above(?)
                     std::stringstream s;
                     s << "Set Registry Value failed (" << returnCode << ")";
                     throw std::exception(s.str().c_str());
