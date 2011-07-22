@@ -615,6 +615,30 @@ void FixVPNServices(void)
                         error << "StartService failed (" << GetLastError() << ")";
                         throw std::exception(error.str().c_str());
                     }
+
+                    // Wait up to 2 seconds for service to start before proceeding with
+                    // connect. If it fails to start, we just proceed anyway.
+
+                    for (int wait = 0; wait < 20; wait++)
+                    {
+                        SERVICE_STATUS serviceStatus;
+                        if (!QueryServiceStatus(service, &serviceStatus))
+                        {
+                            error << "QueryServiceStatus failed (" << GetLastError() << ")";
+                            throw std::exception(error.str().c_str());
+                        }
+
+                        // StartService changes the state to SERVICE_START_PENDING
+                        // (http://msdn.microsoft.com/en-us/library/ms686321%28v=vs.85%29.aspx)
+                        // So as soon as we see a new state, we can proceed.
+
+                        if (serviceStatus.dwCurrentState != SERVICE_START_PENDING)
+                        {
+                            break;
+                        }
+
+                        Sleep(100);
+                    }
                 }
             }
         }
