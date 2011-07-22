@@ -230,8 +230,9 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             }
 
             //
-            // [1b] Minimum version check for VPN (TODO: once we add SSH, fail over to SSH)
+            // [1b] Minimum version check for VPN
             //      L2TP/IPSec/PSK not supported on Windows 2000
+            //      (TODO: once we add SSH, fail over to SSH)
             //
 
             OSVERSIONINFO versionInfo;
@@ -241,6 +242,17 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
                     (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
             {
                 my_print(false, _T("Windows XP or greater required"));
+                throw Abort();
+            }
+
+            //
+            // [1c] Check VPN services and fix if required/possible
+            //
+
+            if (!manager->TweakVPN())
+            {
+                // Failed to fix a known-bad configuration, so abort
+                // (TODO: once we add SSH, fail over to SSH)
                 throw Abort();
             }
 
@@ -383,6 +395,125 @@ void VPNManager::RemoveVPNConnection(void)
     AutoMUTEX lock(m_mutex);
 
     m_vpnConnection.Remove();
+}
+
+bool FixProhibitIpsec(void)
+{
+    // Check for non-default HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RasMan\Parameters\ProhibitIpSec = 1
+    // If found, try to set to 0
+
+    bool result = true;
+    HKEY key = 0;
+    char *buffer = 0;
+
+    try
+    {
+        const char* keyName = "SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters";
+        const char* valueName = "ProhibitIpSec";
+
+        LONG returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_READ, &key);
+
+        if (ERROR_SUCCESS != returnCode)
+        {
+            std::stringstream s;
+            s << "Open Registry Key failed (" << returnCode << ")";
+            throw std::exception(s.str().c_str());
+        }
+
+        DWORD value;
+        DWORD bufferLength = sizeof(value);
+        DWORD type;
+        
+        returnCode = RegQueryValueExA(key, valueName, 0, &type, (LPBYTE)&value, &bufferLength);
+
+        if (ERROR_SUCCESS != returnCode || type != REG_DWORD)
+        {
+            if (returnCode == ERROR_FILE_NOT_FOUND)
+            {
+                // The prohibitIpsec value isn't present by default, handle the same
+                // as when value is present and set to 0
+                value = 0;
+            }
+            else
+            {
+                std::stringstream s;
+                s << "Query Registry Value failed (" << returnCode << ")";
+                throw std::exception(s.str().c_str());
+            }
+        }
+
+        if (value != 0)
+        {
+            value = 0;
+
+            // If we fail in this block, we'll return false so we don't try
+            // to connect -- we know it won't work.
+            result = false;
+
+            // Re-open the registry key with write privileges
+
+            RegCloseKey(key);
+            returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_WRITE, &key);
+
+            if (ERROR_SUCCESS != returnCode)
+            {
+                std::stringstream s;
+
+                // If the user isn't Admin, this will fail as HKLM isn't writable by limited users
+                if (ERROR_ACCESS_DENIED == returnCode)
+                {
+                    s << "insufficient privileges to set HKLM\\SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters\\ProhibitIpSec to 0";
+                }
+                else
+                {
+                    s << "Open Registry Key failed (" << returnCode << ")";
+                }
+
+                throw std::exception(s.str().c_str());
+            }
+
+            returnCode = RegSetValueExA(key, valueName, 0, REG_MULTI_SZ, (PBYTE)value, bufferLength);
+            if (ERROR_SUCCESS != returnCode)
+            {
+                std::stringstream s;
+                s << "Set Registry Value failed (" << returnCode << ")";
+                throw std::exception(s.str().c_str());
+            }
+
+            result = true;
+        }
+    }
+    catch(std::exception& ex)
+    {
+        my_print(false, string("Fix ProhibitIpSec failed: ") + ex.what());
+    }
+
+    // cleanup
+    RegCloseKey(key);
+
+    return result;
+}
+
+bool FixVPNServices(void)
+{
+    return true;
+}
+
+bool VPNManager::TweakVPN(void)
+{
+    // Note: no lock
+
+    // Some 3rd party VPN clients change the default Windows system configuration in ways that
+    // will prevent standard IPSec VPN, such as ours, from running.  We check for the issues
+    // and try to fix if required/possible (needs admin privs).
+
+    if (!FixProhibitIpsec())
+    {
+        // VPN won't run
+        return false;
+    }
+
+    return FixVPNServices();
 }
 
 // memmem.c from gnulib. Used for short buffers -- quadratic performance not an issue.
