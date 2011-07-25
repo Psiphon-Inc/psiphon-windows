@@ -150,6 +150,7 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
         ERROR_ALREADY_EXISTS != returnCode)
     {
         my_print(false, _T("RasValidateEntryName failed (%d)"), returnCode);
+        SetLastVPNErrorCode(returnCode);
         return false;
     }
 
@@ -183,6 +184,7 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
     if (ERROR_SUCCESS != returnCode)
     {
         my_print(false, _T("RasSetEntryProperties failed (%d)"), returnCode);
+        SetLastVPNErrorCode(returnCode);
         return false;
     }
 
@@ -196,6 +198,7 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
     if (ERROR_SUCCESS != returnCode)
     {
         my_print(false, _T("RasSetCredentials failed (%d)"), returnCode);
+        SetLastVPNErrorCode(returnCode);
         return false;
     }
 
@@ -219,6 +222,7 @@ bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
     {
         my_print(false, _T("RasDial failed (%d)"), returnCode);
         SetState(VPN_CONNECTION_STATE_FAILED);
+        SetLastVPNErrorCode(returnCode);
         return false;
     }
 
