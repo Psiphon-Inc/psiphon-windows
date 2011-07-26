@@ -24,7 +24,6 @@
 
 using namespace std;
 
-
 class HTTPSRequest
 {
 public:

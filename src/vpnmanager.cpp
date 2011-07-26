@@ -25,6 +25,7 @@
 #include "httpsrequest.h"
 #include "webbrowser.h"
 #include "embeddedvalues.h"
+#include "sshconnection.h"
 #include <algorithm>
 #include <sstream>
 
@@ -36,6 +37,7 @@ extern HWND g_hWnd;
 VPNManager::VPNManager(void) :
     m_state(VPN_MANAGER_STATE_STOPPED),
     m_userSignalledStop(false),
+    m_sshConnection(m_userSignalledStop),
     m_thread(0)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
@@ -135,6 +137,21 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
 
     while (true) // Try servers loop
     {
+        // TEMP -- new SSH protocol option
+        /*
+        if (manager->SSHConnect(_T("0.0.0.0"),_T("22"),_T("rsa"),_T("psiphonv"),_T("password")))
+        {
+            // TODO: fail over etc.
+            if (manager->SSHWaitForConnected())
+            {
+                manager->SetState(VPN_MANAGER_STATE_CONNECTED);
+            }
+            manager->SSHWaitAndDisconnect();
+        }
+        manager->SetState(VPN_MANAGER_STATE_STOPPED);
+        return 0;
+        */
+
         try
         {
             //
@@ -904,6 +921,37 @@ void VPNManager::TweakDNS(void)
     // Flush is to clear cached lookups from non-VPN DNS
     // Note: this only affects system cache, not application caches (e.g., browsers)
     FlushDNS();
+}
+
+bool VPNManager::SSHConnect(
+        const tstring& sshServerAddress,
+        const tstring& sshServerPort,
+        const tstring& sshServerPublicKey,
+        const tstring& sshUsername,
+        const tstring& sshPassword)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return m_sshConnection.Connect(
+            sshServerAddress,
+            sshServerPort,
+            sshServerPublicKey,
+            sshUsername,
+            sshPassword);
+}
+
+bool VPNManager::SSHWaitForConnected(void)
+{
+    // Note: no lock
+
+    return m_sshConnection.WaitForConnected();
+}
+
+void VPNManager::SSHWaitAndDisconnect(void)
+{
+    // Note: no lock
+
+    m_sshConnection.WaitAndDisconnect();
 }
 
 void VPNManager::OpenHomePages(void)

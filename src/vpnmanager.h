@@ -20,6 +20,7 @@
 #pragma once
 
 #include "vpnconnection.h"
+#include "sshconnection.h"
 #include "vpnlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
@@ -72,6 +73,14 @@ private:
     bool DoUpgrade(const string& download);
     void Establish(void);
     void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
+    bool SSHConnect(
+        const tstring& sshServerAddress,
+        const tstring& sshServerPort,
+        const tstring& sshServerPublicKey,
+        const tstring& sshUsername,
+        const tstring& sshPassword);
+    bool SSHWaitForConnected(void);
+    void SSHWaitAndDisconnect(void);
 
     HANDLE m_mutex;
     VPNManagerState m_state;
@@ -79,5 +88,6 @@ private:
     VPNConnection m_vpnConnection;
     bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
+    SSHConnection m_sshConnection;
     HANDLE m_thread;
 };

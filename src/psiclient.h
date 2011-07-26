@@ -20,7 +20,6 @@
 #pragma once
 
 #include "resource.h"
-#include <Winhttp.h>
 
 
 //==== global constants ================================================
@@ -44,16 +43,6 @@ public:
     operator HANDLE() {return m_handle;}
 private:
     HANDLE m_handle;
-};
-
-class AutoHINTERNET
-{
-public:
-    AutoHINTERNET(HINTERNET handle) {m_handle = handle;}
-    ~AutoHINTERNET() {WinHttpCloseHandle(m_handle);}
-    operator HINTERNET() {return m_handle;}
-private:
-    HINTERNET m_handle;
 };
 
 class AutoMUTEX

@@ -32,6 +32,17 @@
 #pragma comment (lib, "crypt32.lib")
 
 
+class AutoHINTERNET
+{
+public:
+    AutoHINTERNET(HINTERNET handle) {m_handle = handle;}
+    ~AutoHINTERNET() {WinHttpCloseHandle(m_handle);}
+    operator HINTERNET() {return m_handle;}
+private:
+    HINTERNET m_handle;
+};
+
+
 HTTPSRequest::HTTPSRequest(void)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);

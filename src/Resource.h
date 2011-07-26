@@ -43,6 +43,9 @@
 #define IDB_TOOLBAR_ICONS       200
 #define IDB_BANNER              201
 
+// Embedded binaries
+#define IDR_PLINK_EXE           500
+#define IDR_POLIPO_EXE          501
 
 // Next default values for new objects
 //
