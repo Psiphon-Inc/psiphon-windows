@@ -25,6 +25,10 @@
 #include "ras.h"
 #include "raserror.h"
 
+#define NEW_PROXY_ADDRESS (tstring(_T("http=127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT + \
+                           tstring(_T(";https=127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT + \
+                           tstring(_T(";socks=127.0.0.1:")) + PLINK_SOCKS_PROXY_PORT)
+
 SystemProxySettings::SystemProxySettings(void)
 {
     m_originalSettings.clear();
@@ -40,7 +44,7 @@ bool SystemProxySettings::Configure(void)
     // Configure Windows Internet Settings to use our HTTP Proxy
     // This affects IE, Chrome, Safari and recent Firefox builds
 
-    tstring proxyAddress = tstring(_T("127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT;
+    tstring proxyAddress = NEW_PROXY_ADDRESS;
 
     // Get a list of connections, starting with the dial-up connections
     vector<tstring> connections = GetRasConnectionNames();
@@ -82,7 +86,7 @@ bool SystemProxySettings::Revert(void)
 // the existing settings.
 void SystemProxySettings::PreviousCrashCheckHack(connection_proxy& proxySettings)
 {
-    tstring proxyAddress = tstring(_T("127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT;
+    tstring proxyAddress = NEW_PROXY_ADDRESS;
 
     // Don't save settings that are the same as we will be setting.
     // Instead, save default (no proxy) settings.
