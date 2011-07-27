@@ -83,6 +83,7 @@ private:
         const tstring& sshServerPublicKey,
         const tstring& sshUsername,
         const tstring& sshPassword);
+    void SSHDisconnect(void);
     bool SSHWaitForConnected(void);
     void SSHWaitAndDisconnect(void);
 
