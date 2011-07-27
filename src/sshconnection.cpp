@@ -112,6 +112,8 @@ bool SSHConnection::Connect(
         const tstring& sshUsername,
         const tstring& sshPassword)
 {
+    my_print(false, _T("SSH connecting..."));
+
     // Extract executables and put to disk if not already
 
     if (m_plinkPath.size() == 0)
@@ -242,6 +244,8 @@ bool SSHConnection::WaitForConnected(void)
 
     m_systemProxySettings.Configure();
 
+    my_print(false, _T("SSH successfully connected."));
+
     return true;
 }
 
@@ -281,6 +285,8 @@ void SSHConnection::WaitAndDisconnect(void)
 
     // Revert the Windows Internet Settings to the user's previous settings
     m_systemProxySettings.Revert();
+
+    my_print(false, _T("SSH disconnected."));
 }
 
 void SSHConnection::SignalDisconnect(void)

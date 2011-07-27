@@ -23,7 +23,7 @@
 #include "vpnlist.h"
 #include "tstring.h"
 
-class VPNManager;
+class ConnectionManager;
 
 class SessionInfo
 {

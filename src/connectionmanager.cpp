@@ -21,7 +21,7 @@
 #include "shellapi.h"
 #include "config.h"
 #include "psiclient.h"
-#include "vpnmanager.h"
+#include "connectionmanager.h"
 #include "httpsrequest.h"
 #include "webbrowser.h"
 #include "embeddedvalues.h"
@@ -34,8 +34,8 @@
 extern HWND g_hWnd;
 
 
-VPNManager::VPNManager(void) :
-    m_state(VPN_MANAGER_STATE_STOPPED),
+ConnectionManager::ConnectionManager(void) :
+    m_state(CONNECTION_MANAGER_STATE_STOPPED),
     m_userSignalledStop(false),
     m_sshConnection(m_userSignalledStop),
     m_thread(0)
@@ -43,17 +43,24 @@ VPNManager::VPNManager(void) :
     m_mutex = CreateMutex(NULL, FALSE, 0);
 }
 
-VPNManager::~VPNManager(void)
+ConnectionManager::~ConnectionManager(void)
 {
     Stop();
     CloseHandle(m_mutex);
 }
 
-void VPNManager::Toggle()
+void ConnectionManager::OpenHomePages(void)
+{
+    AutoMUTEX lock(m_mutex);
+    
+    OpenBrowser(m_currentSessionInfo.GetHomepages());
+}
+
+void ConnectionManager::Toggle()
 {
     // NOTE: no lock, to allow thread to access object
 
-    if (m_state == VPN_MANAGER_STATE_STOPPED)
+    if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
         Start();
     }
@@ -63,7 +70,7 @@ void VPNManager::Toggle()
     }
 }
 
-void VPNManager::Stop(void)
+void ConnectionManager::Stop(void)
 {
     // NOTE: no lock, to allow thread to access object
 
@@ -84,7 +91,7 @@ void VPNManager::Stop(void)
     }
 }
 
-void VPNManager::Start(void)
+void ConnectionManager::Start(void)
 {
     // Call Stop to cleanup in case thread failed on last Start attempt
     Stop();
@@ -93,91 +100,237 @@ void VPNManager::Start(void)
 
     m_userSignalledStop = false;
 
-    if (m_state != VPN_MANAGER_STATE_STOPPED || m_thread != 0)
+    if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
-        my_print(false, _T("Invalid VPN manager state in Start (%d)"), m_state);
+        my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
         return;
     }
 
-    SetState(VPN_MANAGER_STATE_STARTING);
+    SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-    if (!(m_thread = CreateThread(0, 0, VPNManagerStartThread, (void*)this, 0, 0)))
+    if (!(m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0)))
     {
         my_print(false, _T("Start: CreateThread failed (%d)"), GetLastError());
 
-        SetState(VPN_MANAGER_STATE_STOPPED);
+        SetState(CONNECTION_MANAGER_STATE_STOPPED);
     }
 }
 
-DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
+void ConnectionManager::DoVPNConnection(
+        ConnectionManager* manager,
+        const ServerEntry& serverEntry)
 {
-    VPNManager* manager = (VPNManager*)data;
+    //
+    // Minimum version check for VPN
+    // - L2TP/IPSec/PSK not supported on Windows 2000
+    // - (TODO: once we add SSH, fail over to SSH)
+    //
+    
+    OSVERSIONINFO versionInfo;
+    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+    if (!GetVersionEx(&versionInfo) ||
+            versionInfo.dwMajorVersion < 5 ||
+            (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
+    {
+        my_print(false, _T("Windows XP or greater required"));
+        throw Abort();
+    }
+    
+    //
+    // Check VPN services and fix if required/possible
+    //
+    
+    // Note: we proceed even if the call fails. Testing is inconsistent -- don't
+    // always need all tweaks to connect.
+    TweakVPN();
+    
+    //
+    // Start VPN connection
+    //
+    
+    manager->VPNEstablish();
+    
+    //
+    // Monitor VPN connection and wait for CONNECTED or FAILED
+    //
+    
+    manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_STARTING);
+    
+    if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
+    {
+        // Note: WaitForVPNConnectionStateToChangeFrom throws Abort if user
+        // cancelled, so if we're here it's a FAILED case.
+    
+        // Report error code to server for logging/trouble-shooting.
+        // The request line includes the last VPN error code.
+        
+        tstring requestPath = manager->GetFailedRequestPath();
+    
+        string response;
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.GetRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            requestPath.c_str(),
+                            response))
+        {
+            // Ignore failure
+        }
+    
+        // Wait between 1 and 5 seconds before retrying. This is a quick
+        // fix to deal with the following problem: when a client can
+        // make an HTTPS connection but not a VPN connection, it ends
+        // up spamming "handshake" requests, resulting in PSK race conditions
+        // with other clients that are trying to connect. This is starving
+        // clients that are able to establish the VPN connection.
+        // TODO: a more optimal solution would only wait when re-trying
+        // a server where this condition (HTTPS ok, VPN failed) previously
+        // occurred.
+        Sleep(1000 + rand()%4000);
+    
+        throw TryNextServer();
+    }
+    
+    manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_VPN);
+    
+    //
+    // Patch DNS bug on Windowx XP; and flush DNS
+    // to ensure domains are resolved with VPN's DNS server
+    //
+    
+    // Note: we proceed even if the call fails. This means some domains
+    // may not resolve properly.
+    TweakDNS();
+    
+    //
+    // Open home pages in browser
+    //
+    
+    manager->OpenHomePages();
+    
+    //
+    // "Connected" HTTPS request for server stats (not critical to succeed)
+    //
+    
+    tstring connectedRequestPath = manager->GetConnectRequestPath();
+    
+    // There's no content in the response. Also, failure is ignored since
+    // it just means the server didn't log a stat.
+    
+    string response;
+    HTTPSRequest httpsRequest;
+    if (!httpsRequest.GetRequest(
+                        manager->GetUserSignalledStop(),
+                        NarrowToTString(serverEntry.serverAddress).c_str(),
+                        serverEntry.webServerPort,
+                        serverEntry.webServerCertificate,
+                        connectedRequestPath.c_str(),
+                        response))
+    {
+        // Ignore failure
+    }
+    
+    //
+    // Wait for VPN connection to stop (or fail) -- set ConnectionManager state accordingly (used by UI)
+    //
+    
+    manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_CONNECTED);
+    
+    manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+}
+
+void ConnectionManager::DoSSHConnection(ConnectionManager* manager)
+{
+    //
+    // Establish SSH connection
+    //
+
+    if (!manager->SSHConnect(_T("1.1.1.1"),_T("22"),_T("rsa"),_T("psiphonv"),_T("..."))
+        || !manager->SSHWaitForConnected())
+    {
+        if (manager->GetUserSignalledStop())
+        {
+            throw Abort();
+        }
+        throw TryNextServer();
+    }
+
+    manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
+
+    //
+    // Open home pages in browser
+    //
+   
+    manager->OpenHomePages();    
+
+    //
+    // Wait for SSH connection to stop (or fail)
+    //
+
+    // Note: doesn't throw abort on user cancel, but it all works out the same
+    manager->SSHWaitAndDisconnect();
+    
+    manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+}
+
+DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
+{
+    ConnectionManager* manager = (ConnectionManager*)data;
 
     // Loop through server list, attempting to connect.
     //
     // Connect sequence:
     //
-    // [1] Make Handshake HTTPS request
-    // [1a] Perform download HTTPS request and upgrade, if applicable
-    // [2] Create and dial VPN connection
-    // [3] Wait for VPN connection to succeed or fail
-    // [3] Flush DNS
-    // [4] Launch home pages (failure is acceptable)
-    // [5] Make Connected HTTPS request (failure is acceptable)
-    // [6] Wait for VPN connection to stop
+    // - Make Handshake HTTPS request
+    // - Perform download HTTPS request and upgrade, if applicable
+    // - Try VPN:
+    // -- Create and dial VPN connection
+    // -- Tweak VPN system settings if required
+    // -- Wait for VPN connection to succeed or fail
+    // -- Flush DNS and fix settings if required
+    // - If VPN failed:
+    // -- Create SSH connection
+    // -- Wait for SSH connection to succeed or fail
+    // - If a connection type succeeded:
+    // -- Launch home pages (failure is acceptable)
+    // -- Make Connected HTTPS request (failure is acceptable)
+    // -- Wait for connection to stop
     //
-    // When any of 1-3 fail, the server is marked as failed
-    // in the local server list and the next server from the
-    // list is selected and retried.
+    // When handshake and all connection types fail, the
+    // server is marked as failed in the local server list and
+    // the next server from the list is selected and retried.
     //
     // All operations may be interrupted by user cancel.
     //
-    // NOTE: this function doesn't hold the VPNManager
+    // NOTE: this function doesn't hold the ConnectionManager
     // object lock to allow for cancel etc.
 
     while (true) // Try servers loop
     {
-        // TEMP -- new SSH protocol option
-        /*
-        if (manager->SSHConnect(_T("0.0.0.0"),_T("22"),_T("rsa"),_T("psiphonv"),_T("password")))
-        {
-            // TODO: fail over etc.
-            if (manager->SSHWaitForConnected())
-            {
-                manager->SetState(VPN_MANAGER_STATE_CONNECTED);
-            }
-            manager->SSHWaitAndDisconnect();
-        }
-        manager->SetState(VPN_MANAGER_STATE_STOPPED);
-        return 0;
-        */
-
         try
         {
             //
-            // [1] Handshake HTTPS request
+            // Handshake HTTPS request
             //
 
-            tstring serverAddress;
-            int webPort;
-            string webServerCertificate;
+            ServerEntry serverEntry;
             tstring handshakeRequestPath;
             string handshakeResponse;
 
             // Send list of known server IP addresses (used for stats logging on the server)
 
             manager->LoadNextServer(
-                            serverAddress,
-                            webPort,
-                            webServerCertificate,
+                            serverEntry,
                             handshakeRequestPath);
 
             HTTPSRequest httpsRequest;
             if (!httpsRequest.GetRequest(
                                 manager->GetUserSignalledStop(),
-                                serverAddress.c_str(),
-                                webPort,
-                                webServerCertificate,
+                                NarrowToTString(serverEntry.serverAddress).c_str(),
+                                serverEntry.webServerPort,
+                                serverEntry.webServerCertificate,
                                 handshakeRequestPath.c_str(),
                                 handshakeResponse))
             {
@@ -194,7 +347,7 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
             manager->HandleHandshakeResponse(handshakeResponse.c_str());
 
             //
-            // [1a] Upgrade
+            // Upgrade
             //
 
             // Upgrade now if handshake notified of new version
@@ -206,9 +359,9 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
 
                 if (!httpsRequest.GetRequest(
                             manager->GetUserSignalledStop(),
-                            serverAddress.c_str(),
-                            webPort,
-                            webServerCertificate,
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
                             downloadRequestPath.c_str(),
                             downloadResponse))
                 {
@@ -246,130 +399,26 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
                 }
             }
 
-            //
-            // [1b] Minimum version check for VPN
-            //      L2TP/IPSec/PSK not supported on Windows 2000
-            //      (TODO: once we add SSH, fail over to SSH)
-            //
-
-            OSVERSIONINFO versionInfo;
-            versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
-            if (!GetVersionEx(&versionInfo) ||
-                    versionInfo.dwMajorVersion < 5 ||
-                    (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
+            try
             {
-                my_print(false, _T("Windows XP or greater required"));
-                throw Abort();
+                // Establish VPN connection and wait for termination
+                // Throws TryNextServer or Abort on failure
+
+                DoVPNConnection(manager, serverEntry);
             }
-
-            //
-            // [1c] Check VPN services and fix if required/possible
-            //
-
-            // Note: we proceed even if the call fails. Testing is inconsistent -- don't
-            // always need all tweaks to connect.
-            TweakVPN();
-
-            //
-            // [2] Start VPN connection
-            //
-
-            manager->Establish();
-
-            //
-            // [3] Monitor VPN connection and wait for CONNECTED or FAILED
-            //
-
-            manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_STARTING);
-
-            if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
+            catch (TryNextServer&)
             {
-                // Note: WaitForVPNConnectionStateToChangeFrom throws Abort if user
-                // cancelled, so if we're here it's a FAILED case.
+                // When the VPN attempt fails, establish SSH connection and wait for termination
 
-                // Report error code to server for logging/trouble-shooting.
-                // The request line includes the last VPN error code.
-                
-                tstring requestPath = manager->GetFailedRequestPath();
-
-                string response;
-                if (!httpsRequest.GetRequest(
-                                    manager->GetUserSignalledStop(),
-                                    serverAddress.c_str(),
-                                    webPort,
-                                    webServerCertificate,
-                                    requestPath.c_str(),
-                                    response))
-                {
-                    // Ignore failure
-                }
-
-                // Wait between 1 and 5 seconds before retrying. This is a quick
-                // fix to deal with the following problem: when a client can
-                // make an HTTPS connection but not a VPN connection, it ends
-                // up spamming "handshake" requests, resulting in PSK race conditions
-                // with other clients that are trying to connect. This is starving
-                // clients that are able to establish the VPN connection.
-                // TODO: a more optimal solution would only wait when re-trying
-                // a server where this condition (HTTPS ok, VPN failed) previously
-                // occurred.
-                Sleep(1000 + rand()%4000);
-
-                throw TryNextServer();
+                DoSSHConnection(manager);
             }
-
-            manager->SetState(VPN_MANAGER_STATE_CONNECTED);
-
-            //
-            // [4] Patch DNS bug on Windowx XP; and flush DNS
-            //     to ensure domains are resolved with VPN's DNS server
-            //
-
-            // Note: we proceed even if the call fails. This means some domains
-            // may not resolve properly.
-            TweakDNS();
-
-            //
-            // [5] Open home pages in browser
-            //
-
-            manager->OpenHomePages();
-
-            //
-            // [6] "Connected" HTTPS request for server stats (not critical to succeed)
-            //
-
-            tstring connectedRequestPath = manager->GetConnectRequestPath();
-
-            // There's no content in the response. Also, failure is ignored since
-            // it just means the server didn't log a stat.
-
-            string response;
-            if (!httpsRequest.GetRequest(
-                                manager->GetUserSignalledStop(),
-                                serverAddress.c_str(),
-                                webPort,
-                                webServerCertificate,
-                                connectedRequestPath.c_str(),
-                                response))
-            {
-                // Ignore failure
-            }
-
-            //
-            // [7] Wait for VPN connection to stop (or fail) -- set VPNManager state accordingly (used by UI)
-            //
-
-            manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_CONNECTED);
-
-            manager->SetState(VPN_MANAGER_STATE_STOPPED);
 
             break;
         }
         catch (Abort&)
         {
             manager->RemoveVPNConnection();
-            manager->SetState(VPN_MANAGER_STATE_STOPPED);
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (TryNextServer&)
@@ -383,35 +432,65 @@ DWORD WINAPI VPNManager::VPNManagerStartThread(void* data)
     return 0;
 }
 
-void VPNManager::MarkCurrentServerFailed(void)
-{
-    AutoMUTEX lock(m_mutex);
-    
-    m_vpnList.MarkCurrentServerFailed();
-}
+// ==== VPN Session Functions =================================================
 
-VPNConnectionState VPNManager::GetVPNConnectionState(void)
+VPNConnectionState ConnectionManager::GetVPNConnectionState(void)
 {
     AutoMUTEX lock(m_mutex);
     
     return m_vpnConnection.GetState();
 }
 
-HANDLE VPNManager::GetVPNConnectionStateChangeEvent(void)
+HANDLE ConnectionManager::GetVPNConnectionStateChangeEvent(void)
 {
     AutoMUTEX lock(m_mutex);
     
     return m_vpnConnection.GetStateChangeEvent();
 }
 
-void VPNManager::RemoveVPNConnection(void)
+void ConnectionManager::RemoveVPNConnection(void)
 {
     AutoMUTEX lock(m_mutex);
 
     m_vpnConnection.Remove();
 }
 
-bool VPNManager::SSHConnect(
+void ConnectionManager::VPNEstablish(void)
+{
+    // Kick off the VPN connection establishment
+
+    AutoMUTEX lock(m_mutex);
+    
+    if (!m_vpnConnection.Establish(NarrowToTString(m_currentSessionInfo.GetServerAddress()),
+                                   NarrowToTString(m_currentSessionInfo.GetPSK())))
+    {
+        // This is a local error, we should not try the next server because
+        // we'll likely end up in an infinite loop.
+        throw Abort();
+    }
+}
+
+void ConnectionManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state)
+{
+    // NOTE: no lock, as in ConnectionManagerStartThread
+
+    while (state == GetVPNConnectionState())
+    {
+        HANDLE stateChangeEvent = GetVPNConnectionStateChangeEvent();
+
+        // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
+        DWORD result = WaitForSingleObject(stateChangeEvent, 100);
+
+        if (GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
+        {
+            throw Abort();
+        }
+    }
+}
+
+// ==== SSH Session Functions =================================================
+
+bool ConnectionManager::SSHConnect(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
         const tstring& sshServerPublicKey,
@@ -428,28 +507,30 @@ bool VPNManager::SSHConnect(
             sshPassword);
 }
 
-bool VPNManager::SSHWaitForConnected(void)
+bool ConnectionManager::SSHWaitForConnected(void)
 {
     // Note: no lock
 
     return m_sshConnection.WaitForConnected();
 }
 
-void VPNManager::SSHWaitAndDisconnect(void)
+void ConnectionManager::SSHWaitAndDisconnect(void)
 {
     // Note: no lock
 
     m_sshConnection.WaitAndDisconnect();
 }
 
-void VPNManager::OpenHomePages(void)
+void ConnectionManager::MarkCurrentServerFailed(void)
 {
     AutoMUTEX lock(m_mutex);
     
-    OpenBrowser(m_currentSessionInfo.GetHomepages());
+    m_vpnList.MarkCurrentServerFailed();
 }
 
-tstring VPNManager::GetConnectRequestPath(void)
+// ==== General Session Functions =============================================
+
+tstring ConnectionManager::GetConnectRequestPath(void)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -461,7 +542,7 @@ tstring VPNManager::GetConnectRequestPath(void)
            _T("&vpn_client_ip_address=") + m_vpnConnection.GetPPPIPAddress();
 }
 
-tstring VPNManager::GetFailedRequestPath(void)
+tstring ConnectionManager::GetFailedRequestPath(void)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -476,18 +557,14 @@ tstring VPNManager::GetFailedRequestPath(void)
            _T("&error_code=") + NarrowToTString(s.str());
 }
 
-void VPNManager::LoadNextServer(
-        tstring& serverAddress,
-        int& webPort,
-        string& serverCertificate,
+void ConnectionManager::LoadNextServer(
+        ServerEntry& serverEntry,
         tstring& handshakeRequestPath)
 {
     // Select next server to try to connect to
 
     AutoMUTEX lock(m_mutex);
     
-    ServerEntry serverEntry;
-
     try
     {
         // Try the next server in our list.
@@ -506,9 +583,6 @@ void VPNManager::LoadNextServer(
 
     // Output values used in next TryNextServer step
 
-    serverAddress = NarrowToTString(serverEntry.serverAddress);
-    webPort = serverEntry.webServerPort;
-    serverCertificate = serverEntry.webServerCertificate;
     handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
                            _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
@@ -525,7 +599,7 @@ void VPNManager::LoadNextServer(
     }
 }
 
-void VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
+void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)
 {
     // Parse handshake response
     // - get PSK, which we use to connect to VPN
@@ -551,40 +625,7 @@ void VPNManager::HandleHandshakeResponse(const char* handshakeResponse)
     }
 }
 
-void VPNManager::Establish(void)
-{
-    // Kick off the VPN connection establishment
-
-    AutoMUTEX lock(m_mutex);
-    
-    if (!m_vpnConnection.Establish(NarrowToTString(m_currentSessionInfo.GetServerAddress()),
-                                   NarrowToTString(m_currentSessionInfo.GetPSK())))
-    {
-        // This is a local error, we should not try the next server because
-        // we'll likely end up in an infinite loop.
-        throw Abort();
-    }
-}
-
-void VPNManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state)
-{
-    // NOTE: no lock, as in VPNManagerStartThread
-
-    while (state == GetVPNConnectionState())
-    {
-        HANDLE stateChangeEvent = GetVPNConnectionStateChangeEvent();
-
-        // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-        DWORD result = WaitForSingleObject(stateChangeEvent, 100);
-
-        if (GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
-        {
-            throw Abort();
-        }
-    }
-}
-    
-bool VPNManager::RequireUpgrade(tstring& downloadRequestPath)
+bool ConnectionManager::RequireUpgrade(tstring& downloadRequestPath)
 {
     AutoMUTEX lock(m_mutex);
     
@@ -601,7 +642,7 @@ bool VPNManager::RequireUpgrade(tstring& downloadRequestPath)
     return false;
 }
 
-bool VPNManager::DoUpgrade(const string& download)
+bool ConnectionManager::DoUpgrade(const string& download)
 {
     AutoMUTEX lock(m_mutex);
 

@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
-#include "vpnmanager.h"
 #include <sstream>
 
 void SessionInfo::Set(const ServerEntry& serverEntry)

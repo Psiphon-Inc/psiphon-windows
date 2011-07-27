@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "psiclient.h"
-#include "vpnmanager.h"
+#include "connectionmanager.h"
 #include "embeddedvalues.h"
 
 
@@ -147,9 +147,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
-//==== The VPN Manager ========================================================
+//==== The Connection Manager =================================================
 
-VPNManager g_vpnManager;
+ConnectionManager g_connectionManager;
 
 
 //==== toolbar ================================================================
@@ -224,7 +224,7 @@ void CreateToolbar(HWND hWndParent)
 
 void UpdateButton(HWND hWnd)
 {
-    static VPNManagerState g_lastState = g_vpnManager.GetState();
+    static ConnectionManagerState g_lastState = g_connectionManager.GetState();
 
     TBBUTTONINFO info;
     info.cbSize = sizeof(info);
@@ -232,11 +232,11 @@ void UpdateButton(HWND hWnd)
     static int g_nextAnimationIndex = 0;
     int image = 0;
 
-    VPNManagerState state = g_vpnManager.GetState();
+    ConnectionManagerState state = g_connectionManager.GetState();
 
     // Flash the taskbar after disconnected
 
-    if (state == VPN_MANAGER_STATE_STOPPED && state != g_lastState)
+    if (state == CONNECTION_MANAGER_STATE_STOPPED && state != g_lastState)
     {
         FLASHWINFO info;
         info.cbSize = sizeof(FLASHWINFO);
@@ -251,17 +251,21 @@ void UpdateButton(HWND hWnd)
 
     // Update the button
 
-    if (state == VPN_MANAGER_STATE_STOPPED)
+    if (state == CONNECTION_MANAGER_STATE_STOPPED)
     {
         image = 0;
     }
-    else if (state == VPN_MANAGER_STATE_CONNECTED)
+    else if (state == CONNECTION_MANAGER_STATE_CONNECTED_VPN)
     {
         image = 1;
     }
-    else /* if VPN_MANAGER_STATE_STARTING */
+    else if (state == CONNECTION_MANAGER_STATE_CONNECTED_SSH)
     {
-        image = 2 + (g_nextAnimationIndex++)%4;
+        image = 2;
+    }
+    else /* if CONNECTION_MANAGER_STATE_STARTING */
+    {
+        image = 3 + (g_nextAnimationIndex++)%4;
     }
 
     SendMessage(g_hToolBar, TB_GETBUTTONINFO, IDM_TOGGLE, (LPARAM)&info);
@@ -277,8 +281,9 @@ void UpdateAlpha(HWND hWnd)
 {
     // Make window transparent when connected
 
-    VPNManagerState state = g_vpnManager.GetState();
-    if (state == VPN_MANAGER_STATE_CONNECTED)
+    ConnectionManagerState state = g_connectionManager.GetState();
+    if (state == CONNECTION_MANAGER_STATE_CONNECTED_VPN
+        || state == CONNECTION_MANAGER_STATE_CONNECTED_SSH)
     {
         // Can also animate a fade out: http://msdn.microsoft.com/en-us/library/ms997507.aspx
         SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
@@ -380,7 +385,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // when unexpectedly disconnected.
         g_hTimer = SetTimer(hWnd, IDT_BUTTON_ROTATION, 250, NULL);
 
-        g_vpnManager.Toggle();
+        g_connectionManager.Toggle();
 
         break;
 
@@ -422,14 +427,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (lParam == (LPARAM)g_hBanner)
             {
                 // Banner static control was clicked, so open home pages
-                if (VPN_MANAGER_STATE_CONNECTED == g_vpnManager.GetState())
+                int state = g_connectionManager.GetState();
+                if (CONNECTION_MANAGER_STATE_CONNECTED_VPN == state
+                    || CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
                 {
-                    g_vpnManager.OpenHomePages();
+                    g_connectionManager.OpenHomePages();
                 }
             }
             break;
         case IDM_TOGGLE:
-            g_vpnManager.Toggle();
+            g_connectionManager.Toggle();
             break;
         case IDM_SHOW_DEBUG_MESSAGES:
             g_bShowDebugMessages = !g_bShowDebugMessages;
@@ -467,7 +474,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         // Stop VPN if running
-        g_vpnManager.Stop();
+        g_connectionManager.Stop();
         PostQuitMessage(0);
         break;
 

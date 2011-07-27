@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="connectionmanager.h" />
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="psiclient.h" />
@@ -99,10 +100,10 @@
     <ClInclude Include="tstring.h" />
     <ClInclude Include="vpnconnection.h" />
     <ClInclude Include="vpnlist.h" />
-    <ClInclude Include="vpnmanager.h" />
     <ClInclude Include="webbrowser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
@@ -114,7 +115,6 @@
     <ClCompile Include="systemproxysettings.cpp" />
     <ClCompile Include="vpnconnection.cpp" />
     <ClCompile Include="vpnlist.cpp" />
-    <ClCompile Include="vpnmanager.cpp" />
     <ClCompile Include="webbrowser.cpp" />
   </ItemGroup>
   <ItemGroup>

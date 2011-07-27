@@ -26,50 +26,56 @@
 #include "psiclient.h"
 
 
-enum VPNManagerState
+enum ConnectionManagerState
 {
-    VPN_MANAGER_STATE_STOPPED = 0,
-    VPN_MANAGER_STATE_STARTING,
-    VPN_MANAGER_STATE_CONNECTED
+    CONNECTION_MANAGER_STATE_STOPPED = 0,
+    CONNECTION_MANAGER_STATE_STARTING,
+    CONNECTION_MANAGER_STATE_CONNECTED_VPN,
+    CONNECTION_MANAGER_STATE_CONNECTED_SSH
 };
 
 
-class VPNManager
+class ConnectionManager
 {
 public:
-    VPNManager(void);
-    virtual ~VPNManager(void);
+    ConnectionManager(void);
+    virtual ~ConnectionManager(void);
     void Toggle(void);
     void Stop(void);
-    void SetState(VPNManagerState newState) {m_state = newState;}
-    VPNManagerState GetState(void) {return m_state;}
+    void SetState(ConnectionManagerState newState) {m_state = newState;}
+    ConnectionManagerState GetState(void) {return m_state;}
     const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
     void OpenHomePages(void);
 
 private:
     void Start(void);
-    static DWORD WINAPI VPNManagerStartThread(void* object);
+    static DWORD WINAPI ConnectionManagerStartThread(void* object);
+    static void DoVPNConnection(
+        ConnectionManager* manager,
+        const ServerEntry& serverEntry);
+    static void DoSSHConnection(
+        ConnectionManager* manager);
 
-    // Exception classes to help with the VPNManagerStartThread control flow
+    // Exception classes to help with the ConnectionManagerStartThread control flow
     class TryNextServer { };
     class Abort { };
 
     void MarkCurrentServerFailed(void);
-    VPNConnectionState GetVPNConnectionState(void);
-    HANDLE GetVPNConnectionStateChangeEvent(void);
-    void RemoveVPNConnection(void);
     tstring GetConnectRequestPath(void);
     tstring GetFailedRequestPath(void);
     void LoadNextServer(
-        tstring& serverAddress,
-        int& webPort,
-        string& webServerCertificate,
+        ServerEntry& serverEntry,
         tstring& handshakeRequestPath);
     void HandleHandshakeResponse(
         const char* handshakeResponse);
     bool RequireUpgrade(tstring& downloadRequestPath);
     bool DoUpgrade(const string& download);
-    void Establish(void);
+
+    VPNConnectionState GetVPNConnectionState(void);
+    HANDLE GetVPNConnectionStateChangeEvent(void);
+    void RemoveVPNConnection(void);
+    void VPNEstablish(void);
+
     void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
     bool SSHConnect(
         const tstring& sshServerAddress,
@@ -81,7 +87,7 @@ private:
     void SSHWaitAndDisconnect(void);
 
     HANDLE m_mutex;
-    VPNManagerState m_state;
+    ConnectionManagerState m_state;
     VPNList m_vpnList;
     VPNConnection m_vpnConnection;
     bool m_userSignalledStop;

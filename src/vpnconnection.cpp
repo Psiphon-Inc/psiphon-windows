@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "config.h"
-#include "vpnmanager.h"
+#include "connectionmanager.h"
 #include "vpnconnection.h"
 #include "psiclient.h"
 #include "ras.h"
@@ -41,7 +41,7 @@ void CALLBACK RasDialCallback(
     my_print(true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
     if (0 != dwError)
     {
-        my_print(false, _T("Connection failed (%d)"), dwError);
+        my_print(false, _T("VPN connection failed (%d)"), dwError);
         vpnConnection->SetState(VPN_CONNECTION_STATE_FAILED);
         vpnConnection->SetLastVPNErrorCode(dwError);
     }
@@ -56,7 +56,7 @@ void CALLBACK RasDialCallback(
             return;
         }
 
-        my_print(false, _T("Successfully connected."));
+        my_print(false, _T("VPN successfully connected."));
 
         vpnConnection->SetState(VPN_CONNECTION_STATE_CONNECTED);
 
@@ -67,16 +67,16 @@ void CALLBACK RasDialCallback(
             // Otherwise we'd be stuck in a connected state.
         }
 
-        my_print(false, _T("Disconnected."));
+        my_print(false, _T("VPN disconnected."));
         vpnConnection->SetState(VPN_CONNECTION_STATE_STOPPED);
     }
     else
     {
         if (rasConnState == 0)
         {
-            my_print(false, _T("Connecting..."));
+            my_print(false, _T("VPN connecting..."));
         }
-        my_print(true, _T("Establishing connection... (%x)"), rasConnState);
+        my_print(true, _T("VPN establishing connection... (%x)"), rasConnState);
         vpnConnection->SetState(VPN_CONNECTION_STATE_STARTING);
     }
 }
