@@ -247,6 +247,7 @@ void ConnectionManager::DoSSHConnection(ConnectionManager* manager)
     // Establish SSH connection
     //
 
+    // TEMP
     if (!manager->SSHConnect(_T("1.1.1.1"),_T("22"),_T("rsa"),_T("psiphonv"),_T("..."))
         || !manager->SSHWaitForConnected())
     {
@@ -409,7 +410,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             catch (TryNextServer&)
             {
                 // When the VPN attempt fails, establish SSH connection and wait for termination
-
+                manager->RemoveVPNConnection();
                 DoSSHConnection(manager);
             }
 
@@ -418,12 +419,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         catch (Abort&)
         {
             manager->RemoveVPNConnection();
+            manager->SSHDisconnect();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (TryNextServer&)
         {
             manager->RemoveVPNConnection();
+            manager->SSHDisconnect();
             manager->MarkCurrentServerFailed();
             // Continue while loop to try next server
         }
@@ -505,6 +508,13 @@ bool ConnectionManager::SSHConnect(
             sshServerPublicKey,
             sshUsername,
             sshPassword);
+}
+
+void ConnectionManager::SSHDisconnect(void)
+{
+    // Note: no lock
+
+    m_sshConnection.Disconnect();
 }
 
 bool ConnectionManager::SSHWaitForConnected(void)

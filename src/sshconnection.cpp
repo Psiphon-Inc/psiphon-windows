@@ -23,7 +23,7 @@
 #include "config.h"
 
 SSHConnection::SSHConnection(const bool& cancel)
-: m_cancel(cancel)
+:   m_cancel(cancel)
 {
     ZeroMemory(&m_plinkProcessInfo, sizeof(m_plinkProcessInfo));
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
@@ -41,7 +41,7 @@ bool ExtractExecutable(DWORD resourceID, tstring& path)
     // Extract executable from resources and write to temporary file
 
     HRSRC res;
-    HGLOBAL handle = NULL;
+    HGLOBAL handle = INVALID_HANDLE_VALUE;
     BYTE* data;
     DWORD size;
 
@@ -132,7 +132,7 @@ bool SSHConnection::Connect(
         }
     }
 
-    // Ensure we start from a disconnected state
+    // Ensure we start from a disconnected/clean state
 
     Disconnect();
 
@@ -141,7 +141,7 @@ bool SSHConnection::Connect(
     // Start plink using Psiphon server SSH parameters
 
     tstring plinkCommandLine = m_plinkPath
-                               + _T(" -ssh -C -N")
+                               + _T(" -ssh -C -N -batch")
                                + _T(" -P ") + sshServerPort
                                + _T(" -l ") + sshUsername
                                + _T(" -pw ") + sshPassword
@@ -183,7 +183,8 @@ bool SSHConnection::Connect(
                                 + _T(" proxyPort=") + POLIPO_HTTP_PROXY_PORT
                                 + _T(" socksParentProxy=localhost:") + PLINK_SOCKS_PROXY_PORT
                                 + _T(" diskCacheRoot=\"\"")
-                                + _T(" disableLocalInterface=true");
+                                + _T(" disableLocalInterface=true")
+                                + _T(" logLevel=1");
 
     STARTUPINFO polipoStartupInfo;
     ZeroMemory(&polipoStartupInfo, sizeof(polipoStartupInfo));
@@ -257,8 +258,12 @@ void SSHConnection::WaitAndDisconnect(void)
     // If the user cancels manually, m_cancel will be set -- we
     // handle that here while for VPN it's done in Manager
 
+    bool wasConnected = false;
+
     while (m_plinkProcessInfo.hProcess != 0 && m_polipoProcessInfo.hProcess != 0)
     {
+        wasConnected = true;
+
         HANDLE processes[2];
         processes[0] = m_plinkProcessInfo.hProcess;
         processes[1] = m_polipoProcessInfo.hProcess;
@@ -286,7 +291,10 @@ void SSHConnection::WaitAndDisconnect(void)
     // Revert the Windows Internet Settings to the user's previous settings
     m_systemProxySettings.Revert();
 
-    my_print(false, _T("SSH disconnected."));
+    if (wasConnected)
+    {
+        my_print(false, _T("SSH disconnected."));
+    }
 }
 
 void SSHConnection::SignalDisconnect(void)
