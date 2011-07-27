@@ -24,6 +24,7 @@
 #include "psiclient.h"
 #include "ras.h"
 #include "raserror.h"
+#include <sstream>
 
 
 void CALLBACK RasDialCallback(
@@ -390,4 +391,518 @@ HRASCONN VPNConnection::GetActiveRasConnection()
     }
 
     return rasConnection;
+}
+
+//==== TweakVPN utility functions =============================================
+
+void FixProhibitIpsec(void)
+{
+    // Check for non-default HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RasMan\Parameters\ProhibitIpSec = 1
+    // If found, try to set to 0
+    // In testing, we've found the setting of 1 *sometimes* results in a failed connection, so
+    // we try to change it to 0 but we don't abort the VPN connection attempt if it's 1 and we can't change it.
+
+    std::stringstream error;
+    HKEY key = 0;
+
+    try
+    {
+        const char* keyName = "SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters";
+        const char* valueName = "ProhibitIpSec";
+
+        LONG returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_READ, &key);
+
+        if (ERROR_SUCCESS != returnCode)
+        {
+            error << "Open Registry Key failed (" << returnCode << ")";
+            throw std::exception(error.str().c_str());
+        }
+
+        DWORD value;
+        DWORD bufferLength = sizeof(value);
+        DWORD type;
+        
+        returnCode = RegQueryValueExA(key, valueName, 0, &type, (LPBYTE)&value, &bufferLength);
+
+        if (ERROR_SUCCESS != returnCode || type != REG_DWORD)
+        {
+            if (returnCode == ERROR_FILE_NOT_FOUND)
+            {
+                // The prohibitIpsec value isn't present by default, handle the same
+                // as when value is present and set to 0
+                value = 0;
+            }
+            else
+            {
+                error << "Query Registry Value failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
+            }
+        }
+
+        if (value != 0)
+        {
+            value = 0;
+
+            // Re-open the registry key with write privileges
+
+            RegCloseKey(key);
+            returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_WRITE, &key);
+
+            if (ERROR_SUCCESS != returnCode)
+            {
+                // If the user isn't Admin, this will fail as HKLM isn't writable by limited users
+                if (ERROR_ACCESS_DENIED == returnCode)
+                {
+                    error << "insufficient privileges to set HKLM\\SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters\\ProhibitIpSec to 0";
+                }
+                else
+                {
+                    error << "Open Registry Key failed (" << returnCode << ")";
+                }
+
+                throw std::exception(error.str().c_str());
+            }
+
+            returnCode = RegSetValueExA(key, valueName, 0, REG_DWORD, (PBYTE)&value, bufferLength);
+            if (ERROR_SUCCESS != returnCode)
+            {
+                // TODO: add descriptive case for ACCESS_DENIED as above(?)
+                error << "Set Registry Value failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
+            }
+        }
+    }
+    catch(std::exception& ex)
+    {
+        my_print(false, string("Fix ProhibitIpSec failed: ") + ex.what());
+    }
+
+    // cleanup
+    RegCloseKey(key);
+}
+
+void FixVPNServices(void)
+{
+    // Check for disabled IPSec services and attempt to restore to
+    // default (enabled, auto-start) config and start
+
+    // The start configuration for the "Policy Agent" service
+    // is different for Windows 7.
+
+    DWORD policyAgentStartType = SERVICE_AUTO_START;
+    OSVERSIONINFO versionInfo;
+    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+    // Version 6.1 is Windows 7
+    if (GetVersionEx(&versionInfo) &&
+        versionInfo.dwMajorVersion > 6 ||
+        (versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion >= 1))
+    {
+        policyAgentStartType = SERVICE_DEMAND_START;
+    }
+
+    struct serviceConfig
+    {
+        const TCHAR* name;
+        DWORD startType;
+    } serviceConfigs[] =
+    {
+        {_T("IKEEXT"), SERVICE_AUTO_START},
+        {_T("PolicyAgent"), policyAgentStartType},
+        {_T("RasMan"), SERVICE_DEMAND_START},
+        {_T("TapiSrv"), SERVICE_DEMAND_START}
+    };
+
+    for (int i = 0; i < sizeof(serviceConfigs)/sizeof(serviceConfig); i++)
+    {
+        std::stringstream error;
+        SC_HANDLE manager = 0;
+        SC_HANDLE service = 0;
+
+        try
+        {
+            CloseServiceHandle(manager);
+            manager = OpenSCManager(NULL, NULL, GENERIC_READ);
+            if (NULL == manager)
+            {
+                error << "OpenSCManager failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            CloseServiceHandle(service);
+            service = OpenService(manager,
+                                  serviceConfigs[i].name,
+                                  SERVICE_QUERY_CONFIG|SERVICE_QUERY_STATUS);
+            if (NULL == service)
+            {
+                if (ERROR_SERVICE_DOES_NOT_EXIST == GetLastError())
+                {
+                    // Service doesn't exist, which is expected; e.g., Windows XP doesn't have IKEEXT
+                    // In the case where the service *should* exist, there's nothing we can do
+                    continue;
+                }
+
+                error << "OpenService failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            BYTE buffer[8192]; // Max size is 8K: http://msdn.microsoft.com/en-us/library/ms684932%28v=vs.85%29.aspx
+            DWORD bufferLength = sizeof(buffer);
+            QUERY_SERVICE_CONFIG* serviceConfig = (QUERY_SERVICE_CONFIG*)buffer;
+            if (!QueryServiceConfig(service, serviceConfig, bufferLength, &bufferLength))
+            {
+                error << "QueryServiceConfig failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            SERVICE_STATUS serviceStatus;
+            if (!QueryServiceStatus(service, &serviceStatus))
+            {
+                error << "QueryServiceStatus failed (" << GetLastError() << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            // Note: won't downgrade from SERVICE_AUTO_START to SERVICE_DEMAND_START
+            bool needConfigChange = (SERVICE_AUTO_START != serviceConfig->dwStartType &&
+                                     serviceConfigs[i].startType != serviceConfig->dwStartType);
+
+            // Automatic services are started at login, but we're not re-logging in, so start if
+            // it should've been started at login.
+            // Note: only start if "required" start type is auto, not current config start type
+            bool needStart = (serviceConfigs[i].startType == SERVICE_AUTO_START &&
+                              serviceStatus.dwCurrentState != SERVICE_RUNNING);
+
+            if (needConfigChange || needStart)
+            {
+                CloseServiceHandle(manager);
+                manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+                if (NULL == manager)
+                {
+                    // If the user isn't Admin, this will fail
+                    if (ERROR_ACCESS_DENIED == GetLastError())
+                    {
+                        error << "insufficient privileges to configure or start service " <<
+                                    TStringToNarrow(serviceConfigs[i].name);
+                    }
+                    else
+                    {
+                        error << "OpenSCManager failed (" << GetLastError() << ")";
+                    }
+                    throw std::exception(error.str().c_str());
+                }
+
+                CloseServiceHandle(service);
+                service = OpenService(manager,
+                                      serviceConfigs[i].name,
+                                      SERVICE_CHANGE_CONFIG|SERVICE_START|SERVICE_QUERY_STATUS);
+                if (NULL == service)
+                {
+                    // TODO: add descriptive case for ACCESS_DENIED as above(?)
+                    error << "OpenService failed (" << GetLastError() << ")";
+                    throw std::exception(error.str().c_str());
+                }
+
+                if (needConfigChange)
+                {
+                    if (!ChangeServiceConfig(
+                            service,
+                            SERVICE_NO_CHANGE, serviceConfigs[i].startType, SERVICE_NO_CHANGE,
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL))
+                    {
+                        error << "ChangeServiceConfig failed (" << GetLastError() << ")";
+                        throw std::exception(error.str().c_str());
+                    }
+                }
+
+                if (needStart)
+                {
+                    if (!StartService(service, 0, 0))
+                    {
+                        error << "StartService failed (" << GetLastError() << ")";
+                        throw std::exception(error.str().c_str());
+                    }
+
+                    // Wait up to 2 seconds for service to start before proceeding with
+                    // connect. If it fails to start, we just proceed anyway.
+
+                    for (int wait = 0; wait < 20; wait++)
+                    {
+                        SERVICE_STATUS serviceStatus;
+                        if (!QueryServiceStatus(service, &serviceStatus))
+                        {
+                            error << "QueryServiceStatus failed (" << GetLastError() << ")";
+                            throw std::exception(error.str().c_str());
+                        }
+
+                        // StartService changes the state to SERVICE_START_PENDING
+                        // (http://msdn.microsoft.com/en-us/library/ms686321%28v=vs.85%29.aspx)
+                        // So as soon as we see a new state, we can proceed.
+
+                        if (serviceStatus.dwCurrentState != SERVICE_START_PENDING)
+                        {
+                            break;
+                        }
+
+                        Sleep(100);
+                    }
+                }
+            }
+        }
+        catch(std::exception& ex)
+        {
+            my_print(false, string("Fix VPN Services failed: ") + ex.what());
+        }
+
+        // cleanup
+        CloseServiceHandle(service); 
+        CloseServiceHandle(manager);
+    }
+}
+
+void TweakVPN(void)
+{
+    // Some 3rd party VPN clients change the default Windows system configuration in ways that
+    // will prevent standard IPSec VPN, such as ours, from running.  We check for the issues
+    // and try to fix if required/possible (needs admin privs).
+
+    // Proceed regardless of FixProhibitIpSec/FixVPNServices success, as we're not sure
+    // the fixes are always required.
+
+    FixProhibitIpsec();
+    FixVPNServices();
+}
+
+//==== TweakDNS utility functions =============================================
+
+// memmem.c from gnulib. Used for short buffers -- quadratic performance not an issue.
+
+/* Copyright (C) 1991,92,93,94,96,97,98,2000,2004,2007 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+
+/* Return the first occurrence of NEEDLE in HAYSTACK.  */
+static const void* memmem(
+    const void* haystack,
+    size_t haystack_len,
+    const void* needle,
+    size_t needle_len)
+{
+    const char *begin;
+    const char *const last_possible = (const char *) haystack + haystack_len - needle_len;
+
+    if (needle_len == 0)
+    {
+        /* The first occurrence of the empty string is deemed to occur at
+           the beginning of the string.  */
+        return (void *) haystack;
+    }
+
+    /* Sanity check, otherwise the loop might search through the whole
+       memory.  */
+    if (haystack_len < needle_len)
+    {
+        return NULL;
+    }
+
+    for (begin = (const char *) haystack; begin <= last_possible; ++begin)
+    {
+        if (begin[0] == ((const char *) needle)[0] &&
+            !memcmp((const void *) &begin[1],
+                    (const void *) ((const char *) needle + 1),
+                    needle_len - 1))
+        {
+            return (void *) begin;
+        }
+    }
+
+    return NULL;
+}
+
+static void PatchDNS(void)
+{
+    // Programmatically apply Window XP fix that ensures
+    // VPN's DNS server is used (http://support.microsoft.com/kb/311218)
+
+    OSVERSIONINFO versionInfo;
+    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+
+    // Version 5.1 is Windows XP (not 64-bit)
+    if (GetVersionEx(&versionInfo) &&
+        versionInfo.dwMajorVersion == 5 &&
+        versionInfo.dwMinorVersion == 1)
+    {
+        std::stringstream error;
+        HKEY key = 0;
+        char *buffer = 0;
+
+        try
+        {
+            const char* keyName = "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Linkage";
+            const char* valueName = "Bind";
+
+            LONG returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_READ, &key);
+
+            if (ERROR_SUCCESS != returnCode)
+            {
+                error << "Open Registry Key failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            // RegQueryValueExA on Windows XP wants at least 1 byte
+            buffer = new char [1];
+            DWORD bufferLength = 1;
+            DWORD type;
+            
+            // Using the ANSI version explicitly so we can manipulate narrow strings.
+            returnCode = RegQueryValueExA(key, valueName, 0, &type, (LPBYTE)buffer, &bufferLength);
+            if (ERROR_MORE_DATA == returnCode)
+            {
+                delete [] buffer;
+                buffer = new char [bufferLength];
+                returnCode = RegQueryValueExA(key, valueName, 0, 0, (LPBYTE)buffer, &bufferLength);
+            }
+
+            if (ERROR_SUCCESS != returnCode || type != REG_MULTI_SZ)
+            {
+                error << "Query Registry Value failed (" << returnCode << ")";
+                throw std::exception(error.str().c_str());
+            }
+
+            // We must ensure that the string is double null terminated, as per MSDN
+            // 2 bytes for 2 NULLs as it's a MULTI_SZ.
+            int extraNulls = 0;
+            if (buffer[bufferLength-1] != '\0')
+            {
+                extraNulls = 2;
+            }
+            else if (buffer[bufferLength-2] != '\0')
+            {
+                extraNulls = 1;
+            }
+            if (extraNulls)
+            {
+                char *newBuffer = new char [bufferLength + extraNulls];
+                memset(newBuffer, bufferLength + extraNulls, 0);
+                memcpy(newBuffer, buffer, bufferLength);
+                bufferLength += extraNulls;
+                delete [] buffer;
+                buffer = newBuffer;
+            }
+
+            // Find the '\Device\NdisWanIp' string and move it to the first position.
+            // (If it's already first, don't modify the registry).
+
+            const char* target = "\\Device\\NdisWanIp";
+            size_t target_length = strlen(target) + 1; // include '\0' terminator
+            const char* found = (const char*)memmem(buffer, bufferLength, target, target_length);
+
+            if (found && found != buffer)
+            {
+                // make new buffer = target || start of buffer to target || buffer after target
+                char *newBuffer = new char [bufferLength];
+                memcpy(newBuffer, found, target_length);
+                memcpy(newBuffer + target_length, buffer, found - buffer);
+                memcpy(newBuffer + target_length + (found - buffer),
+                       found + target_length,
+                       bufferLength - (target_length + (found - buffer)));
+                delete [] buffer;
+                buffer = newBuffer;
+
+                // Re-open the registry key with write privileges
+
+                RegCloseKey(key);
+                returnCode = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, KEY_WRITE, &key);
+
+                if (ERROR_SUCCESS != returnCode)
+                {
+                    // If the user isn't Admin, this will fail as HKLM isn't writable by limited users
+                    if (ERROR_ACCESS_DENIED == returnCode)
+                    {
+                        error << "insufficient privileges (See KB311218)";
+                    }
+                    else
+                    {
+                        error << "Open Registry Key failed (" << returnCode << ")";
+                    }
+                    throw std::exception(error.str().c_str());
+                }
+
+                returnCode = RegSetValueExA(key, valueName, 0, REG_MULTI_SZ, (PBYTE)buffer, bufferLength);
+                if (ERROR_SUCCESS != returnCode)
+                {
+                    // TODO: add descriptive case for ACCESS_DENIED as above(?)
+                    error << "Set Registry Value failed (" << returnCode << ")";
+                    throw std::exception(error.str().c_str());
+                }
+            }
+        }
+        catch(std::exception& ex)
+        {
+            my_print(false, string("Fix DNS failed: ") + ex.what());
+        }
+
+        // cleanup
+        delete [] buffer;
+        RegCloseKey(key);
+    }
+}
+
+typedef BOOL (CALLBACK* DNSFLUSHPROC)();
+
+static bool FlushDNS(void)
+{
+    // Adapted code from: http://www.codeproject.com/KB/cpp/Setting_DNS.aspx
+
+    bool result = false;
+	HINSTANCE hDnsDll;
+	DNSFLUSHPROC pDnsFlushProc;
+
+	if ((hDnsDll = LoadLibrary(_T("dnsapi"))) == NULL)
+    {
+        my_print(false, _T("LoadLibrary DNSAPI failed"));
+        return result;
+    }
+
+	if ((pDnsFlushProc = (DNSFLUSHPROC)GetProcAddress(hDnsDll, "DnsFlushResolverCache")) != NULL)
+	{
+		if (FALSE == (pDnsFlushProc)())
+		{
+            my_print(false, _T("DnsFlushResolverCache failed: %d"), GetLastError());
+        }
+        else
+        {
+            result = true;
+        }
+	}
+    else
+    {
+        my_print(false, _T("GetProcAddress DnsFlushResolverCache failed"));
+    }
+
+	FreeLibrary(hDnsDll);
+	return result;
+}
+
+void TweakDNS(void)
+{
+    // Note: no lock
+
+    // Patch tries to fix a bug on XP where the non-VPN's DNS server is still consulted
+    PatchDNS();
+
+    // Flush is to clear cached lookups from non-VPN DNS
+    // Note: this only affects system cache, not application caches (e.g., browsers)
+    FlushDNS();
 }

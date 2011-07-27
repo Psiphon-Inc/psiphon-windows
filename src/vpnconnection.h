@@ -59,3 +59,7 @@ private:
 
     HRASCONN GetActiveRasConnection(void);
 };
+
+void TweakVPN(void);
+void TweakDNS(void);
+
