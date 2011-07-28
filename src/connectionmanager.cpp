@@ -248,7 +248,8 @@ void ConnectionManager::DoSSHConnection(ConnectionManager* manager)
     //
 
     // TEMP
-    if (!manager->SSHConnect(_T("1.1.1.1"),_T("22"),_T("rsa"),_T("psiphonv"),_T("..."))
+    tstring hostKey = _T("<base64>==");
+    if (!manager->SSHConnect(_T("1.1.1.1"),_T("22"),hostKey,_T("psiphonv"),_T("<password>"))
         || !manager->SSHWaitForConnected())
     {
         if (manager->GetUserSignalledStop())
@@ -404,7 +405,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             {
                 // Establish VPN connection and wait for termination
                 // Throws TryNextServer or Abort on failure
-
+                
                 DoVPNConnection(manager, serverEntry);
             }
             catch (TryNextServer&)
