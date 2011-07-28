@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include <WinSock2.h>
+#include <WinCrypt.h>
 #include "sshconnection.h"
 #include "psiclient.h"
 #include "config.h"
@@ -106,6 +107,105 @@ bool ExtractExecutable(DWORD resourceID, tstring& path)
     return true;
 }
 
+bool SetPlinkSSHHostKey(
+        const tstring& sshServerAddress,
+        const tstring& sshServerPort,
+        const tstring& sshServerPublicKey)
+{
+    // Add Plink registry entry for host for non-interactive public key validation
+
+    // Host key is base64 encoded set of fiels
+
+    BYTE* decodedFields = NULL;
+    DWORD size = 0;
+
+    if (!CryptStringToBinary(sshServerPublicKey.c_str(), sshServerPublicKey.length(), CRYPT_STRING_BASE64, NULL, &size, NULL, NULL)
+        || !(decodedFields = new (std::nothrow) BYTE[size])
+        || !CryptStringToBinary(sshServerPublicKey.c_str(), sshServerPublicKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
+    {
+        my_print(false, _T("SetPlinkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
+        return false;
+    }
+
+    // field format: {<4 byte len (big endian), len bytes field>}+
+    // first field is key type, expecting "ssh-rsa";
+    // remaining fields are opaque number value -- simply emit in new format which is comma delimited hex strings
+
+    const char* expectedKeyTypeValue = "ssh-rsa";
+    unsigned long expectedKeyTypeLen = htonl(strlen(expectedKeyTypeValue));
+
+    if (memcmp(decodedFields + 0, &expectedKeyTypeLen, sizeof(unsigned long))
+        || memcmp(decodedFields + sizeof(unsigned long), expectedKeyTypeValue, strlen(expectedKeyTypeValue)))
+    {
+        delete [] decodedFields;
+
+        my_print(false, _T("SetPlinkSSHHostKey: unexpected key type"));
+        return false;
+    }
+
+    string data;
+
+    unsigned long offset = sizeof(unsigned long) + strlen(expectedKeyTypeValue);
+
+    while (offset < size - sizeof(unsigned long))
+    {
+        unsigned long nextLen = ntohl(*((long*)(decodedFields + offset)));
+        offset += sizeof(unsigned long);
+
+        if (nextLen > 0 && offset + nextLen <= size)        
+        {
+            if (data.length() > 0)
+            {
+                data += ",";
+            }
+            data += "0x";
+            const char* hexDigits = "0123456789abcdef";
+            bool leadingZero = true;
+            for (unsigned long i = 0; i < nextLen; i++)
+            {
+                if (0 != decodedFields[offset + i])
+                {
+                    leadingZero = false;
+                }
+                else if (leadingZero)
+                {
+                    continue;
+                }
+                data += hexDigits[decodedFields[offset + i] >> 4];
+                data += hexDigits[decodedFields[offset + i] & 0x0F];
+            }
+            offset += nextLen;
+        }
+    }
+
+    delete [] decodedFields;
+
+    string value = string("rsa2@") + TStringToNarrow(sshServerPort) + ":" + TStringToNarrow(sshServerAddress);
+
+    const TCHAR* plinkRegistryKey = _T("Software\\SimonTatham\\PuTTY\\SshHostKeys");
+
+    HKEY key = 0;
+    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, plinkRegistryKey, 0, 0, 0, KEY_WRITE, 0, &key, NULL);
+    if (ERROR_SUCCESS != returnCode)
+    {
+        my_print(false, _T("SetPlinkSSHHostKey: Create Registry Key failed (%d)"), returnCode);
+        return false;
+    }
+
+    returnCode = RegSetValueExA(key, value.c_str(), 0, REG_SZ, (PBYTE)data.c_str(), data.length()+1);
+    if (ERROR_SUCCESS != returnCode)
+    {
+        RegCloseKey(key);
+
+        my_print(false, _T("SetPlinkSSHHostKey: Set Registry Value failed (%d)"), returnCode);
+        return false;
+    }
+
+    RegCloseKey(key);
+
+    return true;
+}
+
 bool SSHConnection::Connect(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
@@ -137,9 +237,15 @@ bool SSHConnection::Connect(
 
     Disconnect();
 
-    // *** TODO: plink registry entry for server public key ***
+    // Add host to Plink's known host registry set
+    // Note: currently we're not removing this after the session, so we're leaving a trace
+
+    SetPlinkSSHHostKey(sshServerAddress, sshServerPort, sshServerPublicKey);
 
     // Start plink using Psiphon server SSH parameters
+
+    // Note: -batch ensures plink doesn't hang on a prompt when the server's host key isn't
+    // the expected value we just set in the registry
 
     tstring plinkCommandLine = m_plinkPath
                                + _T(" -ssh -C -N -batch")
@@ -210,8 +316,6 @@ bool SSHConnection::Connect(
         my_print(false, _T("SSHConnection::Connect - Polipo CreateProcess failed (%d)"), GetLastError());
         return false;
     }
-
-    // *** TODO: configure Internet Options ***
 
     return true;
 }
