@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include <WinSock2.h>
 #include "sshconnection.h"
 #include "psiclient.h"
 #include "config.h"
@@ -181,7 +182,7 @@ bool SSHConnection::Connect(
 
     tstring polipoCommandLine = m_polipoPath
                                 + _T(" proxyPort=") + POLIPO_HTTP_PROXY_PORT
-                                + _T(" socksParentProxy=localhost:") + PLINK_SOCKS_PROXY_PORT
+                                + _T(" socksParentProxy=127.0.0.1:") + PLINK_SOCKS_PROXY_PORT
                                 + _T(" diskCacheRoot=\"\"")
                                 + _T(" disableLocalInterface=true")
                                 + _T(" logLevel=1");
@@ -223,31 +224,65 @@ void SSHConnection::Disconnect(void)
 
 bool SSHConnection::WaitForConnected(void)
 {
-    // TODO: This is just a tempoary solution. A couple of more robust approaches:
-    // - Monitor stdout/stderr of plink/polipo for expected/unexpected messages
-    // - OR poll HTTP requests to e.g., the Psiphon host's web server
-    // - OR use ssh/http proxy libraries with APIs
-    // - OR integrate plink/polipo source code
+    // There are a number of options for monitoring the connected status
+    // of plink/polipo. We're going with a quick and dirty solution of
+    // (a) monitoring the child processes -- if they exit, there was an error;
+    // (b) asynchronously connecting to the plink SOCKS server, which isn't
+    //     started by plink until its ssh tunnel is established.
+    // Note: piping stdout/stderr of the child processes and monitoring
+    // messages is problematic because we don't control the C I/O flushing
+    // of these processes (http://support.microsoft.com/kb/190351).
+    // Additional measures or alternatives include making actual HTTP
+    // requests through the entire stack from time to time or switching
+    // to integrated ssh/http libraries with APIs.
 
-    // Simply wait 5 seconds to connect
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-    for (int i = 0; i < 50; i++)
+    sockaddr_in plinkSocksServer;
+    plinkSocksServer.sin_family = AF_INET;
+    plinkSocksServer.sin_addr.s_addr = inet_addr("127.0.0.1");
+    plinkSocksServer.sin_port = htons(atoi(TStringToNarrow(PLINK_SOCKS_PROXY_PORT).c_str()));
+
+    SOCKET sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    WSAEVENT connectedEvent = WSACreateEvent();
+
+    bool connected = false;
+
+    if (0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
+        && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plinkSocksServer, sizeof(plinkSocksServer))
+        && WSAEWOULDBLOCK == WSAGetLastError())
     {
-        if (m_cancel)
+        // Wait up to 10 seconds, checking periodically for user cancel
+
+        for (int i = 0; i < 100; i++)
         {
-            return false;
+            if (WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE))
+            {
+                connected = true;
+                break;
+            }
+            else if (m_cancel)
+            {
+                break;
+            }
         }
-        Sleep(100);
     }
 
-    // Now that we are connected, change the Windows Internet Settings
-    // to use our HTTP proxy
+    closesocket(sock);
+    WSACleanup();
 
-    m_systemProxySettings.Configure();
+    if (connected)
+    {
+        // Now that we are connected, change the Windows Internet Settings
+        // to use our HTTP proxy
 
-    my_print(false, _T("SSH successfully connected."));
+        m_systemProxySettings.Configure();
 
-    return true;
+        my_print(false, _T("SSH successfully connected."));
+    }
+
+    return connected;
 }
 
 void SSHConnection::WaitAndDisconnect(void)
