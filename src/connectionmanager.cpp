@@ -186,17 +186,6 @@ void ConnectionManager::DoVPNConnection(
             // Ignore failure
         }
     
-        // Wait between 1 and 5 seconds before retrying. This is a quick
-        // fix to deal with the following problem: when a client can
-        // make an HTTPS connection but not a VPN connection, it ends
-        // up spamming "handshake" requests, resulting in PSK race conditions
-        // with other clients that are trying to connect. This is starving
-        // clients that are able to establish the VPN connection.
-        // TODO: a more optimal solution would only wait when re-trying
-        // a server where this condition (HTTPS ok, VPN failed) previously
-        // occurred.
-        Sleep(1000 + rand()%4000);
-    
         throw TryNextServer();
     }
     
@@ -442,6 +431,21 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             manager->SSHDisconnect();
             manager->MarkCurrentServerFailed();
             // Continue while loop to try next server
+
+            // Wait between 1 and 5 seconds before retrying. This is a quick
+            // fix to deal with the following problem: when a client can
+            // make an HTTPS connection but not a VPN connection, it ends
+            // up spamming "handshake" requests, resulting in PSK race conditions
+            // with other clients that are trying to connect. This is starving
+            // clients that are able to establish the VPN connection.
+            // TODO: a more optimal solution would only wait when re-trying
+            // a server where this condition (HTTPS ok, VPN failed) previously
+            // occurred.
+            // UPDATE: even with SSH as a fail over, we're leaving this delay
+            // in for now as clients blocked on both protocols would otherwise
+            // still spam handshakes. The delay is *after* SSH fail over so as
+            // not to delay that attempt (on the same server).
+            Sleep(1000 + rand()%4000);    
         }
     }
 
