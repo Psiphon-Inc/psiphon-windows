@@ -36,6 +36,10 @@ public:
     string GetWebServerCertificate(void) { return m_serverEntry.webServerCertificate;}
     string GetUpgradeVersion(void) {return m_upgradeVersion;}
     string GetPSK(void) {return m_psk;}
+    string GetSSHPort(void) {return m_sshPort;}
+    string GetSSHUsername(void) {return m_sshUsername;}
+    string GetSSHPassword(void) {return m_sshPassword;}
+    string GetSSHHostKey(void) {return m_sshHostKey;}
     vector<string> GetHomepages(void) {return m_homepages;}
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
 
@@ -46,6 +50,10 @@ private:
 
     string m_upgradeVersion;
     string m_psk;
+    string m_sshPort;
+    string m_sshUsername;
+    string m_sshPassword;
+    string m_sshHostKey;
     vector<string> m_homepages;
     vector<string> m_servers;
 };

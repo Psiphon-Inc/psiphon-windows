@@ -120,6 +120,13 @@ void ConnectionManager::DoVPNConnection(
         ConnectionManager* manager,
         const ServerEntry& serverEntry)
 {
+    // NOTE: this function is a helper for ConnectionManagerStartThread and so doesn't hold the lock
+
+    if (!manager->CurrentServerVPNCapable())
+    {
+        throw TryNextServer();
+    }
+
     //
     // Minimum version check for VPN
     // - L2TP/IPSec/PSK not supported on Windows 2000
@@ -243,13 +250,18 @@ void ConnectionManager::DoVPNConnection(
 
 void ConnectionManager::DoSSHConnection(ConnectionManager* manager)
 {
+    // NOTE: this function is a helper for ConnectionManagerStartThread and so doesn't hold the lock
+
+    if (!manager->CurrentServerSSHCapable())
+    {
+        throw TryNextServer();
+    }
+
     //
     // Establish SSH connection
     //
 
-    // TEMP
-    tstring hostKey = _T("<base64>==");
-    if (!manager->SSHConnect(_T("1.1.1.1"),_T("22"),hostKey,_T("psiphonv"),_T("<password>"))
+    if (!manager->SSHConnect()
         || !manager->SSHWaitForConnected())
     {
         if (manager->GetUserSignalledStop())
@@ -438,6 +450,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
 // ==== VPN Session Functions =================================================
 
+bool ConnectionManager::CurrentServerVPNCapable()
+{
+    AutoMUTEX lock(m_mutex);
+
+    return m_currentSessionInfo.GetPSK().length() > 0;
+}
+
 VPNConnectionState ConnectionManager::GetVPNConnectionState(void)
 {
     AutoMUTEX lock(m_mutex);
@@ -494,21 +513,23 @@ void ConnectionManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState
 
 // ==== SSH Session Functions =================================================
 
-bool ConnectionManager::SSHConnect(
-        const tstring& sshServerAddress,
-        const tstring& sshServerPort,
-        const tstring& sshServerPublicKey,
-        const tstring& sshUsername,
-        const tstring& sshPassword)
+bool ConnectionManager::CurrentServerSSHCapable()
+{
+    AutoMUTEX lock(m_mutex);
+
+    return m_currentSessionInfo.GetSSHHostKey().length() > 0;
+}
+
+bool ConnectionManager::SSHConnect()
 {
     AutoMUTEX lock(m_mutex);
 
     return m_sshConnection.Connect(
-            sshServerAddress,
-            sshServerPort,
-            sshServerPublicKey,
-            sshUsername,
-            sshPassword);
+            NarrowToTString(m_currentSessionInfo.GetServerAddress()),
+            NarrowToTString(m_currentSessionInfo.GetSSHPort()),
+            NarrowToTString(m_currentSessionInfo.GetSSHHostKey()),
+            NarrowToTString(m_currentSessionInfo.GetSSHUsername()),
+            NarrowToTString(m_currentSessionInfo.GetSSHPassword()));
 }
 
 void ConnectionManager::SSHDisconnect(void)

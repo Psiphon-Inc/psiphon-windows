@@ -32,17 +32,29 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     // Expected response:
     //
     // Upgrade: <url> \n        (zero or one)
-    // PSK: <hexstring>\n
+    // PSK: <hexstring>\n       (zero or one)
     // HomePage: <url>\n        (zero or more)
     // Server: <hexstring>\n    (zero or more)
+    // SSHPort: <string>\n         (zero or one)
+    // SSHUsername: <string>\n  (zero or one)
+    // SSHPassword: <string>\n  (zero or one)
+    // SSHHostKey: <string>\n   (zero or one)
 
     static const char* UPGRADE_PREFIX = "Upgrade: ";
     static const char* PSK_PREFIX = "PSK: ";
+    static const char* SSH_PORT_PREFIX = "SSHPort: ";
+    static const char* SSH_USERNAME_PREFIX = "SSHUsername: ";
+    static const char* SSH_PASSWORD_PREFIX = "SSHPassword: ";
+    static const char* SSH_HOST_KEY_PREFIX = "SSHHostkey: ";
     static const char* HOMEPAGE_PREFIX = "Homepage: ";
     static const char* SERVER_PREFIX = "Server: ";
 
     m_upgradeVersion.clear();
     m_psk.clear();
+    m_sshPort.clear();
+    m_sshUsername.clear();
+    m_sshPassword.clear();
+    m_sshHostKey.clear();
     m_homepages.clear();
     m_servers.clear();
 
@@ -60,6 +72,26 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         {
             item.erase(0, strlen(PSK_PREFIX));
             m_psk = item;
+        }
+        else if (0 == item.find(SSH_PORT_PREFIX))
+        {
+            item.erase(0, strlen(SSH_PORT_PREFIX));
+            m_sshPort = item;
+        }
+        else if (0 == item.find(SSH_USERNAME_PREFIX))
+        {
+            item.erase(0, strlen(SSH_USERNAME_PREFIX));
+            m_sshUsername = item;
+        }
+        else if (0 == item.find(SSH_PASSWORD_PREFIX))
+        {
+            item.erase(0, strlen(SSH_PASSWORD_PREFIX));
+            m_sshPassword = item;
+        }
+        else if (0 == item.find(SSH_HOST_KEY_PREFIX))
+        {
+            item.erase(0, strlen(SSH_HOST_KEY_PREFIX));
+            m_sshHostKey = item;
         }
         else if (0 == item.find(HOMEPAGE_PREFIX))
         {

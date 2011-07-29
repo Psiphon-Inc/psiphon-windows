@@ -71,18 +71,15 @@ private:
     bool RequireUpgrade(tstring& downloadRequestPath);
     bool DoUpgrade(const string& download);
 
+    bool CurrentServerVPNCapable(void);
     VPNConnectionState GetVPNConnectionState(void);
     HANDLE GetVPNConnectionStateChangeEvent(void);
     void RemoveVPNConnection(void);
     void VPNEstablish(void);
-
     void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
-    bool SSHConnect(
-        const tstring& sshServerAddress,
-        const tstring& sshServerPort,
-        const tstring& sshServerPublicKey,
-        const tstring& sshUsername,
-        const tstring& sshPassword);
+
+    bool CurrentServerSSHCapable(void);
+    bool SSHConnect(void);
     void SSHDisconnect(void);
     bool SSHWaitForConnected(void);
     void SSHWaitAndDisconnect(void);

@@ -33,7 +33,7 @@ public:
     bool Connect(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
-        const tstring& sshServerPublicKey,
+        const tstring& sshServerHostKey,
         const tstring& sshUsername,
         const tstring& sshPassword);
     void Disconnect(void);

@@ -110,18 +110,18 @@ bool ExtractExecutable(DWORD resourceID, tstring& path)
 bool SetPlinkSSHHostKey(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
-        const tstring& sshServerPublicKey)
+        const tstring& sshServerHostKey)
 {
-    // Add Plink registry entry for host for non-interactive public key validation
+    // Add Plink registry entry for host for non-interactive host key validation
 
     // Host key is base64 encoded set of fiels
 
     BYTE* decodedFields = NULL;
     DWORD size = 0;
 
-    if (!CryptStringToBinary(sshServerPublicKey.c_str(), sshServerPublicKey.length(), CRYPT_STRING_BASE64, NULL, &size, NULL, NULL)
+    if (!CryptStringToBinary(sshServerHostKey.c_str(), sshServerHostKey.length(), CRYPT_STRING_BASE64, NULL, &size, NULL, NULL)
         || !(decodedFields = new (std::nothrow) BYTE[size])
-        || !CryptStringToBinary(sshServerPublicKey.c_str(), sshServerPublicKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
+        || !CryptStringToBinary(sshServerHostKey.c_str(), sshServerHostKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
     {
         my_print(false, _T("SetPlinkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
         return false;
@@ -209,7 +209,7 @@ bool SetPlinkSSHHostKey(
 bool SSHConnection::Connect(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
-        const tstring& sshServerPublicKey,
+        const tstring& sshServerHostKey,
         const tstring& sshUsername,
         const tstring& sshPassword)
 {
@@ -240,7 +240,7 @@ bool SSHConnection::Connect(
     // Add host to Plink's known host registry set
     // Note: currently we're not removing this after the session, so we're leaving a trace
 
-    SetPlinkSSHHostKey(sshServerAddress, sshServerPort, sshServerPublicKey);
+    SetPlinkSSHHostKey(sshServerAddress, sshServerPort, sshServerHostKey);
 
     // Start plink using Psiphon server SSH parameters
 
