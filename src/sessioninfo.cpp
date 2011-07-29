@@ -45,7 +45,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     static const char* SSH_PORT_PREFIX = "SSHPort: ";
     static const char* SSH_USERNAME_PREFIX = "SSHUsername: ";
     static const char* SSH_PASSWORD_PREFIX = "SSHPassword: ";
-    static const char* SSH_HOST_KEY_PREFIX = "SSHHostkey: ";
+    static const char* SSH_HOST_KEY_PREFIX = "SSHHostKey: ";
     static const char* HOMEPAGE_PREFIX = "Homepage: ";
     static const char* SERVER_PREFIX = "Server: ";
 

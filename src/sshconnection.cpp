@@ -154,26 +154,20 @@ bool SetPlinkSSHHostKey(
 
         if (nextLen > 0 && offset + nextLen <= size)        
         {
-            if (data.length() > 0)
-            {
-                data += ",";
-            }
-            data += "0x";
+            string field = "";
             const char* hexDigits = "0123456789abcdef";
-            bool leadingZero = true;
             for (unsigned long i = 0; i < nextLen; i++)
             {
-                if (0 != decodedFields[offset + i])
-                {
-                    leadingZero = false;
-                }
-                else if (leadingZero)
-                {
-                    continue;
-                }
-                data += hexDigits[decodedFields[offset + i] >> 4];
-                data += hexDigits[decodedFields[offset + i] & 0x0F];
+                char digit = hexDigits[decodedFields[offset + i] >> 4];
+                // Don't add leading zeroes
+                if (digit != '0' || field.length() > 0) field += digit;
+                digit = hexDigits[decodedFields[offset + i] & 0x0F];
+                // Always include last nibble (e.g. 0x0)
+                if (i == nextLen-1 || (digit != '0' || field.length() > 0)) field += digit;
             }
+            field = "0x" + field;
+            if (data.length() > 0) data += ",";
+            data += field;
             offset += nextLen;
         }
     }
