@@ -130,7 +130,7 @@ void ConnectionManager::DoVPNConnection(
     //
     // Minimum version check for VPN
     // - L2TP/IPSec/PSK not supported on Windows 2000
-    // - (TODO: once we add SSH, fail over to SSH)
+    // - Throws to try next server -- an assumption here is we'll always try SSH next
     //
     
     OSVERSIONINFO versionInfo;
@@ -139,8 +139,8 @@ void ConnectionManager::DoVPNConnection(
             versionInfo.dwMajorVersion < 5 ||
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
-        my_print(false, _T("Windows XP or greater required"));
-        throw Abort();
+        my_print(false, _T("VPN requires Windows XP or greater"));
+        throw TryNextServer();
     }
     
     //
@@ -570,7 +570,12 @@ void ConnectionManager::VPNEstablish(void)
     {
         // This is a local error, we should not try the next server because
         // we'll likely end up in an infinite loop.
-        throw Abort();
+        // UPDATE: was throwing Abort for reason above, now throwing TryNextServer
+        // to try SSH instead. Assumes we always can try SSH, otherwise we should
+        // still abort.
+        // NOTE: if we know for certain that VPN won't work, we should record that
+        // and stop trying here (and elsewhere in the retry loop)
+        throw TryNextServer();
     }
 }
 
