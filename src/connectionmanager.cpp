@@ -407,6 +407,12 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 // Establish VPN connection and wait for termination
                 // Throws TryNextServer or Abort on failure
                 
+                if (IGNORE_VPN_RELAY)
+                {
+                    // NOTE: This case is for automated testing only
+                    throw TryNextServer();
+                }
+
                 DoVPNConnection(manager, serverEntry);
             }
             catch (TryNextServer&)
