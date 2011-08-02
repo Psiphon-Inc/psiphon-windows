@@ -171,7 +171,7 @@ void ConnectionManager::DoVPNConnection(
         // Report error code to server for logging/trouble-shooting.
         // The request line includes the last VPN error code.
         
-        tstring requestPath = manager->GetFailedRequestPath();
+        tstring requestPath = manager->GetVPNFailedRequestPath();
     
         string response;
         HTTPSRequest httpsRequest;
@@ -201,20 +201,13 @@ void ConnectionManager::DoVPNConnection(
     TweakDNS();
     
     //
-    // Open home pages in browser
-    //
-    
-    manager->OpenHomePages();
-    
-    //
     // "Connected" HTTPS request for server stats (not critical to succeed)
-    //
-    
-    tstring connectedRequestPath = manager->GetConnectRequestPath();
-    
     // There's no content in the response. Also, failure is ignored since
     // it just means the server didn't log a stat.
+    //
     
+    tstring connectedRequestPath = manager->GetVPNConnectRequestPath();
+        
     string response;
     HTTPSRequest httpsRequest;
     if (!httpsRequest.GetRequest(
@@ -227,7 +220,13 @@ void ConnectionManager::DoVPNConnection(
     {
         // Ignore failure
     }
+
+    //
+    // Open home pages in browser
+    //
     
+    manager->OpenHomePages();
+
     //
     // Wait for VPN connection to stop (or fail) -- set ConnectionManager state accordingly (used by UI)
     //
@@ -237,7 +236,9 @@ void ConnectionManager::DoVPNConnection(
     manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
 }
 
-void ConnectionManager::DoSSHConnection(ConnectionManager* manager)
+void ConnectionManager::DoSSHConnection(
+        ConnectionManager* manager,
+        const ServerEntry& serverEntry)
 {
     // NOTE: this function is a helper for ConnectionManagerStartThread and so doesn't hold the lock
 
@@ -257,10 +258,51 @@ void ConnectionManager::DoSSHConnection(ConnectionManager* manager)
         {
             throw Abort();
         }
+
+        // Report error code to server for logging/trouble-shooting.
+        // The request line includes the last VPN error code.
+        
+        tstring requestPath = manager->GetSSHFailedRequestPath();
+    
+        string response;
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.GetRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            requestPath.c_str(),
+                            response))
+        {
+            // Ignore failure
+        }
+
         throw TryNextServer();
     }
 
     manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
+
+
+    //
+    // "Connected" HTTPS request for server stats (not critical to succeed)
+    // There's no content in the response. Also, failure is ignored since
+    // it just means the server didn't log a stat.
+    //
+    
+    tstring connectedRequestPath = manager->GetSSHConnectRequestPath();
+        
+    string response;
+    HTTPSRequest httpsRequest;
+    if (!httpsRequest.GetRequest(
+                        manager->GetUserSignalledStop(),
+                        NarrowToTString(serverEntry.serverAddress).c_str(),
+                        serverEntry.webServerPort,
+                        serverEntry.webServerCertificate,
+                        connectedRequestPath.c_str(),
+                        response))
+    {
+        // Ignore failure
+    }
 
     //
     // Open home pages in browser
@@ -419,7 +461,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             {
                 // When the VPN attempt fails, establish SSH connection and wait for termination
                 manager->RemoveVPNConnection();
-                DoSSHConnection(manager);
+                DoSSHConnection(manager, serverEntry);
             }
 
             break;
@@ -465,6 +507,35 @@ bool ConnectionManager::CurrentServerVPNCapable()
     AutoMUTEX lock(m_mutex);
 
     return m_currentSessionInfo.GetPSK().length() > 0;
+}
+
+tstring ConnectionManager::GetVPNConnectRequestPath(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=VPN") +
+           _T("&session_id=") + m_vpnConnection.GetPPPIPAddress();
+}
+
+tstring ConnectionManager::GetVPNFailedRequestPath(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    std::stringstream s;
+    s << m_vpnConnection.GetLastVPNErrorCode();
+
+    return tstring(HTTP_FAILED_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=VPN") +
+           _T("&error_code=") + NarrowToTString(s.str());
 }
 
 VPNConnectionState ConnectionManager::GetVPNConnectionState(void)
@@ -530,6 +601,36 @@ bool ConnectionManager::CurrentServerSSHCapable()
     return m_currentSessionInfo.GetSSHHostKey().length() > 0;
 }
 
+tstring ConnectionManager::GetSSHConnectRequestPath(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    // TODO: get SSH session ID?
+
+    return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=SSH") +
+           _T("&session_id=0.0.0.0");
+}
+
+tstring ConnectionManager::GetSSHFailedRequestPath(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    // TODO: get error code from SSH client?
+
+    return tstring(HTTP_FAILED_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=SSH") +
+           _T("&error_code=0");
+}
+
 bool ConnectionManager::SSHConnect()
 {
     AutoMUTEX lock(m_mutex);
@@ -571,33 +672,6 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 }
 
 // ==== General Session Functions =============================================
-
-tstring ConnectionManager::GetConnectRequestPath(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&vpn_client_ip_address=") + m_vpnConnection.GetPPPIPAddress();
-}
-
-tstring ConnectionManager::GetFailedRequestPath(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    std::stringstream s;
-    s << m_vpnConnection.GetLastVPNErrorCode();
-
-    return tstring(HTTP_FAILED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&error_code=") + NarrowToTString(s.str());
-}
 
 void ConnectionManager::LoadNextServer(
         ServerEntry& serverEntry,

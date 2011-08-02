@@ -54,15 +54,14 @@ private:
         ConnectionManager* manager,
         const ServerEntry& serverEntry);
     static void DoSSHConnection(
-        ConnectionManager* manager);
+        ConnectionManager* manager,
+        const ServerEntry& serverEntry);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class TryNextServer { };
     class Abort { };
 
     void MarkCurrentServerFailed(void);
-    tstring GetConnectRequestPath(void);
-    tstring GetFailedRequestPath(void);
     void LoadNextServer(
         ServerEntry& serverEntry,
         tstring& handshakeRequestPath);
@@ -71,6 +70,8 @@ private:
     bool RequireUpgrade(tstring& downloadRequestPath);
     bool DoUpgrade(const string& download);
 
+    tstring GetVPNConnectRequestPath(void);
+    tstring GetVPNFailedRequestPath(void);
     bool CurrentServerVPNCapable(void);
     VPNConnectionState GetVPNConnectionState(void);
     HANDLE GetVPNConnectionStateChangeEvent(void);
@@ -78,6 +79,8 @@ private:
     void VPNEstablish(void);
     void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
 
+    tstring GetSSHConnectRequestPath(void);
+    tstring GetSSHFailedRequestPath(void);
     bool CurrentServerSSHCapable(void);
     bool SSHConnect(void);
     void SSHDisconnect(void);
