@@ -351,9 +351,9 @@ bool SSHConnection::WaitForConnected(void)
         && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plinkSocksServer, sizeof(plinkSocksServer))
         && WSAEWOULDBLOCK == WSAGetLastError())
     {
-        // Wait up to 10 seconds, checking periodically for user cancel
+        // Wait up to SSH_CONNECTION_TIMEOUT_SECONDS, checking periodically for user cancel
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < SSH_CONNECTION_TIMEOUT_SECONDS*10; i++)
         {
             if (WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE))
             {

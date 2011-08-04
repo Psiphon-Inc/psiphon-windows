@@ -583,16 +583,29 @@ void ConnectionManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState
 {
     // NOTE: no lock, as in ConnectionManagerStartThread
 
+    int totalWaitMilliseconds = 0;
+
     while (state == GetVPNConnectionState())
     {
         HANDLE stateChangeEvent = GetVPNConnectionStateChangeEvent();
 
         // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-        DWORD result = WaitForSingleObject(stateChangeEvent, 100);
+
+        // Also, wait no longer than VPN_CONNECTION_TIMEOUT_SECONDS... overriding any system
+        // configuration built-in VPN client timeout (which we've found to be too long -- over a minute).
+
+        int waitMilliseconds = 100;
+        DWORD result = WaitForSingleObject(stateChangeEvent, waitMilliseconds);
+
+        totalWaitMilliseconds += waitMilliseconds;
 
         if (GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
         {
             throw Abort();
+        }
+        else if (result == WAIT_TIMEOUT && totalWaitMilliseconds >= VPN_CONNECTION_TIMEOUT_SECONDS*1000)
+        {
+            throw TryNextServer();
         }
     }
 }

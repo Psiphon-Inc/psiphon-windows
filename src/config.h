@@ -30,3 +30,6 @@ static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
 static const TCHAR* HTTP_DOWNLOAD_REQUEST_PATH = _T("/download");
+
+static int VPN_CONNECTION_TIMEOUT_SECONDS = 20;
+static int SSH_CONNECTION_TIMEOUT_SECONDS = 20;
