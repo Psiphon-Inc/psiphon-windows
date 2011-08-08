@@ -583,6 +583,8 @@ void ConnectionManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState
 {
     // NOTE: no lock, as in ConnectionManagerStartThread
 
+    VPNConnectionState originalState = state;
+
     int totalWaitMilliseconds = 0;
 
     while (state == GetVPNConnectionState())
@@ -603,7 +605,10 @@ void ConnectionManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState
         {
             throw Abort();
         }
-        else if (result == WAIT_TIMEOUT && totalWaitMilliseconds >= VPN_CONNECTION_TIMEOUT_SECONDS*1000)
+        else if (
+            result == WAIT_TIMEOUT &&
+            originalState == VPN_CONNECTION_STATE_STARTING &&
+            totalWaitMilliseconds >= VPN_CONNECTION_TIMEOUT_SECONDS*1000)
         {
             throw TryNextServer();
         }
