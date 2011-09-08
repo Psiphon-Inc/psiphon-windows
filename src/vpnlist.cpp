@@ -329,6 +329,36 @@ ServerEntry VPNList::ParseServerEntry(const string& serverEntry)
 // NOTE: This function does not throw because we don't want a failure to prevent a connection attempt.
 void VPNList::WriteListToSystem(const ServerEntries& serverEntryList)
 {
+    // Whenever we're changing the server list, check if the
+    // first server entry changed. If so, delete the "skip VPN"
+    // flag as we don't want to skip VPN for the new top server.
+    // This will include cases where new embedded servers are
+    // added, and when a server is marked as failed and moved
+    // to the bottom of the list.
+    // Note: comparing server entries by server network
+    // address, so we ignore changes to web secret and creds.
+
+    bool resetSkipVPN = true;
+
+    try
+    {
+        ServerEntries oldEntries = GetListFromSystem();
+        if (oldEntries.size() > 0 &&
+            serverEntryList.size() > 0 &&
+            oldEntries[0].serverAddress == serverEntryList[0].serverAddress)
+        {
+            resetSkipVPN = false;
+        }
+    }
+    catch (std::exception &)
+    {
+    }
+
+    if (resetSkipVPN)
+    {
+        ResetSkipVPN();
+    }
+
     HKEY key = 0;
     DWORD disposition = 0;
     LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, LOCAL_SETTINGS_REGISTRY_KEY, 0, 0, 0, KEY_WRITE, 0, &key, &disposition);
@@ -374,4 +404,54 @@ string VPNList::EncodeServerEntries(const ServerEntries& serverEntryList)
         encodedServerList += Hexlify(serverEntry) + "\n";
     }
     return encodedServerList;
+}
+
+bool VPNList::GetSkipVPN(void)
+{
+    bool skipVPN = false;
+
+    HKEY key = 0;
+    DWORD value;
+    DWORD bufferLength = sizeof(value);
+    DWORD type;
+
+    if (ERROR_SUCCESS == RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_READ, &key) &&
+        ERROR_SUCCESS == RegQueryValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN, 0, &type, (LPBYTE)&value, &bufferLength) &&
+        type == REG_DWORD &&
+        value == 1)
+    {
+        skipVPN = true;
+    }
+
+    RegCloseKey(key);
+
+    return skipVPN;
+}
+
+void VPNList::SetSkipVPN(void)
+{
+    HKEY key = 0;
+    DWORD value = 1;
+    DWORD bufferLength = sizeof(value);
+
+    if (ERROR_SUCCESS != RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key) ||
+        ERROR_SUCCESS != RegSetValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN, 0, REG_DWORD, (LPBYTE)&value, bufferLength))
+    {
+        my_print(false, _T("Set Skip VPN Registry Value failed (%d)"), GetLastError());
+    }
+
+    RegCloseKey(key);
+}
+
+void VPNList::ResetSkipVPN(void)
+{
+    HKEY key = 0;
+
+    if (ERROR_SUCCESS != RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key) ||
+        ERROR_SUCCESS != RegDeleteValueA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN))
+    {
+        my_print(false, _T("Delete Skip VPN Registry Value failed (%d)"), GetLastError());
+    }
+
+    RegCloseKey(key);
 }

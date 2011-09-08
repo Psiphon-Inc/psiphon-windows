@@ -42,13 +42,18 @@ public:
     virtual ~ConnectionManager(void);
     void Toggle(void);
     void Stop(void);
+    void Start(void);
     void SetState(ConnectionManagerState newState) {m_state = newState;}
     ConnectionManagerState GetState(void) {return m_state;}
     const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
     void OpenHomePages(void);
+    void SetSkipVPN(void);
+    void ResetSkipVPN(void);
+    bool GetSkipVPN(void);
+    void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
+    bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
 
 private:
-    void Start(void);
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
     static void DoVPNConnection(
         ConnectionManager* manager,
@@ -95,4 +100,5 @@ private:
     SessionInfo m_currentSessionInfo;
     SSHConnection m_sshConnection;
     HANDLE m_thread;
+    bool m_currentSessionSkippedVPN;
 };

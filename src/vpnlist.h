@@ -47,6 +47,9 @@ public:
     void MarkCurrentServerFailed(void);
     ServerEntry GetNextServer(void);
     ServerEntries GetList(void);
+    bool GetSkipVPN(void);
+    void SetSkipVPN(void);
+    void ResetSkipVPN(void);
 
 private:
     ServerEntries GetListFromEmbeddedValues(void);

@@ -38,7 +38,8 @@ ConnectionManager::ConnectionManager(void) :
     m_state(CONNECTION_MANAGER_STATE_STOPPED),
     m_userSignalledStop(false),
     m_sshConnection(m_userSignalledStop),
-    m_thread(0)
+    m_thread(0),
+    m_currentSessionSkippedVPN(false)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 }
@@ -54,6 +55,27 @@ void ConnectionManager::OpenHomePages(void)
     AutoMUTEX lock(m_mutex);
     
     OpenBrowser(m_currentSessionInfo.GetHomepages());
+}
+
+void ConnectionManager::SetSkipVPN(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    m_vpnList.SetSkipVPN();
+}
+
+void ConnectionManager::ResetSkipVPN(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    m_vpnList.ResetSkipVPN();
+}
+
+bool ConnectionManager::GetSkipVPN(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return m_vpnList.GetSkipVPN();
 }
 
 void ConnectionManager::Toggle()
@@ -356,6 +378,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     {
         try
         {
+            // Ensure UI doesn't show "VPN Skipped" icon
+            manager->SetCurrentConnectionSkippedVPN(false);
+
             //
             // Handshake HTTPS request
             //
@@ -369,6 +394,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             manager->LoadNextServer(
                             serverEntry,
                             handshakeRequestPath);
+
+            // If the "Skip VPN" flag is set, the last time the user
+            // connected with this server, VPN failed. So we don't
+            // try VPN again.
+            // Note: this flag is cleared whenever the first server
+            // in the list changes, so VPN will be tried again.
+
+            bool skipVPN = manager->GetSkipVPN();
 
             HTTPSRequest httpsRequest;
             if (!httpsRequest.GetRequest(
@@ -449,9 +482,12 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 // Establish VPN connection and wait for termination
                 // Throws TryNextServer or Abort on failure
                 
-                if (IGNORE_VPN_RELAY)
+                manager->SetCurrentConnectionSkippedVPN(skipVPN);
+
+                // NOTE: IGNORE_VPN_RELAY is for automated testing only
+
+                if (IGNORE_VPN_RELAY || skipVPN)
                 {
-                    // NOTE: This case is for automated testing only
                     throw TryNextServer();
                 }
 
@@ -461,6 +497,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             {
                 // When the VPN attempt fails, establish SSH connection and wait for termination
                 manager->RemoveVPNConnection();
+
+                // Set persistent flag to not try VPN again when we run exactly the same server again
+                manager->SetSkipVPN();
+
                 DoSSHConnection(manager, serverEntry);
             }
 

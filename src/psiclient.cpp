@@ -30,12 +30,16 @@
 // TODO: Calculate instead of using magic constants
 
 const int BUTTON_SIZE = 48;
-const int BANNER_X = BUTTON_SIZE + 10;
+const int BANNER_X = (BUTTON_SIZE + 10);
 const int BANNER_Y = 3;
 const int BANNER_WIDTH = 200;
-const int BANNER_HEIGHT = 48;
+const int BANNER_HEIGHT = BUTTON_SIZE;
+const int VPN_DISABLED_X = (BUTTON_SIZE + 10) + BANNER_WIDTH;
+const int VPN_DISABLED_Y = 3;
+const int VPN_DISABLED_WIDTH = BUTTON_SIZE;
+const int VPN_DISABLED_HEIGHT = BUTTON_SIZE;
 const int TOOLBAR_HEIGHT = BUTTON_SIZE + 16;
-const int WINDOW_WIDTH = BUTTON_SIZE + BANNER_WIDTH + 30;
+const int WINDOW_WIDTH = (BUTTON_SIZE + 10)*2 + BANNER_WIDTH + 10;
 const int WINDOW_HEIGHT = 130;
 
 
@@ -159,6 +163,7 @@ ConnectionManager g_connectionManager;
 
 HWND g_hToolBar = NULL;
 HWND g_hBanner = NULL;
+HWND g_hVPNSkipped = NULL;
 HIMAGELIST g_hToolbarImageList = NULL;
 
 void CreateToolbar(HWND hWndParent)
@@ -166,7 +171,6 @@ void CreateToolbar(HWND hWndParent)
     // Define some constants.
     const int ImageListID = 0;
     const int numButtons = 1;
-    const DWORD buttonStyles = BTNS_AUTOSIZE;
     const int bitmapSize = BUTTON_SIZE;
 
     // Create the toolbar.
@@ -196,7 +200,7 @@ void CreateToolbar(HWND hWndParent)
     TBBUTTON tbButtons[numButtons] = 
     {
         { MAKELONG(0, ImageListID), IDM_TOGGLE, TBSTATE_ENABLED, 
-          buttonStyles, {0}, 0, (INT_PTR)L"" }
+          BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"" }
     };
 
     // Add buttons.
@@ -213,9 +217,21 @@ void CreateToolbar(HWND hWndParent)
                         WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP | SS_NOTIFY,
                         BANNER_X, BANNER_Y, BANNER_WIDTH, BANNER_HEIGHT,
                         g_hToolBar, NULL, hInst, NULL);
-    EnableWindow(g_hBanner, TRUE);
     HBITMAP hBanner = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BANNER));
     SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBanner);
+    EnableWindow(g_hBanner, TRUE);
+    ShowWindow(g_hBanner, TRUE);
+
+    // Add VPN disabled child control.
+    g_hVPNSkipped = CreateWindow(
+                        L"Static", 0,
+                        WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_ICON | SS_NOTIFY,
+                        VPN_DISABLED_X, VPN_DISABLED_Y, VPN_DISABLED_WIDTH, VPN_DISABLED_HEIGHT,
+                        g_hToolBar, NULL, hInst, NULL);
+     HICON hVPNSkippedIcon = ImageList_GetIcon(g_hToolbarImageList, 7, 0);
+     SendMessage(g_hVPNSkipped, STM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)hVPNSkippedIcon);
+     EnableWindow(g_hVPNSkipped, FALSE);
+     ShowWindow(g_hVPNSkipped, FALSE);
 
     // Tell the toolbar to resize itself, and show it.
     SendMessage(g_hToolBar, TB_AUTOSIZE, 0, 0); 
@@ -274,6 +290,20 @@ void UpdateButton(HWND hWnd)
     {
         info.iImage = image;
         SendMessage(g_hToolBar, TB_SETBUTTONINFO, IDM_TOGGLE, (LPARAM)&info);
+    }
+
+    // Update the VPN skipped icon
+
+    if (state == CONNECTION_MANAGER_STATE_CONNECTED_SSH &&
+        g_connectionManager.CurrentSessionSkippedVPN())
+    {
+        EnableWindow(g_hVPNSkipped, TRUE);
+        ShowWindow(g_hVPNSkipped, TRUE);
+    }
+    else
+    {
+        EnableWindow(g_hVPNSkipped, FALSE);
+        ShowWindow(g_hVPNSkipped, FALSE);
     }
 }
 
@@ -417,42 +447,60 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_COMMAND:
 
-        wmId    = LOWORD(wParam);
+        wmId = LOWORD(wParam);
         wmEvent = HIWORD(wParam);
 
-        // Parse the menu selections:
-        switch (wmId)
+        if (lParam == 0) // menu or accelerator event
         {
-        case STN_CLICKED:
-            if (lParam == (LPARAM)g_hBanner)
+            switch (wmId)
             {
-                // Banner static control was clicked, so open home pages
-                int state = g_connectionManager.GetState();
-                if (CONNECTION_MANAGER_STATE_CONNECTED_VPN == state
-                    || CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
-                {
-                    g_connectionManager.OpenHomePages();
-                }
+            case IDM_SHOW_DEBUG_MESSAGES:
+                g_bShowDebugMessages = !g_bShowDebugMessages;
+                my_print(false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
+                break;
+            // TODO: remove help, about, and exit?  The menu is currently hidden
+            case IDM_HELP:
+                break;
+            case IDM_ABOUT:
+                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                break;
+            case IDM_EXIT:
+                DestroyWindow(hWnd);
+                break;
+            default:
+                return DefWindowProc(hWnd, message, wParam, lParam);
             }
-            break;
-        case IDM_TOGGLE:
+        }
+        // lParam != 0: control notifications
+        else if (lParam == (LPARAM)g_hToolBar && wmId == IDM_TOGGLE)
+        {
             g_connectionManager.Toggle();
-            break;
-        case IDM_SHOW_DEBUG_MESSAGES:
-            g_bShowDebugMessages = !g_bShowDebugMessages;
-            my_print(false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
-            break;
-        // TODO: remove help, about, and exit?  The menu is currently hidden
-        case IDM_HELP:
-            break;
-        case IDM_ABOUT:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-            break;
-        case IDM_EXIT:
-            DestroyWindow(hWnd);
-            break;
-        default:
-            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+        else if (lParam == (LPARAM)g_hBanner && wmEvent == STN_CLICKED)
+        {
+            // Banner static control was clicked, so open home pages
+            int state = g_connectionManager.GetState();
+            if (CONNECTION_MANAGER_STATE_CONNECTED_VPN == state
+                || CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
+            {
+                g_connectionManager.OpenHomePages();
+            }
+        }
+        else if (lParam == (LPARAM)g_hVPNSkipped && wmEvent == STN_CLICKED)
+        {
+            // "VPN Skipped" icon is displayed when connected to SSH
+            // and VPN connection attempt was skipped due to previous
+            // failure. In this case, when the user clicks the icon,
+            // we disconnect, clear the skipped state, and
+            // reconnect -- which by default will try
+            // the same server but with VPN not skipped this time.
+            int state = g_connectionManager.GetState();
+            if (CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
+            {
+                g_connectionManager.Stop();
+                g_connectionManager.ResetSkipVPN();
+                g_connectionManager.Start();
+            }
         }
         break;
 
