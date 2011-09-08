@@ -434,12 +434,8 @@ void VPNList::SetSkipVPN(void)
     DWORD value = 1;
     DWORD bufferLength = sizeof(value);
 
-    if (ERROR_SUCCESS != RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key) ||
-        ERROR_SUCCESS != RegSetValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN, 0, REG_DWORD, (LPBYTE)&value, bufferLength))
-    {
-        my_print(false, _T("Set Skip VPN Registry Value failed (%d)"), GetLastError());
-    }
-
+    RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
+    RegSetValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN, 0, REG_DWORD, (LPBYTE)&value, bufferLength);
     RegCloseKey(key);
 }
 
@@ -447,11 +443,7 @@ void VPNList::ResetSkipVPN(void)
 {
     HKEY key = 0;
 
-    if (ERROR_SUCCESS != RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key) ||
-        ERROR_SUCCESS != RegDeleteValueA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN))
-    {
-        my_print(false, _T("Delete Skip VPN Registry Value failed (%d)"), GetLastError());
-    }
-
+    RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
+    RegDeleteValueA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN);
     RegCloseKey(key);
 }
