@@ -95,7 +95,8 @@ void ConnectionManager::Toggle()
 
 time_t ConnectionManager::GetStartingTime()
 {
-    AutoMUTEX lock(m_mutex);
+    // NOTE: no lock, to prevent blocking connection thread with UI polling
+    // Starting Time is informational only, consistency with state isn't critical
 
     if (m_state != CONNECTION_MANAGER_STATE_STARTING)
     {
@@ -109,7 +110,8 @@ time_t ConnectionManager::GetStartingTime()
 
 void ConnectionManager::SetState(ConnectionManagerState newState)
 {
-    AutoMUTEX lock(m_mutex);
+    // NOTE: no lock, to prevent blocking connection thread with UI polling
+    // Starting Time is informational only, consistency with state isn't critical
 
     if (newState == CONNECTION_MANAGER_STATE_STARTING)
     {
