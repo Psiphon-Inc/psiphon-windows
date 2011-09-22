@@ -42,6 +42,7 @@
 
 #define IDB_TOOLBAR_ICONS       200
 #define IDB_BANNER              201
+#define IDB_EMAIL               202
 
 // Embedded binaries
 #define IDR_PLINK_EXE           500

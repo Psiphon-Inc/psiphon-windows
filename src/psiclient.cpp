@@ -163,8 +163,11 @@ ConnectionManager g_connectionManager;
 
 HWND g_hToolBar = NULL;
 HWND g_hBanner = NULL;
+HBITMAP g_hBannerBitmap = NULL;
+HBITMAP g_hEmailBitmap = NULL;
 HWND g_hVPNSkipped = NULL;
 HIMAGELIST g_hToolbarImageList = NULL;
+bool g_bShowEmail = false;
 
 void CreateToolbar(HWND hWndParent)
 {
@@ -217,8 +220,9 @@ void CreateToolbar(HWND hWndParent)
                         WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP | SS_NOTIFY,
                         BANNER_X, BANNER_Y, BANNER_WIDTH, BANNER_HEIGHT,
                         g_hToolBar, NULL, hInst, NULL);
-    HBITMAP hBanner = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BANNER));
-    SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBanner);
+    g_hBannerBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BANNER));
+    g_hEmailBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_EMAIL));
+    SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)g_hBannerBitmap);
     EnableWindow(g_hBanner, TRUE);
     ShowWindow(g_hBanner, TRUE);
 
@@ -326,6 +330,42 @@ void UpdateAlpha(HWND hWnd)
     }
 }
 
+void UpdateBanner(HWND hWnd)
+{
+    // Replace the sponsor banner with an image promoting email propagation:
+    // - When starting takes more than N seconds
+    // - After cancelling a start that took more than N seconds
+    // The sponsor banner is restored on a sucessful connection and when the
+    // start button is toggled again.
+
+    ConnectionManagerState state = g_connectionManager.GetState();
+    time_t startingTime = g_connectionManager.GetStartingTime();
+    time_t timeUntilEmail = 20;
+
+    if (state == CONNECTION_MANAGER_STATE_STARTING && startingTime > timeUntilEmail)
+    {
+        g_bShowEmail = true;
+    }
+    else if ((state == CONNECTION_MANAGER_STATE_STARTING && startingTime <= timeUntilEmail) ||
+             state == CONNECTION_MANAGER_STATE_CONNECTED_VPN ||
+             state == CONNECTION_MANAGER_STATE_CONNECTED_SSH)
+    {
+        g_bShowEmail = false;
+    }
+
+    HBITMAP hBitmap = g_hBannerBitmap;
+
+    if (g_bShowEmail)
+    {
+        hBitmap = g_hEmailBitmap;
+    }
+
+    if (hBitmap != (HBITMAP)SendMessage(g_hBanner, STM_GETIMAGE, (WPARAM)IMAGE_BITMAP, 0))
+    {
+        SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
+    }
+}
+
 //==== my_print (logging) =====================================================
 
 #ifdef _DEBUG
@@ -421,6 +461,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_TIMER:
         UpdateButton(hWnd);
+        UpdateBanner(hWnd);
         // DISABLED: UpdateAlpha(hWnd);
         break;
 

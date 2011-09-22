@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <time.h>
 #include "vpnconnection.h"
 #include "sshconnection.h"
 #include "vpnlist.h"
@@ -43,8 +44,9 @@ public:
     void Toggle(void);
     void Stop(void);
     void Start(void);
-    void SetState(ConnectionManagerState newState) {m_state = newState;}
-    ConnectionManagerState GetState(void) {return m_state;}
+    time_t GetStartingTime(void);
+    void SetState(ConnectionManagerState newState);
+    ConnectionManagerState GetState(void);
     const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
     void OpenHomePages(void);
     void SetSkipVPN(void);
@@ -101,4 +103,5 @@ private:
     SSHConnection m_sshConnection;
     HANDLE m_thread;
     bool m_currentSessionSkippedVPN;
+    time_t m_startingTime;
 };

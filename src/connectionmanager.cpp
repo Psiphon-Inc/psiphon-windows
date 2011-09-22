@@ -39,7 +39,8 @@ ConnectionManager::ConnectionManager(void) :
     m_userSignalledStop(false),
     m_sshConnection(m_userSignalledStop),
     m_thread(0),
-    m_currentSessionSkippedVPN(false)
+    m_currentSessionSkippedVPN(false),
+    m_startingTime(0)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 }
@@ -90,6 +91,41 @@ void ConnectionManager::Toggle()
     {
         Stop();
     }
+}
+
+time_t ConnectionManager::GetStartingTime()
+{
+    AutoMUTEX lock(m_mutex);
+
+    if (m_state != CONNECTION_MANAGER_STATE_STARTING)
+    {
+        return 0;
+    }
+    else
+    {
+        return time(0) - m_startingTime;
+    }
+}
+
+void ConnectionManager::SetState(ConnectionManagerState newState)
+{
+    AutoMUTEX lock(m_mutex);
+
+    if (newState == CONNECTION_MANAGER_STATE_STARTING)
+    {
+        m_startingTime = time(0);
+    }
+    else
+    {
+        m_startingTime = 0;
+    }
+
+    m_state = newState;
+}
+
+ConnectionManagerState ConnectionManager::GetState(void)
+{
+    return m_state;
 }
 
 void ConnectionManager::Stop(void)
