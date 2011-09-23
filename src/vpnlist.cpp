@@ -65,8 +65,8 @@ void VPNList::AddEntriesToList(const vector<string>& newServerEntryList)
 
         if (!alreadyKnown)
         {
-            // Insert the new entry below the current (first) entry, but not at the bottom,
-            // because that may contain a previously failed entry
+            // Insert the new entry as the second entry, so that the first entry can continue
+            // to be used if it is reachable
             oldServerEntryList.insert(oldServerEntryList.begin() + 1, newServerEntry);
         }
     }
@@ -127,6 +127,8 @@ ServerEntries VPNList::GetList(void)
     try
     {
         embeddedServerEntryList = GetListFromEmbeddedValues();
+        // Randomize this list for load-balancing
+        random_shuffle(embeddedServerEntryList.begin(), embeddedServerEntryList.end());
     }
     catch (std::exception &ex)
     {
@@ -152,8 +154,12 @@ ServerEntries VPNList::GetList(void)
 
         if (!alreadyKnown)
         {
-            // Insert the new entry at the top
-            systemServerEntryList.insert(systemServerEntryList.begin(), *embeddedServerEntry);
+            // Insert the new entry as the second entry (if there already is at least one),
+            // so that the first entry can continue to be used if it is reachable
+            systemServerEntryList.insert(systemServerEntryList.size() > 0 ?
+                                            systemServerEntryList.begin() + 1 :
+                                            systemServerEntryList.begin(),
+                                         *embeddedServerEntry);
         }
     }
 
