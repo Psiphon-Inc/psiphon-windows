@@ -340,7 +340,7 @@ void UpdateBanner(HWND hWnd)
 
     ConnectionManagerState state = g_connectionManager.GetState();
     time_t startingTime = g_connectionManager.GetStartingTime();
-    time_t timeUntilEmail = 20;
+    time_t timeUntilEmail = 35;
 
     if (state == CONNECTION_MANAGER_STATE_STARTING && startingTime > timeUntilEmail)
     {
