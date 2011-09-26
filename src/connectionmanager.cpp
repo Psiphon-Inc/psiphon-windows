@@ -521,6 +521,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 }
             }
 
+            bool userSkipVPN = UserSkipVPN();
+
             try
             {
                 // Establish VPN connection and wait for termination
@@ -530,7 +532,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
                 // NOTE: IGNORE_VPN_RELAY is for automated testing only
 
-                if (IGNORE_VPN_RELAY || skipVPN || UserSkipVPN())
+                if (IGNORE_VPN_RELAY || skipVPN || userSkipVPN)
                 {
                     throw TryNextServer();
                 }
@@ -544,7 +546,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
                 // Don't set the persistent flag if the user setting is set, so that removing the
                 // user setting will cause VPN to be tried again.
-                if (!UserSkipVPN())
+                if (!userSkipVPN)
                 {
                     // Set persistent flag to not try VPN again when we run exactly the same server again
                     manager->SetSkipVPN();
