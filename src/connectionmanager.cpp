@@ -26,6 +26,7 @@
 #include "webbrowser.h"
 #include "embeddedvalues.h"
 #include "sshconnection.h"
+#include "usersettings.h"
 #include <algorithm>
 #include <sstream>
 
@@ -43,6 +44,8 @@ ConnectionManager::ConnectionManager(void) :
     m_startingTime(0)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
+
+    InitializeUserSettings();
 }
 
 ConnectionManager::~ConnectionManager(void)
@@ -55,7 +58,10 @@ void ConnectionManager::OpenHomePages(void)
 {
     AutoMUTEX lock(m_mutex);
     
-    OpenBrowser(m_currentSessionInfo.GetHomepages());
+    if (!UserSkipBrowser())
+    {
+        OpenBrowser(m_currentSessionInfo.GetHomepages());
+    }
 }
 
 void ConnectionManager::SetSkipVPN(void)
@@ -524,7 +530,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
                 // NOTE: IGNORE_VPN_RELAY is for automated testing only
 
-                if (IGNORE_VPN_RELAY || skipVPN)
+                if (IGNORE_VPN_RELAY || skipVPN || UserSkipVPN())
                 {
                     throw TryNextServer();
                 }
@@ -536,8 +542,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 // When the VPN attempt fails, establish SSH connection and wait for termination
                 manager->RemoveVPNConnection();
 
-                // Set persistent flag to not try VPN again when we run exactly the same server again
-                manager->SetSkipVPN();
+                // Don't set the persistent flag if the user setting is set, so that removing the
+                // user setting will cause VPN to be tried again.
+                if (!UserSkipVPN())
+                {
+                    // Set persistent flag to not try VPN again when we run exactly the same server again
+                    manager->SetSkipVPN();
+                }
 
                 DoSSHConnection(manager, serverEntry);
             }

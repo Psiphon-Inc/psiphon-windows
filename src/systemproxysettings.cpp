@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Psiphon Inc.
+ * Copyright (c) 2011, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ras.h"
 #include "raserror.h"
+#include "usersettings.h"
 
 
 // This string is passed to InternetSetOption to set the proxy address for each protocol.
@@ -45,6 +46,11 @@ SystemProxySettings::~SystemProxySettings(void)
 
 bool SystemProxySettings::Configure(void)
 {
+    if (UserSkipProxySettings())
+    {
+        return false;
+    }
+
     // Configure Windows Internet Settings to use our HTTP Proxy
     // This affects IE, Chrome, Safari and recent Firefox builds
 
