@@ -569,9 +569,17 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             manager->RemoveVPNConnection();
             manager->SSHDisconnect();
             manager->MarkCurrentServerFailed();
-            // Continue while loop to try next server
 
-            // Wait between 1 and 5 seconds before retrying. This is a quick
+			// Give users some feedback. Before, when the handshake failed
+			// all we displayed was "WinHttpCallbackFailed (200000)" and kept
+			// the arrow animation spinning. A user-authored FAQ mentioned
+			// this error in particular and recommended waiting. So here's
+			// a lightly more encouraging message.
+			my_print(false, _T("Trying next server..."));
+			
+			// Continue while loop to try next server
+
+            // Wait between 1 and 2 seconds before retrying. This is a quick
             // fix to deal with the following problem: when a client can
             // make an HTTPS connection but not a VPN connection, it ends
             // up spamming "handshake" requests, resulting in PSK race conditions
@@ -584,7 +592,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             // in for now as clients blocked on both protocols would otherwise
             // still spam handshakes. The delay is *after* SSH fail over so as
             // not to delay that attempt (on the same server).
-            Sleep(1000 + rand()%4000);    
+            Sleep(1000 + rand()%1000);    
         }
     }
 
