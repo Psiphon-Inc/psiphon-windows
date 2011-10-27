@@ -390,6 +390,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 {
     ConnectionManager* manager = (ConnectionManager*)data;
 
+    // Seed built-in non-crypto PRNG used for shuffling (load balancing)
+    unsigned int seed = (unsigned)time(NULL);
+    srand(seed);
+
     // Loop through server list, attempting to connect.
     //
     // Connect sequence:
