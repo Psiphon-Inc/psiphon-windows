@@ -291,7 +291,11 @@ ServerEntries VPNList::ParseServerEntries(const char* serverEntryListString)
 
     while (getline(stream, item, '\n'))
     {
-        serverEntryList.push_back(ParseServerEntry(item));
+        ServerEntry entry = ParseServerEntry(item);
+        if (entry.webServerCertificate != "None")
+        {
+            serverEntryList.push_back(entry);
+        }
     }
 
     return serverEntryList;
