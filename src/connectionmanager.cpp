@@ -982,6 +982,11 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& response)
 
     m_splitTunnelRoutes = "";
 
+    if (response.length() == 0)
+    {
+        return;
+    }
+
     const int CHUNK_SIZE = 1024;
     const int SANITY_CHECK_SIZE = 10*1024*1024;
     int ret;
