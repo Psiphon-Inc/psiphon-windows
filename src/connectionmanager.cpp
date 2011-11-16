@@ -27,6 +27,7 @@
 #include "embeddedvalues.h"
 #include "sshconnection.h"
 #include "usersettings.h"
+#include "zlib.h"
 #include <algorithm>
 #include <sstream>
 
@@ -267,16 +268,15 @@ void ConnectionManager::DoVPNConnection(
     TweakDNS();
     
     //
-    // "Connected" HTTPS request for server stats (not critical to succeed)
-    // There's no content in the response. Also, failure is ignored since
-    // it just means the server didn't log a stat.
+    // "Connected" HTTPS request for server stats and split tunnel routing info.
+    // It's not critical if this request fails so failure is ignored.
     //
     
     tstring connectedRequestPath = manager->GetVPNConnectRequestPath();
         
     string response;
     HTTPSRequest httpsRequest;
-    if (!httpsRequest.GetRequest(
+    if (httpsRequest.GetRequest(
                         manager->GetUserSignalledStop(),
                         NarrowToTString(serverEntry.serverAddress).c_str(),
                         serverEntry.webServerPort,
@@ -284,7 +284,8 @@ void ConnectionManager::DoVPNConnection(
                         connectedRequestPath.c_str(),
                         response))
     {
-        // Ignore failure
+        // Process split tunnel response
+        manager->ProcessSplitTunnelResponse(response);
     }
 
     //
@@ -350,16 +351,15 @@ void ConnectionManager::DoSSHConnection(
 
 
     //
-    // "Connected" HTTPS request for server stats (not critical to succeed)
-    // There's no content in the response. Also, failure is ignored since
-    // it just means the server didn't log a stat.
+    // "Connected" HTTPS request for server stats and split tunnel routing info.
+    // It's not critical if this request fails so failure is ignored.
     //
     
     tstring connectedRequestPath = manager->GetSSHConnectRequestPath();
         
     string response;
     HTTPSRequest httpsRequest;
-    if (!httpsRequest.GetRequest(
+    if (httpsRequest.GetRequest(
                         manager->GetUserSignalledStop(),
                         NarrowToTString(serverEntry.serverAddress).c_str(),
                         serverEntry.webServerPort,
@@ -367,7 +367,8 @@ void ConnectionManager::DoSSHConnection(
                         connectedRequestPath.c_str(),
                         response))
     {
-        // Ignore failure
+        // Process split tunnel response
+        manager->ProcessSplitTunnelResponse(response);
     }
 
     //
@@ -970,4 +971,53 @@ bool ConnectionManager::DoUpgrade(const string& download)
     PostMessage(g_hWnd, WM_QUIT, 0, 0);
 
     return true;
+}
+
+void ConnectionManager::ProcessSplitTunnelResponse(const string& response)
+{
+    AutoMUTEX lock(m_mutex);
+
+    // Decompress split tunnel route info
+    // Defaults to blank route list on any error --> no split tunneling
+
+    m_splitTunnelRoutes = "";
+
+    const int CHUNK_SIZE = 1024;
+    const int SANITY_CHECK_SIZE = 10*1024*1024;
+    int ret;
+    z_stream stream;
+    char out[CHUNK_SIZE+1];
+
+    stream.zalloc = Z_NULL;
+    stream.zfree = Z_NULL;
+    stream.opaque = Z_NULL;
+    stream.avail_in = response.length();
+    stream.next_in = (unsigned char*)response.c_str();
+    if (Z_OK != inflateInit(&stream))
+    {
+        return;
+    }
+
+    do
+    {
+        stream.avail_out = CHUNK_SIZE;
+        stream.next_out = (unsigned char*)out;
+        ret = inflate(&stream, Z_NO_FLUSH);
+        if (ret != Z_OK && ret != Z_STREAM_END)
+        {
+            my_print(true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
+            m_splitTunnelRoutes = "";
+            break;
+        }
+        out[CHUNK_SIZE - stream.avail_out] = '\0';
+        m_splitTunnelRoutes += out;
+        if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
+        {
+            my_print(true, _T("ProcessSplitTunnelResponse overflow"));
+            m_splitTunnelRoutes = "";
+            break;
+        }
+    } while (ret != Z_STREAM_END);
+
+    inflateEnd(&stream);
 }

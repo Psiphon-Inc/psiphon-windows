@@ -76,6 +76,7 @@ private:
         const char* handshakeResponse);
     bool RequireUpgrade(tstring& downloadRequestPath);
     bool DoUpgrade(const string& download);
+    void ProcessSplitTunnelResponse(const string& response);
 
     tstring GetVPNConnectRequestPath(void);
     tstring GetVPNFailedRequestPath(void);
@@ -104,4 +105,5 @@ private:
     HANDLE m_thread;
     bool m_currentSessionSkippedVPN;
     time_t m_startingTime;
+    string m_splitTunnelRoutes;
 };
