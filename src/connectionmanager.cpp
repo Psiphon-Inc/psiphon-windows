@@ -973,7 +973,7 @@ bool ConnectionManager::DoUpgrade(const string& download)
     return true;
 }
 
-void ConnectionManager::ProcessSplitTunnelResponse(const string& response)
+void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoutes)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -982,7 +982,7 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& response)
 
     m_splitTunnelRoutes = "";
 
-    if (response.length() == 0)
+    if (compressedRoutes.length() == 0)
     {
         return;
     }
@@ -996,8 +996,8 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& response)
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
     stream.opaque = Z_NULL;
-    stream.avail_in = response.length();
-    stream.next_in = (unsigned char*)response.c_str();
+    stream.avail_in = compressedRoutes.length();
+    stream.next_in = (unsigned char*)compressedRoutes.c_str();
     if (Z_OK != inflateInit(&stream))
     {
         return;

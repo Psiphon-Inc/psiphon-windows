@@ -76,7 +76,7 @@ private:
         const char* handshakeResponse);
     bool RequireUpgrade(tstring& downloadRequestPath);
     bool DoUpgrade(const string& download);
-    void ProcessSplitTunnelResponse(const string& response);
+    void ProcessSplitTunnelResponse(const string& compressedRoutes);
 
     tstring GetVPNConnectRequestPath(void);
     tstring GetVPNFailedRequestPath(void);
