@@ -465,6 +465,27 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 {
                     throw Abort();
                 }
+
+                // We now have the client retry on port 443 in case the
+                // configured port is blocked. If this works, then 443
+                // is used for subsequent web requests.
+
+                // TODO: the client could 'remember' which port works
+                // and skip the blocked one next time to avoid waiting
+                // for inevitable timeouts.
+
+                else if (serverEntry.webServerPort != 443
+                            && httpsRequest.GetRequest(
+                                        manager->GetUserSignalledStop(),
+                                        NarrowToTString(serverEntry.serverAddress).c_str(),
+                                        443,
+                                        serverEntry.webServerCertificate,
+                                        handshakeRequestPath.c_str(),
+                                        handshakeResponse))
+                {
+                    serverEntry.webServerPort = 443;
+                    // Fall through to success case
+                }
                 else
                 {
                     throw TryNextServer();
