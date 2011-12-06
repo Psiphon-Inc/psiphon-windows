@@ -39,6 +39,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     // SSHUsername: <string>\n  (zero or one)
     // SSHPassword: <string>\n  (zero or one)
     // SSHHostKey: <string>\n   (zero or one)
+    // SSHSessionID: <string>\n   (zero or one)
 
     static const char* UPGRADE_PREFIX = "Upgrade: ";
     static const char* PSK_PREFIX = "PSK: ";
@@ -46,6 +47,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     static const char* SSH_USERNAME_PREFIX = "SSHUsername: ";
     static const char* SSH_PASSWORD_PREFIX = "SSHPassword: ";
     static const char* SSH_HOST_KEY_PREFIX = "SSHHostKey: ";
+    static const char* SSH_SESSION_ID_PREFIX = "SSHSessionID: ";
     static const char* HOMEPAGE_PREFIX = "Homepage: ";
     static const char* SERVER_PREFIX = "Server: ";
 
@@ -55,6 +57,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     m_sshUsername.clear();
     m_sshPassword.clear();
     m_sshHostKey.clear();
+    m_sshSessionID.clear();
     m_homepages.clear();
     m_servers.clear();
 
@@ -92,6 +95,11 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         {
             item.erase(0, strlen(SSH_HOST_KEY_PREFIX));
             m_sshHostKey = item;
+        }
+        else if (0 == item.find(SSH_SESSION_ID_PREFIX))
+        {
+            item.erase(0, strlen(SSH_SESSION_ID_PREFIX));
+            m_sshSessionID = item;
         }
         else if (0 == item.find(HOMEPAGE_PREFIX))
         {

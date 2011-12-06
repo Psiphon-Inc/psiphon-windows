@@ -21,6 +21,8 @@
 #include <WinSock2.h>
 #include <WinCrypt.h>
 #include "sshconnection.h"
+#include "connectionmanager.h"
+#include "httpsrequest.h"
 #include "psiclient.h"
 #include "config.h"
 
@@ -314,10 +316,10 @@ bool SSHConnection::Connect(
     return true;
 }
 
-void SSHConnection::Disconnect(void)
+void SSHConnection::Disconnect()
 {
     SignalDisconnect();
-    WaitAndDisconnect();
+    WaitAndDisconnect(0);
 }
 
 bool SSHConnection::WaitForConnected(void)
@@ -383,13 +385,15 @@ bool SSHConnection::WaitForConnected(void)
     return connected;
 }
 
-void SSHConnection::WaitAndDisconnect(void)
+void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
 {
-    // See comment in WaitForConnected
+    // Regarding process monitoring: see comment in WaitForConnected
 
     // Wait for either process to terminate, then clean up both
     // If the user cancels manually, m_cancel will be set -- we
     // handle that here while for VPN it's done in Manager
+
+    unsigned int totalTenthsSeconds = 0;
 
     bool wasConnected = false;
 
@@ -401,12 +405,39 @@ void SSHConnection::WaitAndDisconnect(void)
         processes[0] = m_plinkProcessInfo.hProcess;
         processes[1] = m_polipoProcessInfo.hProcess;
 
-        DWORD result = WaitForMultipleObjects(2, processes, FALSE, 100);
+        DWORD result = WaitForMultipleObjects(2, processes, FALSE, 100); // 100 ms. = 1/10 second...
 
         if (m_cancel || result != WAIT_TIMEOUT)
         {
             break;
         }
+
+        // Very basic client-side SSH session duration stats are implemented by sending
+        // status messages at the time buckets we're interested in. The intermediate
+        // updates allow a session duration to be estimated in the case where a post
+        // disconnect update doesn't arrive.
+        // 15 sec, 1 min, 5 min, 30 min, 1 hour, every hour, end of session
+
+        totalTenthsSeconds++; // wraps after 4971 days...
+
+        if (totalTenthsSeconds == 150
+            || totalTenthsSeconds == 600
+            || totalTenthsSeconds == 3000
+            || totalTenthsSeconds == 18000
+            || 0 == (totalTenthsSeconds % 36000))
+        {
+            if (connectionManager)
+            {
+                connectionManager->SendStatusMessage(true);
+            }
+        }
+    }
+
+    // Send a post-disconnect SSH session duration message
+
+    if (wasConnected && connectionManager)
+    {
+        connectionManager->SendStatusMessage(false);
     }
 
     // Attempt graceful shutdown (for the case where one process

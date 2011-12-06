@@ -625,6 +625,34 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     return 0;
 }
 
+void ConnectionManager::SendStatusMessage(bool connected)
+{
+    // NOTE: no lock while waiting for network events
+
+    string serverAddress;
+    int webServerPort;
+    string webServerCertificate;
+    {
+        AutoMUTEX lock(m_mutex);
+        serverAddress = m_currentSessionInfo.GetServerAddress();
+        webServerPort = m_currentSessionInfo.GetWebPort();
+        webServerCertificate = m_currentSessionInfo.GetWebServerCertificate();
+    }
+
+    tstring requestPath = GetSSHStatusRequestPath(connected);
+    string response;
+    HTTPSRequest httpsRequest;
+    httpsRequest.GetRequest(
+            GetUserSignalledStop(),
+            NarrowToTString(serverAddress).c_str(),
+            webServerPort,
+            webServerCertificate,
+            requestPath.c_str(),
+            response);
+    
+    // status message is for stats, success isn't critical
+}
+
 // ==== VPN Session Functions =================================================
 
 bool ConnectionManager::CurrentServerVPNCapable()
@@ -761,7 +789,23 @@ tstring ConnectionManager::GetSSHConnectRequestPath(void)
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=SSH") +
-           _T("&session_id=0.0.0.0");
+           _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID());
+}
+
+tstring ConnectionManager::GetSSHStatusRequestPath(bool connected)
+{
+    AutoMUTEX lock(m_mutex);
+
+    // TODO: get error code from SSH client?
+
+    return tstring(HTTP_STATUS_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=SSH") +
+           _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID()) +
+           _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
 tstring ConnectionManager::GetSSHFailedRequestPath(void)
@@ -809,7 +853,7 @@ void ConnectionManager::SSHWaitAndDisconnect(void)
 {
     // Note: no lock
 
-    m_sshConnection.WaitAndDisconnect();
+    m_sshConnection.WaitAndDisconnect(this);
 }
 
 void ConnectionManager::MarkCurrentServerFailed(void)

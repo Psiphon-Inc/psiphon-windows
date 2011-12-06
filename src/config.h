@@ -32,6 +32,7 @@ static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER = "UserSkipBr
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS = "UserSkipProxySettings";
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");
+static const TCHAR* HTTP_STATUS_REQUEST_PATH = _T("/status");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
 static const TCHAR* HTTP_DOWNLOAD_REQUEST_PATH = _T("/download");
 

@@ -22,6 +22,8 @@
 #include "tstring.h"
 #include "systemproxysettings.h"
 
+class ConnectionManager;
+
 class SSHConnection
 {
 public:
@@ -38,7 +40,7 @@ public:
         const tstring& sshPassword);
     void Disconnect(void);
     bool WaitForConnected(void);
-    void WaitAndDisconnect(void);
+    void WaitAndDisconnect(ConnectionManager* connectionManager);
     void SignalDisconnect(void);
 
 private:

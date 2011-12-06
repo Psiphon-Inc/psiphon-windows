@@ -40,6 +40,7 @@ public:
     string GetSSHUsername(void) {return m_sshUsername;}
     string GetSSHPassword(void) {return m_sshPassword;}
     string GetSSHHostKey(void) {return m_sshHostKey;}
+    string GetSSHSessionID(void) {return m_sshSessionID;}
     vector<string> GetHomepages(void) {return m_homepages;}
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
 
@@ -54,6 +55,7 @@ private:
     string m_sshUsername;
     string m_sshPassword;
     string m_sshHostKey;
+    string m_sshSessionID;
     vector<string> m_homepages;
     vector<string> m_servers;
 };
