@@ -316,7 +316,7 @@ bool SSHConnection::Connect(
     return true;
 }
 
-void SSHConnection::Disconnect()
+void SSHConnection::Disconnect(void)
 {
     SignalDisconnect();
     WaitAndDisconnect(0);

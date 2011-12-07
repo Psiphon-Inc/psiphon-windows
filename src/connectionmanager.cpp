@@ -639,11 +639,18 @@ void ConnectionManager::SendStatusMessage(bool connected)
         webServerCertificate = m_currentSessionInfo.GetWebServerCertificate();
     }
 
+    // When disconnected, ignore the user cancel flag in the HTTP request
+    // wait loop.
+    // TODO: the user may be left waiting too long after cancelling; add
+    // a shorter timeout in this case
+    bool ignoreCancel = false;
+    bool& cancel = connected ? GetUserSignalledStop() : ignoreCancel;
+
     tstring requestPath = GetSSHStatusRequestPath(connected);
     string response;
     HTTPSRequest httpsRequest;
     httpsRequest.GetRequest(
-            GetUserSignalledStop(),
+            cancel,
             NarrowToTString(serverAddress).c_str(),
             webServerPort,
             webServerCertificate,
