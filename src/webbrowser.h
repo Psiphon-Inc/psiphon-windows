@@ -22,5 +22,5 @@
 #include <vector>
 #include "tstring.h"
 
-void OpenBrowser(const tstring& url);
-void OpenBrowser(const vector<string>& urls);
+// Launch URLs in the default browser.
+void OpenBrowser(const vector<tstring>& urls);

@@ -104,7 +104,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         else if (0 == item.find(HOMEPAGE_PREFIX))
         {
             item.erase(0, strlen(HOMEPAGE_PREFIX));
-            m_homepages.push_back(item);
+            m_homepages.push_back(NarrowToTString(item));
         }
         else if  (0 == item.find(SERVER_PREFIX))
         {

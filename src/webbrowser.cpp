@@ -22,8 +22,43 @@
 #include "psiclient.h"
 #include "webbrowser.h"
 #include "shellapi.h"
+#include "shlwapi.h"
 
-void OpenBrowser(const tstring& url)
+
+// Creates a process with the given command line and returns a HANDLE to the 
+// resulting process. Returns 0 on error; call GetLastError to find out why.
+HANDLE LaunchApplication(LPCTSTR command)
+{
+   STARTUPINFO startupInfo = {0};
+   PROCESS_INFORMATION processInfo = {0};
+
+   // The command argument is in-out, so we need to pass a modifiable buffer.
+   TCHAR command_buffer[MAX_PATH] = {0};
+   _tcsncpy_s(command_buffer, MAX_PATH, command, MAX_PATH);
+
+   if(::CreateProcess(NULL, 
+                      command_buffer,
+                      NULL, NULL, FALSE, 0, NULL, NULL,
+                      &startupInfo, &processInfo))
+   {
+      return processInfo.hProcess;
+   }
+
+   return 0;
+}
+
+// Wait for the browser to become available for more page launching.
+// This is pretty much voodoo.
+// hProcess should be a handle to the browser process, but can be 0.
+void WaitForProcessToQuiesce(HANDLE hProcess)
+{
+    if (hProcess) ::WaitForInputIdle(hProcess, 10000);
+    Sleep(2000);
+    if (hProcess) ::WaitForInputIdle(hProcess, 10000);
+}
+
+// Launch the url in the default browser.
+void LaunchWebPage(const tstring& url)
 {
     HINSTANCE returnValue = ShellExecute(0, _T("open"), url.c_str(), 0, 0, SW_SHOWNORMAL);
 
@@ -36,11 +71,63 @@ void OpenBrowser(const tstring& url)
     }
 }
 
-void OpenBrowser(const vector<string>& urls)
+// Launch URLs in the default browser.
+void OpenBrowser(const vector<tstring>& urls)
 {
-    for (vector<string>::const_iterator it = urls.begin();
-         it != urls.end(); ++it)
+    vector<tstring>::const_iterator current_url = urls.begin();
+
+    if (current_url == urls.end())
     {
-        OpenBrowser(NarrowToTString(*it));
+        // No URLs to launch.
+        return;
+    }
+
+    // Get the command line for the associated browser.
+
+    TCHAR sBuffer[MAX_PATH]={0};
+    DWORD dwSize = MAX_PATH;
+
+    HRESULT hr = AssocQueryString(
+        ASSOCF_INIT_DEFAULTTOSTAR, 
+        ASSOCSTR_COMMAND,
+        _T(".htm"),
+        NULL,
+        sBuffer,
+        &dwSize);
+
+    HANDLE hProcess = 0;
+    if (hr == S_OK)
+    {
+        tstring command = sBuffer;
+
+        // Replace the argument placeholder in the command line with the first URL
+        // that we want to launch.
+
+        tstring placeholder = _T("%1");
+        size_t placeholder_pos = command.find(placeholder);
+        if (placeholder_pos != tstring::npos)
+        {
+            command.replace(placeholder_pos, placeholder.length(), *current_url);
+            ++current_url;
+        }
+
+        // Launch the application with the first URL.
+
+        hProcess = LaunchApplication(command.c_str());
+
+        if (hProcess == 0)
+        {
+            my_print(true, _T("LaunchApplication failed"));
+            // But we'll continue anyway. Hopefully ShellExecute will still succeed.
+        }
+    }
+
+    // Now that we're sure the application is open, launch the rest of the URLs.
+
+    for (; current_url != urls.end(); ++current_url)
+    {
+        WaitForProcessToQuiesce(hProcess);
+
+        LaunchWebPage(*current_url);
     }
 }

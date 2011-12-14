@@ -41,7 +41,7 @@ public:
     string GetSSHPassword(void) {return m_sshPassword;}
     string GetSSHHostKey(void) {return m_sshHostKey;}
     string GetSSHSessionID(void) {return m_sshSessionID;}
-    vector<string> GetHomepages(void) {return m_homepages;}
+    vector<tstring> GetHomepages(void) {return m_homepages;}
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
 
     bool ParseHandshakeResponse(const string& response);
@@ -56,6 +56,6 @@ private:
     string m_sshPassword;
     string m_sshHostKey;
     string m_sshSessionID;
-    vector<string> m_homepages;
+    vector<tstring> m_homepages;
     vector<string> m_servers;
 };
