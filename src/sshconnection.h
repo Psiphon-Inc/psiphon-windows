@@ -24,6 +24,12 @@
 
 class ConnectionManager;
 
+enum
+{
+    SSH_CONNECT_OBFUSCATED = 0,
+    SSH_CONNECT_STANDARD
+};
+
 class SSHConnection
 {
 public:
@@ -33,11 +39,14 @@ public:
     // TODO: async connect, state change notifiers, connection monitor, etc.?
 
     bool Connect(
+        int connectType,
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
         const tstring& sshServerHostKey,
         const tstring& sshUsername,
-        const tstring& sshPassword);
+        const tstring& sshPassword,
+        const tstring& sshObfuscatedPort,
+        const tstring& sshObfuscatedKey);
     void Disconnect(void);
     bool WaitForConnected(void);
     void WaitAndDisconnect(ConnectionManager* connectionManager);
@@ -46,8 +55,9 @@ public:
 private:
     SystemProxySettings m_systemProxySettings;
     const bool &m_cancel;
-    tstring m_plinkPath;
+    tstring m_plonkPath;
     tstring m_polipoPath;
-    PROCESS_INFORMATION m_plinkProcessInfo;
+    PROCESS_INFORMATION m_plonkProcessInfo;
     PROCESS_INFORMATION m_polipoProcessInfo;
+    int m_connectType;
 };

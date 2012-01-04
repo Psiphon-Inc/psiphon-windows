@@ -41,6 +41,8 @@ public:
     string GetSSHPassword(void) {return m_sshPassword;}
     string GetSSHHostKey(void) {return m_sshHostKey;}
     string GetSSHSessionID(void) {return m_sshSessionID;}
+    string GetSSHObfuscatedPort(void) {return m_sshObfuscatedPort;}
+    string GetSSHObfuscatedKey(void) {return m_sshObfuscatedKey;}
     vector<tstring> GetHomepages(void) {return m_homepages;}
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
 
@@ -56,6 +58,8 @@ private:
     string m_sshPassword;
     string m_sshHostKey;
     string m_sshSessionID;
+    string m_sshObfuscatedPort;
+    string m_sshObfuscatedKey;
     vector<tstring> m_homepages;
     vector<string> m_servers;
 };

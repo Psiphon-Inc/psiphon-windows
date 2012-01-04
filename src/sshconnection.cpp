@@ -29,7 +29,7 @@
 SSHConnection::SSHConnection(const bool& cancel)
 :   m_cancel(cancel)
 {
-    ZeroMemory(&m_plinkProcessInfo, sizeof(m_plinkProcessInfo));
+    ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
 }
 
@@ -109,12 +109,12 @@ bool ExtractExecutable(DWORD resourceID, tstring& path)
     return true;
 }
 
-bool SetPlinkSSHHostKey(
+bool SetPlonkSSHHostKey(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
         const tstring& sshServerHostKey)
 {
-    // Add Plink registry entry for host for non-interactive host key validation
+    // Add Plonk registry entry for host for non-interactive host key validation
 
     // Host key is base64 encoded set of fiels
 
@@ -125,7 +125,7 @@ bool SetPlinkSSHHostKey(
         || !(decodedFields = new (std::nothrow) BYTE[size])
         || !CryptStringToBinary(sshServerHostKey.c_str(), sshServerHostKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
     {
-        my_print(false, _T("SetPlinkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
+        my_print(false, _T("SetPlonkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
         return false;
     }
 
@@ -141,7 +141,7 @@ bool SetPlinkSSHHostKey(
     {
         delete [] decodedFields;
 
-        my_print(false, _T("SetPlinkSSHHostKey: unexpected key type"));
+        my_print(false, _T("SetPlonkSSHHostKey: unexpected key type"));
         return false;
     }
 
@@ -178,13 +178,13 @@ bool SetPlinkSSHHostKey(
 
     string value = string("rsa2@") + TStringToNarrow(sshServerPort) + ":" + TStringToNarrow(sshServerAddress);
 
-    const TCHAR* plinkRegistryKey = _T("Software\\SimonTatham\\PuTTY\\SshHostKeys");
+    const TCHAR* plonkRegistryKey = _T("Software\\SimonTatham\\PuTTY\\SshHostKeys");
 
     HKEY key = 0;
-    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, plinkRegistryKey, 0, 0, 0, KEY_WRITE, 0, &key, NULL);
+    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, plonkRegistryKey, 0, 0, 0, KEY_WRITE, 0, &key, NULL);
     if (ERROR_SUCCESS != returnCode)
     {
-        my_print(false, _T("SetPlinkSSHHostKey: Create Registry Key failed (%d)"), returnCode);
+        my_print(false, _T("SetPlonkSSHHostKey: Create Registry Key failed (%d)"), returnCode);
         return false;
     }
 
@@ -193,7 +193,7 @@ bool SetPlinkSSHHostKey(
     {
         RegCloseKey(key);
 
-        my_print(false, _T("SetPlinkSSHHostKey: Set Registry Value failed (%d)"), returnCode);
+        my_print(false, _T("SetPlonkSSHHostKey: Set Registry Value failed (%d)"), returnCode);
         return false;
     }
 
@@ -203,19 +203,22 @@ bool SetPlinkSSHHostKey(
 }
 
 bool SSHConnection::Connect(
+        int connectType,
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
         const tstring& sshServerHostKey,
         const tstring& sshUsername,
-        const tstring& sshPassword)
+        const tstring& sshPassword,
+        const tstring& sshObfuscatedPort,
+        const tstring& sshObfuscatedKey)
 {
     my_print(false, _T("SSH connecting..."));
 
     // Extract executables and put to disk if not already
 
-    if (m_plinkPath.size() == 0)
+    if (m_plonkPath.size() == 0)
     {
-        if (!ExtractExecutable(IDR_PLINK_EXE, m_plinkPath))
+        if (!ExtractExecutable(IDR_PLONK_EXE, m_plonkPath))
         {
             return false;
         }
@@ -233,31 +236,49 @@ bool SSHConnection::Connect(
 
     Disconnect();
 
-    // Add host to Plink's known host registry set
+    m_connectType = connectType;
+
+    // Add host to Plonk's known host registry set
     // Note: currently we're not removing this after the session, so we're leaving a trace
 
-    SetPlinkSSHHostKey(sshServerAddress, sshServerPort, sshServerHostKey);
+    SetPlonkSSHHostKey(sshServerAddress, sshServerPort, sshServerHostKey);
 
-    // Start plink using Psiphon server SSH parameters
+    // Start plonk using Psiphon server SSH parameters
 
-    // Note: -batch ensures plink doesn't hang on a prompt when the server's host key isn't
+    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
     // the expected value we just set in the registry
 
-    tstring plinkCommandLine = m_plinkPath
-                               + _T(" -ssh -C -N -batch")
-                               + _T(" -P ") + sshServerPort
-                               + _T(" -l ") + sshUsername
-                               + _T(" -pw ") + sshPassword
-                               + _T(" -D ") + PLINK_SOCKS_PROXY_PORT
-                               + _T(" ") + sshServerAddress;
+    tstring plonkCommandLine;
+    
+    if (connectType == SSH_CONNECT_OBFUSCATED)
+    {
+        plonkCommandLine = m_plonkPath
+                                + _T(" -ssh -C -N -batch")
+                                + _T(" -P ") + sshServerPort
+                                + _T(" -l ") + sshUsername
+                                + _T(" -pw ") + sshPassword
+                                + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
+                                + _T(" ") + sshServerAddress;
+    }
+    else
+    {
+        plonkCommandLine = m_plonkPath
+                                + _T(" -ssh -C -N -batch")
+                                + _T(" -P ") + sshObfuscatedPort
+                                + _T(" -z -Z ") + sshObfuscatedKey
+                                + _T(" -l ") + sshUsername
+                                + _T(" -pw ") + sshPassword
+                                + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
+                                + _T(" ") + sshServerAddress;
+    }
 
-    STARTUPINFO plinkStartupInfo;
-    ZeroMemory(&plinkStartupInfo, sizeof(plinkStartupInfo));
-    plinkStartupInfo.cb = sizeof(plinkStartupInfo);
+    STARTUPINFO plonkStartupInfo;
+    ZeroMemory(&plonkStartupInfo, sizeof(plonkStartupInfo));
+    plonkStartupInfo.cb = sizeof(plonkStartupInfo);
 
     if (!CreateProcess(
-            m_plinkPath.c_str(),
-            (TCHAR*)plinkCommandLine.c_str(),
+            m_plonkPath.c_str(),
+            (TCHAR*)plonkCommandLine.c_str(),
             NULL,
             NULL,
             FALSE,
@@ -268,10 +289,10 @@ bool SSHConnection::Connect(
 #endif
             NULL,
             NULL,
-            &plinkStartupInfo,
-            &m_plinkProcessInfo))
+            &plonkStartupInfo,
+            &m_plonkProcessInfo))
     {
-        my_print(false, _T("SSHConnection::Connect - Plink CreateProcess failed (%d)"), GetLastError());
+        my_print(false, _T("SSHConnection::Connect - Plonk CreateProcess failed (%d)"), GetLastError());
         return false;
     }
 
@@ -279,12 +300,12 @@ bool SSHConnection::Connect(
     // various options; in testing, we found cases where Polipo stopped responding
     // when the ssh tunnel was torn down.
 
-    // Start polipo, using plink's SOCKS proxy, with no disk cache and no web admin interface
+    // Start polipo, using plonk's SOCKS proxy, with no disk cache and no web admin interface
     // (same recommended settings as Tor: http://www.pps.jussieu.fr/~jch/software/polipo/tor.html
 
     tstring polipoCommandLine = m_polipoPath
                                 + _T(" proxyPort=") + POLIPO_HTTP_PROXY_PORT
-                                + _T(" socksParentProxy=127.0.0.1:") + PLINK_SOCKS_PROXY_PORT
+                                + _T(" socksParentProxy=127.0.0.1:") + PLONK_SOCKS_PROXY_PORT
                                 + _T(" diskCacheRoot=\"\"")
                                 + _T(" disableLocalInterface=true")
                                 + _T(" logLevel=1");
@@ -320,15 +341,16 @@ void SSHConnection::Disconnect(void)
 {
     SignalDisconnect();
     WaitAndDisconnect(0);
+    m_connectType = -1;
 }
 
 bool SSHConnection::WaitForConnected(void)
 {
     // There are a number of options for monitoring the connected status
-    // of plink/polipo. We're going with a quick and dirty solution of
+    // of plonk/polipo. We're going with a quick and dirty solution of
     // (a) monitoring the child processes -- if they exit, there was an error;
-    // (b) asynchronously connecting to the plink SOCKS server, which isn't
-    //     started by plink until its ssh tunnel is established.
+    // (b) asynchronously connecting to the plonk SOCKS server, which isn't
+    //     started by plonk until its ssh tunnel is established.
     // Note: piping stdout/stderr of the child processes and monitoring
     // messages is problematic because we don't control the C I/O flushing
     // of these processes (http://support.microsoft.com/kb/190351).
@@ -339,10 +361,10 @@ bool SSHConnection::WaitForConnected(void)
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-    sockaddr_in plinkSocksServer;
-    plinkSocksServer.sin_family = AF_INET;
-    plinkSocksServer.sin_addr.s_addr = inet_addr("127.0.0.1");
-    plinkSocksServer.sin_port = htons(atoi(TStringToNarrow(PLINK_SOCKS_PROXY_PORT).c_str()));
+    sockaddr_in plonkSocksServer;
+    plonkSocksServer.sin_family = AF_INET;
+    plonkSocksServer.sin_addr.s_addr = inet_addr("127.0.0.1");
+    plonkSocksServer.sin_port = htons(atoi(TStringToNarrow(PLONK_SOCKS_PROXY_PORT).c_str()));
 
     SOCKET sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     WSAEVENT connectedEvent = WSACreateEvent();
@@ -350,7 +372,7 @@ bool SSHConnection::WaitForConnected(void)
     bool connected = false;
 
     if (0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
-        && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plinkSocksServer, sizeof(plinkSocksServer))
+        && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plonkSocksServer, sizeof(plonkSocksServer))
         && WSAEWOULDBLOCK == WSAGetLastError())
     {
         // Wait up to SSH_CONNECTION_TIMEOUT_SECONDS, checking periodically for user cancel
@@ -397,12 +419,12 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
 
     bool wasConnected = false;
 
-    while (m_plinkProcessInfo.hProcess != 0 && m_polipoProcessInfo.hProcess != 0)
+    while (m_plonkProcessInfo.hProcess != 0 && m_polipoProcessInfo.hProcess != 0)
     {
         wasConnected = true;
 
         HANDLE processes[2];
-        processes[0] = m_plinkProcessInfo.hProcess;
+        processes[0] = m_plonkProcessInfo.hProcess;
         processes[1] = m_polipoProcessInfo.hProcess;
 
         DWORD result = WaitForMultipleObjects(2, processes, FALSE, 100); // 100 ms. = 1/10 second...
@@ -428,7 +450,7 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
         {
             if (connectionManager)
             {
-                connectionManager->SendStatusMessage(true);
+                connectionManager->SendStatusMessage(m_connectType, true);
             }
         }
     }
@@ -437,16 +459,16 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
 
     if (wasConnected && connectionManager)
     {
-        connectionManager->SendStatusMessage(false);
+        connectionManager->SendStatusMessage(m_connectType, false);
     }
 
     // Attempt graceful shutdown (for the case where one process
     // terminated unexpectedly, not a user cancel)
     SignalDisconnect();
 
-    CloseHandle(m_plinkProcessInfo.hProcess);
-    CloseHandle(m_plinkProcessInfo.hThread);
-    ZeroMemory(&m_plinkProcessInfo, sizeof(m_plinkProcessInfo));
+    CloseHandle(m_plonkProcessInfo.hProcess);
+    CloseHandle(m_plonkProcessInfo.hThread);
+    ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
 
     CloseHandle(m_polipoProcessInfo.hProcess);
     CloseHandle(m_polipoProcessInfo.hThread);
@@ -465,11 +487,11 @@ void SSHConnection::SignalDisconnect(void)
 {
     // Give each process an opportunity for graceful shutdown, then terminate
 
-    if (m_plinkProcessInfo.hProcess != 0)
+    if (m_plonkProcessInfo.hProcess != 0)
     {
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plinkProcessInfo.dwProcessId);
+        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
         Sleep(100);
-        TerminateProcess(m_plinkProcessInfo.hProcess, 0);
+        TerminateProcess(m_plonkProcessInfo.hProcess, 0);
     }
 
     if (m_polipoProcessInfo.hProcess != 0)

@@ -54,7 +54,7 @@ public:
     bool GetSkipVPN(void);
     void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
     bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
-    void SendStatusMessage(bool connected);
+    void SendStatusMessage(int connectType, bool connected);
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
@@ -88,11 +88,11 @@ private:
     void VPNEstablish(void);
     void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
 
-    tstring GetSSHConnectRequestPath(void);
-    tstring GetSSHStatusRequestPath(bool connected);
-    tstring GetSSHFailedRequestPath(void);
+    tstring GetSSHConnectRequestPath(int connectType);
+    tstring GetSSHStatusRequestPath(int connectType, bool connected);
+    tstring GetSSHFailedRequestPath(int connectType);
     bool CurrentServerSSHCapable(void);
-    bool SSHConnect(void);
+    bool SSHConnect(int connectType);
     void SSHDisconnect(void);
     bool SSHWaitForConnected(void);
     void SSHWaitAndDisconnect(void);

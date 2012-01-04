@@ -48,6 +48,8 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     static const char* SSH_PASSWORD_PREFIX = "SSHPassword: ";
     static const char* SSH_HOST_KEY_PREFIX = "SSHHostKey: ";
     static const char* SSH_SESSION_ID_PREFIX = "SSHSessionID: ";
+    static const char* SSH_OBFUSCATED_PORT_PREFIX = "SSHObfuscatedPort: ";
+    static const char* SSH_OBFUSCATED_KEY_PREFIX = "SSHObfuscatedKey: ";
     static const char* HOMEPAGE_PREFIX = "Homepage: ";
     static const char* SERVER_PREFIX = "Server: ";
 
@@ -58,6 +60,8 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     m_sshPassword.clear();
     m_sshHostKey.clear();
     m_sshSessionID.clear();
+    m_sshObfuscatedPort.clear();
+    m_sshObfuscatedKey.clear();
     m_homepages.clear();
     m_servers.clear();
 
@@ -100,6 +104,16 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         {
             item.erase(0, strlen(SSH_SESSION_ID_PREFIX));
             m_sshSessionID = item;
+        }
+        else if (0 == item.find(SSH_OBFUSCATED_PORT_PREFIX))
+        {
+            item.erase(0, strlen(SSH_OBFUSCATED_PORT_PREFIX));
+            m_sshObfuscatedPort = item;
+        }
+        else if (0 == item.find(SSH_OBFUSCATED_KEY_PREFIX))
+        {
+            item.erase(0, strlen(SSH_OBFUSCATED_KEY_PREFIX));
+            m_sshObfuscatedKey = item;
         }
         else if (0 == item.find(HOMEPAGE_PREFIX))
         {

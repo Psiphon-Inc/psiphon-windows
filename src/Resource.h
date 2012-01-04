@@ -45,7 +45,7 @@
 #define IDB_EMAIL               202
 
 // Embedded binaries
-#define IDR_PLINK_EXE           500
+#define IDR_PLONK_EXE           500
 #define IDR_POLIPO_EXE          501
 
 // Next default values for new objects

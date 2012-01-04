@@ -32,7 +32,7 @@
 // proxying FTP, so FTP will not be proxied.
 #define NEW_PROXY_ADDRESS (tstring(_T("http=127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT + \
                            tstring(_T(";https=127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT + \
-                           tstring(_T(";socks=127.0.0.1:")) + PLINK_SOCKS_PROXY_PORT)
+                           tstring(_T(";socks=127.0.0.1:")) + PLONK_SOCKS_PROXY_PORT)
 
 SystemProxySettings::SystemProxySettings(void)
 {

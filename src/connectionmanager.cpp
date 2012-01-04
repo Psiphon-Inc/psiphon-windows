@@ -317,34 +317,41 @@ void ConnectionManager::DoSSHConnection(
     //
     // Establish SSH connection
     //
+    // First attempt is using obfuscated SSH port and protocol, second attempt is using
+    // standard SSH port and protocol (in case the unusual configuration is blocked and
+    // the standard configuration is not).
+    //
 
-    if (!manager->SSHConnect()
-        || !manager->SSHWaitForConnected())
+    int connectType = SSH_CONNECT_OBFUSCATED;
+    for (; connectType <= SSH_CONNECT_STANDARD; connectType++)
     {
-        if (manager->GetUserSignalledStop())
+        if (!manager->SSHConnect(connectType)
+            || !manager->SSHWaitForConnected())
         {
-            throw Abort();
-        }
+            if (manager->GetUserSignalledStop())
+            {
+                throw Abort();
+            }
 
-        // Report error code to server for logging/trouble-shooting.
-        // The request line includes the last VPN error code.
+            // Report error code to server for logging/trouble-shooting.
         
-        tstring requestPath = manager->GetSSHFailedRequestPath();
+            tstring requestPath = manager->GetSSHFailedRequestPath(connectType);
     
-        string response;
-        HTTPSRequest httpsRequest;
-        if (!httpsRequest.GetRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            requestPath.c_str(),
-                            response))
-        {
-            // Ignore failure
-        }
+            string response;
+            HTTPSRequest httpsRequest;
+            if (!httpsRequest.GetRequest(
+                                manager->GetUserSignalledStop(),
+                                NarrowToTString(serverEntry.serverAddress).c_str(),
+                                serverEntry.webServerPort,
+                                serverEntry.webServerCertificate,
+                                requestPath.c_str(),
+                                response))
+            {
+                // Ignore failure
+            }
 
-        throw TryNextServer();
+            throw TryNextServer();
+        }
     }
 
     manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
@@ -355,7 +362,7 @@ void ConnectionManager::DoSSHConnection(
     // It's not critical if this request fails so failure is ignored.
     //
     
-    tstring connectedRequestPath = manager->GetSSHConnectRequestPath();
+    tstring connectedRequestPath = manager->GetSSHConnectRequestPath(connectType);
         
     string response;
     HTTPSRequest httpsRequest;
@@ -625,7 +632,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     return 0;
 }
 
-void ConnectionManager::SendStatusMessage(bool connected)
+void ConnectionManager::SendStatusMessage(int connectType, bool connected)
 {
     // NOTE: no lock while waiting for network events
 
@@ -646,7 +653,7 @@ void ConnectionManager::SendStatusMessage(bool connected)
     bool ignoreCancel = false;
     bool& cancel = connected ? GetUserSignalledStop() : ignoreCancel;
 
-    tstring requestPath = GetSSHStatusRequestPath(connected);
+    tstring requestPath = GetSSHStatusRequestPath(connectType, connected);
     string response;
     HTTPSRequest httpsRequest;
     httpsRequest.GetRequest(
@@ -784,7 +791,7 @@ bool ConnectionManager::CurrentServerSSHCapable()
     return m_currentSessionInfo.GetSSHHostKey().length() > 0;
 }
 
-tstring ConnectionManager::GetSSHConnectRequestPath(void)
+tstring ConnectionManager::GetSSHConnectRequestPath(int connectType)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -795,11 +802,11 @@ tstring ConnectionManager::GetSSHConnectRequestPath(void)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=SSH") +
+           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OBS-SSH") : _T("SSH")) +
            _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID());
 }
 
-tstring ConnectionManager::GetSSHStatusRequestPath(bool connected)
+tstring ConnectionManager::GetSSHStatusRequestPath(int connectType, bool connected)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -810,14 +817,17 @@ tstring ConnectionManager::GetSSHStatusRequestPath(bool connected)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=SSH") +
+           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OBS-SSH") : _T("SSH")) +
            _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID()) +
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
-tstring ConnectionManager::GetSSHFailedRequestPath(void)
+tstring ConnectionManager::GetSSHFailedRequestPath(int connectType)
 {
     AutoMUTEX lock(m_mutex);
+
+    std::stringstream s;
+    s << connectType;
 
     // TODO: get error code from SSH client?
 
@@ -826,20 +836,23 @@ tstring ConnectionManager::GetSSHFailedRequestPath(void)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=SSH") +
+           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OBS-SSH") : _T("SSH")) +
            _T("&error_code=0");
 }
 
-bool ConnectionManager::SSHConnect()
+bool ConnectionManager::SSHConnect(int connectType)
 {
     AutoMUTEX lock(m_mutex);
 
     return m_sshConnection.Connect(
+            connectType,
             NarrowToTString(m_currentSessionInfo.GetServerAddress()),
             NarrowToTString(m_currentSessionInfo.GetSSHPort()),
             NarrowToTString(m_currentSessionInfo.GetSSHHostKey()),
             NarrowToTString(m_currentSessionInfo.GetSSHUsername()),
-            NarrowToTString(m_currentSessionInfo.GetSSHPassword()));
+            NarrowToTString(m_currentSessionInfo.GetSSHPassword()),
+            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedPort()),
+            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedKey()));
 }
 
 void ConnectionManager::SSHDisconnect(void)
