@@ -322,11 +322,12 @@ void ConnectionManager::DoSSHConnection(
     // the standard configuration is not).
     //
 
+    bool connected = false;
     int connectType = SSH_CONNECT_OBFUSCATED;
+
     for (; connectType <= SSH_CONNECT_STANDARD; connectType++)
     {
-        if (!manager->SSHConnect(connectType)
-            || !manager->SSHWaitForConnected())
+        if (!manager->SSHConnect(connectType) || !manager->SSHWaitForConnected())
         {
             if (manager->GetUserSignalledStop())
             {
@@ -349,9 +350,19 @@ void ConnectionManager::DoSSHConnection(
             {
                 // Ignore failure
             }
-
-            throw TryNextServer();
         }
+        else
+        {
+            connected = true;
+            break;
+        }
+    }
+
+    if (!connected)
+    {
+        // Neither attempt succeeded
+
+        throw TryNextServer();
     }
 
     manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
@@ -802,7 +813,7 @@ tstring ConnectionManager::GetSSHConnectRequestPath(int connectType)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OBS-SSH") : _T("SSH")) +
+           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")) +
            _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID());
 }
 
@@ -817,7 +828,7 @@ tstring ConnectionManager::GetSSHStatusRequestPath(int connectType, bool connect
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OBS-SSH") : _T("SSH")) +
+           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")) +
            _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID()) +
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
@@ -836,7 +847,7 @@ tstring ConnectionManager::GetSSHFailedRequestPath(int connectType)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OBS-SSH") : _T("SSH")) +
+           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")) +
            _T("&error_code=0");
 }
 

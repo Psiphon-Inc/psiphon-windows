@@ -254,7 +254,8 @@ bool SSHConnection::Connect(
     {
         plonkCommandLine = m_plonkPath
                                 + _T(" -ssh -C -N -batch")
-                                + _T(" -P ") + sshServerPort
+                                + _T(" -P ") + sshObfuscatedPort
+                                + _T(" -z -Z ") + sshObfuscatedKey
                                 + _T(" -l ") + sshUsername
                                 + _T(" -pw ") + sshPassword
                                 + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
@@ -264,8 +265,7 @@ bool SSHConnection::Connect(
     {
         plonkCommandLine = m_plonkPath
                                 + _T(" -ssh -C -N -batch")
-                                + _T(" -P ") + sshObfuscatedPort
-                                + _T(" -z -Z ") + sshObfuscatedKey
+                                + _T(" -P ") + sshServerPort
                                 + _T(" -l ") + sshUsername
                                 + _T(" -pw ") + sshPassword
                                 + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
