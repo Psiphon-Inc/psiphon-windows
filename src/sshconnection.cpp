@@ -252,6 +252,12 @@ bool SSHConnection::Connect(
     
     if (connectType == SSH_CONNECT_OBFUSCATED)
     {
+        if (sshObfuscatedPort.size() <= 0 || sshObfuscatedKey.size() <= 0)
+        {
+            my_print(false, _T("SSHConnection::Connect - missing parameters"));
+            return false;
+        }
+
         plonkCommandLine = m_plonkPath
                                 + _T(" -ssh -C -N -batch")
                                 + _T(" -P ") + sshObfuscatedPort
