@@ -381,23 +381,43 @@ bool SSHConnection::WaitForConnected(void)
 
     bool connected = false;
 
-    if (0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
+    if (INVALID_SOCKET != sock
+        && 0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
         && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plonkSocksServer, sizeof(plonkSocksServer))
         && WSAEWOULDBLOCK == WSAGetLastError())
     {
         // Wait up to SSH_CONNECTION_TIMEOUT_SECONDS, checking periodically for user cancel
+        int waitLimit = SSH_CONNECTION_TIMEOUT_SECONDS*10;
 
-        for (int i = 0; i < SSH_CONNECTION_TIMEOUT_SECONDS*10; i++)
+        for (int i = 0; i < waitLimit; i++)
         {
             if (WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE))
             {
                 // Connect operation is complete. Check if success or failure.
+                
                 WSANETWORKEVENTS networkEvents;
                 if (0 == WSAEnumNetworkEvents(sock, connectedEvent, &networkEvents)
                     && (networkEvents.lNetworkEvents & FD_CONNECT)
                     && networkEvents.iErrorCode[FD_CONNECT_BIT] == 0)
                 {
                     connected = true;
+                }
+                else if (i < waitLimit
+                         && (networkEvents.lNetworkEvents & FD_CONNECT)
+                         && networkEvents.iErrorCode[FD_CONNECT_BIT] != 0)
+                {
+                    // It's possible the connect failed immediately because the plonk SOCKS
+                    // server wasn't ready yet. If time remains, re-try.
+
+                    closesocket(sock);
+                    sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+                    if (INVALID_SOCKET != sock
+                        && 0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
+                        && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plonkSocksServer, sizeof(plonkSocksServer))
+                        && WSAEWOULDBLOCK == WSAGetLastError())
+                    {
+                        continue;
+                    }
                 }
                 break;
             }
@@ -409,6 +429,7 @@ bool SSHConnection::WaitForConnected(void)
     }
 
     closesocket(sock);
+    WSACloseEvent(connectedEvent);
     WSACleanup();
 
     if (connected)
