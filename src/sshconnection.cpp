@@ -409,6 +409,13 @@ bool SSHConnection::WaitForConnected(void)
                     // It's possible the connect failed immediately because the plonk SOCKS
                     // server wasn't ready yet. If time remains, re-try.
 
+                    if (WAIT_OBJECT_0 == WaitForSingleObject(m_plonkProcessInfo.hProcess, 0))
+                    {
+                        // It can't work if plonk has already aborted.
+
+                        break;
+                    }
+
                     closesocket(sock);
                     sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
                     if (INVALID_SOCKET != sock
