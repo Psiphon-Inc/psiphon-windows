@@ -371,9 +371,13 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     //Base64 decode pem string to BYTE*
     
     //Get the expected pbBinary length
-    CryptStringToBinaryA(
-        (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
-        CRYPT_STRING_BASE64, NULL, &cbBinary, NULL, NULL);
+    if (!CryptStringToBinaryA(
+            (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
+            CRYPT_STRING_BASE64, NULL, &cbBinary, NULL, NULL))
+    {
+        my_print(false, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
+        return false;
+    }
 
     pbBinary = new (std::nothrow) BYTE[cbBinary];
     if (!pbBinary)
@@ -383,9 +387,13 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     }
 
     //Perform base64 decode
-    CryptStringToBinaryA(
+    if (!CryptStringToBinaryA(
         (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
-        CRYPT_STRING_BASE64, pbBinary, &cbBinary, NULL, NULL);
+        CRYPT_STRING_BASE64, pbBinary, &cbBinary, NULL, NULL))
+    {
+        my_print(false, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
+        return false;
+    }
     
     // Check if the certificate in pCert matches the expectedServerCertificate
     if (pCert->cbCertEncoded == cbBinary)
