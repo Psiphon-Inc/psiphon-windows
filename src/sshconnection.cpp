@@ -391,7 +391,14 @@ bool SSHConnection::WaitForConnected(void)
         {
             if (WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE))
             {
-                connected = true;
+                // Connect operation is complete. Check if success or failure.
+                WSANETWORKEVENTS networkEvents;
+                if (0 == WSAEnumNetworkEvents(sock, connectedEvent, &networkEvents)
+                    && (networkEvents.lNetworkEvents & FD_CONNECT)
+                    && networkEvents.iErrorCode[FD_CONNECT_BIT] == 0)
+                {
+                    connected = true;
+                }
                 break;
             }
             else if (m_cancel)
