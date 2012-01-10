@@ -391,7 +391,7 @@ bool SSHConnection::WaitForConnected(void)
     {
         DWORD now = GetTickCount();
 
-        if (now < start // Note: GetTickCount can wrap; small chance of a short timeout
+        if (now < start // Note: GetTickCount wraps after 49 days; small chance of a shorter timeout
             || now >= start + maxWaitMilliseconds)
         {
             break;
