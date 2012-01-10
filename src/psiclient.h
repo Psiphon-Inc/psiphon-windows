@@ -32,6 +32,18 @@
 void my_print(bool bDebugMessage, const TCHAR* format, ...);
 void my_print(bool bDebugMessage, const string& message);
 
+#ifdef UNICODE
+    #define WIDEN2(x) L##x
+    #define WIDEN(x) WIDEN2(x)
+    #define __WFILE__ WIDEN(__FILE__)
+    #define __WFUNCTION__ WIDEN(__FUNCTION__)
+    #define __TFILE__ __WFILE__
+    #define __TFUNCTION__ __WFUNCTION__
+#else
+    #define __TFILE__ __FILE__
+    #define __TFILE__ __FUNCTION__
+#endif
+
 
 //==== global helpers ==================================================
 

@@ -53,11 +53,18 @@ public:
     void SignalDisconnect(void);
 
 private:
+    HANDLE CreatePolipoPipe();
+    bool ProcessPageViews(unsigned int totalTenthsSeconds);
+    void ParsePageViewBuffer(const char* page_view_buffer);
+
+private:
     SystemProxySettings m_systemProxySettings;
     const bool &m_cancel;
     tstring m_plonkPath;
     tstring m_polipoPath;
     PROCESS_INFORMATION m_plonkProcessInfo;
     PROCESS_INFORMATION m_polipoProcessInfo;
+    HANDLE m_polipoPipe;
     int m_connectType;
+    map<string, int> m_pageViewEntries;
 };

@@ -27,7 +27,8 @@
 #include "config.h"
 
 SSHConnection::SSHConnection(const bool& cancel)
-:   m_cancel(cancel)
+:   m_cancel(cancel),
+    m_polipoPipe(NULL)
 {
     ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
@@ -306,6 +307,12 @@ bool SSHConnection::Connect(
         return false;
     }
 
+    // Close the unneccesary handles
+    CloseHandle(m_plonkProcessInfo.hThread);
+    m_plonkProcessInfo.hThread = NULL;
+
+    WaitForInputIdle(m_plonkProcessInfo.hProcess, 5000);
+
     // TODO: wait for parent proxy to be in place? See comment in WaitForConnected for
     // various options; in testing, we found cases where Polipo stopped responding
     // when the ssh tunnel was torn down.
@@ -324,12 +331,22 @@ bool SSHConnection::Connect(
     ZeroMemory(&polipoStartupInfo, sizeof(polipoStartupInfo));
     polipoStartupInfo.cb = sizeof(polipoStartupInfo);
 
+    polipoStartupInfo.dwFlags = STARTF_USESTDHANDLES;
+    polipoStartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    polipoStartupInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+    polipoStartupInfo.hStdOutput = CreatePolipoPipe();
+    if (!polipoStartupInfo.hStdOutput)
+    {
+        my_print(false, _T("SSHConnection::Connect - CreatePolipoPipe failed (%d)"), GetLastError());
+        return false;
+    }
+
     if (!CreateProcess(
             m_polipoPath.c_str(),
             (TCHAR*)polipoCommandLine.c_str(),
             NULL,
             NULL,
-            FALSE,
+            TRUE, // bInheritHandles
 #ifdef _DEBUG
             CREATE_NEW_PROCESS_GROUP,
 #else
@@ -343,6 +360,22 @@ bool SSHConnection::Connect(
         my_print(false, _T("SSHConnection::Connect - Polipo CreateProcess failed (%d)"), GetLastError());
         return false;
     }
+
+    // Close the unneccesary handles
+    CloseHandle(m_polipoProcessInfo.hThread);
+    m_polipoProcessInfo.hThread = NULL;
+
+    // Close child pipe handle (do not continue to modify the parent).
+    // You need to make sure that no handles to the write end of the
+    // output pipe are maintained in this process or else the pipe will
+    // not close when the child process exits and the ReadFile will hang.
+    if (!CloseHandle(polipoStartupInfo.hStdOutput))
+    {
+        my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    WaitForInputIdle(m_polipoProcessInfo.hProcess, 5000);
 
     return true;
 }
@@ -433,11 +466,10 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
     {
         wasConnected = true;
 
-        HANDLE processes[2];
-        processes[0] = m_plonkProcessInfo.hProcess;
-        processes[1] = m_polipoProcessInfo.hProcess;
+        HANDLE wait_handles[] = { m_plonkProcessInfo.hProcess, 
+                                  m_polipoProcessInfo.hProcess };
 
-        DWORD result = WaitForMultipleObjects(2, processes, FALSE, 100); // 100 ms. = 1/10 second...
+        DWORD result = WaitForMultipleObjects(sizeof(wait_handles)/sizeof(HANDLE), wait_handles, FALSE, 100); // 100 ms. = 1/10 second...
 
         if (m_cancel || result != WAIT_TIMEOUT)
         {
@@ -463,6 +495,11 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
                 connectionManager->SendStatusMessage(m_connectType, true);
             }
         }
+
+        if (!ProcessPageViews(totalTenthsSeconds))
+        {
+            break;
+        }
     }
 
     // Send a post-disconnect SSH session duration message
@@ -477,12 +514,13 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
     SignalDisconnect();
 
     CloseHandle(m_plonkProcessInfo.hProcess);
-    CloseHandle(m_plonkProcessInfo.hThread);
     ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
 
     CloseHandle(m_polipoProcessInfo.hProcess);
-    CloseHandle(m_polipoProcessInfo.hThread);
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
+
+    CloseHandle(m_polipoPipe);
+    m_polipoPipe = NULL;
 
     // Revert the Windows Internet Settings to the user's previous settings
     m_systemProxySettings.Revert();
@@ -510,4 +548,189 @@ void SSHConnection::SignalDisconnect(void)
         Sleep(100);
         TerminateProcess(m_polipoProcessInfo.hProcess, 0);
     }
+}
+
+// Create the pipe that will be used to communicate between the Polipo child 
+// process and this process. The child write handle should be used as the stdin
+// of the Polipo process.
+// Returns NULL on error.
+HANDLE SSHConnection::CreatePolipoPipe()
+{
+    // Most of this code is adapted from:
+    // http://support.microsoft.com/kb/190351
+
+    // Set up the security attributes struct.
+    SECURITY_ATTRIBUTES sa;
+    sa.nLength= sizeof(SECURITY_ATTRIBUTES);
+    sa.lpSecurityDescriptor = NULL;
+    sa.bInheritHandle = TRUE;
+
+    // Create the child output pipe.
+    HANDLE hOutputReadTmp, hOutputWrite, hOutputRead;
+    if (!CreatePipe(&hOutputReadTmp, &hOutputWrite, &sa, 0))
+    {
+        my_print(false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return NULL;
+    }
+
+    // Create new output read handle and the input write handles. Set
+    // the Properties to FALSE. Otherwise, the child inherits the
+    // properties and, as a result, non-closeable handles to the pipes
+    // are created.
+    if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
+                         GetCurrentProcess(),
+                         &hOutputRead, // Address of new handle.
+                         0, 
+                         FALSE, // Make it uninheritable.
+                         DUPLICATE_SAME_ACCESS))
+    {
+        my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return NULL;
+    }
+
+    // Close inheritable copies of the handles you do not want to be
+    // inherited.
+    if (!CloseHandle(hOutputReadTmp))
+    {
+        my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return NULL;
+    }
+
+    m_polipoPipe = hOutputRead;
+
+    return hOutputWrite;
+}
+
+#include <regex>
+
+// Check Polipo pipe for page view info waiting to be processed; gather info;
+// process; send to server.
+// Returns true on success, false otherwise.
+bool SSHConnection::ProcessPageViews(unsigned int totalTenthsSeconds)
+{
+    // Stats get sent to the server when a time or size limit has been reached.
+
+    const unsigned int SEND_INTERVAL_TENTHS_SECONDS = (1*60*10); // 5 mins
+    const unsigned int SEND_MAX_ENTRIES = 1000;
+
+    DWORD bytes_avail = 0;
+
+    // ReadFile will block forever if there's no data to read, so we need
+    // to check if there's data available to read first.
+    if (!PeekNamedPipe(m_polipoPipe, NULL, 0, NULL, &bytes_avail, NULL))
+    {
+        my_print(false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    if (bytes_avail > 0)
+    {
+        char* page_view_buffer = new char[bytes_avail+1];
+        DWORD num_read = 0;
+        if (!ReadFile(m_polipoPipe, page_view_buffer, bytes_avail, &num_read, NULL))
+        {
+            my_print(false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+            false;
+        }
+        page_view_buffer[bytes_avail] = '\0';
+
+        // Add or update the current set of page view counts with the new info.
+        ParsePageViewBuffer(page_view_buffer);
+
+        delete[] page_view_buffer;
+    }
+
+    if ((totalTenthsSeconds % SEND_INTERVAL_TENTHS_SECONDS) == 0
+        || m_pageViewEntries.size() >= SEND_MAX_ENTRIES)
+    {
+        my_print(false, _T("%s:%d - PAGE VIEWS SENT"), __TFUNCTION__, __LINE__);
+        m_pageViewEntries.clear();
+    }
+
+    return true;
+}
+
+void SSHConnection::ParsePageViewBuffer(const char* page_view_buffer)
+{
+    const char* HTTP_PREFIX = "PSIPHON-PAGE-VIEW-HTTP:>>";
+    const char* HTTPS_PREFIX = "PSIPHON-PAGE-VIEW-HTTPS:>>";
+    const char* ENTRY_END = "<<";
+
+
+    // DEBUG
+    my_print(false, _T("%s:%d START - %S"), __TFUNCTION__, __LINE__, page_view_buffer);
+
+
+    // TODO: Use regexes or whatever. 
+    // <regex>: http://msdn.microsoft.com/en-us/library/ff926112.aspx
+
+    const char* curr_pos = page_view_buffer;
+    const char* end_pos = page_view_buffer + strlen(page_view_buffer);
+
+    while (curr_pos < end_pos)
+    {
+        const char* http_entry_start = strstr(curr_pos, HTTP_PREFIX);
+        const char* https_entry_start = strstr(curr_pos, HTTPS_PREFIX);
+        const char* entry_end = NULL;
+        string entry;
+
+        // Which entry comes next -- HTTP or HTTPS?
+
+        if (http_entry_start 
+            && (!https_entry_start || http_entry_start < https_entry_start))
+        {
+            // HTTP
+            const char* entry_start = http_entry_start + strlen(HTTP_PREFIX);
+            entry_end = strstr(entry_start, ENTRY_END);
+            
+            if (!entry_end)
+            {
+                // Something is rather wrong. Maybe an incomplete entry.
+                // Stop processing;
+                break;
+            }
+
+            entry = string(entry_start, entry_end-entry_start);
+        }
+        else if (https_entry_start 
+                 && (!http_entry_start || https_entry_start < http_entry_start))
+        {
+            // HTTPS
+            const char* entry_start = https_entry_start + strlen(HTTPS_PREFIX);
+            entry_end = strstr(entry_start, ENTRY_END);
+
+            if (!entry_end)
+            {
+                // Something is rather wrong. Maybe an incomplete entry.
+                // Stop processing;
+                break;
+            }
+
+            entry = string(entry_start, entry_end-entry_start);
+        }
+        else
+        {
+            // No next entry found.
+            break;
+        }
+
+        // Add/increment the entry.
+        map<string, int>::iterator map_entry = m_pageViewEntries.find(entry);
+        if (map_entry == m_pageViewEntries.end())
+        {
+            m_pageViewEntries[entry] = 1;
+        }
+        else
+        {
+            map_entry->second += 1;
+        }
+
+        curr_pos = entry_end + strlen(ENTRY_END);
+
+        // DEBUG
+        my_print(false, _T("%s:%d - %d:%S"), __TFUNCTION__, __LINE__, m_pageViewEntries[entry], entry.c_str());
+    }
+
+    // DEBUG
+    my_print(false, _T("%s:%d END - %S"), __TFUNCTION__, __LINE__, page_view_buffer);
 }
