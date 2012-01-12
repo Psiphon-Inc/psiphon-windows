@@ -46,7 +46,8 @@ public:
         const tstring& sshUsername,
         const tstring& sshPassword,
         const tstring& sshObfuscatedPort,
-        const tstring& sshObfuscatedKey);
+        const tstring& sshObfuscatedKey,
+        const vector<std::regex>& statsRegexes);
     void Disconnect(void);
     bool WaitForConnected(void);
     void WaitAndDisconnect(ConnectionManager* connectionManager);
@@ -67,6 +68,7 @@ private:
     PROCESS_INFORMATION m_polipoProcessInfo;
     HANDLE m_polipoPipe;
     int m_connectType;
-    map<string, int> m_pageViewEntries;
+    map<tstring, int> m_pageViewEntries;
     unsigned long long m_bytesTransferred;
+    vector<std::regex> m_statsRegexes;
 };

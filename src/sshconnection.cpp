@@ -212,8 +212,9 @@ bool SSHConnection::Connect(
         const tstring& sshUsername,
         const tstring& sshPassword,
         const tstring& sshObfuscatedPort,
-        const tstring& sshObfuscatedKey)
-{
+        const tstring& sshObfuscatedKey,
+        const vector<std::regex>& statsRegexes)
+{    
     my_print(false, _T("SSH connecting..."));
 
     // Extract executables and put to disk if not already
@@ -239,6 +240,7 @@ bool SSHConnection::Connect(
     Disconnect();
 
     m_connectType = connectType;
+    m_statsRegexes = statsRegexes;
 
     // Start plonk using Psiphon server SSH parameters
 
@@ -633,7 +635,7 @@ bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
         }
         page_view_buffer[bytes_avail] = '\0';
 
-        // Page view and traffic stats with the new info.
+        // Update page view and traffic stats with the new info.
         ParsePolipoStatsBuffer(page_view_buffer);
 
         delete[] page_view_buffer;
@@ -644,10 +646,10 @@ bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
     {
         my_print(false, _T("%s:%d - PAGE VIEWS SENT"), __TFUNCTION__, __LINE__);
 
-        map<string, int>::iterator pos = m_pageViewEntries.begin();
+        map<tstring, int>::iterator pos = m_pageViewEntries.begin();
         for (; pos != m_pageViewEntries.end(); pos++)
         {
-            my_print(false, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
+            my_print(false, _T("PAGEVIEW: %d: %s"), pos->second, pos->first.c_str());
         }
         m_pageViewEntries.clear();
         my_print(false, _T("BYTES: %llu"), m_bytesTransferred);
@@ -657,20 +659,40 @@ bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
     return true;
 }
 
+/* Store page view info. Some transformation may be done depending on the 
+   contents of m_statsRegexes. 
+*/
 void SSHConnection::UpsertPageView(const string& entry)
 {
-    if (entry.length() > 0)
+    if (entry.length() <= 0)
     {
-        // Add/increment the entry.
-        map<string, int>::iterator map_entry = m_pageViewEntries.find(entry);
-        if (map_entry == m_pageViewEntries.end())
+        return;
+    }
+
+    NarrowToTString(entry);
+    tstring store_entry = _T("(OTHER)");
+
+    bool match = false;
+    for (unsigned int i = 0; i < m_statsRegexes.size(); i++)
+    {
+        if (regex_search(
+                entry, 
+                m_statsRegexes[i]))
         {
-            m_pageViewEntries[entry] = 1;
+            store_entry = NarrowToTString(entry);
+            break;
         }
-        else
-        {
-            map_entry->second += 1;
-        }
+    }
+
+    // Add/increment the entry.
+    map<tstring, int>::iterator map_entry = m_pageViewEntries.find(store_entry);
+    if (map_entry == m_pageViewEntries.end())
+    {
+        m_pageViewEntries[store_entry] = 1;
+    }
+    else
+    {
+        map_entry->second += 1;
     }
 }
 
@@ -680,9 +702,6 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
     const char* HTTPS_PREFIX = "PSIPHON-PAGE-VIEW-HTTPS:>>";
     const char* BYTES_TRANSFERRED_PREFIX = "PSIPHON-BYTES-TRANSFERRED:>>";
     const char* ENTRY_END = "<<";
-
-    // TODO: Use regexes or whatever. 
-    // <regex>: http://msdn.microsoft.com/en-us/library/ff926112.aspx
 
     const char* curr_pos = page_view_buffer;
     const char* end_pos = page_view_buffer + strlen(page_view_buffer);

@@ -45,6 +45,7 @@ public:
     string GetSSHObfuscatedKey(void) {return m_sshObfuscatedKey;}
     vector<tstring> GetHomepages(void) {return m_homepages;}
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
+    vector<std::regex> GetStatsRegexes() {return m_statsRegexes;}
 
     bool ParseHandshakeResponse(const string& response);
 
@@ -62,4 +63,5 @@ private:
     string m_sshObfuscatedKey;
     vector<tstring> m_homepages;
     vector<string> m_servers;
+    vector<std::regex> m_statsRegexes;
 };

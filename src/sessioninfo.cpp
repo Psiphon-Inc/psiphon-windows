@@ -40,6 +40,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     // SSHPassword: <string>\n  (zero or one)
     // SSHHostKey: <string>\n   (zero or one)
     // SSHSessionID: <string>\n   (zero or one)
+    // StatsRegex: <regex>\n    (zero or more)
 
     static const char* UPGRADE_PREFIX = "Upgrade: ";
     static const char* PSK_PREFIX = "PSK: ";
@@ -52,6 +53,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     static const char* SSH_OBFUSCATED_KEY_PREFIX = "SSHObfuscatedKey: ";
     static const char* HOMEPAGE_PREFIX = "Homepage: ";
     static const char* SERVER_PREFIX = "Server: ";
+    static const char* STATS_REGEX_PREFIX = "StatsRegex: ";
 
     m_upgradeVersion.clear();
     m_psk.clear();
@@ -64,6 +66,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     m_sshObfuscatedKey.clear();
     m_homepages.clear();
     m_servers.clear();
+    m_statsRegexes.clear();
 
     stringstream stream(response);
     string item;
@@ -124,6 +127,11 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         {
             item.erase(0, strlen(SERVER_PREFIX));
             m_servers.push_back(item);
+        }
+        else if (0 == item.find(STATS_REGEX_PREFIX))
+        {
+            item.erase(0, strlen(STATS_REGEX_PREFIX));
+            m_statsRegexes.push_back(std::regex(item, std::regex::ECMAScript | std::regex::icase));
         }
     }
 

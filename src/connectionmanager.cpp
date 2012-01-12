@@ -863,7 +863,8 @@ bool ConnectionManager::SSHConnect(int connectType)
             NarrowToTString(m_currentSessionInfo.GetSSHUsername()),
             NarrowToTString(m_currentSessionInfo.GetSSHPassword()),
             NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedPort()),
-            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedKey()));
+            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedKey()),
+            m_currentSessionInfo.GetStatsRegexes());
 }
 
 void ConnectionManager::SSHDisconnect(void)
