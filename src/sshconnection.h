@@ -54,8 +54,9 @@ public:
 
 private:
     HANDLE CreatePolipoPipe();
-    bool ProcessPageViews(unsigned int totalTenthsSeconds);
-    void ParsePageViewBuffer(const char* page_view_buffer);
+    bool ProcessPolipoStats(unsigned int totalTenthsSeconds);
+    void UpsertPageView(const string& entry);
+    void ParsePolipoStatsBuffer(const char* page_view_buffer);
 
 private:
     SystemProxySettings m_systemProxySettings;
@@ -67,4 +68,5 @@ private:
     HANDLE m_polipoPipe;
     int m_connectType;
     map<string, int> m_pageViewEntries;
+    unsigned long long m_bytesTransferred;
 };

@@ -28,7 +28,8 @@
 
 SSHConnection::SSHConnection(const bool& cancel)
 :   m_cancel(cancel),
-    m_polipoPipe(NULL)
+    m_polipoPipe(NULL),
+    m_bytesTransferred(0)
 {
     ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
@@ -496,7 +497,7 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
             }
         }
 
-        if (!ProcessPageViews(totalTenthsSeconds))
+        if (!ProcessPolipoStats(totalTenthsSeconds))
         {
             break;
         }
@@ -601,17 +602,15 @@ HANDLE SSHConnection::CreatePolipoPipe()
     return hOutputWrite;
 }
 
-#include <regex>
-
-// Check Polipo pipe for page view info waiting to be processed; gather info;
-// process; send to server.
+// Check Polipo pipe for page view, bytes transferred, etc., info waiting to 
+// be processed; gather info; process; send to server.
 // Returns true on success, false otherwise.
-bool SSHConnection::ProcessPageViews(unsigned int totalTenthsSeconds)
+bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
     const unsigned int SEND_INTERVAL_TENTHS_SECONDS = (1*60*10); // 5 mins
-    const unsigned int SEND_MAX_ENTRIES = 1000;
+    const unsigned int SEND_MAX_ENTRIES = 100;
 
     DWORD bytes_avail = 0;
 
@@ -634,8 +633,8 @@ bool SSHConnection::ProcessPageViews(unsigned int totalTenthsSeconds)
         }
         page_view_buffer[bytes_avail] = '\0';
 
-        // Add or update the current set of page view counts with the new info.
-        ParsePageViewBuffer(page_view_buffer);
+        // Page view and traffic stats with the new info.
+        ParsePolipoStatsBuffer(page_view_buffer);
 
         delete[] page_view_buffer;
     }
@@ -644,22 +643,43 @@ bool SSHConnection::ProcessPageViews(unsigned int totalTenthsSeconds)
         || m_pageViewEntries.size() >= SEND_MAX_ENTRIES)
     {
         my_print(false, _T("%s:%d - PAGE VIEWS SENT"), __TFUNCTION__, __LINE__);
+
+        map<string, int>::iterator pos = m_pageViewEntries.begin();
+        for (; pos != m_pageViewEntries.end(); pos++)
+        {
+            my_print(false, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
+        }
         m_pageViewEntries.clear();
+        my_print(false, _T("BYTES: %llu"), m_bytesTransferred);
+        m_bytesTransferred = 0;
     }
 
     return true;
 }
 
-void SSHConnection::ParsePageViewBuffer(const char* page_view_buffer)
+void SSHConnection::UpsertPageView(const string& entry)
+{
+    if (entry.length() > 0)
+    {
+        // Add/increment the entry.
+        map<string, int>::iterator map_entry = m_pageViewEntries.find(entry);
+        if (map_entry == m_pageViewEntries.end())
+        {
+            m_pageViewEntries[entry] = 1;
+        }
+        else
+        {
+            map_entry->second += 1;
+        }
+    }
+}
+
+void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
 {
     const char* HTTP_PREFIX = "PSIPHON-PAGE-VIEW-HTTP:>>";
     const char* HTTPS_PREFIX = "PSIPHON-PAGE-VIEW-HTTPS:>>";
+    const char* BYTES_TRANSFERRED_PREFIX = "PSIPHON-BYTES-TRANSFERRED:>>";
     const char* ENTRY_END = "<<";
-
-
-    // DEBUG
-    my_print(false, _T("%s:%d START - %S"), __TFUNCTION__, __LINE__, page_view_buffer);
-
 
     // TODO: Use regexes or whatever. 
     // <regex>: http://msdn.microsoft.com/en-us/library/ff926112.aspx
@@ -671,16 +691,25 @@ void SSHConnection::ParsePageViewBuffer(const char* page_view_buffer)
     {
         const char* http_entry_start = strstr(curr_pos, HTTP_PREFIX);
         const char* https_entry_start = strstr(curr_pos, HTTPS_PREFIX);
+        const char* bytes_transferred_start = strstr(curr_pos, BYTES_TRANSFERRED_PREFIX);
         const char* entry_end = NULL;
-        string entry;
 
-        // Which entry comes next -- HTTP or HTTPS?
+        if (http_entry_start == NULL) http_entry_start = end_pos;
+        if (https_entry_start == NULL) https_entry_start = end_pos;
+        if (bytes_transferred_start == NULL) bytes_transferred_start = end_pos;
 
-        if (http_entry_start 
-            && (!https_entry_start || http_entry_start < https_entry_start))
+        const char* next = min(http_entry_start, min(https_entry_start, bytes_transferred_start));
+        if (next >= end_pos)
         {
-            // HTTP
-            const char* entry_start = http_entry_start + strlen(HTTP_PREFIX);
+            // No next entry found
+            break;
+        }
+
+        // Find the next entry
+
+        if (next == http_entry_start)
+        {
+            const char* entry_start = next + strlen(HTTP_PREFIX);
             entry_end = strstr(entry_start, ENTRY_END);
             
             if (!entry_end)
@@ -690,13 +719,11 @@ void SSHConnection::ParsePageViewBuffer(const char* page_view_buffer)
                 break;
             }
 
-            entry = string(entry_start, entry_end-entry_start);
+            UpsertPageView(string(entry_start, entry_end-entry_start));
         }
-        else if (https_entry_start 
-                 && (!http_entry_start || https_entry_start < http_entry_start))
+        else if (next == https_entry_start)
         {
-            // HTTPS
-            const char* entry_start = https_entry_start + strlen(HTTPS_PREFIX);
+            const char* entry_start = next + strlen(HTTPS_PREFIX);
             entry_end = strstr(entry_start, ENTRY_END);
 
             if (!entry_end)
@@ -706,31 +733,29 @@ void SSHConnection::ParsePageViewBuffer(const char* page_view_buffer)
                 break;
             }
 
-            entry = string(entry_start, entry_end-entry_start);
+            UpsertPageView(string(entry_start, entry_end-entry_start));
+        }
+        else if (next == bytes_transferred_start)
+        {
+            const char* entry_start = next + strlen(BYTES_TRANSFERRED_PREFIX);
+            entry_end = strstr(entry_start, ENTRY_END);
+
+            if (!entry_end)
+            {
+                // Something is rather wrong. Maybe an incomplete entry.
+                // Stop processing;
+                break;
+            }
+
+            m_bytesTransferred += atoi(string(entry_start, entry_end-entry_start).c_str());
         }
         else
         {
-            // No next entry found.
+            // Shouldn't get here...
+            // ASSERT(0);
             break;
         }
 
-        // Add/increment the entry.
-        map<string, int>::iterator map_entry = m_pageViewEntries.find(entry);
-        if (map_entry == m_pageViewEntries.end())
-        {
-            m_pageViewEntries[entry] = 1;
-        }
-        else
-        {
-            map_entry->second += 1;
-        }
-
         curr_pos = entry_end + strlen(ENTRY_END);
-
-        // DEBUG
-        my_print(false, _T("%s:%d - %d:%S"), __TFUNCTION__, __LINE__, m_pageViewEntries[entry], entry.c_str());
     }
-
-    // DEBUG
-    my_print(false, _T("%s:%d END - %S"), __TFUNCTION__, __LINE__, page_view_buffer);
 }
