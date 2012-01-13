@@ -54,7 +54,10 @@ public:
     bool GetSkipVPN(void);
     void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
     bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
-    void SendStatusMessage(int connectType, bool connected);
+    void SendStatusMessage(
+            int connectType, bool connected,
+            const map<string, int>& pageViewEntries,
+            unsigned long long bytesTransferred);
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);

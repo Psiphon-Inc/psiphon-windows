@@ -220,13 +220,15 @@ void CALLBACK WinHttpStatusCallback(
     }
 }
 
-bool HTTPSRequest::GetRequest(
+bool HTTPSRequest::MakeRequest(
         const bool& cancel,
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response)
+        string& response,
+        LPVOID additionalData/*=NULL*/,
+        DWORD additionalDataLength/*=0*/)
 {
     DWORD dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
 				    SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
@@ -262,7 +264,7 @@ bool HTTPSRequest::GetRequest(
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(
                     hConnect,
-	                _T("GET"),
+	                additionalData ? _T("POST") : _T("GET"),
 	                requestPath,
 	                NULL,
 	                WINHTTP_NO_REFERER,
@@ -306,9 +308,9 @@ bool HTTPSRequest::GetRequest(
                     hRequest,
 	                WINHTTP_NO_ADDITIONAL_HEADERS,
 	                0,
-	                WINHTTP_NO_REQUEST_DATA,
-	                0,
-	                0,
+	                additionalData ? additionalData : WINHTTP_NO_REQUEST_DATA,
+	                additionalDataLength,
+	                additionalDataLength,
 	                (DWORD_PTR)this))
     {
 	    my_print(false, _T("WinHttpSendRequest failed (%d)"), GetLastError());

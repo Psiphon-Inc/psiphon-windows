@@ -29,7 +29,8 @@
 SSHConnection::SSHConnection(const bool& cancel)
 :   m_cancel(cancel),
     m_polipoPipe(NULL),
-    m_bytesTransferred(0)
+    m_bytesTransferred(0),
+    m_lastStatusSendTimeMS(0)
 {
     ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
@@ -461,8 +462,6 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
     // If the user cancels manually, m_cancel will be set -- we
     // handle that here while for VPN it's done in Manager
 
-    unsigned int totalTenthsSeconds = 0;
-
     bool wasConnected = false;
 
     while (m_plonkProcessInfo.hProcess != 0 && m_polipoProcessInfo.hProcess != 0)
@@ -479,37 +478,15 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
             break;
         }
 
-        // Very basic client-side SSH session duration stats are implemented by sending
-        // status messages at the time buckets we're interested in. The intermediate
-        // updates allow a session duration to be estimated in the case where a post
-        // disconnect update doesn't arrive.
-        // 15 sec, 1 min, 5 min, 30 min, 1 hour, every hour, end of session
-
-        totalTenthsSeconds++; // wraps after 4971 days...
-
-        if (totalTenthsSeconds == 150
-            || totalTenthsSeconds == 600
-            || totalTenthsSeconds == 3000
-            || totalTenthsSeconds == 18000
-            || 0 == (totalTenthsSeconds % 36000))
-        {
-            if (connectionManager)
-            {
-                connectionManager->SendStatusMessage(m_connectType, true);
-            }
-        }
-
-        if (!ProcessPolipoStats(totalTenthsSeconds))
-        {
-            break;
-        }
+        // We'll continue regardless of the stats-processing return status.
+        (void)ProcessStatsAndStatus(connectionManager);
     }
 
     // Send a post-disconnect SSH session duration message
 
     if (wasConnected && connectionManager)
     {
-        connectionManager->SendStatusMessage(m_connectType, false);
+        (void)ProcessStatsAndStatus(connectionManager, true);
     }
 
     // Attempt graceful shutdown (for the case where one process
@@ -524,6 +501,8 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
 
     CloseHandle(m_polipoPipe);
     m_polipoPipe = NULL;
+
+    m_lastStatusSendTimeMS = 0;
 
     // Revert the Windows Internet Settings to the user's previous settings
     m_systemProxySettings.Revert();
@@ -607,14 +586,20 @@ HANDLE SSHConnection::CreatePolipoPipe()
 // Check Polipo pipe for page view, bytes transferred, etc., info waiting to 
 // be processed; gather info; process; send to server.
 // Returns true on success, false otherwise.
-bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
+bool SSHConnection::ProcessStatsAndStatus(
+                        ConnectionManager* connectionManager, 
+                        bool force/*=false*/)
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
-    const unsigned int SEND_INTERVAL_TENTHS_SECONDS = (1*60*10); // 5 mins
+    const unsigned int SEND_INTERVAL_MS = (1*60*1000); // 5 mins
     const unsigned int SEND_MAX_ENTRIES = 100;
 
     DWORD bytes_avail = 0;
+
+    // On the very first call, m_lastStatusSendTimeMS will be 0, but we don't
+    // want to send immediately. So...
+    if (m_lastStatusSendTimeMS == 0) m_lastStatusSendTimeMS = GetTickCount();
 
     // ReadFile will block forever if there's no data to read, so we need
     // to check if there's data available to read first.
@@ -624,6 +609,7 @@ bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
         return false;
     }
 
+    // If there's data available from the Polipo pipe, process it.
     if (bytes_avail > 0)
     {
         char* page_view_buffer = new char[bytes_avail+1];
@@ -641,19 +627,19 @@ bool SSHConnection::ProcessPolipoStats(unsigned int totalTenthsSeconds)
         delete[] page_view_buffer;
     }
 
-    if ((totalTenthsSeconds % SEND_INTERVAL_TENTHS_SECONDS) == 0
+    // If the time or size thresholds have been exceeded, or if we're being 
+    // forced to, send the stats.
+    if (force
+        || (m_lastStatusSendTimeMS + SEND_INTERVAL_MS) < GetTickCount()
         || m_pageViewEntries.size() >= SEND_MAX_ENTRIES)
     {
-        my_print(false, _T("%s:%d - PAGE VIEWS SENT"), __TFUNCTION__, __LINE__);
+        connectionManager->SendStatusMessage(
+            m_connectType, true, m_pageViewEntries, m_bytesTransferred);
 
-        map<tstring, int>::iterator pos = m_pageViewEntries.begin();
-        for (; pos != m_pageViewEntries.end(); pos++)
-        {
-            my_print(false, _T("PAGEVIEW: %d: %s"), pos->second, pos->first.c_str());
-        }
+        // Reset stats
         m_pageViewEntries.clear();
-        my_print(false, _T("BYTES: %llu"), m_bytesTransferred);
         m_bytesTransferred = 0;
+        m_lastStatusSendTimeMS = GetTickCount();
     }
 
     return true;
@@ -669,8 +655,7 @@ void SSHConnection::UpsertPageView(const string& entry)
         return;
     }
 
-    NarrowToTString(entry);
-    tstring store_entry = _T("(OTHER)");
+    string store_entry = "(OTHER)";
 
     bool match = false;
     for (unsigned int i = 0; i < m_statsRegexes.size(); i++)
@@ -679,13 +664,13 @@ void SSHConnection::UpsertPageView(const string& entry)
                 entry, 
                 m_statsRegexes[i]))
         {
-            store_entry = NarrowToTString(entry);
+            store_entry = entry;
             break;
         }
     }
 
     // Add/increment the entry.
-    map<tstring, int>::iterator map_entry = m_pageViewEntries.find(store_entry);
+    map<string, int>::iterator map_entry = m_pageViewEntries.find(store_entry);
     if (map_entry == m_pageViewEntries.end())
     {
         m_pageViewEntries[store_entry] = 1;
@@ -778,3 +763,4 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
         curr_pos = entry_end + strlen(ENTRY_END);
     }
 }
+

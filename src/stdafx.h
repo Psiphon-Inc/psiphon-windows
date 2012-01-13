@@ -40,3 +40,4 @@
 #include "tstring.h"
 #include <map>
 #include <regex>
+#include <sstream>

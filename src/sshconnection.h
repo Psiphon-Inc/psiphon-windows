@@ -55,7 +55,7 @@ public:
 
 private:
     HANDLE CreatePolipoPipe();
-    bool ProcessPolipoStats(unsigned int totalTenthsSeconds);
+    bool ProcessStatsAndStatus(ConnectionManager* connectionManager, bool force=false);
     void UpsertPageView(const string& entry);
     void ParsePolipoStatsBuffer(const char* page_view_buffer);
 
@@ -68,7 +68,8 @@ private:
     PROCESS_INFORMATION m_polipoProcessInfo;
     HANDLE m_polipoPipe;
     int m_connectType;
-    map<tstring, int> m_pageViewEntries;
+    DWORD m_lastStatusSendTimeMS;
+    map<string, int> m_pageViewEntries;
     unsigned long long m_bytesTransferred;
     vector<std::regex> m_statsRegexes;
 };

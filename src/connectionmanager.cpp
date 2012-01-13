@@ -242,7 +242,7 @@ void ConnectionManager::DoVPNConnection(
     
         string response;
         HTTPSRequest httpsRequest;
-        if (!httpsRequest.GetRequest(
+        if (!httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
                             NarrowToTString(serverEntry.serverAddress).c_str(),
                             serverEntry.webServerPort,
@@ -276,7 +276,7 @@ void ConnectionManager::DoVPNConnection(
         
     string response;
     HTTPSRequest httpsRequest;
-    if (httpsRequest.GetRequest(
+    if (httpsRequest.MakeRequest(
                         manager->GetUserSignalledStop(),
                         NarrowToTString(serverEntry.serverAddress).c_str(),
                         serverEntry.webServerPort,
@@ -340,7 +340,7 @@ void ConnectionManager::DoSSHConnection(
     
             string response;
             HTTPSRequest httpsRequest;
-            if (!httpsRequest.GetRequest(
+            if (!httpsRequest.MakeRequest(
                                 manager->GetUserSignalledStop(),
                                 NarrowToTString(serverEntry.serverAddress).c_str(),
                                 serverEntry.webServerPort,
@@ -377,7 +377,7 @@ void ConnectionManager::DoSSHConnection(
         
     string response;
     HTTPSRequest httpsRequest;
-    if (httpsRequest.GetRequest(
+    if (httpsRequest.MakeRequest(
                         manager->GetUserSignalledStop(),
                         NarrowToTString(serverEntry.serverAddress).c_str(),
                         serverEntry.webServerPort,
@@ -471,7 +471,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             bool skipVPN = manager->GetSkipVPN();
 
             HTTPSRequest httpsRequest;
-            if (!httpsRequest.GetRequest(
+            if (!httpsRequest.MakeRequest(
                                 manager->GetUserSignalledStop(),
                                 NarrowToTString(serverEntry.serverAddress).c_str(),
                                 serverEntry.webServerPort,
@@ -493,7 +493,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 // for inevitable timeouts.
 
                 else if (serverEntry.webServerPort != 443
-                            && httpsRequest.GetRequest(
+                            && httpsRequest.MakeRequest(
                                         manager->GetUserSignalledStop(),
                                         NarrowToTString(serverEntry.serverAddress).c_str(),
                                         443,
@@ -523,7 +523,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             {
                 // Download new binary
 
-                if (!httpsRequest.GetRequest(
+                if (!httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
                             NarrowToTString(serverEntry.serverAddress).c_str(),
                             serverEntry.webServerPort,
@@ -643,7 +643,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     return 0;
 }
 
-void ConnectionManager::SendStatusMessage(int connectType, bool connected)
+void ConnectionManager::SendStatusMessage(
+                            int connectType, bool connected,
+                            const map<string, int>& pageViewEntries,
+                            unsigned long long bytesTransferred)
 {
     // NOTE: no lock while waiting for network events
 
@@ -664,16 +667,42 @@ void ConnectionManager::SendStatusMessage(int connectType, bool connected)
     bool ignoreCancel = false;
     bool& cancel = connected ? GetUserSignalledStop() : ignoreCancel;
 
+    // Format stats data for consumption by the server. We'll manually format JSON.
+    ostringstream additionalData; 
+    additionalData << "{";
+    additionalData << "\"bytes_transferred\":" << bytesTransferred << ",";
+    my_print(true, _T("BYTES: %llu"), bytesTransferred);
+
+    additionalData << "\"page_views\":[";
+    map<string, int>::const_iterator pos = pageViewEntries.begin();
+    for (; pos != pageViewEntries.end(); pos++)
+    {
+        if (pos != pageViewEntries.begin())
+            additionalData << ",";
+
+        additionalData << "{";
+        additionalData << "\"page\":\"" << pos->first.c_str() << "\",";
+        additionalData << "\"count\":" << pos->second;
+        additionalData << "}";
+        my_print(true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
+    }
+    additionalData << "]}";
+
+    string additionalDataString = additionalData.str();
+    my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
+
     tstring requestPath = GetSSHStatusRequestPath(connectType, connected);
     string response;
     HTTPSRequest httpsRequest;
-    httpsRequest.GetRequest(
+    httpsRequest.MakeRequest(
             cancel,
             NarrowToTString(serverAddress).c_str(),
             webServerPort,
             webServerCertificate,
             requestPath.c_str(),
-            response);
+            response,
+            (LPVOID)additionalDataString.c_str(),
+            additionalDataString.length());
     
     // status message is for stats, success isn't critical
 }
