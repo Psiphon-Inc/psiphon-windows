@@ -701,6 +701,7 @@ void ConnectionManager::SendStatusMessage(
             webServerCertificate,
             requestPath.c_str(),
             response,
+            L"Content-Type: application/json",
             (LPVOID)additionalDataString.c_str(),
             additionalDataString.length());
     

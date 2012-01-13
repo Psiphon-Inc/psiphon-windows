@@ -36,6 +36,7 @@ public:
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
+        LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);
 

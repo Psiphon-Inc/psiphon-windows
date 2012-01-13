@@ -93,13 +93,13 @@ void CALLBACK WinHttpStatusCallback(
 
         dwLen = sizeof(pCert);
         if (!WinHttpQueryOption(
-	                hRequest,
-	                WINHTTP_OPTION_SERVER_CERT_CONTEXT,
-	                &pCert,
-	                &dwLen)
+                    hRequest,
+                    WINHTTP_OPTION_SERVER_CERT_CONTEXT,
+                    &pCert,
+                    &dwLen)
             || NULL == pCert)
         {
-	        my_print(false, _T("WinHttpQueryOption failed (%d)"), GetLastError());
+            my_print(false, _T("WinHttpQueryOption failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -119,7 +119,7 @@ void CALLBACK WinHttpStatusCallback(
 
         if (!WinHttpReceiveResponse(hRequest, NULL))
         {
-    	    my_print(false, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
+            my_print(false, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -137,21 +137,21 @@ void CALLBACK WinHttpStatusCallback(
                         &dwLen, 
                         NULL))
         {
-	        my_print(false, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
+            my_print(false, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
 
         if (200 != dwStatusCode)
         {
-	        my_print(false, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
+            my_print(false, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
             WinHttpCloseHandle(hRequest);
             return;
         }
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
-	        my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -181,7 +181,7 @@ void CALLBACK WinHttpStatusCallback(
     
         if (!WinHttpReadData(hRequest, pBuffer, dwLen, &dwLen))
         {
-	        my_print(false, _T("WinHttpReadData failed (%d)"), GetLastError());
+            my_print(false, _T("WinHttpReadData failed (%d)"), GetLastError());
             HeapFree(GetProcessHeap(), 0, pBuffer);
             WinHttpCloseHandle(hRequest);
             return;
@@ -198,7 +198,7 @@ void CALLBACK WinHttpStatusCallback(
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
-	        my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            my_print(false, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -227,63 +227,64 @@ bool HTTPSRequest::MakeRequest(
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
+        LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
 {
     DWORD dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
-				    SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
-				    SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+                    SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
+                    SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-	                WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-	                WINHTTP_NO_PROXY_NAME,
-	                WINHTTP_NO_PROXY_BYPASS,
+                    WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    WINHTTP_NO_PROXY_NAME,
+                    WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 
     if (NULL == hSession)
     {
-	    my_print(false, _T("WinHttpOpen failed (%d)"), GetLastError());
+        my_print(false, _T("WinHttpOpen failed (%d)"), GetLastError());
         return false;
     }
 
     AutoHINTERNET hConnect =
             WinHttpConnect(
                 hSession,
-	            serverAddress,
-	            serverWebPort,
-	            0);
+                serverAddress,
+                serverWebPort,
+                0);
 
     if (NULL == hConnect)
     {
-	    my_print(false, _T("WinHttpConnect failed (%d)"), GetLastError());
+        my_print(false, _T("WinHttpConnect failed (%d)"), GetLastError());
         return false;
     }
 
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(
                     hConnect,
-	                additionalData ? _T("POST") : _T("GET"),
-	                requestPath,
-	                NULL,
-	                WINHTTP_NO_REFERER,
-	                WINHTTP_DEFAULT_ACCEPT_TYPES,
-	                WINHTTP_FLAG_SECURE); 
+                    additionalData ? _T("POST") : _T("GET"),
+                    requestPath,
+                    NULL,
+                    WINHTTP_NO_REFERER,
+                    WINHTTP_DEFAULT_ACCEPT_TYPES,
+                    WINHTTP_FLAG_SECURE); 
 
     if (NULL == hRequest)
     {
-	    my_print(false, _T("WinHttpOpenRequest failed (%d)"), GetLastError());
+        my_print(false, _T("WinHttpOpenRequest failed (%d)"), GetLastError());
         return false;
     }
 
     if (FALSE == WinHttpSetOption(
-	                hRequest,
-	                WINHTTP_OPTION_SECURITY_FLAGS,
-	                &dwFlags,
-	                sizeof(DWORD)))
+                    hRequest,
+                    WINHTTP_OPTION_SECURITY_FLAGS,
+                    &dwFlags,
+                    sizeof(DWORD)))
     {
-	    my_print(false, _T("WinHttpSetOption failed (%d)"), GetLastError());
+        my_print(false, _T("WinHttpSetOption failed (%d)"), GetLastError());
         return false;
     }
 
@@ -293,7 +294,7 @@ bool HTTPSRequest::MakeRequest(
                                                 WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
                                                 NULL))
     {
-	    my_print(false, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
+        my_print(false, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
         return false;
     }
 
@@ -306,14 +307,14 @@ bool HTTPSRequest::MakeRequest(
 
     if (FALSE == WinHttpSendRequest(
                     hRequest,
-	                WINHTTP_NO_ADDITIONAL_HEADERS,
-	                0,
-	                additionalData ? additionalData : WINHTTP_NO_REQUEST_DATA,
-	                additionalDataLength,
-	                additionalDataLength,
-	                (DWORD_PTR)this))
+                    additionalHeaders ? additionalHeaders : WINHTTP_NO_ADDITIONAL_HEADERS,
+                    additionalHeaders ? wcslen(additionalHeaders) : 0,
+                    additionalData ? additionalData : WINHTTP_NO_REQUEST_DATA,
+                    additionalDataLength,
+                    additionalDataLength,
+                    (DWORD_PTR)this))
     {
-	    my_print(false, _T("WinHttpSendRequest failed (%d)"), GetLastError());
+        my_print(false, _T("WinHttpSendRequest failed (%d)"), GetLastError());
         return false;
     }
 
