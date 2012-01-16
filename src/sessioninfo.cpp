@@ -53,7 +53,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
     static const char* SSH_OBFUSCATED_KEY_PREFIX = "SSHObfuscatedKey: ";
     static const char* HOMEPAGE_PREFIX = "Homepage: ";
     static const char* SERVER_PREFIX = "Server: ";
-    static const char* STATS_REGEX_PREFIX = "StatsRegex: ";
+    static const char* STATS_REGEX_PREFIX = "PageViewRegex: ";
 
     m_upgradeVersion.clear();
     m_psk.clear();
