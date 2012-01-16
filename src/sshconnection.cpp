@@ -413,32 +413,63 @@ bool SSHConnection::WaitForConnected(void)
     plonkSocksServer.sin_addr.s_addr = inet_addr("127.0.0.1");
     plonkSocksServer.sin_port = htons(atoi(TStringToNarrow(PLONK_SOCKS_PROXY_PORT).c_str()));
 
-    SOCKET sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    SOCKET sock = INVALID_SOCKET;
     WSAEVENT connectedEvent = WSACreateEvent();
+    WSANETWORKEVENTS networkEvents;
+
+    // Wait up to SSH_CONNECTION_TIMEOUT_SECONDS, checking periodically for user cancel
+
+    DWORD start = GetTickCount();
+    DWORD maxWaitMilliseconds = SSH_CONNECTION_TIMEOUT_SECONDS*1000;
 
     bool connected = false;
 
-    if (0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
-        && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plonkSocksServer, sizeof(plonkSocksServer))
-        && WSAEWOULDBLOCK == WSAGetLastError())
+    while (true)
     {
-        // Wait up to SSH_CONNECTION_TIMEOUT_SECONDS, checking periodically for user cancel
+        DWORD now = GetTickCount();
 
-        for (int i = 0; i < SSH_CONNECTION_TIMEOUT_SECONDS*10; i++)
+        if (now < start // Note: GetTickCount wraps after 49 days; small chance of a shorter timeout
+            || now >= start + maxWaitMilliseconds)
         {
-            if (WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE))
-            {
-                connected = true;
-                break;
-            }
-            else if (m_cancel)
-            {
-                break;
-            }
+            break;
+        }
+
+        // Attempt to connect to SOCKS proxy
+        // Just wait 100 ms. and then check for user cancel etc.
+
+        closesocket(sock);
+        sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+        if (INVALID_SOCKET != sock
+            && 0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
+            && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plonkSocksServer, sizeof(plonkSocksServer))
+            && WSAEWOULDBLOCK == WSAGetLastError()
+            && WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE)
+            && 0 == WSAEnumNetworkEvents(sock, connectedEvent, &networkEvents)
+            && (networkEvents.lNetworkEvents & FD_CONNECT)
+            && networkEvents.iErrorCode[FD_CONNECT_BIT] == 0)
+        {
+            connected = true;
+            break;
+        }
+
+        // If plonk aborted, give up
+
+        if (WAIT_OBJECT_0 == WaitForSingleObject(m_plonkProcessInfo.hProcess, 0))
+        {
+            break;
+        }
+
+        // Check if user canceled
+
+        if (m_cancel)
+        {
+            break;
         }
     }
 
     closesocket(sock);
+    WSACloseEvent(connectedEvent);
     WSACleanup();
 
     if (connected)

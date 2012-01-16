@@ -329,6 +329,11 @@ void ConnectionManager::DoSSHConnection(
     {
         if (!manager->SSHConnect(connectType) || !manager->SSHWaitForConnected())
         {
+            // Explicit disconnect cleanup before next attempt (SSH object cleans
+            // up automatically, but that results in confusing log output).
+
+            manager->SSHDisconnect();
+
             if (manager->GetUserSignalledStop())
             {
                 throw Abort();
