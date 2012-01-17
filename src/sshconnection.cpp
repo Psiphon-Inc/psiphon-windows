@@ -325,6 +325,7 @@ bool SSHConnection::Connect(
     // (same recommended settings as Tor: http://www.pps.jussieu.fr/~jch/software/polipo/tor.html
 
     tstring polipoCommandLine = m_polipoPath
+                                + _T(" psiphonStats=true")
                                 + _T(" proxyPort=") + POLIPO_HTTP_PROXY_PORT
                                 + _T(" socksParentProxy=127.0.0.1:") + PLONK_SOCKS_PROXY_PORT
                                 + _T(" diskCacheRoot=\"\"")
