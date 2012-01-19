@@ -73,7 +73,7 @@ private:
     int m_connectType;
     DWORD m_lastStatusSendTimeMS;
     map<string, int> m_pageViewEntries;
-    map<string, int> m_httpsRequests;
+    map<string, int> m_httpsRequestEntries;
     unsigned long long m_bytesTransferred;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;

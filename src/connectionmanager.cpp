@@ -651,7 +651,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 void ConnectionManager::SendStatusMessage(
                             int connectType, bool connected,
                             const map<string, int>& pageViewEntries,
-                            const map<string, int>& httpsRequests,
+                            const map<string, int>& httpsRequestEntries,
                             unsigned long long bytesTransferred)
 {
     // NOTE: no lock while waiting for network events
@@ -673,43 +673,38 @@ void ConnectionManager::SendStatusMessage(
     bool ignoreCancel = false;
     bool& cancel = connected ? GetUserSignalledStop() : ignoreCancel;
 
-    // Format stats data for consumption by the server. We'll manually format JSON.
-    ostringstream additionalData; 
-    additionalData << "{";
-    additionalData << "\"bytes_transferred\":" << bytesTransferred << ",";
+    // Format stats data for consumption by the server. 
+
+    Json::Value stats;
+    stats["bytes_transferred"] = bytesTransferred;
     my_print(true, _T("BYTES: %llu"), bytesTransferred);
 
-    additionalData << "\"page_views\":[";
     map<string, int>::const_iterator pos = pageViewEntries.begin();
+    Json::Value page_views(Json::arrayValue);
     for (; pos != pageViewEntries.end(); pos++)
     {
-        if (pos != pageViewEntries.begin())
-            additionalData << ",";
-
-        additionalData << "{";
-        additionalData << "\"page\":\"" << pos->first.c_str() << "\",";
-        additionalData << "\"count\":" << pos->second;
-        additionalData << "}";
+        Json::Value entry;
+        entry["page"] = pos->first;
+        entry["count"] = pos->second;
+        page_views.append(entry);
         my_print(true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
     }
-    additionalData << "],";
+    stats["page_views"] = page_views;
 
-    additionalData << "\"https_requests\":[";
-    pos = httpsRequests.begin();
-    for (; pos != httpsRequests.end(); pos++)
+    pos = httpsRequestEntries.begin();
+    Json::Value https_requests(Json::arrayValue);
+    for (; pos != httpsRequestEntries.end(); pos++)
     {
-        if (pos != httpsRequests.begin())
-            additionalData << ",";
-
-        additionalData << "{";
-        additionalData << "\"domain\":\"" << pos->first.c_str() << "\",";
-        additionalData << "\"count\":" << pos->second;
-        additionalData << "}";
+        Json::Value entry;
+        entry["domain"] = pos->first;
+        entry["count"] = pos->second;
+        https_requests.append(entry);
         my_print(true, _T("HTTPS REQUEST: %d: %S"), pos->second, pos->first.c_str());
     }
-    additionalData << "]";
-    additionalData << "}";
+    stats["https_requests"] = https_requests;
 
+    ostringstream additionalData; 
+    additionalData << stats; 
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 

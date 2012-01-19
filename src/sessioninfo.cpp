@@ -21,7 +21,6 @@
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include <sstream>
-#include <json.h>
 
 
 void SessionInfo::Set(const ServerEntry& serverEntry)

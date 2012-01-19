@@ -57,7 +57,7 @@ public:
     void SendStatusMessage(
             int connectType, bool connected,
             const map<string, int>& pageViewEntries,
-            const map<string, int>& httpsRequests,
+            const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
 
 private:

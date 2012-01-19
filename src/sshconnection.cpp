@@ -646,7 +646,7 @@ bool SSHConnection::ProcessStatsAndStatus(
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
-    const unsigned int SEND_INTERVAL_MS = (5*60*1000); // 5 mins
+    const unsigned int SEND_INTERVAL_MS = (5*6*1000); // 5 mins
     const unsigned int SEND_MAX_ENTRIES = 100;
 
     DWORD bytes_avail = 0;
@@ -686,14 +686,14 @@ bool SSHConnection::ProcessStatsAndStatus(
     if (force
         || (m_lastStatusSendTimeMS + SEND_INTERVAL_MS) < GetTickCount()
         || m_pageViewEntries.size() >= SEND_MAX_ENTRIES
-        || m_httpsRequests.size() >= SEND_MAX_ENTRIES)
+        || m_httpsRequestEntries.size() >= SEND_MAX_ENTRIES)
     {
         connectionManager->SendStatusMessage(
-            m_connectType, true, m_pageViewEntries, m_httpsRequests, m_bytesTransferred);
+            m_connectType, true, m_pageViewEntries, m_httpsRequestEntries, m_bytesTransferred);
 
         // Reset stats
         m_pageViewEntries.clear();
-        m_httpsRequests.clear();
+        m_httpsRequestEntries.clear();
         m_bytesTransferred = 0;
         m_lastStatusSendTimeMS = GetTickCount();
     }
@@ -767,10 +767,10 @@ void SSHConnection::UpsertHttpsRequest(string entry)
     if (store_entry.length() == 0) return;
 
     // Add/increment the entry.
-    map<string, int>::iterator map_entry = m_httpsRequests.find(store_entry);
-    if (map_entry == m_httpsRequests.end())
+    map<string, int>::iterator map_entry = m_httpsRequestEntries.find(store_entry);
+    if (map_entry == m_httpsRequestEntries.end())
     {
-        m_httpsRequests[store_entry] = 1;
+        m_httpsRequestEntries[store_entry] = 1;
     }
     else
     {
