@@ -214,7 +214,8 @@ bool SSHConnection::Connect(
         const tstring& sshPassword,
         const tstring& sshObfuscatedPort,
         const tstring& sshObfuscatedKey,
-        const vector<std::regex>& statsRegexes)
+        const vector<RegexReplace>& pageViewRegexes,
+        const vector<RegexReplace>& httpsRequestRegexes)
 {    
     my_print(false, _T("SSH connecting..."));
 
@@ -241,7 +242,8 @@ bool SSHConnection::Connect(
     Disconnect();
 
     m_connectType = connectType;
-    m_statsRegexes = statsRegexes;
+    m_pageViewRegexes = pageViewRegexes;
+    m_httpsRequestRegexes = httpsRequestRegexes;
 
     // Start plonk using Psiphon server SSH parameters
 
@@ -338,9 +340,7 @@ bool SSHConnection::Connect(
 
     polipoStartupInfo.dwFlags = STARTF_USESTDHANDLES;
     polipoStartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    polipoStartupInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-    polipoStartupInfo.hStdOutput = CreatePolipoPipe();
-    if (!polipoStartupInfo.hStdOutput)
+    if (!CreatePolipoPipe(polipoStartupInfo.hStdOutput, polipoStartupInfo.hStdError))
     {
         my_print(false, _T("SSHConnection::Connect - CreatePolipoPipe failed (%d)"), GetLastError());
         return false;
@@ -565,11 +565,15 @@ void SSHConnection::SignalDisconnect(void)
 }
 
 // Create the pipe that will be used to communicate between the Polipo child 
-// process and this process. The child write handle should be used as the stdin
-// of the Polipo process.
-// Returns NULL on error.
-HANDLE SSHConnection::CreatePolipoPipe()
+// process and this process. o_outputPipe write handle should be used as the stdout
+// of the Polipo process, and o_errorPipe as stderr. 
+// (Both pipes are really the same, but duplicated.)
+// Returns true on success.
+bool SSHConnection::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 {
+    o_outputPipe = INVALID_HANDLE_VALUE;
+    o_errorPipe = INVALID_HANDLE_VALUE;
+
     // Most of this code is adapted from:
     // http://support.microsoft.com/kb/190351
 
@@ -579,12 +583,25 @@ HANDLE SSHConnection::CreatePolipoPipe()
     sa.lpSecurityDescriptor = NULL;
     sa.bInheritHandle = TRUE;
 
+    HANDLE hOutputReadTmp, hOutputWrite, hOutputRead, hErrorWrite;
+
     // Create the child output pipe.
-    HANDLE hOutputReadTmp, hOutputWrite, hOutputRead;
     if (!CreatePipe(&hOutputReadTmp, &hOutputWrite, &sa, 0))
     {
         my_print(false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return NULL;
+        return false;
+    }
+
+    // Create a duplicate of the output write handle for the std error
+    // write handle. This is necessary in case the child application
+    // closes one of its std output handles.
+    if (!DuplicateHandle(
+            GetCurrentProcess(), hOutputWrite, 
+            GetCurrentProcess(), &hErrorWrite,
+            0, TRUE, DUPLICATE_SAME_ACCESS))
+    {
+        my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
     }
 
     // Create new output read handle and the input write handles. Set
@@ -599,7 +616,7 @@ HANDLE SSHConnection::CreatePolipoPipe()
                          DUPLICATE_SAME_ACCESS))
     {
         my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return NULL;
+        return false;
     }
 
     // Close inheritable copies of the handles you do not want to be
@@ -607,16 +624,21 @@ HANDLE SSHConnection::CreatePolipoPipe()
     if (!CloseHandle(hOutputReadTmp))
     {
         my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return NULL;
+        return false;
     }
 
     m_polipoPipe = hOutputRead;
+    o_outputPipe = hOutputWrite;
+    o_errorPipe = hErrorWrite;
 
-    return hOutputWrite;
+    return true;
 }
 
 // Check Polipo pipe for page view, bytes transferred, etc., info waiting to 
 // be processed; gather info; process; send to server.
+// If force is false, the stats will only be sent to the server if certain
+// time or size limits have been exceeded; if force is true, the stats will
+// be sent regardlesss of limits.
 // Returns true on success, false otherwise.
 bool SSHConnection::ProcessStatsAndStatus(
                         ConnectionManager* connectionManager, 
@@ -663,13 +685,15 @@ bool SSHConnection::ProcessStatsAndStatus(
     // forced to, send the stats.
     if (force
         || (m_lastStatusSendTimeMS + SEND_INTERVAL_MS) < GetTickCount()
-        || m_pageViewEntries.size() >= SEND_MAX_ENTRIES)
+        || m_pageViewEntries.size() >= SEND_MAX_ENTRIES
+        || m_httpsRequests.size() >= SEND_MAX_ENTRIES)
     {
         connectionManager->SendStatusMessage(
-            m_connectType, true, m_pageViewEntries, m_bytesTransferred);
+            m_connectType, true, m_pageViewEntries, m_httpsRequests, m_bytesTransferred);
 
         // Reset stats
         m_pageViewEntries.clear();
+        m_httpsRequests.clear();
         m_bytesTransferred = 0;
         m_lastStatusSendTimeMS = GetTickCount();
     }
@@ -678,34 +702,75 @@ bool SSHConnection::ProcessStatsAndStatus(
 }
 
 /* Store page view info. Some transformation may be done depending on the 
-   contents of m_statsRegexes. 
+   contents of m_pageViewRegexes. 
 */
 void SSHConnection::UpsertPageView(const string& entry)
 {
-    if (entry.length() <= 0)
-    {
-        return;
-    }
+    if (entry.length() <= 0) return;
 
     string store_entry = "(OTHER)";
 
-    bool match = false;
-    for (unsigned int i = 0; i < m_statsRegexes.size(); i++)
+    for (unsigned int i = 0; i < m_pageViewRegexes.size(); i++)
     {
-        if (regex_search(
-                entry, 
-                m_statsRegexes[i]))
+        if (regex_match(entry, m_pageViewRegexes[i].regex))
         {
-            store_entry = entry;
+            store_entry = regex_replace(
+                            entry, 
+                            m_pageViewRegexes[i].regex, 
+                            m_pageViewRegexes[i].replace);
             break;
         }
     }
+
+    if (store_entry.length() == 0) return;
 
     // Add/increment the entry.
     map<string, int>::iterator map_entry = m_pageViewEntries.find(store_entry);
     if (map_entry == m_pageViewEntries.end())
     {
         m_pageViewEntries[store_entry] = 1;
+    }
+    else
+    {
+        map_entry->second += 1;
+    }
+}
+
+/* Store HTTPS request info. Some transformation may be done depending on the 
+   contents of m_httpsRequestRegexes. 
+*/
+void SSHConnection::UpsertHttpsRequest(string entry)
+{
+    // First of all, get rid of any trailing port number.
+    string::size_type port = entry.find_last_of(':');
+    if (port != entry.npos)
+    {
+        entry.erase(entry.begin()+port, entry.end());
+    }
+
+    if (entry.length() <= 0) return;
+
+    string store_entry = "(OTHER)";
+
+    for (unsigned int i = 0; i < m_httpsRequestRegexes.size(); i++)
+    {
+        if (regex_match(entry, m_httpsRequestRegexes[i].regex))
+        {
+            store_entry = regex_replace(
+                            entry, 
+                            m_httpsRequestRegexes[i].regex, 
+                            m_httpsRequestRegexes[i].replace);
+            break;
+        }
+    }
+
+    if (store_entry.length() == 0) return;
+
+    // Add/increment the entry.
+    map<string, int>::iterator map_entry = m_httpsRequests.find(store_entry);
+    if (map_entry == m_httpsRequests.end())
+    {
+        m_httpsRequests[store_entry] = 1;
     }
     else
     {
@@ -769,7 +834,7 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            UpsertPageView(string(entry_start, entry_end-entry_start));
+            UpsertHttpsRequest(string(entry_start, entry_end-entry_start));
         }
         else if (next == bytes_transferred_start)
         {

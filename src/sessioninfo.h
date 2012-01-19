@@ -25,6 +25,12 @@
 
 class ConnectionManager;
 
+struct RegexReplace
+{
+    regex regex;
+    string replace;
+};
+
 class SessionInfo
 {
 public:
@@ -45,9 +51,11 @@ public:
     string GetSSHObfuscatedKey(void) {return m_sshObfuscatedKey;}
     vector<tstring> GetHomepages(void) {return m_homepages;}
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
-    vector<std::regex> GetStatsRegexes() {return m_statsRegexes;}
+    vector<RegexReplace> GetPageViewRegexes() {return m_pageViewRegexes;}
+    vector<RegexReplace> GetHttpsRequestRegexes() {return m_httpsRequestRegexes;}
 
     bool ParseHandshakeResponse(const string& response);
+    bool ProcessConfig(const string& config_json);
 
 private:
     ServerEntry m_serverEntry;
@@ -63,5 +71,6 @@ private:
     string m_sshObfuscatedKey;
     vector<tstring> m_homepages;
     vector<string> m_servers;
-    vector<std::regex> m_statsRegexes;
+    vector<RegexReplace> m_pageViewRegexes;
+    vector<RegexReplace> m_httpsRequestRegexes;
 };

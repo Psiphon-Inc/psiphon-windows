@@ -651,6 +651,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 void ConnectionManager::SendStatusMessage(
                             int connectType, bool connected,
                             const map<string, int>& pageViewEntries,
+                            const map<string, int>& httpsRequests,
                             unsigned long long bytesTransferred)
 {
     // NOTE: no lock while waiting for network events
@@ -691,7 +692,23 @@ void ConnectionManager::SendStatusMessage(
         additionalData << "}";
         my_print(true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
     }
-    additionalData << "]}";
+    additionalData << "],";
+
+    additionalData << "\"https_requests\":[";
+    pos = httpsRequests.begin();
+    for (; pos != httpsRequests.end(); pos++)
+    {
+        if (pos != httpsRequests.begin())
+            additionalData << ",";
+
+        additionalData << "{";
+        additionalData << "\"domain\":\"" << pos->first.c_str() << "\",";
+        additionalData << "\"count\":" << pos->second;
+        additionalData << "}";
+        my_print(true, _T("HTTPS REQUEST: %d: %S"), pos->second, pos->first.c_str());
+    }
+    additionalData << "]";
+    additionalData << "}";
 
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
@@ -899,7 +916,8 @@ bool ConnectionManager::SSHConnect(int connectType)
             NarrowToTString(m_currentSessionInfo.GetSSHPassword()),
             NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedPort()),
             NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedKey()),
-            m_currentSessionInfo.GetStatsRegexes());
+            m_currentSessionInfo.GetPageViewRegexes(),
+            m_currentSessionInfo.GetHttpsRequestRegexes());
 }
 
 void ConnectionManager::SSHDisconnect(void)

@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="connectionmanager.cpp" />
+    <ClCompile Include="httpsrequest.cpp" />
+    <ClCompile Include="psiclient.cpp" />
+    <ClCompile Include="sessioninfo.cpp" />
+    <ClCompile Include="sshconnection.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="systemproxysettings.cpp" />
+    <ClCompile Include="usersettings.cpp" />
+    <ClCompile Include="vpnconnection.cpp" />
+    <ClCompile Include="vpnlist.cpp" />
+    <ClCompile Include="webbrowser.cpp" />
+    <ClCompile Include="json\jsoncpp.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.h" />
+    <ClInclude Include="connectionmanager.h" />
+    <ClInclude Include="embeddedvalues.h" />
+    <ClInclude Include="httpsrequest.h" />
+    <ClInclude Include="psiclient.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="sessioninfo.h" />
+    <ClInclude Include="sshconnection.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="systemproxysettings.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="tstring.h" />
+    <ClInclude Include="usersettings.h" />
+    <ClInclude Include="vpnconnection.h" />
+    <ClInclude Include="vpnlist.h" />
+    <ClInclude Include="webbrowser.h" />
+    <ClInclude Include="json\forwards.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\crc32.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\inffast.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\inffixed.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\inflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\inftrees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\zconf.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\zlib.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\zlib\zutil.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="psiclient.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="psiclient.ico" />
+    <None Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="json">
+      <UniqueIdentifier>{106ceb3c-f752-4f8a-b641-e0707df25db2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{41e9db18-683d-474f-89e2-b80064cd2d5c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
