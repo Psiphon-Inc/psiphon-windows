@@ -57,7 +57,7 @@ public:
 
 private:
     bool CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
-    bool ProcessStatsAndStatus(ConnectionManager* connectionManager, bool force=false);
+    bool ProcessStatsAndStatus(ConnectionManager* connectionManager, bool connected);
     void UpsertPageView(const string& entry);
     void UpsertHttpsRequest(string entry);
     void ParsePolipoStatsBuffer(const char* page_view_buffer);

@@ -511,14 +511,14 @@ void SSHConnection::WaitAndDisconnect(ConnectionManager* connectionManager)
         }
 
         // We'll continue regardless of the stats-processing return status.
-        (void)ProcessStatsAndStatus(connectionManager);
+        (void)ProcessStatsAndStatus(connectionManager, true);
     }
 
     // Send a post-disconnect SSH session duration message
 
     if (wasConnected && connectionManager)
     {
-        (void)ProcessStatsAndStatus(connectionManager, true);
+        (void)ProcessStatsAndStatus(connectionManager, false);
     }
 
     // Attempt graceful shutdown (for the case where one process
@@ -636,13 +636,13 @@ bool SSHConnection::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 
 // Check Polipo pipe for page view, bytes transferred, etc., info waiting to 
 // be processed; gather info; process; send to server.
-// If force is false, the stats will only be sent to the server if certain
-// time or size limits have been exceeded; if force is true, the stats will
+// If connected is true, the stats will only be sent to the server if certain
+// time or size limits have been exceeded; if connected is false, the stats will
 // be sent regardlesss of limits.
 // Returns true on success, false otherwise.
 bool SSHConnection::ProcessStatsAndStatus(
                         ConnectionManager* connectionManager, 
-                        bool force/*=false*/)
+                        bool connected)
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
@@ -689,14 +689,14 @@ bool SSHConnection::ProcessStatsAndStatus(
 
     // If the time or size thresholds have been exceeded, or if we're being 
     // forced to, send the stats.
-    if (force
+    if (!connected
         || (m_lastStatusSendTimeMS + s_send_interval_ms) < now
         || m_pageViewEntries.size() >= s_send_max_entries
         || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
         if (connectionManager->SendStatusMessage(
                                 m_connectType, 
-                                true, 
+                                connected, // Note: there's a timeout side-effect when connected=false
                                 m_pageViewEntries, 
                                 m_httpsRequestEntries, 
                                 m_bytesTransferred))
