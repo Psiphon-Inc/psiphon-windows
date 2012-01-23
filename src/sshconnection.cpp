@@ -646,9 +646,9 @@ bool SSHConnection::ProcessStatsAndStatus(
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
-    const unsigned int DEFAULT_SEND_INTERVAL_MS = (5*60*1000); // 5 mins
+    const DWORD DEFAULT_SEND_INTERVAL_MS = (5*60*1000); // 5 mins
     const unsigned int DEFAULT_SEND_MAX_ENTRIES = 100;
-    static unsigned int s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
+    static DWORD s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
     static unsigned int s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
     DWORD bytes_avail = 0;
@@ -683,10 +683,14 @@ bool SSHConnection::ProcessStatsAndStatus(
         delete[] page_view_buffer;
     }
 
+    // Note: GetTickCount wraps after 49 days; small chance of a shorter timeout
+    DWORD now = GetTickCount();
+    if (now < m_lastStatusSendTimeMS) m_lastStatusSendTimeMS = 0;
+
     // If the time or size thresholds have been exceeded, or if we're being 
     // forced to, send the stats.
     if (force
-        || (m_lastStatusSendTimeMS + s_send_interval_ms) < GetTickCount()
+        || (m_lastStatusSendTimeMS + s_send_interval_ms) < now
         || m_pageViewEntries.size() >= s_send_max_entries
         || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
@@ -705,7 +709,7 @@ bool SSHConnection::ProcessStatsAndStatus(
             m_pageViewEntries.clear();
             m_httpsRequestEntries.clear();
             m_bytesTransferred = 0;
-            m_lastStatusSendTimeMS = GetTickCount();
+            m_lastStatusSendTimeMS = now;
         }
         else
         {
