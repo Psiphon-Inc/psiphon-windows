@@ -648,7 +648,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     return 0;
 }
 
-void ConnectionManager::SendStatusMessage(
+bool ConnectionManager::SendStatusMessage(
                             int connectType, bool connected,
                             const map<string, int>& pageViewEntries,
                             const map<string, int>& httpsRequestEntries,
@@ -711,18 +711,18 @@ void ConnectionManager::SendStatusMessage(
     tstring requestPath = GetSSHStatusRequestPath(connectType, connected);
     string response;
     HTTPSRequest httpsRequest;
-    httpsRequest.MakeRequest(
-            cancel,
-            NarrowToTString(serverAddress).c_str(),
-            webServerPort,
-            webServerCertificate,
-            requestPath.c_str(),
-            response,
-            L"Content-Type: application/json",
-            (LPVOID)additionalDataString.c_str(),
-            additionalDataString.length());
+    bool success = httpsRequest.MakeRequest(
+                                    cancel,
+                                    NarrowToTString(serverAddress).c_str(),
+                                    webServerPort,
+                                    webServerCertificate,
+                                    requestPath.c_str(),
+                                    response,
+                                    L"Content-Type: application/json",
+                                    (LPVOID)additionalDataString.c_str(),
+                                    additionalDataString.length());
     
-    // status message is for stats, success isn't critical
+    return success;
 }
 
 // ==== VPN Session Functions =================================================

@@ -54,7 +54,7 @@ public:
     bool GetSkipVPN(void);
     void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
     bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
-    void SendStatusMessage(
+    bool SendStatusMessage(
             int connectType, bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,

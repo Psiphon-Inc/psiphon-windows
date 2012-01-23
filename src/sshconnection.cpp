@@ -646,8 +646,10 @@ bool SSHConnection::ProcessStatsAndStatus(
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
-    const unsigned int SEND_INTERVAL_MS = (5*60*1000); // 5 mins
-    const unsigned int SEND_MAX_ENTRIES = 100;
+    const unsigned int DEFAULT_SEND_INTERVAL_MS = (5*60*1000); // 5 mins
+    const unsigned int DEFAULT_SEND_MAX_ENTRIES = 100;
+    static unsigned int s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
+    static unsigned int s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
     DWORD bytes_avail = 0;
 
@@ -684,18 +686,34 @@ bool SSHConnection::ProcessStatsAndStatus(
     // If the time or size thresholds have been exceeded, or if we're being 
     // forced to, send the stats.
     if (force
-        || (m_lastStatusSendTimeMS + SEND_INTERVAL_MS) < GetTickCount()
-        || m_pageViewEntries.size() >= SEND_MAX_ENTRIES
-        || m_httpsRequestEntries.size() >= SEND_MAX_ENTRIES)
+        || (m_lastStatusSendTimeMS + s_send_interval_ms) < GetTickCount()
+        || m_pageViewEntries.size() >= s_send_max_entries
+        || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
-        connectionManager->SendStatusMessage(
-            m_connectType, true, m_pageViewEntries, m_httpsRequestEntries, m_bytesTransferred);
+        if (connectionManager->SendStatusMessage(
+                                m_connectType, 
+                                true, 
+                                m_pageViewEntries, 
+                                m_httpsRequestEntries, 
+                                m_bytesTransferred))
+        {
+            // Reset thresholds
+            s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
+            s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
-        // Reset stats
-        m_pageViewEntries.clear();
-        m_httpsRequestEntries.clear();
-        m_bytesTransferred = 0;
-        m_lastStatusSendTimeMS = GetTickCount();
+            // Reset stats
+            m_pageViewEntries.clear();
+            m_httpsRequestEntries.clear();
+            m_bytesTransferred = 0;
+            m_lastStatusSendTimeMS = GetTickCount();
+        }
+        else
+        {
+            // Status sending failures are fairly common.
+            // We'll back off the thresholds and try again later.
+            s_send_interval_ms += DEFAULT_SEND_INTERVAL_MS;
+            s_send_max_entries += DEFAULT_SEND_MAX_ENTRIES;
+        }
     }
 
     return true;
