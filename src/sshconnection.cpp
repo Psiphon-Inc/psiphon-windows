@@ -646,8 +646,8 @@ bool SSHConnection::ProcessStatsAndStatus(
 {
     // Stats get sent to the server when a time or size limit has been reached.
 
-    const DWORD DEFAULT_SEND_INTERVAL_MS = (5*60*1000); // 5 mins
-    const unsigned int DEFAULT_SEND_MAX_ENTRIES = 100;
+    const DWORD DEFAULT_SEND_INTERVAL_MS = (30*60*1000); // 30 mins
+    const unsigned int DEFAULT_SEND_MAX_ENTRIES = 1000;  // This is mostly to bound memory usage
     static DWORD s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
     static unsigned int s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
