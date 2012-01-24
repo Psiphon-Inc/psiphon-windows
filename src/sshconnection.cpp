@@ -730,6 +730,8 @@ void SSHConnection::UpsertPageView(const string& entry)
 {
     if (entry.length() <= 0) return;
 
+    my_print(true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
+
     string store_entry = "(OTHER)";
 
     for (unsigned int i = 0; i < m_pageViewRegexes.size(); i++)
@@ -805,6 +807,7 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
     const char* HTTP_PREFIX = "PSIPHON-PAGE-VIEW-HTTP:>>";
     const char* HTTPS_PREFIX = "PSIPHON-PAGE-VIEW-HTTPS:>>";
     const char* BYTES_TRANSFERRED_PREFIX = "PSIPHON-BYTES-TRANSFERRED:>>";
+    const char* DEBUG_PREFIX = "PSIPHON-DEBUG:>>";
     const char* ENTRY_END = "<<";
 
     const char* curr_pos = page_view_buffer;
@@ -815,13 +818,18 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
         const char* http_entry_start = strstr(curr_pos, HTTP_PREFIX);
         const char* https_entry_start = strstr(curr_pos, HTTPS_PREFIX);
         const char* bytes_transferred_start = strstr(curr_pos, BYTES_TRANSFERRED_PREFIX);
+        const char* debug_start = strstr(curr_pos, DEBUG_PREFIX);
         const char* entry_end = NULL;
 
         if (http_entry_start == NULL) http_entry_start = end_pos;
         if (https_entry_start == NULL) https_entry_start = end_pos;
         if (bytes_transferred_start == NULL) bytes_transferred_start = end_pos;
+        if (debug_start == NULL) debug_start = end_pos;
 
-        const char* next = min(http_entry_start, min(https_entry_start, bytes_transferred_start));
+        const char* next = min(http_entry_start, https_entry_start);
+        next = min(next, bytes_transferred_start);
+        next = min(next, debug_start);
+
         if (next >= end_pos)
         {
             // No next entry found
@@ -876,11 +884,19 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 m_bytesTransferred += bytes;
             }
         }
-        else
+        else // if (next == debug_start)
         {
-            // Shouldn't get here...
-            // ASSERT(0);
-            break;
+            const char* entry_start = next + strlen(HTTPS_PREFIX);
+            entry_end = strstr(entry_start, ENTRY_END);
+
+            if (!entry_end)
+            {
+                // Something is rather wrong. Maybe an incomplete entry.
+                // Stop processing;
+                break;
+            }
+
+            my_print(true, _T("POLIPO-DEBUG: %S"), string(entry_start, entry_end-entry_start).c_str());
         }
 
         curr_pos = entry_end + strlen(ENTRY_END);
