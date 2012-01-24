@@ -226,7 +226,7 @@ static const char *endChunkTrailer = "\r\n0\r\n\r\n";
 
 /* PSIPHON */
 #include <time.h>
-unsigned int bytes_read = 0;
+int bytes_read = 0;
 time_t last_send_time = 0;
 
 int
@@ -372,14 +372,18 @@ do_scheduled_stream(int status, FdEventHandlerPtr event)
            counting one of them will give us a "total bytes proxied" value.
            Every so often we'll tell the Psiphon client this number so that 
            it can update the stats. */
-        if(psiphonStats)
+        if(psiphonStats && rc > 0)
         {
             const time_t SEND_INTERVAL_SECS = 5;
+            //TODO: check for int overflow in the future
             bytes_read += rc;
             if (last_send_time+SEND_INTERVAL_SECS < time(NULL))
             {
-                printf("PSIPHON-BYTES-TRANSFERRED:>>%d<<", bytes_read);
-                fflush(NULL);
+                if(bytes_read > 0)
+                {
+                    printf("PSIPHON-BYTES-TRANSFERRED:>>%d<<", bytes_read);
+                    fflush(NULL);
+                }
                 bytes_read = 0;
                 last_send_time = time(NULL);
             }
