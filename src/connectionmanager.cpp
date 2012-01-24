@@ -526,6 +526,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             string downloadResponse;
             if (manager->RequireUpgrade(downloadRequestPath))
             {
+                my_print(false, _T("Upgrading to new version..."));
+
                 // Download new binary
 
                 if (!httpsRequest.MakeRequest(
