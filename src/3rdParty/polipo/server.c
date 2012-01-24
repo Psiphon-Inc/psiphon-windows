@@ -2428,7 +2428,12 @@ httpServerHandlerHeaders(int eof,
                 /* Hack: It's not unusual for png, js, swf, etc., files to have 
                    a MIME type of text/html (probably due to a misconfigured 
                    server). So we'll exclude files if they have an obviously
-                   incorrect file extension. */
+                   incorrect file extension. 
+                   Note that there's at least one theoretical case when URIs 
+                   will be incorrectly discarded by this code: 
+                        http://example.js (no trailing slash or path or file)
+                   We're not going to worry about that for now.
+                */
                 /* We'll need to make a copy, since we might need to modify it. */
                 ext_check_uri = (char*)malloc(sizeof(char)*(new_object->key_size+1));
                 strncpy(ext_check_uri, (char*)new_object->key, new_object->key_size);
