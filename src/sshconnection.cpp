@@ -870,7 +870,11 @@ void SSHConnection::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            m_bytesTransferred += atoi(string(entry_start, entry_end-entry_start).c_str());
+            int bytes = atoi(string(entry_start, entry_end-entry_start).c_str());
+            if (bytes > 0)
+            {
+                m_bytesTransferred += bytes;
+            }
         }
         else
         {
