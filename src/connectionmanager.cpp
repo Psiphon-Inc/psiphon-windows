@@ -273,7 +273,8 @@ void ConnectionManager::DoVPNConnection(
     //
     
     tstring connectedRequestPath = manager->GetVPNConnectRequestPath();
-        
+
+    DWORD start = GetTickCount();
     string response;
     HTTPSRequest httpsRequest;
     if (httpsRequest.MakeRequest(
@@ -284,6 +285,20 @@ void ConnectionManager::DoVPNConnection(
                         connectedRequestPath.c_str(),
                         response))
     {
+        // Speed feedback
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            httpsRequest.MakeRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            manager->GetSpeedRequestPath(_T("connected"), now-start, response.length()).c_str(),
+                            speedResponse);
+        }
+
         // Process split tunnel response
         manager->ProcessSplitTunnelResponse(response);
     }
@@ -380,6 +395,7 @@ void ConnectionManager::DoSSHConnection(
     
     tstring connectedRequestPath = manager->GetSSHConnectRequestPath(connectType);
         
+    DWORD start = GetTickCount();
     string response;
     HTTPSRequest httpsRequest;
     if (httpsRequest.MakeRequest(
@@ -390,6 +406,20 @@ void ConnectionManager::DoSSHConnection(
                         connectedRequestPath.c_str(),
                         response))
     {
+        // Speed feedback
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            httpsRequest.MakeRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            manager->GetSpeedRequestPath(_T("connected"), now-start, response.length()).c_str(),
+                            speedResponse);
+        }
+
         // Process split tunnel response
         manager->ProcessSplitTunnelResponse(response);
     }
@@ -530,6 +560,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
                 // Download new binary
 
+                DWORD start = GetTickCount();
                 if (!httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
                             NarrowToTString(serverEntry.serverAddress).c_str(),
@@ -555,6 +586,20 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 }
                 else
                 {
+                    // Speed feedback
+                    DWORD now = GetTickCount();
+                    if (now >= start) // GetTickCount can wrap
+                    {
+                        string speedResponse;
+                        httpsRequest.MakeRequest(
+                                        manager->GetUserSignalledStop(),
+                                        NarrowToTString(serverEntry.serverAddress).c_str(),
+                                        serverEntry.webServerPort,
+                                        serverEntry.webServerCertificate,
+                                        manager->GetSpeedRequestPath(_T("download"), now-start, downloadResponse.length()).c_str(),
+                                        speedResponse);
+                    }
+
                     // Perform upgrade.
         
                     // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
@@ -725,6 +770,27 @@ bool ConnectionManager::SendStatusMessage(
                                     additionalDataString.length());
     
     return success;
+}
+
+
+tstring ConnectionManager::GetSpeedRequestPath(const tstring& operation, DWORD milliseconds, DWORD size)
+{
+    AutoMUTEX lock(m_mutex);
+
+    std::stringstream strMilliseconds;
+    strMilliseconds << milliseconds;
+
+    std::stringstream strSize;
+    strSize << size;
+
+    return tstring(HTTP_SPEED_REQUEST_PATH) + 
+           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&operation=") + operation +
+           _T("&milliseconds=") + NarrowToTString(strMilliseconds.str()) +
+           _T("&size=") + NarrowToTString(strSize.str());
 }
 
 // ==== VPN Session Functions =================================================
