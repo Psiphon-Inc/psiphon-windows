@@ -73,7 +73,11 @@ private:
     class TryNextServer { };
     class Abort { };
 
-    tstring GetSpeedRequestPath(const tstring& operation, DWORD milliseconds, DWORD size);
+    tstring GetSpeedRequestPath(
+        const tstring& relayProtocol,
+        const tstring& operation,
+        DWORD milliseconds,
+        DWORD size);
 
     void MarkCurrentServerFailed(void);
     void LoadNextServer(

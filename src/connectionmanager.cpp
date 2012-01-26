@@ -295,7 +295,8 @@ void ConnectionManager::DoVPNConnection(
                             NarrowToTString(serverEntry.serverAddress).c_str(),
                             serverEntry.webServerPort,
                             serverEntry.webServerCertificate,
-                            manager->GetSpeedRequestPath(_T("connected"), now-start, response.length()).c_str(),
+                            manager->GetSpeedRequestPath(
+                                _T("VPN"), _T("connected"), now-start, response.length()).c_str(),
                             speedResponse);
         }
 
@@ -407,6 +408,7 @@ void ConnectionManager::DoSSHConnection(
                         response))
     {
         // Speed feedback
+        // (NOTE: /connected isn't tunneled in SSH mode)
         DWORD now = GetTickCount();
         if (now >= start) // GetTickCount can wrap
         {
@@ -416,7 +418,9 @@ void ConnectionManager::DoSSHConnection(
                             NarrowToTString(serverEntry.serverAddress).c_str(),
                             serverEntry.webServerPort,
                             serverEntry.webServerCertificate,
-                            manager->GetSpeedRequestPath(_T("connected"), now-start, response.length()).c_str(),
+                            manager->GetSpeedRequestPath(
+                                (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
+                                _T("connected"), now-start, response.length()).c_str(),
                             speedResponse);
         }
 
@@ -596,7 +600,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                                         NarrowToTString(serverEntry.serverAddress).c_str(),
                                         serverEntry.webServerPort,
                                         serverEntry.webServerCertificate,
-                                        manager->GetSpeedRequestPath(_T("download"), now-start, downloadResponse.length()).c_str(),
+                                        manager->GetSpeedRequestPath(
+                                            _T("None"), _T("download"), now-start, downloadResponse.length()).c_str(),
                                         speedResponse);
                     }
 
@@ -773,7 +778,7 @@ bool ConnectionManager::SendStatusMessage(
 }
 
 
-tstring ConnectionManager::GetSpeedRequestPath(const tstring& operation, DWORD milliseconds, DWORD size)
+tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, const tstring& operation, DWORD milliseconds, DWORD size)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -788,6 +793,7 @@ tstring ConnectionManager::GetSpeedRequestPath(const tstring& operation, DWORD m
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=") + relayProtocol +
            _T("&operation=") + operation +
            _T("&milliseconds=") + NarrowToTString(strMilliseconds.str()) +
            _T("&size=") + NarrowToTString(strSize.str());
