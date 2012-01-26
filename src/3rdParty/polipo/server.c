@@ -2408,23 +2408,74 @@ httpServerHandlerHeaders(int eof,
             for (; header != NULL; header = header->next)
             {
                 if (strstr(header->string, "text/html") != NULL
-                        || strstr(header->string, "application/xhtml+xml") != NULL)
+                    || strstr(header->string, "application/xhtml+xml") != NULL)
                 {
                     mime_type_ok = 1;
                     break;
                 }
             }
 
-            if (mime_type_ok)
+            if (mime_type_ok && new_object->key_size > 0)
             {
-                /* The object's key is its original URI, which is what we want to
-                   send back to the Psiphon client. */
-                char* uri = (char*)malloc(sizeof(char)*(new_object->key_size+1));
-                strncpy(uri, (char*)new_object->key, new_object->key_size);
-                uri[new_object->key_size] = '\0';
-                printf("PSIPHON-PAGE-VIEW-HTTP:>>%s<<\n", uri);
-                fflush(NULL);
-                free(uri);
+                /* Note: The object's key is its original URI, which is what 
+                   we want to send back to the Psiphon client. */
+
+                char* ext_check_uri = 0;
+                char* query_params_start = 0;
+                char* ext_start = 0;
+                int bad_extension = 0;
+
+                /* Hack: It's not unusual for png, js, swf, etc., files to have 
+                   a MIME type of text/html (probably due to a misconfigured 
+                   server). So we'll exclude files if they have an obviously
+                   incorrect file extension. 
+                   Note that there's at least one theoretical case when URIs 
+                   will be incorrectly discarded by this code: 
+                        http://example.js (no trailing slash or path or file)
+                   We're not going to worry about that for now.
+                */
+                /* We'll need to make a copy, since we might need to modify it. */
+                ext_check_uri = (char*)malloc(sizeof(char)*(new_object->key_size+1));
+                strncpy(ext_check_uri, (char*)new_object->key, new_object->key_size);
+                ext_check_uri[new_object->key_size] = '\0';
+                /* Exclude query parameters. */
+                query_params_start = strchr(ext_check_uri, '?');
+                if (query_params_start) *query_params_start = '\0';
+                /* Look for the extension. */
+                ext_start = strrchr(ext_check_uri, '.');
+                if (ext_start)
+                {
+                    const char* bad_extensions[] = 
+                        { ".js", ".jpg", ".jpeg", ".png", ".swf", ".flv", ".css",
+                          ".gif", ".ico" };
+
+                    int i;
+                    for (i = 0; 
+                         i < (sizeof(bad_extensions)/sizeof(*bad_extensions)); 
+                         i++)
+                    {
+                        if (strcmp(ext_start, bad_extensions[i]) == 0)
+                        {
+                            bad_extension = 1;
+                            break;
+                        }
+                    }
+                }
+
+                free(ext_check_uri);
+
+                /* If the MIME type and extension are good, send the URI to psiclient. */
+                if (!bad_extension)
+                {
+                    char* uri = (char*)malloc(sizeof(char)*(new_object->key_size+1));
+                    strncpy(uri, (char*)new_object->key, new_object->key_size);
+                    uri[new_object->key_size] = '\0';
+                    
+                    printf("PSIPHON-PAGE-VIEW-HTTP:>>%s<<\n", uri);
+                    fflush(NULL);
+                    
+                    free(uri);
+                }
             }
         }
     }
