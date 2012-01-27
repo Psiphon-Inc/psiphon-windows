@@ -17,6 +17,15 @@
  *
  */
 
+/*
+NOTES
+- break out transports into separate files
+- merge transport and connection classes
+- remove transport-specific logic from connectionmanager
+- make vpnlist more generic (maybe just needs rename)
+- make previous-transport-failure records more generic
+*/
+
 #pragma once
 
 #include "connectionmanager.h"
