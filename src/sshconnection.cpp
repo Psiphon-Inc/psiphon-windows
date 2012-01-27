@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include <WinSock2.h>
 #include <WinCrypt.h>
+#include <Shlwapi.h>
 #include "sshconnection.h"
 #include "connectionmanager.h"
 #include "httpsrequest.h"
@@ -43,7 +44,7 @@ SSHConnection::~SSHConnection(void)
 
 extern HINSTANCE hInst;
 
-bool ExtractExecutable(DWORD resourceID, tstring& path)
+bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
 {
     // Extract executable from resources and write to temporary file
 
@@ -80,15 +81,14 @@ bool ExtractExecutable(DWORD resourceID, tstring& path)
         return false;
     }
 
-    TCHAR tempFileName[MAX_PATH];
-    ret = GetTempFileName(tempPath, _T(""), 0, tempFileName);
-    if (ret == 0)
+    TCHAR filePath[MAX_PATH];
+    if (NULL == PathCombine(filePath, tempPath, exeFilename))
     {
         my_print(false, _T("ExtractExecutable - GetTempFileName failed (%d)"), GetLastError());
         return false;
     }
 
-    HANDLE tempFile = CreateFile(tempFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE tempFile = CreateFile(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (tempFile == INVALID_HANDLE_VALUE) 
     { 
         my_print(false, _T("ExtractExecutable - CreateFile failed (%d)"), GetLastError());
@@ -107,7 +107,7 @@ bool ExtractExecutable(DWORD resourceID, tstring& path)
 
     CloseHandle(tempFile);
 
-    path = tempFileName;
+    path = filePath;
 
     return true;
 }
@@ -223,7 +223,7 @@ bool SSHConnection::Connect(
 
     if (m_plonkPath.size() == 0)
     {
-        if (!ExtractExecutable(IDR_PLONK_EXE, m_plonkPath))
+        if (!ExtractExecutable(IDR_PLONK_EXE, PLONK_EXE_NAME, m_plonkPath))
         {
             return false;
         }
@@ -231,7 +231,7 @@ bool SSHConnection::Connect(
 
     if (m_polipoPath.size() == 0)
     {
-        if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
+        if (!ExtractExecutable(IDR_POLIPO_EXE, POLIPO_EXE_NAME, m_polipoPath))
         {
             return false;
         }

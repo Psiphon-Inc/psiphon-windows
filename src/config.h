@@ -21,6 +21,8 @@
 
 #include <tchar.h>
 
+static const TCHAR* PLONK_EXE_NAME = _T("psiphon3-plonk.exe");
+static const TCHAR* POLIPO_EXE_NAME = _T("psiphon3-polipo.exe");
 static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
 static const TCHAR* POLIPO_HTTP_PROXY_PORT = _T("8080");
 static const TCHAR* VPN_CONNECTION_NAME = _T("Psiphon3");
