@@ -22,6 +22,7 @@
 #include "psiclient.h"
 #include <Winhttp.h>
 #include <WinCrypt.h>
+#include "config.h"
 #include "embeddedvalues.h"
 
 // NOTE: this code depends on built-in Windows crypto services
@@ -227,6 +228,7 @@ bool HTTPSRequest::MakeRequest(
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
+        bool useProxy/*=false*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
@@ -238,8 +240,8 @@ bool HTTPSRequest::MakeRequest(
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-                    WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                    WINHTTP_NO_PROXY_NAME,
+                    useProxy ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    useProxy ? (tstring(_T("127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT).c_str() : WINHTTP_NO_PROXY_NAME,
                     WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 

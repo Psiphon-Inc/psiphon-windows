@@ -53,6 +53,7 @@ public:
     vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
     vector<RegexReplace> GetPageViewRegexes() {return m_pageViewRegexes;}
     vector<RegexReplace> GetHttpsRequestRegexes() {return m_httpsRequestRegexes;}
+    string GetSpeedTestURL(void) {return m_speedTestURL;}
 
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);
@@ -73,4 +74,5 @@ private:
     vector<string> m_servers;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
+    string m_speedTestURL;
 };

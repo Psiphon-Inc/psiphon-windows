@@ -286,17 +286,25 @@ void ConnectionManager::DoVPNConnection(
                         response))
     {
         // Speed feedback
+        // Note: the /connected request is not tunneled as the end point is not
+        // routed through the VPN tunnel
+
         DWORD now = GetTickCount();
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
+            HTTPSRequest httpsRequest;
             httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
                             NarrowToTString(serverEntry.serverAddress).c_str(),
                             serverEntry.webServerPort,
                             serverEntry.webServerCertificate,
                             manager->GetSpeedRequestPath(
-                                _T("VPN"), _T("connected"), now-start, response.length()).c_str(),
+                                _T("VPN"),
+                                _T("connected"),
+                                _T("(None)"),
+                                now-start,
+                                response.length()).c_str(),
                             speedResponse);
         }
 
@@ -309,6 +317,47 @@ void ConnectionManager::DoVPNConnection(
     //
     
     manager->OpenHomePages();
+
+    // Perform tunneled speed test when requested
+    // In VPN mode, the WinHttp request is implicitly tunneled.
+
+    tstring speedTestURL = manager->GetSpeedTestURL();
+
+    if (speedTestURL.length() > 0)
+    {
+        DWORD start = GetTickCount();
+        string response;
+        HTTPSRequest httpsRequest;
+        bool success = false;
+        if (httpsRequest.MakeRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            speedTestURL.c_str(),
+                            response))
+        {
+            success = true;
+        }
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            HTTPSRequest httpsRequest;
+            httpsRequest.MakeRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            manager->GetSpeedRequestPath(
+                                _T("VPN"),
+                                _T("speed_test"),
+                                success ? speedTestURL.c_str() : _T("(Failed)"),
+                                now-start,
+                                response.length()).c_str(),
+                            speedResponse);
+        }
+    }
 
     //
     // Wait for VPN connection to stop (or fail) -- set ConnectionManager state accordingly (used by UI)
@@ -408,11 +457,13 @@ void ConnectionManager::DoSSHConnection(
                         response))
     {
         // Speed feedback
-        // (NOTE: /connected isn't tunneled in SSH mode)
+        // Note: the /connected request is not tunneled as it's not proxied
+
         DWORD now = GetTickCount();
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
+            HTTPSRequest httpsRequest;
             httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
                             NarrowToTString(serverEntry.serverAddress).c_str(),
@@ -420,7 +471,10 @@ void ConnectionManager::DoSSHConnection(
                             serverEntry.webServerCertificate,
                             manager->GetSpeedRequestPath(
                                 (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
-                                _T("connected"), now-start, response.length()).c_str(),
+                                _T("connected"),
+                                _T("(None)"),
+                                now-start,
+                                response.length()).c_str(),
                             speedResponse);
         }
 
@@ -433,6 +487,48 @@ void ConnectionManager::DoSSHConnection(
     //
    
     manager->OpenHomePages();    
+
+    // Perform tunneled speed test when requested
+    // In SSH mode, the WinHttp request is explicitly proxied through polipo.
+
+    tstring speedTestURL = manager->GetSpeedTestURL();
+
+    if (speedTestURL.length() > 0)
+    {
+        DWORD start = GetTickCount();
+        string response;
+        HTTPSRequest httpsRequest;
+        bool success = false;
+        if (httpsRequest.MakeRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            speedTestURL.c_str(),
+                            response,
+                            true)) // useProxy=true
+        {
+            success = true;
+        }
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            HTTPSRequest httpsRequest;
+            httpsRequest.MakeRequest(
+                            manager->GetUserSignalledStop(),
+                            NarrowToTString(serverEntry.serverAddress).c_str(),
+                            serverEntry.webServerPort,
+                            serverEntry.webServerCertificate,
+                            manager->GetSpeedRequestPath(
+                                (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
+                                _T("speed_test"),
+                                success ? speedTestURL.c_str() : _T("(Failed)"),
+                                now-start,
+                                response.length()).c_str(),
+                            speedResponse);
+        }
+    }
 
     //
     // Wait for SSH connection to stop (or fail)
@@ -601,7 +697,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                                         serverEntry.webServerPort,
                                         serverEntry.webServerCertificate,
                                         manager->GetSpeedRequestPath(
-                                            _T("None"), _T("download"), now-start, downloadResponse.length()).c_str(),
+                                            _T("(None)"),
+                                            _T("download"),
+                                            _T("(None)"),
+                                            now-start,
+                                            downloadResponse.length()).c_str(),
                                         speedResponse);
                     }
 
@@ -770,6 +870,7 @@ bool ConnectionManager::SendStatusMessage(
                                     webServerCertificate,
                                     requestPath.c_str(),
                                     response,
+                                    false, // useProxy=false
                                     L"Content-Type: application/json",
                                     (LPVOID)additionalDataString.c_str(),
                                     additionalDataString.length());
@@ -778,7 +879,7 @@ bool ConnectionManager::SendStatusMessage(
 }
 
 
-tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, const tstring& operation, DWORD milliseconds, DWORD size)
+tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, const tstring& operation, const tstring& info, DWORD milliseconds, DWORD size)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -795,13 +896,21 @@ tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, con
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") + relayProtocol +
            _T("&operation=") + operation +
+           _T("&info=") + info +
            _T("&milliseconds=") + NarrowToTString(strMilliseconds.str()) +
            _T("&size=") + NarrowToTString(strSize.str());
 }
 
+tstring ConnectionManager::GetSpeedTestURL(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return NarrowToTString(m_currentSessionInfo.GetSpeedTestURL());
+}
+
 // ==== VPN Session Functions =================================================
 
-bool ConnectionManager::CurrentServerVPNCapable()
+bool ConnectionManager::CurrentServerVPNCapable(void)
 {
     AutoMUTEX lock(m_mutex);
 

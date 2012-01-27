@@ -146,6 +146,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 {
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
+    m_speedTestURL.clear();
 
     Json::Value config;
     Json::Reader reader;
@@ -157,9 +158,10 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         return false;
     }
 
-    // Page view regexes
     try
     {
+        // Page view regexes
+        
         Json::Value regexes = config["page_view_regexes"];
 
         for (Json::Value::ArrayIndex i = 0; i < regexes.size(); i++)
@@ -172,17 +174,10 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
             m_pageViewRegexes.push_back(rx_re);
         }
-    }
-    catch (exception& e)
-    {
-        my_print(false, _T("%s:%d: Page view regex parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
-        return false;
-    }
 
-    // HTTPS request regexes
-    try
-    {
-        Json::Value regexes = config["https_request_regexes"];
+        // HTTPS request regexes
+        
+        regexes = config["https_request_regexes"];
 
         for (Json::Value::ArrayIndex i = 0; i < regexes.size(); i++)
         {
@@ -194,10 +189,14 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
             m_httpsRequestRegexes.push_back(rx_re);
         }
+
+        // Speed Test URL
+
+        m_speedTestURL = config.get("speed_test_url", "").asString();
     }
     catch (exception& e)
     {
-        my_print(false, _T("%s:%d: Page view regex parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        my_print(false, _T("%s:%d: Config parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
         return false;
     }
 

@@ -76,8 +76,10 @@ private:
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
         const tstring& operation,
+        const tstring& info,
         DWORD milliseconds,
         DWORD size);
+    tstring GetSpeedTestURL(void);
 
     void MarkCurrentServerFailed(void);
     void LoadNextServer(
