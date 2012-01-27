@@ -302,7 +302,7 @@ void ConnectionManager::DoVPNConnection(
                             manager->GetSpeedRequestPath(
                                 _T("VPN"),
                                 _T("connected"),
-                                _T("(None)"),
+                                _T("(NONE)"),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -351,8 +351,8 @@ void ConnectionManager::DoVPNConnection(
                             serverEntry.webServerCertificate,
                             manager->GetSpeedRequestPath(
                                 _T("VPN"),
-                                _T("speed_test"),
-                                success ? speedTestURL.c_str() : _T("(Failed)"),
+                                success ? _T("speed_test") : _T("speed_test_failure"),
+                                speedTestURL.c_str(),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -472,7 +472,7 @@ void ConnectionManager::DoSSHConnection(
                             manager->GetSpeedRequestPath(
                                 (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
                                 _T("connected"),
-                                _T("(None)"),
+                                _T("(NONE)"),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -522,8 +522,8 @@ void ConnectionManager::DoSSHConnection(
                             serverEntry.webServerCertificate,
                             manager->GetSpeedRequestPath(
                                 (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
-                                _T("speed_test"),
-                                success ? speedTestURL.c_str() : _T("(Failed)"),
+                                success ? _T("speed_test") : _T("speed_test_failure"),
+                                speedTestURL.c_str(),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -697,9 +697,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                                         serverEntry.webServerPort,
                                         serverEntry.webServerCertificate,
                                         manager->GetSpeedRequestPath(
-                                            _T("(None)"),
+                                            _T("(NONE)"),
                                             _T("download"),
-                                            _T("(None)"),
+                                            _T("(NONE)"),
                                             now-start,
                                             downloadResponse.length()).c_str(),
                                         speedResponse);
