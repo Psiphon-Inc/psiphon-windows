@@ -264,6 +264,8 @@ bool HTTPSRequest::MakeRequest(
         return false;
     }
 
+    // Note: when certificate is empty, not using HTTPS
+
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(
                     hConnect,
@@ -272,7 +274,7 @@ bool HTTPSRequest::MakeRequest(
                     NULL,
                     WINHTTP_NO_REFERER,
                     WINHTTP_DEFAULT_ACCEPT_TYPES,
-                    WINHTTP_FLAG_SECURE); 
+                    WINHTTP_FLAG_SECURE);
 
     if (NULL == hRequest)
     {
@@ -368,6 +370,13 @@ void HTTPSRequest::AppendResponse(const string& responseData)
 bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
 {
     AutoMUTEX lock(m_mutex);
+
+    // Set an empty certificate when validation isn't required
+
+    if (m_expectedServerCertificate.length() == 0)
+    {
+        return true;
+    }
 
     BYTE* pbBinary = NULL; //base64 decoded pem
     DWORD cbBinary; //base64 decoded pem size

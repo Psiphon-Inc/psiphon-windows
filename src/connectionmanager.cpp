@@ -321,9 +321,11 @@ void ConnectionManager::DoVPNConnection(
     // Perform tunneled speed test when requested
     // In VPN mode, the WinHttp request is implicitly tunneled.
 
-    tstring speedTestURL = manager->GetSpeedTestURL();
+    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
+    manager->GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
+    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
 
-    if (speedTestURL.length() > 0)
+    if (speedTestServerAddress.length() > 0)
     {
         DWORD start = GetTickCount();
         string response;
@@ -331,10 +333,10 @@ void ConnectionManager::DoVPNConnection(
         bool success = false;
         if (httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            speedTestURL.c_str(),
+                            speedTestServerAddress.c_str(),
+                            _ttoi(speedTestServerPort.c_str()),
+                            "",
+                            speedTestRequestPath.c_str(),
                             response))
         {
             success = true;
@@ -491,9 +493,11 @@ void ConnectionManager::DoSSHConnection(
     // Perform tunneled speed test when requested
     // In SSH mode, the WinHttp request is explicitly proxied through polipo.
 
-    tstring speedTestURL = manager->GetSpeedTestURL();
+    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
+    manager->GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
+    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
 
-    if (speedTestURL.length() > 0)
+    if (speedTestServerAddress.length() > 0)
     {
         DWORD start = GetTickCount();
         string response;
@@ -501,10 +505,10 @@ void ConnectionManager::DoSSHConnection(
         bool success = false;
         if (httpsRequest.MakeRequest(
                             manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            speedTestURL.c_str(),
+                            speedTestServerAddress.c_str(),
+                            _ttoi(speedTestServerPort.c_str()),
+                            "",
+                            speedTestRequestPath.c_str(),
                             response,
                             true)) // useProxy=true
         {
@@ -901,11 +905,13 @@ tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, con
            _T("&size=") + NarrowToTString(strSize.str());
 }
 
-tstring ConnectionManager::GetSpeedTestURL(void)
+void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, tstring& serverPort, tstring& requestPath)
 {
     AutoMUTEX lock(m_mutex);
 
-    return NarrowToTString(m_currentSessionInfo.GetSpeedTestURL());
+    serverAddress = NarrowToTString(m_currentSessionInfo.GetSpeedTestServerAddress());
+    serverPort = NarrowToTString(m_currentSessionInfo.GetSpeedTestServerPort());
+    requestPath = NarrowToTString(m_currentSessionInfo.GetSpeedTestRequestPath());
 }
 
 // ==== VPN Session Functions =================================================

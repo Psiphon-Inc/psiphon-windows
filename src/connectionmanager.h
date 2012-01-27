@@ -79,7 +79,7 @@ private:
         const tstring& info,
         DWORD milliseconds,
         DWORD size);
-    tstring GetSpeedTestURL(void);
+    void GetSpeedTestURL(tstring& serverAddress, tstring& serverPort, tstring& requestPath);
 
     void MarkCurrentServerFailed(void);
     void LoadNextServer(
