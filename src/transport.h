@@ -38,40 +38,33 @@ class TransportBase
 public:
     TransportBase(ConnectionManager* manager);
 
-    // Should be called to create the connection
+    virtual tstring GetTransportName() const = 0;
+
+    // Call to create the connection
     bool Connect(const ServerEntry& serverEntry);
 
-    virtual tstring GetTransportName() const = 0;
-    virtual ConnectionManagerState GetConnectedState() const = 0;
-    virtual tstring GetConnectFailedRequestPath() const = 0;
-    virtual tstring GetConnectSuccessRequestPath() const = 0;
+    // Call after connection to wait for disconnection.
+    // Will also disconnect when the abort flag is set to true.
     virtual void WaitForDisconnect() = 0;
-    virtual void Cleanup() = 0;
+
+    // Do any necessary final cleanup. 
+    // If restartImminent is true, then the same transport will reconnect
+    // momentarily, which may affect the cleanup steps.
+    virtual bool Cleanup(bool restartImminent) = 0;
+
+    // Exception classes to help with the control flow
+    // Indicates that this transport was not successful
+    class TransportFailed { };
+    // Indicates that a connection abort was requested
+    class Abort { };
 
 protected:
-    virtual bool PreConnect() = 0;
     virtual bool TransportConnect(const ServerEntry& serverEntry) = 0;
 
 protected:
     ConnectionManager* m_manager;
 };
 
-
-class VPNTransport: public TransportBase
-{
-public:
-    tstring GetTransportName() const { return _T("VPN"); }
-    ConnectionManagerState GetConnectedState() const { return CONNECTION_MANAGER_STATE_CONNECTED_VPN; }
-
-    void WaitForDisconnect();
-    tstring GetConnectFailedRequestPath() const;
-    tstring GetConnectSuccessRequestPath() const;
-    void Cleanup();
-
-protected:
-    bool PreConnect();
-    bool TransportConnect(const ServerEntry& serverEntry);
-};
 
 
 // Base class for the SSH transports
@@ -85,7 +78,6 @@ public:
     virtual tstring GetConnectSuccessRequestPath() const; 
 
 protected:
-    virtual bool PreConnect();
     virtual bool TransportConnect(const ServerEntry& serverEntry);
 
     virtual int GetSSHType() const = 0;

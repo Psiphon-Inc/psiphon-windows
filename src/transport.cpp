@@ -32,15 +32,10 @@ TransportBase::TransportBase(ConnectionManager* manager)
 
 bool TransportBase::Connect(const ServerEntry& serverEntry)
 {
-    if (!PreConnect())
-        return false;
-
     if (!TransportConnect(serverEntry))
     {
         return false;
     }
-
-    m_manager->SetState(GetConnectedState());
 
     return true;
 }

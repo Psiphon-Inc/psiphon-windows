@@ -112,6 +112,7 @@
     <ClInclude Include="usersettings.h" />
     <ClInclude Include="vpnconnection.h" />
     <ClInclude Include="vpnlist.h" />
+    <ClInclude Include="vpntransport.h" />
     <ClInclude Include="webbrowser.h" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
     <ClCompile Include="usersettings.cpp" />
     <ClCompile Include="vpnconnection.cpp" />
     <ClCompile Include="vpnlist.cpp" />
+    <ClCompile Include="vpntransport.cpp" />
     <ClCompile Include="webbrowser.cpp" />
   </ItemGroup>
   <ItemGroup>
