@@ -19,6 +19,8 @@
 
 /*
 NOTES
+- modify connection loop to make sure API is okay
+  - will need to change VPNlist and logic
 - break out transports into separate files
 - merge transport and connection classes
 - remove transport-specific logic from connectionmanager
