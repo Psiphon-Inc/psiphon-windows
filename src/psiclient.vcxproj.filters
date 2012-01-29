@@ -33,6 +33,8 @@
     <ClCompile Include="3rdParty\zlib\zutil.c">
       <Filter>zlib</Filter>
     </ClCompile>
+    <ClCompile Include="transport.cpp" />
+    <ClCompile Include="vpntransport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -81,6 +83,8 @@
     <ClInclude Include="3rdParty\zlib\zutil.h">
       <Filter>zlib</Filter>
     </ClInclude>
+    <ClInclude Include="transport.h" />
+    <ClInclude Include="vpntransport.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
