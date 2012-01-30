@@ -19,10 +19,6 @@
 
 /*
 NOTES
-- modify connection loop to make sure API is okay
-- break out transports into separate files
-- merge transport and connection classes
-- remove transport-specific logic from connectionmanager
 - make vpnlist more generic (maybe just needs rename)
 - make previous-transport-failure records more generic
 - make connection loop transport-agnostic
