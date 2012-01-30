@@ -21,10 +21,6 @@
 
 #include <tchar.h>
 
-static const TCHAR* PLONK_EXE_NAME = _T("psiphon3-plonk.exe");
-static const TCHAR* POLIPO_EXE_NAME = _T("psiphon3-polipo.exe");
-static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
-static const TCHAR* POLIPO_HTTP_PROXY_PORT = _T("8080");
 static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN = "SkipVPN";
@@ -38,4 +34,3 @@ static const TCHAR* HTTP_SPEED_REQUEST_PATH = _T("/speed");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
 static const TCHAR* HTTP_DOWNLOAD_REQUEST_PATH = _T("/download");
 
-static int SSH_CONNECTION_TIMEOUT_SECONDS = 20;

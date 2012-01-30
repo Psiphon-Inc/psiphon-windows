@@ -46,11 +46,12 @@ public:
     virtual tstring GetLastTransportError() const;
 
     virtual void WaitForDisconnect();
-    virtual bool Cleanup(bool restartImminent);
+    virtual bool Cleanup();
 
 protected:
     virtual void TransportConnect(const SessionInfo& sessionInfo);
     
+    void TransportConnectHelper(const SessionInfo& sessionInfo);
     bool ServerVPNCapable(const SessionInfo& sessionInfo) const;
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
@@ -69,7 +70,6 @@ protected:
                             RASCONNSTATE rasConnState,
                             DWORD dwError,
                             DWORD);
-
 
 private:
     ConnectionState m_state;

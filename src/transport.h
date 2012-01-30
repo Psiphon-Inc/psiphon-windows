@@ -48,23 +48,24 @@ public:
 
     virtual tstring GetLastTransportError() const = 0;
 
-    // Call to create the connection
+    // Call to create the connection.
+    // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort
     void Connect(SessionInfo sessionInfo);
 
     // Call after connection to wait for disconnection.
+    // Must clean itself up as needed.
     // May throw TransportFailed or Abort
     virtual void WaitForDisconnect() = 0;
 
     // Do any necessary final cleanup. 
-    // If restartImminent is true, then the same transport will reconnect
-    // momentarily, which may affect the cleanup steps.
-    virtual bool Cleanup(bool restartImminent) = 0;
+    // Must be safe to call even if a connection was never established.
+    virtual bool Cleanup() = 0;
 
     // Exception classes to help with the control flow
     // Indicates that this transport was not successful
     class TransportFailed { };
-    // Indicates that a connection abort was requested
+    // Indicates that a connection abort was requested (i.e., by the user).
     class Abort { };
 
 protected:
@@ -88,9 +89,20 @@ public:
         return TransportFactory::m_registeredTransports.size();
     }
 
+    // TODO: Is this function only useful for testing? Should it be removed?
     static TransportBase* New(tstring transportName, ConnectionManager* manager)
     {
         return m_registeredTransports[transportName](manager);
+    }
+
+    static void NewAll(vector<TransportBase*>& all_transports, ConnectionManager* manager)
+    {
+        all_transports.clear();
+        map<tstring, TransportAllocator>::const_iterator it;
+        for (it = m_registeredTransports.begin(); it != m_registeredTransports.end(); it++)
+        {
+            all_transports.push_back(it->second(manager));
+        }
     }
 
     static map<tstring, TransportAllocator> m_registeredTransports;

@@ -50,7 +50,14 @@ VPNTransport::VPNTransport(ConnectionManager* manager)
 
 VPNTransport::~VPNTransport()
 {
-    Cleanup(false);
+    // We must be careful about cleaning up if we're upgrading -- we expect the
+    // client to restart again and don't want a race between the old and
+    // new processes to potentially mess with the new process's session.
+    // If we're upgrading, then we never made a connection in the first place.
+    if (!m_rasConnection)
+    {
+        (void)Cleanup();
+    }
     CloseHandle(m_stateChangeEvent);
 }
 
@@ -73,19 +80,19 @@ tstring VPNTransport::GetLastTransportError() const
 
 void VPNTransport::WaitForDisconnect()
 {
-    WaitForConnectionStateToChangeFrom(CONNECTION_STATE_CONNECTED);
+    try
+    {
+        WaitForConnectionStateToChangeFrom(CONNECTION_STATE_CONNECTED);
+    }
+    catch(...)
+    {
+        Cleanup();
+        throw;
+    }
 }
 
-bool VPNTransport::Cleanup(bool restartImminent)
+bool VPNTransport::Cleanup()
 {
-    // Don't remove the connection if we're upgrading -- we expect the
-    // client to restart again and don't want a race between the old and
-    // new processes to potentially mess with the new process's session.
-    if (restartImminent)
-    {
-        return true;
-    }
-
     DWORD returnCode = ERROR_SUCCESS;
 
     // Disconnect either the stored HRASCONN, or by entry name.
@@ -163,6 +170,19 @@ void VPNTransport::TransportConnect(const SessionInfo& sessionInfo)
         throw TransportFailed();
     }
 
+    try
+    {
+        TransportConnectHelper(sessionInfo);
+    }
+    catch(...)
+    {
+        (void)Cleanup();
+        throw;
+    }
+}
+
+void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
+{
     //
     // Minimum version check for VPN
     // - L2TP/IPSec/PSK not supported on Windows 2000
@@ -234,7 +254,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
 {
     DWORD returnCode = ERROR_SUCCESS;
 
-    (void)Cleanup(false);
+    (void)Cleanup();
 
     if (GetConnectionState() != CONNECTION_STATE_STOPPED && GetConnectionState() != CONNECTION_STATE_FAILED)
     {

@@ -55,7 +55,7 @@ public:
     void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
     bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
     bool SendStatusMessage(
-            int connectType, bool connected,
+            bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
@@ -85,17 +85,17 @@ private:
     bool DoUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
 
-    tstring GetVPNConnectRequestPath(void);
-    tstring GetVPNFailedRequestPath(void);
+    tstring GetFailedRequestPath(TransportBase* transport);
+    tstring GetConnectRequestPath(TransportBase* transport);
+    tstring GetStatusRequestPath(TransportBase* transport, bool connected);
 
-    tstring GetSSHConnectRequestPath(int connectType);
-    tstring GetSSHStatusRequestPath(int connectType, bool connected);
-    tstring GetSSHFailedRequestPath(int connectType);
     bool CurrentServerSSHCapable(void);
     bool SSHConnect(int connectType);
     void SSHDisconnect(void);
     bool SSHWaitForConnected(void);
     void SSHWaitAndDisconnect(void);
+
+    void DoPostConnect();
 
     HANDLE m_mutex;
     ConnectionManagerState m_state;
