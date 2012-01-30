@@ -36,26 +36,26 @@ class SessionInfo
 public:
     void Set(const ServerEntry& serverEntry);
 
-    string GetServerAddress(void) {return m_serverEntry.serverAddress;}
-    int GetWebPort(void) {return m_serverEntry.webServerPort;}
-    string GetWebServerSecret(void) {return m_serverEntry.webServerSecret;}
-    string GetWebServerCertificate(void) { return m_serverEntry.webServerCertificate;}
-    string GetUpgradeVersion(void) {return m_upgradeVersion;}
-    string GetPSK(void) {return m_psk;}
-    string GetSSHPort(void) {return m_sshPort;}
-    string GetSSHUsername(void) {return m_sshUsername;}
-    string GetSSHPassword(void) {return m_sshPassword;}
-    string GetSSHHostKey(void) {return m_sshHostKey;}
-    string GetSSHSessionID(void) {return m_sshSessionID;}
-    string GetSSHObfuscatedPort(void) {return m_sshObfuscatedPort;}
-    string GetSSHObfuscatedKey(void) {return m_sshObfuscatedKey;}
-    vector<tstring> GetHomepages(void) {return m_homepages;}
-    vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
-    vector<RegexReplace> GetPageViewRegexes() {return m_pageViewRegexes;}
-    vector<RegexReplace> GetHttpsRequestRegexes() {return m_httpsRequestRegexes;}
-    string GetSpeedTestServerAddress(void) {return m_speedTestServerAddress;}
-    string GetSpeedTestServerPort(void) {return m_speedTestServerPort;}
-    string GetSpeedTestRequestPath(void) {return m_speedTestRequestPath;}
+    string GetServerAddress(void) const {return m_serverEntry.serverAddress;}
+    int GetWebPort(void) const {return m_serverEntry.webServerPort;}
+    string GetWebServerSecret(void) const {return m_serverEntry.webServerSecret;}
+    string GetWebServerCertificate(void) const { return m_serverEntry.webServerCertificate;}
+    string GetUpgradeVersion(void) const {return m_upgradeVersion;}
+    string GetPSK(void) const {return m_psk;}
+    string GetSSHPort(void) const {return m_sshPort;}
+    string GetSSHUsername(void) const {return m_sshUsername;}
+    string GetSSHPassword(void) const {return m_sshPassword;}
+    string GetSSHHostKey(void) const {return m_sshHostKey;}
+    string GetSSHSessionID(void) const {return m_sshSessionID;}
+    string GetSSHObfuscatedPort(void) const {return m_sshObfuscatedPort;}
+    string GetSSHObfuscatedKey(void) const {return m_sshObfuscatedKey;}
+    vector<tstring> GetHomepages(void) const {return m_homepages;}
+    vector<string> GetDiscoveredServerEntries(void) const {return m_servers;}
+    vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
+    vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
+    string GetSpeedTestServerAddress(void) const {return m_speedTestServerAddress;}
+    string GetSpeedTestServerPort(void) const {return m_speedTestServerPort;}
+    string GetSpeedTestRequestPath(void) const {return m_speedTestRequestPath;}
 
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);

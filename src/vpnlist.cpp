@@ -27,14 +27,18 @@
 
 VPNList::VPNList(void)
 {
+    m_mutex = CreateMutex(NULL, FALSE, 0);
 }
 
 VPNList::~VPNList(void)
 {
+    CloseHandle(m_mutex);
 }
 
 void VPNList::AddEntriesToList(const vector<string>& newServerEntryList)
 {
+    AutoMUTEX lock(m_mutex);
+
     if (newServerEntryList.size() < 1)
     {
         return;
@@ -76,6 +80,8 @@ void VPNList::AddEntriesToList(const vector<string>& newServerEntryList)
 
 void VPNList::MarkCurrentServerFailed(void)
 {
+    AutoMUTEX lock(m_mutex);
+
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() > 1)
     {
@@ -88,6 +94,8 @@ void VPNList::MarkCurrentServerFailed(void)
 
 ServerEntry VPNList::GetNextServer(void)
 {
+    AutoMUTEX lock(m_mutex);
+
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() < 1)
     {
@@ -102,6 +110,8 @@ ServerEntry VPNList::GetNextServer(void)
 
 ServerEntries VPNList::GetList(void)
 {
+    AutoMUTEX lock(m_mutex);
+
     // Load persistent list of servers from system (registry)
 
     ServerEntries systemServerEntryList;
@@ -418,6 +428,8 @@ string VPNList::EncodeServerEntries(const ServerEntries& serverEntryList)
 
 bool VPNList::GetSkipVPN(void)
 {
+    AutoMUTEX lock(m_mutex);
+
     bool skipVPN = false;
 
     HKEY key = 0;
@@ -440,6 +452,8 @@ bool VPNList::GetSkipVPN(void)
 
 void VPNList::SetSkipVPN(void)
 {
+    AutoMUTEX lock(m_mutex);
+
     HKEY key = 0;
     DWORD value = 1;
     DWORD bufferLength = sizeof(value);
@@ -451,6 +465,8 @@ void VPNList::SetSkipVPN(void)
 
 void VPNList::ResetSkipVPN(void)
 {
+    AutoMUTEX lock(m_mutex);
+
     HKEY key = 0;
 
     RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);

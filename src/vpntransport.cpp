@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,18 @@
 #include "raserror.h"
 
 
+void TweakVPN();
+void TweakDNS();
+
+
+static const TCHAR* TRANSPORT_NAME = _T("VPN");
+
+// Set up the registration of this type
+static TransportBase* New(ConnectionManager* manager)
+{
+    return new VPNTransport(manager);
+}
+static int _stub = TransportFactory::Register(TRANSPORT_NAME, &New);
 
 
 VPNTransport::VPNTransport(ConnectionManager* manager)
@@ -31,7 +43,7 @@ VPNTransport::VPNTransport(ConnectionManager* manager)
       m_state(CONNECTION_STATE_STOPPED),
       m_stateChangeEvent(INVALID_HANDLE_VALUE),
       m_rasConnection(0),
-      m_lastVPNErrorCode(0)
+      m_lastErrorCode(0)
 {
     m_stateChangeEvent = CreateEvent(NULL, FALSE, FALSE, 0);
 }
@@ -40,6 +52,23 @@ VPNTransport::~VPNTransport()
 {
     Cleanup(false);
     CloseHandle(m_stateChangeEvent);
+}
+
+tstring VPNTransport::GetTransportName() const 
+{ 
+    return TRANSPORT_NAME; 
+}
+
+tstring VPNTransport::GetSessionID(SessionInfo sessionInfo) const
+{
+    return GetPPPIPAddress();
+}
+
+tstring VPNTransport::GetLastTransportError() const
+{
+    std::stringstream s;
+    s << GetLastErrorCode();
+    return NarrowToTString(s.str());
 }
 
 void VPNTransport::WaitForDisconnect()
@@ -127,12 +156,11 @@ bool VPNTransport::Cleanup(bool restartImminent)
     return true;
 }
 
-bool VPNTransport::TransportConnect(const ServerEntry& serverEntry)
+void VPNTransport::TransportConnect(const SessionInfo& sessionInfo)
 {
-    // The absence of a PSK indicates that the server is not VPN-capable
-    if (serverEntry.serverPSK.length() == 0)
+    if (!ServerVPNCapable(sessionInfo))
     {
-        return false;
+        throw TransportFailed();
     }
 
     //
@@ -148,7 +176,7 @@ bool VPNTransport::TransportConnect(const ServerEntry& serverEntry)
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
         my_print(false, _T("VPN requires Windows XP or greater"));
-        return false;
+        throw TransportFailed();
     }
 
     //
@@ -164,10 +192,10 @@ bool VPNTransport::TransportConnect(const ServerEntry& serverEntry)
     //
     
     if (!Establish(
-            NarrowToTString(serverEntry.serverAddress), 
-            NarrowToTString(serverEntry.serverPSK)))
+            NarrowToTString(sessionInfo.GetServerAddress()), 
+            NarrowToTString(sessionInfo.GetPSK())))
     {
-        return false;
+        throw TransportFailed();
     }
 
     //
@@ -180,7 +208,7 @@ bool VPNTransport::TransportConnect(const ServerEntry& serverEntry)
     {
         // Note: WaitForVPNConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
-        return false;
+        throw TransportFailed();
     }
 
     //
@@ -193,7 +221,13 @@ bool VPNTransport::TransportConnect(const ServerEntry& serverEntry)
     TweakDNS();
     
 
-    return true;
+    throw TransportFailed();
+}
+
+bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
+{
+    // The absence of a PSK indicates that the server is not VPN-capable
+    return sessionInfo.GetPSK().length() > 0;
 }
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
@@ -215,7 +249,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
         ERROR_ALREADY_EXISTS != returnCode)
     {
         my_print(false, _T("RasValidateEntryName failed (%d)"), returnCode);
-        SetLastVPNErrorCode(returnCode);
+        SetLastErrorCode(returnCode);
         return false;
     }
 
@@ -249,7 +283,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     if (ERROR_SUCCESS != returnCode)
     {
         my_print(false, _T("RasSetEntryProperties failed (%d)"), returnCode);
-        SetLastVPNErrorCode(returnCode);
+        SetLastErrorCode(returnCode);
         return false;
     }
 
@@ -263,7 +297,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     if (ERROR_SUCCESS != returnCode)
     {
         my_print(false, _T("RasSetCredentials failed (%d)"), returnCode);
-        SetLastVPNErrorCode(returnCode);
+        SetLastErrorCode(returnCode);
         return false;
     }
 
@@ -287,7 +321,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     {
         my_print(false, _T("RasDial failed (%d)"), returnCode);
         SetConnectionState(CONNECTION_STATE_FAILED);
-        SetLastVPNErrorCode(returnCode);
+        SetLastErrorCode(returnCode);
         return false;
     }
 
@@ -311,8 +345,15 @@ HANDLE VPNTransport::GetStateChangeEvent()
     return m_stateChangeEvent;
 }
 
-void VPNTransport::SetLastVPNErrorCode(unsigned int lastErrorCode) {m_lastVPNErrorCode = lastErrorCode;}
-unsigned int VPNTransport::GetLastVPNErrorCode(void) {return m_lastVPNErrorCode;}
+void VPNTransport::SetLastErrorCode(unsigned int lastErrorCode) 
+{
+    m_lastErrorCode = lastErrorCode;
+}
+
+unsigned int VPNTransport::GetLastErrorCode(void) const
+{
+    return m_lastErrorCode;
+}
 
 void VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state)
 {
@@ -348,11 +389,11 @@ void VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state)
     }
 }
 
-tstring VPNTransport::GetPPPIPAddress()
+tstring VPNTransport::GetPPPIPAddress() const
 {
     tstring IPAddress;
 
-    if (m_rasConnection && VPN_CONNECTION_STATE_CONNECTED == GetConnectionState())
+    if (m_rasConnection && CONNECTION_STATE_CONNECTED == GetConnectionState())
     {
         RASPPPIP projectionInfo;
         memset(&projectionInfo, 0, sizeof(projectionInfo));
@@ -453,8 +494,6 @@ HRASCONN VPNTransport::GetActiveRasConnection()
     return rasConnection;
 }
 
-
-
 void CALLBACK VPNTransport::RasDialCallback(
     DWORD userData,
     DWORD,
@@ -471,7 +510,7 @@ void CALLBACK VPNTransport::RasDialCallback(
     {
         my_print(false, _T("VPN connection failed (%d)"), dwError);
         vpnTransport->SetConnectionState(CONNECTION_STATE_FAILED);
-        vpnTransport->SetLastVPNErrorCode(dwError);
+        vpnTransport->SetLastErrorCode(dwError);
     }
     else if (RASCS_Connected == rasConnState)
     {
@@ -1012,7 +1051,7 @@ static bool FlushDNS()
 	return result;
 }
 
-void TweakDNS(void)
+void TweakDNS()
 {
     // Note: no lock
 

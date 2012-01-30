@@ -26,14 +26,13 @@ using namespace std;
 struct ServerEntry
 {
     ServerEntry(void) {}
-    ServerEntry(const string& serverAddress_, int webServerPort_, const string& webServerSecret_, const string& webServerCertificate_, const string& serverPSK_) :
-        serverAddress(serverAddress_), webServerPort(webServerPort_), webServerSecret(webServerSecret_) , webServerCertificate(webServerCertificate_), serverPSK(serverPSK_) {}
+    ServerEntry(const string& serverAddress_, int webServerPort_, const string& webServerSecret_, const string& webServerCertificate_) :
+        serverAddress(serverAddress_), webServerPort(webServerPort_), webServerSecret(webServerSecret_) , webServerCertificate(webServerCertificate_) {}
 
     string serverAddress;
     int webServerPort;
     string webServerSecret;
     string webServerCertificate;
-    string serverPSK;
 };
 
 typedef vector<ServerEntry> ServerEntries;
@@ -59,4 +58,6 @@ private:
     ServerEntry ParseServerEntry(const string& serverEntry);
     void WriteListToSystem(const ServerEntries& serverEntryList);
     string EncodeServerEntries(const ServerEntries& serverEntryList);
+
+    HANDLE m_mutex;
 };

@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "connectionmanager.h"
+#include "ras.h"
+#include "tstring.h"
 
 
 static int VPN_CONNECTION_TIMEOUT_SECONDS = 20;
@@ -40,21 +41,24 @@ public:
     VPNTransport(ConnectionManager* manager); 
     virtual ~VPNTransport();
 
-    virtual tstring GetTransportName() const { return _T("VPN"); }
+    virtual tstring GetTransportName() const;
+    virtual tstring GetSessionID(SessionInfo sessionInfo) const;
+    virtual tstring GetLastTransportError() const;
 
     virtual void WaitForDisconnect();
     virtual bool Cleanup(bool restartImminent);
 
 protected:
-    virtual bool TransportConnect(const ServerEntry& serverEntry);
+    virtual void TransportConnect(const SessionInfo& sessionInfo);
     
+    bool ServerVPNCapable(const SessionInfo& sessionInfo) const;
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
     HANDLE GetStateChangeEvent();
-    void SetLastVPNErrorCode(unsigned int lastErrorCode);
-    unsigned int GetLastVPNErrorCode();
+    void SetLastErrorCode(unsigned int lastErrorCode);
+    unsigned int GetLastErrorCode() const;
     void WaitForConnectionStateToChangeFrom(ConnectionState state);
-    tstring GetPPPIPAddress();
+    tstring GetPPPIPAddress() const;
     HRASCONN GetActiveRasConnection();
     bool Establish(const tstring& serverAddress, const tstring& PSK);
     static void CALLBACK RasDialCallback(
@@ -71,5 +75,5 @@ private:
     ConnectionState m_state;
     HANDLE m_stateChangeEvent;
     HRASCONN m_rasConnection;
-    unsigned int m_lastVPNErrorCode;
+    unsigned int m_lastErrorCode;
 };

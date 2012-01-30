@@ -20,12 +20,13 @@
 /*
 NOTES
 - modify connection loop to make sure API is okay
-  - will need to change VPNlist and logic
 - break out transports into separate files
 - merge transport and connection classes
 - remove transport-specific logic from connectionmanager
 - make vpnlist more generic (maybe just needs rename)
 - make previous-transport-failure records more generic
+- make connection loop transport-agnostic
+    - will need to change VPNlist and logic
 */
 
 #pragma once
@@ -42,11 +43,17 @@ public:
 
     virtual tstring GetTransportName() const = 0;
 
+    // Only valid when connected
+    virtual tstring GetSessionID(SessionInfo sessionInfo) const = 0;
+
+    virtual tstring GetLastTransportError() const = 0;
+
     // Call to create the connection
-    bool Connect(const ServerEntry& serverEntry);
+    // May throw TransportFailed or Abort
+    void Connect(SessionInfo sessionInfo);
 
     // Call after connection to wait for disconnection.
-    // Will also disconnect when the abort flag is set to true.
+    // May throw TransportFailed or Abort
     virtual void WaitForDisconnect() = 0;
 
     // Do any necessary final cleanup. 
@@ -61,46 +68,32 @@ public:
     class Abort { };
 
 protected:
-    virtual bool TransportConnect(const ServerEntry& serverEntry) = 0;
+    // May throw TransportFailed or Abort
+    virtual void TransportConnect(const SessionInfo& sessionInfo) = 0;
 
 protected:
     ConnectionManager* m_manager;
 };
 
-
-
-// Base class for the SSH transports
-class SSHTransportBase: public TransportBase
+typedef TransportBase* (*TransportAllocator)(ConnectionManager*);
+class TransportFactory
 {
 public:
-    virtual ConnectionManagerState GetConnectedState() const { return CONNECTION_MANAGER_STATE_CONNECTED_SSH; }
-    virtual void WaitForDisconnect();
-    virtual void Cleanup();
-    virtual tstring GetConnectFailedRequestPath() const;
-    virtual tstring GetConnectSuccessRequestPath() const; 
+    static int Register(tstring transportName, TransportAllocator transportAllocator)
+    {
+        TransportFactory::m_registeredTransports[transportName] = transportAllocator;
+        // The return value is essentially meaningless, but some return value 
+        // is needed, so that an assignment can be done, to avoid an error 
+        // that occurs otherwise when calling this with no scope.
+        return TransportFactory::m_registeredTransports.size();
+    }
 
-protected:
-    virtual bool TransportConnect(const ServerEntry& serverEntry);
+    static TransportBase* New(tstring transportName, ConnectionManager* manager)
+    {
+        return m_registeredTransports[transportName](manager);
+    }
 
-    virtual int GetSSHType() const = 0;
+    static map<tstring, TransportAllocator> m_registeredTransports;
 };
+map<tstring, TransportAllocator> TransportFactory::m_registeredTransports;
 
-// Standard SSH
-class SSHTransport: public SSHTransportBase
-{
-public:
-    tstring GetTransportName() const { return _T("SSH"); }
-
-protected:
-    int GetSSHType() const { return SSH_CONNECT_STANDARD; }
-};
-
-// Obfuscated SSH
-class OSSHTransport: public SSHTransportBase
-{
-public:
-    tstring GetTransportName() const { return _T("OSSH"); }
-
-protected:
-    int GetSSHType() const { return SSH_CONNECT_OBFUSCATED; }
-};

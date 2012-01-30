@@ -20,12 +20,12 @@
 #pragma once
 
 #include <time.h>
-#include "vpnconnection.h"
-#include "sshconnection.h"
 #include "vpnlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 
+
+class TransportBase;
 
 enum ConnectionManagerState
 {
@@ -62,12 +62,6 @@ public:
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
-    static void DoVPNConnection(
-        ConnectionManager* manager,
-        const ServerEntry& serverEntry);
-    static void DoSSHConnection(
-        ConnectionManager* manager,
-        const ServerEntry& serverEntry);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class TryNextServer { };
@@ -93,12 +87,6 @@ private:
 
     tstring GetVPNConnectRequestPath(void);
     tstring GetVPNFailedRequestPath(void);
-    bool CurrentServerVPNCapable(void);
-    VPNConnectionState GetVPNConnectionState(void);
-    HANDLE GetVPNConnectionStateChangeEvent(void);
-    void RemoveVPNConnection(void);
-    void VPNEstablish(void);
-    void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
 
     tstring GetSSHConnectRequestPath(int connectType);
     tstring GetSSHStatusRequestPath(int connectType, bool connected);
@@ -112,12 +100,17 @@ private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
     VPNList m_vpnList;
-    VPNConnection m_vpnConnection;
     bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
-    SSHConnection m_sshConnection;
     HANDLE m_thread;
     bool m_currentSessionSkippedVPN;
     time_t m_startingTime;
     string m_splitTunnelRoutes;
+
+    // TEMP: Replace with array and accessors
+public:
+    TransportBase* m_currentTransport;
+    TransportBase* m_vpnTransport;
+    TransportBase* m_sshTransport;
+    TransportBase* m_osshTransport;
 };
