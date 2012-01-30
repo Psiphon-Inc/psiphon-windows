@@ -30,9 +30,7 @@ TransportBase::TransportBase(ConnectionManager* manager)
 {
 }
 
-void TransportBase::Connect(const ServerEntry& serverEntry)
+void TransportBase::Connect(SessionInfo sessionInfo)
 {
-    TransportConnect(serverEntry);
+    TransportConnect(sessionInfo);
 }
-
-

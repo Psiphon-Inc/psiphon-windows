@@ -103,7 +103,6 @@
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="sessioninfo.h" />
-    <ClInclude Include="sshconnection.h" />
     <ClInclude Include="sshtransport.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />
@@ -148,7 +147,6 @@
     </ClCompile>
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
-    <ClCompile Include="sshconnection.cpp" />
     <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

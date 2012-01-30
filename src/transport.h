@@ -62,11 +62,13 @@ public:
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
 
-    // Exception classes to help with the control flow
+    //
+    // Exception classes
+    //
     // Indicates that this transport was not successful
     class TransportFailed { };
-    // Indicates that a connection abort was requested (i.e., by the user).
-    class Abort { };
+    // Indicates a fatal system error
+    class Error { };
 
 protected:
     // May throw TransportFailed or Abort

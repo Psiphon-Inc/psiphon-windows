@@ -93,7 +93,7 @@ void SSHTransportBase::WaitForDisconnectHelper()
 
         DWORD result = WaitForMultipleObjects(sizeof(wait_handles)/sizeof(HANDLE), wait_handles, FALSE, 100); // 100 ms. = 1/10 second...
 
-        if (m_manager->GetUserSignalledStop() || result != WAIT_TIMEOUT)
+        if (m_manager->GetUserSignalledStop(false) || result != WAIT_TIMEOUT)
         {
             break;
         }
@@ -380,7 +380,7 @@ bool SSHTransportBase::WaitForConnected()
 
         // Check if user canceled
 
-        if (m_manager->GetUserSignalledStop())
+        if (m_manager->GetUserSignalledStop(false))
         {
             break;
         }
@@ -389,6 +389,9 @@ bool SSHTransportBase::WaitForConnected()
     closesocket(sock);
     WSACloseEvent(connectedEvent);
     WSACleanup();
+
+    // Check if user canceled, and throw if so.
+    (void)m_manager->GetUserSignalledStop(true);
 
     if (connected)
     {
@@ -428,7 +431,7 @@ void SSHTransportBase::WaitAndDisconnect()
 
         DWORD result = WaitForMultipleObjects(sizeof(wait_handles)/sizeof(HANDLE), wait_handles, FALSE, 100); // 100 ms. = 1/10 second...
 
-        if (m_manager->GetUserSignalledStop() || result != WAIT_TIMEOUT)
+        if (m_manager->GetUserSignalledStop(false) || result != WAIT_TIMEOUT)
         {
             break;
         }

@@ -395,9 +395,13 @@ void VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state)
 
         totalWaitMilliseconds += waitMilliseconds;
 
-        if (m_manager->GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
+        // Check if the user requested a stop, and throw if so.
+        (void)m_manager->GetUserSignalledStop(true);
+
+        if (result == WAIT_FAILED || result == WAIT_ABANDONED)
         {
-            throw Abort();
+            // Something has gone very wrong.
+            throw Error();
         }
         else if (
             result == WAIT_TIMEOUT &&

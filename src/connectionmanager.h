@@ -47,7 +47,7 @@ public:
     time_t GetStartingTime(void);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState(void);
-    const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
+    const bool& GetUserSignalledStop(bool throwIfTrue);
     void OpenHomePages(void);
     void SetSkipVPN(void);
     void ResetSkipVPN(void);
@@ -67,6 +67,12 @@ private:
     class TryNextServer { };
     class Abort { };
 
+    void DoPostConnect();
+
+    tstring GetFailedRequestPath(TransportBase* transport);
+    tstring GetConnectRequestPath(TransportBase* transport);
+    tstring GetStatusRequestPath(TransportBase* transport, bool connected);
+
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
         const tstring& operation,
@@ -85,18 +91,7 @@ private:
     bool DoUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
 
-    tstring GetFailedRequestPath(TransportBase* transport);
-    tstring GetConnectRequestPath(TransportBase* transport);
-    tstring GetStatusRequestPath(TransportBase* transport, bool connected);
-
-    bool CurrentServerSSHCapable(void);
-    bool SSHConnect(int connectType);
-    void SSHDisconnect(void);
-    bool SSHWaitForConnected(void);
-    void SSHWaitAndDisconnect(void);
-
-    void DoPostConnect();
-
+private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
     VPNList m_vpnList;
@@ -108,7 +103,7 @@ private:
     string m_splitTunnelRoutes;
 
     // TEMP: Replace with array and accessors
-public:
+private:
     TransportBase* m_currentTransport;
     TransportBase* m_vpnTransport;
     TransportBase* m_sshTransport;

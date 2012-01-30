@@ -132,9 +132,18 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
     m_state = newState;
 }
 
-ConnectionManagerState ConnectionManager::GetState(void)
+ConnectionManagerState ConnectionManager::GetState()
 {
     return m_state;
+}
+
+const bool& ConnectionManager::GetUserSignalledStop(bool throwIfTrue) 
+{
+    if (throwIfTrue && m_userSignalledStop)
+    {
+        throw Abort();
+    }
+    return m_userSignalledStop;
 }
 
 void ConnectionManager::Stop(void)
@@ -258,18 +267,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
             HTTPSRequest httpsRequest;
             if (!httpsRequest.MakeRequest(
-                                manager->GetUserSignalledStop(),
+                                manager->GetUserSignalledStop(true),
                                 NarrowToTString(serverEntry.serverAddress).c_str(),
                                 serverEntry.webServerPort,
                                 serverEntry.webServerCertificate,
                                 handshakeRequestPath.c_str(),
                                 handshakeResponse))
             {
-                if (manager->GetUserSignalledStop())
-                {
-                    throw Abort();
-                }
-
                 // We now have the client retry on port 443 in case the
                 // configured port is blocked. If this works, then 443
                 // is used for subsequent web requests.
@@ -278,9 +282,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 // and skip the blocked one next time to avoid waiting
                 // for inevitable timeouts.
 
-                else if (serverEntry.webServerPort != 443
-                            && httpsRequest.MakeRequest(
-                                        manager->GetUserSignalledStop(),
+                if (serverEntry.webServerPort != 443
+                    && httpsRequest.MakeRequest(
+                                        manager->GetUserSignalledStop(true),
                                         NarrowToTString(serverEntry.serverAddress).c_str(),
                                         443,
                                         serverEntry.webServerCertificate,
@@ -313,19 +317,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
                 DWORD start = GetTickCount();
                 if (!httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
+                            manager->GetUserSignalledStop(true),
                             NarrowToTString(serverEntry.serverAddress).c_str(),
                             serverEntry.webServerPort,
                             serverEntry.webServerCertificate,
                             downloadRequestPath.c_str(),
                             downloadResponse))
                 {
-                    if (manager->GetUserSignalledStop())
-                    {
-                        throw Abort();
-                    }
-                    // else fall through to Establish()
-
                     // If the download failed, we simply proceed with the connection.
                     // Rationale:
                     // - The server is (and hopefully will remain) backwards compatible.
@@ -342,8 +340,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                     if (now >= start) // GetTickCount can wrap
                     {
                         string speedResponse;
-                        httpsRequest.MakeRequest(
-                                        manager->GetUserSignalledStop(),
+                        (void)httpsRequest.MakeRequest( // Ignore failure
+                                        manager->GetUserSignalledStop(true),
                                         NarrowToTString(serverEntry.serverAddress).c_str(),
                                         serverEntry.webServerPort,
                                         serverEntry.webServerCertificate,
@@ -369,7 +367,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                         // NOTE: state will remain INITIALIZING.  The app is terminating.
                         return 0;
                     }
-                    // else fall through to Establish()
+                    // else fall through to connection
                 }
             }
 
@@ -402,6 +400,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             {
                 TransportBase* transport = transports[i];
 
+                // Force a stop check before trying the next transport
+                (void)manager->GetUserSignalledStop(true);
+
                 try
                 {
                     // TEMP HACK
@@ -422,16 +423,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                     tstring requestPath = manager->GetFailedRequestPath(transport);    
                     string response;
                     HTTPSRequest httpsRequest;
-                    if (!httpsRequest.MakeRequest(
-                                        manager->GetUserSignalledStop(),
+                    (void)httpsRequest.MakeRequest( // Ignore failure
+                                        manager->GetUserSignalledStop(true),
                                         NarrowToTString(serverEntry.serverAddress).c_str(),
                                         serverEntry.webServerPort,
                                         serverEntry.webServerCertificate,
                                         requestPath.c_str(),
-                                        response))
-                    {
-                        // Ignore failure
-                    }
+                                        response);
 
                     // TEMP HACK
                     if (transport->GetTransportName() == _T("VPN"))
@@ -464,13 +462,21 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
             break;
         }
-        catch (TransportBase::Abort&)
+        catch (TransportBase::Error&)
         {
+            if (manager->m_currentTransport)
+            {
+                manager->m_currentTransport->Cleanup();
+            }
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (Abort&)
         {
+            if (manager->m_currentTransport)
+            {
+                manager->m_currentTransport->Cleanup();
+            }
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -525,7 +531,7 @@ void ConnectionManager::DoPostConnect()
     string response;
     HTTPSRequest httpsRequest;
     if (httpsRequest.MakeRequest(
-                        GetUserSignalledStop(),
+                        GetUserSignalledStop(true),
                         NarrowToTString(m_currentSessionInfo.GetServerAddress()).c_str(),
                         m_currentSessionInfo.GetWebPort(),
                         m_currentSessionInfo.GetWebServerCertificate(),
@@ -541,7 +547,7 @@ void ConnectionManager::DoPostConnect()
             string speedResponse;
             HTTPSRequest httpsRequest;
             httpsRequest.MakeRequest(
-                            GetUserSignalledStop(),
+                            GetUserSignalledStop(true),
                             NarrowToTString(m_currentSessionInfo.GetServerAddress()).c_str(),
                             m_currentSessionInfo.GetWebPort(),
                             m_currentSessionInfo.GetWebServerCertificate(),
@@ -582,7 +588,7 @@ bool ConnectionManager::SendStatusMessage(
     // TODO: the user may be left waiting too long after cancelling; add
     // a shorter timeout in this case
     bool ignoreCancel = false;
-    bool& cancel = connected ? GetUserSignalledStop() : ignoreCancel;
+    bool& cancel = connected ? GetUserSignalledStop(true) : ignoreCancel;
 
     // Format stats data for consumption by the server. 
 
@@ -669,11 +675,6 @@ void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, tstring& serverP
     requestPath = NarrowToTString(m_currentSessionInfo.GetSpeedTestRequestPath());
 }
 
-const SessionInfo& ConnectionManager::GetCurrentSessionInfo() const
-{
-    return m_currentSessionInfo;
-}
-
 tstring ConnectionManager::GetFailedRequestPath(TransportBase* transport)
 {
     AutoMUTEX lock(m_mutex);
@@ -716,53 +717,6 @@ tstring ConnectionManager::GetStatusRequestPath(TransportBase* transport, bool c
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
-
-// ==== SSH Session Functions =================================================
-
-bool ConnectionManager::CurrentServerSSHCapable()
-{
-    AutoMUTEX lock(m_mutex);
-
-    return m_currentSessionInfo.GetSSHHostKey().length() > 0;
-}
-
-bool ConnectionManager::SSHConnect(int connectType)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return m_sshConnection.Connect(
-            connectType,
-            NarrowToTString(m_currentSessionInfo.GetServerAddress()),
-            NarrowToTString(m_currentSessionInfo.GetSSHPort()),
-            NarrowToTString(m_currentSessionInfo.GetSSHHostKey()),
-            NarrowToTString(m_currentSessionInfo.GetSSHUsername()),
-            NarrowToTString(m_currentSessionInfo.GetSSHPassword()),
-            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedPort()),
-            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedKey()),
-            m_currentSessionInfo.GetPageViewRegexes(),
-            m_currentSessionInfo.GetHttpsRequestRegexes());
-}
-
-void ConnectionManager::SSHDisconnect(void)
-{
-    // Note: no lock
-
-    m_sshConnection.Disconnect();
-}
-
-bool ConnectionManager::SSHWaitForConnected(void)
-{
-    // Note: no lock
-
-    return m_sshConnection.WaitForConnected();
-}
-
-void ConnectionManager::SSHWaitAndDisconnect(void)
-{
-    // Note: no lock
-
-    m_sshConnection.WaitAndDisconnect(this);
-}
 
 void ConnectionManager::MarkCurrentServerFailed(void)
 {
@@ -932,10 +886,6 @@ bool ConnectionManager::DoUpgrade(const string& download)
         // Abort upgrade: Establish() will proceed.
         return false;
     }
-
-    // Don't teardown connection: see comment in VPNConnection::Remove
-
-    m_vpnConnection.SuspendTeardownForUpgrade();
 
     // Die & respawn
     // TODO: if ShellExecute fails, don't die?
