@@ -23,8 +23,6 @@
 #include "vpnlist.h"
 #include "tstring.h"
 
-class ConnectionManager;
-
 struct RegexReplace
 {
     regex regex;

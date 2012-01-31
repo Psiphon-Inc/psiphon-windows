@@ -27,15 +27,30 @@ NOTES
 
 #pragma once
 
-#include "connectionmanager.h"
+class SessionInfo;
 
 
-// All transport implementations should inherit this class. 
-// It has many pure virtual members that must be implemented by subclasses.
-class TransportBase
+// This interface must be implemented by the class that manages the transports 
+// (i.e., ConnectionManager). Using this will help us keep track of which 
+// functions in ConnectionManager are depended on by the transports, and are
+// available to new transports.
+class ITransportManager
 {
 public:
-    TransportBase(ConnectionManager* manager);
+    virtual const bool& GetUserSignalledStop(bool throwIfTrue) = 0;
+    virtual bool SendStatusMessage(
+            bool connected,
+            const map<string, int>& pageViewEntries,
+            const map<string, int>& httpsRequestEntries,
+            unsigned long long bytesTransferred) = 0;
+};
+
+
+// All transport implementations must implement this interface
+class ITransport
+{
+public:
+    ITransport(ITransportManager* manager);
 
     virtual tstring GetTransportName() const = 0;
 
@@ -71,10 +86,10 @@ protected:
     virtual void TransportConnect(const SessionInfo& sessionInfo) = 0;
 
 protected:
-    ConnectionManager* m_manager;
+    ITransportManager* m_manager;
 };
 
-typedef TransportBase* (*TransportAllocator)(ConnectionManager*);
+typedef ITransport* (*TransportAllocator)(ITransportManager*);
 class TransportFactory
 {
 public:
@@ -88,12 +103,12 @@ public:
     }
 
     // TODO: Is this function only useful for testing? Should it be removed?
-    static TransportBase* New(tstring transportName, ConnectionManager* manager)
+    static ITransport* New(tstring transportName, ITransportManager* manager)
     {
         return m_registeredTransports[transportName](manager);
     }
 
-    static void NewAll(vector<TransportBase*>& all_transports, ConnectionManager* manager)
+    static void NewAll(vector<ITransport*>& all_transports, ITransportManager* manager)
     {
         all_transports.clear();
         map<tstring, TransportAllocator>::const_iterator it;

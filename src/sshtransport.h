@@ -21,6 +21,9 @@
 
 #include "systemproxysettings.h"
 
+class SessionInfo;
+struct RegexReplace;
+
 
 static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
 static const TCHAR* POLIPO_HTTP_PROXY_PORT = _T("8080");
@@ -32,10 +35,10 @@ static const TCHAR* POLIPO_EXE_NAME = _T("psiphon3-polipo.exe");
 //
 // Base class for the SSH transports
 //
-class SSHTransportBase: public TransportBase
+class SSHTransportBase: public ITransport
 {
 public:
-    SSHTransportBase(ConnectionManager* manager); 
+    SSHTransportBase(ITransportManager* manager); 
     virtual ~SSHTransportBase();
 
     virtual tstring GetTransportName() const = 0;
@@ -91,7 +94,7 @@ protected:
 class SSHTransport: public SSHTransportBase
 {
 public:
-    SSHTransport(ConnectionManager* manager); 
+    SSHTransport(ITransportManager* manager); 
     virtual ~SSHTransport();
 
     virtual tstring GetTransportName() const;
@@ -112,7 +115,7 @@ protected:
 class OSSHTransport: public SSHTransportBase
 {
 public:
-    OSSHTransport(ConnectionManager* manager); 
+    OSSHTransport(ITransportManager* manager); 
     virtual ~OSSHTransport();
 
     virtual tstring GetTransportName() const;

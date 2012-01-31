@@ -19,18 +19,19 @@
 
 #include "stdafx.h"
 #include "transport.h"
+#include "sessioninfo.h"
 
 
 /******************************************************************************
- TransportBase
+ ITransport
 ******************************************************************************/
 
-TransportBase::TransportBase(ConnectionManager* manager)
+ITransport::ITransport(ITransportManager* manager)
     : m_manager(manager) 
 {
 }
 
-void TransportBase::Connect(SessionInfo sessionInfo)
+void ITransport::Connect(SessionInfo sessionInfo)
 {
     TransportConnect(sessionInfo);
 }

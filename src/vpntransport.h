@@ -22,12 +22,14 @@
 #include "ras.h"
 #include "tstring.h"
 
+class SessionInfo;
+
 
 static int VPN_CONNECTION_TIMEOUT_SECONDS = 20;
 static const TCHAR* VPN_CONNECTION_NAME = _T("Psiphon3");
 
 
-class VPNTransport: public TransportBase
+class VPNTransport: public ITransport
 {
     enum ConnectionState
     {
@@ -38,7 +40,7 @@ class VPNTransport: public TransportBase
     };
 
 public:
-    VPNTransport(ConnectionManager* manager); 
+    VPNTransport(ITransportManager* manager); 
     virtual ~VPNTransport();
 
     virtual tstring GetTransportName() const;

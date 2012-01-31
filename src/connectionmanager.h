@@ -23,9 +23,8 @@
 #include "vpnlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
+#include "transport.h"
 
-
-class TransportBase;
 
 enum ConnectionManagerState
 {
@@ -36,7 +35,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager
+class ConnectionManager : public ITransportManager
 {
 public:
     ConnectionManager(void);
@@ -69,9 +68,9 @@ private:
 
     void DoPostConnect();
 
-    tstring GetFailedRequestPath(TransportBase* transport);
-    tstring GetConnectRequestPath(TransportBase* transport);
-    tstring GetStatusRequestPath(TransportBase* transport, bool connected);
+    tstring GetFailedRequestPath(ITransport* transport);
+    tstring GetConnectRequestPath(ITransport* transport);
+    tstring GetStatusRequestPath(ITransport* transport, bool connected);
 
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
@@ -104,8 +103,8 @@ private:
 
     // TEMP: Replace with array and accessors
 private:
-    TransportBase* m_currentTransport;
-    TransportBase* m_vpnTransport;
-    TransportBase* m_sshTransport;
-    TransportBase* m_osshTransport;
+    ITransport* m_currentTransport;
+    ITransport* m_vpnTransport;
+    ITransport* m_sshTransport;
+    ITransport* m_osshTransport;
 };

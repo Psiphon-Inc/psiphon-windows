@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "transport.h"
 #include "sshtransport.h"
+#include "sessioninfo.h"
+#include "psiclient.h"
 #include <WinSock2.h>
 #include <WinCrypt.h>
 #include <Shlwapi.h>
@@ -36,8 +38,8 @@ bool SetPlonkSSHHostKey(
  SSHTransportBase
 ******************************************************************************/
 
-SSHTransportBase::SSHTransportBase(ConnectionManager* manager)
-    : TransportBase(manager),
+SSHTransportBase::SSHTransportBase(ITransportManager* manager)
+    : ITransport(manager),
     m_polipoPipe(NULL),
     m_bytesTransferred(0),
     m_lastStatusSendTimeMS(0)
@@ -835,14 +837,14 @@ void SSHTransportBase::ParsePolipoStatsBuffer(const char* page_view_buffer)
 static const TCHAR* SSH_TRANSPORT_NAME = _T("SSH");
 
 // Set up the registration of this type
-static TransportBase* NewSSH(ConnectionManager* manager)
+static ITransport* NewSSH(ITransportManager* manager)
 {
     return new SSHTransport(manager);
 }
 static int _sshstub = TransportFactory::Register(SSH_TRANSPORT_NAME, &NewSSH);
 
 
-SSHTransport::SSHTransport(ConnectionManager* manager)
+SSHTransport::SSHTransport(ITransportManager* manager)
     : SSHTransportBase(manager)
 {
 }
@@ -886,14 +888,14 @@ bool SSHTransport::GetSSHParams(
 static const TCHAR* OSSH_TRANSPORT_NAME = _T("OSSH");
 
 // Set up the registration of this type
-static TransportBase* NewOSSH(ConnectionManager* manager)
+static ITransport* NewOSSH(ITransportManager* manager)
 {
     return new OSSHTransport(manager);
 }
 static int _osshstub = TransportFactory::Register(OSSH_TRANSPORT_NAME, &NewOSSH);
 
 
-OSSHTransport::OSSHTransport(ConnectionManager* manager)
+OSSHTransport::OSSHTransport(ITransportManager* manager)
     : SSHTransportBase(manager)
 {
 }

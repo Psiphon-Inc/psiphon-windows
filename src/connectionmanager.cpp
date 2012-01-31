@@ -393,12 +393,12 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             }
 
             // TEMP
-            TransportBase* transports[] = {manager->m_vpnTransport, manager->m_osshTransport, manager->m_sshTransport};
+            ITransport* transports[] = {manager->m_vpnTransport, manager->m_osshTransport, manager->m_sshTransport};
             manager->m_currentTransport = 0;
 
             for (int i = 0; i < sizeof(transports)/sizeof(*transports); i++)
             {
-                TransportBase* transport = transports[i];
+                ITransport* transport = transports[i];
 
                 // Force a stop check before trying the next transport
                 (void)manager->GetUserSignalledStop(true);
@@ -417,7 +417,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
                     break;
                 }
-                catch (TransportBase::TransportFailed&)
+                catch (ITransport::TransportFailed&)
                 {
                     // Report error code to server for logging/trouble-shooting.
                     tstring requestPath = manager->GetFailedRequestPath(transport);    
@@ -462,7 +462,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
             break;
         }
-        catch (TransportBase::Error&)
+        catch (ITransport::Error&)
         {
             if (manager->m_currentTransport)
             {
@@ -675,7 +675,7 @@ void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, tstring& serverP
     requestPath = NarrowToTString(m_currentSessionInfo.GetSpeedTestRequestPath());
 }
 
-tstring ConnectionManager::GetFailedRequestPath(TransportBase* transport)
+tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -688,7 +688,7 @@ tstring ConnectionManager::GetFailedRequestPath(TransportBase* transport)
            _T("&error_code=") + transport->GetLastTransportError();
 }
 
-tstring ConnectionManager::GetConnectRequestPath(TransportBase* transport)
+tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -701,7 +701,7 @@ tstring ConnectionManager::GetConnectRequestPath(TransportBase* transport)
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo);
 }
 
-tstring ConnectionManager::GetStatusRequestPath(TransportBase* transport, bool connected)
+tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
 {
     AutoMUTEX lock(m_mutex);
 

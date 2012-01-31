@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "transport.h"
 #include "vpntransport.h"
+#include "sessioninfo.h"
+#include "psiclient.h"
 #include "ras.h"
 #include "raserror.h"
 
@@ -31,15 +33,15 @@ void TweakDNS();
 static const TCHAR* TRANSPORT_NAME = _T("VPN");
 
 // Set up the registration of this type
-static TransportBase* New(ConnectionManager* manager)
+static ITransport* New(ITransportManager* manager)
 {
     return new VPNTransport(manager);
 }
 static int _stub = TransportFactory::Register(TRANSPORT_NAME, &New);
 
 
-VPNTransport::VPNTransport(ConnectionManager* manager)
-    : TransportBase(manager),
+VPNTransport::VPNTransport(ITransportManager* manager)
+    : ITransport(manager),
       m_state(CONNECTION_STATE_STOPPED),
       m_stateChangeEvent(INVALID_HANDLE_VALUE),
       m_rasConnection(0),
