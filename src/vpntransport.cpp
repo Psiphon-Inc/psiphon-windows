@@ -99,6 +99,9 @@ void VPNTransport::WaitForDisconnect()
         Cleanup();
         throw;
     }
+
+    // Also clean up in the case of no exception
+    Cleanup();
 }
 
 bool VPNTransport::Cleanup()

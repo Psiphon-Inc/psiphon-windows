@@ -74,6 +74,9 @@ void SSHTransportBase::WaitForDisconnect()
         Cleanup();
         throw;
     }
+
+    // Also clean up in the case of no exception
+    Cleanup();
 }
 
 void SSHTransportBase::WaitForDisconnectHelper()
