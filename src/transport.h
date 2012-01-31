@@ -28,6 +28,7 @@ NOTES
 #pragma once
 
 class SessionInfo;
+class ITransport;
 
 
 // This interface must be implemented by the class that manages the transports 
@@ -39,6 +40,7 @@ class ITransportManager
 public:
     virtual const bool& GetUserSignalledStop(bool throwIfTrue) = 0;
     virtual bool SendStatusMessage(
+            ITransport* transport,
             bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,

@@ -47,12 +47,6 @@ ConnectionManager::ConnectionManager(void) :
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
-    // TEMP
-    m_vpnTransport = 0;
-    m_sshTransport = 0;
-    m_osshTransport = 0;
-    m_currentTransport = 0;
-
     InitializeUserSettings();
 }
 
@@ -167,14 +161,11 @@ void ConnectionManager::Stop(void)
         m_thread = 0;
     }
 
-    // TEMP
-    delete m_vpnTransport;
-    m_vpnTransport = 0;
-    delete m_sshTransport;
-    m_sshTransport = 0;
-    delete m_osshTransport;
-    m_osshTransport = 0;
-    m_currentTransport = 0;
+    for (size_t i = 0; i < m_transports.size(); i++)
+    {
+        delete m_transports[i];
+    }
+    m_transports.clear();
 }
 
 void ConnectionManager::Start(void)
@@ -184,11 +175,7 @@ void ConnectionManager::Start(void)
 
     AutoMUTEX lock(m_mutex);
 
-    // TEMP
-    m_vpnTransport = TransportRegistry::New(_T("VPN"), this);
-    m_sshTransport = TransportRegistry::New(_T("SSH"), this);
-    m_osshTransport = TransportRegistry::New(_T("OSSH"), this);
-    m_currentTransport = 0;
+    TransportRegistry::NewAll(m_transports, this);
 
     m_userSignalledStop = false;
 
@@ -247,8 +234,12 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
     while (true) // Try servers loop
     {
+        ITransport* currentTransport = 0;
+
         try
         {
+            currentTransport = 0;
+
             // Ensure UI doesn't show "VPN Skipped" icon
             manager->SetCurrentConnectionSkippedVPN(false);
 
@@ -393,13 +384,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 sessionInfo = manager->m_currentSessionInfo;
             }
 
-            // TEMP
-            ITransport* transports[] = {manager->m_vpnTransport, manager->m_osshTransport, manager->m_sshTransport};
-            manager->m_currentTransport = 0;
-
-            for (int i = 0; i < sizeof(transports)/sizeof(*transports); i++)
+            for (size_t i = 0; i < manager->m_transports.size(); i++)
             {
-                ITransport* transport = transports[i];
+                ITransport* transport = manager->m_transports[i];
 
                 // Force a stop check before trying the next transport
                 (void)manager->GetUserSignalledStop(true);
@@ -414,7 +401,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                     }
 
                     transport->Connect(sessionInfo);
-                    manager->m_currentTransport = transport;
+                    currentTransport = transport;
 
                     break;
                 }
@@ -447,17 +434,17 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             }
 
             // Did any transports succeed in connecting to this server?
-            if (!manager->m_currentTransport)
+            if (!currentTransport)
             {
                 throw TryNextServer();
             }
 
-            manager->DoPostConnect();
+            manager->DoPostConnect(currentTransport);
 
             //
             // Wait for transport to stop (or fail)
             //
-            manager->m_currentTransport->WaitForDisconnect();
+            currentTransport->WaitForDisconnect();
 
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
 
@@ -465,18 +452,18 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         }
         catch (ITransport::Error&)
         {
-            if (manager->m_currentTransport)
+            if (currentTransport)
             {
-                manager->m_currentTransport->Cleanup();
+                currentTransport->Cleanup();
             }
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (Abort&)
         {
-            if (manager->m_currentTransport)
+            if (currentTransport)
             {
-                manager->m_currentTransport->Cleanup();
+                currentTransport->Cleanup();
             }
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
@@ -514,7 +501,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     return 0;
 }
 
-void ConnectionManager::DoPostConnect()
+void ConnectionManager::DoPostConnect(ITransport* currentTransport)
 {
     // Called from connection thread
 
@@ -526,7 +513,7 @@ void ConnectionManager::DoPostConnect()
     // It's not critical if this request fails so failure is ignored.
     //
     
-    tstring connectedRequestPath = GetConnectRequestPath(m_currentTransport);
+    tstring connectedRequestPath = GetConnectRequestPath(currentTransport);
         
     DWORD start = GetTickCount();
     string response;
@@ -553,7 +540,7 @@ void ConnectionManager::DoPostConnect()
                             m_currentSessionInfo.GetWebPort(),
                             m_currentSessionInfo.GetWebServerCertificate(),
                             GetSpeedRequestPath(
-                                m_currentTransport->GetTransportName(),
+                                currentTransport->GetTransportName(),
                                 _T("connected"),
                                 _T("(NONE)"),
                                 now-start,
@@ -567,6 +554,7 @@ void ConnectionManager::DoPostConnect()
 }
 
 bool ConnectionManager::SendStatusMessage(
+                            ITransport* transport,
                             bool connected,
                             const map<string, int>& pageViewEntries,
                             const map<string, int>& httpsRequestEntries,
@@ -626,7 +614,7 @@ bool ConnectionManager::SendStatusMessage(
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
-    tstring requestPath = GetStatusRequestPath(m_currentTransport, connected);
+    tstring requestPath = GetStatusRequestPath(transport, connected);
     string response;
     HTTPSRequest httpsRequest;
     bool success = httpsRequest.MakeRequest(

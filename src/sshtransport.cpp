@@ -624,6 +624,7 @@ bool SSHTransportBase::ProcessStatsAndStatus(bool connected)
         || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
         if (m_manager->SendStatusMessage(
+                                this,
                                 connected, // Note: there's a timeout side-effect when connected=false
                                 m_pageViewEntries, 
                                 m_httpsRequestEntries, 

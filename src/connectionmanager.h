@@ -54,6 +54,7 @@ public:
     void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
     bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
     bool SendStatusMessage(
+            ITransport* transport,
             bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
@@ -66,7 +67,7 @@ private:
     class TryNextServer { };
     class Abort { };
 
-    void DoPostConnect();
+    void DoPostConnect(ITransport* currentTransport);
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);
@@ -100,11 +101,5 @@ private:
     bool m_currentSessionSkippedVPN;
     time_t m_startingTime;
     string m_splitTunnelRoutes;
-
-    // TEMP: Replace with array and accessors
-private:
-    ITransport* m_currentTransport;
-    ITransport* m_vpnTransport;
-    ITransport* m_sshTransport;
-    ITransport* m_osshTransport;
+    vector<ITransport*> m_transports;
 };
