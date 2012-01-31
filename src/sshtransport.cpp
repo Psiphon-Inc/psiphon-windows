@@ -947,12 +947,12 @@ bool OSSHTransport::GetSSHParams(
 
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
     o_serverPort = NarrowToTString(sessionInfo.GetSSHObfuscatedPort());
-    o_serverHostKey = NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
+    o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
     o_plonkCommandLine = m_plonkPath
                             + _T(" -ssh -C -N -batch")
                             + _T(" -P ") + o_serverPort
-                            + _T(" -z -Z ") + o_serverHostKey
+                            + _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey())
                             + _T(" -l ") + NarrowToTString(sessionInfo.GetSSHUsername())
                             + _T(" -pw ") + NarrowToTString(sessionInfo.GetSSHPassword())
                             + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
