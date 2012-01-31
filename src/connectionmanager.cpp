@@ -414,7 +414,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                     }
 
                     transport->Connect(sessionInfo);
-                    manager->m_currentTransport = manager->m_vpnTransport;
+                    manager->m_currentTransport = transport;
 
                     break;
                 }
