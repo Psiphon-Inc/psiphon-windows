@@ -143,6 +143,8 @@ const bool& ConnectionManager::GetUserSignalledStop(bool throwIfTrue)
 
 void ConnectionManager::Stop(void)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     // NOTE: no lock, to allow thread to access object
 
     // The assumption is that signalling stop will cause any current operations to
@@ -157,7 +159,9 @@ void ConnectionManager::Stop(void)
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
     {
+        my_print(true, _T("%s: Waiting for thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_thread, INFINITE);
+        my_print(true, _T("%s: Thread died"), __TFUNCTION__);
         m_thread = 0;
     }
 
@@ -166,10 +170,14 @@ void ConnectionManager::Stop(void)
         delete m_transports[i];
     }
     m_transports.clear();
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::Start(void)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     // Call Stop to cleanup in case thread failed on last Start attempt
     Stop();
 
@@ -182,6 +190,7 @@ void ConnectionManager::Start(void)
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
         my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
+        my_print(true, _T("%s: enter"), __TFUNCTION__);
         return;
     }
 
@@ -193,11 +202,15 @@ void ConnectionManager::Start(void)
 
         SetState(CONNECTION_MANAGER_STATE_STOPPED);
     }
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
 
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     ConnectionManager* manager = (ConnectionManager*)data;
 
     // Seed built-in non-crypto PRNG used for shuffling (load balancing)
@@ -234,6 +247,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
     while (true) // Try servers loop
     {
+        my_print(true, _T("%s: enter server loop"), __TFUNCTION__);
+
         ITransport* currentTransport = 0;
 
         try
@@ -253,9 +268,12 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
             // Send list of known server IP addresses (used for stats logging on the server)
 
+            my_print(true, _T("%s: LoadNextServer"), __TFUNCTION__);
             manager->LoadNextServer(
                             serverEntry,
                             handshakeRequestPath);
+
+            my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, serverEntry.webServerPort);
 
             HTTPSRequest httpsRequest;
             if (!httpsRequest.MakeRequest(
@@ -273,6 +291,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 // TODO: the client could 'remember' which port works
                 // and skip the blocked one next time to avoid waiting
                 // for inevitable timeouts.
+
+                my_print(true, _T("%s: handshake request on port 443"), __TFUNCTION__);
 
                 if (serverEntry.webServerPort != 443
                     && httpsRequest.MakeRequest(
@@ -292,6 +312,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 }
             }
 
+            my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
             manager->HandleHandshakeResponse(handshakeResponse.c_str());
 
             //
@@ -388,6 +409,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             {
                 ITransport* transport = manager->m_transports[i];
 
+                my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, transport->GetTransportName().c_str());
+
                 // Force a stop check before trying the next transport
                 (void)manager->GetUserSignalledStop(true);
 
@@ -407,6 +430,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 }
                 catch (ITransport::TransportFailed&)
                 {
+                    my_print(true, _T("%s: transport failed"), __TFUNCTION__);
+
                     // Report error code to server for logging/trouble-shooting.
                     tstring requestPath = manager->GetFailedRequestPath(transport);    
                     string response;
@@ -436,22 +461,28 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             // Did any transports succeed in connecting to this server?
             if (!currentTransport)
             {
+                my_print(true, _T("%s: no transport succeeded"), __TFUNCTION__);
                 throw TryNextServer();
             }
+
+            my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
 
             manager->DoPostConnect(currentTransport);
 
             //
             // Wait for transport to stop (or fail)
             //
+            my_print(true, _T("%s: WaitForDisconnect"), __TFUNCTION__);
             currentTransport->WaitForDisconnect();
 
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
 
+            my_print(true, _T("%s: breaking"), __TFUNCTION__);
             break;
         }
         catch (ITransport::Error&)
         {
+            my_print(true, _T("%s: caught ITransport::Error"), __TFUNCTION__);
             if (currentTransport)
             {
                 currentTransport->Cleanup();
@@ -459,8 +490,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
-        catch (Abort&)
+        catch (ConnectionManager::Abort&)
         {
+            my_print(true, _T("%s: caught Abort"), __TFUNCTION__);
             if (currentTransport)
             {
                 currentTransport->Cleanup();
@@ -468,8 +500,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
-        catch (TryNextServer&)
+        catch (ConnectionManager::TryNextServer&)
         {
+            my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
             manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
@@ -498,6 +531,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         }
     }
 
+    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
     return 0;
 }
 
@@ -709,7 +743,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
 
 void ConnectionManager::MarkCurrentServerFailed(void)
 {
-    AutoMUTEX lock(m_mutex);
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
     
     m_vpnList.MarkCurrentServerFailed();
 }
@@ -720,12 +754,15 @@ void ConnectionManager::LoadNextServer(
         ServerEntry& serverEntry,
         tstring& handshakeRequestPath)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     // Select next server to try to connect to
 
-    AutoMUTEX lock(m_mutex);
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
     
     try
     {
+        my_print(true, _T("%s: GetNextServer"), __TFUNCTION__);
         // Try the next server in our list.
         serverEntry = m_vpnList.GetNextServer();
     }
@@ -737,7 +774,7 @@ void ConnectionManager::LoadNextServer(
 
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
-
+    my_print(true, _T("%s: m_currentSessionInfo.Set"), __TFUNCTION__);
     m_currentSessionInfo.Set(serverEntry);
 
     // Output values used in next TryNextServer step
@@ -749,13 +786,16 @@ void ConnectionManager::LoadNextServer(
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
-
+    my_print(true, _T("%s: m_vpnList.GetList"), __TFUNCTION__);
     ServerEntries serverEntries =  m_vpnList.GetList();
+    my_print(true, _T("%s: serverEntries loop"), __TFUNCTION__);
     for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
         handshakeRequestPath += _T("&known_server=");
         handshakeRequestPath += NarrowToTString(ii->serverAddress);
     }
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)

@@ -515,6 +515,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // lParam != 0: control notifications
         else if (lParam == (LPARAM)g_hToolBar && wmId == IDM_TOGGLE)
         {
+            my_print(true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
             g_connectionManager.Toggle();
         }
         else if (lParam == (LPARAM)g_hBanner && wmEvent == STN_CLICKED)

@@ -71,9 +71,12 @@ void SSHTransportBase::WaitForDisconnect()
     }
     catch(...)
     {
+        my_print(true, _T("%s: exiting with exception"), __TFUNCTION__);
         Cleanup();
         throw;
     }
+
+    my_print(true, _T("%s: exiting cleanly"), __TFUNCTION__);
 
     // Also clean up in the case of no exception
     Cleanup();
