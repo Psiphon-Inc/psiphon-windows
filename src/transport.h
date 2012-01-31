@@ -54,6 +54,9 @@ public:
 
     virtual tstring GetTransportName() const = 0;
 
+    // Every implementing class must have a static function with this signature:
+    //static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+
     // Only valid when connected
     virtual tstring GetSessionID(SessionInfo sessionInfo) const = 0;
 
@@ -62,6 +65,7 @@ public:
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort
+    // Subclasses must not override.
     void Connect(SessionInfo sessionInfo);
 
     // Call after connection to wait for disconnection.
@@ -88,37 +92,4 @@ protected:
 protected:
     ITransportManager* m_manager;
 };
-
-typedef ITransport* (*TransportAllocator)(ITransportManager*);
-class TransportFactory
-{
-public:
-    static int Register(tstring transportName, TransportAllocator transportAllocator)
-    {
-        TransportFactory::m_registeredTransports[transportName] = transportAllocator;
-        // The return value is essentially meaningless, but some return value 
-        // is needed, so that an assignment can be done, to avoid an error 
-        // that occurs otherwise when calling this with no scope.
-        return TransportFactory::m_registeredTransports.size();
-    }
-
-    // TODO: Is this function only useful for testing? Should it be removed?
-    static ITransport* New(tstring transportName, ITransportManager* manager)
-    {
-        return m_registeredTransports[transportName](manager);
-    }
-
-    static void NewAll(vector<ITransport*>& all_transports, ITransportManager* manager)
-    {
-        all_transports.clear();
-        map<tstring, TransportAllocator>::const_iterator it;
-        for (it = m_registeredTransports.begin(); it != m_registeredTransports.end(); it++)
-        {
-            all_transports.push_back(it->second(manager));
-        }
-    }
-
-    static map<tstring, TransportAllocator> m_registeredTransports;
-};
-map<tstring, TransportAllocator> TransportFactory::m_registeredTransports;
 

@@ -20,7 +20,8 @@
 #pragma once
 
 #include "ras.h"
-#include "tstring.h"
+#include "transport.h"
+#include "transport_registry.h"
 
 class SessionInfo;
 
@@ -42,6 +43,8 @@ class VPNTransport: public ITransport
 public:
     VPNTransport(ITransportManager* manager); 
     virtual ~VPNTransport();
+
+    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
     virtual tstring GetTransportName() const;
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;

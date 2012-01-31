@@ -32,12 +32,20 @@ void TweakDNS();
 
 static const TCHAR* TRANSPORT_NAME = _T("VPN");
 
-// Set up the registration of this type
+// Support the registration of this transport type
 static ITransport* New(ITransportManager* manager)
 {
     return new VPNTransport(manager);
 }
-static int _stub = TransportFactory::Register(TRANSPORT_NAME, &New);
+
+// static
+void VPNTransport::GetFactory(
+                    tstring& o_transportName,
+                    TransportFactory& o_transportFactory)
+{
+    o_transportFactory = New;
+    o_transportName = TRANSPORT_NAME;
+}
 
 
 VPNTransport::VPNTransport(ITransportManager* manager)

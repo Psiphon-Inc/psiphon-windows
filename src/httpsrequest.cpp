@@ -25,6 +25,10 @@
 #include "config.h"
 #include "embeddedvalues.h"
 
+// TEMP: Reference to a specific transport shouldn't be necessary (after local proxy is broken out)
+#include "sshtransport.h"
+
+
 // NOTE: this code depends on built-in Windows crypto services
 // How do export restrictions impact general availability of crypto services?
 // http://technet.microsoft.com/en-us/library/cc962093.aspx

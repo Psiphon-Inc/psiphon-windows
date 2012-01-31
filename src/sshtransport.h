@@ -19,10 +19,13 @@
 
 #pragma once
 
+#include "transport.h"
+#include "transport_registry.h"
 #include "systemproxysettings.h"
 
 class SessionInfo;
 struct RegexReplace;
+
 
 
 static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
@@ -97,6 +100,8 @@ public:
     SSHTransport(ITransportManager* manager); 
     virtual ~SSHTransport();
 
+    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+
     virtual tstring GetTransportName() const;
 
 protected:
@@ -117,6 +122,8 @@ class OSSHTransport: public SSHTransportBase
 public:
     OSSHTransport(ITransportManager* manager); 
     virtual ~OSSHTransport();
+
+    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
     virtual tstring GetTransportName() const;
 

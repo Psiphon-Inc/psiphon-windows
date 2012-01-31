@@ -26,6 +26,9 @@
 #include "raserror.h"
 #include "usersettings.h"
 
+// TEMP: Reference to a specific transport shouldn't be necessary (after local proxy is broken out)
+#include "sshtransport.h"
+
 
 // This string is passed to InternetSetOption to set the proxy address for each protocol.
 // NOTE that we do not include a proxy setting for FTP, since Polipo does not support

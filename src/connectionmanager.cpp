@@ -31,6 +31,7 @@
 #include <sstream>
 
 #include "transport.h"
+#include "transport_registry.h"
 
 
 // Upgrade process posts a Quit message
@@ -184,9 +185,9 @@ void ConnectionManager::Start(void)
     AutoMUTEX lock(m_mutex);
 
     // TEMP
-    m_vpnTransport = TransportFactory::New(_T("VPN"), this);
-    m_sshTransport = TransportFactory::New(_T("SSH"), this);
-    m_osshTransport = TransportFactory::New(_T("OSSH"), this);
+    m_vpnTransport = TransportRegistry::New(_T("VPN"), this);
+    m_sshTransport = TransportRegistry::New(_T("SSH"), this);
+    m_osshTransport = TransportRegistry::New(_T("OSSH"), this);
     m_currentTransport = 0;
 
     m_userSignalledStop = false;

@@ -836,12 +836,20 @@ void SSHTransportBase::ParsePolipoStatsBuffer(const char* page_view_buffer)
 
 static const TCHAR* SSH_TRANSPORT_NAME = _T("SSH");
 
-// Set up the registration of this type
+// Support the registration of this transport type
 static ITransport* NewSSH(ITransportManager* manager)
 {
     return new SSHTransport(manager);
 }
-static int _sshstub = TransportFactory::Register(SSH_TRANSPORT_NAME, &NewSSH);
+
+// static
+void SSHTransport::GetFactory(
+                    tstring& o_transportName,
+                    TransportFactory& o_transportFactory)
+{
+    o_transportFactory = NewSSH;
+    o_transportName = SSH_TRANSPORT_NAME;
+}
 
 
 SSHTransport::SSHTransport(ITransportManager* manager)
@@ -853,6 +861,7 @@ SSHTransport::~SSHTransport()
 {
 }
 
+// static
 tstring SSHTransport::GetTransportName() const 
 { 
     return SSH_TRANSPORT_NAME; 
@@ -887,12 +896,20 @@ bool SSHTransport::GetSSHParams(
 
 static const TCHAR* OSSH_TRANSPORT_NAME = _T("OSSH");
 
-// Set up the registration of this type
+// Support the registration of this transport type
 static ITransport* NewOSSH(ITransportManager* manager)
 {
     return new OSSHTransport(manager);
 }
-static int _osshstub = TransportFactory::Register(OSSH_TRANSPORT_NAME, &NewOSSH);
+
+// static
+void OSSHTransport::GetFactory(
+                    tstring& o_transportName,
+                    TransportFactory& o_transportFactory)
+{
+    o_transportFactory = NewOSSH;
+    o_transportName = OSSH_TRANSPORT_NAME;
+}
 
 
 OSSHTransport::OSSHTransport(ITransportManager* manager)

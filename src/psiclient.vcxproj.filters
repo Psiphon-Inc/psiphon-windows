@@ -34,6 +34,7 @@
     <ClCompile Include="transport.cpp" />
     <ClCompile Include="vpntransport.cpp" />
     <ClCompile Include="sshtransport.cpp" />
+    <ClCompile Include="transport_registry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="transport.h" />
     <ClInclude Include="vpntransport.h" />
     <ClInclude Include="sshtransport.h" />
+    <ClInclude Include="transport_registry.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
