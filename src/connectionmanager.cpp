@@ -465,8 +465,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 throw TryNextServer();
             }
 
+            // Do post-connect work, like opening home pages
             my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
-
             manager->DoPostConnect(currentTransport);
 
             //
@@ -475,6 +475,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             my_print(true, _T("%s: WaitForDisconnect"), __TFUNCTION__);
             currentTransport->WaitForDisconnect();
 
+            //
+            // Disconnected
+            //
+
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
 
             my_print(true, _T("%s: breaking"), __TFUNCTION__);
@@ -482,6 +486,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         }
         catch (ITransport::Error&)
         {
+            // Unrecoverable error. Cleanup and exit.
             my_print(true, _T("%s: caught ITransport::Error"), __TFUNCTION__);
             if (currentTransport)
             {
@@ -492,6 +497,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         }
         catch (ConnectionManager::Abort&)
         {
+            // User requested cancel. Cleanup and exit.
             my_print(true, _T("%s: caught Abort"), __TFUNCTION__);
             if (currentTransport)
             {
@@ -502,6 +508,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         }
         catch (ConnectionManager::TryNextServer&)
         {
+            // Failed to connect to the server. Try the next one.
             my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
             manager->MarkCurrentServerFailed();
 

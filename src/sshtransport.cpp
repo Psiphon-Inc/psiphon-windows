@@ -168,7 +168,7 @@ void SSHTransportBase::TransportConnect(const SessionInfo& sessionInfo)
 
 void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
 {
-    my_print(false, _T("SSH connecting..."));
+    my_print(false, _T("%s connecting..."), GetTransportName().c_str());
 
     // Extract executables and put to disk if not already
 
@@ -408,7 +408,7 @@ bool SSHTransportBase::WaitForConnected()
 
         m_systemProxySettings.Configure();
 
-        my_print(false, _T("SSH successfully connected."));
+        my_print(false, _T("%s successfully connected."), GetTransportName().c_str());
     }
 
     return connected;
