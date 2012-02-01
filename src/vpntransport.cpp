@@ -239,7 +239,7 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     
     if (CONNECTION_STATE_CONNECTED != GetConnectionState())
     {
-        // Note: WaitForVPNConnectionStateToChangeFrom throws Abort if user
+        // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
         throw TransportFailed();
     }
