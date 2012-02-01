@@ -41,25 +41,29 @@ class AutoHINTERNET
 {
 public:
     AutoHINTERNET(HINTERNET handle) {m_handle = handle;}
-    ~AutoHINTERNET() {WinHttpCloseHandle(m_handle);}
+    ~AutoHINTERNET() { this->WinHttpCloseHandle(); }
     operator HINTERNET() {return m_handle;}
+    void WinHttpCloseHandle() { if (m_handle != NULL) ::WinHttpCloseHandle(m_handle); m_handle = NULL; }
 private:
     HINTERNET m_handle;
 };
 
 
-HTTPSRequest::HTTPSRequest(void)
+HTTPSRequest::HTTPSRequest()
+    : m_closedEvent(NULL)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
-
-    // Must use a manual event: multiple things wait on the same event
-    m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
 }
 
-HTTPSRequest::~HTTPSRequest(void)
+HTTPSRequest::~HTTPSRequest()
 {
     // In case object is destroyed while callback is outstanding, wait
-    WaitForSingleObject(m_closedEvent, INFINITE);
+    if (m_closedEvent != NULL)
+    {
+        WaitForSingleObject(m_closedEvent, INFINITE);
+        CloseHandle(m_closedEvent);
+        m_closedEvent = NULL;
+    }
 
     CloseHandle(m_mutex);
 }
@@ -71,6 +75,17 @@ void CALLBACK WinHttpStatusCallback(
                 LPVOID lpvStatusInformation,
                 DWORD dwStatusInformationLength)
 {
+    // From: http://msdn.microsoft.com/en-us/library/windows/desktop/aa384068%28v=vs.85%29.aspx
+    // "...it is possible in WinHTTP for a notification to occur before a context 
+    // value is set. If the callback function receives a notification before the 
+    // context value is set, the application must be prepared to receive NULL in 
+    // the dwContext parameter of the callback function."
+    if (dwContext == NULL)
+    {
+        my_print(true, _T("%s: received no context; thread exiting"), __TFUNCTION__);
+        return;
+    }
+
     HTTPSRequest* httpRequest = (HTTPSRequest*)dwContext;
     CERT_CONTEXT *pCert = {0};
     DWORD dwStatusCode;
@@ -308,7 +323,10 @@ bool HTTPSRequest::MakeRequest(
 
     // Kick off the asynchronous processing
 
-    ResetEvent(m_closedEvent);
+    // Must use a manual event: multiple things wait on the same event
+    _ASSERT(m_closedEvent == NULL);
+    m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
+
     m_expectedServerCertificate = webServerCertificate;
     m_requestSuccess = false;
     m_response = "";
@@ -322,6 +340,8 @@ bool HTTPSRequest::MakeRequest(
                     additionalDataLength,
                     (DWORD_PTR)this))
     {
+        CloseHandle(m_closedEvent);
+        m_closedEvent = NULL;
         my_print(false, _T("WinHttpSendRequest failed (%d)"), GetLastError());
         return false;
     }
@@ -336,16 +356,20 @@ bool HTTPSRequest::MakeRequest(
         {
             if (cancel)
             {
-                WinHttpCloseHandle(hRequest);
+                hRequest.WinHttpCloseHandle();
                 WaitForSingleObject(m_closedEvent, INFINITE);
+                CloseHandle(m_closedEvent);
+                m_closedEvent = NULL;
                 return false;
             }
         }
         else if (result != WAIT_OBJECT_0)
         {
             // internal error
-            WinHttpCloseHandle(hRequest);
+            hRequest.WinHttpCloseHandle();
             WaitForSingleObject(m_closedEvent, INFINITE);
+            CloseHandle(m_closedEvent);
+            m_closedEvent = NULL;
             return false;
         }
         else
@@ -354,6 +378,9 @@ bool HTTPSRequest::MakeRequest(
             break;
         }
     }
+
+    CloseHandle(m_closedEvent);
+    m_closedEvent = NULL;
 
     if (m_requestSuccess)
     {

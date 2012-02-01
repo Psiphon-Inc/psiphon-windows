@@ -27,8 +27,8 @@ using namespace std;
 class HTTPSRequest
 {
 public:
-    HTTPSRequest(void);
-    virtual ~HTTPSRequest(void);
+    HTTPSRequest();
+    virtual ~HTTPSRequest();
     bool MakeRequest(
         const bool& cancel,
         const TCHAR* serverAddress,
