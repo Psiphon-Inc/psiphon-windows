@@ -26,6 +26,8 @@ NOTES
 - make previous-transport-failure records more generic
 - make connection loop transport-agnostic
     - will need to change VPNlist and logic
+- add API to track order and set of transports to try 
+    - right now the order is basically random (iterate through map order)
 */
 
 #pragma once

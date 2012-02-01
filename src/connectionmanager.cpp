@@ -263,6 +263,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             //
 
             ServerEntry serverEntry;
+            HTTPSRequest httpsRequest;
             tstring handshakeRequestPath;
             string handshakeResponse;
 
@@ -273,47 +274,46 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                             serverEntry,
                             handshakeRequestPath);
 
-            my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, serverEntry.webServerPort);
+            // We now have the client retry on port 443 in case the
+            // configured port is blocked. If this works, then 443
+            // is used for subsequent web requests.
 
-            HTTPSRequest httpsRequest;
-            if (!httpsRequest.MakeRequest(
-                                manager->GetUserSignalledStop(true),
-                                NarrowToTString(serverEntry.serverAddress).c_str(),
-                                serverEntry.webServerPort,
-                                serverEntry.webServerCertificate,
-                                handshakeRequestPath.c_str(),
-                                handshakeResponse))
+            // TODO: the client could 'remember' which port works
+            // and skip the blocked one next time to avoid waiting
+            // for inevitable timeouts.
+
+            vector<int> ports;
+            ports.push_back(serverEntry.webServerPort);
+            if (serverEntry.webServerPort != 443) ports.push_back(443);
+
+            for (size_t i = 0; i < ports.size(); i++)
             {
-                // We now have the client retry on port 443 in case the
-                // configured port is blocked. If this works, then 443
-                // is used for subsequent web requests.
+                int port = ports[i];
+                my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, port);
 
-                // TODO: the client could 'remember' which port works
-                // and skip the blocked one next time to avoid waiting
-                // for inevitable timeouts.
-
-                my_print(true, _T("%s: handshake request on port 443"), __TFUNCTION__);
-
-                if (serverEntry.webServerPort != 443
-                    && httpsRequest.MakeRequest(
-                                        manager->GetUserSignalledStop(true),
-                                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                                        443,
-                                        serverEntry.webServerCertificate,
-                                        handshakeRequestPath.c_str(),
-                                        handshakeResponse))
+                if (httpsRequest.MakeRequest(
+                                    manager->GetUserSignalledStop(true),
+                                    NarrowToTString(serverEntry.serverAddress).c_str(),
+                                    port,
+                                    serverEntry.webServerCertificate,
+                                    handshakeRequestPath.c_str(),
+                                    handshakeResponse))
                 {
-                    serverEntry.webServerPort = 443;
-                    // Fall through to success case
-                }
-                else
-                {
-                    throw TryNextServer();
+                    // Handshake succeeded. Use this port for future requests.
+                    serverEntry.webServerPort = port;
+                    break;
                 }
             }
 
-            my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
-            manager->HandleHandshakeResponse(handshakeResponse.c_str());
+            if (handshakeResponse.length() > 0)
+            {
+                my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
+                manager->HandleHandshakeResponse(handshakeResponse.c_str());
+            }
+            else
+            {
+                throw TryNextServer();
+            }
 
             //
             // Upgrade
