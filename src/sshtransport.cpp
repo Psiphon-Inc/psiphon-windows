@@ -475,7 +475,7 @@ void SSHTransportBase::WaitAndDisconnect()
 
     if (wasConnected)
     {
-        my_print(false, _T("SSH disconnected."));
+        my_print(false, _T("%s disconnected."), GetTransportName().c_str());
     }
 }
 
@@ -948,7 +948,7 @@ bool OSSHTransport::GetSSHParams(
     if (sessionInfo.GetSSHObfuscatedPort().size() <= 0 
         || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
     {
-        my_print(false, _T("SSHConnection::Connect - missing parameters"));
+        my_print(false, _T("%s - missing parameters"), __TFUNCTION__);
         return false;
     }
 
