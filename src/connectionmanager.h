@@ -63,7 +63,7 @@ private:
     class TryNextServer { };
     class Abort { };
 
-    void DoPostConnect(ITransport* currentTransport);
+    void DoPostConnect(const SessionInfo& sessionInfo);
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);

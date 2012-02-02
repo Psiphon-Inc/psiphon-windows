@@ -199,11 +199,11 @@ void ConnectionManager::Start(void)
 }
 
 
-DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
+DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
-    ConnectionManager* manager = (ConnectionManager*)data;
+    ConnectionManager* manager = (ConnectionManager*)object;
 
     // Seed built-in non-crypto PRNG used for shuffling (load balancing)
     unsigned int seed = (unsigned)time(NULL);
@@ -350,7 +350,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
             // Do post-connect work, like opening home pages
             my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
-            manager->DoPostConnect(manager->m_transport);
+            manager->DoPostConnect(sessionInfo);
 
             //
             // Wait for transport to stop (or fail)
@@ -419,31 +419,36 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     return 0;
 }
 
-void ConnectionManager::DoPostConnect(ITransport* currentTransport)
+void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
 {
     // Called from connection thread
+    // NOTE: no lock while waiting for network events
 
     // TEMP HACK -- should be transport-generic
-    if (currentTransport->GetTransportName() == _T("VPN"))
+    if (m_transport->GetTransportName() == _T("VPN"))
+    {
         SetState(CONNECTION_MANAGER_STATE_CONNECTED_VPN);
+    }
     else
+    {
         SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
+    }
 
     //
     // "Connected" HTTPS request for server stats and split tunnel routing info.
     // It's not critical if this request fails so failure is ignored.
     //
     
-    tstring connectedRequestPath = GetConnectRequestPath(currentTransport);
+    tstring connectedRequestPath = GetConnectRequestPath(m_transport);
         
     DWORD start = GetTickCount();
     string response;
     HTTPSRequest httpsRequest;
     if (httpsRequest.MakeRequest(
                         GetUserSignalledStop(true),
-                        NarrowToTString(m_currentSessionInfo.GetServerAddress()).c_str(),
-                        m_currentSessionInfo.GetWebPort(),
-                        m_currentSessionInfo.GetWebServerCertificate(),
+                        NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                        sessionInfo.GetWebPort(),
+                        sessionInfo.GetWebServerCertificate(),
                         connectedRequestPath.c_str(),
                         response))
     {
@@ -457,11 +462,11 @@ void ConnectionManager::DoPostConnect(ITransport* currentTransport)
             HTTPSRequest httpsRequest;
             httpsRequest.MakeRequest(
                             GetUserSignalledStop(true),
-                            NarrowToTString(m_currentSessionInfo.GetServerAddress()).c_str(),
-                            m_currentSessionInfo.GetWebPort(),
-                            m_currentSessionInfo.GetWebServerCertificate(),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            sessionInfo.GetWebPort(),
+                            sessionInfo.GetWebServerCertificate(),
                             GetSpeedRequestPath(
-                                currentTransport->GetTransportName(),
+                                m_transport->GetTransportName(),
                                 _T("connected"),
                                 _T("(NONE)"),
                                 now-start,
@@ -471,6 +476,55 @@ void ConnectionManager::DoPostConnect(ITransport* currentTransport)
 
         // Process split tunnel response
         ProcessSplitTunnelResponse(response);
+    }
+
+    //
+    // Open home pages in browser
+    //
+    
+    OpenHomePages();
+
+    // Perform tunneled speed test when requested
+    // In VPN mode, the WinHttp request is implicitly tunneled.
+
+    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
+    GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
+    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
+
+    if (speedTestServerAddress.length() > 0)
+    {
+        DWORD start = GetTickCount();
+        string response;
+        HTTPSRequest httpsRequest;
+        bool success = false;
+        if (httpsRequest.MakeRequest(
+                            GetUserSignalledStop(true),
+                            speedTestServerAddress.c_str(),
+                            _ttoi(speedTestServerPort.c_str()),
+                            "",
+                            speedTestRequestPath.c_str(),
+                            response))
+        {
+            success = true;
+        }
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            HTTPSRequest httpsRequest;
+            httpsRequest.MakeRequest(
+                            GetUserSignalledStop(true),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            sessionInfo.GetWebPort(),
+                            sessionInfo.GetWebServerCertificate(),
+                            GetSpeedRequestPath(
+                                m_transport->GetTransportName(),
+                                success ? _T("speed_test") : _T("speed_test_failure"),
+                                speedTestURL.c_str(),
+                                now-start,
+                                response.length()).c_str(),
+                            speedResponse);
+        }
     }
 }
 
