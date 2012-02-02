@@ -252,9 +252,6 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     // Note: we proceed even if the call fails. This means some domains
     // may not resolve properly.
     TweakDNS();
-    
-
-    throw TransportFailed();
 }
 
 bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
