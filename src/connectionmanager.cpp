@@ -42,8 +42,10 @@ ConnectionManager::ConnectionManager(void) :
     m_state(CONNECTION_MANAGER_STATE_STOPPED),
     m_userSignalledStop(false),
     m_thread(0),
+    m_upgradeThread(0),
     m_currentSessionSkippedVPN(false),
-    m_startingTime(0)
+    m_startingTime(0),
+    m_upgradePending(false)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -165,6 +167,14 @@ void ConnectionManager::Stop(void)
         m_thread = 0;
     }
 
+    if (m_upgradeThread)
+    {
+        my_print(true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
+        WaitForSingleObject(m_upgradeThread, INFINITE);
+        my_print(true, _T("%s: Upgrade thread died"), __TFUNCTION__);
+        m_upgradeThread = 0;
+    }
+
     for (size_t i = 0; i < m_transports.size(); i++)
     {
         delete m_transports[i];
@@ -190,7 +200,7 @@ void ConnectionManager::Start(void)
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
         my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
-        my_print(true, _T("%s: enter"), __TFUNCTION__);
+        my_print(true, _T("%s: exit"), __TFUNCTION__);
         return;
     }
 
@@ -247,6 +257,21 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
     while (true) // Try servers loop
     {
+        if (manager->m_upgradePending)
+        {
+            // An upgrade has been downloaded and paved.  Since there is no
+            // currently connected tunnel, go ahead and restart the application
+            // using the new version.
+            // TODO: if ShellExecute fails, don't die?
+            TCHAR filename[1000];
+            if (GetModuleFileName(NULL, filename, 1000))
+            {
+                ShellExecute(0, NULL, filename, 0, 0, SW_SHOWNORMAL);
+                PostMessage(g_hWnd, WM_QUIT, 0, 0);
+                break;
+            }
+        }
+
         my_print(true, _T("%s: enter server loop"), __TFUNCTION__);
 
         ITransport* currentTransport = 0;
@@ -315,72 +340,16 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 throw TryNextServer();
             }
 
-            //
-            // Upgrade
-            //
-
-            // Upgrade now if handshake notified of new version
-            tstring downloadRequestPath;
-            string downloadResponse;
-            if (manager->RequireUpgrade(downloadRequestPath))
+            // If handshake notified of new version, start the upgrade in a (background) thread
+            if (manager->RequireUpgrade())
             {
-                my_print(false, _T("Upgrading to new version..."));
-
-                // Download new binary
-
-                DWORD start = GetTickCount();
-                if (!httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(true),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            downloadRequestPath.c_str(),
-                            downloadResponse))
+                if (!manager->m_upgradeThread ||
+                    WAIT_OBJECT_0 == WaitForSingleObject(manager->m_upgradeThread, 0))
                 {
-                    // If the download failed, we simply proceed with the connection.
-                    // Rationale:
-                    // - The server is (and hopefully will remain) backwards compatible.
-                    // - The failure is likely a configuration one, as the handshake worked.
-                    // - A configuration failure could be common across all servers, so the
-                    //   client will never connect.
-                    // - Fail-over exposes new server IPs to hostile networks, so we don't
-                    //   like doing it in the case where we know the handshake already succeeded.
-                }
-                else
-                {
-                    // Speed feedback
-                    DWORD now = GetTickCount();
-                    if (now >= start) // GetTickCount can wrap
+                    if (!(manager->m_upgradeThread = CreateThread(0, 0, UpgradeThread, manager, 0, 0)))
                     {
-                        string speedResponse;
-                        (void)httpsRequest.MakeRequest( // Ignore failure
-                                        manager->GetUserSignalledStop(true),
-                                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                                        serverEntry.webServerPort,
-                                        serverEntry.webServerCertificate,
-                                        manager->GetSpeedRequestPath(
-                                            _T("(NONE)"),
-                                            _T("download"),
-                                            _T("(NONE)"),
-                                            now-start,
-                                            downloadResponse.length()).c_str(),
-                                        speedResponse);
+                        my_print(false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
-
-                    // Perform upgrade.
-        
-                    // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
-                    // If it fails, we DO proceed with Establish -- using the old (current) version.  One scenario
-                    // in this case is if the binary is on read-only media.
-                    // NOTE: means the server should always support old versions... which for now just means
-                    // supporting Establish() etc. as we're already past the handshake.
-
-                    if (manager->DoUpgrade(downloadResponse))
-                    {
-                        // NOTE: state will remain INITIALIZING.  The app is terminating.
-                        return 0;
-                    }
-                    // else fall through to connection
                 }
             }
 
@@ -740,6 +709,17 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
+void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath)
+{
+    AutoMUTEX lock(m_mutex);
+
+    sessionInfo = m_currentSessionInfo;
+    requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
+                    _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                    _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+                    _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
+                    _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+}
 
 void ConnectionManager::MarkCurrentServerFailed(void)
 {
@@ -824,24 +804,82 @@ void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)
     }
 }
 
-bool ConnectionManager::RequireUpgrade(tstring& downloadRequestPath)
+bool ConnectionManager::RequireUpgrade(void)
 {
     AutoMUTEX lock(m_mutex);
-    
-    if (m_currentSessionInfo.GetUpgradeVersion().size() > 0)
-    {
-        downloadRequestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
-                              _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                              _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                              _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
-                              _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
-        return true;
-    }
 
-    return false;
+    return !m_upgradePending && m_currentSessionInfo.GetUpgradeVersion().size() > 0;
 }
 
-bool ConnectionManager::DoUpgrade(const string& download)
+DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
+{
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
+    my_print(false, _T("Downloading new version..."));
+
+    ConnectionManager* manager = (ConnectionManager*)object;
+
+    SessionInfo sessionInfo;
+    tstring downloadRequestPath;
+    string downloadResponse;
+    // Note that this is getting the current session info, which is set
+    // by LoadNextServer.  So it's unlikely but possible that we may be
+    // loading the next server after the first one that notified us of an
+    // upgrade failed to connect.  This still should not be a problem, since
+    // all servers should have the same upgrades available.
+    manager->GetUpgradeRequestInfo(sessionInfo, downloadRequestPath);
+
+    // Download new binary
+    DWORD start = GetTickCount();
+    HTTPSRequest httpsRequest;
+    if (!httpsRequest.MakeRequest(
+                manager->GetUserSignalledStop(true),
+                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                sessionInfo.GetWebPort(),
+                sessionInfo.GetWebServerCertificate(),
+                downloadRequestPath.c_str(),
+                downloadResponse))
+    {
+        // If the download failed, we simply do nothing.
+        // Rationale:
+        // - The server is (and hopefully will remain) backwards compatible.
+        // - The failure is likely a configuration one, as the handshake worked.
+        // - A configuration failure could be common across all servers, so the
+        //   client will never connect.
+        // - Fail-over exposes new server IPs to hostile networks, so we don't
+        //   like doing it in the case where we know the handshake already succeeded.
+    }
+    else
+    {
+        // Speed feedback
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            (void)httpsRequest.MakeRequest( // Ignore failure
+                            manager->GetUserSignalledStop(true),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            sessionInfo.GetWebPort(),
+                            sessionInfo.GetWebServerCertificate(),
+                            manager->GetSpeedRequestPath(
+                                _T("(NONE)"),
+                                _T("download"),
+                                _T("(NONE)"),
+                                now-start,
+                                downloadResponse.length()).c_str(),
+                            speedResponse);
+        }
+
+        // Perform upgrade.
+        
+        manager->PaveUpgrade(downloadResponse);
+    }
+
+    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
+    return 0;
+}
+
+void ConnectionManager::PaveUpgrade(const string& download)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -850,8 +888,8 @@ bool ConnectionManager::DoUpgrade(const string& download)
     TCHAR filename[1000];
     if (!GetModuleFileName(NULL, filename, 1000))
     {
-        // Abort upgrade: Establish() will proceed.
-        return false;
+        // Abort upgrade
+        return;
     }
 
     // Rename current binary to archive name
@@ -912,17 +950,11 @@ bool ConnectionManager::DoUpgrade(const string& download)
             CopyFile(archive_filename.c_str(), filename, FALSE);
         }
 
-        // Abort upgrade: Establish() will proceed.
-        return false;
+        // Abort upgrade
+        return;
     }
 
-    // Die & respawn
-    // TODO: if ShellExecute fails, don't die?
-
-    ShellExecute(0, NULL, filename, 0, 0, SW_SHOWNORMAL);
-    PostMessage(g_hWnd, WM_QUIT, 0, 0);
-
-    return true;
+    m_upgradePending = true;
 }
 
 void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoutes)
