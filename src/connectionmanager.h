@@ -20,7 +20,7 @@
 #pragma once
 
 #include <time.h>
-#include "vpnlist.h"
+#include "serverlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "transport.h"
@@ -48,11 +48,6 @@ public:
     ConnectionManagerState GetState(void);
     const bool& GetUserSignalledStop(bool throwIfTrue);
     void OpenHomePages(void);
-    void SetSkipVPN(void);
-    void ResetSkipVPN(void);
-    bool GetSkipVPN(void);
-    void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
-    bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
     bool SendStatusMessage(
             ITransport* transport,
             bool connected,
@@ -94,12 +89,11 @@ private:
 private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
-    VPNList m_vpnList;
+    ServerList m_serverList;
     bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
-    bool m_currentSessionSkippedVPN;
     time_t m_startingTime;
     string m_splitTunnelRoutes;
-    vector<ITransport*> m_transports;
+    ITransport* m_transport;
 };

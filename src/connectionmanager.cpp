@@ -42,8 +42,8 @@ ConnectionManager::ConnectionManager(void) :
     m_state(CONNECTION_MANAGER_STATE_STOPPED),
     m_userSignalledStop(false),
     m_thread(0),
-    m_currentSessionSkippedVPN(false),
-    m_startingTime(0)
+    m_startingTime(0),
+    m_transport(0)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -64,21 +64,6 @@ void ConnectionManager::OpenHomePages(void)
     {
         OpenBrowser(m_currentSessionInfo.GetHomepages());
     }
-}
-
-void ConnectionManager::SetSkipVPN(void)
-{
-    m_vpnList.SetSkipVPN();
-}
-
-void ConnectionManager::ResetSkipVPN(void)
-{
-    m_vpnList.ResetSkipVPN();
-}
-
-bool ConnectionManager::GetSkipVPN(void)
-{
-    return m_vpnList.GetSkipVPN();
 }
 
 void ConnectionManager::Toggle()
@@ -165,11 +150,8 @@ void ConnectionManager::Stop(void)
         m_thread = 0;
     }
 
-    for (size_t i = 0; i < m_transports.size(); i++)
-    {
-        delete m_transports[i];
-    }
-    m_transports.clear();
+    delete m_transport;
+    m_transport = 0;
 
     my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
@@ -183,7 +165,8 @@ void ConnectionManager::Start(void)
 
     AutoMUTEX lock(m_mutex);
 
-    TransportRegistry::NewAll(m_transports, this);
+    // TEMP: Should get transport type from user setting (or default)
+    m_transport = TransportRegistry::New(_T("OSSH"), this);
 
     m_userSignalledStop = false;
 
@@ -217,24 +200,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     unsigned int seed = (unsigned)time(NULL);
     srand(seed);
 
+    //
     // Loop through server list, attempting to connect.
-    //
-    // Connect sequence:
-    //
-    // - Make Handshake HTTPS request
-    // - Perform download HTTPS request and upgrade, if applicable
-    // - Try VPN:
-    // -- Create and dial VPN connection
-    // -- Tweak VPN system settings if required
-    // -- Wait for VPN connection to succeed or fail
-    // -- Flush DNS and fix settings if required
-    // - If VPN failed:
-    // -- Create SSH connection
-    // -- Wait for SSH connection to succeed or fail
-    // - If a connection type succeeded:
-    // -- Launch home pages (failure is acceptable)
-    // -- Make Connected HTTPS request (failure is acceptable)
-    // -- Wait for connection to stop
     //
     // When handshake and all connection types fail, the
     // server is marked as failed in the local server list and
@@ -249,15 +216,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
     {
         my_print(true, _T("%s: enter server loop"), __TFUNCTION__);
 
-        ITransport* currentTransport = 0;
-
         try
         {
-            currentTransport = 0;
-
-            // Ensure UI doesn't show "VPN Skipped" icon
-            manager->SetCurrentConnectionSkippedVPN(false);
-
             //
             // Handshake HTTPS request
             //
@@ -384,19 +344,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 }
             }
 
-            // If the "Skip VPN" flag is set, the last time the user
-            // connected with this server, VPN failed. So we don't
-            // try VPN again.
-            // Note: this flag is cleared whenever the first server
-            // in the list changes, so VPN will be tried again.
-
-            bool skipVPN = manager->GetSkipVPN();
-
-            bool userSkipVPN = UserSkipVPN();
-            manager->SetCurrentConnectionSkippedVPN(skipVPN);
-
-            bool tryVPN = !(IGNORE_VPN_RELAY || skipVPN || userSkipVPN);
-
             // Make a copy of the session info, so that we don't have to hold 
             // the mutex while connecting.
             SessionInfo sessionInfo;
@@ -405,75 +352,43 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 sessionInfo = manager->m_currentSessionInfo;
             }
 
-            for (size_t i = 0; i < manager->m_transports.size(); i++)
+            my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportName().c_str());
+
+            // Force a stop check before trying the next transport
+            (void)manager->GetUserSignalledStop(true);
+
+            try
             {
-                ITransport* transport = manager->m_transports[i];
-
-                my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, transport->GetTransportName().c_str());
-
-                // Force a stop check before trying the next transport
-                (void)manager->GetUserSignalledStop(true);
-
-                try
-                {
-                    // TEMP HACK
-                    if (transport->GetTransportName() == _T("VPN")
-                        && !tryVPN)
-                    {
-                        continue;
-                    }
-
-                    transport->Connect(sessionInfo);
-                    currentTransport = transport;
-
-                    break;
-                }
-                catch (ITransport::TransportFailed&)
-                {
-                    my_print(true, _T("%s: transport failed"), __TFUNCTION__);
-
-                    // Report error code to server for logging/trouble-shooting.
-                    tstring requestPath = manager->GetFailedRequestPath(transport);    
-                    string response;
-                    HTTPSRequest httpsRequest;
-                    (void)httpsRequest.MakeRequest( // Ignore failure
-                                        manager->GetUserSignalledStop(true),
-                                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                                        serverEntry.webServerPort,
-                                        serverEntry.webServerCertificate,
-                                        requestPath.c_str(),
-                                        response);
-
-                    // TEMP HACK
-                    if (transport->GetTransportName() == _T("VPN"))
-                    {
-                        // Don't set the persistent flag if the user setting is set, so that removing the
-                        // user setting will cause VPN to be tried again.
-                        if (!userSkipVPN)
-                        {
-                            // Set persistent flag to not try VPN again when we run exactly the same server again
-                            manager->SetSkipVPN();
-                        }
-                    }
-                }
+                manager->m_transport->Connect(sessionInfo);
             }
-
-            // Did any transports succeed in connecting to this server?
-            if (!currentTransport)
+            catch (ITransport::TransportFailed&)
             {
-                my_print(true, _T("%s: no transport succeeded"), __TFUNCTION__);
+                my_print(true, _T("%s: transport failed"), __TFUNCTION__);
+
+                // Report error code to server for logging/trouble-shooting.
+                tstring requestPath = manager->GetFailedRequestPath(manager->m_transport);    
+                string response;
+                HTTPSRequest httpsRequest;
+                (void)httpsRequest.MakeRequest( // Ignore failure
+                                    manager->GetUserSignalledStop(true),
+                                    NarrowToTString(serverEntry.serverAddress).c_str(),
+                                    serverEntry.webServerPort,
+                                    serverEntry.webServerCertificate,
+                                    requestPath.c_str(),
+                                    response);
+
                 throw TryNextServer();
             }
 
             // Do post-connect work, like opening home pages
             my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
-            manager->DoPostConnect(currentTransport);
+            manager->DoPostConnect(manager->m_transport);
 
             //
             // Wait for transport to stop (or fail)
             //
             my_print(true, _T("%s: WaitForDisconnect"), __TFUNCTION__);
-            currentTransport->WaitForDisconnect();
+            manager->m_transport->WaitForDisconnect();
 
             //
             // Disconnected
@@ -488,10 +403,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         {
             // Unrecoverable error. Cleanup and exit.
             my_print(true, _T("%s: caught ITransport::Error"), __TFUNCTION__);
-            if (currentTransport)
-            {
-                currentTransport->Cleanup();
-            }
+            manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -499,10 +411,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         {
             // User requested cancel. Cleanup and exit.
             my_print(true, _T("%s: caught Abort"), __TFUNCTION__);
-            if (currentTransport)
-            {
-                currentTransport->Cleanup();
-            }
+            manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -546,8 +455,11 @@ void ConnectionManager::DoPostConnect(ITransport* currentTransport)
 {
     // Called from connection thread
 
-    // TEMP HACK -- should be transport-specific
-    SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
+    // TEMP HACK -- should be transport-generic
+    if (currentTransport->GetTransportName() == _T("VPN"))
+        SetState(CONNECTION_MANAGER_STATE_CONNECTED_VPN);
+    else
+        SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
 
     //
     // "Connected" HTTPS request for server stats and split tunnel routing info.
@@ -752,7 +664,7 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 {
     AutoMUTEX lock(m_mutex, __TFUNCTION__);
     
-    m_vpnList.MarkCurrentServerFailed();
+    m_serverList.MarkCurrentServerFailed();
 }
 
 // ==== General Session Functions =============================================
@@ -771,7 +683,7 @@ void ConnectionManager::LoadNextServer(
     {
         my_print(true, _T("%s: GetNextServer"), __TFUNCTION__);
         // Try the next server in our list.
-        serverEntry = m_vpnList.GetNextServer();
+        serverEntry = m_serverList.GetNextServer();
     }
     catch (std::exception &ex)
     {
@@ -793,8 +705,8 @@ void ConnectionManager::LoadNextServer(
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
-    my_print(true, _T("%s: m_vpnList.GetList"), __TFUNCTION__);
-    ServerEntries serverEntries =  m_vpnList.GetList();
+    my_print(true, _T("%s: m_serverList.GetList"), __TFUNCTION__);
+    ServerEntries serverEntries =  m_serverList.GetList();
     my_print(true, _T("%s: serverEntries loop"), __TFUNCTION__);
     for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
@@ -822,12 +734,12 @@ void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)
 
     try
     {
-        m_vpnList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
+        m_serverList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
     }
     catch (std::exception &ex)
     {
         my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
-        // This isn't fatal.  The VPN connection can still be established.
+        // This isn't fatal.  The transport connection can still be established.
     }
 }
 

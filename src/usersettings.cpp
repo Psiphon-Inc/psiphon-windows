@@ -25,7 +25,6 @@
 void InitializeUserSettings(void)
 {
     // Read - and consequently write out default values for - all settings
-    UserSkipVPN();
     UserSkipBrowser();
     UserSkipProxySettings();
 }
@@ -70,12 +69,6 @@ void SetUserSetting(const string& settingName, bool settingValue)
     RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
     RegSetValueExA(key, settingName.c_str(), 0, REG_DWORD, (LPBYTE)&value, bufferLength);
     RegCloseKey(key);
-}
-
-
-bool UserSkipVPN(void)
-{
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_VPN);
 }
 
 

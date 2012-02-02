@@ -38,7 +38,7 @@ public:
     template<class TRANSPORT_TYPE>
     static int Register();
 
-    // TODO: Is this function only useful for testing? Should it be removed?
+    // Create new instance of a particular transport
     static ITransport* New(tstring transportName, ITransportManager* manager);
     
     // Create new instances of all available transports.

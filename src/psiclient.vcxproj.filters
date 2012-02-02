@@ -8,7 +8,6 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="systemproxysettings.cpp" />
     <ClCompile Include="usersettings.cpp" />
-    <ClCompile Include="vpnlist.cpp" />
     <ClCompile Include="webbrowser.cpp" />
     <ClCompile Include="json\jsoncpp.cpp">
       <Filter>json</Filter>
@@ -35,6 +34,7 @@
     <ClCompile Include="vpntransport.cpp" />
     <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="transport_registry.cpp" />
+    <ClCompile Include="serverlist.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -49,7 +49,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
-    <ClInclude Include="vpnlist.h" />
     <ClInclude Include="webbrowser.h" />
     <ClInclude Include="json\forwards.h">
       <Filter>json</Filter>
@@ -85,6 +84,7 @@
     <ClInclude Include="vpntransport.h" />
     <ClInclude Include="sshtransport.h" />
     <ClInclude Include="transport_registry.h" />
+    <ClInclude Include="serverlist.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

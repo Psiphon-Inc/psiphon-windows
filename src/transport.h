@@ -22,12 +22,6 @@ NOTES
 - Make behaviour consistent when user cancels connect. 
   Right now it might throw abort or might exit cleanly (SSH for sure).
 - The use of hInst in SSHTransport is probably too much coupling.
-- make vpnlist more generic (maybe just needs rename)
-- make previous-transport-failure records more generic
-- make connection loop transport-agnostic
-    - will need to change VPNlist and logic
-- add API to track order and set of transports to try 
-    - right now the order is basically random (iterate through map order)
 */
 
 #pragma once

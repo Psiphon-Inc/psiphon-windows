@@ -102,6 +102,7 @@
     <ClInclude Include="json\json.h" />
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="serverlist.h" />
     <ClInclude Include="sessioninfo.h" />
     <ClInclude Include="sshtransport.h" />
     <ClInclude Include="stdafx.h" />
@@ -111,7 +112,6 @@
     <ClInclude Include="transport_registry.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
-    <ClInclude Include="vpnlist.h" />
     <ClInclude Include="vpntransport.h" />
     <ClInclude Include="webbrowser.h" />
   </ItemGroup>
@@ -147,6 +147,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="psiclient.cpp" />
+    <ClCompile Include="serverlist.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
     <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -157,7 +158,6 @@
     <ClCompile Include="transport.cpp" />
     <ClCompile Include="transport_registry.cpp" />
     <ClCompile Include="usersettings.cpp" />
-    <ClCompile Include="vpnlist.cpp" />
     <ClCompile Include="vpntransport.cpp" />
     <ClCompile Include="webbrowser.cpp" />
   </ItemGroup>

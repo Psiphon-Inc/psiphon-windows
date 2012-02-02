@@ -298,8 +298,8 @@ void UpdateButton(HWND hWnd)
 
     // Update the VPN skipped icon
 
-    if (state == CONNECTION_MANAGER_STATE_CONNECTED_SSH &&
-        g_connectionManager.CurrentSessionSkippedVPN())
+    if (state == CONNECTION_MANAGER_STATE_CONNECTED_SSH
+        /*Defunct: remove with UI update: && g_connectionManager.CurrentSessionSkippedVPN()*/)
     {
         EnableWindow(g_hVPNSkipped, TRUE);
         ShowWindow(g_hVPNSkipped, TRUE);
@@ -540,7 +540,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
             {
                 g_connectionManager.Stop();
-                g_connectionManager.ResetSkipVPN();
                 g_connectionManager.Start();
             }
         }

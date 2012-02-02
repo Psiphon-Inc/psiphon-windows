@@ -20,7 +20,7 @@
 #pragma once
 
 #include <vector>
-#include "vpnlist.h"
+#include "serverlist.h"
 #include "tstring.h"
 
 struct RegexReplace
