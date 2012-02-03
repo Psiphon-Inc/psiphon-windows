@@ -41,6 +41,7 @@ TCHAR g_szWindowClass[MAX_LOADSTRING];
 
 HWND g_hWnd;
 ConnectionManager g_connectionManager;
+tstring g_lastTransportSelection;
 
 // (...more globals in Controls section)
 
@@ -263,7 +264,7 @@ void CreateControls(HWND hWndParent)
     g_hInfoLinkStatic = CreateWindow(
         L"Static",
         L"https://psiphon3.com", // TODO: ...
-        WS_CHILD | WS_VISIBLE | SS_NOTIFY,
+        WS_CHILD|WS_VISIBLE|SS_NOTIFY,
         INFO_LINK_X,
         INFO_LINK_Y,
         INFO_LINK_WIDTH,
@@ -552,7 +553,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // when unexpectedly disconnected.
         SetTimer(hWnd, IDT_BUTTON_ANIMATION, 250, NULL);
 
-        g_connectionManager.Toggle(GetSelectedTransport());
+        // Start a connection on the default transport
+
+        g_lastTransportSelection = GetSelectedTransport();
+        g_connectionManager.Toggle(g_lastTransportSelection);
 
         break;
 
@@ -616,16 +620,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                  && wmId >= IDC_TRANSPORT_OPTION_RADIO_FIRST && wmId <= IDC_TRANSPORT_OPTION_RADIO_LAST
                  && wmEvent == BN_CLICKED)
         {
-            // If already connecting/connected, restart with the new transport immediately
+            tstring newTransportSelection = GetSelectedTransport();
 
-            if (CONNECTION_MANAGER_STATE_STOPPED != g_connectionManager.GetState())
+            if (newTransportSelection != g_lastTransportSelection)
             {
+                // Restart with the new transport immediately
+
                 // Show a Wait cursor since ConnectionManager::Stop() (called by Start) can
                 // take a few seconds to complete, which blocks the radio button redrawing
                 // animation. WM_SETCURSOR will reset the cursor automatically.
                 SetCursor(LoadCursor(0, IDC_WAIT));
 
-                g_connectionManager.Start(GetSelectedTransport());
+                g_connectionManager.Start(newTransportSelection);
+
+                g_lastTransportSelection = newTransportSelection;
             }
         }
         
