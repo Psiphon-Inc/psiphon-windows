@@ -32,7 +32,7 @@
 #define IDM_SHOW_DEBUG_MESSAGES             112
 #define IDM_HELP                            113
 #define IDR_MAINFRAME                       128
-#define IDT_BUTTON_ROTATION                 129
+#define IDT_BUTTON_ANIMATION                129
 #define IDB_TOGGLE_BUTTON_IMAGES            200
 #define IDB_BANNER                          201
 #define IDB_EMAIL                           202
