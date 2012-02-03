@@ -21,18 +21,8 @@
 
 #include "transport.h"
 #include "transport_registry.h"
-#include "systemproxysettings.h"
 
 class SessionInfo;
-struct RegexReplace;
-
-
-
-static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
-static const TCHAR* POLIPO_HTTP_PROXY_PORT = _T("8080");
-static int SSH_CONNECTION_TIMEOUT_SECONDS = 20;
-static const TCHAR* PLONK_EXE_NAME = _T("psiphon3-plonk.exe");
-static const TCHAR* POLIPO_EXE_NAME = _T("psiphon3-polipo.exe");
 
 
 //
@@ -41,19 +31,24 @@ static const TCHAR* POLIPO_EXE_NAME = _T("psiphon3-polipo.exe");
 class SSHTransportBase: public ITransport
 {
 public:
-    SSHTransportBase(ITransportManager* manager); 
+    SSHTransportBase(); 
     virtual ~SSHTransportBase();
 
+    // Subclasses must implement this member
     virtual tstring GetTransportName() const = 0;
+
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;
+    virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
 
-    virtual void WaitForDisconnect();
     virtual bool Cleanup();
 
 protected:
+    // ITransport implementation
     virtual void TransportConnect(const SessionInfo& sessionInfo);
+    virtual bool DoPeriodicCheck();
 
+    // Subclasses must implement this member
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
                     tstring& o_serverAddress, 
@@ -62,32 +57,12 @@ protected:
                     tstring& o_plonkCommandLine) = 0;
 
     void TransportConnectHelper(const SessionInfo& sessionInfo);
-    void WaitForDisconnectHelper();
-    bool ServerSSHCapable(const SessionInfo& sessionInfo);
-    bool WaitForConnected();
-    void Disconnect();
-    void WaitAndDisconnect();
-    void SignalDisconnect();
-
-    bool CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
-    bool ProcessStatsAndStatus(bool connected);
-    void UpsertPageView(const string& entry);
-    void UpsertHttpsRequest(string entry);
-    void ParsePolipoStatsBuffer(const char* page_view_buffer);
+    bool IsServerSSHCapable(const SessionInfo& sessionInfo) const;
+    bool LaunchPlonk(const TCHAR* plonkCommandLine);
 
 protected:
-    SystemProxySettings m_systemProxySettings;
     tstring m_plonkPath;
-    tstring m_polipoPath;
     PROCESS_INFORMATION m_plonkProcessInfo;
-    PROCESS_INFORMATION m_polipoProcessInfo;
-    HANDLE m_polipoPipe;
-    DWORD m_lastStatusSendTimeMS;
-    map<string, int> m_pageViewEntries;
-    map<string, int> m_httpsRequestEntries;
-    unsigned long long m_bytesTransferred;
-    vector<RegexReplace> m_pageViewRegexes;
-    vector<RegexReplace> m_httpsRequestRegexes;
 };
 
 
@@ -97,7 +72,7 @@ protected:
 class SSHTransport: public SSHTransportBase
 {
 public:
-    SSHTransport(ITransportManager* manager); 
+    SSHTransport(); 
     virtual ~SSHTransport();
 
     static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
@@ -120,7 +95,7 @@ protected:
 class OSSHTransport: public SSHTransportBase
 {
 public:
-    OSSHTransport(ITransportManager* manager); 
+    OSSHTransport(); 
     virtual ~OSSHTransport();
 
     static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,35 +19,14 @@
 
 #pragma once
 
-#include <string>
-#include <sstream>
 
-using namespace std;
 
-#ifdef _UNICODE
-#define tstring wstring
-#else
-#define tstring string
-#endif
+bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
 
-typedef basic_stringstream<TCHAR> tstringstream;
-
-static tstring NarrowToTString(const string& narrowString)
-{
-#ifdef _UNICODE
-    wstring wideString(narrowString.length(), L' ');
-    std::copy(narrowString.begin(), narrowString.end(), wideString.begin());
-    return wideString;
-#else
-    return narrowString;
-#endif
-}
-
-static string TStringToNarrow(const tstring& tString)
-{
-#ifdef _UNICODE
-    return string(tString.begin(), tString.end());
-#else
-    return tString;
-#endif
-}
+// Possible return values:
+//  ERROR_SUCCESS on success
+//  WAIT_TIMEOUT if timeout exceeded
+//  ERROR_SYSTEM_PROCESS_TERMINATED if process died
+//  ERROR_OPERATION_ABORTED if cancel event signaled
+// process and cancelEvent can be NULL
+DWORD WaitForConnectability(int port, DWORD timeout, HANDLE process, HANDLE cancelEvent);

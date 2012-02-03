@@ -23,7 +23,9 @@
 #include "serverlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
-#include "transport.h"
+#include "local_proxy.h"
+
+class ITransport;
 
 
 enum ConnectionManagerState
@@ -35,7 +37,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ITransportManager
+class ConnectionManager : public ILocalProxyStatsCollector
 {
 public:
     ConnectionManager(void);
@@ -49,7 +51,6 @@ public:
     const bool& GetUserSignalledStop(bool throwIfTrue);
     void OpenHomePages(void);
     bool SendStatusMessage(
-            ITransport* transport,
             bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,

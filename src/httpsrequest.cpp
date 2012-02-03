@@ -247,7 +247,7 @@ bool HTTPSRequest::MakeRequest(
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
-        bool useProxy/*=false*/,
+        int proxyPort/*=0*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
@@ -256,11 +256,17 @@ bool HTTPSRequest::MakeRequest(
                     SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
+    tstringstream proxy;
+    if (proxyPort > 0)
+    {
+        proxy << _T("127.0.0.1:") << proxyPort;
+    }
+
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-                    useProxy ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                    useProxy ? (tstring(_T("127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT).c_str() : WINHTTP_NO_PROXY_NAME,
+                    proxy.str().length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    proxy.str().length() ? proxy.str().c_str() : WINHTTP_NO_PROXY_NAME,
                     WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 

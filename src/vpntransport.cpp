@@ -26,6 +26,11 @@
 #include "raserror.h"
 
 
+#define VPN_CONNECTION_TIMEOUT_SECONDS  20
+#define VPN_CONNECTION_NAME             _T("Psiphon3")
+
+
+
 void TweakVPN();
 void TweakDNS();
 
@@ -33,9 +38,9 @@ void TweakDNS();
 static const TCHAR* TRANSPORT_NAME = _T("VPN");
 
 // Support the registration of this transport type
-static ITransport* New(ITransportManager* manager)
+static ITransport* New()
 {
-    return new VPNTransport(manager);
+    return new VPNTransport();
 }
 
 // static
@@ -48,9 +53,8 @@ void VPNTransport::GetFactory(
 }
 
 
-VPNTransport::VPNTransport(ITransportManager* manager)
-    : ITransport(manager),
-      m_state(CONNECTION_STATE_STOPPED),
+VPNTransport::VPNTransport()
+    : m_state(CONNECTION_STATE_STOPPED),
       m_stateChangeEvent(INVALID_HANDLE_VALUE),
       m_rasConnection(0),
       m_lastErrorCode(0)
@@ -81,27 +85,16 @@ tstring VPNTransport::GetSessionID(SessionInfo sessionInfo) const
     return GetPPPIPAddress();
 }
 
+int VPNTransport::GetLocalProxyParentPort() const
+{
+    return 0;
+}
+
 tstring VPNTransport::GetLastTransportError() const
 {
     std::stringstream s;
     s << GetLastErrorCode();
     return NarrowToTString(s.str());
-}
-
-void VPNTransport::WaitForDisconnect()
-{
-    try
-    {
-        WaitForConnectionStateToChangeFrom(CONNECTION_STATE_CONNECTED);
-    }
-    catch(...)
-    {
-        Cleanup();
-        throw;
-    }
-
-    // Also clean up in the case of no exception
-    Cleanup();
 }
 
 bool VPNTransport::Cleanup()
@@ -235,7 +228,14 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     // Monitor VPN connection and wait for CONNECTED or FAILED
     //
     
-    WaitForConnectionStateToChangeFrom(CONNECTION_STATE_STARTING);
+    // Also, wait no longer than VPN_CONNECTION_TIMEOUT_SECONDS... overriding any system
+    // configuration built-in VPN client timeout (which we've found to be too long -- over a minute).
+    if (!WaitForConnectionStateToChangeFrom(
+            CONNECTION_STATE_STARTING, 
+            VPN_CONNECTION_TIMEOUT_SECONDS*1000))
+    {
+        throw TransportFailed();
+    }
     
     if (CONNECTION_STATE_CONNECTED != GetConnectionState())
     {
@@ -252,9 +252,6 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     // Note: we proceed even if the call fails. This means some domains
     // may not resolve properly.
     TweakDNS();
-    
-
-    throw TransportFailed();
 }
 
 bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
@@ -372,7 +369,6 @@ void VPNTransport::SetConnectionState(ConnectionState newState)
     SetEvent(m_stateChangeEvent);
 }
 
-
 HANDLE VPNTransport::GetStateChangeEvent()
 {
     return m_stateChangeEvent;
@@ -388,9 +384,14 @@ unsigned int VPNTransport::GetLastErrorCode(void) const
     return m_lastErrorCode;
 }
 
-void VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state)
+bool VPNTransport::DoPeriodicCheck()
 {
-    int totalWaitMilliseconds = 0;
+    return GetConnectionState() == CONNECTION_STATE_CONNECTED;
+}
+
+bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWORD timeout)
+{
+    DWORD totalWaitMilliseconds = 0;
 
     ConnectionState originalState = state;
 
@@ -400,30 +401,38 @@ void VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state)
 
         // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
 
-        // Also, wait no longer than VPN_CONNECTION_TIMEOUT_SECONDS... overriding any system
-        // configuration built-in VPN client timeout (which we've found to be too long -- over a minute).
+        DWORD waitMilliseconds = 100;
 
-        int waitMilliseconds = 100;
-        DWORD result = WaitForSingleObject(stateChangeEvent, waitMilliseconds);
+        HANDLE events[] = { stateChangeEvent, GetSignalStopEvent() };
+        size_t eventsSize = sizeof(events) / sizeof(*events);
+
+        DWORD result = WaitForMultipleObjects(eventsSize, events, FALSE, waitMilliseconds);
 
         totalWaitMilliseconds += waitMilliseconds;
 
-        // Check if the user requested a stop, and throw if so.
-        (void)m_manager->GetUserSignalledStop(true);
-
-        if (result == WAIT_FAILED || result == WAIT_ABANDONED)
+        if (result == WAIT_TIMEOUT &&
+                 totalWaitMilliseconds >= timeout)
         {
-            // Something has gone very wrong.
-            throw Error();
+            return false;
         }
-        else if (
-            result == WAIT_TIMEOUT &&
-            originalState == CONNECTION_STATE_STARTING &&
-            totalWaitMilliseconds >= VPN_CONNECTION_TIMEOUT_SECONDS*1000)
+        else if (result == WAIT_OBJECT_0)
         {
-            throw TransportFailed();
+            // State changed
+            break;
+        }
+        else if (result == WAIT_OBJECT_0+1) // stop event signalled
+        {
+            throw Abort();
+        }
+        else
+        {
+            std::stringstream s;
+            s << __FUNCTION__ << ": WaitForMultipleObjects failed (" << result << ", " << GetLastError() << ")";
+            throw Error(s.str().c_str());
         }
     }
+
+    return true;
 }
 
 tstring VPNTransport::GetPPPIPAddress() const

@@ -50,19 +50,19 @@ int TransportRegistry::Register()
 }
 
 // static 
-ITransport* TransportRegistry::New(tstring transportName, ITransportManager* manager)
+ITransport* TransportRegistry::New(tstring transportName)
 {
-    return m_registeredTransports[transportName](manager);
+    return m_registeredTransports[transportName]();
 }
 
 // static 
-void TransportRegistry::NewAll(vector<ITransport*>& all_transports, ITransportManager* manager)
+void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
 {
     all_transports.clear();
     map<tstring, TransportFactory>::const_iterator it;
     for (it = m_registeredTransports.begin(); it != m_registeredTransports.end(); it++)
     {
-        all_transports.push_back(it->second(manager));
+        all_transports.push_back(it->second());
     }
 }
 

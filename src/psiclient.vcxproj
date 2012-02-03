@@ -100,6 +100,7 @@
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="json\forwards.h" />
     <ClInclude Include="json\json.h" />
+    <ClInclude Include="local_proxy.h" />
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="serverlist.h" />
@@ -112,8 +113,10 @@
     <ClInclude Include="transport_registry.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
+    <ClInclude Include="utilities.h" />
     <ClInclude Include="vpntransport.h" />
     <ClInclude Include="webbrowser.h" />
+    <ClInclude Include="worker_thread.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rdParty\zlib\adler32.c">
@@ -146,6 +149,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="local_proxy.cpp" />
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="serverlist.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
@@ -158,8 +162,10 @@
     <ClCompile Include="transport.cpp" />
     <ClCompile Include="transport_registry.cpp" />
     <ClCompile Include="usersettings.cpp" />
+    <ClCompile Include="utilities.cpp" />
     <ClCompile Include="vpntransport.cpp" />
     <ClCompile Include="webbrowser.cpp" />
+    <ClCompile Include="worker_thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

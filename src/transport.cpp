@@ -26,14 +26,36 @@
  ITransport
 ******************************************************************************/
 
-ITransport::ITransport(ITransportManager* manager)
-    : m_manager(manager) 
+ITransport::ITransport()
 {
 }
 
 void ITransport::Connect(SessionInfo sessionInfo)
 {
-    TransportConnect(sessionInfo);
+    m_sessionInfo = sessionInfo;
+
+    if (!IWorkerThread::Start())
+    {
+        throw TransportFailed();
+    }
+
 }
 
+bool ITransport::DoStart()
+{
+    try
+    {
+        TransportConnect(m_sessionInfo);
+    }
+    catch(...)
+    {
+        return false;
+    }
 
+    return true;
+}
+
+void ITransport::DoStop()
+{
+    Cleanup();
+}

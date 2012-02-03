@@ -354,11 +354,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
             my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportName().c_str());
 
-            // Force a stop check before trying the next transport
+            // Force a stop check before trying to connect with transport
             (void)manager->GetUserSignalledStop(true);
 
+            // Attempt to connect to the current server using the current transport.
             try
             {
+                // Launches the transport thread and doesn't return until it
+                // observes a successful (or not) connection.
                 manager->m_transport->Connect(sessionInfo);
             }
             catch (ITransport::TransportFailed&)
@@ -380,15 +383,62 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
                 throw TryNextServer();
             }
 
-            // Do post-connect work, like opening home pages
+            // Force a stop check before trying to set up local proxy
+            (void)manager->GetUserSignalledStop(true);
+
+            //
+            // Set up the local proxy
+            //
+
+            my_print(true, _T("%s: setting up LocalProxy"), __TFUNCTION__);
+            LocalProxy localProxy(
+                        manager, 
+                        sessionInfo, 
+                        manager->m_transport->GetLocalProxyParentPort(), 
+                        false); // split tunnel
+
+            // Launches the local proxy thread and doesn't return until it
+            // observes a successful (or not) connection.
+            if (!localProxy.Start())
+            {
+                throw IWorkerThread::Error("LocalProxy::Start failed");
+            }
+
+            //
+            // Transport and local proxy in place.
+            // Do post-connect work, like opening home pages.
+            //
+
             my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
             manager->DoPostConnect(manager->m_transport);
 
             //
-            // Wait for transport to stop (or fail)
+            // Wait for transport and/or local proxy to stop (or fail)
             //
-            my_print(true, _T("%s: WaitForDisconnect"), __TFUNCTION__);
-            manager->m_transport->WaitForDisconnect();
+
+            my_print(true, _T("%s: entering transport+localproxy wait"), __TFUNCTION__);
+
+            HANDLE waitHandles[] = { manager->m_transport->GetStoppedEvent(), 
+                                     localProxy.GetStoppedEvent() };
+            size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
+
+            DWORD result = WaitForMultipleObjects(
+                            waitHandlesCount, 
+                            waitHandles, 
+                            FALSE, // wait for any event
+                            INFINITE);
+
+            // At least one of the connection threads has stopped, or there's 
+            // an error. Tell both transport and localProxy and stop and wait 
+            // for them to do so.
+            localProxy.Stop();
+            manager->m_transport->Stop();
+            manager->m_transport->Cleanup();
+
+            if (result > (WAIT_OBJECT_0 + waitHandlesCount))
+            {
+                throw IWorkerThread::Error("WaitForMultipleObjects failed");
+            }
 
             //
             // Disconnected
@@ -399,10 +449,18 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
             my_print(true, _T("%s: breaking"), __TFUNCTION__);
             break;
         }
-        catch (ITransport::Error&)
+        catch (IWorkerThread::Error& error)
         {
             // Unrecoverable error. Cleanup and exit.
-            my_print(true, _T("%s: caught ITransport::Error"), __TFUNCTION__);
+            my_print(true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
+            manager->m_transport->Cleanup();
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            break;
+        }
+        catch (IWorkerThread::Abort&)
+        {
+            // User requested cancel. Cleanup and exit.
+            my_print(true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
             manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
@@ -410,7 +468,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         catch (ConnectionManager::Abort&)
         {
             // User requested cancel. Cleanup and exit.
-            my_print(true, _T("%s: caught Abort"), __TFUNCTION__);
+            my_print(true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
             manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
@@ -419,6 +477,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         {
             // Failed to connect to the server. Try the next one.
             my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
+            manager->m_transport->Cleanup();
             manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
@@ -507,7 +566,6 @@ void ConnectionManager::DoPostConnect(ITransport* currentTransport)
 }
 
 bool ConnectionManager::SendStatusMessage(
-                            ITransport* transport,
                             bool connected,
                             const map<string, int>& pageViewEntries,
                             const map<string, int>& httpsRequestEntries,
@@ -567,7 +625,7 @@ bool ConnectionManager::SendStatusMessage(
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
-    tstring requestPath = GetStatusRequestPath(transport, connected);
+    tstring requestPath = GetStatusRequestPath(m_transport, connected);
     string response;
     HTTPSRequest httpsRequest;
     bool success = httpsRequest.MakeRequest(

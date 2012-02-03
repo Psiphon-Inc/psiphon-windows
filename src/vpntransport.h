@@ -26,10 +26,6 @@
 class SessionInfo;
 
 
-static int VPN_CONNECTION_TIMEOUT_SECONDS = 20;
-static const TCHAR* VPN_CONNECTION_NAME = _T("Psiphon3");
-
-
 class VPNTransport: public ITransport
 {
     enum ConnectionState
@@ -41,20 +37,22 @@ class VPNTransport: public ITransport
     };
 
 public:
-    VPNTransport(ITransportManager* manager); 
+    VPNTransport(); 
     virtual ~VPNTransport();
 
     static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
     virtual tstring GetTransportName() const;
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;
+    virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
 
-    virtual void WaitForDisconnect();
     virtual bool Cleanup();
 
 protected:
+    // ITransport implementation
     virtual void TransportConnect(const SessionInfo& sessionInfo);
+    virtual bool DoPeriodicCheck();
     
     void TransportConnectHelper(const SessionInfo& sessionInfo);
     bool ServerVPNCapable(const SessionInfo& sessionInfo) const;
@@ -63,7 +61,7 @@ protected:
     HANDLE GetStateChangeEvent();
     void SetLastErrorCode(unsigned int lastErrorCode);
     unsigned int GetLastErrorCode() const;
-    void WaitForConnectionStateToChangeFrom(ConnectionState state);
+    bool WaitForConnectionStateToChangeFrom(ConnectionState state, DWORD timeout);
     tstring GetPPPIPAddress() const;
     HRASCONN GetActiveRasConnection();
     bool Establish(const tstring& serverAddress, const tstring& PSK);

@@ -26,32 +26,17 @@ NOTES
 
 #pragma once
 
-class SessionInfo;
+#include "worker_thread.h"
+#include "sessioninfo.h"
+
 class ITransport;
 
 
-// This interface must be implemented by the class that manages the transports 
-// (i.e., ConnectionManager). Using this will help us keep track of which 
-// functions in ConnectionManager are depended on by the transports, and are
-// available to new transports.
-class ITransportManager
-{
-public:
-    virtual const bool& GetUserSignalledStop(bool throwIfTrue) = 0;
-    virtual bool SendStatusMessage(
-            ITransport* transport,
-            bool connected,
-            const map<string, int>& pageViewEntries,
-            const map<string, int>& httpsRequestEntries,
-            unsigned long long bytesTransferred) = 0;
-};
-
-
 // All transport implementations must implement this interface
-class ITransport
+class ITransport : public IWorkerThread
 {
 public:
-    ITransport(ITransportManager* manager);
+    ITransport();
 
     virtual tstring GetTransportName() const = 0;
 
@@ -61,6 +46,11 @@ public:
     // Only valid when connected
     virtual tstring GetSessionID(SessionInfo sessionInfo) const = 0;
 
+    // Find out what port, if any, the local proxy should connect to in order 
+    // to use this transport.
+    // Returns zero if the local proxy should not connect directly to the transport.
+    virtual int GetLocalProxyParentPort() const = 0;
+
     virtual tstring GetLastTransportError() const = 0;
 
     // Call to create the connection.
@@ -69,11 +59,6 @@ public:
     // Subclasses must not override.
     void Connect(SessionInfo sessionInfo);
 
-    // Call after connection to wait for disconnection.
-    // Must clean itself up as needed.
-    // May throw TransportFailed or Abort
-    virtual void WaitForDisconnect() = 0;
-
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
@@ -81,16 +66,24 @@ public:
     //
     // Exception classes
     //
+    // Generally speaking, any of these, or IWorkerThread::Abort, or
+    // IWorkerThread::Error may be thrown at any time. 
+    // (Except in const members?)
+    //
     // Indicates that this transport was not successful
     class TransportFailed { };
-    // Indicates a fatal system error
-    class Error { };
 
 protected:
-    // May throw TransportFailed or Abort
+    // May throw TransportFailed or IWorkerThread::Abort
     virtual void TransportConnect(const SessionInfo& sessionInfo) = 0;
 
+    // IWorkerThread implementation
+    virtual bool DoStart();
+    virtual void DoStop();
+    // The implementing class must implement this
+    virtual bool DoPeriodicCheck() = 0;
+
 protected:
-    ITransportManager* m_manager;
+    SessionInfo m_sessionInfo;
 };
 

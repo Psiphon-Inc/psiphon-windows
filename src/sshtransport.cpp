@@ -24,28 +24,27 @@
 #include "psiclient.h"
 #include <WinSock2.h>
 #include <WinCrypt.h>
-#include <Shlwapi.h>
+#include "utilities.h"
 
 
+#define PLONK_SOCKS_PROXY_PORT          1080
+#define SSH_CONNECTION_TIMEOUT_SECONDS  20
+#define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
 
-bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
-bool SetPlonkSSHHostKey(
+
+static bool SetPlonkSSHHostKey(
         const tstring& sshServerAddress,
         const tstring& sshServerPort,
         const tstring& sshServerHostKey);
+
 
 /******************************************************************************
  SSHTransportBase
 ******************************************************************************/
 
-SSHTransportBase::SSHTransportBase(ITransportManager* manager)
-    : ITransport(manager),
-    m_polipoPipe(NULL),
-    m_bytesTransferred(0),
-    m_lastStatusSendTimeMS(0)
+SSHTransportBase::SSHTransportBase()
 {
     ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
-    ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
 }
 
 SSHTransportBase::~SSHTransportBase()
@@ -58,99 +57,78 @@ tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo) const
     return NarrowToTString(sessionInfo.GetSSHSessionID());
 }
 
+int SSHTransportBase::GetLocalProxyParentPort() const
+{
+    return PLONK_SOCKS_PROXY_PORT;
+}
+
 tstring SSHTransportBase::GetLastTransportError() const
 {
     return _T("0");
 }
 
-void SSHTransportBase::WaitForDisconnect()
+bool SSHTransportBase::DoPeriodicCheck()
 {
-    try
-    {
-        WaitForDisconnectHelper();
-    }
-    catch(...)
-    {
-        my_print(true, _T("%s: exiting with exception"), __TFUNCTION__);
-        Cleanup();
-        throw;
-    }
+    // Check if we've lost the Plonk process
 
-    my_print(true, _T("%s: exiting cleanly"), __TFUNCTION__);
+    bool wasConnected = true;
 
-    // Also clean up in the case of no exception
-    Cleanup();
-}
-
-void SSHTransportBase::WaitForDisconnectHelper()
-{
-    // Regarding process monitoring: see comment in WaitForConnected
-
-    // Wait for either process to terminate, then clean up both
-    // If the user cancels manually, m_cancel will be set -- we
-    // handle that here while for VPN it's done in Manager
-
-    bool wasConnected = false;
-
-    while (m_plonkProcessInfo.hProcess != 0 && m_polipoProcessInfo.hProcess != 0)
+    if (m_plonkProcessInfo.hProcess != 0)
     {
         wasConnected = true;
 
-        HANDLE wait_handles[] = { m_plonkProcessInfo.hProcess, 
-                                  m_polipoProcessInfo.hProcess };
+        // The plonk process handle will be signalled when the process terminates
+        DWORD result = WaitForSingleObject(m_plonkProcessInfo.hProcess, 0);
 
-        DWORD result = WaitForMultipleObjects(sizeof(wait_handles)/sizeof(HANDLE), wait_handles, FALSE, 100); // 100 ms. = 1/10 second...
-
-        if (m_manager->GetUserSignalledStop(false) || result != WAIT_TIMEOUT)
+        if (result == WAIT_TIMEOUT)
         {
-            break;
+            // Everything normal
+            return true;
         }
-
-        // We'll continue regardless of the stats-processing return status.
-        (void)ProcessStatsAndStatus(true);
+        else if (result != WAIT_OBJECT_0)
+        {
+            std::stringstream s;
+            s << __FUNCTION__ << ": WaitForSingleObject failed (" << result << ", " << GetLastError() << ")";
+            throw Error(s.str().c_str());
+        }
     }
 
-    // Send a post-disconnect SSH session duration message
+    // If we're here, then we've lost the plonk process
 
-    if (wasConnected)
-    {
-        (void)ProcessStatsAndStatus(false);
-    }
-
-    // Attempt graceful shutdown (for the case where one process
-    // terminated unexpectedly, not a user cancel)
-    SignalDisconnect();
-
-    CloseHandle(m_plonkProcessInfo.hProcess);
-    ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
-
-    CloseHandle(m_polipoProcessInfo.hProcess);
-    ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
-
-    CloseHandle(m_polipoPipe);
-    m_polipoPipe = NULL;
-
-    m_lastStatusSendTimeMS = 0;
-
-    // Revert the Windows Internet Settings to the user's previous settings
-    m_systemProxySettings.Revert();
+    Cleanup();
 
     if (wasConnected)
     {
         my_print(false, _T("SSH disconnected."));
     }
+
+    return false;
 }
 
 bool SSHTransportBase::Cleanup()
 {
-    Disconnect();
+    // Give the process an opportunity for graceful shutdown, then terminate
+    if (m_plonkProcessInfo.hProcess != 0
+        && m_plonkProcessInfo.hProcess != INVALID_HANDLE_VALUE)
+    {
+        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
+        WaitForSingleObject(m_plonkProcessInfo.hProcess, 100);
+        TerminateProcess(m_plonkProcessInfo.hProcess, 0);
+    }
+
+    if (m_plonkProcessInfo.hProcess != 0
+        && m_plonkProcessInfo.hProcess != INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(m_plonkProcessInfo.hProcess);
+    }
+    ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
 
     return true;
 }
 
 void SSHTransportBase::TransportConnect(const SessionInfo& sessionInfo)
 {
-    if (!ServerSSHCapable(sessionInfo))
+    if (!IsServerSSHCapable(sessionInfo))
     {
         throw TransportFailed();
     }
@@ -180,28 +158,24 @@ void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
         }
     }
 
-    if (m_polipoPath.size() == 0)
-    {
-        if (!ExtractExecutable(IDR_POLIPO_EXE, POLIPO_EXE_NAME, m_polipoPath))
-        {
-            throw TransportFailed();
-        }
-    }
-
     // Ensure we start from a disconnected/clean state
-    Disconnect();
-
-    m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
-    m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
+    if (!Cleanup())
+    {
+        std::stringstream s;
+        s << __FUNCTION__ << ": Cleanup failed (" << GetLastError() << ")";
+        throw Error(s.str().c_str());
+    }
 
     // Start plonk using Psiphon server SSH parameters
 
-    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
-    // the expected value we just set in the registry
-
     tstring serverAddress, serverPort, serverHostKey, plonkCommandLine;
 
-    if (!GetSSHParams(sessionInfo, serverAddress, serverPort, serverHostKey, plonkCommandLine))
+    if (!GetSSHParams(
+            sessionInfo, 
+            serverAddress, 
+            serverPort, 
+            serverHostKey, 
+            plonkCommandLine))
     {
         throw TransportFailed();
     }
@@ -213,13 +187,49 @@ void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
 
     // Create the Plonk process and connect to server
 
+    if (!LaunchPlonk(plonkCommandLine.c_str()))
+    {
+        my_print(false, _T("%s - LaunchPlonk failed (%d)"), __TFUNCTION__, GetLastError());
+        throw TransportFailed();
+    }
+
+    // TODO: wait for parent proxy to be in place? In testing, we found cases 
+    // where Polipo stopped responding when the ssh tunnel was torn down.
+
+    DWORD connected = WaitForConnectability(
+                        PLONK_SOCKS_PROXY_PORT,
+                        SSH_CONNECTION_TIMEOUT_SECONDS*1000,
+                        m_plonkProcessInfo.hProcess,
+                        GetSignalStopEvent());
+
+    if (ERROR_OPERATION_ABORTED == connected)
+    {
+        throw Abort();
+    }
+    else if (ERROR_SUCCESS != connected)
+    {
+        throw TransportFailed();
+    }
+
+    my_print(false, _T("%s successfully connected."), GetTransportName().c_str());
+}
+
+bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
+{
+    return sessionInfo.GetSSHHostKey().length() > 0;
+}
+
+// Create the Plonk process and connect to server
+bool SSHTransportBase::LaunchPlonk(const TCHAR* plonkCommandLine)
+{
+
     STARTUPINFO plonkStartupInfo;
     ZeroMemory(&plonkStartupInfo, sizeof(plonkStartupInfo));
     plonkStartupInfo.cb = sizeof(plonkStartupInfo);
 
     if (!CreateProcess(
             m_plonkPath.c_str(),
-            (TCHAR*)plonkCommandLine.c_str(),
+            (TCHAR*)plonkCommandLine,
             NULL,
             NULL,
             FALSE,
@@ -233,8 +243,7 @@ void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
             &plonkStartupInfo,
             &m_plonkProcessInfo))
     {
-        my_print(false, _T("%s - Plonk CreateProcess failed (%d)"), __TFUNCTION__, GetLastError());
-        throw TransportFailed();
+        return false;
     }
 
     // Close the unneccesary handles
@@ -243,598 +252,8 @@ void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
 
     WaitForInputIdle(m_plonkProcessInfo.hProcess, 5000);
 
-    // TODO: wait for parent proxy to be in place? See comment in WaitForConnected for
-    // various options; in testing, we found cases where Polipo stopped responding
-    // when the ssh tunnel was torn down.
-
-    // Start polipo, using plonk's SOCKS proxy, with no disk cache and no web admin interface
-    // (same recommended settings as Tor: http://www.pps.jussieu.fr/~jch/software/polipo/tor.html
-
-    tstring polipoCommandLine = m_polipoPath
-                                + _T(" psiphonStats=true")
-                                + _T(" proxyPort=") + POLIPO_HTTP_PROXY_PORT
-                                + _T(" socksParentProxy=127.0.0.1:") + PLONK_SOCKS_PROXY_PORT
-                                + _T(" diskCacheRoot=\"\"")
-                                + _T(" disableLocalInterface=true")
-                                + _T(" logLevel=1");
-
-    STARTUPINFO polipoStartupInfo;
-    ZeroMemory(&polipoStartupInfo, sizeof(polipoStartupInfo));
-    polipoStartupInfo.cb = sizeof(polipoStartupInfo);
-
-    polipoStartupInfo.dwFlags = STARTF_USESTDHANDLES;
-    polipoStartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    if (!CreatePolipoPipe(polipoStartupInfo.hStdOutput, polipoStartupInfo.hStdError))
-    {
-        my_print(false, _T("%s - CreatePolipoPipe failed (%d)"), __TFUNCTION__, GetLastError());
-        throw TransportFailed();
-    }
-
-    if (!CreateProcess(
-            m_polipoPath.c_str(),
-            (TCHAR*)polipoCommandLine.c_str(),
-            NULL,
-            NULL,
-            TRUE, // bInheritHandles
-#ifdef _DEBUG
-            CREATE_NEW_PROCESS_GROUP,
-#else
-            CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW,
-#endif
-            NULL,
-            NULL,
-            &polipoStartupInfo,
-            &m_polipoProcessInfo))
-    {
-        my_print(false, _T("%s - Polipo CreateProcess failed (%d)"), __TFUNCTION__, GetLastError());
-        throw TransportFailed();
-    }
-
-    // Close the unneccesary handles
-    CloseHandle(m_polipoProcessInfo.hThread);
-    m_polipoProcessInfo.hThread = NULL;
-
-    // Close child pipe handle (do not continue to modify the parent).
-    // You need to make sure that no handles to the write end of the
-    // output pipe are maintained in this process or else the pipe will
-    // not close when the child process exits and the ReadFile will hang.
-    if (!CloseHandle(polipoStartupInfo.hStdOutput))
-    {
-        my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        throw TransportFailed();
-    }
-
-    WaitForInputIdle(m_polipoProcessInfo.hProcess, 5000);
-
-    if (!WaitForConnected())
-    {
-        throw TransportFailed();
-    }
-}
-
-bool SSHTransportBase::ServerSSHCapable(const SessionInfo& sessionInfo)
-{
-    return sessionInfo.GetSSHHostKey().length() > 0;
-}
-
-bool SSHTransportBase::WaitForConnected()
-{
-    // There are a number of options for monitoring the connected status
-    // of plonk/polipo. We're going with a quick and dirty solution of
-    // (a) monitoring the child processes -- if they exit, there was an error;
-    // (b) asynchronously connecting to the plonk SOCKS server, which isn't
-    //     started by plonk until its ssh tunnel is established.
-    // Note: piping stdout/stderr of the child processes and monitoring
-    // messages is problematic because we don't control the C I/O flushing
-    // of these processes (http://support.microsoft.com/kb/190351).
-    // Additional measures or alternatives include making actual HTTP
-    // requests through the entire stack from time to time or switching
-    // to integrated ssh/http libraries with APIs.
-
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-    sockaddr_in plonkSocksServer;
-    plonkSocksServer.sin_family = AF_INET;
-    plonkSocksServer.sin_addr.s_addr = inet_addr("127.0.0.1");
-    plonkSocksServer.sin_port = htons(atoi(TStringToNarrow(PLONK_SOCKS_PROXY_PORT).c_str()));
-
-    SOCKET sock = INVALID_SOCKET;
-    WSAEVENT connectedEvent = WSACreateEvent();
-    WSANETWORKEVENTS networkEvents;
-
-    // Wait up to SSH_CONNECTION_TIMEOUT_SECONDS, checking periodically for user cancel
-
-    DWORD start = GetTickCount();
-    DWORD maxWaitMilliseconds = SSH_CONNECTION_TIMEOUT_SECONDS*1000;
-
-    bool connected = false;
-
-    while (true)
-    {
-        DWORD now = GetTickCount();
-
-        if (now < start // Note: GetTickCount wraps after 49 days; small chance of a shorter timeout
-            || now >= start + maxWaitMilliseconds)
-        {
-            break;
-        }
-
-        // Attempt to connect to SOCKS proxy
-        // Just wait 100 ms. and then check for user cancel etc.
-
-        closesocket(sock);
-        sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-        if (INVALID_SOCKET != sock
-            && 0 == WSAEventSelect(sock, connectedEvent, FD_CONNECT)
-            && SOCKET_ERROR == connect(sock, (SOCKADDR*)&plonkSocksServer, sizeof(plonkSocksServer))
-            && WSAEWOULDBLOCK == WSAGetLastError()
-            && WSA_WAIT_EVENT_0 == WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE)
-            && 0 == WSAEnumNetworkEvents(sock, connectedEvent, &networkEvents)
-            && (networkEvents.lNetworkEvents & FD_CONNECT)
-            && networkEvents.iErrorCode[FD_CONNECT_BIT] == 0)
-        {
-            connected = true;
-            break;
-        }
-
-        // If plonk aborted, give up
-
-        if (WAIT_OBJECT_0 == WaitForSingleObject(m_plonkProcessInfo.hProcess, 0))
-        {
-            break;
-        }
-
-        // Check if user canceled
-
-        if (m_manager->GetUserSignalledStop(false))
-        {
-            break;
-        }
-    }
-
-    closesocket(sock);
-    WSACloseEvent(connectedEvent);
-    WSACleanup();
-
-    // Check if user canceled, and throw if so.
-    (void)m_manager->GetUserSignalledStop(true);
-
-    if (connected)
-    {
-        // Now that we are connected, change the Windows Internet Settings
-        // to use our HTTP proxy
-
-        m_systemProxySettings.Configure();
-
-        my_print(false, _T("%s successfully connected."), GetTransportName().c_str());
-    }
-
-    return connected;
-}
-
-void SSHTransportBase::Disconnect()
-{
-    SignalDisconnect();
-    WaitAndDisconnect();
-}
-
-void SSHTransportBase::WaitAndDisconnect()
-{
-    // Regarding process monitoring: see comment in WaitForConnected
-
-    // Wait for either process to terminate, then clean up both
-    // If the user cancels manually, m_cancel will be set -- we
-    // handle that here while for VPN it's done in Manager
-
-    bool wasConnected = false;
-
-    while (m_plonkProcessInfo.hProcess != 0 && m_polipoProcessInfo.hProcess != 0)
-    {
-        wasConnected = true;
-
-        HANDLE wait_handles[] = { m_plonkProcessInfo.hProcess, 
-                                  m_polipoProcessInfo.hProcess };
-
-        DWORD result = WaitForMultipleObjects(sizeof(wait_handles)/sizeof(HANDLE), wait_handles, FALSE, 100); // 100 ms. = 1/10 second...
-
-        if (m_manager->GetUserSignalledStop(false) || result != WAIT_TIMEOUT)
-        {
-            break;
-        }
-
-        // We'll continue regardless of the stats-processing return status.
-        (void)ProcessStatsAndStatus(true);
-    }
-
-    // Send a post-disconnect SSH session duration message
-
-    if (wasConnected)
-    {
-        (void)ProcessStatsAndStatus(false);
-    }
-
-    // Attempt graceful shutdown (for the case where one process
-    // terminated unexpectedly, not a user cancel)
-    SignalDisconnect();
-
-    CloseHandle(m_plonkProcessInfo.hProcess);
-    ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
-
-    CloseHandle(m_polipoProcessInfo.hProcess);
-    ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
-
-    CloseHandle(m_polipoPipe);
-    m_polipoPipe = NULL;
-
-    m_lastStatusSendTimeMS = 0;
-
-    // Revert the Windows Internet Settings to the user's previous settings
-    m_systemProxySettings.Revert();
-
-    if (wasConnected)
-    {
-        my_print(false, _T("%s disconnected."), GetTransportName().c_str());
-    }
-}
-
-void SSHTransportBase::SignalDisconnect()
-{
-    // Give each process an opportunity for graceful shutdown, then terminate
-
-    if (m_plonkProcessInfo.hProcess != 0)
-    {
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
-        Sleep(100);
-        TerminateProcess(m_plonkProcessInfo.hProcess, 0);
-    }
-
-    if (m_polipoProcessInfo.hProcess != 0)
-    {
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_polipoProcessInfo.dwProcessId);
-        Sleep(100);
-        TerminateProcess(m_polipoProcessInfo.hProcess, 0);
-    }
-}
-
-// Create the pipe that will be used to communicate between the Polipo child 
-// process and this process. o_outputPipe write handle should be used as the stdout
-// of the Polipo process, and o_errorPipe as stderr. 
-// (Both pipes are really the same, but duplicated.)
-// Returns true on success.
-bool SSHTransportBase::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
-{
-    o_outputPipe = INVALID_HANDLE_VALUE;
-    o_errorPipe = INVALID_HANDLE_VALUE;
-
-    // Most of this code is adapted from:
-    // http://support.microsoft.com/kb/190351
-
-    // Set up the security attributes struct.
-    SECURITY_ATTRIBUTES sa;
-    sa.nLength= sizeof(SECURITY_ATTRIBUTES);
-    sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = TRUE;
-
-    HANDLE hOutputReadTmp, hOutputWrite, hOutputRead, hErrorWrite;
-
-    // Create the child output pipe.
-    if (!CreatePipe(&hOutputReadTmp, &hOutputWrite, &sa, 0))
-    {
-        my_print(false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Create a duplicate of the output write handle for the std error
-    // write handle. This is necessary in case the child application
-    // closes one of its std output handles.
-    if (!DuplicateHandle(
-            GetCurrentProcess(), hOutputWrite, 
-            GetCurrentProcess(), &hErrorWrite,
-            0, TRUE, DUPLICATE_SAME_ACCESS))
-    {
-        my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Create new output read handle and the input write handles. Set
-    // the Properties to FALSE. Otherwise, the child inherits the
-    // properties and, as a result, non-closeable handles to the pipes
-    // are created.
-    if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
-                         GetCurrentProcess(),
-                         &hOutputRead, // Address of new handle.
-                         0, 
-                         FALSE, // Make it uninheritable.
-                         DUPLICATE_SAME_ACCESS))
-    {
-        my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Close inheritable copies of the handles you do not want to be
-    // inherited.
-    if (!CloseHandle(hOutputReadTmp))
-    {
-        my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    m_polipoPipe = hOutputRead;
-    o_outputPipe = hOutputWrite;
-    o_errorPipe = hErrorWrite;
-
     return true;
 }
-
-// Check Polipo pipe for page view, bytes transferred, etc., info waiting to 
-// be processed; gather info; process; send to server.
-// If connected is true, the stats will only be sent to the server if certain
-// time or size limits have been exceeded; if connected is false, the stats will
-// be sent regardlesss of limits.
-// Returns true on success, false otherwise.
-bool SSHTransportBase::ProcessStatsAndStatus(bool connected)
-{
-    // Stats get sent to the server when a time or size limit has been reached.
-
-    const DWORD DEFAULT_SEND_INTERVAL_MS = (30*60*1000); // 30 mins
-    const unsigned int DEFAULT_SEND_MAX_ENTRIES = 1000;  // This is mostly to bound memory usage
-    static DWORD s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
-    static unsigned int s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
-
-    DWORD bytes_avail = 0;
-
-    // On the very first call, m_lastStatusSendTimeMS will be 0, but we don't
-    // want to send immediately. So...
-    if (m_lastStatusSendTimeMS == 0) m_lastStatusSendTimeMS = GetTickCount();
-
-    // ReadFile will block forever if there's no data to read, so we need
-    // to check if there's data available to read first.
-    if (!PeekNamedPipe(m_polipoPipe, NULL, 0, NULL, &bytes_avail, NULL))
-    {
-        my_print(false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // If there's data available from the Polipo pipe, process it.
-    if (bytes_avail > 0)
-    {
-        char* page_view_buffer = new char[bytes_avail+1];
-        DWORD num_read = 0;
-        if (!ReadFile(m_polipoPipe, page_view_buffer, bytes_avail, &num_read, NULL))
-        {
-            my_print(false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-            false;
-        }
-        page_view_buffer[bytes_avail] = '\0';
-
-        // Update page view and traffic stats with the new info.
-        ParsePolipoStatsBuffer(page_view_buffer);
-
-        delete[] page_view_buffer;
-    }
-
-    // Note: GetTickCount wraps after 49 days; small chance of a shorter timeout
-    DWORD now = GetTickCount();
-    if (now < m_lastStatusSendTimeMS) m_lastStatusSendTimeMS = 0;
-
-    // If the time or size thresholds have been exceeded, or if we're being 
-    // forced to, send the stats.
-    if (!connected
-        || (m_lastStatusSendTimeMS + s_send_interval_ms) < now
-        || m_pageViewEntries.size() >= s_send_max_entries
-        || m_httpsRequestEntries.size() >= s_send_max_entries)
-    {
-        if (m_manager->SendStatusMessage(
-                                this,
-                                connected, // Note: there's a timeout side-effect when connected=false
-                                m_pageViewEntries, 
-                                m_httpsRequestEntries, 
-                                m_bytesTransferred))
-        {
-            // Reset thresholds
-            s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
-            s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
-
-            // Reset stats
-            m_pageViewEntries.clear();
-            m_httpsRequestEntries.clear();
-            m_bytesTransferred = 0;
-            m_lastStatusSendTimeMS = now;
-        }
-        else
-        {
-            // Status sending failures are fairly common.
-            // We'll back off the thresholds and try again later.
-            s_send_interval_ms += DEFAULT_SEND_INTERVAL_MS;
-            s_send_max_entries += DEFAULT_SEND_MAX_ENTRIES;
-        }
-    }
-
-    return true;
-}
-
-/* Store page view info. Some transformation may be done depending on the 
-   contents of m_pageViewRegexes. 
-*/
-void SSHTransportBase::UpsertPageView(const string& entry)
-{
-    if (entry.length() <= 0) return;
-
-    my_print(true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
-
-    string store_entry = "(OTHER)";
-
-    for (unsigned int i = 0; i < m_pageViewRegexes.size(); i++)
-    {
-        if (regex_match(entry, m_pageViewRegexes[i].regex))
-        {
-            store_entry = regex_replace(
-                            entry, 
-                            m_pageViewRegexes[i].regex, 
-                            m_pageViewRegexes[i].replace);
-            break;
-        }
-    }
-
-    if (store_entry.length() == 0) return;
-
-    // Add/increment the entry.
-    map<string, int>::iterator map_entry = m_pageViewEntries.find(store_entry);
-    if (map_entry == m_pageViewEntries.end())
-    {
-        m_pageViewEntries[store_entry] = 1;
-    }
-    else
-    {
-        map_entry->second += 1;
-    }
-}
-
-/* Store HTTPS request info. Some transformation may be done depending on the 
-   contents of m_httpsRequestRegexes. 
-*/
-void SSHTransportBase::UpsertHttpsRequest(string entry)
-{
-    // First of all, get rid of any trailing port number.
-    string::size_type port = entry.find_last_of(':');
-    if (port != entry.npos)
-    {
-        entry.erase(entry.begin()+port, entry.end());
-    }
-
-    if (entry.length() <= 0) return;
-
-    string store_entry = "(OTHER)";
-
-    for (unsigned int i = 0; i < m_httpsRequestRegexes.size(); i++)
-    {
-        if (regex_match(entry, m_httpsRequestRegexes[i].regex))
-        {
-            store_entry = regex_replace(
-                            entry, 
-                            m_httpsRequestRegexes[i].regex, 
-                            m_httpsRequestRegexes[i].replace);
-            break;
-        }
-    }
-
-    if (store_entry.length() == 0) return;
-
-    // Add/increment the entry.
-    map<string, int>::iterator map_entry = m_httpsRequestEntries.find(store_entry);
-    if (map_entry == m_httpsRequestEntries.end())
-    {
-        m_httpsRequestEntries[store_entry] = 1;
-    }
-    else
-    {
-        map_entry->second += 1;
-    }
-}
-
-void SSHTransportBase::ParsePolipoStatsBuffer(const char* page_view_buffer)
-{
-    const char* HTTP_PREFIX = "PSIPHON-PAGE-VIEW-HTTP:>>";
-    const char* HTTPS_PREFIX = "PSIPHON-PAGE-VIEW-HTTPS:>>";
-    const char* BYTES_TRANSFERRED_PREFIX = "PSIPHON-BYTES-TRANSFERRED:>>";
-    const char* DEBUG_PREFIX = "PSIPHON-DEBUG:>>";
-    const char* ENTRY_END = "<<";
-
-    const char* curr_pos = page_view_buffer;
-    const char* end_pos = page_view_buffer + strlen(page_view_buffer);
-
-    while (curr_pos < end_pos)
-    {
-        const char* http_entry_start = strstr(curr_pos, HTTP_PREFIX);
-        const char* https_entry_start = strstr(curr_pos, HTTPS_PREFIX);
-        const char* bytes_transferred_start = strstr(curr_pos, BYTES_TRANSFERRED_PREFIX);
-        const char* debug_start = strstr(curr_pos, DEBUG_PREFIX);
-        const char* entry_end = NULL;
-
-        if (http_entry_start == NULL) http_entry_start = end_pos;
-        if (https_entry_start == NULL) https_entry_start = end_pos;
-        if (bytes_transferred_start == NULL) bytes_transferred_start = end_pos;
-        if (debug_start == NULL) debug_start = end_pos;
-
-        const char* next = min(http_entry_start, https_entry_start);
-        next = min(next, bytes_transferred_start);
-        next = min(next, debug_start);
-
-        if (next >= end_pos)
-        {
-            // No next entry found
-            break;
-        }
-
-        // Find the next entry
-
-        if (next == http_entry_start)
-        {
-            const char* entry_start = next + strlen(HTTP_PREFIX);
-            entry_end = strstr(entry_start, ENTRY_END);
-            
-            if (!entry_end)
-            {
-                // Something is rather wrong. Maybe an incomplete entry.
-                // Stop processing;
-                break;
-            }
-
-            UpsertPageView(string(entry_start, entry_end-entry_start));
-        }
-        else if (next == https_entry_start)
-        {
-            const char* entry_start = next + strlen(HTTPS_PREFIX);
-            entry_end = strstr(entry_start, ENTRY_END);
-
-            if (!entry_end)
-            {
-                // Something is rather wrong. Maybe an incomplete entry.
-                // Stop processing;
-                break;
-            }
-
-            UpsertHttpsRequest(string(entry_start, entry_end-entry_start));
-        }
-        else if (next == bytes_transferred_start)
-        {
-            const char* entry_start = next + strlen(BYTES_TRANSFERRED_PREFIX);
-            entry_end = strstr(entry_start, ENTRY_END);
-
-            if (!entry_end)
-            {
-                // Something is rather wrong. Maybe an incomplete entry.
-                // Stop processing;
-                break;
-            }
-
-            int bytes = atoi(string(entry_start, entry_end-entry_start).c_str());
-            if (bytes > 0)
-            {
-                m_bytesTransferred += bytes;
-            }
-        }
-        else // if (next == debug_start)
-        {
-            const char* entry_start = next + strlen(HTTPS_PREFIX);
-            entry_end = strstr(entry_start, ENTRY_END);
-
-            if (!entry_end)
-            {
-                // Something is rather wrong. Maybe an incomplete entry.
-                // Stop processing;
-                break;
-            }
-
-            my_print(true, _T("POLIPO-DEBUG: %S"), string(entry_start, entry_end-entry_start).c_str());
-        }
-
-        curr_pos = entry_end + strlen(ENTRY_END);
-    }
-}
-
 
 
 /******************************************************************************
@@ -844,9 +263,9 @@ void SSHTransportBase::ParsePolipoStatsBuffer(const char* page_view_buffer)
 static const TCHAR* SSH_TRANSPORT_NAME = _T("SSH");
 
 // Support the registration of this transport type
-static ITransport* NewSSH(ITransportManager* manager)
+static ITransport* NewSSH()
 {
-    return new SSHTransport(manager);
+    return new SSHTransport();
 }
 
 // static
@@ -859,8 +278,7 @@ void SSHTransport::GetFactory(
 }
 
 
-SSHTransport::SSHTransport(ITransportManager* manager)
-    : SSHTransportBase(manager)
+SSHTransport::SSHTransport()
 {
 }
 
@@ -885,13 +303,18 @@ bool SSHTransport::GetSSHParams(
     o_serverPort = NarrowToTString(sessionInfo.GetSSHPort());
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
-    o_plonkCommandLine = m_plonkPath
-                            + _T(" -ssh -C -N -batch")
-                            + _T(" -P ") + o_serverPort
-                            + _T(" -l ") + NarrowToTString(sessionInfo.GetSSHUsername())
-                            + _T(" -pw ") + NarrowToTString(sessionInfo.GetSSHPassword())
-                            + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
-                            + _T(" ") + o_serverAddress;
+    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
+    // the expected value we just set in the registry
+
+    tstringstream args;
+    args << _T(" -ssh -C -N -batch")
+         << _T(" -P ") << o_serverPort.c_str()
+         << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
+         << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
+         << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
+         << _T(" ") << o_serverAddress.c_str();
+
+    o_plonkCommandLine = m_plonkPath + args.str();
 
     return true;
 }
@@ -904,9 +327,9 @@ bool SSHTransport::GetSSHParams(
 static const TCHAR* OSSH_TRANSPORT_NAME = _T("OSSH");
 
 // Support the registration of this transport type
-static ITransport* NewOSSH(ITransportManager* manager)
+static ITransport* NewOSSH()
 {
-    return new OSSHTransport(manager);
+    return new OSSHTransport();
 }
 
 // static
@@ -919,8 +342,7 @@ void OSSHTransport::GetFactory(
 }
 
 
-OSSHTransport::OSSHTransport(ITransportManager* manager)
-    : SSHTransportBase(manager)
+OSSHTransport::OSSHTransport()
 {
 }
 
@@ -956,14 +378,19 @@ bool OSSHTransport::GetSSHParams(
     o_serverPort = NarrowToTString(sessionInfo.GetSSHObfuscatedPort());
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
-    o_plonkCommandLine = m_plonkPath
-                            + _T(" -ssh -C -N -batch")
-                            + _T(" -P ") + o_serverPort
-                            + _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey())
-                            + _T(" -l ") + NarrowToTString(sessionInfo.GetSSHUsername())
-                            + _T(" -pw ") + NarrowToTString(sessionInfo.GetSSHPassword())
-                            + _T(" -D ") + PLONK_SOCKS_PROXY_PORT
-                            + _T(" ") + o_serverAddress;
+    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
+    // the expected value we just set in the registry
+
+    tstringstream args;
+    args << _T(" -ssh -C -N -batch")
+         << _T(" -P ") << o_serverPort.c_str()
+         << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str()
+         << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
+         << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
+         << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
+         << _T(" ") << o_serverAddress.c_str();
+
+    o_plonkCommandLine = m_plonkPath + args.str();
 
     return true;
 }
@@ -972,76 +399,6 @@ bool OSSHTransport::GetSSHParams(
 /******************************************************************************
  Helpers
 ******************************************************************************/
-
-extern HINSTANCE hInst;
-
-bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
-{
-    // Extract executable from resources and write to temporary file
-
-    HRSRC res;
-    HGLOBAL handle = INVALID_HANDLE_VALUE;
-    BYTE* data;
-    DWORD size;
-
-    res = FindResource(hInst, MAKEINTRESOURCE(resourceID), RT_RCDATA);
-    if (!res)
-    {
-        my_print(false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());
-        return false;
-    }
-
-    handle = LoadResource(NULL, res);
-    if (!handle)
-    {
-        my_print(false, _T("ExtractExecutable - LoadResource failed (%d)"), GetLastError());
-        return false;
-    }
-
-    data = (BYTE*)LockResource(handle);
-    size = SizeofResource(NULL, res);
-
-    DWORD ret;
-    TCHAR tempPath[MAX_PATH];
-    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
-    // tempPath can contain no more than MAX_PATH-14 characters
-    ret = GetTempPath(MAX_PATH, tempPath);
-    if (ret > MAX_PATH-14 || ret == 0)
-    {
-        my_print(false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
-        return false;
-    }
-
-    TCHAR filePath[MAX_PATH];
-    if (NULL == PathCombine(filePath, tempPath, exeFilename))
-    {
-        my_print(false, _T("ExtractExecutable - GetTempFileName failed (%d)"), GetLastError());
-        return false;
-    }
-
-    HANDLE tempFile = CreateFile(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (tempFile == INVALID_HANDLE_VALUE) 
-    { 
-        my_print(false, _T("ExtractExecutable - CreateFile failed (%d)"), GetLastError());
-        return false;
-    }
-
-    DWORD written = 0;
-    if (!WriteFile(tempFile, data, size, &written, NULL)
-        || written != size
-        || !FlushFileBuffers(tempFile))
-    {
-        CloseHandle(tempFile);
-        my_print(false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), GetLastError());
-        return false;
-    }
-
-    CloseHandle(tempFile);
-
-    path = filePath;
-
-    return true;
-}
 
 bool SetPlonkSSHHostKey(
         const tstring& sshServerAddress,

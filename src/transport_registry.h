@@ -20,7 +20,6 @@
 #pragma once
 
 class ITransport;
-class ITransportManager;
 
 
 //
@@ -29,7 +28,7 @@ class ITransportManager;
 // Transports must use unique names.
 //
 
-typedef ITransport* (*TransportFactory)(ITransportManager*);
+typedef ITransport* (*TransportFactory)();
 
 class TransportRegistry
 {
@@ -39,10 +38,10 @@ public:
     static int Register();
 
     // Create new instance of a particular transport
-    static ITransport* New(tstring transportName, ITransportManager* manager);
+    static ITransport* New(tstring transportName);
     
     // Create new instances of all available transports.
-    static void NewAll(vector<ITransport*>& all_transports, ITransportManager* manager);
+    static void NewAll(vector<ITransport*>& all_transports);
 
 private:
     static map<tstring, TransportFactory> m_registeredTransports;

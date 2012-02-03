@@ -35,6 +35,9 @@
     <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="transport_registry.cpp" />
     <ClCompile Include="serverlist.cpp" />
+    <ClCompile Include="local_proxy.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="worker_thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -85,6 +88,9 @@
     <ClInclude Include="sshtransport.h" />
     <ClInclude Include="transport_registry.h" />
     <ClInclude Include="serverlist.h" />
+    <ClInclude Include="local_proxy.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="worker_thread.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
