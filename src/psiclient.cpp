@@ -17,240 +17,272 @@
  *
  */
 
-//==== includes ===============================================================
+//==== Includes ===============================================================
 
 #include "stdafx.h"
+
+// This is for Windows XP/Vista+ style controls
+#include <Commctrl.h>
+#pragma comment (lib, "Comctl32.lib")
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
 
 
-//==== layout =================================================================
-
-// TODO: Calculate instead of using magic constants
-
-const int BUTTON_SIZE = 48;
-const int BANNER_X = (BUTTON_SIZE + 10);
-const int BANNER_Y = 3;
-const int BANNER_WIDTH = 200;
-const int BANNER_HEIGHT = BUTTON_SIZE;
-const int VPN_DISABLED_X = (BUTTON_SIZE + 10) + BANNER_WIDTH;
-const int VPN_DISABLED_Y = 3;
-const int VPN_DISABLED_WIDTH = BUTTON_SIZE;
-const int VPN_DISABLED_HEIGHT = BUTTON_SIZE;
-const int TOOLBAR_HEIGHT = BUTTON_SIZE + 16;
-const int WINDOW_WIDTH = (BUTTON_SIZE + 10)*2 + BANNER_WIDTH + 10;
-const int WINDOW_HEIGHT = 130;
-
-
-//==== Win32 boilerplate ======================================================
+//==== Globals ================================================================
 
 #define MAX_LOADSTRING 100
 
-// Global Variables
-HINSTANCE hInst;
-TCHAR szTitle[MAX_LOADSTRING];
-TCHAR szWindowClass[MAX_LOADSTRING];
+HINSTANCE g_hInst;
+TCHAR g_szTitle[MAX_LOADSTRING];
+TCHAR g_szWindowClass[MAX_LOADSTRING];
 
-// Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+HWND g_hWnd;
+ConnectionManager g_connectionManager;
+static UINT_PTR g_hTimer;
 
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+// (...more globals in Controls section)
+
+
+//==== UI layout ===============================================================
+
+//
+//                 + - - - - - - - - - - - +
+//                 ' ^                     '
+// [toggle button] ' | transport selection ' [banner]
+//                 ' v                     '
+//                 + - - - - - - - - - - - +
+// +------------------------------------------------+
+// | ^                                              |
+// | | log list box                                 |
+// | v                                              |
+// +------------------------------------------------+
+//                   [info link]
+//
+
+const int SPACER = 5;
+
+const int TOGGLE_BUTTON_X = 0 + SPACER;
+const int TOGGLE_BUTTON_IMAGE_WIDTH = 48;
+const int TOGGLE_BUTTON_WIDTH = 56;
+const int TOGGLE_BUTTON_HEIGHT = 56;
+
+const int TRANSPORT_FIRST_ITEM_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
+const int TRANSPORT_FIRST_ITEM_Y = 0 + SPACER;
+const int TRANSPORT_ITEM_WIDTH = 48;
+const int TRANSPORT_ITEM_HEIGHT = 16;
+
+// First transport in this list is the default
+
+const TCHAR* transportOptions[] = {_T("SSH+"), _T("VPN"), _T("SSH")};
+const int transportOptionCount = sizeof(transportOptions)/sizeof(const TCHAR*);
+
+const int TRANSPORT_TOTAL_HEIGHT = TRANSPORT_ITEM_HEIGHT + (transportOptionCount-1)*(SPACER + TRANSPORT_ITEM_HEIGHT);
+
+// Toggle button and banner are vertically centered relative to transport section
+
+const int TOGGLE_BUTTON_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > TOGGLE_BUTTON_HEIGHT ?
+                                          (TRANSPORT_TOTAL_HEIGHT - TOGGLE_BUTTON_HEIGHT)/2 : 0);
+
+const int BANNER_X = TRANSPORT_FIRST_ITEM_X + TRANSPORT_ITEM_WIDTH + SPACER;
+const int BANNER_WIDTH = 200;
+const int BANNER_HEIGHT = 48;
+
+const int BANNER_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > BANNER_HEIGHT ?
+                                          (TRANSPORT_TOTAL_HEIGHT - BANNER_HEIGHT)/2 : 0);
+
+const int WINDOW_WIDTH = BANNER_X + BANNER_WIDTH + SPACER + 20; // non-client-area hack adjustment
+const int WINDOW_HEIGHT = 200;
+
+const int INFO_LINK_WIDTH = 200;
+const int INFO_LINK_HEIGHT = 16;
+const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
+const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
+
+const int LOG_LIST_BOX_X = 0;
+const int LOG_LIST_BOX_Y = max(TOGGLE_BUTTON_HEIGHT,
+                               max(BANNER_HEIGHT,
+                                   transportOptionCount*(TRANSPORT_ITEM_HEIGHT+SPACER))) + SPACER;
+const int LOG_LIST_BOX_WIDTH = WINDOW_WIDTH;
+const int LOG_LIST_BOX_HEIGHT = WINDOW_HEIGHT - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT);
+
+
+//==== Controls ================================================================
+
+HWND g_hToggleButton = NULL;
+HIMAGELIST g_hToggleButtonImageList = NULL;
+const int TOGGLE_BUTTON_ICON_COUNT = 6;
+HICON g_hToggleButtonIcons[TOGGLE_BUTTON_ICON_COUNT];
+HWND g_hBannerStatic = NULL;
+HBITMAP g_hBannerBitmap = NULL;
+HBITMAP g_hEmailBitmap = NULL;
+HWND g_hTransportRadioButtons[transportOptionCount];
+HWND g_hLogListBox = NULL;
+HWND g_hInfoLinkStatic = NULL;
+bool g_bShowEmail = false;
+
+
+void ResizeControls(HWND hWndParent)
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+    RECT rect;
+    GetClientRect(hWndParent, &rect);
 
-    MSG msg;
-    HACCEL hAccelTable;
+    int windowWidth = rect.right - rect.left;
+    int windowHeight = rect.bottom - rect.top;
 
-    // Initialize global strings
-    LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadString(hInstance, IDC_PSICLIENT, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
-
-    // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
+    if (g_hLogListBox != NULL)
     {
-        return FALSE;
+        MoveWindow(
+            g_hLogListBox,
+            LOG_LIST_BOX_X,
+            LOG_LIST_BOX_Y,
+            windowWidth,
+            windowHeight - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT),
+            TRUE);
     }
 
-    hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
-
-    // Main message loop:
-    while (GetMessage(&msg, NULL, 0, 0))
+    if (g_hInfoLinkStatic != NULL)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        MoveWindow(
+            g_hInfoLinkStatic,
+            (windowWidth - INFO_LINK_WIDTH)/2,
+            windowHeight - INFO_LINK_HEIGHT,
+            INFO_LINK_WIDTH,
+            INFO_LINK_HEIGHT,
+            TRUE);
+    }
+}
+
+
+void CreateControls(HWND hWndParent)
+{
+    HGDIOBJ font = GetStockObject(DEFAULT_GUI_FONT);
+
+    // Toggle Button
+
+    g_hToggleButton = CreateWindow(
+        L"Button",
+        L"",
+        WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON|BS_ICON,
+        TOGGLE_BUTTON_X,
+        TOGGLE_BUTTON_Y,
+        TOGGLE_BUTTON_WIDTH,
+        TOGGLE_BUTTON_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_TOGGLE_BUTTON,
+        g_hInst,
+        NULL);
+
+    g_hToggleButtonImageList = ImageList_LoadImage(
+        g_hInst,
+        MAKEINTRESOURCE(IDB_TOGGLE_BUTTON_IMAGES),
+        TOGGLE_BUTTON_IMAGE_WIDTH,
+        0,
+        CLR_DEFAULT,
+        IMAGE_BITMAP,
+        LR_CREATEDIBSECTION);
+
+    assert(TOGGLE_BUTTON_ICON_COUNT == ImageList_GetImageCount(g_hToggleButtonImageList));
+
+    for (int i = 0; i < TOGGLE_BUTTON_ICON_COUNT; i++)
+    {
+        g_hToggleButtonIcons[i] = ImageList_GetIcon(
+            g_hToggleButtonImageList,
+            i,
+            ILD_NORMAL);
+    }
+
+    // Banner
+
+    g_hBannerStatic = CreateWindow(
+        L"Static",
+        0,
+        WS_CHILD|WS_VISIBLE|SS_CENTERIMAGE|SS_BITMAP|SS_NOTIFY,
+        BANNER_X,
+        BANNER_Y,
+        BANNER_WIDTH,
+        BANNER_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_BANNER_STATIC,
+        g_hInst,
+        NULL);
+    g_hBannerBitmap = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_BANNER));
+    g_hEmailBitmap = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_EMAIL));
+    SendMessage(g_hBannerStatic, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)g_hBannerBitmap);
+    EnableWindow(g_hBannerStatic, TRUE);
+    ShowWindow(g_hBannerStatic, TRUE);
+
+    // Transport Radio Buttons
+
+    for (int i = 0; i < transportOptionCount; i++)
+    {
+        g_hTransportRadioButtons[i] = CreateWindow(
+            L"Button",
+            transportOptions[i],
+            WS_CHILD|WS_VISIBLE|BS_RADIOBUTTON,
+            TRANSPORT_FIRST_ITEM_X + SPACER,
+            TRANSPORT_FIRST_ITEM_Y + i*(TRANSPORT_ITEM_HEIGHT + SPACER),
+            TRANSPORT_ITEM_WIDTH,
+            TRANSPORT_ITEM_HEIGHT,
+            hWndParent,
+            (HMENU)(IDC_TRANSPORT_OPTION_RADIO_FIRST + i),
+            g_hInst,
+            NULL);
+
+        SendMessage(g_hTransportRadioButtons[i], WM_SETFONT, (WPARAM)font, NULL);
+
+        if (i == 0)
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            SendMessage(
+                g_hTransportRadioButtons[i],
+                BM_SETCHECK,
+                BST_CHECKED,
+                0);
         }
     }
 
-    return (int) msg.wParam;
-}
+    // Log List
 
-ATOM MyRegisterClass(HINSTANCE hInstance)
-{
-    WNDCLASSEX wcex;
+    g_hLogListBox = CreateWindow(
+        L"Listbox",
+        L"",
+        WS_CHILD|WS_VISIBLE|WS_VSCROLL|LBS_NOINTEGRALHEIGHT|LBS_DISABLENOSCROLL|LBS_NOTIFY,
+        LOG_LIST_BOX_X,
+        LOG_LIST_BOX_Y,
+        LOG_LIST_BOX_WIDTH,
+        LOG_LIST_BOX_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_LOG_LISTBOX,
+        g_hInst,
+        NULL);
+    SendMessage(g_hLogListBox, WM_SETFONT, (WPARAM)font, NULL);
 
-    wcex.cbSize = sizeof(WNDCLASSEX);
+    // Info Link
 
-    wcex.style = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc = WndProc;
-    wcex.cbClsExtra = 0;
-    wcex.cbWndExtra = 0;
-    wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PSICLIENT));
-    wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
-    //wcex.lpszMenuName = MAKEINTRESOURCE(IDC_PSICLIENT);
-    wcex.lpszMenuName = 0;
-    wcex.lpszClassName = szWindowClass;
-    wcex.hIconSm = NULL;
-
-    return RegisterClassEx(&wcex);
-}
-
-HWND g_hWnd;
-
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
-{
-   HWND hWnd;
-   RECT rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-
-   hInst = hInstance; // Store instance handle in our global variable
-
-   SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-
-   hWnd = CreateWindowEx(
-            WS_EX_APPWINDOW,
-            szWindowClass,
-            szTitle,
-            WS_OVERLAPPEDWINDOW,
-            // CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
-            rect.right - WINDOW_WIDTH, rect.bottom - WINDOW_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
-            NULL, NULL, hInstance, NULL);
-
-   if (!hWnd)
-   {
-      return FALSE;
-   }
-
-   g_hWnd = hWnd;
-
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-
-   return TRUE;
+    g_hInfoLinkStatic = CreateWindow(
+        L"Static",
+        L"https://psiphon3.com", // TODO: ...
+        WS_CHILD | WS_VISIBLE | SS_NOTIFY,
+        INFO_LINK_X,
+        INFO_LINK_Y,
+        INFO_LINK_WIDTH,
+        INFO_LINK_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_INFO_LINK_STATIC,
+        g_hInst,
+        NULL);
+    SendMessage(g_hInfoLinkStatic, WM_SETFONT, (WPARAM)font, NULL);
 }
 
 
-//==== The Connection Manager =================================================
-
-ConnectionManager g_connectionManager;
-
-
-//==== toolbar ================================================================
-
-// http://msdn.microsoft.com/en-us/library/bb760446%28v=VS.85%29.aspx
-
-
-HWND g_hToolBar = NULL;
-HWND g_hBanner = NULL;
-HBITMAP g_hBannerBitmap = NULL;
-HBITMAP g_hEmailBitmap = NULL;
-HWND g_hVPNSkipped = NULL;
-HIMAGELIST g_hToolbarImageList = NULL;
-bool g_bShowEmail = false;
-
-void CreateToolbar(HWND hWndParent)
-{
-    // Define some constants.
-    const int ImageListID = 0;
-    const int numButtons = 1;
-    const int bitmapSize = BUTTON_SIZE;
-
-    // Create the toolbar.
-    g_hToolBar = CreateWindowEx(
-                            0, TOOLBARCLASSNAME, NULL, 
-                            WS_CHILD | TBSTYLE_WRAPABLE,
-                            0, 0, 0, 0,
-                            hWndParent, NULL, hInst, NULL);
-    if (g_hToolBar == NULL)
-    {
-        return;
-    }
-
-    // Create image list from bitmap
-
-    g_hToolbarImageList = ImageList_LoadImage(
-        hInst, MAKEINTRESOURCE(IDB_TOOLBAR_ICONS),
-        bitmapSize, numButtons, CLR_DEFAULT, // GetSysColor(COLOR_BTNFACE),
-        IMAGE_BITMAP, LR_CREATEDIBSECTION);
-
-    // Set the image list.
-    SendMessage(
-        g_hToolBar, TB_SETIMAGELIST, (WPARAM)ImageListID, 
-        (LPARAM)g_hToolbarImageList);
-
-    // Initialize button info.
-    TBBUTTON tbButtons[numButtons] = 
-    {
-        { MAKELONG(0, ImageListID), IDM_TOGGLE, TBSTATE_ENABLED, 
-          BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"" }
-    };
-
-    // Add buttons.
-    SendMessage(
-        g_hToolBar, TB_BUTTONSTRUCTSIZE, 
-        (WPARAM)sizeof(TBBUTTON), 0);
-    SendMessage(
-        g_hToolBar, TB_ADDBUTTONS, (WPARAM)numButtons, 
-        (LPARAM)&tbButtons);
-
-    // Add banner child control.
-    g_hBanner = CreateWindow(
-                        L"Static", 0,
-                        WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_BITMAP | SS_NOTIFY,
-                        BANNER_X, BANNER_Y, BANNER_WIDTH, BANNER_HEIGHT,
-                        g_hToolBar, NULL, hInst, NULL);
-    g_hBannerBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BANNER));
-    g_hEmailBitmap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_EMAIL));
-    SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)g_hBannerBitmap);
-    EnableWindow(g_hBanner, TRUE);
-    ShowWindow(g_hBanner, TRUE);
-
-    // Add VPN disabled child control.
-    g_hVPNSkipped = CreateWindow(
-                        L"Static", 0,
-                        WS_CHILD | WS_VISIBLE | SS_CENTERIMAGE | SS_ICON | SS_NOTIFY,
-                        VPN_DISABLED_X, VPN_DISABLED_Y, VPN_DISABLED_WIDTH, VPN_DISABLED_HEIGHT,
-                        g_hToolBar, NULL, hInst, NULL);
-     HICON hVPNSkippedIcon = ImageList_GetIcon(g_hToolbarImageList, 7, 0);
-     SendMessage(g_hVPNSkipped, STM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)hVPNSkippedIcon);
-     EnableWindow(g_hVPNSkipped, FALSE);
-     ShowWindow(g_hVPNSkipped, FALSE);
-
-    // Tell the toolbar to resize itself, and show it.
-    SendMessage(g_hToolBar, TB_AUTOSIZE, 0, 0); 
-    ShowWindow(g_hToolBar, TRUE);
-}
-
-void UpdateButton(HWND hWnd)
+void UpdateButton(HWND hWndParent)
 {
     static ConnectionManagerState g_lastState = g_connectionManager.GetState();
 
-    TBBUTTONINFO info;
-    info.cbSize = sizeof(info);
-    info.dwMask = TBIF_IMAGE;
     static int g_nextAnimationIndex = 0;
-    int image = 0;
+    int iconIndex = 0;
 
     ConnectionManagerState state = g_connectionManager.GetState();
 
@@ -260,7 +292,7 @@ void UpdateButton(HWND hWnd)
     {
         FLASHWINFO info;
         info.cbSize = sizeof(FLASHWINFO);
-        info.hwnd = hWnd;
+        info.hwnd = hWndParent;
         info.dwFlags = FLASHW_ALL|FLASHW_TIMERNOFG;
         info.uCount = 1;
         info.dwTimeout = 0;
@@ -273,64 +305,35 @@ void UpdateButton(HWND hWnd)
 
     if (state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        image = 0;
+        iconIndex = 0;
     }
-    else if (state == CONNECTION_MANAGER_STATE_CONNECTED_VPN)
+    else if (state == CONNECTION_MANAGER_STATE_CONNECTED)
     {
-        image = 1;
-    }
-    else if (state == CONNECTION_MANAGER_STATE_CONNECTED_SSH)
-    {
-        image = 2;
+        iconIndex = 1;
     }
     else /* if CONNECTION_MANAGER_STATE_STARTING */
     {
-        image = 3 + (g_nextAnimationIndex++)%4;
+        iconIndex = 2 + (g_nextAnimationIndex++)%4;
     }
 
-    SendMessage(g_hToolBar, TB_GETBUTTONINFO, IDM_TOGGLE, (LPARAM)&info);
+    HANDLE currentIcon = (HANDLE)SendMessage(
+        g_hToggleButton,
+        BM_GETIMAGE,
+        IMAGE_ICON,
+        0);
 
-    if (info.iImage != image)
+    if (currentIcon != g_hToggleButtonIcons[iconIndex])
     {
-        info.iImage = image;
-        SendMessage(g_hToolBar, TB_SETBUTTONINFO, IDM_TOGGLE, (LPARAM)&info);
-    }
-
-    // Update the VPN skipped icon
-
-    if (state == CONNECTION_MANAGER_STATE_CONNECTED_SSH
-        /*Defunct: remove with UI update: && g_connectionManager.CurrentSessionSkippedVPN()*/)
-    {
-        EnableWindow(g_hVPNSkipped, TRUE);
-        ShowWindow(g_hVPNSkipped, TRUE);
-    }
-    else
-    {
-        EnableWindow(g_hVPNSkipped, FALSE);
-        ShowWindow(g_hVPNSkipped, FALSE);
+        SendMessage(
+            g_hToggleButton,
+            BM_SETIMAGE,
+            IMAGE_ICON,
+            (LPARAM)g_hToggleButtonIcons[iconIndex]);
     }
 }
 
-void UpdateAlpha(HWND hWnd)
-{
-    // Make window transparent when connected
 
-    ConnectionManagerState state = g_connectionManager.GetState();
-    if (state == CONNECTION_MANAGER_STATE_CONNECTED_VPN
-        || state == CONNECTION_MANAGER_STATE_CONNECTED_SSH)
-    {
-        // Can also animate a fade out: http://msdn.microsoft.com/en-us/library/ms997507.aspx
-        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-        SetLayeredWindowAttributes(hWnd, 0, (255 * 75) / 100, LWA_ALPHA);
-    }
-    else
-    {
-        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-        SetLayeredWindowAttributes(hWnd, 0, (255 * 100) / 100, LWA_ALPHA);
-    }
-}
-
-void UpdateBanner(HWND hWnd)
+void UpdateBanner(HWND hWndParent)
 {
     // Replace the sponsor banner with an image promoting email propagation:
     // - When starting takes more than N seconds
@@ -347,8 +350,7 @@ void UpdateBanner(HWND hWnd)
         g_bShowEmail = true;
     }
     else if ((state == CONNECTION_MANAGER_STATE_STARTING && startingTime <= timeUntilEmail) ||
-             state == CONNECTION_MANAGER_STATE_CONNECTED_VPN ||
-             state == CONNECTION_MANAGER_STATE_CONNECTED_SSH)
+             state == CONNECTION_MANAGER_STATE_CONNECTED)
     {
         g_bShowEmail = false;
     }
@@ -360,11 +362,26 @@ void UpdateBanner(HWND hWnd)
         hBitmap = g_hEmailBitmap;
     }
 
-    if (hBitmap != (HBITMAP)SendMessage(g_hBanner, STM_GETIMAGE, (WPARAM)IMAGE_BITMAP, 0))
+    if (hBitmap != (HBITMAP)SendMessage(g_hBannerStatic, STM_GETIMAGE, (WPARAM)IMAGE_BITMAP, 0))
     {
-        SendMessage(g_hBanner, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
+        SendMessage(g_hBannerStatic, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
     }
 }
+
+
+tstring GetSelectedTransport(void)
+{
+    for (int i = 0; i < transportOptionCount; i++)
+    {
+        if (BST_CHECKED == SendMessage(g_hTransportRadioButtons[i], BM_GETCHECK, 0, 0))
+        {
+            return transportOptions[i];
+        }
+    }
+    assert(0);
+    return _T("");
+}
+
 
 //==== my_print (logging) =====================================================
 
@@ -416,38 +433,119 @@ void my_print(bool bDebugMessage, const string& message)
 }
 
 
+//==== Win32 boilerplate ======================================================
+
+ATOM MyRegisterClass(HINSTANCE hInstance);
+BOOL InitInstance(HINSTANCE, int);
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+
+int APIENTRY _tWinMain(
+    HINSTANCE hInstance,
+    HINSTANCE hPrevInstance,
+    LPTSTR lpCmdLine,
+    int nCmdShow)
+{
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(lpCmdLine);
+
+    LoadString(hInstance, IDS_APP_TITLE, g_szTitle, MAX_LOADSTRING);
+    LoadString(hInstance, IDC_PSICLIENT, g_szWindowClass, MAX_LOADSTRING);
+    MyRegisterClass(hInstance);
+
+    // Perform application initialization
+
+    if (!InitInstance (hInstance, nCmdShow))
+    {
+        return FALSE;
+    }
+
+    HACCEL hAccelTable;
+    hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
+
+    // Main message loop
+
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    return (int) msg.wParam;
+}
+
+ATOM MyRegisterClass(HINSTANCE hInstance)
+{
+    WNDCLASSEX wcex;
+
+    wcex.cbSize = sizeof(WNDCLASSEX);
+
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = WndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = hInstance;
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PSICLIENT));
+    wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground = (HBRUSH)(COLOR_BTNFACE+1);
+    //wcex.lpszMenuName = MAKEINTRESOURCE(IDC_PSICLIENT);
+    wcex.lpszMenuName = 0;
+    wcex.lpszClassName = g_szWindowClass;
+    wcex.hIconSm = NULL;
+
+    return RegisterClassEx(&wcex);
+}
+
+
 //==== Main window function ===================================================
 
-static UINT_PTR g_hTimer;
-static HWND g_hListBox = NULL;
+BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+{
+   g_hInst = hInstance;
+
+   RECT rect;
+   SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
+
+   g_hWnd = CreateWindowEx(
+        WS_EX_APPWINDOW,
+        g_szWindowClass,
+        g_szTitle,
+        WS_OVERLAPPEDWINDOW,
+        rect.right - WINDOW_WIDTH,
+        rect.bottom - WINDOW_HEIGHT,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        NULL, NULL, hInstance, NULL);
+
+   ShowWindow(g_hWnd, nCmdShow);
+   UpdateWindow(g_hWnd);
+
+   return TRUE;
+}
+
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
     PAINTSTRUCT ps;
     HDC hdc;
-    RECT rect;
-    HGDIOBJ font;
     TCHAR* myPrintMessage;
 
     switch (message)
     {
     case WM_CREATE:
-
-        CreateToolbar(hWnd);
-
-        g_hListBox = CreateWindow(_T("listbox"),
-                                _T(""),
-                                WS_CHILD|WS_VISIBLE|WS_VSCROLL|
-                                LBS_NOINTEGRALHEIGHT|LBS_DISABLENOSCROLL|LBS_NOTIFY,
-                                0, 0, 1, 1,
-                                hWnd, NULL, NULL, NULL);
-        font = GetStockObject(DEFAULT_GUI_FONT);
-        SendMessage(g_hListBox, WM_SETFONT, (WPARAM)font, NULL);
+        CreateControls(hWnd);
 
         // Display client version number 
 
-        SendMessage(g_hListBox, LB_ADDSTRING, NULL,
+        SendMessage(
+            g_hLogListBox,
+            LB_ADDSTRING,
+            NULL,
             (LPARAM)(tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // NOTE: we leave the connection animation timer running even after fully connected
@@ -455,35 +553,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // when unexpectedly disconnected.
         g_hTimer = SetTimer(hWnd, IDT_BUTTON_ROTATION, 250, NULL);
 
-        g_connectionManager.Toggle();
+        g_connectionManager.Toggle(GetSelectedTransport());
 
+        break;
+
+    case WM_SIZE:
+        ResizeControls(hWnd);
         break;
 
     case WM_TIMER:
         UpdateButton(hWnd);
         UpdateBanner(hWnd);
-        // DISABLED: UpdateAlpha(hWnd);
-        break;
-
-    case WM_SIZE:
-        // make list box fill window client area
-        GetClientRect(hWnd, &rect);
-        if (g_hToolBar != NULL)
-        {
-            MoveWindow(
-                g_hToolBar,
-                0, 0,
-                rect.right-rect.left, TOOLBAR_HEIGHT,
-                TRUE);
-        }
-        if (g_hListBox != NULL)
-        {
-            MoveWindow(
-                g_hListBox,
-                0, TOOLBAR_HEIGHT,
-                rect.right-rect.left, rect.bottom-rect.top - TOOLBAR_HEIGHT,
-                TRUE);
-        }
         break;
 
     case WM_COMMAND:
@@ -491,7 +571,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         wmId = LOWORD(wParam);
         wmEvent = HIWORD(wParam);
 
-        if (lParam == 0) // menu or accelerator event
+        // lParam == 0: menu or accelerator event
+
+        if (lParam == 0)
         {
             switch (wmId)
             {
@@ -503,7 +585,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_HELP:
                 break;
             case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
@@ -513,47 +595,69 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         // lParam != 0: control notifications
-        else if (lParam == (LPARAM)g_hToolBar && wmId == IDM_TOGGLE)
+
+        // Toggle button clicked
+
+        else if (lParam == (LPARAM)g_hToggleButton && wmEvent == BN_CLICKED)
         {
             my_print(true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
-            g_connectionManager.Toggle();
+            g_connectionManager.Toggle(GetSelectedTransport());
         }
-        else if (lParam == (LPARAM)g_hBanner && wmEvent == STN_CLICKED)
+
+        // Transport radio button clicked
+
+        else if (lParam != 0
+                 && wmId >= IDC_TRANSPORT_OPTION_RADIO_FIRST && wmId <= IDC_TRANSPORT_OPTION_RADIO_LAST
+                 && wmEvent == BN_CLICKED)
         {
-            // Banner static control was clicked, so open home pages
+            int clickedIndex = wmId - IDC_TRANSPORT_OPTION_RADIO_FIRST;
+            for (int i = 0; i < transportOptionCount; i++)
+            {
+                SendMessage(
+                    g_hTransportRadioButtons[i],
+                    BM_SETCHECK,
+                    (i == clickedIndex) ? BST_CHECKED : BST_UNCHECKED,
+                    0);
+            }
+
+            // If already connecting/connected, restart with the new transport immediately
+
+            if (CONNECTION_MANAGER_STATE_STOPPED != g_connectionManager.GetState())
+            {
+                g_connectionManager.Stop();
+                g_connectionManager.Start(GetSelectedTransport());
+            }
+        }
+        
+        // Banner clicked
+        
+        else if (lParam == (LPARAM)g_hBannerStatic && wmEvent == STN_CLICKED)
+        {
             int state = g_connectionManager.GetState();
-            if (CONNECTION_MANAGER_STATE_CONNECTED_VPN == state
-                || CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
+            if (CONNECTION_MANAGER_STATE_CONNECTED == state)
             {
                 g_connectionManager.OpenHomePages();
             }
         }
-        else if (lParam == (LPARAM)g_hVPNSkipped && wmEvent == STN_CLICKED)
+
+        // Info link clicked
+        
+        else if (lParam == (LPARAM)g_hInfoLinkStatic && wmEvent == STN_CLICKED)
         {
-            // "VPN Skipped" icon is displayed when connected to SSH
-            // and VPN connection attempt was skipped due to previous
-            // failure. In this case, when the user clicks the icon,
-            // we disconnect, clear the skipped state, and
-            // reconnect -- which by default will try
-            // the same server but with VPN not skipped this time.
-            int state = g_connectionManager.GetState();
-            if (CONNECTION_MANAGER_STATE_CONNECTED_SSH == state)
-            {
-                g_connectionManager.Stop();
-                g_connectionManager.Start();
-            }
+            // Info link static control was clicked, so open Psiphon 3 page
+            // TODO: ...
         }
         break;
 
     case WM_PSIPHON_MY_PRINT:
         // Display message in listbox and scroll to bottom of listbox.
         myPrintMessage = (TCHAR*)lParam;
-        SendMessage(g_hListBox, LB_ADDSTRING, NULL, (LPARAM)myPrintMessage);
+        SendMessage(g_hLogListBox, LB_ADDSTRING, NULL, (LPARAM)myPrintMessage);
         OutputDebugString(myPrintMessage);
         OutputDebugString(L"\n");
         free(myPrintMessage);
-        SendMessage(g_hListBox, LB_SETCURSEL,
-        SendMessage(g_hListBox, LB_GETCOUNT, NULL, NULL)-1, NULL);
+        SendMessage(g_hLogListBox, LB_SETCURSEL,
+        SendMessage(g_hLogListBox, LB_GETCOUNT, NULL, NULL)-1, NULL);
         break;
 
     case WM_PAINT:
@@ -573,7 +677,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-// Message handler for about box.
+
+//==== About box ==============================================================
+
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);

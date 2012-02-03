@@ -30,8 +30,7 @@ enum ConnectionManagerState
 {
     CONNECTION_MANAGER_STATE_STOPPED = 0,
     CONNECTION_MANAGER_STATE_STARTING,
-    CONNECTION_MANAGER_STATE_CONNECTED_VPN,
-    CONNECTION_MANAGER_STATE_CONNECTED_SSH
+    CONNECTION_MANAGER_STATE_CONNECTED
 };
 
 
@@ -40,9 +39,9 @@ class ConnectionManager : public ITransportManager
 public:
     ConnectionManager(void);
     virtual ~ConnectionManager(void);
-    void Toggle(void);
+    void Toggle(const tstring& transport);
     void Stop(void);
-    void Start(void);
+    void Start(const tstring& transport);
     time_t GetStartingTime(void);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState(void);

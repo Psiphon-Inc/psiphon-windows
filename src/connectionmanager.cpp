@@ -67,13 +67,13 @@ void ConnectionManager::OpenHomePages(void)
     }
 }
 
-void ConnectionManager::Toggle()
+void ConnectionManager::Toggle(const tstring& transport)
 {
     // NOTE: no lock, to allow thread to access object
 
     if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        Start();
+        Start(transport);
     }
     else
     {
@@ -165,7 +165,7 @@ void ConnectionManager::Stop(void)
     my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
-void ConnectionManager::Start(void)
+void ConnectionManager::Start(const tstring& transport)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
@@ -174,8 +174,7 @@ void ConnectionManager::Start(void)
 
     AutoMUTEX lock(m_mutex);
 
-    // TEMP: Should get transport type from user setting (or default)
-    m_transport = TransportRegistry::New(_T("OSSH"), this);
+    m_transport = TransportRegistry::New(transport, this);
 
     m_userSignalledStop = false;
 
@@ -424,15 +423,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     // Called from connection thread
     // NOTE: no lock while waiting for network events
 
-    // TEMP HACK -- should be transport-generic
-    if (m_transport->GetTransportName() == _T("VPN"))
-    {
-        SetState(CONNECTION_MANAGER_STATE_CONNECTED_VPN);
-    }
-    else
-    {
-        SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
-    }
+    SetState(CONNECTION_MANAGER_STATE_CONNECTED);
 
     //
     // "Connected" HTTPS request for server stats and split tunnel routing info.
