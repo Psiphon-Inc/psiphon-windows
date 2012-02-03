@@ -324,7 +324,7 @@ bool SSHTransport::GetSSHParams(
  OSSHTransport
 ******************************************************************************/
 
-static const TCHAR* OSSH_TRANSPORT_NAME = _T("OSSH");
+static const TCHAR* OSSH_TRANSPORT_NAME = _T("SSH+");
 
 // Support the registration of this transport type
 static ITransport* NewOSSH()

@@ -32,8 +32,7 @@ enum ConnectionManagerState
 {
     CONNECTION_MANAGER_STATE_STOPPED = 0,
     CONNECTION_MANAGER_STATE_STARTING,
-    CONNECTION_MANAGER_STATE_CONNECTED_VPN,
-    CONNECTION_MANAGER_STATE_CONNECTED_SSH
+    CONNECTION_MANAGER_STATE_CONNECTED
 };
 
 
@@ -42,9 +41,9 @@ class ConnectionManager : public ILocalProxyStatsCollector
 public:
     ConnectionManager(void);
     virtual ~ConnectionManager(void);
-    void Toggle(void);
+    void Toggle(const tstring& transport);
     void Stop(void);
-    void Start(void);
+    void Start(const tstring& transport);
     time_t GetStartingTime(void);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState(void);
@@ -58,16 +57,18 @@ public:
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
+    static DWORD WINAPI ConnectionManager::UpgradeThread(void* object);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class TryNextServer { };
     class Abort { };
 
-    void DoPostConnect(ITransport* currentTransport);
+    void DoPostConnect(const SessionInfo& sessionInfo);
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
+    void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
 
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
@@ -83,8 +84,8 @@ private:
         tstring& handshakeRequestPath);
     void HandleHandshakeResponse(
         const char* handshakeResponse);
-    bool RequireUpgrade(tstring& downloadRequestPath);
-    bool DoUpgrade(const string& download);
+    bool RequireUpgrade(void);
+    void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
 
 private:
@@ -94,7 +95,9 @@ private:
     bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
+    HANDLE m_upgradeThread;
     time_t m_startingTime;
     string m_splitTunnelRoutes;
     ITransport* m_transport;
+    bool m_upgradePending;
 };

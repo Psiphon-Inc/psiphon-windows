@@ -330,7 +330,7 @@ bool HTTPSRequest::MakeRequest(
     // Kick off the asynchronous processing
 
     // Must use a manual event: multiple things wait on the same event
-    _ASSERT(m_closedEvent == NULL);
+    assert(m_closedEvent == NULL);
     m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
 
     m_expectedServerCertificate = webServerCertificate;
