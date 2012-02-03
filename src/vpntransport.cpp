@@ -169,8 +169,12 @@ bool VPNTransport::Cleanup()
     return true;
 }
 
-void VPNTransport::TransportConnect(const SessionInfo& sessionInfo)
+void VPNTransport::TransportConnect(
+                    const SessionInfo& sessionInfo,
+                    SystemProxySettings*)
 {
+    // The SystemProxySettings param is unused
+
     if (!ServerVPNCapable(sessionInfo))
     {
         throw TransportFailed();

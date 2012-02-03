@@ -25,7 +25,7 @@
 
 
 
-extern HINSTANCE hInst;
+extern HINSTANCE g_hInst;
 
 bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
 {
@@ -36,7 +36,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     BYTE* data;
     DWORD size;
 
-    res = FindResource(hInst, MAKEINTRESOURCE(resourceID), RT_RCDATA);
+    res = FindResource(g_hInst, MAKEINTRESOURCE(resourceID), RT_RCDATA);
     if (!res)
     {
         my_print(false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());

@@ -26,6 +26,7 @@
 #include "webbrowser.h"
 #include "embeddedvalues.h"
 #include "usersettings.h"
+#include "systemproxysettings.h"
 #include "zlib.h"
 #include <algorithm>
 #include <sstream>
@@ -324,12 +325,17 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Force a stop check before trying to connect with transport
             (void)manager->GetUserSignalledStop(true);
 
+            SystemProxySettings systemProxySettings;
+
             // Attempt to connect to the current server using the current transport.
             try
             {
                 // Launches the transport thread and doesn't return until it
                 // observes a successful (or not) connection.
-                manager->m_transport->Connect(sessionInfo);
+                manager->m_transport->Connect(
+                                        sessionInfo, 
+                                        &systemProxySettings,
+                                        manager->GetUserSignalledStop(true));
             }
             catch (ITransport::TransportFailed&)
             {
@@ -361,18 +367,28 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             LocalProxy localProxy(
                         manager, 
                         sessionInfo, 
+                        &systemProxySettings,
                         manager->m_transport->GetLocalProxyParentPort(), 
                         false); // split tunnel
 
             // Launches the local proxy thread and doesn't return until it
             // observes a successful (or not) connection.
-            if (!localProxy.Start())
+            if (!localProxy.Start(manager->GetUserSignalledStop(true)))
             {
                 throw IWorkerThread::Error("LocalProxy::Start failed");
             }
 
             //
             // Transport and local proxy in place.
+            //
+
+            //
+            // Apply the system proxy settings.
+            //
+
+            systemProxySettings.Apply();
+
+            //
             // Do post-connect work, like opening home pages.
             //
 
@@ -406,6 +422,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             {
                 throw IWorkerThread::Error("WaitForMultipleObjects failed");
             }
+
+            // Revert the system proxy settings.
+            // This will also be done by the systemProxySettings dtor, 
+            // but we'll make it explicit here.
+            systemProxySettings.Revert();
 
             //
             // Disconnected

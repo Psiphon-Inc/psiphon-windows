@@ -28,7 +28,7 @@ public:
 
     // Blocking call. Returns true if worker was successfully started,
     // false otherwise.
-    virtual bool Start();
+    virtual bool Start(const bool& externalStopSignalFlag);
 
     // Blocking call. Tell the thread to stop and wait for it to do so.
     virtual void Stop();
@@ -73,6 +73,7 @@ protected:
     static DWORD WINAPI Thread(void* object);
 
 protected:
+    const bool* m_externalStopSignalFlag;
     HANDLE m_thread;
     HANDLE m_startedEvent;
     HANDLE m_stoppedEvent;

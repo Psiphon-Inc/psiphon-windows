@@ -45,7 +45,9 @@ public:
 
 protected:
     // ITransport implementation
-    virtual void TransportConnect(const SessionInfo& sessionInfo);
+    virtual void TransportConnect(
+                    const SessionInfo& sessionInfo, 
+                    SystemProxySettings* systemProxySettings);
     virtual bool DoPeriodicCheck();
 
     // Subclasses must implement this member
@@ -56,7 +58,9 @@ protected:
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine) = 0;
 
-    void TransportConnectHelper(const SessionInfo& sessionInfo);
+    void TransportConnectHelper(
+            const SessionInfo& sessionInfo,
+            SystemProxySettings* systemProxySettings);
     bool IsServerSSHCapable(const SessionInfo& sessionInfo) const;
     bool LaunchPlonk(const TCHAR* plonkCommandLine);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,28 +26,35 @@
 #include "raserror.h"
 #include "usersettings.h"
 
-// TEMP: Reference to a specific transport shouldn't be necessary (after local proxy is broken out)
-#include "sshtransport.h"
 
-
-// This string is passed to InternetSetOption to set the proxy address for each protocol.
-// NOTE that we do not include a proxy setting for FTP, since Polipo does not support
-// proxying FTP, so FTP will not be proxied.
-#define NEW_PROXY_ADDRESS (tstring(_T("http=127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT + \
-                           tstring(_T(";https=127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT + \
-                           tstring(_T(";socks=127.0.0.1:")) + PLONK_SOCKS_PROXY_PORT)
-
-SystemProxySettings::SystemProxySettings(void)
+SystemProxySettings::SystemProxySettings()
+    : m_settingsApplied(false)
 {
     m_originalSettings.clear();
+    SetHttpProxyPort(0);
+    SetHttpsProxyPort(0);
+    SetSocksProxyPort(0);
 }
 
-SystemProxySettings::~SystemProxySettings(void)
+SystemProxySettings::~SystemProxySettings()
 {
     Revert();
 }
 
-bool SystemProxySettings::Configure(void)
+void SystemProxySettings::SetHttpProxyPort(int port)
+{
+    m_httpProxyPort = port;
+}
+void SystemProxySettings::SetHttpsProxyPort(int port)
+{
+    m_httpsProxyPort = port;
+}
+void SystemProxySettings::SetSocksProxyPort(int port)
+{
+    m_socksProxyPort = port;
+}
+
+bool SystemProxySettings::Apply()
 {
     if (UserSkipProxySettings())
     {
@@ -57,7 +64,13 @@ bool SystemProxySettings::Configure(void)
     // Configure Windows Internet Settings to use our HTTP Proxy
     // This affects IE, Chrome, Safari and recent Firefox builds
 
-    tstring proxyAddress = NEW_PROXY_ADDRESS;
+    tstring proxyAddress = MakeProxySettingString();
+    if(proxyAddress.length() == 0)
+    {
+        return false;
+    }
+
+    m_settingsApplied = true;
 
     // Get a list of connections, starting with the dial-up connections
     vector<tstring> connections = GetRasConnectionNames();
@@ -68,9 +81,43 @@ bool SystemProxySettings::Configure(void)
     return (Save(connections) && SetConnectionsProxies(connections, proxyAddress));
 }
 
-bool SystemProxySettings::Revert(void)
+tstring SystemProxySettings::MakeProxySettingString()
+{
+    // This string is passed to InternetSetOption to set the proxy address for each protocol.
+    // NOTE that we do not include a proxy setting for FTP, since Polipo does not support
+    // proxying FTP, so FTP will not be proxied.
+
+    tstringstream proxySetting;
+
+    if (m_httpProxyPort > 0)
+    {
+        if (proxySetting.str().length() > 0) proxySetting << _T(";");
+        proxySetting << _T("http=127.0.0.1:") << m_httpProxyPort;
+    }
+
+    if (m_httpsProxyPort > 0)
+    {
+        if (proxySetting.str().length() > 0) proxySetting << _T(";");
+        proxySetting << _T("https=127.0.0.1:") << m_httpsProxyPort;
+    }
+
+    if (m_socksProxyPort > 0)
+    {
+        if (proxySetting.str().length() > 0) proxySetting << _T(";");
+        proxySetting << _T("socks=127.0.0.1:") << m_socksProxyPort;
+    }
+
+    return proxySetting.str();
+}
+
+bool SystemProxySettings::Revert()
 {
     // Revert Windows Internet Settings back to user's original configuration
+
+    if (!m_settingsApplied)
+    {
+        return true;
+    }
 
     bool success = true;
 
@@ -99,7 +146,7 @@ bool SystemProxySettings::Revert(void)
 // the existing settings.
 void SystemProxySettings::PreviousCrashCheckHack(connection_proxy& proxySettings)
 {
-    tstring proxyAddress = NEW_PROXY_ADDRESS;
+    tstring proxyAddress = MakeProxySettingString();
 
     // Don't save settings that are the same as we will be setting.
     // Instead, save default (no proxy) settings.
@@ -269,7 +316,7 @@ static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWO
     return RasEnumEntries(0, 0, rasEntryNames, &bufferSize, &entries);
 }
 
-vector<tstring> SystemProxySettings::GetRasConnectionNames(void)
+vector<tstring> SystemProxySettings::GetRasConnectionNames()
 {
     vector<tstring> connections;
     LPRASENTRYNAME rasEntryNames = 0;

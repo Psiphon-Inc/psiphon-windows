@@ -21,7 +21,6 @@
 NOTES
 - Make behaviour consistent when user cancels connect. 
   Right now it might throw abort or might exit cleanly (SSH for sure).
-- The use of hInst in SSHTransport is probably too much coupling.
 */
 
 #pragma once
@@ -30,6 +29,7 @@ NOTES
 #include "sessioninfo.h"
 
 class ITransport;
+class SystemProxySettings;
 
 
 // All transport implementations must implement this interface
@@ -57,7 +57,10 @@ public:
     // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort
     // Subclasses must not override.
-    void Connect(SessionInfo sessionInfo);
+    void Connect(
+            SessionInfo sessionInfo, 
+            SystemProxySettings* systemProxySettings,
+            const bool& stopSignalFlag);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
@@ -75,7 +78,9 @@ public:
 
 protected:
     // May throw TransportFailed or IWorkerThread::Abort
-    virtual void TransportConnect(const SessionInfo& sessionInfo) = 0;
+    virtual void TransportConnect(
+                    const SessionInfo& sessionInfo, 
+                    SystemProxySettings* systemProxySettings) = 0;
 
     // IWorkerThread implementation
     virtual bool DoStart();
@@ -85,5 +90,6 @@ protected:
 
 protected:
     SessionInfo m_sessionInfo;
+    SystemProxySettings* m_systemProxySettings;
 };
 

@@ -22,6 +22,7 @@
 #include "psiclient.h"
 #include "utilities.h"
 #include "sessioninfo.h"
+#include "systemproxysettings.h"
 #include <Shlwapi.h>
 
 
@@ -34,9 +35,11 @@
 LocalProxy::LocalProxy(
                 ILocalProxyStatsCollector* statsCollector, 
                 const SessionInfo& sessionInfo, 
+                SystemProxySettings* systemProxySettings,
                 int parentPort, 
                 bool useSplitTunnel)
     : m_statsCollector(statsCollector),
+      m_systemProxySettings(systemProxySettings),
       m_parentPort(parentPort),
       m_useSplitTunnel(useSplitTunnel),
       m_polipoPipe(NULL),
@@ -47,6 +50,9 @@ LocalProxy::LocalProxy(
 
     m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
     m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
+
+    assert(statsCollector);
+    assert(systemProxySettings);
 }
 
 LocalProxy::~LocalProxy()
@@ -75,13 +81,10 @@ bool LocalProxy::DoStart()
     }
 
     // Now that we are connected, change the Windows Internet Settings
-    // to use our HTTP proxy
+    // to use our HTTP proxy (not actually applied until later).
 
-    if (!m_systemProxySettings.Configure())
-    {
-        Cleanup();
-        return false;
-    }
+    m_systemProxySettings->SetHttpProxyPort(POLIPO_HTTP_PROXY_PORT);
+    m_systemProxySettings->SetHttpsProxyPort(POLIPO_HTTP_PROXY_PORT);
 
     my_print(true, _T("Polipo successfully started."));
 
@@ -167,9 +170,6 @@ void LocalProxy::Cleanup()
     m_polipoPipe = NULL;
 
     m_lastStatusSendTimeMS = 0;
-
-    // Revert the Windows Internet Settings to the user's previous settings
-    m_systemProxySettings.Revert();
 }
 
 
@@ -178,21 +178,20 @@ bool LocalProxy::StartPolipo()
     // Start polipo, with no disk cache and no web admin interface
     // (same recommended settings as Tor: http://www.pps.jussieu.fr/~jch/software/polipo/tor.html
 
-    // Use the parent proxy, if one is available for the current transport
-    tstring parentProxy;
-    if (m_parentPort > 0)
-    {
-        parentProxy = _T(" socksParentProxy=127.0.0.1:") + m_parentPort;
-    }
-
     tstringstream polipoCommandLine;
+
     polipoCommandLine << m_polipoPath
                       << _T(" psiphonStats=true")
-                      << _T(" proxyPort=") + POLIPO_HTTP_PROXY_PORT
-                      << parentProxy
+                      << _T(" proxyPort=") << POLIPO_HTTP_PROXY_PORT
                       << _T(" diskCacheRoot=\"\"")
                       << _T(" disableLocalInterface=true")
                       << _T(" logLevel=1");
+
+    // Use the parent proxy, if one is available for the current transport
+    if (m_parentPort > 0)
+    {
+        polipoCommandLine << _T(" socksParentProxy=127.0.0.1:") << m_parentPort;
+    }
 
     STARTUPINFO polipoStartupInfo;
     ZeroMemory(&polipoStartupInfo, sizeof(polipoStartupInfo));

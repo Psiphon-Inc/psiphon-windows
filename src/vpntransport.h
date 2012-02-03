@@ -51,7 +51,9 @@ public:
 
 protected:
     // ITransport implementation
-    virtual void TransportConnect(const SessionInfo& sessionInfo);
+    virtual void TransportConnect(
+                    const SessionInfo& sessionInfo,
+                    SystemProxySettings* systemProxySettings);
     virtual bool DoPeriodicCheck();
     
     void TransportConnectHelper(const SessionInfo& sessionInfo);

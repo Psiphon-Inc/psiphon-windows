@@ -25,6 +25,7 @@
 #include <WinSock2.h>
 #include <WinCrypt.h>
 #include "utilities.h"
+#include "systemproxysettings.h"
 
 
 #define PLONK_SOCKS_PROXY_PORT          1080
@@ -126,7 +127,9 @@ bool SSHTransportBase::Cleanup()
     return true;
 }
 
-void SSHTransportBase::TransportConnect(const SessionInfo& sessionInfo)
+void SSHTransportBase::TransportConnect(
+                        const SessionInfo& sessionInfo,
+                        SystemProxySettings* systemProxySettings)
 {
     if (!IsServerSSHCapable(sessionInfo))
     {
@@ -135,7 +138,7 @@ void SSHTransportBase::TransportConnect(const SessionInfo& sessionInfo)
 
     try
     {
-        TransportConnectHelper(sessionInfo);
+        TransportConnectHelper(sessionInfo, systemProxySettings);
     }
     catch(...)
     {
@@ -144,7 +147,9 @@ void SSHTransportBase::TransportConnect(const SessionInfo& sessionInfo)
     }
 }
 
-void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
+void SSHTransportBase::TransportConnectHelper(
+                        const SessionInfo& sessionInfo,
+                        SystemProxySettings* systemProxySettings)
 {
     my_print(false, _T("%s connecting..."), GetTransportName().c_str());
 
@@ -210,6 +215,8 @@ void SSHTransportBase::TransportConnectHelper(const SessionInfo& sessionInfo)
     {
         throw TransportFailed();
     }
+
+    systemProxySettings->SetHttpProxyPort(PLONK_SOCKS_PROXY_PORT);
 
     my_print(false, _T("%s successfully connected."), GetTransportName().c_str());
 }

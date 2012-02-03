@@ -22,7 +22,8 @@
 
 
 IWorkerThread::IWorkerThread()
-    : m_thread(0)
+    : m_thread(0),
+      m_externalStopSignalFlag(0)
 {
     m_startedEvent = CreateEvent(
                         NULL, 
@@ -72,13 +73,16 @@ bool IWorkerThread::IsStopSignalled(bool throwIfSignalled)
     return signalled;
 }
 
-bool IWorkerThread::Start()
+bool IWorkerThread::Start(const bool& externalStopSignalFlag)
 {
-    _ASSERT(m_thread == 0);
+    assert(m_thread == 0);
+    assert(m_externalStopSignalFlag == 0);
 
     ResetEvent(m_startedEvent);
     ResetEvent(m_stoppedEvent);
     ResetEvent(m_signalStopEvent);
+
+    m_externalStopSignalFlag = &externalStopSignalFlag;
 
     m_thread = CreateThread(0, 0, IWorkerThread::Thread, (void*)this, 0, 0);
     if (!m_thread)
@@ -109,6 +113,12 @@ bool IWorkerThread::Start()
     }
 
     bool started = (waitReturn == WAIT_OBJECT_0);
+
+    if (!started)
+    {
+        Stop();
+    }
+
     return started;
 }
 
@@ -122,6 +132,8 @@ void IWorkerThread::Stop()
     }
 
     m_thread = 0;
+
+    m_externalStopSignalFlag = 0;
 }
 
 // static
@@ -143,10 +155,9 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         {
             DWORD waitResult = WaitForSingleObject(_this->m_signalStopEvent, 100);
 
-            if (waitResult == WAIT_OBJECT_0)
+            if (waitResult == WAIT_OBJECT_0 || *_this->m_externalStopSignalFlag)
             {
-                // m_signalStopEvent set. Need to stop.
-                _this->DoStop();
+                // Stop request signalled. Need to stop now.
                 break;
             }
             else if (waitResult == WAIT_TIMEOUT)
@@ -154,14 +165,12 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
                 if (!_this->DoPeriodicCheck())
                 {
                     // Implementation indicates that we need to stop.
-                    _this->DoStop(); // possibly a no-op, but for completeness
                     break;
                 }
             }
             else 
             {
                 // An error occurred in the wait call
-                _this->DoStop();
                 break;
             }
         }

@@ -27,25 +27,30 @@
 ******************************************************************************/
 
 ITransport::ITransport()
+    : m_systemProxySettings(NULL)
 {
 }
 
-void ITransport::Connect(SessionInfo sessionInfo)
+void ITransport::Connect(
+                    SessionInfo sessionInfo, 
+                    SystemProxySettings* systemProxySettings,
+                    const bool& stopSignalFlag)
 {
     m_sessionInfo = sessionInfo;
+    m_systemProxySettings = systemProxySettings;
+    assert(m_systemProxySettings);
 
-    if (!IWorkerThread::Start())
+    if (!IWorkerThread::Start(stopSignalFlag))
     {
         throw TransportFailed();
     }
-
 }
 
 bool ITransport::DoStart()
 {
     try
     {
-        TransportConnect(m_sessionInfo);
+        TransportConnect(m_sessionInfo, m_systemProxySettings);
     }
     catch(...)
     {
@@ -58,4 +63,5 @@ bool ITransport::DoStart()
 void ITransport::DoStop()
 {
     Cleanup();
+    m_systemProxySettings = 0;
 }

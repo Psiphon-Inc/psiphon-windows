@@ -20,10 +20,10 @@
 #pragma once
 
 #include "worker_thread.h"
-#include "systemproxysettings.h"
 
 class SessionInfo;
 struct RegexReplace;
+class SystemProxySettings;
 
 
 class ILocalProxyStatsCollector
@@ -43,6 +43,7 @@ public:
     LocalProxy(
         ILocalProxyStatsCollector* statsCollector, 
         const SessionInfo& sessionInfo, 
+        SystemProxySettings* systemProxySettings,
         int parentPort, 
         bool useSplitTunnel);
     virtual ~LocalProxy();
@@ -68,7 +69,7 @@ private:
     int m_parentPort;
     tstring m_polipoPath;
     bool m_useSplitTunnel;
-    SystemProxySettings m_systemProxySettings;
+    SystemProxySettings* m_systemProxySettings;
     PROCESS_INFORMATION m_polipoProcessInfo;
     HANDLE m_polipoPipe;
     DWORD m_lastStatusSendTimeMS;
