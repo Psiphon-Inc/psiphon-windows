@@ -41,7 +41,6 @@ TCHAR g_szWindowClass[MAX_LOADSTRING];
 
 HWND g_hWnd;
 ConnectionManager g_connectionManager;
-static UINT_PTR g_hTimer;
 
 // (...more globals in Controls section)
 
@@ -221,7 +220,7 @@ void CreateControls(HWND hWndParent)
         g_hTransportRadioButtons[i] = CreateWindow(
             L"Button",
             transportOptions[i],
-            WS_CHILD|WS_VISIBLE|BS_RADIOBUTTON,
+            WS_CHILD|WS_VISIBLE|BS_AUTORADIOBUTTON|(i == 0 ? WS_GROUP : 0),
             TRANSPORT_FIRST_ITEM_X + SPACER,
             TRANSPORT_FIRST_ITEM_Y + i*(TRANSPORT_ITEM_HEIGHT + SPACER),
             TRANSPORT_ITEM_WIDTH,
@@ -551,7 +550,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // NOTE: we leave the connection animation timer running even after fully connected
         // when the icon no longer animates -- since the timer handler also updates the UI
         // when unexpectedly disconnected.
-        g_hTimer = SetTimer(hWnd, IDT_BUTTON_ROTATION, 250, NULL);
+        SetTimer(hWnd, IDT_BUTTON_ANIMATION, 250, NULL);
 
         g_connectionManager.Toggle(GetSelectedTransport());
 
@@ -562,8 +561,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_TIMER:
-        UpdateButton(hWnd);
-        UpdateBanner(hWnd);
+        if (IDT_BUTTON_ANIMATION == wParam)
+        {
+            UpdateButton(hWnd);
+            UpdateBanner(hWnd);
+        }
         break;
 
     case WM_COMMAND:
@@ -601,6 +603,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (lParam == (LPARAM)g_hToggleButton && wmEvent == BN_CLICKED)
         {
             my_print(true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
+
+            // See comment below about Stop() blocking the UI
+            SetCursor(LoadCursor(0, IDC_WAIT));
+
             g_connectionManager.Toggle(GetSelectedTransport());
         }
 
@@ -610,21 +616,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                  && wmId >= IDC_TRANSPORT_OPTION_RADIO_FIRST && wmId <= IDC_TRANSPORT_OPTION_RADIO_LAST
                  && wmEvent == BN_CLICKED)
         {
-            int clickedIndex = wmId - IDC_TRANSPORT_OPTION_RADIO_FIRST;
-            for (int i = 0; i < transportOptionCount; i++)
-            {
-                SendMessage(
-                    g_hTransportRadioButtons[i],
-                    BM_SETCHECK,
-                    (i == clickedIndex) ? BST_CHECKED : BST_UNCHECKED,
-                    0);
-            }
-
             // If already connecting/connected, restart with the new transport immediately
 
             if (CONNECTION_MANAGER_STATE_STOPPED != g_connectionManager.GetState())
             {
-                g_connectionManager.Stop();
+                // Show a Wait cursor since ConnectionManager::Stop() (called by Start) can
+                // take a few seconds to complete, which blocks the radio button redrawing
+                // animation. WM_SETCURSOR will reset the cursor automatically.
+                SetCursor(LoadCursor(0, IDC_WAIT));
+
                 g_connectionManager.Start(GetSelectedTransport());
             }
         }
