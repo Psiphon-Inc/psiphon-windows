@@ -30,6 +30,8 @@
 #include "zlib.h"
 #include <algorithm>
 #include <sstream>
+#include <Shlwapi.h>
+
 
 #include "transport.h"
 #include "transport_registry.h"
@@ -369,7 +371,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                         sessionInfo, 
                         &systemProxySettings,
                         manager->m_transport->GetLocalProxyParentPort(), 
-                        false); // split tunnel
+                        manager->GetSplitTunnelingFilePath()); // split tunneling file
 
             // Launches the local proxy thread and doesn't return until it
             // observes a successful (or not) connection.
@@ -1006,8 +1008,6 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
     // Decompress split tunnel route info
     // Defaults to blank route list on any error --> no split tunneling
 
-    m_splitTunnelRoutes = "";
-
     if (compressedRoutes.length() == 0)
     {
         return;
@@ -1015,9 +1015,10 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
 
     const int CHUNK_SIZE = 1024;
     const int SANITY_CHECK_SIZE = 10*1024*1024;
-    int ret;
+    DWORD ret;
+    unsigned have = 0, total = 0;
     z_stream stream;
-    char out[CHUNK_SIZE+1];
+    char out[CHUNK_SIZE];
 
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
@@ -1029,6 +1030,23 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         return;
     }
 
+
+    tstring filePath = GetSplitTunnelingFilePath();
+    if (filePath.length() == 0)
+    {
+        my_print(false, _T("ProcessSplitTunnelResponse - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        return;
+    }
+
+    AutoHANDLE file = CreateFile(filePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (file == INVALID_HANDLE_VALUE)
+    {
+        my_print(false, _T("ProcessSplitTunnelResponse - CreateFile failed (%d)"), GetLastError());
+        return;
+    }
+
+    DWORD written;
     do
     {
         stream.avail_out = CHUNK_SIZE;
@@ -1037,18 +1055,42 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         if (ret != Z_OK && ret != Z_STREAM_END)
         {
             my_print(true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
-            m_splitTunnelRoutes = "";
+            DeleteFile(filePath.c_str());
             break;
         }
-        out[CHUNK_SIZE - stream.avail_out] = '\0';
-        m_splitTunnelRoutes += out;
-        if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
+        have = CHUNK_SIZE - stream.avail_out;
+        if (!WriteFile(file, (unsigned char*)out, have, &written, NULL) || written != have)
+        {
+            throw std::exception("ProcessSplitTunnelResponse - WriteFile failed");
+        }
+
+        total += have;
+
+        if (total > SANITY_CHECK_SIZE)
         {
             my_print(true, _T("ProcessSplitTunnelResponse overflow"));
-            m_splitTunnelRoutes = "";
+            DeleteFile(filePath.c_str());
             break;
         }
     } while (ret != Z_STREAM_END);
 
     inflateEnd(&stream);
+}
+tstring ConnectionManager::GetSplitTunnelingFilePath()
+{
+    TCHAR filePath[MAX_PATH];
+    TCHAR tempPath[MAX_PATH];
+    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
+    // tempPath can contain no more than MAX_PATH-14 characters
+    int ret = GetTempPath(MAX_PATH, tempPath);
+    if (ret > MAX_PATH-14 || ret == 0)
+    {
+        return _T("");
+    }
+
+    if(NULL != PathCombine(filePath, tempPath, SPLIT_TUNNELING_FILE_NAME))
+    {
+        return tstring(filePath);
+    }
+    return _T("");
 }

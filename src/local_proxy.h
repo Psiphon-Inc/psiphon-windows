@@ -45,7 +45,7 @@ public:
         const SessionInfo& sessionInfo, 
         SystemProxySettings* systemProxySettings,
         int parentPort, 
-        bool useSplitTunnel);
+        const tstring& splitTunnelingFilePath);
     virtual ~LocalProxy();
 
 protected:
@@ -68,7 +68,7 @@ private:
     ILocalProxyStatsCollector* m_statsCollector;
     int m_parentPort;
     tstring m_polipoPath;
-    bool m_useSplitTunnel;
+    tstring m_splitTunnelingFilePath;
     SystemProxySettings* m_systemProxySettings;
     PROCESS_INFORMATION m_polipoProcessInfo;
     HANDLE m_polipoPipe;

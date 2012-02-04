@@ -37,14 +37,14 @@ LocalProxy::LocalProxy(
                 const SessionInfo& sessionInfo, 
                 SystemProxySettings* systemProxySettings,
                 int parentPort, 
-                bool useSplitTunnel)
+                const tstring& splitTunnelingFilePath)
     : m_statsCollector(statsCollector),
       m_systemProxySettings(systemProxySettings),
       m_parentPort(parentPort),
-      m_useSplitTunnel(useSplitTunnel),
       m_polipoPipe(NULL),
       m_bytesTransferred(0),
-      m_lastStatusSendTimeMS(0)
+      m_lastStatusSendTimeMS(0),
+      m_splitTunnelingFilePath(splitTunnelingFilePath)
 {
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
 
@@ -188,9 +188,18 @@ bool LocalProxy::StartPolipo()
                       << _T(" logLevel=1");
 
     // Use the parent proxy, if one is available for the current transport
+    // also do split tunneling if there is a parent proxy 
     if (m_parentPort > 0)
     {
         polipoCommandLine << _T(" socksParentProxy=127.0.0.1:") << m_parentPort;
+        if(m_splitTunnelingFilePath.length() > 0)
+        {
+            polipoCommandLine << _T(" splitTunnelingFile=\"") << m_splitTunnelingFilePath << _T("\"");
+
+            //TODO: the DNS for split tunneling is hardcoded. Make it a part of handshake or 
+            //create another tunnel for DNS in the future?
+            polipoCommandLine << _T(" splitTunnelingDnsServer=8.8.8.8");
+        }
     }
 
     STARTUPINFO polipoStartupInfo;

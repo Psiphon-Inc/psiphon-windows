@@ -25,6 +25,7 @@
 #include "psiclient.h"
 #include "local_proxy.h"
 
+
 class ITransport;
 
 
@@ -87,6 +88,7 @@ private:
     bool RequireUpgrade(void);
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
+    tstring GetSplitTunnelingFilePath();
 
 private:
     HANDLE m_mutex;

@@ -320,6 +320,9 @@ bool SSHTransport::GetSSHParams(
          << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
          << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
          << _T(" ") << o_serverAddress.c_str();
+#ifdef _DEBUG
+         args << _T(" -v");
+#endif
 
     o_plonkCommandLine = m_plonkPath + args.str();
 
@@ -396,7 +399,9 @@ bool OSSHTransport::GetSSHParams(
          << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
          << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
          << _T(" ") << o_serverAddress.c_str();
-
+#ifdef _DEBUG
+         args << _T(" -v");
+#endif
     o_plonkCommandLine = m_plonkPath + args.str();
 
     return true;
