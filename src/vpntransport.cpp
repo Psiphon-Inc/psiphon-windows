@@ -414,17 +414,18 @@ bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWO
 
         totalWaitMilliseconds += waitMilliseconds;
 
-        if (result == WAIT_TIMEOUT &&
-                 totalWaitMilliseconds >= timeout)
+        if (result == WAIT_TIMEOUT)
         {
-            return false;
+            if (totalWaitMilliseconds >= timeout)
+                return false;
         }
         else if (result == WAIT_OBJECT_0)
         {
-            // State changed
-            break;
+            // State event set, but that doesn't mean that the state actually changed.
+            // Let the loop condition check.
+            continue;
         }
-        else if (result == WAIT_OBJECT_0+1) // stop event signalled
+        else if (result == WAIT_OBJECT_0+1 || *m_externalStopSignalFlag) // stop event signalled
         {
             throw Abort();
         }
