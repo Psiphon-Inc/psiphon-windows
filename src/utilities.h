@@ -38,3 +38,11 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value);
 bool WriteRegistryStringValue(const string& name, const string& value);
 
 bool ReadRegistryStringValue(const string& name, string& value);
+
+// Text metrics are relative to default font
+
+int TextHeight(void);
+
+int TextWidth(const TCHAR* text);
+
+int LongestTextWidth(const TCHAR* texts[], int count);

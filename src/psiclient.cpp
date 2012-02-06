@@ -65,6 +65,7 @@ tstring g_lastTransportSelection;
 //                   [info link]
 //
 
+
 const int SPACER = 5;
 
 const int TOGGLE_BUTTON_X = 0 + SPACER;
@@ -72,16 +73,15 @@ const int TOGGLE_BUTTON_IMAGE_WIDTH = 48;
 const int TOGGLE_BUTTON_WIDTH = 56;
 const int TOGGLE_BUTTON_HEIGHT = 56;
 
-const int TRANSPORT_FIRST_ITEM_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
-const int TRANSPORT_FIRST_ITEM_Y = 0 + SPACER;
-const int TRANSPORT_ITEM_WIDTH = 48;
-const int TRANSPORT_ITEM_HEIGHT = 16;
-
 // First transport in this list is the default
 
 const TCHAR* transportOptions[] = {_T("SSH+"), _T("VPN"), _T("SSH")};
 const int transportOptionCount = sizeof(transportOptions)/sizeof(const TCHAR*);
 
+const int TRANSPORT_FIRST_ITEM_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
+const int TRANSPORT_FIRST_ITEM_Y = 0 + SPACER;
+const int TRANSPORT_ITEM_WIDTH = 16 + LongestTextWidth(transportOptions, transportOptionCount);
+const int TRANSPORT_ITEM_HEIGHT = TextHeight();
 const int TRANSPORT_TOTAL_HEIGHT = TRANSPORT_ITEM_HEIGHT + (transportOptionCount-1)*(SPACER + TRANSPORT_ITEM_HEIGHT);
 
 // Toggle button and banner are vertically centered relative to transport section
@@ -99,8 +99,8 @@ const int BANNER_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > BANNER_HEIGHT ?
 const int WINDOW_WIDTH = BANNER_X + BANNER_WIDTH + SPACER + 20; // non-client-area hack adjustment
 const int WINDOW_HEIGHT = 200;
 
-const int INFO_LINK_WIDTH = 200;
-const int INFO_LINK_HEIGHT = 16;
+const int INFO_LINK_WIDTH = TextWidth(INFO_LINK_URL);
+const int INFO_LINK_HEIGHT = TextHeight();
 const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
 const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
 
@@ -266,7 +266,7 @@ void CreateControls(HWND hWndParent)
 
     g_hInfoLinkStatic = CreateWindow(
         L"Static",
-        L"https://psiphon3.com", // TODO: ...
+        INFO_LINK_URL,
         WS_CHILD|WS_VISIBLE|SS_NOTIFY,
         INFO_LINK_X,
         INFO_LINK_Y,

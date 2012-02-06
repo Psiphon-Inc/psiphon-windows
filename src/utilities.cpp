@@ -319,3 +319,42 @@ bool ReadRegistryStringValue(const string& name, string& value)
 
     return success;
 }
+
+
+int TextHeight(void)
+{
+    HWND hWnd = CreateWindow(L"Static", 0, 0, 0, 0, 0, 0, 0, 0, g_hInst, 0);
+    HGDIOBJ font = GetStockObject(DEFAULT_GUI_FONT);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM)font, NULL);
+    TEXTMETRIC textMetric;
+    BOOL success = GetTextMetrics(GetDC(hWnd), &textMetric);
+    DestroyWindow(hWnd);
+    return success ? textMetric.tmHeight : 0;
+}
+
+
+int TextWidth(const TCHAR* text)
+{
+    HWND hWnd = CreateWindow(L"Static", 0, 0, 0, 0, 0, 0, 0, 0, g_hInst, 0);
+    HGDIOBJ font = GetStockObject(DEFAULT_GUI_FONT);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM)font, NULL);
+    SIZE size;
+    BOOL success = GetTextExtentPoint32(GetDC(hWnd), text, _tcslen(text), &size);
+    DestroyWindow(hWnd);
+    return success ? size.cx : 0;
+}
+
+
+int LongestTextWidth(const TCHAR* texts[], int count)
+{
+    int longestWidth = 0;
+    for (int i = 0; i < count; i++)
+    {
+        int width = TextWidth(texts[i]);
+        if (width > longestWidth)
+        {
+            longestWidth = width;
+        }
+    }
+    return longestWidth;
+}
