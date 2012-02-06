@@ -30,6 +30,8 @@
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
 #include "transport.h"
+#include "config.h"
+#include "utilities.h"
 
 
 //==== Globals ================================================================
@@ -384,6 +386,50 @@ tstring GetSelectedTransport(void)
 }
 
 
+void StoreSelectedTransport(void)
+{
+    string selectedTransport = TStringToNarrow(GetSelectedTransport());
+    if (selectedTransport.length() > 0)
+    {
+        WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport);
+    }
+}
+
+
+void RestoreSelectedTransport(void)
+{
+    string selectedTransport;
+    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport))
+    {
+        return;
+    }
+
+    int matchIndex = -1;
+    for (int i = 0; i < transportOptionCount; i++)
+    {
+        if (selectedTransport == TStringToNarrow(transportOptions[i]))
+        {
+            matchIndex = i;
+            break;
+        }
+    }
+
+    // First check that it's a valid transport identifier
+    if (-1 == matchIndex)
+    {
+        return;
+    }
+
+    for (int i = 0; i < transportOptionCount; i++)
+    {
+        SendMessage(
+            g_hTransportRadioButtons[i],
+            BM_SETCHECK,
+            (i == matchIndex) ? BST_CHECKED : BST_UNCHECKED,
+            0);
+    }    
+}
+
 //==== my_print (logging) =====================================================
 
 #ifdef _DEBUG
@@ -554,7 +600,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // when unexpectedly disconnected.
         SetTimer(hWnd, IDT_BUTTON_ANIMATION, 250, NULL);
 
-        // Start a connection on the default transport
+        // If there's a transport preference setting, restore it
+
+        RestoreSelectedTransport();
+
+        // Start a connection on the selected transport
 
         g_lastTransportSelection = GetSelectedTransport();
         g_connectionManager.Toggle(g_lastTransportSelection);
@@ -621,6 +671,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                  && wmId >= IDC_TRANSPORT_OPTION_RADIO_FIRST && wmId <= IDC_TRANSPORT_OPTION_RADIO_LAST
                  && wmEvent == BN_CLICKED)
         {
+            // Store the selection for next app run
+
+            StoreSelectedTransport();
+
             tstring newTransportSelection = GetSelectedTransport();
 
             if (newTransportSelection != g_lastTransportSelection)

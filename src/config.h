@@ -23,6 +23,7 @@
 
 static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT = "Transport";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER = "UserSkipBrowser";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS = "UserSkipProxySettings";
 static const TCHAR* SPLIT_TUNNELING_FILE_NAME = _T("psiphon.route");

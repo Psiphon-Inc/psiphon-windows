@@ -30,3 +30,11 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 //  ERROR_OPERATION_ABORTED if cancel event signaled
 // process and cancelEvent can be NULL
 DWORD WaitForConnectability(int port, DWORD timeout, HANDLE process, HANDLE cancelEvent);
+
+bool WriteRegistryDwordValue(const string& name, DWORD value);
+
+bool ReadRegistryDwordValue(const string& name, DWORD& value);
+
+bool WriteRegistryStringValue(const string& name, const string& value);
+
+bool ReadRegistryStringValue(const string& name, string& value);

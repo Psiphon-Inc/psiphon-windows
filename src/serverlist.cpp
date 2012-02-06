@@ -22,6 +22,7 @@
 #include "serverlist.h"
 #include "embeddedvalues.h"
 #include "config.h"
+#include "utilities.h"
 #include <algorithm>
 #include <sstream>
 
@@ -187,64 +188,12 @@ ServerEntries ServerList::GetListFromEmbeddedValues()
 
 ServerEntries ServerList::GetListFromSystem()
 {
-    HKEY key = 0;
-    DWORD disposition = 0;
-    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, LOCAL_SETTINGS_REGISTRY_KEY, 0, 0, 0, KEY_READ, 0, &key, &disposition);
-    if (ERROR_SUCCESS != returnCode)
+    string serverEntryListString;
+
+    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, serverEntryListString))
     {
-        std::stringstream s;
-        s << "Create Registry Key failed (" << returnCode << ")";
-        throw std::exception(s.str().c_str());
+         return ServerEntries();
     }
-
-    DWORD bufferLength = 0;
-    char* buffer = 0;
-
-    // Using the ANSI version explicitly.
-    returnCode = RegQueryValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 0, 0, NULL, &bufferLength);
-
-    if (ERROR_FILE_NOT_FOUND == returnCode)
-    {
-        return ServerEntries();
-    }
-    else if (ERROR_SUCCESS != returnCode)
-    {
-        std::stringstream s;
-        s << "Query Registry Value size failed (" << returnCode << ")";
-        throw std::exception(s.str().c_str());
-    }
-
-    // We must ensure that the string is null terminated, as per MSDN
-    buffer = new char[bufferLength + 1];
-    if (!buffer)
-    {
-        RegCloseKey(key);
-        throw std::exception("GetListFromSystem: Error reallocating memory");
-    }
-    buffer[bufferLength] = '\0';
-
-    returnCode = RegQueryValueExA(
-                    key, 
-                    LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 
-                    0, 0, 
-                    (LPBYTE)buffer, &bufferLength);
-
-    if (ERROR_FILE_NOT_FOUND == returnCode)
-    {
-        delete[] buffer;
-        return ServerEntries();
-    }
-    else if (ERROR_SUCCESS != returnCode)
-    {
-        delete[] buffer;
-        std::stringstream s;
-        s << "Query Registry Value failed (" << returnCode << ")";
-        throw std::exception(s.str().c_str());
-    }
-
-    string serverEntryListString(buffer);
-    delete[] buffer;
-    RegCloseKey(key);
 
     return ParseServerEntries(serverEntryListString.c_str());
 }
@@ -358,31 +307,9 @@ ServerEntry ServerList::ParseServerEntry(const string& serverEntry)
 // NOTE: This function does not throw because we don't want a failure to prevent a connection attempt.
 void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
 {
-    HKEY key = 0;
-    DWORD disposition = 0;
-    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, LOCAL_SETTINGS_REGISTRY_KEY, 0, 0, 0, KEY_WRITE, 0, &key, &disposition);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("Create Registry Key failed (%d)"), returnCode);
-        return;
-    }
-
     string encodedServerEntryList = EncodeServerEntries(serverEntryList);
 
-    // Using the ANSI version explicitly.
-    returnCode = RegSetValueExA(
-                    key, 
-                    LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 
-                    0, REG_SZ, 
-                    (LPBYTE)encodedServerEntryList.c_str(), 
-                    encodedServerEntryList.length()+1); // Write the null terminator
-
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("Set Registry Value failed (%d)"), returnCode);
-    }
-
-    RegCloseKey(key);
+    WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList);
 }
 
 string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)

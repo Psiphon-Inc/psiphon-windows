@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "usersettings.h"
 #include "config.h"
+#include "utilities.h"
 
 
 void InitializeUserSettings(void)
@@ -32,43 +33,16 @@ void InitializeUserSettings(void)
 
 bool GetUserSetting(const string& settingName)
 {
-    bool settingValue = false;
+    DWORD value = 0;
 
-    HKEY key = 0;
-    DWORD value;
-    DWORD bufferLength = sizeof(value);
-    DWORD type;
-
-    if (ERROR_SUCCESS == RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_READ, &key) &&
-        ERROR_SUCCESS == RegQueryValueExA(key, settingName.c_str(), 0, &type, (LPBYTE)&value, &bufferLength) &&
-        type == REG_DWORD &&
-        value == 1)
+    if (!ReadRegistryDwordValue(settingName, value))
     {
-        settingValue = true;
+        // Write out the setting with a "false" settingValue so that it's there
+        // for users to see and use, if they want to set it.
+        WriteRegistryDwordValue(settingName, 0);
     }
 
-    RegCloseKey(key);
-
-    // Write out the setting with a "false" settingValue so that it's there
-    // for users to see and use, if they want to set it.
-    if (!settingValue)
-    {
-        SetUserSetting(settingName, false);
-    }
-
-    return settingValue;
-}
-
-
-void SetUserSetting(const string& settingName, bool settingValue)
-{
-    HKEY key = 0;
-    DWORD value = settingValue ? 1 : 0;
-    DWORD bufferLength = sizeof(value);
-
-    RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
-    RegSetValueExA(key, settingName.c_str(), 0, REG_DWORD, (LPBYTE)&value, bufferLength);
-    RegCloseKey(key);
+    return value == 1;
 }
 
 
