@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "transport.h"
 #include "sessioninfo.h"
+#include "psiclient.h"
 
 
 /******************************************************************************
@@ -57,6 +58,8 @@ bool ITransport::DoStart()
         return false;
     }
 
+    my_print(false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
+
     return true;
 }
 
@@ -64,4 +67,6 @@ void ITransport::DoStop()
 {
     Cleanup();
     m_systemProxySettings = 0;
+
+    my_print(false, _T("%s disconnected."), GetTransportDisplayName().c_str());
 }

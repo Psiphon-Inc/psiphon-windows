@@ -134,7 +134,6 @@ void LocalProxy::DoStop()
     {
         // We were (probably) connected, so send a final stats message
         (void)ProcessStatsAndStatus(false);
-        my_print(false, _T("Local proxy closed."));
     }
 }
 

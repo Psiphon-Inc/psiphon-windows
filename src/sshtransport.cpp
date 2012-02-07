@@ -74,12 +74,8 @@ bool SSHTransportBase::DoPeriodicCheck()
 {
     // Check if we've lost the Plonk process
 
-    bool wasConnected = true;
-
     if (m_plonkProcessInfo.hProcess != 0)
     {
-        wasConnected = true;
-
         // The plonk process handle will be signalled when the process terminates
         DWORD result = WaitForSingleObject(m_plonkProcessInfo.hProcess, 0);
 
@@ -88,7 +84,12 @@ bool SSHTransportBase::DoPeriodicCheck()
             // Everything normal
             return true;
         }
-        else if (result != WAIT_OBJECT_0)
+        else if (result == WAIT_OBJECT_0)
+        {
+            // The process has signalled -- which implies that it has died
+            return false;
+        }
+        else
         {
             std::stringstream s;
             s << __FUNCTION__ << ": WaitForSingleObject failed (" << result << ", " << GetLastError() << ")";
@@ -96,14 +97,7 @@ bool SSHTransportBase::DoPeriodicCheck()
         }
     }
 
-    // If we're here, then we've lost the plonk process
-
-    Cleanup();
-
-    if (wasConnected)
-    {
-        my_print(false, _T("SSH disconnected."));
-    }
+    // If we're here, then there's no Plonk process at all.
 
     return false;
 }
@@ -219,8 +213,6 @@ void SSHTransportBase::TransportConnectHelper(
     }
 
     systemProxySettings->SetHttpProxyPort(PLONK_SOCKS_PROXY_PORT);
-
-    my_print(false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 }
 
 bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const

@@ -582,8 +582,6 @@ void CALLBACK VPNTransport::RasDialCallback(
             return;
         }
 
-        my_print(false, _T("VPN successfully connected."));
-
         vpnTransport->SetConnectionState(CONNECTION_STATE_CONNECTED);
 
         if (WAIT_FAILED == WaitForSingleObject(rasEvent, INFINITE))
@@ -593,7 +591,6 @@ void CALLBACK VPNTransport::RasDialCallback(
             // Otherwise we'd be stuck in a connected state.
         }
 
-        my_print(false, _T("VPN disconnected."));
         vpnTransport->SetConnectionState(CONNECTION_STATE_STOPPED);
     }
     else
