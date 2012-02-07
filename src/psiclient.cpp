@@ -32,6 +32,7 @@
 #include "transport.h"
 #include "config.h"
 #include "utilities.h"
+#include "hyperlink.h"
 
 
 //==== Globals ================================================================
@@ -99,7 +100,7 @@ const int BANNER_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > BANNER_HEIGHT ?
 const int WINDOW_WIDTH = BANNER_X + BANNER_WIDTH + SPACER + 20; // non-client-area hack adjustment
 const int WINDOW_HEIGHT = 200;
 
-const int INFO_LINK_WIDTH = TextWidth(INFO_LINK_URL);
+const int INFO_LINK_WIDTH = TextWidth(INFO_LINK_PROMPT);
 const int INFO_LINK_HEIGHT = TextHeight();
 const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
 const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
@@ -124,6 +125,8 @@ HBITMAP g_hEmailBitmap = NULL;
 HWND g_hTransportRadioButtons[transportOptionCount];
 HWND g_hLogListBox = NULL;
 HWND g_hInfoLinkStatic = NULL;
+CHyperLink g_infoLinkHyperlink;
+HWND g_hInfoLinkTooltip = NULL;
 bool g_bShowEmail = false;
 
 
@@ -266,8 +269,8 @@ void CreateControls(HWND hWndParent)
 
     g_hInfoLinkStatic = CreateWindow(
         L"Static",
-        INFO_LINK_URL,
-        WS_CHILD|WS_VISIBLE|SS_NOTIFY,
+        INFO_LINK_PROMPT,
+        WS_CHILD|WS_VISIBLE,
         INFO_LINK_X,
         INFO_LINK_Y,
         INFO_LINK_WIDTH,
@@ -277,6 +280,33 @@ void CreateControls(HWND hWndParent)
         g_hInst,
         NULL);
     SendMessage(g_hInfoLinkStatic, WM_SETFONT, (WPARAM)font, NULL);
+
+    g_infoLinkHyperlink.ConvertStaticToHyperlink(
+        hWndParent,
+        IDC_INFO_LINK_STATIC,
+        INFO_LINK_URL);
+
+    g_hInfoLinkTooltip = CreateWindowEx(
+        NULL,
+        TOOLTIPS_CLASS,
+        NULL,
+        WS_POPUP|TTS_ALWAYSTIP|TTS_BALLOON,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        hWndParent,
+        NULL, 
+        g_hInst,
+        NULL);
+    
+    TOOLINFO toolInfo = {0};
+    toolInfo.cbSize = sizeof(toolInfo);
+    toolInfo.hwnd = hWndParent;
+    toolInfo.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+    toolInfo.uId = (UINT_PTR)g_hInfoLinkStatic;
+    toolInfo.lpszText = (TCHAR*)INFO_LINK_URL;
+    SendMessage(g_hInfoLinkTooltip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
 }
 
 
