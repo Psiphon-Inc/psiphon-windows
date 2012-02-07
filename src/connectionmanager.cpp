@@ -327,7 +327,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 sessionInfo = manager->m_currentSessionInfo;
             }
 
-            my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportName().c_str());
+            my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
             // Force a stop check before trying to connect with transport
             (void)manager->GetUserSignalledStop(true);
@@ -544,7 +544,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             sessionInfo.GetWebPort(),
                             sessionInfo.GetWebServerCertificate(),
                             GetSpeedRequestPath(
-                                m_transport->GetTransportName(),
+                                m_transport->GetTransportProtocolName(),
                                 _T("connected"),
                                 _T("(NONE)"),
                                 now-start,
@@ -596,7 +596,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             sessionInfo.GetWebPort(),
                             sessionInfo.GetWebServerCertificate(),
                             GetSpeedRequestPath(
-                                m_transport->GetTransportName(),
+                                m_transport->GetTransportProtocolName(),
                                 success ? _T("speed_test") : _T("speed_test_failure"),
                                 speedTestURL.c_str(),
                                 now-start,
@@ -725,7 +725,7 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportName() + 
+           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
            _T("&error_code=") + transport->GetLastTransportError();
 }
 
@@ -738,7 +738,7 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") + transport->GetTransportName() + 
+           _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo);
 }
 
@@ -753,7 +753,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportName() + 
+           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) + 
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }

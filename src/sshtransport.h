@@ -35,7 +35,8 @@ public:
     virtual ~SSHTransportBase();
 
     // Subclasses must implement this member
-    virtual tstring GetTransportName() const = 0;
+    virtual tstring GetTransportProtocolName() const = 0;
+    virtual tstring GetTransportDisplayName() const = 0;
 
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;
     virtual int GetLocalProxyParentPort() const;
@@ -81,7 +82,8 @@ public:
 
     static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
-    virtual tstring GetTransportName() const;
+    virtual tstring GetTransportProtocolName() const;
+    virtual tstring GetTransportDisplayName() const;
 
 protected:
     virtual bool GetSSHParams(
@@ -104,7 +106,8 @@ public:
 
     static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
-    virtual tstring GetTransportName() const;
+    virtual tstring GetTransportProtocolName() const;
+    virtual tstring GetTransportDisplayName() const;
 
 protected:
     virtual bool GetSSHParams(

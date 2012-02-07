@@ -35,7 +35,8 @@ void TweakVPN();
 void TweakDNS();
 
 
-static const TCHAR* TRANSPORT_NAME = _T("VPN");
+static const TCHAR* TRANSPORT_PROTOCOL_NAME = _T("VPN");
+static const TCHAR* TRANSPORT_DISPLAY_NAME = _T("VPN");
 
 // Support the registration of this transport type
 static ITransport* New()
@@ -49,7 +50,7 @@ void VPNTransport::GetFactory(
                     TransportFactory& o_transportFactory)
 {
     o_transportFactory = New;
-    o_transportName = TRANSPORT_NAME;
+    o_transportName = TRANSPORT_DISPLAY_NAME;
 }
 
 
@@ -75,9 +76,14 @@ VPNTransport::~VPNTransport()
     CloseHandle(m_stateChangeEvent);
 }
 
-tstring VPNTransport::GetTransportName() const 
+tstring VPNTransport::GetTransportProtocolName() const 
 { 
-    return TRANSPORT_NAME; 
+    return TRANSPORT_PROTOCOL_NAME;
+}
+
+tstring VPNTransport::GetTransportDisplayName() const 
+{ 
+    return TRANSPORT_DISPLAY_NAME;
 }
 
 tstring VPNTransport::GetSessionID(SessionInfo sessionInfo) const

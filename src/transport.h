@@ -38,7 +38,9 @@ class ITransport : public IWorkerThread
 public:
     ITransport();
 
-    virtual tstring GetTransportName() const = 0;
+    virtual tstring GetTransportProtocolName() const = 0;
+
+    virtual tstring GetTransportDisplayName() const = 0;
 
     // Every implementing class must have a static function with this signature:
     //static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);

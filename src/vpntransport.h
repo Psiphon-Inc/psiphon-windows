@@ -42,7 +42,8 @@ public:
 
     static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
-    virtual tstring GetTransportName() const;
+    virtual tstring GetTransportProtocolName() const;
+    virtual tstring GetTransportDisplayName() const;
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;

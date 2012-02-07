@@ -151,7 +151,7 @@ void SSHTransportBase::TransportConnectHelper(
                         const SessionInfo& sessionInfo,
                         SystemProxySettings* systemProxySettings)
 {
-    my_print(false, _T("%s connecting..."), GetTransportName().c_str());
+    my_print(false, _T("%s connecting..."), GetTransportDisplayName().c_str());
 
     // Extract executables and put to disk if not already
 
@@ -218,7 +218,7 @@ void SSHTransportBase::TransportConnectHelper(
 
     systemProxySettings->SetHttpProxyPort(PLONK_SOCKS_PROXY_PORT);
 
-    my_print(false, _T("%s successfully connected."), GetTransportName().c_str());
+    my_print(false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 }
 
 bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
@@ -267,7 +267,8 @@ bool SSHTransportBase::LaunchPlonk(const TCHAR* plonkCommandLine)
  SSHTransport
 ******************************************************************************/
 
-static const TCHAR* SSH_TRANSPORT_NAME = _T("SSH");
+static const TCHAR* SSH_TRANSPORT_PROTOCOL_NAME = _T("SSH");
+static const TCHAR* SSH_TRANSPORT_DISPLAY_NAME = _T("SSH");
 
 // Support the registration of this transport type
 static ITransport* NewSSH()
@@ -281,7 +282,7 @@ void SSHTransport::GetFactory(
                     TransportFactory& o_transportFactory)
 {
     o_transportFactory = NewSSH;
-    o_transportName = SSH_TRANSPORT_NAME;
+    o_transportName = SSH_TRANSPORT_DISPLAY_NAME;
 }
 
 
@@ -294,9 +295,14 @@ SSHTransport::~SSHTransport()
 }
 
 // static
-tstring SSHTransport::GetTransportName() const 
+tstring SSHTransport::GetTransportProtocolName() const 
+{
+    return SSH_TRANSPORT_PROTOCOL_NAME;
+}
+
+tstring SSHTransport::GetTransportDisplayName() const 
 { 
-    return SSH_TRANSPORT_NAME; 
+    return SSH_TRANSPORT_DISPLAY_NAME; 
 }
 
 bool SSHTransport::GetSSHParams(
@@ -334,7 +340,8 @@ bool SSHTransport::GetSSHParams(
  OSSHTransport
 ******************************************************************************/
 
-static const TCHAR* OSSH_TRANSPORT_NAME = _T("SSH+");
+static const TCHAR* OSSH_TRANSPORT_PROTOCOL_NAME = _T("OSSH");
+static const TCHAR* OSSH_TRANSPORT_DISPLAY_NAME = _T("SSH+");
 
 // Support the registration of this transport type
 static ITransport* NewOSSH()
@@ -348,7 +355,7 @@ void OSSHTransport::GetFactory(
                     TransportFactory& o_transportFactory)
 {
     o_transportFactory = NewOSSH;
-    o_transportName = OSSH_TRANSPORT_NAME;
+    o_transportName = OSSH_TRANSPORT_DISPLAY_NAME;
 }
 
 
@@ -360,9 +367,14 @@ OSSHTransport::~OSSHTransport()
 {
 }
 
-tstring OSSHTransport::GetTransportName() const 
-{ 
-    return OSSH_TRANSPORT_NAME; 
+tstring OSSHTransport::GetTransportProtocolName() const 
+{
+    return OSSH_TRANSPORT_PROTOCOL_NAME;
+}
+
+tstring OSSHTransport::GetTransportDisplayName() const 
+{
+    return OSSH_TRANSPORT_DISPLAY_NAME;
 }
 
 bool OSSHTransport::GetSSHParams(
