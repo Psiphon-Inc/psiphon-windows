@@ -50,8 +50,6 @@ SSHTransportBase::SSHTransportBase()
 
 SSHTransportBase::~SSHTransportBase()
 {
-    IWorkerThread::Stop();
-
     (void)Cleanup();
 }
 
@@ -286,6 +284,7 @@ SSHTransport::SSHTransport()
 
 SSHTransport::~SSHTransport()
 {
+    IWorkerThread::Stop();
 }
 
 // static
@@ -359,6 +358,7 @@ OSSHTransport::OSSHTransport()
 
 OSSHTransport::~OSSHTransport()
 {
+    IWorkerThread::Stop();
 }
 
 tstring OSSHTransport::GetTransportProtocolName() const 
