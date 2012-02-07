@@ -49,7 +49,7 @@ public:
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState(void);
     const bool& GetUserSignalledStop(bool throwIfTrue);
-    void OpenHomePages(void);
+    void OpenHomePages(const TCHAR* defaultHomePage=0);
     bool SendStatusMessage(
             bool connected,
             const map<string, int>& pageViewEntries,

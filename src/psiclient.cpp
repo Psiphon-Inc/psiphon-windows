@@ -32,7 +32,7 @@
 #include "transport.h"
 #include "config.h"
 #include "utilities.h"
-#include "hyperlink.h"
+#include "webbrowser.h"
 
 
 //==== Globals ================================================================
@@ -125,8 +125,9 @@ HBITMAP g_hEmailBitmap = NULL;
 HWND g_hTransportRadioButtons[transportOptionCount];
 HWND g_hLogListBox = NULL;
 HWND g_hInfoLinkStatic = NULL;
-CHyperLink g_infoLinkHyperlink;
 HWND g_hInfoLinkTooltip = NULL;
+HFONT g_hDefaultFont = NULL;
+HFONT g_hUnderlineFont = NULL;
 bool g_bShowEmail = false;
 
 
@@ -162,9 +163,15 @@ void ResizeControls(HWND hWndParent)
 }
 
 
+void SubclassHyperlink(HWND hWnd);
+
 void CreateControls(HWND hWndParent)
 {
-    HGDIOBJ font = GetStockObject(DEFAULT_GUI_FONT);
+    g_hDefaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+    LOGFONT logfont;
+    GetObject(g_hDefaultFont, sizeof(logfont), &logfont);
+    logfont.lfUnderline = TRUE;
+    g_hUnderlineFont = CreateFontIndirect(&logfont);
 
     // Toggle Button
 
@@ -220,6 +227,8 @@ void CreateControls(HWND hWndParent)
     EnableWindow(g_hBannerStatic, TRUE);
     ShowWindow(g_hBannerStatic, TRUE);
 
+    SubclassHyperlink(g_hBannerStatic);
+
     // Transport Radio Buttons
 
     for (int i = 0; i < transportOptionCount; i++)
@@ -237,7 +246,7 @@ void CreateControls(HWND hWndParent)
             g_hInst,
             NULL);
 
-        SendMessage(g_hTransportRadioButtons[i], WM_SETFONT, (WPARAM)font, NULL);
+        SendMessage(g_hTransportRadioButtons[i], WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
 
         if (i == 0)
         {
@@ -263,14 +272,17 @@ void CreateControls(HWND hWndParent)
         (HMENU)IDC_LOG_LISTBOX,
         g_hInst,
         NULL);
-    SendMessage(g_hLogListBox, WM_SETFONT, (WPARAM)font, NULL);
+    SendMessage(g_hLogListBox, WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
 
     // Info Link
+
+    // Hyperlink-like static control implementation adapted from:
+    // http://www.olivierlanglois.net/hyperlinkdemo.htm
 
     g_hInfoLinkStatic = CreateWindow(
         L"Static",
         INFO_LINK_PROMPT,
-        WS_CHILD|WS_VISIBLE,
+        WS_CHILD|WS_VISIBLE|SS_NOTIFY,
         INFO_LINK_X,
         INFO_LINK_Y,
         INFO_LINK_WIDTH,
@@ -279,12 +291,7 @@ void CreateControls(HWND hWndParent)
         (HMENU)IDC_INFO_LINK_STATIC,
         g_hInst,
         NULL);
-    SendMessage(g_hInfoLinkStatic, WM_SETFONT, (WPARAM)font, NULL);
-
-    g_infoLinkHyperlink.ConvertStaticToHyperlink(
-        hWndParent,
-        IDC_INFO_LINK_STATIC,
-        INFO_LINK_URL);
+    SendMessage(g_hInfoLinkStatic, WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
 
     g_hInfoLinkTooltip = CreateWindowEx(
         NULL,
@@ -307,6 +314,67 @@ void CreateControls(HWND hWndParent)
     toolInfo.uId = (UINT_PTR)g_hInfoLinkStatic;
     toolInfo.lpszText = (TCHAR*)INFO_LINK_URL;
     SendMessage(g_hInfoLinkTooltip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
+
+    SubclassHyperlink(g_hInfoLinkStatic);
+}
+
+
+const TCHAR* HYPERLINK_ORIGINAL_WINDOWS_PROCEDURE = _T("Original Static Control Windows Procedure");
+
+LRESULT CALLBACK HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_MOUSEMOVE:
+        if (GetCapture() != hWnd)
+        {
+            SendMessage(hWnd, WM_SETFONT, (WPARAM)g_hUnderlineFont, FALSE);
+            InvalidateRect(hWnd, NULL, FALSE);
+            SetCapture(hWnd);
+        }
+        else
+        {
+            RECT rect;
+            GetWindowRect(hWnd, &rect);
+            POINT point = {LOWORD(lParam), HIWORD(lParam)};
+            ClientToScreen(hWnd, &point);
+            if (!PtInRect(&rect, point))
+            {
+                SendMessage(hWnd, WM_SETFONT, (WPARAM)g_hDefaultFont, FALSE);
+                InvalidateRect(hWnd, NULL, FALSE);
+                ReleaseCapture();
+            }
+        }
+        break;
+
+    case WM_CAPTURECHANGED:
+        SendMessage(hWnd, WM_SETFONT, (WPARAM)g_hDefaultFont, FALSE);
+        InvalidateRect(hWnd, NULL, FALSE);
+        break;
+
+    case WM_SETCURSOR:
+        SetCursor(LoadCursor(0, IDC_HAND));
+        return TRUE;
+    }
+
+    WNDPROC proc = (WNDPROC)GetProp(hWnd, HYPERLINK_ORIGINAL_WINDOWS_PROCEDURE);
+    return CallWindowProc(proc, hWnd, message, wParam, lParam);
+}
+
+
+void SubclassHyperlink(HWND hWnd)
+{
+    // NOTE: link color is handled in WM_CTLCOLORSTATIC in
+    // the parent window function without subclassing
+
+    SetProp(
+        hWnd,
+        HYPERLINK_ORIGINAL_WINDOWS_PROCEDURE,
+        (HANDLE)GetWindowLong(hWnd, GWL_WNDPROC));
+    SetWindowLong(
+        hWnd,
+        GWL_WNDPROC,
+        (LONG)HyperlinkProc);
 }
 
 
@@ -611,6 +679,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     PAINTSTRUCT ps;
     HDC hdc;
     TCHAR* myPrintMessage;
+    LRESULT result;
 
     switch (message)
     {
@@ -726,10 +795,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
         else if (lParam == (LPARAM)g_hBannerStatic && wmEvent == STN_CLICKED)
         {
+            // If connected, sponsor open home pages, or info link if
+            // no sponsor pages. If not connected, open info link.
+
             int state = g_connectionManager.GetState();
             if (CONNECTION_MANAGER_STATE_CONNECTED == state)
             {
-                g_connectionManager.OpenHomePages();
+                g_connectionManager.OpenHomePages(INFO_LINK_URL);
+            }
+            else
+            {
+                OpenBrowser(INFO_LINK_URL);
             }
         }
 
@@ -738,7 +814,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (lParam == (LPARAM)g_hInfoLinkStatic && wmEvent == STN_CLICKED)
         {
             // Info link static control was clicked, so open Psiphon 3 page
-            // TODO: ...
+            // NOTE: Info link may be opened when not tunneled
+            
+            OpenBrowser(INFO_LINK_URL);
         }
         break;
 
@@ -758,6 +836,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
         break;
 
+    case WM_CTLCOLORSTATIC:
+        result = DefWindowProc(hWnd, message, wParam, lParam);
+        // Set color for info link static control
+        if ((HWND)lParam == g_hInfoLinkStatic)
+        {
+            SetTextColor((HDC)wParam, RGB(0, 0, 192));
+        }
+        return result;
+
     case WM_DESTROY:
         // Stop VPN if running
         g_connectionManager.Stop();
@@ -767,6 +854,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 

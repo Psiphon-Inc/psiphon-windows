@@ -60,13 +60,18 @@ ConnectionManager::~ConnectionManager(void)
     CloseHandle(m_mutex);
 }
 
-void ConnectionManager::OpenHomePages(void)
+void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
 {
     AutoMUTEX lock(m_mutex);
     
     if (!UserSkipBrowser())
     {
-        OpenBrowser(m_currentSessionInfo.GetHomepages());
+        vector<tstring> urls = m_currentSessionInfo.GetHomepages();
+        if (urls.size() == 0 && defaultHomePage)
+        {
+            urls.push_back(defaultHomePage);
+        }
+        OpenBrowser(urls);
     }
 }
 

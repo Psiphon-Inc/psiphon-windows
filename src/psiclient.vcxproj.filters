@@ -38,9 +38,6 @@
     <ClCompile Include="3rdParty\json\jsoncpp.cpp">
       <Filter>json</Filter>
     </ClCompile>
-    <ClCompile Include="3rdParty\hyperlink\hyperlink.cpp">
-      <Filter>hyperlink</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -94,9 +91,6 @@
     <ClInclude Include="3rdParty\json\json.h">
       <Filter>json</Filter>
     </ClInclude>
-    <ClInclude Include="3rdParty\hyperlink\hyperlink.h">
-      <Filter>hyperlink</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
@@ -111,9 +105,6 @@
     </Filter>
     <Filter Include="zlib">
       <UniqueIdentifier>{41e9db18-683d-474f-89e2-b80064cd2d5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="hyperlink">
-      <UniqueIdentifier>{6a49cf0f-538c-4783-90c6-46788d2f137f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

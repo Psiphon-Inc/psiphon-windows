@@ -86,7 +86,6 @@
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="3rdParty\hyperlink\hyperlink.h" />
     <ClInclude Include="3rdParty\json\forwards.h" />
     <ClInclude Include="3rdParty\json\json.h" />
     <ClInclude Include="3rdParty\zlib\crc32.h" />
@@ -120,10 +119,6 @@
     <ClInclude Include="worker_thread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="3rdParty\hyperlink\hyperlink.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="3rdParty\json\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
