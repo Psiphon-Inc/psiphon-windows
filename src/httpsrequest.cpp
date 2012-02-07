@@ -92,7 +92,7 @@ void CALLBACK WinHttpStatusCallback(
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    my_print(true, _T("HTTPS request... (%x)"), dwInternetStatus);
+    my_print(true, _T("HTTPS request... (%d)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {
@@ -225,13 +225,16 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_FLAG_REQUEST_ERROR:
         // Get error value as per http://msdn.microsoft.com/en-us/library/aa383917%28v=VS.85%29.aspx
-        my_print(false, _T("HTTP request error (%x, %x)"),
-                 ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
-                 ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
+        if (ERROR_WINHTTP_OPERATION_CANCELLED != ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError)
+        {
+            my_print(false, _T("HTTP request error (%d, %d)"),
+                     ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
+                     ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
+        }
         WinHttpCloseHandle(hRequest);
         break;
     case WINHTTP_CALLBACK_FLAG_SECURE_FAILURE:
-        my_print(false, _T("HTTP secure failure (%x)"), lpvStatusInformation);
+        my_print(false, _T("HTTP secure failure (%d)"), lpvStatusInformation);
         WinHttpCloseHandle(hRequest);
         break;
     default:
