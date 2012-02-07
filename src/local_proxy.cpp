@@ -583,7 +583,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
         }
         else // if (next == debug_start)
         {
-            const char* entry_start = next + strlen(HTTPS_PREFIX);
+            const char* entry_start = next + strlen(DEBUG_PREFIX);
             entry_end = strstr(entry_start, ENTRY_END);
 
             if (!entry_end)
