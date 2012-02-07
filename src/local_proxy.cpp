@@ -95,12 +95,8 @@ bool LocalProxy::DoPeriodicCheck()
 {
     // Check if we've lost the Polipo process
 
-    bool wasConnected = false;
-
     if (m_polipoProcessInfo.hProcess != 0)
     {
-        wasConnected = true;
-
         // The polipo process handle will be signalled when the process terminates
         DWORD result = WaitForSingleObject(m_polipoProcessInfo.hProcess, 0);
 
@@ -113,7 +109,12 @@ bool LocalProxy::DoPeriodicCheck()
 
             return true;
         }
-        else if (result != WAIT_OBJECT_0)
+        else if (result == WAIT_OBJECT_0)
+        {
+            // The process has signalled -- which implies that it's died
+            return false;
+        }
+        else
         {
             std::stringstream s;
             s << __FUNCTION__ << ": WaitForSingleObject failed (" << result << ", " << GetLastError() << ")";
@@ -121,27 +122,18 @@ bool LocalProxy::DoPeriodicCheck()
         }
     }
 
-    // If we're here, then we've lost the polipo process
-
-    // Send a post-disconnect session stats message
-
-    if (wasConnected)
-    {
-        (void)ProcessStatsAndStatus(false);
-    }
-
-    Cleanup();
-
-    if (wasConnected)
-    {
-        my_print(false, _T("Local proxy closed."));
-    }
-
+    // If we're here, then there's no Polipo process at all (which is weird, but...)
     return false;
 }
 
 void LocalProxy::DoStop()
 {
+    if (m_polipoProcessInfo.hProcess != 0)
+    {
+        // We were (probably) connected, so send a final stats message
+        (void)ProcessStatsAndStatus(false);
+        my_print(false, _T("Local proxy closed."));
+    }
 }
 
 void LocalProxy::Cleanup()
