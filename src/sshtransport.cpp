@@ -199,7 +199,7 @@ void SSHTransportBase::TransportConnectHelper(
                         PLONK_SOCKS_PROXY_PORT,
                         SSH_CONNECTION_TIMEOUT_SECONDS*1000,
                         m_plonkProcessInfo.hProcess,
-                        GetSignalStopEvent());
+                        GetSignalStopFlags());
 
     if (ERROR_OPERATION_ABORTED == connected)
     {

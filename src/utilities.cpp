@@ -23,6 +23,7 @@
 #include "config.h"
 #include <Shlwapi.h>
 #include <WinSock2.h>
+#include "utilities.h"
 
 
 extern HINSTANCE g_hInst;
@@ -96,7 +97,11 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 }
 
 
-DWORD WaitForConnectability(int port, DWORD timeout, HANDLE process, HANDLE cancelEvent)
+DWORD WaitForConnectability(
+        int port, 
+        DWORD timeout, 
+        HANDLE process, 
+        const vector<const bool*>& signalStopFlags)
 {
     // There are a number of options for monitoring the connected status
     // of plonk/polipo. We're going with a quick and dirty solution of
@@ -170,8 +175,7 @@ DWORD WaitForConnectability(int port, DWORD timeout, HANDLE process, HANDLE canc
         
         // Check if cancel is signalled
 
-        if (cancelEvent != NULL
-            && WAIT_OBJECT_0 == WaitForSingleObject(cancelEvent, 0))
+        if (TestBoolArray(signalStopFlags))
         {
             returnValue = ERROR_OPERATION_ABORTED;
             break;
@@ -357,4 +361,18 @@ int LongestTextWidth(const TCHAR* texts[], int count)
         }
     }
     return longestWidth;
+}
+
+
+bool TestBoolArray(const vector<const bool*>& boolArray)
+{
+    for (size_t i = 0; i < boolArray.size(); i++)
+    {
+        if (*(boolArray[i]))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }

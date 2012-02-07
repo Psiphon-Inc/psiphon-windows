@@ -247,7 +247,7 @@ bool LocalProxy::StartPolipo()
                         POLIPO_HTTP_PROXY_PORT,
                         POLIPO_CONNECTION_TIMEOUT_SECONDS*1000,
                         m_polipoProcessInfo.hProcess,
-                        GetSignalStopEvent());
+                        GetSignalStopFlags());
 
     if (ERROR_OPERATION_ABORTED == connected)
     {

@@ -58,8 +58,7 @@ public:
     };
 
 protected:
-    virtual HANDLE GetSignalStopEvent() const;
-    virtual bool IsStopSignalled(bool throwIfSignalled);
+    const vector<const bool*>& GetSignalStopFlags() const;
 
     // Called to do worker set-up before going into busy-wait loop
     virtual bool DoStart() = 0;
@@ -74,10 +73,12 @@ protected:
     static DWORD WINAPI Thread(void* object);
 
 protected:
-    const bool* m_externalStopSignalFlag;
     HANDLE m_thread;
     HANDLE m_startedEvent;
     HANDLE m_stoppedEvent;
-    HANDLE m_signalStopEvent;
+
+    const bool* m_externalStopSignalFlag;
+    bool m_internalSignalStopFlag;
+    vector<const bool*> m_signalStopFlags;
 };
 

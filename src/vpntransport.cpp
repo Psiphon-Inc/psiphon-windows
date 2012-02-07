@@ -24,6 +24,7 @@
 #include "psiclient.h"
 #include "ras.h"
 #include "raserror.h"
+#include "utilities.h"
 
 
 #define VPN_CONNECTION_TIMEOUT_SECONDS  20
@@ -409,16 +410,11 @@ bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWO
 
     while (state == GetConnectionState())
     {
-        HANDLE stateChangeEvent = GetStateChangeEvent();
-
         // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
 
         DWORD waitMilliseconds = 100;
 
-        HANDLE events[] = { stateChangeEvent, GetSignalStopEvent() };
-        size_t eventsSize = sizeof(events) / sizeof(*events);
-
-        DWORD result = WaitForMultipleObjects(eventsSize, events, FALSE, waitMilliseconds);
+        DWORD result = WaitForSingleObject(GetStateChangeEvent(), waitMilliseconds);
 
         totalWaitMilliseconds += waitMilliseconds;
 
@@ -433,7 +429,7 @@ bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWO
             // Let the loop condition check.
             continue;
         }
-        else if (result == WAIT_OBJECT_0+1 || *m_externalStopSignalFlag) // stop event signalled
+        else if (TestBoolArray(GetSignalStopFlags())) // stop event signalled
         {
             throw Abort();
         }

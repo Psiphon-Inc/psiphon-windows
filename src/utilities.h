@@ -20,7 +20,6 @@
 #pragma once
 
 
-
 bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
 
 // Possible return values:
@@ -29,7 +28,11 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 //  ERROR_SYSTEM_PROCESS_TERMINATED if process died
 //  ERROR_OPERATION_ABORTED if cancel event signaled
 // process and cancelEvent can be NULL
-DWORD WaitForConnectability(int port, DWORD timeout, HANDLE process, HANDLE cancelEvent);
+DWORD WaitForConnectability(
+        int port, 
+        DWORD timeout, 
+        HANDLE process, 
+        const vector<const bool*>& signalStopFlags);
 
 bool WriteRegistryDwordValue(const string& name, DWORD value);
 
@@ -46,3 +49,7 @@ int TextHeight(void);
 int TextWidth(const TCHAR* text);
 
 int LongestTextWidth(const TCHAR* texts[], int count);
+
+// Returns true if at least one item in the array is true.
+bool TestBoolArray(const vector<const bool*>& boolArray);
+

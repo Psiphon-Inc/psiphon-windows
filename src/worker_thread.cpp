@@ -19,11 +19,13 @@
 
 #include "stdafx.h"
 #include "worker_thread.h"
+#include "utilities.h"
 
 
 IWorkerThread::IWorkerThread()
     : m_thread(0),
-      m_externalStopSignalFlag(0)
+      m_externalStopSignalFlag(0),
+      m_internalSignalStopFlag(false)
 {
     m_startedEvent = CreateEvent(
                         NULL, 
@@ -36,12 +38,6 @@ IWorkerThread::IWorkerThread()
                         TRUE,  // manual reset
                         TRUE,  // initial state should be SET
                         0);
-
-    m_signalStopEvent = CreateEvent(
-                        NULL, 
-                        TRUE,  // manual reset
-                        FALSE, // initial state
-                        0);
 }
 
 IWorkerThread::~IWorkerThread()
@@ -51,7 +47,6 @@ IWorkerThread::~IWorkerThread()
 
     CloseHandle(m_startedEvent);
     CloseHandle(m_stoppedEvent);
-    CloseHandle(m_signalStopEvent);
 }
 
 HANDLE IWorkerThread::GetStoppedEvent() const
@@ -59,20 +54,9 @@ HANDLE IWorkerThread::GetStoppedEvent() const
     return m_stoppedEvent;
 }
 
-HANDLE IWorkerThread::GetSignalStopEvent() const
+const vector<const bool*>& IWorkerThread::GetSignalStopFlags() const
 {
-    return m_signalStopEvent;
-}
-
-bool IWorkerThread::IsStopSignalled(bool throwIfSignalled)
-{
-    DWORD result = WaitForSingleObject(GetSignalStopEvent(), 0);
-    bool signalled = (result == WAIT_OBJECT_0);
-    if (throwIfSignalled && signalled)
-    {
-        throw Abort();
-    }
-    return signalled;
+    return m_signalStopFlags;
 }
 
 bool IWorkerThread::Start(const bool& externalStopSignalFlag)
@@ -82,9 +66,14 @@ bool IWorkerThread::Start(const bool& externalStopSignalFlag)
 
     ResetEvent(m_startedEvent);
     ResetEvent(m_stoppedEvent);
-    ResetEvent(m_signalStopEvent);
-
+    
     m_externalStopSignalFlag = &externalStopSignalFlag;
+    m_internalSignalStopFlag = false;
+
+    m_signalStopFlags.clear();
+    m_signalStopFlags.push_back(&m_internalSignalStopFlag);
+    m_signalStopFlags.push_back(m_externalStopSignalFlag);
+
 
     m_thread = CreateThread(0, 0, IWorkerThread::Thread, (void*)this, 0, 0);
     if (!m_thread)
@@ -126,7 +115,7 @@ bool IWorkerThread::Start(const bool& externalStopSignalFlag)
 
 void IWorkerThread::Stop()
 {
-    SetEvent(m_signalStopEvent);
+    m_internalSignalStopFlag = true;
 
     if (m_thread != INVALID_HANDLE_VALUE && m_thread != 0)
     {
@@ -155,26 +144,20 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
     
         while (success)
         {
-            DWORD waitResult = WaitForSingleObject(_this->m_signalStopEvent, 100);
+            Sleep(100);
 
-            if (waitResult == WAIT_OBJECT_0 
-                || *_this->m_externalStopSignalFlag)
+            if (TestBoolArray(_this->GetSignalStopFlags()))
             {
                 // Stop request signalled. Need to stop now.
                 break;
             }
-            else if (waitResult == WAIT_TIMEOUT)
+            else
             {
                 if (!_this->DoPeriodicCheck())
                 {
                     // Implementation indicates that we need to stop.
                     break;
                 }
-            }
-            else 
-            {
-                // An error occurred in the wait call
-                break;
             }
         }
     }
