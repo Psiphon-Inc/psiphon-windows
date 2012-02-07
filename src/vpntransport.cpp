@@ -65,6 +65,8 @@ VPNTransport::VPNTransport()
 
 VPNTransport::~VPNTransport()
 {
+    IWorkerThread::Stop();
+
     // We must be careful about cleaning up if we're upgrading -- we expect the
     // client to restart again and don't want a race between the old and
     // new processes to potentially mess with the new process's session.

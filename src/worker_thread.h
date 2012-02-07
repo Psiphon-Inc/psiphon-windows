@@ -31,6 +31,7 @@ public:
     virtual bool Start(const bool& externalStopSignalFlag);
 
     // Blocking call. Tell the thread to stop and wait for it to do so.
+    // Implementing classes MUST call this from their destructor.
     virtual void Stop();
 
     // The returned event will be set when the thread stops.

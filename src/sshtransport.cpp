@@ -50,6 +50,8 @@ SSHTransportBase::SSHTransportBase()
 
 SSHTransportBase::~SSHTransportBase()
 {
+    IWorkerThread::Stop();
+
     (void)Cleanup();
 }
 

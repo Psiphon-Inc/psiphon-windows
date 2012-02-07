@@ -57,6 +57,8 @@ LocalProxy::LocalProxy(
 
 LocalProxy::~LocalProxy()
 {
+    IWorkerThread::Stop();
+
     Cleanup();
 }
 

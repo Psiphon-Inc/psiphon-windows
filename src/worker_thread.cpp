@@ -46,7 +46,9 @@ IWorkerThread::IWorkerThread()
 
 IWorkerThread::~IWorkerThread()
 {
-    Stop();
+    // Subclasses MUST call IWorkerThread::Stop() in their destructor.
+    assert(m_thread == 0);
+
     CloseHandle(m_startedEvent);
     CloseHandle(m_stoppedEvent);
     CloseHandle(m_signalStopEvent);
@@ -155,7 +157,8 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         {
             DWORD waitResult = WaitForSingleObject(_this->m_signalStopEvent, 100);
 
-            if (waitResult == WAIT_OBJECT_0 || *_this->m_externalStopSignalFlag)
+            if (waitResult == WAIT_OBJECT_0 
+                || *_this->m_externalStopSignalFlag)
             {
                 // Stop request signalled. Need to stop now.
                 break;
