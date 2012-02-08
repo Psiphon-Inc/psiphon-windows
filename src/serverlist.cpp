@@ -19,22 +19,27 @@
 
 #include "stdafx.h"
 #include "psiclient.h"
-#include "vpnlist.h"
+#include "serverlist.h"
 #include "embeddedvalues.h"
 #include "config.h"
+#include "utilities.h"
 #include <algorithm>
 #include <sstream>
 
-VPNList::VPNList(void)
+ServerList::ServerList()
 {
+    m_mutex = CreateMutex(NULL, FALSE, 0);
 }
 
-VPNList::~VPNList(void)
+ServerList::~ServerList()
 {
+    CloseHandle(m_mutex);
 }
 
-void VPNList::AddEntriesToList(const vector<string>& newServerEntryList)
+void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
 {
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+
     if (newServerEntryList.size() < 1)
     {
         return;
@@ -74,8 +79,10 @@ void VPNList::AddEntriesToList(const vector<string>& newServerEntryList)
     WriteListToSystem(oldServerEntryList);
 }
 
-void VPNList::MarkCurrentServerFailed(void)
+void ServerList::MarkCurrentServerFailed()
 {
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() > 1)
     {
@@ -86,8 +93,10 @@ void VPNList::MarkCurrentServerFailed(void)
     }
 }
 
-ServerEntry VPNList::GetNextServer(void)
+ServerEntry ServerList::GetNextServer()
 {
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() < 1)
     {
@@ -100,8 +109,10 @@ ServerEntry VPNList::GetNextServer(void)
     return serverEntryList[0];
 }
 
-ServerEntries VPNList::GetList(void)
+ServerEntries ServerList::GetList()
 {
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+
     // Load persistent list of servers from system (registry)
 
     ServerEntries systemServerEntryList;
@@ -170,61 +181,18 @@ ServerEntries VPNList::GetList(void)
     return systemServerEntryList;
 }
 
-ServerEntries VPNList::GetListFromEmbeddedValues(void)
+ServerEntries ServerList::GetListFromEmbeddedValues()
 {
     return ParseServerEntries(EMBEDDED_SERVER_LIST);
 }
 
-ServerEntries VPNList::GetListFromSystem(void)
+ServerEntries ServerList::GetListFromSystem()
 {
-    HKEY key = 0;
-    DWORD disposition = 0;
-    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, LOCAL_SETTINGS_REGISTRY_KEY, 0, 0, 0, KEY_READ, 0, &key, &disposition);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        std::stringstream s;
-        s << "Create Registry Key failed (" << returnCode << ")";
-        throw std::exception(s.str().c_str());
-    }
+    string serverEntryListString;
 
-    DWORD bufferLength = 1;
-    char *buffer = (char *)malloc(bufferLength * sizeof(char));
-    if (!buffer)
+    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, serverEntryListString))
     {
-        RegCloseKey(key);
-        throw std::exception("GetListFromSystem: Error allocating memory");
-    }
-
-    // Using the ANSI version explicitly.
-    returnCode = RegQueryValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 0, 0, (LPBYTE)buffer, &bufferLength);
-    if (ERROR_MORE_DATA == returnCode)
-    {
-        // We must ensure that the string is null terminated, as per MSDN
-        char *newBuffer = (char *)realloc(buffer, bufferLength + 1);
-        if (!newBuffer)
-        {
-            free(buffer);
-            RegCloseKey(key);
-            throw std::exception("GetListFromSystem: Error reallocating memory");
-        }
-        buffer = newBuffer;
-        buffer[bufferLength - 1] = '\0';
-        returnCode = RegQueryValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 0, 0, (LPBYTE)buffer, &bufferLength);
-    }
-
-    string serverEntryListString(buffer);
-    free(buffer);
-    RegCloseKey(key);
-
-    if (ERROR_FILE_NOT_FOUND == returnCode)
-    {
-        return ServerEntries();
-    }
-    else if (ERROR_SUCCESS != returnCode)
-    {
-        std::stringstream s;
-        s << "Query Registry Value failed (" << returnCode << ")";
-        throw std::exception(s.str().c_str());
+         return ServerEntries();
     }
 
     return ParseServerEntries(serverEntryListString.c_str());
@@ -281,8 +249,8 @@ string Dehexlify(const string& input)
     return output;
 }
 
-// The errors below throw (preventing any VPN connection from starting)
-ServerEntries VPNList::ParseServerEntries(const char* serverEntryListString)
+// The errors below throw (preventing any Server connection from starting)
+ServerEntries ServerList::ParseServerEntries(const char* serverEntryListString)
 {
     ServerEntries serverEntryList;
 
@@ -301,7 +269,7 @@ ServerEntries VPNList::ParseServerEntries(const char* serverEntryListString)
     return serverEntryList;
 }
 
-ServerEntry VPNList::ParseServerEntry(const string& serverEntry)
+ServerEntry ServerList::ParseServerEntry(const string& serverEntry)
 {
     string line = Dehexlify(serverEntry);
 
@@ -337,73 +305,14 @@ ServerEntry VPNList::ParseServerEntry(const string& serverEntry)
 }
 
 // NOTE: This function does not throw because we don't want a failure to prevent a connection attempt.
-void VPNList::WriteListToSystem(const ServerEntries& serverEntryList)
+void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
 {
-    // Whenever we're changing the server list, check if the
-    // first server entry changed. If so, delete the "skip VPN"
-    // flag as we don't want to skip VPN for the new top server.
-    // This will include cases where new embedded servers are
-    // added, and when a server is marked as failed and moved
-    // to the bottom of the list.
-    // Note: comparing server entries by server network
-    // address, so we ignore changes to web secret and creds.
-
-    bool resetSkipVPN = true;
-
-    try
-    {
-        ServerEntries oldEntries = GetListFromSystem();
-        if (oldEntries.size() > 0 &&
-            serverEntryList.size() > 0 &&
-            oldEntries[0].serverAddress == serverEntryList[0].serverAddress)
-        {
-            resetSkipVPN = false;
-        }
-    }
-    catch (std::exception &)
-    {
-    }
-
-    if (resetSkipVPN)
-    {
-        ResetSkipVPN();
-    }
-
-    HKEY key = 0;
-    DWORD disposition = 0;
-    LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, LOCAL_SETTINGS_REGISTRY_KEY, 0, 0, 0, KEY_WRITE, 0, &key, &disposition);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("Create Registry Key failed (%d)"), returnCode);
-        return;
-    }
-
     string encodedServerEntryList = EncodeServerEntries(serverEntryList);
-    // REG_MULTI_SZ needs two terminating null characters.  We're using REG_SZ right now, but I'm leaving this in anyways.
-    int bufferLength = encodedServerEntryList.length() + 2;
-    char *buffer = (char *)malloc(bufferLength * sizeof(char));
-    if (!buffer)
-    {
-        my_print(false, _T("WriteListToSystem: Error allocating memory"));
-        RegCloseKey(key);
-        return;
-    }
-    sprintf_s(buffer, bufferLength, encodedServerEntryList.c_str());
-    buffer[bufferLength - 1] = '\0';
-    buffer[bufferLength - 2] = '\0';
 
-    // Using the ANSI version explicitly.
-    returnCode = RegSetValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 0, REG_SZ, (PBYTE)buffer, bufferLength);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("Set Registry Value failed (%d)"), returnCode);
-    }
-    free(buffer);
-
-    RegCloseKey(key);
+    WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList);
 }
 
-string VPNList::EncodeServerEntries(const ServerEntries& serverEntryList)
+string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)
 {
     string encodedServerList;
     for (ServerEntryIterator it = serverEntryList.begin(); it != serverEntryList.end(); ++it)
@@ -416,44 +325,3 @@ string VPNList::EncodeServerEntries(const ServerEntries& serverEntryList)
     return encodedServerList;
 }
 
-bool VPNList::GetSkipVPN(void)
-{
-    bool skipVPN = false;
-
-    HKEY key = 0;
-    DWORD value;
-    DWORD bufferLength = sizeof(value);
-    DWORD type;
-
-    if (ERROR_SUCCESS == RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_READ, &key) &&
-        ERROR_SUCCESS == RegQueryValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN, 0, &type, (LPBYTE)&value, &bufferLength) &&
-        type == REG_DWORD &&
-        value == 1)
-    {
-        skipVPN = true;
-    }
-
-    RegCloseKey(key);
-
-    return skipVPN;
-}
-
-void VPNList::SetSkipVPN(void)
-{
-    HKEY key = 0;
-    DWORD value = 1;
-    DWORD bufferLength = sizeof(value);
-
-    RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
-    RegSetValueExA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN, 0, REG_DWORD, (LPBYTE)&value, bufferLength);
-    RegCloseKey(key);
-}
-
-void VPNList::ResetSkipVPN(void)
-{
-    HKEY key = 0;
-
-    RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
-    RegDeleteValueA(key, LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN);
-    RegCloseKey(key);
-}

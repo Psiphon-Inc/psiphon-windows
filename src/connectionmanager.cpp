@@ -25,11 +25,16 @@
 #include "httpsrequest.h"
 #include "webbrowser.h"
 #include "embeddedvalues.h"
-#include "sshconnection.h"
 #include "usersettings.h"
+#include "systemproxysettings.h"
 #include "zlib.h"
 #include <algorithm>
 #include <sstream>
+#include <Shlwapi.h>
+
+
+#include "transport.h"
+#include "transport_registry.h"
 
 
 // Upgrade process posts a Quit message
@@ -39,10 +44,10 @@ extern HWND g_hWnd;
 ConnectionManager::ConnectionManager(void) :
     m_state(CONNECTION_MANAGER_STATE_STOPPED),
     m_userSignalledStop(false),
-    m_sshConnection(m_userSignalledStop),
     m_thread(0),
-    m_currentSessionSkippedVPN(false),
-    m_startingTime(0)
+    m_upgradeThread(0),
+    m_startingTime(0),
+    m_transport(0)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -55,44 +60,28 @@ ConnectionManager::~ConnectionManager(void)
     CloseHandle(m_mutex);
 }
 
-void ConnectionManager::OpenHomePages(void)
+void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
 {
     AutoMUTEX lock(m_mutex);
     
     if (!UserSkipBrowser())
     {
-        OpenBrowser(m_currentSessionInfo.GetHomepages());
+        vector<tstring> urls = m_currentSessionInfo.GetHomepages();
+        if (urls.size() == 0 && defaultHomePage)
+        {
+            urls.push_back(defaultHomePage);
+        }
+        OpenBrowser(urls);
     }
 }
 
-void ConnectionManager::SetSkipVPN(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    m_vpnList.SetSkipVPN();
-}
-
-void ConnectionManager::ResetSkipVPN(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    m_vpnList.ResetSkipVPN();
-}
-
-bool ConnectionManager::GetSkipVPN(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return m_vpnList.GetSkipVPN();
-}
-
-void ConnectionManager::Toggle()
+void ConnectionManager::Toggle(const tstring& transport)
 {
     // NOTE: no lock, to allow thread to access object
 
     if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        Start();
+        Start(transport);
     }
     else
     {
@@ -132,13 +121,24 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
     m_state = newState;
 }
 
-ConnectionManagerState ConnectionManager::GetState(void)
+ConnectionManagerState ConnectionManager::GetState()
 {
     return m_state;
 }
 
+const bool& ConnectionManager::GetUserSignalledStop(bool throwIfTrue) 
+{
+    if (throwIfTrue && m_userSignalledStop)
+    {
+        throw Abort();
+    }
+    return m_userSignalledStop;
+}
+
 void ConnectionManager::Stop(void)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     // NOTE: no lock, to allow thread to access object
 
     // The assumption is that signalling stop will cause any current operations to
@@ -153,23 +153,43 @@ void ConnectionManager::Stop(void)
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
     {
+        my_print(true, _T("%s: Waiting for thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_thread, INFINITE);
+        my_print(true, _T("%s: Thread died"), __TFUNCTION__);
         m_thread = 0;
     }
+
+    if (m_upgradeThread)
+    {
+        my_print(true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
+        WaitForSingleObject(m_upgradeThread, INFINITE);
+        my_print(true, _T("%s: Upgrade thread died"), __TFUNCTION__);
+        m_upgradeThread = 0;
+    }
+
+    delete m_transport;
+    m_transport = 0;
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
-void ConnectionManager::Start(void)
+void ConnectionManager::Start(const tstring& transport)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     // Call Stop to cleanup in case thread failed on last Start attempt
     Stop();
 
     AutoMUTEX lock(m_mutex);
+
+    m_transport = TransportRegistry::New(transport);
 
     m_userSignalledStop = false;
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
         my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
+        my_print(true, _T("%s: exit"), __TFUNCTION__);
         return;
     }
 
@@ -181,395 +201,23 @@ void ConnectionManager::Start(void)
 
         SetState(CONNECTION_MANAGER_STATE_STOPPED);
     }
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
-void ConnectionManager::DoVPNConnection(
-        ConnectionManager* manager,
-        const ServerEntry& serverEntry)
+
+DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
-    // NOTE: this function is a helper for ConnectionManagerStartThread and so doesn't hold the lock
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
 
-    if (!manager->CurrentServerVPNCapable())
-    {
-        throw TryNextServer();
-    }
-
-    //
-    // Minimum version check for VPN
-    // - L2TP/IPSec/PSK not supported on Windows 2000
-    // - Throws to try next server -- an assumption here is we'll always try SSH next
-    //
-    
-    OSVERSIONINFO versionInfo;
-    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
-    if (!GetVersionEx(&versionInfo) ||
-            versionInfo.dwMajorVersion < 5 ||
-            (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
-    {
-        my_print(false, _T("VPN requires Windows XP or greater"));
-        throw TryNextServer();
-    }
-    
-    //
-    // Check VPN services and fix if required/possible
-    //
-    
-    // Note: we proceed even if the call fails. Testing is inconsistent -- don't
-    // always need all tweaks to connect.
-    TweakVPN();
-    
-    //
-    // Start VPN connection
-    //
-    
-    manager->VPNEstablish();
-    
-    //
-    // Monitor VPN connection and wait for CONNECTED or FAILED
-    //
-    
-    manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_STARTING);
-    
-    if (VPN_CONNECTION_STATE_CONNECTED != manager->GetVPNConnectionState())
-    {
-        // Note: WaitForVPNConnectionStateToChangeFrom throws Abort if user
-        // cancelled, so if we're here it's a FAILED case.
-    
-        // Report error code to server for logging/trouble-shooting.
-        // The request line includes the last VPN error code.
-        
-        tstring requestPath = manager->GetVPNFailedRequestPath();
-    
-        string response;
-        HTTPSRequest httpsRequest;
-        if (!httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            requestPath.c_str(),
-                            response))
-        {
-            // Ignore failure
-        }
-    
-        throw TryNextServer();
-    }
-    
-    manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_VPN);
-    
-    //
-    // Patch DNS bug on Windowx XP; and flush DNS
-    // to ensure domains are resolved with VPN's DNS server
-    //
-    
-    // Note: we proceed even if the call fails. This means some domains
-    // may not resolve properly.
-    TweakDNS();
-    
-    //
-    // "Connected" HTTPS request for server stats and split tunnel routing info.
-    // It's not critical if this request fails so failure is ignored.
-    //
-    
-    tstring connectedRequestPath = manager->GetVPNConnectRequestPath();
-
-    DWORD start = GetTickCount();
-    string response;
-    HTTPSRequest httpsRequest;
-    if (httpsRequest.MakeRequest(
-                        manager->GetUserSignalledStop(),
-                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                        serverEntry.webServerPort,
-                        serverEntry.webServerCertificate,
-                        connectedRequestPath.c_str(),
-                        response))
-    {
-        // Speed feedback
-        // Note: the /connected request is not tunneled as the end point is not
-        // routed through the VPN tunnel
-
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
-        {
-            string speedResponse;
-            HTTPSRequest httpsRequest;
-            httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            manager->GetSpeedRequestPath(
-                                _T("VPN"),
-                                _T("connected"),
-                                _T("(NONE)"),
-                                now-start,
-                                response.length()).c_str(),
-                            speedResponse);
-        }
-
-        // Process split tunnel response
-        manager->ProcessSplitTunnelResponse(response);
-    }
-
-    //
-    // Open home pages in browser
-    //
-    
-    manager->OpenHomePages();
-
-    // Perform tunneled speed test when requested
-    // In VPN mode, the WinHttp request is implicitly tunneled.
-
-    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
-    manager->GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
-    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
-
-    if (speedTestServerAddress.length() > 0)
-    {
-        DWORD start = GetTickCount();
-        string response;
-        HTTPSRequest httpsRequest;
-        bool success = false;
-        if (httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            speedTestServerAddress.c_str(),
-                            _ttoi(speedTestServerPort.c_str()),
-                            "",
-                            speedTestRequestPath.c_str(),
-                            response))
-        {
-            success = true;
-        }
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
-        {
-            string speedResponse;
-            HTTPSRequest httpsRequest;
-            httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            manager->GetSpeedRequestPath(
-                                _T("VPN"),
-                                success ? _T("speed_test") : _T("speed_test_failure"),
-                                speedTestURL.c_str(),
-                                now-start,
-                                response.length()).c_str(),
-                            speedResponse);
-        }
-    }
-
-    //
-    // Wait for VPN connection to stop (or fail) -- set ConnectionManager state accordingly (used by UI)
-    //
-    
-    manager->WaitForVPNConnectionStateToChangeFrom(VPN_CONNECTION_STATE_CONNECTED);
-    
-    manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
-}
-
-void ConnectionManager::DoSSHConnection(
-        ConnectionManager* manager,
-        const ServerEntry& serverEntry)
-{
-    // NOTE: this function is a helper for ConnectionManagerStartThread and so doesn't hold the lock
-
-    if (!manager->CurrentServerSSHCapable())
-    {
-        throw TryNextServer();
-    }
-
-    //
-    // Establish SSH connection
-    //
-    // First attempt is using obfuscated SSH port and protocol, second attempt is using
-    // standard SSH port and protocol (in case the unusual configuration is blocked and
-    // the standard configuration is not).
-    //
-
-    bool connected = false;
-    int connectType = SSH_CONNECT_OBFUSCATED;
-
-    for (; connectType <= SSH_CONNECT_STANDARD; connectType++)
-    {
-        if (!manager->SSHConnect(connectType) || !manager->SSHWaitForConnected())
-        {
-            // Explicit disconnect cleanup before next attempt (SSH object cleans
-            // up automatically, but that results in confusing log output).
-
-            manager->SSHDisconnect();
-
-            if (manager->GetUserSignalledStop())
-            {
-                throw Abort();
-            }
-
-            // Report error code to server for logging/trouble-shooting.
-        
-            tstring requestPath = manager->GetSSHFailedRequestPath(connectType);
-    
-            string response;
-            HTTPSRequest httpsRequest;
-            if (!httpsRequest.MakeRequest(
-                                manager->GetUserSignalledStop(),
-                                NarrowToTString(serverEntry.serverAddress).c_str(),
-                                serverEntry.webServerPort,
-                                serverEntry.webServerCertificate,
-                                requestPath.c_str(),
-                                response))
-            {
-                // Ignore failure
-            }
-        }
-        else
-        {
-            connected = true;
-            break;
-        }
-    }
-
-    if (!connected)
-    {
-        // Neither attempt succeeded
-
-        throw TryNextServer();
-    }
-
-    manager->SetState(CONNECTION_MANAGER_STATE_CONNECTED_SSH);
-
-
-    //
-    // "Connected" HTTPS request for server stats and split tunnel routing info.
-    // It's not critical if this request fails so failure is ignored.
-    //
-    
-    tstring connectedRequestPath = manager->GetSSHConnectRequestPath(connectType);
-        
-    DWORD start = GetTickCount();
-    string response;
-    HTTPSRequest httpsRequest;
-    if (httpsRequest.MakeRequest(
-                        manager->GetUserSignalledStop(),
-                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                        serverEntry.webServerPort,
-                        serverEntry.webServerCertificate,
-                        connectedRequestPath.c_str(),
-                        response))
-    {
-        // Speed feedback
-        // Note: the /connected request is not tunneled as it's not proxied
-
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
-        {
-            string speedResponse;
-            HTTPSRequest httpsRequest;
-            httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            manager->GetSpeedRequestPath(
-                                (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
-                                _T("connected"),
-                                _T("(NONE)"),
-                                now-start,
-                                response.length()).c_str(),
-                            speedResponse);
-        }
-
-        // Process split tunnel response
-        manager->ProcessSplitTunnelResponse(response);
-    }
-
-    //
-    // Open home pages in browser
-    //
-   
-    manager->OpenHomePages();    
-
-    // Perform tunneled speed test when requested
-    // In SSH mode, the WinHttp request is explicitly proxied through polipo.
-
-    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
-    manager->GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
-    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
-
-    if (speedTestServerAddress.length() > 0)
-    {
-        DWORD start = GetTickCount();
-        string response;
-        HTTPSRequest httpsRequest;
-        bool success = false;
-        if (httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            speedTestServerAddress.c_str(),
-                            _ttoi(speedTestServerPort.c_str()),
-                            "",
-                            speedTestRequestPath.c_str(),
-                            response,
-                            true)) // useProxy=true
-        {
-            success = true;
-        }
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
-        {
-            string speedResponse;
-            HTTPSRequest httpsRequest;
-            httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            manager->GetSpeedRequestPath(
-                                (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")),
-                                success ? _T("speed_test") : _T("speed_test_failure"),
-                                speedTestURL.c_str(),
-                                now-start,
-                                response.length()).c_str(),
-                            speedResponse);
-        }
-    }
-
-    //
-    // Wait for SSH connection to stop (or fail)
-    //
-
-    // Note: doesn't throw abort on user cancel, but it all works out the same
-    manager->SSHWaitAndDisconnect();
-    
-    manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
-}
-
-DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
-{
-    ConnectionManager* manager = (ConnectionManager*)data;
+    ConnectionManager* manager = (ConnectionManager*)object;
 
     // Seed built-in non-crypto PRNG used for shuffling (load balancing)
     unsigned int seed = (unsigned)time(NULL);
     srand(seed);
 
+    //
     // Loop through server list, attempting to connect.
-    //
-    // Connect sequence:
-    //
-    // - Make Handshake HTTPS request
-    // - Perform download HTTPS request and upgrade, if applicable
-    // - Try VPN:
-    // -- Create and dial VPN connection
-    // -- Tweak VPN system settings if required
-    // -- Wait for VPN connection to succeed or fail
-    // -- Flush DNS and fix settings if required
-    // - If VPN failed:
-    // -- Create SSH connection
-    // -- Wait for SSH connection to succeed or fail
-    // - If a connection type succeeded:
-    // -- Launch home pages (failure is acceptable)
-    // -- Make Connected HTTPS request (failure is acceptable)
-    // -- Wait for connection to stop
     //
     // When handshake and all connection types fail, the
     // server is marked as failed in the local server list and
@@ -582,197 +230,249 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
 
     while (true) // Try servers loop
     {
+        if (manager->m_upgradePending)
+        {
+            // An upgrade has been downloaded and paved.  Since there is no
+            // currently connected tunnel, go ahead and restart the application
+            // using the new version.
+            // TODO: if ShellExecute fails, don't die?
+            TCHAR filename[1000];
+            if (GetModuleFileName(NULL, filename, 1000))
+            {
+                ShellExecute(0, NULL, filename, 0, 0, SW_SHOWNORMAL);
+                PostMessage(g_hWnd, WM_QUIT, 0, 0);
+                break;
+            }
+        }
+
+        my_print(true, _T("%s: enter server loop"), __TFUNCTION__);
+
         try
         {
-            // Ensure UI doesn't show "VPN Skipped" icon
-            manager->SetCurrentConnectionSkippedVPN(false);
-
             //
             // Handshake HTTPS request
             //
 
             ServerEntry serverEntry;
+            HTTPSRequest httpsRequest;
             tstring handshakeRequestPath;
             string handshakeResponse;
 
             // Send list of known server IP addresses (used for stats logging on the server)
 
+            my_print(true, _T("%s: LoadNextServer"), __TFUNCTION__);
             manager->LoadNextServer(
                             serverEntry,
                             handshakeRequestPath);
 
-            // If the "Skip VPN" flag is set, the last time the user
-            // connected with this server, VPN failed. So we don't
-            // try VPN again.
-            // Note: this flag is cleared whenever the first server
-            // in the list changes, so VPN will be tried again.
+            // We now have the client retry on port 443 in case the
+            // configured port is blocked. If this works, then 443
+            // is used for subsequent web requests.
 
-            bool skipVPN = manager->GetSkipVPN();
+            // TODO: the client could 'remember' which port works
+            // and skip the blocked one next time to avoid waiting
+            // for inevitable timeouts.
 
-            HTTPSRequest httpsRequest;
-            if (!httpsRequest.MakeRequest(
-                                manager->GetUserSignalledStop(),
-                                NarrowToTString(serverEntry.serverAddress).c_str(),
-                                serverEntry.webServerPort,
-                                serverEntry.webServerCertificate,
-                                handshakeRequestPath.c_str(),
-                                handshakeResponse))
+            vector<int> ports;
+            ports.push_back(serverEntry.webServerPort);
+            if (serverEntry.webServerPort != 443) ports.push_back(443);
+
+            for (size_t i = 0; i < ports.size(); i++)
             {
-                if (manager->GetUserSignalledStop())
-                {
-                    throw Abort();
-                }
+                int port = ports[i];
+                my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, port);
 
-                // We now have the client retry on port 443 in case the
-                // configured port is blocked. If this works, then 443
-                // is used for subsequent web requests.
-
-                // TODO: the client could 'remember' which port works
-                // and skip the blocked one next time to avoid waiting
-                // for inevitable timeouts.
-
-                else if (serverEntry.webServerPort != 443
-                            && httpsRequest.MakeRequest(
-                                        manager->GetUserSignalledStop(),
-                                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                                        443,
-                                        serverEntry.webServerCertificate,
-                                        handshakeRequestPath.c_str(),
-                                        handshakeResponse))
+                if (httpsRequest.MakeRequest(
+                                    manager->GetUserSignalledStop(true),
+                                    NarrowToTString(serverEntry.serverAddress).c_str(),
+                                    port,
+                                    serverEntry.webServerCertificate,
+                                    handshakeRequestPath.c_str(),
+                                    handshakeResponse))
                 {
-                    serverEntry.webServerPort = 443;
-                    // Fall through to success case
-                }
-                else
-                {
-                    throw TryNextServer();
+                    // Handshake succeeded. Use this port for future requests.
+                    serverEntry.webServerPort = port;
+                    break;
                 }
             }
 
-            manager->HandleHandshakeResponse(handshakeResponse.c_str());
-
-            //
-            // Upgrade
-            //
-
-            // Upgrade now if handshake notified of new version
-            tstring downloadRequestPath;
-            string downloadResponse;
-            if (manager->RequireUpgrade(downloadRequestPath))
+            if (handshakeResponse.length() > 0)
             {
-                my_print(false, _T("Upgrading to new version..."));
+                my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
+                manager->HandleHandshakeResponse(handshakeResponse.c_str());
+            }
+            else
+            {
+                throw TryNextServer();
+            }
 
-                // Download new binary
-
-                DWORD start = GetTickCount();
-                if (!httpsRequest.MakeRequest(
-                            manager->GetUserSignalledStop(),
-                            NarrowToTString(serverEntry.serverAddress).c_str(),
-                            serverEntry.webServerPort,
-                            serverEntry.webServerCertificate,
-                            downloadRequestPath.c_str(),
-                            downloadResponse))
+            // If handshake notified of new version, start the upgrade in a (background) thread
+            if (manager->RequireUpgrade())
+            {
+                if (!manager->m_upgradeThread ||
+                    WAIT_OBJECT_0 == WaitForSingleObject(manager->m_upgradeThread, 0))
                 {
-                    if (manager->GetUserSignalledStop())
+                    if (!(manager->m_upgradeThread = CreateThread(0, 0, UpgradeThread, manager, 0, 0)))
                     {
-                        throw Abort();
+                        my_print(false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
-                    // else fall through to Establish()
-
-                    // If the download failed, we simply proceed with the connection.
-                    // Rationale:
-                    // - The server is (and hopefully will remain) backwards compatible.
-                    // - The failure is likely a configuration one, as the handshake worked.
-                    // - A configuration failure could be common across all servers, so the
-                    //   client will never connect.
-                    // - Fail-over exposes new server IPs to hostile networks, so we don't
-                    //   like doing it in the case where we know the handshake already succeeded.
-                }
-                else
-                {
-                    // Speed feedback
-                    DWORD now = GetTickCount();
-                    if (now >= start) // GetTickCount can wrap
-                    {
-                        string speedResponse;
-                        httpsRequest.MakeRequest(
-                                        manager->GetUserSignalledStop(),
-                                        NarrowToTString(serverEntry.serverAddress).c_str(),
-                                        serverEntry.webServerPort,
-                                        serverEntry.webServerCertificate,
-                                        manager->GetSpeedRequestPath(
-                                            _T("(NONE)"),
-                                            _T("download"),
-                                            _T("(NONE)"),
-                                            now-start,
-                                            downloadResponse.length()).c_str(),
-                                        speedResponse);
-                    }
-
-                    // Perform upgrade.
-        
-                    // If the upgrade succeeds, it will terminate the process and we don't proceed with Establish.
-                    // If it fails, we DO proceed with Establish -- using the old (current) version.  One scenario
-                    // in this case is if the binary is on read-only media.
-                    // NOTE: means the server should always support old versions... which for now just means
-                    // supporting Establish() etc. as we're already past the handshake.
-
-                    if (manager->DoUpgrade(downloadResponse))
-                    {
-                        // NOTE: state will remain INITIALIZING.  The app is terminating.
-                        return 0;
-                    }
-                    // else fall through to Establish()
                 }
             }
 
-            bool userSkipVPN = UserSkipVPN();
+            // Make a copy of the session info, so that we don't have to hold 
+            // the mutex while connecting.
+            SessionInfo sessionInfo;
+            {
+                AutoMUTEX(manager->m_mutex);
+                sessionInfo = manager->m_currentSessionInfo;
+            }
 
+            my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+
+            // Force a stop check before trying to connect with transport
+            (void)manager->GetUserSignalledStop(true);
+
+            SystemProxySettings systemProxySettings;
+
+            // Attempt to connect to the current server using the current transport.
             try
             {
-                // Establish VPN connection and wait for termination
-                // Throws TryNextServer or Abort on failure
-                
-                manager->SetCurrentConnectionSkippedVPN(skipVPN);
-
-                // NOTE: IGNORE_VPN_RELAY is for automated testing only
-
-                if (IGNORE_VPN_RELAY || skipVPN || userSkipVPN)
-                {
-                    throw TryNextServer();
-                }
-
-                DoVPNConnection(manager, serverEntry);
+                // Launches the transport thread and doesn't return until it
+                // observes a successful (or not) connection.
+                manager->m_transport->Connect(
+                                        sessionInfo, 
+                                        &systemProxySettings,
+                                        manager->GetUserSignalledStop(true));
             }
-            catch (TryNextServer&)
+            catch (ITransport::TransportFailed&)
             {
-                // When the VPN attempt fails, establish SSH connection and wait for termination
-                manager->RemoveVPNConnection();
+                my_print(true, _T("%s: transport failed"), __TFUNCTION__);
 
-                // Don't set the persistent flag if the user setting is set, so that removing the
-                // user setting will cause VPN to be tried again.
-                if (!userSkipVPN)
-                {
-                    // Set persistent flag to not try VPN again when we run exactly the same server again
-                    manager->SetSkipVPN();
-                }
+                // Report error code to server for logging/trouble-shooting.
+                tstring requestPath = manager->GetFailedRequestPath(manager->m_transport);    
+                string response;
+                HTTPSRequest httpsRequest;
+                (void)httpsRequest.MakeRequest( // Ignore failure
+                                    manager->GetUserSignalledStop(true),
+                                    NarrowToTString(serverEntry.serverAddress).c_str(),
+                                    serverEntry.webServerPort,
+                                    serverEntry.webServerCertificate,
+                                    requestPath.c_str(),
+                                    response);
 
-                DoSSHConnection(manager, serverEntry);
+                throw TryNextServer();
             }
 
+            // Force a stop check before trying to set up local proxy
+            (void)manager->GetUserSignalledStop(true);
+
+            //
+            // Set up the local proxy
+            //
+
+            my_print(true, _T("%s: setting up LocalProxy"), __TFUNCTION__);
+            LocalProxy localProxy(
+                        manager, 
+                        sessionInfo, 
+                        &systemProxySettings,
+                        manager->m_transport->GetLocalProxyParentPort(), 
+                        manager->GetSplitTunnelingFilePath()); // split tunneling file
+
+            // Launches the local proxy thread and doesn't return until it
+            // observes a successful (or not) connection.
+            if (!localProxy.Start(manager->GetUserSignalledStop(true)))
+            {
+                throw IWorkerThread::Error("LocalProxy::Start failed");
+            }
+
+            //
+            // Transport and local proxy in place.
+            //
+
+            //
+            // Apply the system proxy settings.
+            //
+
+            systemProxySettings.Apply();
+
+            //
+            // Do post-connect work, like opening home pages.
+            //
+
+            my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
+            manager->DoPostConnect(sessionInfo);
+
+            //
+            // Wait for transport and/or local proxy to stop (or fail)
+            //
+
+            my_print(true, _T("%s: entering transport+localproxy wait"), __TFUNCTION__);
+
+            HANDLE waitHandles[] = { manager->m_transport->GetStoppedEvent(), 
+                                     localProxy.GetStoppedEvent() };
+            size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
+
+            DWORD result = WaitForMultipleObjects(
+                            waitHandlesCount, 
+                            waitHandles, 
+                            FALSE, // wait for any event
+                            INFINITE);
+
+            // At least one of the connection threads has stopped, or there's 
+            // an error. Tell both transport and localProxy and stop and wait 
+            // for them to do so.
+            localProxy.Stop();
+            manager->m_transport->Stop();
+            manager->m_transport->Cleanup();
+
+            if (result > (WAIT_OBJECT_0 + waitHandlesCount))
+            {
+                throw IWorkerThread::Error("WaitForMultipleObjects failed");
+            }
+
+            // Revert the system proxy settings.
+            // This will also be done by the systemProxySettings dtor, 
+            // but we'll make it explicit here.
+            systemProxySettings.Revert();
+
+            //
+            // Disconnected
+            //
+
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+
+            my_print(true, _T("%s: breaking"), __TFUNCTION__);
             break;
         }
-        catch (Abort&)
+        catch (IWorkerThread::Error& error)
         {
-            manager->RemoveVPNConnection();
-            manager->SSHDisconnect();
+            // Unrecoverable error. Cleanup and exit.
+            my_print(true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
+            manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
-        catch (TryNextServer&)
+        catch (IWorkerThread::Abort&)
         {
-            manager->RemoveVPNConnection();
-            manager->SSHDisconnect();
+            // User requested cancel. Cleanup and exit.
+            my_print(true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
+            manager->m_transport->Cleanup();
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            break;
+        }
+        catch (ConnectionManager::Abort&)
+        {
+            // User requested cancel. Cleanup and exit.
+            my_print(true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
+            manager->m_transport->Cleanup();
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            break;
+        }
+        catch (ConnectionManager::TryNextServer&)
+        {
+            // Failed to connect to the server. Try the next one.
+            my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
+            manager->m_transport->Cleanup();
             manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
@@ -801,11 +501,113 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* data)
         }
     }
 
+    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
     return 0;
 }
 
+void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
+{
+    // Called from connection thread
+    // NOTE: no lock while waiting for network events
+
+    SetState(CONNECTION_MANAGER_STATE_CONNECTED);
+
+    //
+    // "Connected" HTTPS request for server stats and split tunnel routing info.
+    // It's not critical if this request fails so failure is ignored.
+    //
+    
+    tstring connectedRequestPath = GetConnectRequestPath(m_transport);
+        
+    DWORD start = GetTickCount();
+    string response;
+    HTTPSRequest httpsRequest;
+    if (httpsRequest.MakeRequest(
+                        GetUserSignalledStop(true),
+                        NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                        sessionInfo.GetWebPort(),
+                        sessionInfo.GetWebServerCertificate(),
+                        connectedRequestPath.c_str(),
+                        response))
+    {
+        // Speed feedback
+        // Note: the /connected request is not tunneled as it's not proxied
+
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            HTTPSRequest httpsRequest;
+            httpsRequest.MakeRequest(
+                            GetUserSignalledStop(true),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            sessionInfo.GetWebPort(),
+                            sessionInfo.GetWebServerCertificate(),
+                            GetSpeedRequestPath(
+                                m_transport->GetTransportProtocolName(),
+                                _T("connected"),
+                                _T("(NONE)"),
+                                now-start,
+                                response.length()).c_str(),
+                            speedResponse);
+        }
+
+        // Process split tunnel response
+        ProcessSplitTunnelResponse(response);
+    }
+
+    //
+    // Open home pages in browser
+    //
+    
+    OpenHomePages();
+
+    // Perform tunneled speed test when requested
+    // In VPN mode, the WinHttp request is implicitly tunneled.
+
+    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
+    GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
+    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
+
+    if (speedTestServerAddress.length() > 0)
+    {
+        DWORD start = GetTickCount();
+        string response;
+        HTTPSRequest httpsRequest;
+        bool success = false;
+        if (httpsRequest.MakeRequest(
+                            GetUserSignalledStop(true),
+                            speedTestServerAddress.c_str(),
+                            _ttoi(speedTestServerPort.c_str()),
+                            "",
+                            speedTestRequestPath.c_str(),
+                            response))
+        {
+            success = true;
+        }
+        DWORD now = GetTickCount();
+        if (now >= start) // GetTickCount can wrap
+        {
+            string speedResponse;
+            HTTPSRequest httpsRequest;
+            httpsRequest.MakeRequest(
+                            GetUserSignalledStop(true),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            sessionInfo.GetWebPort(),
+                            sessionInfo.GetWebServerCertificate(),
+                            GetSpeedRequestPath(
+                                m_transport->GetTransportProtocolName(),
+                                success ? _T("speed_test") : _T("speed_test_failure"),
+                                speedTestURL.c_str(),
+                                now-start,
+                                response.length()).c_str(),
+                            speedResponse);
+        }
+    }
+}
+
 bool ConnectionManager::SendStatusMessage(
-                            int connectType, bool connected,
+                            bool connected,
                             const map<string, int>& pageViewEntries,
                             const map<string, int>& httpsRequestEntries,
                             unsigned long long bytesTransferred)
@@ -827,7 +629,7 @@ bool ConnectionManager::SendStatusMessage(
     // TODO: the user may be left waiting too long after cancelling; add
     // a shorter timeout in this case
     bool ignoreCancel = false;
-    bool& cancel = connected ? GetUserSignalledStop() : ignoreCancel;
+    bool& cancel = connected ? GetUserSignalledStop(true) : ignoreCancel;
 
     // Format stats data for consumption by the server. 
 
@@ -864,7 +666,7 @@ bool ConnectionManager::SendStatusMessage(
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
-    tstring requestPath = GetSSHStatusRequestPath(connectType, connected);
+    tstring requestPath = GetStatusRequestPath(m_transport, connected);
     string response;
     HTTPSRequest httpsRequest;
     bool success = httpsRequest.MakeRequest(
@@ -914,146 +716,33 @@ void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, tstring& serverP
     requestPath = NarrowToTString(m_currentSessionInfo.GetSpeedTestRequestPath());
 }
 
-// ==== VPN Session Functions =================================================
-
-bool ConnectionManager::CurrentServerVPNCapable(void)
+tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
-
-    return m_currentSessionInfo.GetPSK().length() > 0;
-}
-
-tstring ConnectionManager::GetVPNConnectRequestPath(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=VPN") +
-           _T("&session_id=") + m_vpnConnection.GetPPPIPAddress();
-}
-
-tstring ConnectionManager::GetVPNFailedRequestPath(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    std::stringstream s;
-    s << m_vpnConnection.GetLastVPNErrorCode();
 
     return tstring(HTTP_FAILED_REQUEST_PATH) + 
            _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=VPN") +
-           _T("&error_code=") + NarrowToTString(s.str());
+           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
+           _T("&error_code=") + transport->GetLastTransportError();
 }
 
-VPNConnectionState ConnectionManager::GetVPNConnectionState(void)
+tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
-    
-    return m_vpnConnection.GetState();
-}
-
-HANDLE ConnectionManager::GetVPNConnectionStateChangeEvent(void)
-{
-    AutoMUTEX lock(m_mutex);
-    
-    return m_vpnConnection.GetStateChangeEvent();
-}
-
-void ConnectionManager::RemoveVPNConnection(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    m_vpnConnection.Remove();
-}
-
-void ConnectionManager::VPNEstablish(void)
-{
-    // Kick off the VPN connection establishment
-
-    AutoMUTEX lock(m_mutex);
-    
-    if (!m_vpnConnection.Establish(NarrowToTString(m_currentSessionInfo.GetServerAddress()),
-                                   NarrowToTString(m_currentSessionInfo.GetPSK())))
-    {
-        // This is a local error, we should not try the next server because
-        // we'll likely end up in an infinite loop.
-        // UPDATE: was throwing Abort for reason above, now throwing TryNextServer
-        // to try SSH instead. Assumes we always can try SSH, otherwise we should
-        // still abort.
-        // NOTE: if we know for certain that VPN won't work, we should record that
-        // and stop trying here (and elsewhere in the retry loop)
-        throw TryNextServer();
-    }
-}
-
-void ConnectionManager::WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state)
-{
-    // NOTE: no lock, as in ConnectionManagerStartThread
-
-    VPNConnectionState originalState = state;
-
-    int totalWaitMilliseconds = 0;
-
-    while (state == GetVPNConnectionState())
-    {
-        HANDLE stateChangeEvent = GetVPNConnectionStateChangeEvent();
-
-        // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
-
-        // Also, wait no longer than VPN_CONNECTION_TIMEOUT_SECONDS... overriding any system
-        // configuration built-in VPN client timeout (which we've found to be too long -- over a minute).
-
-        int waitMilliseconds = 100;
-        DWORD result = WaitForSingleObject(stateChangeEvent, waitMilliseconds);
-
-        totalWaitMilliseconds += waitMilliseconds;
-
-        if (GetUserSignalledStop() || result == WAIT_FAILED || result == WAIT_ABANDONED)
-        {
-            throw Abort();
-        }
-        else if (
-            result == WAIT_TIMEOUT &&
-            originalState == VPN_CONNECTION_STATE_STARTING &&
-            totalWaitMilliseconds >= VPN_CONNECTION_TIMEOUT_SECONDS*1000)
-        {
-            throw TryNextServer();
-        }
-    }
-}
-
-// ==== SSH Session Functions =================================================
-
-bool ConnectionManager::CurrentServerSSHCapable()
-{
-    AutoMUTEX lock(m_mutex);
-
-    return m_currentSessionInfo.GetSSHHostKey().length() > 0;
-}
-
-tstring ConnectionManager::GetSSHConnectRequestPath(int connectType)
-{
-    AutoMUTEX lock(m_mutex);
-
-    // TODO: get SSH session ID?
 
     return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
            _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")) +
-           _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID());
+           _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
+           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo);
 }
 
-tstring ConnectionManager::GetSSHStatusRequestPath(int connectType, bool connected)
+tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -1064,72 +753,28 @@ tstring ConnectionManager::GetSSHStatusRequestPath(int connectType, bool connect
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")) +
-           _T("&session_id=") + NarrowToTString(m_currentSessionInfo.GetSSHSessionID()) +
+           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
+           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) + 
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
-tstring ConnectionManager::GetSSHFailedRequestPath(int connectType)
+void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath)
 {
     AutoMUTEX lock(m_mutex);
 
-    std::stringstream s;
-    s << connectType;
-
-    // TODO: get error code from SSH client?
-
-    return tstring(HTTP_FAILED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (connectType == SSH_CONNECT_OBFUSCATED ? _T("OSSH") : _T("SSH")) +
-           _T("&error_code=0");
-}
-
-bool ConnectionManager::SSHConnect(int connectType)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return m_sshConnection.Connect(
-            connectType,
-            NarrowToTString(m_currentSessionInfo.GetServerAddress()),
-            NarrowToTString(m_currentSessionInfo.GetSSHPort()),
-            NarrowToTString(m_currentSessionInfo.GetSSHHostKey()),
-            NarrowToTString(m_currentSessionInfo.GetSSHUsername()),
-            NarrowToTString(m_currentSessionInfo.GetSSHPassword()),
-            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedPort()),
-            NarrowToTString(m_currentSessionInfo.GetSSHObfuscatedKey()),
-            m_currentSessionInfo.GetPageViewRegexes(),
-            m_currentSessionInfo.GetHttpsRequestRegexes());
-}
-
-void ConnectionManager::SSHDisconnect(void)
-{
-    // Note: no lock
-
-    m_sshConnection.Disconnect();
-}
-
-bool ConnectionManager::SSHWaitForConnected(void)
-{
-    // Note: no lock
-
-    return m_sshConnection.WaitForConnected();
-}
-
-void ConnectionManager::SSHWaitAndDisconnect(void)
-{
-    // Note: no lock
-
-    m_sshConnection.WaitAndDisconnect(this);
+    sessionInfo = m_currentSessionInfo;
+    requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
+                    _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                    _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+                    _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
+                    _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 }
 
 void ConnectionManager::MarkCurrentServerFailed(void)
 {
-    AutoMUTEX lock(m_mutex);
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
     
-    m_vpnList.MarkCurrentServerFailed();
+    m_serverList.MarkCurrentServerFailed();
 }
 
 // ==== General Session Functions =============================================
@@ -1138,14 +783,17 @@ void ConnectionManager::LoadNextServer(
         ServerEntry& serverEntry,
         tstring& handshakeRequestPath)
 {
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
     // Select next server to try to connect to
 
-    AutoMUTEX lock(m_mutex);
+    AutoMUTEX lock(m_mutex, __TFUNCTION__);
     
     try
     {
+        my_print(true, _T("%s: GetNextServer"), __TFUNCTION__);
         // Try the next server in our list.
-        serverEntry = m_vpnList.GetNextServer();
+        serverEntry = m_serverList.GetNextServer();
     }
     catch (std::exception &ex)
     {
@@ -1155,7 +803,7 @@ void ConnectionManager::LoadNextServer(
 
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
-
+    my_print(true, _T("%s: m_currentSessionInfo.Set"), __TFUNCTION__);
     m_currentSessionInfo.Set(serverEntry);
 
     // Output values used in next TryNextServer step
@@ -1167,13 +815,16 @@ void ConnectionManager::LoadNextServer(
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
-
-    ServerEntries serverEntries =  m_vpnList.GetList();
+    my_print(true, _T("%s: m_serverList.GetList"), __TFUNCTION__);
+    ServerEntries serverEntries =  m_serverList.GetList();
+    my_print(true, _T("%s: serverEntries loop"), __TFUNCTION__);
     for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
         handshakeRequestPath += _T("&known_server=");
         handshakeRequestPath += NarrowToTString(ii->serverAddress);
     }
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)
@@ -1193,33 +844,98 @@ void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)
 
     try
     {
-        m_vpnList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
+        m_serverList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
     }
     catch (std::exception &ex)
     {
         my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
-        // This isn't fatal.  The VPN connection can still be established.
+        // This isn't fatal.  The transport connection can still be established.
     }
 }
 
-bool ConnectionManager::RequireUpgrade(tstring& downloadRequestPath)
+bool ConnectionManager::RequireUpgrade(void)
 {
     AutoMUTEX lock(m_mutex);
-    
-    if (m_currentSessionInfo.GetUpgradeVersion().size() > 0)
-    {
-        downloadRequestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
-                              _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                              _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                              _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
-                              _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
-        return true;
-    }
 
-    return false;
+    return !m_upgradePending && m_currentSessionInfo.GetUpgradeVersion().size() > 0;
 }
 
-bool ConnectionManager::DoUpgrade(const string& download)
+DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
+{
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
+    my_print(false, _T("Downloading new version..."));
+
+    ConnectionManager* manager = (ConnectionManager*)object;
+
+    try
+    {
+        SessionInfo sessionInfo;
+        tstring downloadRequestPath;
+        string downloadResponse;
+        // Note that this is getting the current session info, which is set
+        // by LoadNextServer.  So it's unlikely but possible that we may be
+        // loading the next server after the first one that notified us of an
+        // upgrade failed to connect.  This still should not be a problem, since
+        // all servers should have the same upgrades available.
+        manager->GetUpgradeRequestInfo(sessionInfo, downloadRequestPath);
+
+        // Download new binary
+        DWORD start = GetTickCount();
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.MakeRequest(
+                    manager->GetUserSignalledStop(true),
+                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                    sessionInfo.GetWebPort(),
+                    sessionInfo.GetWebServerCertificate(),
+                    downloadRequestPath.c_str(),
+                    downloadResponse))
+        {
+            // If the download failed, we simply do nothing.
+            // Rationale:
+            // - The server is (and hopefully will remain) backwards compatible.
+            // - The failure is likely a configuration one, as the handshake worked.
+            // - A configuration failure could be common across all servers, so the
+            //   client will never connect.
+            // - Fail-over exposes new server IPs to hostile networks, so we don't
+            //   like doing it in the case where we know the handshake already succeeded.
+        }
+        else
+        {
+            // Speed feedback
+            DWORD now = GetTickCount();
+            if (now >= start) // GetTickCount can wrap
+            {
+                string speedResponse;
+                (void)httpsRequest.MakeRequest( // Ignore failure
+                                manager->GetUserSignalledStop(true),
+                                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                                sessionInfo.GetWebPort(),
+                                sessionInfo.GetWebServerCertificate(),
+                                manager->GetSpeedRequestPath(
+                                    _T("(NONE)"),
+                                    _T("download"),
+                                    _T("(NONE)"),
+                                    now-start,
+                                    downloadResponse.length()).c_str(),
+                                speedResponse);
+            }
+
+            // Perform upgrade.
+        
+            manager->PaveUpgrade(downloadResponse);
+        }
+    }
+    catch (Abort&)
+    {
+        // do nothing, just exit
+    }
+
+    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
+    return 0;
+}
+
+void ConnectionManager::PaveUpgrade(const string& download)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -1228,8 +944,8 @@ bool ConnectionManager::DoUpgrade(const string& download)
     TCHAR filename[1000];
     if (!GetModuleFileName(NULL, filename, 1000))
     {
-        // Abort upgrade: Establish() will proceed.
-        return false;
+        // Abort upgrade
+        return;
     }
 
     // Rename current binary to archive name
@@ -1290,21 +1006,11 @@ bool ConnectionManager::DoUpgrade(const string& download)
             CopyFile(archive_filename.c_str(), filename, FALSE);
         }
 
-        // Abort upgrade: Establish() will proceed.
-        return false;
+        // Abort upgrade
+        return;
     }
 
-    // Don't teardown connection: see comment in VPNConnection::Remove
-
-    m_vpnConnection.SuspendTeardownForUpgrade();
-
-    // Die & respawn
-    // TODO: if ShellExecute fails, don't die?
-
-    ShellExecute(0, NULL, filename, 0, 0, SW_SHOWNORMAL);
-    PostMessage(g_hWnd, WM_QUIT, 0, 0);
-
-    return true;
+    m_upgradePending = true;
 }
 
 void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoutes)
@@ -1314,8 +1020,6 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
     // Decompress split tunnel route info
     // Defaults to blank route list on any error --> no split tunneling
 
-    m_splitTunnelRoutes = "";
-
     if (compressedRoutes.length() == 0)
     {
         return;
@@ -1323,9 +1027,10 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
 
     const int CHUNK_SIZE = 1024;
     const int SANITY_CHECK_SIZE = 10*1024*1024;
-    int ret;
+    DWORD ret;
+    unsigned have = 0, total = 0;
     z_stream stream;
-    char out[CHUNK_SIZE+1];
+    char out[CHUNK_SIZE];
 
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
@@ -1337,6 +1042,23 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         return;
     }
 
+
+    tstring filePath = GetSplitTunnelingFilePath();
+    if (filePath.length() == 0)
+    {
+        my_print(false, _T("ProcessSplitTunnelResponse - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        return;
+    }
+
+    AutoHANDLE file = CreateFile(filePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (file == INVALID_HANDLE_VALUE)
+    {
+        my_print(false, _T("ProcessSplitTunnelResponse - CreateFile failed (%d)"), GetLastError());
+        return;
+    }
+
+    DWORD written;
     do
     {
         stream.avail_out = CHUNK_SIZE;
@@ -1345,18 +1067,42 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         if (ret != Z_OK && ret != Z_STREAM_END)
         {
             my_print(true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
-            m_splitTunnelRoutes = "";
+            DeleteFile(filePath.c_str());
             break;
         }
-        out[CHUNK_SIZE - stream.avail_out] = '\0';
-        m_splitTunnelRoutes += out;
-        if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
+        have = CHUNK_SIZE - stream.avail_out;
+        if (!WriteFile(file, (unsigned char*)out, have, &written, NULL) || written != have)
+        {
+            throw std::exception("ProcessSplitTunnelResponse - WriteFile failed");
+        }
+
+        total += have;
+
+        if (total > SANITY_CHECK_SIZE)
         {
             my_print(true, _T("ProcessSplitTunnelResponse overflow"));
-            m_splitTunnelRoutes = "";
+            DeleteFile(filePath.c_str());
             break;
         }
     } while (ret != Z_STREAM_END);
 
     inflateEnd(&stream);
+}
+tstring ConnectionManager::GetSplitTunnelingFilePath()
+{
+    TCHAR filePath[MAX_PATH];
+    TCHAR tempPath[MAX_PATH];
+    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
+    // tempPath can contain no more than MAX_PATH-14 characters
+    int ret = GetTempPath(MAX_PATH, tempPath);
+    if (ret > MAX_PATH-14 || ret == 0)
+    {
+        return _T("");
+    }
+
+    if(NULL != PathCombine(filePath, tempPath, SPLIT_TUNNELING_FILE_NAME))
+    {
+        return tstring(filePath);
+    }
+    return _T("");
 }

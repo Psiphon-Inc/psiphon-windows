@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,35 +19,30 @@
 
 #pragma once
 
-#include <string>
-#include <sstream>
+class ITransport;
 
-using namespace std;
 
-#ifdef _UNICODE
-#define tstring wstring
-#else
-#define tstring string
-#endif
+//
+// Factory for creating new transport instances.
+// All transports must register themselves to become available.
+// Transports must use unique names.
+//
 
-typedef basic_stringstream<TCHAR> tstringstream;
+typedef ITransport* (*TransportFactory)();
 
-static tstring NarrowToTString(const string& narrowString)
+class TransportRegistry
 {
-#ifdef _UNICODE
-    wstring wideString(narrowString.length(), L' ');
-    std::copy(narrowString.begin(), narrowString.end(), wideString.begin());
-    return wideString;
-#else
-    return narrowString;
-#endif
-}
+public:
+    // Register as an available transport.
+    template<class TRANSPORT_TYPE>
+    static int Register();
 
-static string TStringToNarrow(const tstring& tString)
-{
-#ifdef _UNICODE
-    return string(tString.begin(), tString.end());
-#else
-    return tString;
-#endif
-}
+    // Create new instance of a particular transport
+    static ITransport* New(tstring transportName);
+    
+    // Create new instances of all available transports.
+    static void NewAll(vector<ITransport*>& all_transports);
+
+private:
+    static map<tstring, TransportFactory> m_registeredTransports;
+};

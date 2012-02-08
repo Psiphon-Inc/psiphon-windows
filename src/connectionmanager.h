@@ -20,58 +20,56 @@
 #pragma once
 
 #include <time.h>
-#include "vpnconnection.h"
-#include "sshconnection.h"
-#include "vpnlist.h"
+#include "serverlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
+#include "local_proxy.h"
+
+
+class ITransport;
 
 
 enum ConnectionManagerState
 {
     CONNECTION_MANAGER_STATE_STOPPED = 0,
     CONNECTION_MANAGER_STATE_STARTING,
-    CONNECTION_MANAGER_STATE_CONNECTED_VPN,
-    CONNECTION_MANAGER_STATE_CONNECTED_SSH
+    CONNECTION_MANAGER_STATE_CONNECTED
 };
 
 
-class ConnectionManager
+class ConnectionManager : public ILocalProxyStatsCollector
 {
 public:
     ConnectionManager(void);
     virtual ~ConnectionManager(void);
-    void Toggle(void);
+    void Toggle(const tstring& transport);
     void Stop(void);
-    void Start(void);
+    void Start(const tstring& transport);
     time_t GetStartingTime(void);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState(void);
-    const bool& GetUserSignalledStop(void) {return m_userSignalledStop;}
-    void OpenHomePages(void);
-    void SetSkipVPN(void);
-    void ResetSkipVPN(void);
-    bool GetSkipVPN(void);
-    void SetCurrentConnectionSkippedVPN(bool skippedVPN) {m_currentSessionSkippedVPN = skippedVPN;}
-    bool CurrentSessionSkippedVPN(void) {return m_currentSessionSkippedVPN;}
+    const bool& GetUserSignalledStop(bool throwIfTrue);
+    void OpenHomePages(const TCHAR* defaultHomePage=0);
     bool SendStatusMessage(
-            int connectType, bool connected,
+            bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
-    static void DoVPNConnection(
-        ConnectionManager* manager,
-        const ServerEntry& serverEntry);
-    static void DoSSHConnection(
-        ConnectionManager* manager,
-        const ServerEntry& serverEntry);
+    static DWORD WINAPI ConnectionManager::UpgradeThread(void* object);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class TryNextServer { };
     class Abort { };
+
+    void DoPostConnect(const SessionInfo& sessionInfo);
+
+    tstring GetFailedRequestPath(ITransport* transport);
+    tstring GetConnectRequestPath(ITransport* transport);
+    tstring GetStatusRequestPath(ITransport* transport, bool connected);
+    void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
 
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
@@ -87,37 +85,21 @@ private:
         tstring& handshakeRequestPath);
     void HandleHandshakeResponse(
         const char* handshakeResponse);
-    bool RequireUpgrade(tstring& downloadRequestPath);
-    bool DoUpgrade(const string& download);
+    bool RequireUpgrade(void);
+    void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
+    tstring GetSplitTunnelingFilePath();
 
-    tstring GetVPNConnectRequestPath(void);
-    tstring GetVPNFailedRequestPath(void);
-    bool CurrentServerVPNCapable(void);
-    VPNConnectionState GetVPNConnectionState(void);
-    HANDLE GetVPNConnectionStateChangeEvent(void);
-    void RemoveVPNConnection(void);
-    void VPNEstablish(void);
-    void WaitForVPNConnectionStateToChangeFrom(VPNConnectionState state);
-
-    tstring GetSSHConnectRequestPath(int connectType);
-    tstring GetSSHStatusRequestPath(int connectType, bool connected);
-    tstring GetSSHFailedRequestPath(int connectType);
-    bool CurrentServerSSHCapable(void);
-    bool SSHConnect(int connectType);
-    void SSHDisconnect(void);
-    bool SSHWaitForConnected(void);
-    void SSHWaitAndDisconnect(void);
-
+private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
-    VPNList m_vpnList;
-    VPNConnection m_vpnConnection;
+    ServerList m_serverList;
     bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
-    SSHConnection m_sshConnection;
     HANDLE m_thread;
-    bool m_currentSessionSkippedVPN;
+    HANDLE m_upgradeThread;
     time_t m_startingTime;
     string m_splitTunnelRoutes;
+    ITransport* m_transport;
+    bool m_upgradePending;
 };

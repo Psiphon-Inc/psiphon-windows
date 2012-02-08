@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,228 +18,96 @@
  */
 
 #include "stdafx.h"
-#include "config.h"
-#include "connectionmanager.h"
-#include "vpnconnection.h"
+#include "transport.h"
+#include "vpntransport.h"
+#include "sessioninfo.h"
 #include "psiclient.h"
 #include "ras.h"
 #include "raserror.h"
-#include <sstream>
+#include "utilities.h"
 
 
-void CALLBACK RasDialCallback(
-    DWORD userData,
-    DWORD,
-    HRASCONN rasConnection,
-    UINT,
-    RASCONNSTATE rasConnState,
-    DWORD dwError,
-    DWORD)
+#define VPN_CONNECTION_TIMEOUT_SECONDS  20
+#define VPN_CONNECTION_NAME             _T("Psiphon3")
+
+
+
+void TweakVPN();
+void TweakDNS();
+
+
+static const TCHAR* TRANSPORT_PROTOCOL_NAME = _T("VPN");
+static const TCHAR* TRANSPORT_DISPLAY_NAME = _T("VPN");
+
+// Support the registration of this transport type
+static ITransport* New()
 {
-    VPNConnection* vpnConnection = (VPNConnection*)userData;
-
-    my_print(true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
-    if (0 != dwError)
-    {
-        my_print(false, _T("VPN connection failed (%d)"), dwError);
-        vpnConnection->SetState(VPN_CONNECTION_STATE_FAILED);
-        vpnConnection->SetLastVPNErrorCode(dwError);
-    }
-    else if (RASCS_Connected == rasConnState)
-    {
-        // Set up a disconnection notification event
-        AutoHANDLE rasEvent = CreateEvent(0, FALSE, FALSE, 0);
-        DWORD returnCode = RasConnectionNotification(rasConnection, rasEvent, RASCN_Disconnection);
-        if (ERROR_SUCCESS != returnCode)
-        {
-            my_print(false, _T("RasConnectionNotification failed (%d)"), returnCode);
-            return;
-        }
-
-        my_print(false, _T("VPN successfully connected."));
-
-        vpnConnection->SetState(VPN_CONNECTION_STATE_CONNECTED);
-
-        if (WAIT_FAILED == WaitForSingleObject(rasEvent, INFINITE))
-        {
-            my_print(false, _T("WaitForSingleObject failed (%d)"), GetLastError());
-            // Fall through to VPN_CONNECTION_STATE_STOPPED.
-            // Otherwise we'd be stuck in a connected state.
-        }
-
-        my_print(false, _T("VPN disconnected."));
-        vpnConnection->SetState(VPN_CONNECTION_STATE_STOPPED);
-    }
-    else
-    {
-        if (rasConnState == 0)
-        {
-            my_print(false, _T("VPN connecting..."));
-        }
-        my_print(true, _T("VPN establishing connection... (%x)"), rasConnState);
-        vpnConnection->SetState(VPN_CONNECTION_STATE_STARTING);
-    }
+    return new VPNTransport();
 }
 
-VPNConnection::VPNConnection(void) :
-    m_state(VPN_CONNECTION_STATE_STOPPED),
-    m_rasConnection(0),
-    m_suspendTeardownForUpgrade(false),
-    m_lastVPNErrorCode(0)
+// static
+void VPNTransport::GetFactory(
+                    tstring& o_transportName,
+                    TransportFactory& o_transportFactory)
+{
+    o_transportFactory = New;
+    o_transportName = TRANSPORT_DISPLAY_NAME;
+}
+
+
+VPNTransport::VPNTransport()
+    : m_state(CONNECTION_STATE_STOPPED),
+      m_stateChangeEvent(INVALID_HANDLE_VALUE),
+      m_rasConnection(0),
+      m_lastErrorCode(0)
 {
     m_stateChangeEvent = CreateEvent(NULL, FALSE, FALSE, 0);
 }
 
-VPNConnection::~VPNConnection(void)
+VPNTransport::~VPNTransport()
 {
-    Remove();
+    IWorkerThread::Stop();
+
+    // We must be careful about cleaning up if we're upgrading -- we expect the
+    // client to restart again and don't want a race between the old and
+    // new processes to potentially mess with the new process's session.
+    // If we're upgrading, then we never made a connection in the first place.
+    if (!m_rasConnection)
+    {
+        (void)Cleanup();
+    }
     CloseHandle(m_stateChangeEvent);
 }
 
-void VPNConnection::SetState(VPNConnectionState newState)
-{
-    // No lock:
-    // "Simple reads and writes to properly-aligned 32-bit variables are atomic operations."
-    // http://msdn.microsoft.com/en-us/library/ms684122%28v=vs.85%29.aspx
-    m_state = newState;
-    SetEvent(m_stateChangeEvent);
+tstring VPNTransport::GetTransportProtocolName() const 
+{ 
+    return TRANSPORT_PROTOCOL_NAME;
 }
 
-VPNConnectionState VPNConnection::GetState(void)
-{
-    return m_state;
+tstring VPNTransport::GetTransportDisplayName() const 
+{ 
+    return TRANSPORT_DISPLAY_NAME;
 }
 
-tstring VPNConnection::GetPPPIPAddress(void)
+tstring VPNTransport::GetSessionID(SessionInfo sessionInfo) const
 {
-    tstring IPAddress;
-
-    if (m_rasConnection && VPN_CONNECTION_STATE_CONNECTED == GetState())
-    {
-        RASPPPIP projectionInfo;
-        memset(&projectionInfo, 0, sizeof(projectionInfo));
-        projectionInfo.dwSize = sizeof(projectionInfo);
-        DWORD projectionInfoSize = sizeof(projectionInfo);
-        DWORD returnCode = RasGetProjectionInfo(m_rasConnection, RASP_PppIp, &projectionInfo, &projectionInfoSize);
-        if (ERROR_SUCCESS != returnCode)
-        {
-            my_print(false, _T("RasGetProjectionInfo failed (%d)"), returnCode);
-        }
-
-        IPAddress = projectionInfo.szIpAddress;
-    }
-
-    return IPAddress;
+    return GetPPPIPAddress();
 }
 
-bool VPNConnection::Establish(const tstring& serverAddress, const tstring& PSK)
+int VPNTransport::GetLocalProxyParentPort() const
 {
-    DWORD returnCode = ERROR_SUCCESS;
-
-    Remove();
-
-    if (m_state != VPN_CONNECTION_STATE_STOPPED && m_state != VPN_CONNECTION_STATE_FAILED)
-    {
-        my_print(false, _T("Invalid VPN connection state in Establish (%d)"), m_state);
-        return false;
-    }
-
-    // The RasValidateEntryName function validates the format of a connection
-    // entry name. The name must contain at least one non-white-space alphanumeric character.
-    returnCode = RasValidateEntryName(0, VPN_CONNECTION_NAME);
-    if (ERROR_SUCCESS != returnCode &&
-        ERROR_ALREADY_EXISTS != returnCode)
-    {
-        my_print(false, _T("RasValidateEntryName failed (%d)"), returnCode);
-        SetLastVPNErrorCode(returnCode);
-        return false;
-    }
-
-    // Set up the VPN connection properties
-    RASENTRY rasEntry;
-    memset(&rasEntry, 0, sizeof(rasEntry));
-    rasEntry.dwSize = sizeof(rasEntry);
-    rasEntry.dwfOptions = RASEO_IpHeaderCompression |
-                          RASEO_RemoteDefaultGateway |
-                          RASEO_SwCompression |
-                          RASEO_RequireMsEncryptedPw |
-                          RASEO_RequireDataEncryption |
-                          RASEO_ModemLights;
-    rasEntry.dwfOptions2 = RASEO2_UsePreSharedKey |
-                           RASEO2_DontNegotiateMultilink |
-                           RASEO2_SecureFileAndPrint | 
-                           RASEO2_SecureClientForMSNet |
-                           RASEO2_DisableNbtOverIP;
-    rasEntry.dwVpnStrategy = VS_L2tpOnly;
-    lstrcpy(rasEntry.szLocalPhoneNumber, serverAddress.c_str());
-    rasEntry.dwfNetProtocols = RASNP_Ip;
-    rasEntry.dwFramingProtocol = RASFP_Ppp;
-    rasEntry.dwEncryptionType = ET_Require;
-    lstrcpy(rasEntry.szDeviceType, RASDT_Vpn);
-        
-    // The RasSetEntryProperties function changes the connection information
-    // for an entry in the phone book or creates a new phone-book entry.
-    // If the entry name does not match an existing entry, RasSetEntryProperties
-    // creates a new phone-book entry.
-    returnCode = RasSetEntryProperties(0, VPN_CONNECTION_NAME, &rasEntry, sizeof(rasEntry), 0, 0);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("RasSetEntryProperties failed (%d)"), returnCode);
-        SetLastVPNErrorCode(returnCode);
-        return false;
-    }
-
-    // Set the Preshared Secret
-    RASCREDENTIALS vpnCredentials;
-    memset(&vpnCredentials, 0, sizeof(vpnCredentials));
-    vpnCredentials.dwSize = sizeof(vpnCredentials);
-    vpnCredentials.dwMask = RASCM_PreSharedKey;
-    lstrcpy(vpnCredentials.szPassword, PSK.c_str());
-    returnCode = RasSetCredentials(0, VPN_CONNECTION_NAME, &vpnCredentials, FALSE);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("RasSetCredentials failed (%d)"), returnCode);
-        SetLastVPNErrorCode(returnCode);
-        return false;
-    }
-
-    // Make the vpn connection
-    RASDIALPARAMS vpnParams;
-    memset(&vpnParams, 0, sizeof(vpnParams));
-    vpnParams.dwSize = sizeof(vpnParams);
-    lstrcpy(vpnParams.szEntryName, VPN_CONNECTION_NAME);
-    lstrcpy(vpnParams.szUserName, _T("user")); // The server does not care about username
-    lstrcpy(vpnParams.szPassword, _T("password")); // This can also be hardcoded because
-                                                   // the server authentication (which we
-                                                   // really care about) is in IPSec using PSK
-
-    // Pass pointer to this object to callback for state change updates
-    vpnParams.dwCallbackId = (ULONG_PTR)this;
-
-    m_rasConnection = 0;
-    SetState(VPN_CONNECTION_STATE_STARTING);
-    returnCode = RasDial(0, 0, &vpnParams, 2, &RasDialCallback, &m_rasConnection);
-    if (ERROR_SUCCESS != returnCode)
-    {
-        my_print(false, _T("RasDial failed (%d)"), returnCode);
-        SetState(VPN_CONNECTION_STATE_FAILED);
-        SetLastVPNErrorCode(returnCode);
-        return false;
-    }
-
-    return true;
+    return 0;
 }
 
-bool VPNConnection::Remove(void)
+tstring VPNTransport::GetLastTransportError() const
 {
-    // Don't remove the connection if we're upgrading -- we expect the
-    // client to restart again and don't want a race between the old and
-    // new processes to potentially mess with the new process's session.
-    if (m_suspendTeardownForUpgrade)
-    {
-        return true;
-    }
+    std::stringstream s;
+    s << GetLastErrorCode();
+    return NarrowToTString(s.str());
+}
 
+bool VPNTransport::Cleanup()
+{
     DWORD returnCode = ERROR_SUCCESS;
 
     // Disconnect either the stored HRASCONN, or by entry name.
@@ -310,7 +178,295 @@ bool VPNConnection::Remove(void)
     return true;
 }
 
-HRASCONN VPNConnection::GetActiveRasConnection()
+void VPNTransport::TransportConnect(
+                    const SessionInfo& sessionInfo,
+                    SystemProxySettings*)
+{
+    // The SystemProxySettings param is unused
+
+    if (!ServerVPNCapable(sessionInfo))
+    {
+        throw TransportFailed();
+    }
+
+    try
+    {
+        TransportConnectHelper(sessionInfo);
+    }
+    catch(...)
+    {
+        (void)Cleanup();
+        throw;
+    }
+}
+
+void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
+{
+    //
+    // Minimum version check for VPN
+    // - L2TP/IPSec/PSK not supported on Windows 2000
+    // - Throws to try next server -- an assumption here is we'll always try SSH next
+    //
+    
+    OSVERSIONINFO versionInfo;
+    versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+    if (!GetVersionEx(&versionInfo) ||
+            versionInfo.dwMajorVersion < 5 ||
+            (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
+    {
+        my_print(false, _T("VPN requires Windows XP or greater"));
+        throw TransportFailed();
+    }
+
+    //
+    // Check VPN services and fix if required/possible
+    //
+    
+    // Note: we proceed even if the call fails. Testing is inconsistent -- don't
+    // always need all tweaks to connect.
+    TweakVPN();
+
+    //
+    // Start VPN connection
+    //
+    
+    if (!Establish(
+            NarrowToTString(sessionInfo.GetServerAddress()), 
+            NarrowToTString(sessionInfo.GetPSK())))
+    {
+        throw TransportFailed();
+    }
+
+    //
+    // Monitor VPN connection and wait for CONNECTED or FAILED
+    //
+    
+    // Also, wait no longer than VPN_CONNECTION_TIMEOUT_SECONDS... overriding any system
+    // configuration built-in VPN client timeout (which we've found to be too long -- over a minute).
+    if (!WaitForConnectionStateToChangeFrom(
+            CONNECTION_STATE_STARTING, 
+            VPN_CONNECTION_TIMEOUT_SECONDS*1000))
+    {
+        throw TransportFailed();
+    }
+    
+    if (CONNECTION_STATE_CONNECTED != GetConnectionState())
+    {
+        // Note: WaitForConnectionStateToChangeFrom throws Abort if user
+        // cancelled, so if we're here it's a FAILED case.
+        throw TransportFailed();
+    }
+
+    //
+    // Patch DNS bug on Windowx XP; and flush DNS
+    // to ensure domains are resolved with VPN's DNS server
+    //
+    
+    // Note: we proceed even if the call fails. This means some domains
+    // may not resolve properly.
+    TweakDNS();
+}
+
+bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
+{
+    // The absence of a PSK indicates that the server is not VPN-capable
+    return sessionInfo.GetPSK().length() > 0;
+}
+
+bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
+{
+    DWORD returnCode = ERROR_SUCCESS;
+
+    (void)Cleanup();
+
+    if (GetConnectionState() != CONNECTION_STATE_STOPPED && GetConnectionState() != CONNECTION_STATE_FAILED)
+    {
+        my_print(false, _T("Invalid VPN connection state in Establish (%d)"), GetConnectionState());
+        return false;
+    }
+
+    // The RasValidateEntryName function validates the format of a connection
+    // entry name. The name must contain at least one non-white-space alphanumeric character.
+    returnCode = RasValidateEntryName(0, VPN_CONNECTION_NAME);
+    if (ERROR_SUCCESS != returnCode &&
+        ERROR_ALREADY_EXISTS != returnCode)
+    {
+        my_print(false, _T("RasValidateEntryName failed (%d)"), returnCode);
+        SetLastErrorCode(returnCode);
+        return false;
+    }
+
+    // Set up the VPN connection properties
+    RASENTRY rasEntry;
+    memset(&rasEntry, 0, sizeof(rasEntry));
+    rasEntry.dwSize = sizeof(rasEntry);
+    rasEntry.dwfOptions = RASEO_IpHeaderCompression |
+                          RASEO_RemoteDefaultGateway |
+                          RASEO_SwCompression |
+                          RASEO_RequireMsEncryptedPw |
+                          RASEO_RequireDataEncryption |
+                          RASEO_ModemLights;
+    rasEntry.dwfOptions2 = RASEO2_UsePreSharedKey |
+                           RASEO2_DontNegotiateMultilink |
+                           RASEO2_SecureFileAndPrint | 
+                           RASEO2_SecureClientForMSNet |
+                           RASEO2_DisableNbtOverIP;
+    rasEntry.dwVpnStrategy = VS_L2tpOnly;
+    lstrcpy(rasEntry.szLocalPhoneNumber, serverAddress.c_str());
+    rasEntry.dwfNetProtocols = RASNP_Ip;
+    rasEntry.dwFramingProtocol = RASFP_Ppp;
+    rasEntry.dwEncryptionType = ET_Require;
+    lstrcpy(rasEntry.szDeviceType, RASDT_Vpn);
+        
+    // The RasSetEntryProperties function changes the connection information
+    // for an entry in the phone book or creates a new phone-book entry.
+    // If the entry name does not match an existing entry, RasSetEntryProperties
+    // creates a new phone-book entry.
+    returnCode = RasSetEntryProperties(0, VPN_CONNECTION_NAME, &rasEntry, sizeof(rasEntry), 0, 0);
+    if (ERROR_SUCCESS != returnCode)
+    {
+        my_print(false, _T("RasSetEntryProperties failed (%d)"), returnCode);
+        SetLastErrorCode(returnCode);
+        return false;
+    }
+
+    // Set the Preshared Secret
+    RASCREDENTIALS vpnCredentials;
+    memset(&vpnCredentials, 0, sizeof(vpnCredentials));
+    vpnCredentials.dwSize = sizeof(vpnCredentials);
+    vpnCredentials.dwMask = RASCM_PreSharedKey;
+    lstrcpy(vpnCredentials.szPassword, PSK.c_str());
+    returnCode = RasSetCredentials(0, VPN_CONNECTION_NAME, &vpnCredentials, FALSE);
+    if (ERROR_SUCCESS != returnCode)
+    {
+        my_print(false, _T("RasSetCredentials failed (%d)"), returnCode);
+        SetLastErrorCode(returnCode);
+        return false;
+    }
+
+    // Make the vpn connection
+    RASDIALPARAMS vpnParams;
+    memset(&vpnParams, 0, sizeof(vpnParams));
+    vpnParams.dwSize = sizeof(vpnParams);
+    lstrcpy(vpnParams.szEntryName, VPN_CONNECTION_NAME);
+    lstrcpy(vpnParams.szUserName, _T("user")); // The server does not care about username
+    lstrcpy(vpnParams.szPassword, _T("password")); // This can also be hardcoded because
+                                                   // the server authentication (which we
+                                                   // really care about) is in IPSec using PSK
+
+    // Pass pointer to this object to callback for state change updates
+    vpnParams.dwCallbackId = (ULONG_PTR)this;
+
+    m_rasConnection = 0;
+    SetConnectionState(CONNECTION_STATE_STARTING);
+    returnCode = RasDial(0, 0, &vpnParams, 2, &(VPNTransport::RasDialCallback), &m_rasConnection);
+    if (ERROR_SUCCESS != returnCode)
+    {
+        my_print(false, _T("RasDial failed (%d)"), returnCode);
+        SetConnectionState(CONNECTION_STATE_FAILED);
+        SetLastErrorCode(returnCode);
+        return false;
+    }
+
+    return true;
+}
+
+VPNTransport::ConnectionState VPNTransport::GetConnectionState() const
+{
+    return m_state;
+}
+
+void VPNTransport::SetConnectionState(ConnectionState newState)
+{
+    m_state = newState;
+    SetEvent(m_stateChangeEvent);
+}
+
+HANDLE VPNTransport::GetStateChangeEvent()
+{
+    return m_stateChangeEvent;
+}
+
+void VPNTransport::SetLastErrorCode(unsigned int lastErrorCode) 
+{
+    m_lastErrorCode = lastErrorCode;
+}
+
+unsigned int VPNTransport::GetLastErrorCode(void) const
+{
+    return m_lastErrorCode;
+}
+
+bool VPNTransport::DoPeriodicCheck()
+{
+    return GetConnectionState() == CONNECTION_STATE_CONNECTED;
+}
+
+bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWORD timeout)
+{
+    DWORD totalWaitMilliseconds = 0;
+
+    ConnectionState originalState = state;
+
+    while (state == GetConnectionState())
+    {
+        // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
+
+        DWORD waitMilliseconds = 100;
+
+        DWORD result = WaitForSingleObject(GetStateChangeEvent(), waitMilliseconds);
+
+        totalWaitMilliseconds += waitMilliseconds;
+
+        if (result == WAIT_TIMEOUT)
+        {
+            if (totalWaitMilliseconds >= timeout)
+                return false;
+        }
+        else if (result == WAIT_OBJECT_0)
+        {
+            // State event set, but that doesn't mean that the state actually changed.
+            // Let the loop condition check.
+            continue;
+        }
+        else if (TestBoolArray(GetSignalStopFlags())) // stop event signalled
+        {
+            throw Abort();
+        }
+        else
+        {
+            std::stringstream s;
+            s << __FUNCTION__ << ": WaitForMultipleObjects failed (" << result << ", " << GetLastError() << ")";
+            throw Error(s.str().c_str());
+        }
+    }
+
+    return true;
+}
+
+tstring VPNTransport::GetPPPIPAddress() const
+{
+    tstring IPAddress;
+
+    if (m_rasConnection && CONNECTION_STATE_CONNECTED == GetConnectionState())
+    {
+        RASPPPIP projectionInfo;
+        memset(&projectionInfo, 0, sizeof(projectionInfo));
+        projectionInfo.dwSize = sizeof(projectionInfo);
+        DWORD projectionInfoSize = sizeof(projectionInfo);
+        DWORD returnCode = RasGetProjectionInfo(m_rasConnection, RASP_PppIp, &projectionInfo, &projectionInfoSize);
+        if (ERROR_SUCCESS != returnCode)
+        {
+            my_print(false, _T("RasGetProjectionInfo failed (%d)"), returnCode);
+        }
+
+        IPAddress = projectionInfo.szIpAddress;
+    }
+
+    return IPAddress;
+}
+
+HRASCONN VPNTransport::GetActiveRasConnection()
 {
     if (m_rasConnection)
     {
@@ -393,9 +549,61 @@ HRASCONN VPNConnection::GetActiveRasConnection()
     return rasConnection;
 }
 
+void CALLBACK VPNTransport::RasDialCallback(
+    DWORD userData,
+    DWORD,
+    HRASCONN rasConnection,
+    UINT,
+    RASCONNSTATE rasConnState,
+    DWORD dwError,
+    DWORD)
+{
+    VPNTransport* vpnTransport = (VPNTransport*)userData;
+
+    my_print(true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
+    if (0 != dwError)
+    {
+        my_print(false, _T("VPN connection failed (%d)"), dwError);
+        vpnTransport->SetConnectionState(CONNECTION_STATE_FAILED);
+        vpnTransport->SetLastErrorCode(dwError);
+    }
+    else if (RASCS_Connected == rasConnState)
+    {
+        // Set up a disconnection notification event
+        AutoHANDLE rasEvent = CreateEvent(0, FALSE, FALSE, 0);
+        DWORD returnCode = RasConnectionNotification(rasConnection, rasEvent, RASCN_Disconnection);
+        if (ERROR_SUCCESS != returnCode)
+        {
+            my_print(false, _T("RasConnectionNotification failed (%d)"), returnCode);
+            return;
+        }
+
+        vpnTransport->SetConnectionState(CONNECTION_STATE_CONNECTED);
+
+        if (WAIT_FAILED == WaitForSingleObject(rasEvent, INFINITE))
+        {
+            my_print(false, _T("WaitForSingleObject failed (%d)"), GetLastError());
+            // Fall through to VPN_CONNECTION_STATE_STOPPED.
+            // Otherwise we'd be stuck in a connected state.
+        }
+
+        vpnTransport->SetConnectionState(CONNECTION_STATE_STOPPED);
+    }
+    else
+    {
+        if (rasConnState == 0)
+        {
+            my_print(false, _T("VPN connecting..."));
+        }
+        my_print(true, _T("VPN establishing connection... (%x)"), rasConnState);
+        vpnTransport->SetConnectionState(CONNECTION_STATE_STARTING);
+    }
+}
+
+
 //==== TweakVPN utility functions =============================================
 
-void FixProhibitIpsec(void)
+void FixProhibitIpsec()
 {
     // Check for non-default HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RasMan\Parameters\ProhibitIpSec = 1
     // If found, try to set to 0
@@ -481,7 +689,7 @@ void FixProhibitIpsec(void)
     RegCloseKey(key);
 }
 
-void FixVPNServices(void)
+void FixVPNServices()
 {
     // Check for disabled IPSec services and attempt to restore to
     // default (enabled, auto-start) config and start
@@ -658,7 +866,7 @@ void FixVPNServices(void)
     }
 }
 
-void TweakVPN(void)
+void TweakVPN()
 {
     // Some 3rd party VPN clients change the default Windows system configuration in ways that
     // will prevent standard IPSec VPN, such as ours, from running.  We check for the issues
@@ -730,7 +938,7 @@ static const void* memmem(
     return NULL;
 }
 
-static void PatchDNS(void)
+static void PatchDNS()
 {
     // Programmatically apply Window XP fix that ensures
     // VPN's DNS server is used (http://support.microsoft.com/kb/311218)
@@ -861,7 +1069,7 @@ static void PatchDNS(void)
 
 typedef BOOL (CALLBACK* DNSFLUSHPROC)();
 
-static bool FlushDNS(void)
+static bool FlushDNS()
 {
     // Adapted code from: http://www.codeproject.com/KB/cpp/Setting_DNS.aspx
 
@@ -895,7 +1103,7 @@ static bool FlushDNS(void)
 	return result;
 }
 
-void TweakDNS(void)
+void TweakDNS()
 {
     // Note: no lock
 

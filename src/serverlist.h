@@ -25,7 +25,7 @@ using namespace std;
 
 struct ServerEntry
 {
-    ServerEntry(void) {}
+    ServerEntry() {}
     ServerEntry(const string& serverAddress_, int webServerPort_, const string& webServerSecret_, const string& webServerCertificate_) :
         serverAddress(serverAddress_), webServerPort(webServerPort_), webServerSecret(webServerSecret_) , webServerCertificate(webServerCertificate_) {}
 
@@ -38,24 +38,23 @@ struct ServerEntry
 typedef vector<ServerEntry> ServerEntries;
 typedef ServerEntries::const_iterator ServerEntryIterator;
 
-class VPNList
+class ServerList
 {
 public:
-    VPNList(void);
-    virtual ~VPNList(void);
+    ServerList();
+    virtual ~ServerList();
     void AddEntriesToList(const vector<string>& newServerEntryList);
-    void MarkCurrentServerFailed(void);
-    ServerEntry GetNextServer(void);
-    ServerEntries GetList(void);
-    bool GetSkipVPN(void);
-    void SetSkipVPN(void);
-    void ResetSkipVPN(void);
+    void MarkCurrentServerFailed();
+    ServerEntry GetNextServer();
+    ServerEntries GetList();
 
 private:
-    ServerEntries GetListFromEmbeddedValues(void);
-    ServerEntries GetListFromSystem(void);
+    ServerEntries GetListFromEmbeddedValues();
+    ServerEntries GetListFromSystem();
     ServerEntries ParseServerEntries(const char* serverEntryListString);
     ServerEntry ParseServerEntry(const string& serverEntry);
     void WriteListToSystem(const ServerEntries& serverEntryList);
     string EncodeServerEntries(const ServerEntries& serverEntryList);
+
+    HANDLE m_mutex;
 };

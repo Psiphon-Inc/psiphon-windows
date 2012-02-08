@@ -50,4 +50,3 @@ static const char* EMBEDDED_SERVER_LIST =
 
 static const int IGNORE_SYSTEM_SERVER_LIST = 0;
 
-static const int IGNORE_VPN_RELAY = 0;

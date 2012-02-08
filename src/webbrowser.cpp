@@ -71,6 +71,13 @@ void LaunchWebPage(const tstring& url)
     }
 }
 
+void OpenBrowser(const tstring& url)
+{
+    vector<tstring> urls;
+    urls.push_back(url);
+    OpenBrowser(urls);
+}
+
 // Launch URLs in the default browser.
 void OpenBrowser(const vector<tstring>& urls)
 {

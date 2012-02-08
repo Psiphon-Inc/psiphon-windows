@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>3rdParty\zlib;json</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdParty\zlib;3rdParty\json;3rdParty\hyperlink</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -70,7 +70,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>3rdParty\zlib;json</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdParty\zlib;3rdParty\json;3rdParty\hyperlink</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -86,6 +86,8 @@
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rdParty\json\forwards.h" />
+    <ClInclude Include="3rdParty\json\json.h" />
     <ClInclude Include="3rdParty\zlib\crc32.h" />
     <ClInclude Include="3rdParty\zlib\inffast.h" />
     <ClInclude Include="3rdParty\zlib\inffixed.h" />
@@ -98,22 +100,29 @@
     <ClInclude Include="connectionmanager.h" />
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="httpsrequest.h" />
-    <ClInclude Include="json\forwards.h" />
-    <ClInclude Include="json\json.h" />
+    <ClInclude Include="local_proxy.h" />
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="serverlist.h" />
     <ClInclude Include="sessioninfo.h" />
-    <ClInclude Include="sshconnection.h" />
+    <ClInclude Include="sshtransport.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="transport.h" />
+    <ClInclude Include="transport_registry.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
-    <ClInclude Include="vpnconnection.h" />
-    <ClInclude Include="vpnlist.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="vpntransport.h" />
     <ClInclude Include="webbrowser.h" />
+    <ClInclude Include="worker_thread.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rdParty\json\jsoncpp.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="3rdParty\zlib\adler32.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -140,22 +149,23 @@
     </ClCompile>
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="httpsrequest.cpp" />
-    <ClCompile Include="json\jsoncpp.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="local_proxy.cpp" />
     <ClCompile Include="psiclient.cpp" />
+    <ClCompile Include="serverlist.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
-    <ClCompile Include="sshconnection.cpp" />
+    <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="systemproxysettings.cpp" />
+    <ClCompile Include="transport.cpp" />
+    <ClCompile Include="transport_registry.cpp" />
     <ClCompile Include="usersettings.cpp" />
-    <ClCompile Include="vpnconnection.cpp" />
-    <ClCompile Include="vpnlist.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="vpntransport.cpp" />
     <ClCompile Include="webbrowser.cpp" />
+    <ClCompile Include="worker_thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

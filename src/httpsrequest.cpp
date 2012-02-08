@@ -25,6 +25,10 @@
 #include "config.h"
 #include "embeddedvalues.h"
 
+// TEMP: Reference to a specific transport shouldn't be necessary (after local proxy is broken out)
+#include "sshtransport.h"
+
+
 // NOTE: this code depends on built-in Windows crypto services
 // How do export restrictions impact general availability of crypto services?
 // http://technet.microsoft.com/en-us/library/cc962093.aspx
@@ -37,25 +41,29 @@ class AutoHINTERNET
 {
 public:
     AutoHINTERNET(HINTERNET handle) {m_handle = handle;}
-    ~AutoHINTERNET() {WinHttpCloseHandle(m_handle);}
+    ~AutoHINTERNET() { this->WinHttpCloseHandle(); }
     operator HINTERNET() {return m_handle;}
+    void WinHttpCloseHandle() { if (m_handle != NULL) ::WinHttpCloseHandle(m_handle); m_handle = NULL; }
 private:
     HINTERNET m_handle;
 };
 
 
-HTTPSRequest::HTTPSRequest(void)
+HTTPSRequest::HTTPSRequest()
+    : m_closedEvent(NULL)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
-
-    // Must use a manual event: multiple things wait on the same event
-    m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
 }
 
-HTTPSRequest::~HTTPSRequest(void)
+HTTPSRequest::~HTTPSRequest()
 {
     // In case object is destroyed while callback is outstanding, wait
-    WaitForSingleObject(m_closedEvent, INFINITE);
+    if (m_closedEvent != NULL)
+    {
+        WaitForSingleObject(m_closedEvent, INFINITE);
+        CloseHandle(m_closedEvent);
+        m_closedEvent = NULL;
+    }
 
     CloseHandle(m_mutex);
 }
@@ -67,13 +75,24 @@ void CALLBACK WinHttpStatusCallback(
                 LPVOID lpvStatusInformation,
                 DWORD dwStatusInformationLength)
 {
+    // From: http://msdn.microsoft.com/en-us/library/windows/desktop/aa384068%28v=vs.85%29.aspx
+    // "...it is possible in WinHTTP for a notification to occur before a context 
+    // value is set. If the callback function receives a notification before the 
+    // context value is set, the application must be prepared to receive NULL in 
+    // the dwContext parameter of the callback function."
+    if (dwContext == NULL)
+    {
+        my_print(true, _T("%s: received no context; thread exiting"), __TFUNCTION__);
+        return;
+    }
+
     HTTPSRequest* httpRequest = (HTTPSRequest*)dwContext;
     CERT_CONTEXT *pCert = {0};
     DWORD dwStatusCode;
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    my_print(true, _T("HTTPS request... (%x)"), dwInternetStatus);
+    my_print(true, _T("HTTPS request... (%d)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {
@@ -206,13 +225,16 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_FLAG_REQUEST_ERROR:
         // Get error value as per http://msdn.microsoft.com/en-us/library/aa383917%28v=VS.85%29.aspx
-        my_print(false, _T("HTTP request error (%x, %x)"),
-                 ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
-                 ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
+        if (ERROR_WINHTTP_OPERATION_CANCELLED != ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError)
+        {
+            my_print(false, _T("HTTP request error (%d, %d)"),
+                     ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
+                     ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
+        }
         WinHttpCloseHandle(hRequest);
         break;
     case WINHTTP_CALLBACK_FLAG_SECURE_FAILURE:
-        my_print(false, _T("HTTP secure failure (%x)"), lpvStatusInformation);
+        my_print(false, _T("HTTP secure failure (%d)"), lpvStatusInformation);
         WinHttpCloseHandle(hRequest);
         break;
     default:
@@ -228,7 +250,7 @@ bool HTTPSRequest::MakeRequest(
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
-        bool useProxy/*=false*/,
+        int proxyPort/*=0*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
@@ -237,11 +259,17 @@ bool HTTPSRequest::MakeRequest(
                     SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
+    tstringstream proxy;
+    if (proxyPort > 0)
+    {
+        proxy << _T("127.0.0.1:") << proxyPort;
+    }
+
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-                    useProxy ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                    useProxy ? (tstring(_T("127.0.0.1:")) + POLIPO_HTTP_PROXY_PORT).c_str() : WINHTTP_NO_PROXY_NAME,
+                    proxy.str().length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    proxy.str().length() ? proxy.str().c_str() : WINHTTP_NO_PROXY_NAME,
                     WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 
@@ -304,7 +332,10 @@ bool HTTPSRequest::MakeRequest(
 
     // Kick off the asynchronous processing
 
-    ResetEvent(m_closedEvent);
+    // Must use a manual event: multiple things wait on the same event
+    assert(m_closedEvent == NULL);
+    m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
+
     m_expectedServerCertificate = webServerCertificate;
     m_requestSuccess = false;
     m_response = "";
@@ -318,6 +349,8 @@ bool HTTPSRequest::MakeRequest(
                     additionalDataLength,
                     (DWORD_PTR)this))
     {
+        CloseHandle(m_closedEvent);
+        m_closedEvent = NULL;
         my_print(false, _T("WinHttpSendRequest failed (%d)"), GetLastError());
         return false;
     }
@@ -332,16 +365,20 @@ bool HTTPSRequest::MakeRequest(
         {
             if (cancel)
             {
-                WinHttpCloseHandle(hRequest);
+                hRequest.WinHttpCloseHandle();
                 WaitForSingleObject(m_closedEvent, INFINITE);
+                CloseHandle(m_closedEvent);
+                m_closedEvent = NULL;
                 return false;
             }
         }
         else if (result != WAIT_OBJECT_0)
         {
             // internal error
-            WinHttpCloseHandle(hRequest);
+            hRequest.WinHttpCloseHandle();
             WaitForSingleObject(m_closedEvent, INFINITE);
+            CloseHandle(m_closedEvent);
+            m_closedEvent = NULL;
             return false;
         }
         else
@@ -350,6 +387,9 @@ bool HTTPSRequest::MakeRequest(
             break;
         }
     }
+
+    CloseHandle(m_closedEvent);
+    m_closedEvent = NULL;
 
     if (m_requestSuccess)
     {

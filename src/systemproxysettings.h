@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 #pragma once
 
 #include "tstring.h"
-
 #include <vector>
 
 using namespace std;
@@ -28,10 +27,19 @@ using namespace std;
 class SystemProxySettings
 {
 public:
-    SystemProxySettings(void);
-    virtual ~SystemProxySettings(void);
-    bool Configure(void);
-    bool Revert(void);
+    SystemProxySettings();
+    virtual ~SystemProxySettings();
+
+    //
+    // The Set*ProxyPort functions do *not* apply the setting -- they only set
+    // a member variable that will be used when Apply is called to actually
+    // make the settings take effect.
+    void SetHttpProxyPort(int port);
+    void SetHttpsProxyPort(int port);
+    void SetSocksProxyPort(int port);
+    bool Apply();
+
+    bool Revert();
 
 private:
     static const int INTERNET_OPTIONS_NUMBER = 2;
@@ -51,7 +59,13 @@ private:
     bool SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress);
     bool SetConnectionProxy(const connection_proxy& setting);
     bool GetConnectionProxy(connection_proxy& setting);
-    vector<tstring> GetRasConnectionNames(void);
+    vector<tstring> GetRasConnectionNames();
+    tstring MakeProxySettingString();
 
+    bool m_settingsApplied;
     vector<connection_proxy> m_originalSettings;
+
+    int m_httpProxyPort;
+    int m_httpsProxyPort;
+    int m_socksProxyPort;
 };

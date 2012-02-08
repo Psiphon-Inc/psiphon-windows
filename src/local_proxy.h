@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,58 +19,59 @@
 
 #pragma once
 
-#include "tstring.h"
-#include "systemproxysettings.h"
+#include "worker_thread.h"
 
-class ConnectionManager;
+class SessionInfo;
 struct RegexReplace;
+class SystemProxySettings;
 
-enum
-{
-    SSH_CONNECT_OBFUSCATED = 0,
-    SSH_CONNECT_STANDARD
-};
 
-class SSHConnection
+class ILocalProxyStatsCollector
 {
 public:
-    SSHConnection(const bool& cancel);
-    virtual ~SSHConnection(void);
+    virtual bool SendStatusMessage(
+                    bool connected,
+                    const map<string, int>& pageViewEntries,
+                    const map<string, int>& httpsRequestEntries,
+                    unsigned long long bytesTransferred) = 0;
+};
 
-    // TODO: async connect, state change notifiers, connection monitor, etc.?
 
-    bool Connect(
-        int connectType,
-        const tstring& sshServerAddress,
-        const tstring& sshServerPort,
-        const tstring& sshServerHostKey,
-        const tstring& sshUsername,
-        const tstring& sshPassword,
-        const tstring& sshObfuscatedPort,
-        const tstring& sshObfuscatedKey,
-        const vector<RegexReplace>& pageViewRegexes,
-        const vector<RegexReplace>& httpsRequestRegexes);
-    void Disconnect(void);
-    bool WaitForConnected(void);
-    void WaitAndDisconnect(ConnectionManager* connectionManager);
-    void SignalDisconnect(void);
+class LocalProxy : public IWorkerThread
+{
+public:
+    LocalProxy(
+        ILocalProxyStatsCollector* statsCollector, 
+        const SessionInfo& sessionInfo, 
+        SystemProxySettings* systemProxySettings,
+        int parentPort, 
+        const tstring& splitTunnelingFilePath);
+    virtual ~LocalProxy();
 
-private:
+protected:
+    // IWorkerThread implementation
+    bool DoStart();
+    bool DoPeriodicCheck();
+    void DoStop();
+
+    void Cleanup();
+
+    bool StartPolipo();
     bool CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
-    bool ProcessStatsAndStatus(ConnectionManager* connectionManager, bool connected);
+    bool ProcessStatsAndStatus(bool connected);
     void UpsertPageView(const string& entry);
     void UpsertHttpsRequest(string entry);
     void ParsePolipoStatsBuffer(const char* page_view_buffer);
 
+
 private:
-    SystemProxySettings m_systemProxySettings;
-    const bool &m_cancel;
-    tstring m_plonkPath;
+    ILocalProxyStatsCollector* m_statsCollector;
+    int m_parentPort;
     tstring m_polipoPath;
-    PROCESS_INFORMATION m_plonkProcessInfo;
+    tstring m_splitTunnelingFilePath;
+    SystemProxySettings* m_systemProxySettings;
     PROCESS_INFORMATION m_polipoProcessInfo;
     HANDLE m_polipoPipe;
-    int m_connectType;
     DWORD m_lastStatusSendTimeMS;
     map<string, int> m_pageViewEntries;
     map<string, int> m_httpsRequestEntries;
@@ -78,3 +79,4 @@ private:
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
 };
+

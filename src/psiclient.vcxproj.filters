@@ -5,16 +5,10 @@
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
-    <ClCompile Include="sshconnection.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="systemproxysettings.cpp" />
     <ClCompile Include="usersettings.cpp" />
-    <ClCompile Include="vpnconnection.cpp" />
-    <ClCompile Include="vpnlist.cpp" />
     <ClCompile Include="webbrowser.cpp" />
-    <ClCompile Include="json\jsoncpp.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
     <ClCompile Include="3rdParty\zlib\adler32.c">
       <Filter>zlib</Filter>
     </ClCompile>
@@ -33,6 +27,17 @@
     <ClCompile Include="3rdParty\zlib\zutil.c">
       <Filter>zlib</Filter>
     </ClCompile>
+    <ClCompile Include="transport.cpp" />
+    <ClCompile Include="vpntransport.cpp" />
+    <ClCompile Include="sshtransport.cpp" />
+    <ClCompile Include="transport_registry.cpp" />
+    <ClCompile Include="serverlist.cpp" />
+    <ClCompile Include="local_proxy.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="worker_thread.cpp" />
+    <ClCompile Include="3rdParty\json\jsoncpp.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -42,21 +47,12 @@
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="sessioninfo.h" />
-    <ClInclude Include="sshconnection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
-    <ClInclude Include="vpnconnection.h" />
-    <ClInclude Include="vpnlist.h" />
     <ClInclude Include="webbrowser.h" />
-    <ClInclude Include="json\forwards.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json.h">
-      <Filter>json</Filter>
-    </ClInclude>
     <ClInclude Include="3rdParty\zlib\crc32.h">
       <Filter>zlib</Filter>
     </ClInclude>
@@ -80,6 +76,20 @@
     </ClInclude>
     <ClInclude Include="3rdParty\zlib\zutil.h">
       <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="transport.h" />
+    <ClInclude Include="vpntransport.h" />
+    <ClInclude Include="sshtransport.h" />
+    <ClInclude Include="transport_registry.h" />
+    <ClInclude Include="serverlist.h" />
+    <ClInclude Include="local_proxy.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="worker_thread.h" />
+    <ClInclude Include="3rdParty\json\forwards.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\json\json.h">
+      <Filter>json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

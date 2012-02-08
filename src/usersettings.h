@@ -26,6 +26,5 @@ using namespace std;
 void InitializeUserSettings(void);
 bool GetUserSetting(const string& settingName);
 void SetUserSetting(const string& settingName, bool settingValue);
-bool UserSkipVPN(void);
 bool UserSkipBrowser(void);
 bool UserSkipProxySettings(void);

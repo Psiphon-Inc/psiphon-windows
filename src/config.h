@@ -21,23 +21,18 @@
 
 #include <tchar.h>
 
-static const TCHAR* PLONK_EXE_NAME = _T("psiphon3-plonk.exe");
-static const TCHAR* POLIPO_EXE_NAME = _T("psiphon3-polipo.exe");
-static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
-static const TCHAR* POLIPO_HTTP_PROXY_PORT = _T("8080");
-static const TCHAR* VPN_CONNECTION_NAME = _T("Psiphon3");
+static const TCHAR* INFO_LINK_PROMPT = _T("About Psiphon 3");
+// NOTE: Info link may be opened when not tunneled
+static const TCHAR* INFO_LINK_URL = _T("https://sites.google.com/a/psiphon3.com/psiphon3/");
 static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
-static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN = "SkipVPN";
-static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_VPN = "UserSkipVPN";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT = "Transport";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER = "UserSkipBrowser";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS = "UserSkipProxySettings";
+static const TCHAR* SPLIT_TUNNELING_FILE_NAME = _T("psiphon.route");
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");
 static const TCHAR* HTTP_STATUS_REQUEST_PATH = _T("/status");
 static const TCHAR* HTTP_SPEED_REQUEST_PATH = _T("/speed");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
 static const TCHAR* HTTP_DOWNLOAD_REQUEST_PATH = _T("/download");
-
-static int VPN_CONNECTION_TIMEOUT_SECONDS = 20;
-static int SSH_CONNECTION_TIMEOUT_SECONDS = 20;

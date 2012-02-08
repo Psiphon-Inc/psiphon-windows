@@ -27,8 +27,8 @@ using namespace std;
 class HTTPSRequest
 {
 public:
-    HTTPSRequest(void);
-    virtual ~HTTPSRequest(void);
+    HTTPSRequest();
+    virtual ~HTTPSRequest();
     bool MakeRequest(
         const bool& cancel,
         const TCHAR* serverAddress,
@@ -36,7 +36,7 @@ public:
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
-        bool useProxy=false,
+        int proxyPort=0, // 0 indicates no proxy
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);
