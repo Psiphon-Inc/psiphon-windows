@@ -868,60 +868,67 @@ DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
 
     ConnectionManager* manager = (ConnectionManager*)object;
 
-    SessionInfo sessionInfo;
-    tstring downloadRequestPath;
-    string downloadResponse;
-    // Note that this is getting the current session info, which is set
-    // by LoadNextServer.  So it's unlikely but possible that we may be
-    // loading the next server after the first one that notified us of an
-    // upgrade failed to connect.  This still should not be a problem, since
-    // all servers should have the same upgrades available.
-    manager->GetUpgradeRequestInfo(sessionInfo, downloadRequestPath);
+    try
+    {
+        SessionInfo sessionInfo;
+        tstring downloadRequestPath;
+        string downloadResponse;
+        // Note that this is getting the current session info, which is set
+        // by LoadNextServer.  So it's unlikely but possible that we may be
+        // loading the next server after the first one that notified us of an
+        // upgrade failed to connect.  This still should not be a problem, since
+        // all servers should have the same upgrades available.
+        manager->GetUpgradeRequestInfo(sessionInfo, downloadRequestPath);
 
-    // Download new binary
-    DWORD start = GetTickCount();
-    HTTPSRequest httpsRequest;
-    if (!httpsRequest.MakeRequest(
-                manager->GetUserSignalledStop(true),
-                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                sessionInfo.GetWebPort(),
-                sessionInfo.GetWebServerCertificate(),
-                downloadRequestPath.c_str(),
-                downloadResponse))
-    {
-        // If the download failed, we simply do nothing.
-        // Rationale:
-        // - The server is (and hopefully will remain) backwards compatible.
-        // - The failure is likely a configuration one, as the handshake worked.
-        // - A configuration failure could be common across all servers, so the
-        //   client will never connect.
-        // - Fail-over exposes new server IPs to hostile networks, so we don't
-        //   like doing it in the case where we know the handshake already succeeded.
-    }
-    else
-    {
-        // Speed feedback
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
+        // Download new binary
+        DWORD start = GetTickCount();
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.MakeRequest(
+                    manager->GetUserSignalledStop(true),
+                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                    sessionInfo.GetWebPort(),
+                    sessionInfo.GetWebServerCertificate(),
+                    downloadRequestPath.c_str(),
+                    downloadResponse))
         {
-            string speedResponse;
-            (void)httpsRequest.MakeRequest( // Ignore failure
-                            manager->GetUserSignalledStop(true),
-                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                            sessionInfo.GetWebPort(),
-                            sessionInfo.GetWebServerCertificate(),
-                            manager->GetSpeedRequestPath(
-                                _T("(NONE)"),
-                                _T("download"),
-                                _T("(NONE)"),
-                                now-start,
-                                downloadResponse.length()).c_str(),
-                            speedResponse);
+            // If the download failed, we simply do nothing.
+            // Rationale:
+            // - The server is (and hopefully will remain) backwards compatible.
+            // - The failure is likely a configuration one, as the handshake worked.
+            // - A configuration failure could be common across all servers, so the
+            //   client will never connect.
+            // - Fail-over exposes new server IPs to hostile networks, so we don't
+            //   like doing it in the case where we know the handshake already succeeded.
         }
+        else
+        {
+            // Speed feedback
+            DWORD now = GetTickCount();
+            if (now >= start) // GetTickCount can wrap
+            {
+                string speedResponse;
+                (void)httpsRequest.MakeRequest( // Ignore failure
+                                manager->GetUserSignalledStop(true),
+                                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                                sessionInfo.GetWebPort(),
+                                sessionInfo.GetWebServerCertificate(),
+                                manager->GetSpeedRequestPath(
+                                    _T("(NONE)"),
+                                    _T("download"),
+                                    _T("(NONE)"),
+                                    now-start,
+                                    downloadResponse.length()).c_str(),
+                                speedResponse);
+            }
 
-        // Perform upgrade.
+            // Perform upgrade.
         
-        manager->PaveUpgrade(downloadResponse);
+            manager->PaveUpgrade(downloadResponse);
+        }
+    }
+    catch (Abort&)
+    {
+        // do nothing, just exit
     }
 
     my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
