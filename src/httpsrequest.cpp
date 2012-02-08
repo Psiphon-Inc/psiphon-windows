@@ -223,7 +223,7 @@ void CALLBACK WinHttpStatusCallback(
             return;
         }
         break;
-    case WINHTTP_CALLBACK_FLAG_REQUEST_ERROR:
+    case WINHTTP_CALLBACK_STATUS_REQUEST_ERROR:
         // Get error value as per http://msdn.microsoft.com/en-us/library/aa383917%28v=VS.85%29.aspx
         if (ERROR_WINHTTP_OPERATION_CANCELLED != ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError)
         {
@@ -233,7 +233,7 @@ void CALLBACK WinHttpStatusCallback(
         }
         WinHttpCloseHandle(hRequest);
         break;
-    case WINHTTP_CALLBACK_FLAG_SECURE_FAILURE:
+    case WINHTTP_CALLBACK_STATUS_SECURE_FAILURE:
         my_print(false, _T("HTTP secure failure (%d)"), lpvStatusInformation);
         WinHttpCloseHandle(hRequest);
         break;
