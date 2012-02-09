@@ -64,8 +64,8 @@ int httpServerSideHandler2(int status,
                            StreamRequestPtr srequest);
 int httpServerConnectionDnsHandler(int status, 
                                    GethostbynameRequestPtr request);
-int httpServerSplitTunnelingHandler(int status, 
-                                    SplitTunnelingRequestPtr request);
+int httpServerSplitTunnelingDnsHandler(int status, 
+                                    GethostbynameRequestPtr request);
 int httpServerConnectionHandler(int status,
                                 FdEventHandlerPtr event,
                                 ConnectRequestPtr request);

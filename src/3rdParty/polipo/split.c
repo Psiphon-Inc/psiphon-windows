@@ -1,19 +1,20 @@
 #include "polipo.h"
 
 static AtomPtr splitTunnelingFile = NULL;
-static AtomPtr splitTunnelingDnsServer = NULL;
+AtomPtr splitTunnelingDnsServer = NULL;
 NetworkList* localNetworks = NULL;
-int splitTunneling = 0;
+int splitTunneling = 0; //flag for server.c && tunnel.c
 
 static int parseSplitFile(AtomPtr filename);
+static void destroyNetworkList(void);
+static int splitFileObserver(TimeEventHandlerPtr event);
+int fileExists(AtomPtr filename);
 
 void 
 preinitSplitTunneling(void)
 {
     CONFIG_VARIABLE(splitTunnelingDnsServer, CONFIG_ATOM_LOWER,
             "The name server to use with split tunneling over SOCKS.");
-    CONFIG_VARIABLE(splitTunneling, CONFIG_BOOLEAN,
-            "Use split tunneling");
     CONFIG_VARIABLE(splitTunnelingFile, CONFIG_ATOM, 
             "Local networks file for split tunneling");
 
@@ -24,119 +25,59 @@ void
 initSplitTunneling(void)
 {
     int rc;
-    if(splitTunneling && splitTunnelingFile)
+    if(!splitTunnelingFile || !splitTunnelingFile->string || strlen(splitTunnelingFile->string) == 0)
     {
-        rc = parseSplitFile(splitTunnelingFile);
+        return; //Do not do split tunneling if file is not specified
+    }
+
+    if(!splitTunnelingDnsServer)
+    {
+        do_log(L_ERROR, "No splitTunnelingDnsServer provided for split tunneling\n");
+        exit(1);
+    }
+
+    /* schedule splitFileObserver at this point*/
+    rc = 0;
+    TimeEventHandlerPtr event = scheduleTimeEvent(-1, splitFileObserver, sizeof(rc), &rc);
+    if(event == NULL)
+    {
+        do_log(L_ERROR, "Couldn't schedule splitFileObserver\n");
+        exit(1);
+    }
+
+
+}
+
+static int
+splitFileObserver(TimeEventHandlerPtr event)
+{
+    int is_split_on = *(int*)event->data;
+    int file_exists = fileExists(splitTunnelingFile);
+
+    if(is_split_on && file_exists)
+    {
+        splitTunneling = 1;
+    }
+    else if(is_split_on && !file_exists)
+    {
+        splitTunneling = 0;
+        destroyNetworkList();
+    }
+    else if(!is_split_on && file_exists)
+    {
+        int rc = parseSplitFile(splitTunnelingFile);
         if(rc < 0)
-            exit(1);
-        int i;
-        for(i=0; i< localNetworks->used; i++)
-        {   
-
-            NetworkPtr t = localNetworks->networks[i];
-            struct in_addr test_network =  t->network;
-            char* ip = inet_ntoa(test_network);
-            do_log(L_WARN, "%s/%d\n", ip, t->maskbits);
-
-        }   
-        struct in_addr local;
-        char * test_ip = "127.0.0.2";
-        inet_aton(test_ip, &local);
-        int n = isLocalAddress(local);
-        do_log(L_WARN, "%s is %s the range\n", test_ip, n?"in":"not in");
-    }
-
-    return;
-}
-
-int 
-do_split_tunneling(int (*handler)(int, SplitTunnelingRequestPtr), void *data)
-{
-
-    SplitTunnelingRequestPtr request = malloc(sizeof(SplitTunnelingRequestRec));
-
-    request->data = data;
-    request->handler = handler;
-    request->local = 1;
-
-    //handler(1, request);
-    //return 1;
-    //connect to socks parent proxy and
-    //do DNS over TCP
-    int dns_port = 80;
-    do_socks_connect(atomString(splitTunnelingDnsServer), dns_port,
-            splitSocksConnectDnsHandler,
-            request);
-    return 0;
-}
-
-int
-splitSocksConnectDnsHandler(int status, SocksRequestPtr request)
-{
-    /*
-       ./polipo proxyPort=8888 socksParentProxy=127.0.0.1:12345 diskCacheRoot="" disableLocalInterface=true logLevel=1 splitTunneling=true splitTunnelingDnsServer=8.8.8.8
-
-
-    */
-    /*
-    HTTPConnectionPtr connection = request->data;
-
-    assert(connection->fd < 0);
-    if(request->fd >= 0) { 
-        connection->fd = request->fd;
-        connection->server->addrindex = 0; 
-    }    
-    return httpServerConnectionHandlerCommon(status, connection);
-    */
-    do_stream(IO_WRITE, request->fd, 0, "1\n\n", 3,
-            splitSocksWriteDnsHandler, request);
-
-    return 1;
-}
-
-int 
-splitSocksWriteDnsHandler(int status,
-        FdEventHandlerPtr event,
-        StreamRequestPtr srequest)
-{
-    SocksRequestPtr request = srequest->data;
-
-    if(status < 0)
-        goto error;
-
-    if(!streamRequestDone(srequest)) {
-        if(status) {
-            status = -ESOCKS_PROTOCOL;
-            goto error;
+        {
+            exit(1); 
         }
-        return 0;
+        splitTunneling = 1;
     }
-
-    request->buf = malloc(10); 
-
-    do_stream(IO_READ | IO_NOTNOW, request->fd, 0, request->buf, 8,
-            splitSocksReadDnsHandler,
-            request);
-    return 1;
-
-error:
-    CLOSE(request->fd);
-    request->fd = -1;
-    request->handler(status, request);
-    //destroySocksRequest(request);
-    return 1;
-}
-
-int
-splitSocksReadDnsHandler(int status,
-                 FdEventHandlerPtr event,
-                 StreamRequestPtr srequest)
-{
-    SocksRequestPtr request = srequest->data;
-
-    CLOSE(request->fd);
-    request->handler(status, request);
-    //destroySocksRequest(request);
+    event = scheduleTimeEvent(5, splitFileObserver, sizeof(splitTunneling), &splitTunneling);
+    if(event == NULL)
+    {
+        do_log(L_ERROR, "Couldn't reschedule splitFileObserver");
+        exit(1);
+    }
     return 1;
 }
 
@@ -150,11 +91,15 @@ parseSplitFile(AtomPtr filename)
     FILE *f;
 
     if(!filename || filename->length == 0)
-        return 0;
+    {
+        do_log(L_ERROR, "Split tunneling file name not supplied\n");
+        return -1;
+
+    }
     f = fopen(filename->string, "r");
     if(f == NULL) {
         do_log(L_ERROR, "Couldn't open split tunneling file %s: %d.\n",
-               filename->string, errno);
+                filename->string, errno);
         return -1;
     }
 
@@ -180,7 +125,7 @@ parseSplitFile(AtomPtr filename)
         mask = ntohl(inamask.s_addr);
         for ( maskbits=32 ; (mask & (1L<<(32-maskbits))) == 0 ; maskbits-- )
             ;
-        /* Re-create the netmask and compare to the origianl
+        /* Re-create the netmask and compare to the oroginal
          * to make sure it is a valid netmask.
          */
         mask = 0;
@@ -207,10 +152,14 @@ parseSplitFile(AtomPtr filename)
     if(NULL == localNetworks)
         return 1;
 
+    //Sort the array
     qsort(localNetworks->networks, localNetworks->used, sizeof(NetworkPtr), cmpNetworks);
+
     //remove duplicate networks from 
     //the array
     removeDups(&localNetworks);
+    //set flag for DNS over TCP
+    splitTunneling = 1;
     return 1;
 }
 
@@ -253,7 +202,6 @@ makeNetworkList(int size)
     return list;
 }
 
-
 void 
 networkListCons(NetworkPtr network, NetworkList *list)
 {
@@ -295,8 +243,8 @@ removeDups(NetworkList** listPtr)
     int i;
     for (i = 1; i < list->used; i++) 
     {
-        //if (memcmp(list->networks[k]->data, list->networks[i]->data, 4)) 
-        if (memcmp(&(list->networks[k]->network), &(list->networks[i]->network), sizeof(struct in_addr)))
+        if (memcmp(&(list->networks[k]->network), &(list->networks[i]->network), 
+                    sizeof(struct in_addr)))
         {              
             k++;
             if(k != i)
@@ -314,8 +262,12 @@ removeDups(NetworkList** listPtr)
 int
 isLocalAddress(struct in_addr addr)
 {
-    NetworkPtr *pNetwork;
-    pNetwork = bsearch(&addr, localNetworks->networks, localNetworks->used, sizeof(NetworkPtr), addressInNetwork); 
+    if(localNetworks == NULL)
+        return 0;
+    if(!localNetworks->used)
+        return 0;
+    NetworkPtr *pNetwork = bsearch(&addr, localNetworks->networks, localNetworks->used, 
+            sizeof(NetworkPtr), addressInNetwork); 
     return pNetwork != NULL;
 }
 
@@ -333,4 +285,31 @@ addressInNetwork( const void * va, const void * vb)
     if((network.s_addr & netmask.s_addr) == (addr.s_addr & netmask.s_addr)) 
         return 0;
     return 1;
+}
+
+int
+fileExists(AtomPtr filename)
+{
+    FILE *file = fopen(filename->string, "r");
+    if (file)
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+static void 
+destroyNetworkList(void)
+{
+    int i;
+    if(localNetworks) {
+        for(i = 0; i < localNetworks->used; i++)
+            free(localNetworks->networks[i]);
+        localNetworks->used = 0;
+        localNetworks->size = 0;
+        free(localNetworks->networks);
+        free(localNetworks);
+        localNetworks = NULL;
+    }
 }

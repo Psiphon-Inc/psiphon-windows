@@ -55,6 +55,7 @@ static int tunnelRead2Handler(int, FdEventHandlerPtr, StreamRequestPtr);
 static int tunnelWrite1Handler(int, FdEventHandlerPtr, StreamRequestPtr);
 static int tunnelWrite2Handler(int, FdEventHandlerPtr, StreamRequestPtr);
 static int tunnelDnsHandler(int, GethostbynameRequestPtr);
+static int tunnelSplitTunnelingDnsHandler(int, GethostbynameRequestPtr);
 static int tunnelConnectionHandler(int, FdEventHandlerPtr, ConnectRequestPtr);
 static int tunnelSocksHandler(int, SocksRequestPtr);
 static int tunnelHandlerCommon(int, TunnelPtr);
@@ -168,15 +169,27 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
     
     releaseAtom(url);
 
-    if(socksParentProxy)
-        do_socks_connect(parentHost ?
-                         parentHost->string : tunnel->hostname->string,
-                         parentHost ? parentPort : tunnel->port,
-                         tunnelSocksHandler, tunnel);
-    else
+    if(socksParentProxy) {
+        /* PSIPHON split tunneling option*/
+        if(splitTunneling)
+        {
+            do_gethostbyname_socks(parentHost ?
+                    parentHost->string : tunnel->hostname->string, 0,
+                    tunnelSplitTunnelingDnsHandler, tunnel);
+        }
+        else
+        {
+            do_socks_connect(parentHost ?
+                    parentHost->string : tunnel->hostname->string,
+                    parentHost ? parentPort : tunnel->port,
+                    tunnelSocksHandler, tunnel);
+        }
+    }
+    else {
         do_gethostbyname(parentHost ?
                          parentHost->string : tunnel->hostname->string, 0,
                          tunnelDnsHandler, tunnel);
+    }
 }
 
 static int
@@ -203,6 +216,63 @@ tunnelDnsHandler(int status, GethostbynameRequestPtr request)
     do_connect(retainAtom(request->addr), 0,
                parentHost ? parentPort : tunnel->port,
                tunnelConnectionHandler, tunnel);
+    return 1;
+}
+
+static int
+tunnelSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request)
+{
+    TunnelPtr tunnel = request->data;
+
+    if(status <= 0) {
+        tunnelError(tunnel, 504,
+                    internAtomError(-status, 
+                                    "Host %s lookup failed",
+                                    atomString(tunnel->hostname)));
+        return 1;
+    }
+
+    if(request->addr->string[0] == DNS_CNAME) {
+        if(request->count > 10)
+            tunnelError(tunnel, 504, internAtom("CNAME loop"));
+        do_gethostbyname_socks(request->addr->string + 1, request->count + 1,
+                         tunnelDnsHandler, tunnel);
+        return 1;
+    }
+
+    //Get IP from th request, check against our local networks list
+    int local_addr = 0;
+    if(request->addr->string[0] == DNS_A)
+    {
+        HostAddressPtr host_addr;    
+        host_addr = (HostAddressPtr) &request->addr->string[1];
+        //we deal only with IPv4 addresses 
+        if(host_addr->af == 4)
+        {
+            struct in_addr servaddr;
+            memcpy(&servaddr.s_addr, &host_addr->data, sizeof(struct in_addr));
+            local_addr =  isLocalAddress(servaddr);
+        }
+    }
+    printf("PSIPHON-DEBUG:>>Domain %s is %s<<", request->name->string, local_addr == 0 ? "not local": "local");
+    fflush(NULL);
+
+    //Use SOCKS for IPs that are not local and connect directly to the ones that are
+    //At this point the DNS record for the request should be cached, default TTL for DNS requests
+    //is 240 seconds
+    if(local_addr == 0)
+    {
+            do_socks_connect(parentHost ?
+                    parentHost->string : tunnel->hostname->string,
+                    parentHost ? parentPort : tunnel->port,
+                    tunnelSocksHandler, tunnel);
+    }
+    else 
+    {
+        do_connect(retainAtom(request->addr), 0,
+                parentHost ? parentPort : tunnel->port,
+                tunnelConnectionHandler, tunnel);
+    }
     return 1;
 }
 

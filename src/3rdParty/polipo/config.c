@@ -564,7 +564,7 @@ parseAtom(char *buf, int offset, AtomPtr *value_return, int insensitive)
         y0 = i;
         while(letter(buf[i]) || digit(buf[i]) || 
               buf[i] == '_' || buf[i] == '-' || buf[i] == '~' ||
-              buf[i] == '.' || buf[i] == ':' || buf[i] == '/')
+              buf[i] == '.' || buf[i] == ':' || buf[i] == '/' || buf[i] == '\\')
             i++;
         j = i;
     }

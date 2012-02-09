@@ -507,9 +507,12 @@ httpServerConnection(HTTPServerPtr server)
            connection->server->name, connection->server->port);
     httpSetTimeout(connection, serverTimeout);
     if(socksParentProxy) {
+        /* PSIPHON split tunneling option*/
         if(splitTunneling)
         {
-            do_split_tunneling(httpServerSplitTunnelingHandler, 
+            connection->connecting = CONNECTING_SOCKS;
+            do_gethostbyname_socks(server->name, 0,
+                    httpServerSplitTunnelingDnsHandler, 
                     connection);
         }
         else
@@ -527,10 +530,76 @@ httpServerConnection(HTTPServerPtr server)
     return 1;
 }
 
-int httpServerSplitTunnelingHandler(int status, SplitTunnelingRequestPtr request)
+/* PSIPHON split tunneling handler function */
+int httpServerSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request) 
 {
     HTTPConnectionPtr connection = request->data;
-    if(request->local)
+
+    //This is pretty much original polipo code for httpServerConnectionDnsHandler
+
+    if(status <= 0) {
+        AtomPtr message;
+        message = internAtomF("Host %s lookup failed: %s",
+                              request->name ?
+                              request->name->string : "(unknown)",
+                              request->error_message ?
+                              request->error_message->string :
+                              pstrerror(-status));
+        do_log(L_ERROR, "Host %s lookup failed: %s (%d).\n", 
+               request->name ?
+               request->name->string : "(unknown)",
+               request->error_message ?
+               request->error_message->string :
+               pstrerror(-status), -status);
+        connection->connecting = 0;
+        if(connection->server->request)
+            httpServerAbortRequest(connection->server->request, 1, 504,
+                                   retainAtom(message));
+        httpServerAbort(connection, 1, 502, message);
+        return 1;
+    }
+
+    if(request->addr->string[0] == DNS_CNAME) {
+        if(request->count > 10) {
+            AtomPtr message = internAtom("DNS CNAME loop");
+            do_log(L_ERROR, "DNS CNAME loop.\n");
+            connection->connecting = 0;
+            if(connection->server->request)
+                httpServerAbortRequest(connection->server->request, 1, 504,
+                                       retainAtom(message));
+            httpServerAbort(connection, 1, 504, message);
+            return 1;
+        }
+            
+        httpSetTimeout(connection, serverTimeout);
+        do_gethostbyname_socks(request->addr->string + 1, request->count + 1,
+                         httpServerSplitTunnelingDnsHandler,
+                         connection);
+        return 1;
+    }
+
+
+    //Get IP from th request, check against our local networks list
+    int local_addr = 0;
+    if(request->addr->string[0] == DNS_A)
+    {
+        HostAddressPtr host_addr;    
+        host_addr = (HostAddressPtr) &request->addr->string[1];
+        //we deal only with IPv4 addresses 
+        if(host_addr->af == 4)
+        {
+            struct in_addr servaddr;
+            memcpy(&servaddr.s_addr, &host_addr->data, sizeof(struct in_addr));
+            local_addr =  isLocalAddress(servaddr);
+        }
+    }
+    printf("PSIPHON-DEBUG:>>Domain %s is %s<<", request->name->string, local_addr == 0 ? "not local": "local");
+    fflush(NULL);
+
+    //Use SOCKS for IPs that are not local and connect directly to the ones that are
+    //At this point the DNS record for the request should be cached, default TTL for DNS requests
+    //is 240 seconds
+    if(local_addr == 0)
     {
         connection->connecting = CONNECTING_SOCKS;
         do_socks_connect(connection->server->name, connection->server->port,
@@ -539,14 +608,16 @@ int httpServerSplitTunnelingHandler(int status, SplitTunnelingRequestPtr request
     }
     else
     {
-        connection->connecting = CONNECTING_DNS;
-        do_gethostbyname(connection->server->name, 0,
-                httpServerConnectionDnsHandler,
-                connection);
+        connection->connecting = CONNECTING_CONNECT;
+        httpSetTimeout(connection, serverTimeout);
+        do_connect(retainAtom(request->addr), connection->server->addrindex,
+                connection->server->port,
+                httpServerConnectionHandler, connection);
     }
 
     return 1;
 }
+/* END PSIPHON handler */
 
 int
 httpServerConnectionDnsHandler(int status, GethostbynameRequestPtr request)

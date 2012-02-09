@@ -1,4 +1,5 @@
 extern int splitTunneling;
+extern AtomPtr splitTunnelingDnsServer;
 
 typedef struct _SplitTunnelingRequest {
     int local;
@@ -22,10 +23,6 @@ NetworkList*  makeNetworkList(int size);
 void networkListCons(NetworkPtr nw, NetworkList* list);
 void preinitSplitTunneling(void);
 void initSplitTunneling(void);
-int do_split_tunneling(int (*)(int, SplitTunnelingRequestPtr), void*);
-int splitSocksConnectDnsHandler(int, SocksRequestPtr);
-int splitSocksWriteDnsHandler(int, FdEventHandlerPtr, StreamRequestPtr);
-int splitSocksReadDnsHandler(int, FdEventHandlerPtr, StreamRequestPtr);
 int cmpNetworks(const void *a, const void *b);
 void removeDups(NetworkList** list);
 int addressInNetwork( const void * va, const void * vb);
