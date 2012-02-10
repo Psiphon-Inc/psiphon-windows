@@ -301,6 +301,48 @@ ServerEntry ServerList::ParseServerEntry(const string& serverEntry)
     }
     entry.webServerCertificate = lineItem;
 
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Port not present", __TFUNCTION__));
+        entry.sshPort = 0;
+    }
+    entry.sshPort = atoi(lineItem.c_str());;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Username not present", __TFUNCTION__));
+        entry.sshUsername = "";
+    }
+    entry.sshUsername = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Password not present", __TFUNCTION__));
+        entry.sshPassword = "";
+    }
+    entry.sshPassword = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Host Key not present", __TFUNCTION__));
+        entry.sshHostKey = "";
+    }
+    entry.sshHostKey = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Obfuscated Port not present", __TFUNCTION__));
+        entry.sshObfuscatedPort = 0;
+    }
+    entry.sshObfuscatedPort = atoi(lineItem.c_str());;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Obfuscated Key not present", __TFUNCTION__));
+        entry.sshObfuscatedKey = "";
+    }
+    entry.sshObfuscatedKey = lineItem;
+
     return entry;
 }
 

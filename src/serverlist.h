@@ -33,6 +33,12 @@ struct ServerEntry
     int webServerPort;
     string webServerSecret;
     string webServerCertificate;
+    int sshPort;
+    string sshUsername;
+    string sshPassword;
+    string sshHostKey;
+    int sshObfuscatedPort;
+    string sshObfuscatedKey;
 };
 
 typedef vector<ServerEntry> ServerEntries;
