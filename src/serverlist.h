@@ -25,7 +25,7 @@ using namespace std;
 
 struct ServerEntry
 {
-    ServerEntry() {}
+    ServerEntry() : webServerPort(0), sshPort(0), sshObfuscatedPort(0) {}
     ServerEntry(const ServerEntry& src) { Copy(src); }
     void Copy(const ServerEntry& src);
 

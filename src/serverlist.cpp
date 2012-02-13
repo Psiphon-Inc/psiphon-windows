@@ -273,7 +273,9 @@ ServerEntry ServerList::ParseServerEntry(const string& serverEntry)
     string line = Dehexlify(serverEntry);
 
     ServerEntry entry;
-    entry.FromString(serverEntry);
+    entry.FromString(line);
+
+    return entry;
 }
 
 // NOTE: This function does not throw because we don't want a failure to prevent a connection attempt.
@@ -317,16 +319,29 @@ string ServerEntry::ToString() const
 {
     stringstream ss;
     
+    //
+    // Legacy values are simply space-separated strings
+    //
+
     ss << serverAddress << " ";
     ss << webServerPort << " ";
     ss << webServerSecret << " ";
     ss << webServerCertificate << " ";
-    ss << sshPort << " ";
-    ss << sshUsername << " ";
-    ss << sshPassword << " ";
-    ss << sshHostKey << " ";
-    ss << sshObfuscatedPort << " ";
-    ss << sshObfuscatedKey;
+
+    //
+    // Extended values are JSON-encoded.
+    //
+
+    Json::Value entry;
+    
+    entry["sshPort"] = sshPort;
+    entry["sshUsername"] = sshUsername;
+    entry["sshPassword"] = sshPassword;
+    entry["sshHostKey"] = sshHostKey;
+    entry["sshObfuscatedPort"] = sshObfuscatedPort;
+    entry["sshObfuscatedKey"] = sshObfuscatedKey;
+
+    ss << entry;
 
     return ss.str();
 }
@@ -335,6 +350,10 @@ void ServerEntry::FromString(const string& str)
 {
     stringstream lineStream(str);
     string lineItem;
+
+    //
+    // Legacy values are simply space-separated strings
+    //
 
     if (!getline(lineStream, lineItem, ' '))
     {
@@ -360,63 +379,42 @@ void ServerEntry::FromString(const string& str)
     }
     webServerCertificate = lineItem;
 
-    if (!getline(lineStream, lineItem, ' '))
+    //
+    // Extended values are JSON-encoded.
+    //
+
+    if (!getline(lineStream, lineItem, '\0'))
     {
-        my_print(true, _T("%s: SSH Port not present", __TFUNCTION__));
-        sshPort = 0;
-    }
-    else
-    {
-        sshPort = atoi(lineItem.c_str());
+        my_print(true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
+        
+        // Assumption: we're not reading into a ServerEntry struct that already
+        // has values set. So we're relying on the default values being set by
+        // the constructor.
+        return;
     }
 
-    if (!getline(lineStream, lineItem, ' '))
+    Json::Value json_entry;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(lineItem, json_entry);
+    if (!parsingSuccessful)
     {
-        my_print(true, _T("%s: SSH Username not present", __TFUNCTION__));
-        sshUsername = "";
-    }
-    else
-    {
-        sshUsername = lineItem;
-    }
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Password not present", __TFUNCTION__));
-        sshPassword = "";
-    }
-    else
-    {
-        sshPassword = lineItem;
+        string fail = reader.getFormattedErrorMessages();
+        my_print(false, _T("%s: Extended JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        throw std::exception("Server Entries are corrupt: can't parse JSON");
     }
 
-    if (!getline(lineStream, lineItem, ' '))
+    try
     {
-        my_print(true, _T("%s: SSH Host Key not present", __TFUNCTION__));
-        sshHostKey = "";
+        sshPort = json_entry.get("sshPort", 0).asInt();
+        sshUsername = json_entry.get("sshUsername", 0).asString();
+        sshPassword = json_entry.get("sshPassword", 0).asString();
+        sshHostKey = json_entry.get("sshHostKey", 0).asString();
+        sshObfuscatedPort = json_entry.get("sshObfuscatedPort", 0).asInt();
+        sshObfuscatedKey = json_entry.get("sshObfuscatedKey", 0).asString();
     }
-    else
+    catch (exception& e)
     {
-        sshHostKey = lineItem;
-    }
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Obfuscated Port not present", __TFUNCTION__));
-        sshObfuscatedPort = 0;
-    }
-    else
-    {
-        sshObfuscatedPort = atoi(lineItem.c_str());
-    }
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Obfuscated Key not present", __TFUNCTION__));
-        sshObfuscatedKey = "";
-    }
-    else
-    {
-        sshObfuscatedKey = lineItem;
+        my_print(false, _T("%s: Extended JSON parse exception: %S"), __TFUNCTION__, e.what());
+        throw std::exception("Server Entries are corrupt: parse JSON exception");
     }
 }
