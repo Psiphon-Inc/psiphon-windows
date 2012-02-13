@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <sstream>
 
+
 ServerList::ServerList()
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
@@ -61,9 +62,7 @@ void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
                 alreadyKnown = true;
                 // NOTE: We always update the values for known servers, because we trust the
                 //       discovery mechanisms
-                oldServerEntry->webServerPort = newServerEntry.webServerPort;
-                oldServerEntry->webServerSecret = newServerEntry.webServerSecret;
-                oldServerEntry->webServerCertificate = newServerEntry.webServerCertificate;
+                oldServerEntry->Copy(newServerEntry);
                 break;
             }
         }
@@ -273,77 +272,8 @@ ServerEntry ServerList::ParseServerEntry(const string& serverEntry)
 {
     string line = Dehexlify(serverEntry);
 
-    stringstream lineStream(line);
-    string lineItem;
     ServerEntry entry;
-        
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Server Address");
-    }
-    entry.serverAddress = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
-    }
-    entry.webServerPort = atoi(lineItem.c_str());
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Web Server Secret");
-    }
-    entry.webServerSecret = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Web Server Certificate");
-    }
-    entry.webServerCertificate = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Port not present", __TFUNCTION__));
-        entry.sshPort = 0;
-    }
-    entry.sshPort = atoi(lineItem.c_str());;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Username not present", __TFUNCTION__));
-        entry.sshUsername = "";
-    }
-    entry.sshUsername = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Password not present", __TFUNCTION__));
-        entry.sshPassword = "";
-    }
-    entry.sshPassword = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Host Key not present", __TFUNCTION__));
-        entry.sshHostKey = "";
-    }
-    entry.sshHostKey = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Obfuscated Port not present", __TFUNCTION__));
-        entry.sshObfuscatedPort = 0;
-    }
-    entry.sshObfuscatedPort = atoi(lineItem.c_str());;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        my_print(true, _T("%s: SSH Obfuscated Key not present", __TFUNCTION__));
-        entry.sshObfuscatedKey = "";
-    }
-    entry.sshObfuscatedKey = lineItem;
-
-    return entry;
+    entry.FromString(serverEntry);
 }
 
 // NOTE: This function does not throw because we don't want a failure to prevent a connection attempt.
@@ -359,11 +289,134 @@ string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)
     string encodedServerList;
     for (ServerEntryIterator it = serverEntryList.begin(); it != serverEntryList.end(); ++it)
     {
-        stringstream port;
-        port << it->webServerPort;
-        string serverEntry = it->serverAddress + " " + port.str() + " " + it->webServerSecret + " " + it->webServerCertificate;
-        encodedServerList += Hexlify(serverEntry) + "\n";
+        encodedServerList += Hexlify(it->ToString()) + "\n";
     }
     return encodedServerList;
 }
 
+
+/***********************************************
+ServerEntry members
+*/
+
+void ServerEntry::Copy(const ServerEntry& src)
+{
+    this->serverAddress = src.serverAddress;
+    this->webServerPort = src.webServerPort;
+    this->webServerSecret = src.webServerSecret;
+    this->webServerCertificate = src.webServerCertificate;
+    this->sshPort = src.sshPort;
+    this->sshUsername = src.sshUsername;
+    this->sshPassword = src.sshPassword;
+    this->sshHostKey = src.sshHostKey;
+    this->sshObfuscatedPort = src.sshObfuscatedPort;
+    this->sshObfuscatedKey = src.sshObfuscatedKey;
+}
+
+string ServerEntry::ToString() const
+{
+    stringstream ss;
+    
+    ss << serverAddress << " ";
+    ss << webServerPort << " ";
+    ss << webServerSecret << " ";
+    ss << webServerCertificate << " ";
+    ss << sshPort << " ";
+    ss << sshUsername << " ";
+    ss << sshPassword << " ";
+    ss << sshHostKey << " ";
+    ss << sshObfuscatedPort << " ";
+    ss << sshObfuscatedKey;
+
+    return ss.str();
+}
+
+void ServerEntry::FromString(const string& str)
+{
+    stringstream lineStream(str);
+    string lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Server Address");
+    }
+    serverAddress = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
+    }
+    webServerPort = atoi(lineItem.c_str());
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Web Server Secret");
+    }
+    webServerSecret = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Web Server Certificate");
+    }
+    webServerCertificate = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Port not present", __TFUNCTION__));
+        sshPort = 0;
+    }
+    else
+    {
+        sshPort = atoi(lineItem.c_str());
+    }
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Username not present", __TFUNCTION__));
+        sshUsername = "";
+    }
+    else
+    {
+        sshUsername = lineItem;
+    }
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Password not present", __TFUNCTION__));
+        sshPassword = "";
+    }
+    else
+    {
+        sshPassword = lineItem;
+    }
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Host Key not present", __TFUNCTION__));
+        sshHostKey = "";
+    }
+    else
+    {
+        sshHostKey = lineItem;
+    }
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Obfuscated Port not present", __TFUNCTION__));
+        sshObfuscatedPort = 0;
+    }
+    else
+    {
+        sshObfuscatedPort = atoi(lineItem.c_str());
+    }
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        my_print(true, _T("%s: SSH Obfuscated Key not present", __TFUNCTION__));
+        sshObfuscatedKey = "";
+    }
+    else
+    {
+        sshObfuscatedKey = lineItem;
+    }
+}

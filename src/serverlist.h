@@ -26,8 +26,11 @@ using namespace std;
 struct ServerEntry
 {
     ServerEntry() {}
-    ServerEntry(const string& serverAddress_, int webServerPort_, const string& webServerSecret_, const string& webServerCertificate_) :
-        serverAddress(serverAddress_), webServerPort(webServerPort_), webServerSecret(webServerSecret_) , webServerCertificate(webServerCertificate_) {}
+    ServerEntry(const ServerEntry& src) { Copy(src); }
+    void Copy(const ServerEntry& src);
+
+    string ToString() const;
+    void FromString(const string& str);
 
     string serverAddress;
     int webServerPort;
