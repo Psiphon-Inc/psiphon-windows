@@ -160,11 +160,17 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
         return;
     }
 
+    //Psiphon
+    //checking if tunnel is allowed on a particular port 
+    //is no needed if the proxy accepts connections made only from localhost 
+    /*
     if(!intListMember(port, tunnelAllowedPorts)) {
         releaseAtom(url);
         tunnelError(tunnel, 403, internAtom("Forbidden port"));
         return;
     }
+    */
+
     tunnel->port = port;
     
     releaseAtom(url);
