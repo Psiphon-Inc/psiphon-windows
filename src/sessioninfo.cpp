@@ -58,12 +58,12 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
 
     m_upgradeVersion.clear();
     m_psk.clear();
-    m_sshPort.clear();
+    m_sshPort = 0;
     m_sshUsername.clear();
     m_sshPassword.clear();
     m_sshHostKey.clear();
     m_sshSessionID.clear();
-    m_sshObfuscatedPort.clear();
+    m_sshObfuscatedPort = 0;
     m_sshObfuscatedKey.clear();
     m_homepages.clear();
     m_servers.clear();
@@ -86,7 +86,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         else if (0 == item.find(SSH_PORT_PREFIX))
         {
             item.erase(0, strlen(SSH_PORT_PREFIX));
-            m_sshPort = item;
+            m_sshPort = atoi(item.c_str());
         }
         else if (0 == item.find(SSH_USERNAME_PREFIX))
         {
@@ -111,7 +111,7 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
         else if (0 == item.find(SSH_OBFUSCATED_PORT_PREFIX))
         {
             item.erase(0, strlen(SSH_OBFUSCATED_PORT_PREFIX));
-            m_sshObfuscatedPort = item;
+            m_sshObfuscatedPort = atoi(item.c_str());
         }
         else if (0 == item.find(SSH_OBFUSCATED_KEY_PREFIX))
         {
@@ -210,3 +210,66 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
     return true;
 }
+
+string SessionInfo::GetServerAddress() const 
+{
+    return m_serverEntry.serverAddress;
+}
+
+int SessionInfo::GetWebPort() const 
+{
+    return m_serverEntry.webServerPort;
+}
+
+string SessionInfo::GetWebServerSecret() const 
+{
+    return m_serverEntry.webServerSecret;
+}
+
+string SessionInfo::GetWebServerCertificate() const 
+{ 
+    return m_serverEntry.webServerCertificate;
+}
+
+// Returns the first value that is greater than zero
+static int Coalesce(int x, int y)
+{
+    return x > 0 ? x : y;
+}
+
+// Returns the first value that is non-empty.
+static string Coalesce(const string& x, const string& y)
+{
+    return !x.empty() ? x : y;
+}
+
+int SessionInfo::GetSSHPort() const 
+{
+    return Coalesce(m_sshPort, m_serverEntry.sshPort);
+}
+
+string SessionInfo::GetSSHUsername() const 
+{
+    return Coalesce(m_sshUsername, m_serverEntry.sshUsername);
+}
+
+string SessionInfo::GetSSHPassword() const 
+{
+    return Coalesce(m_sshPassword, m_serverEntry.sshPassword);
+}
+
+string SessionInfo::GetSSHHostKey() const 
+{
+    return Coalesce(m_sshHostKey, m_serverEntry.sshHostKey);
+}
+
+int SessionInfo::GetSSHObfuscatedPort() const 
+{
+    return Coalesce(m_sshObfuscatedPort, m_serverEntry.sshObfuscatedPort);
+}
+
+string SessionInfo::GetSSHObfuscatedKey() const 
+{
+    return Coalesce(m_sshObfuscatedKey, m_serverEntry.sshObfuscatedKey);
+}
+

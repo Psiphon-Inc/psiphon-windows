@@ -35,7 +35,7 @@
 
 static bool SetPlonkSSHHostKey(
         const tstring& sshServerAddress,
-        const tstring& sshServerPort,
+        int sshServerPort,
         const tstring& sshServerHostKey);
 
 
@@ -167,7 +167,8 @@ void SSHTransportBase::TransportConnectHelper(
 
     // Start plonk using Psiphon server SSH parameters
 
-    tstring serverAddress, serverPort, serverHostKey, plonkCommandLine;
+    tstring serverAddress, serverHostKey, plonkCommandLine;
+    int serverPort = 0;
 
     if (!GetSSHParams(
             sessionInfo, 
@@ -298,15 +299,26 @@ tstring SSHTransport::GetTransportDisplayName() const
     return SSH_TRANSPORT_DISPLAY_NAME; 
 }
 
+bool SSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
+{
+    bool sufficientInfo = 
+        sessionInfo.GetServerAddress().length() > 0
+        && sessionInfo.GetSSHPort() > 0
+        && sessionInfo.GetSSHHostKey().length() > 0
+        && sessionInfo.GetSSHUsername().length() > 0
+        && sessionInfo.GetSSHPassword().length() > 0;
+    return sufficientInfo;
+}
+
 bool SSHTransport::GetSSHParams(
                     const SessionInfo& sessionInfo,
                     tstring& o_serverAddress, 
-                    tstring& o_serverPort, 
+                    int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine)
 {
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
-    o_serverPort = NarrowToTString(sessionInfo.GetSSHPort());
+    o_serverPort = sessionInfo.GetSSHPort();
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
     // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
@@ -314,7 +326,7 @@ bool SSHTransport::GetSSHParams(
 
     tstringstream args;
     args << _T(" -ssh -C -N -batch")
-         << _T(" -P ") << o_serverPort.c_str()
+         << _T(" -P ") << o_serverPort
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
          << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
          << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
@@ -371,19 +383,31 @@ tstring OSSHTransport::GetTransportDisplayName() const
     return OSSH_TRANSPORT_DISPLAY_NAME;
 }
 
+bool OSSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
+{
+    bool sufficientInfo = 
+        sessionInfo.GetServerAddress().length() > 0
+        && sessionInfo.GetSSHObfuscatedPort() > 0
+        && sessionInfo.GetSSHHostKey().length() > 0
+        && sessionInfo.GetSSHUsername().length() > 0
+        && sessionInfo.GetSSHPassword().length() > 0
+        && sessionInfo.GetSSHObfuscatedKey().length() > 0;
+    return !sufficientInfo;
+}
+
 bool OSSHTransport::GetSSHParams(
                     const SessionInfo& sessionInfo,
                     tstring& o_serverAddress, 
-                    tstring& o_serverPort, 
+                    int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine)
 {
     o_serverAddress.clear();
-    o_serverPort.clear();
+    o_serverPort = 0;
     o_serverHostKey.clear();
     o_plonkCommandLine.clear();
 
-    if (sessionInfo.GetSSHObfuscatedPort().size() <= 0 
+    if (sessionInfo.GetSSHObfuscatedPort() <= 0 
         || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
     {
         my_print(false, _T("%s - missing parameters"), __TFUNCTION__);
@@ -391,7 +415,7 @@ bool OSSHTransport::GetSSHParams(
     }
 
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
-    o_serverPort = NarrowToTString(sessionInfo.GetSSHObfuscatedPort());
+    o_serverPort = sessionInfo.GetSSHObfuscatedPort();
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
     // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
@@ -399,7 +423,7 @@ bool OSSHTransport::GetSSHParams(
 
     tstringstream args;
     args << _T(" -ssh -C -N -batch")
-         << _T(" -P ") << o_serverPort.c_str()
+         << _T(" -P ") << o_serverPort
          << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str()
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
          << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
@@ -420,7 +444,7 @@ bool OSSHTransport::GetSSHParams(
 
 bool SetPlonkSSHHostKey(
         const tstring& sshServerAddress,
-        const tstring& sshServerPort,
+        int sshServerPort,
         const tstring& sshServerHostKey)
 {
     // Add Plonk registry entry for host for non-interactive host key validation
@@ -485,7 +509,8 @@ bool SetPlonkSSHHostKey(
 
     delete [] decodedFields;
 
-    string value = string("rsa2@") + TStringToNarrow(sshServerPort) + ":" + TStringToNarrow(sshServerAddress);
+    stringstream value;
+    value << "rsa2@" << sshServerPort << ":" << TStringToNarrow(sshServerAddress);
 
     const TCHAR* plonkRegistryKey = _T("Software\\SimonTatham\\PuTTY\\SshHostKeys");
 
@@ -497,7 +522,7 @@ bool SetPlonkSSHHostKey(
         return false;
     }
 
-    returnCode = RegSetValueExA(key, value.c_str(), 0, REG_SZ, (PBYTE)data.c_str(), data.length()+1);
+    returnCode = RegSetValueExA(key, value.str().c_str(), 0, REG_SZ, (PBYTE)data.c_str(), data.length()+1);
     if (ERROR_SUCCESS != returnCode)
     {
         RegCloseKey(key);

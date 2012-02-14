@@ -106,6 +106,11 @@ tstring VPNTransport::GetLastTransportError() const
     return NarrowToTString(s.str());
 }
 
+bool VPNTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
+{
+    return true;
+}
+
 bool VPNTransport::Cleanup()
 {
     DWORD returnCode = ERROR_SUCCESS;
