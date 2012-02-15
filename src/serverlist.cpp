@@ -341,7 +341,8 @@ string ServerEntry::ToString() const
     entry["sshObfuscatedPort"] = sshObfuscatedPort;
     entry["sshObfuscatedKey"] = sshObfuscatedKey;
 
-    ss << entry;
+    Json::FastWriter jsonWriter;
+    ss << jsonWriter.write(entry);
 
     return ss.str();
 }

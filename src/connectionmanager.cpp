@@ -615,7 +615,8 @@ bool ConnectionManager::SendStatusMessage(
     stats["https_requests"] = https_requests;
 
     ostringstream additionalData; 
-    additionalData << stats; 
+    Json::FastWriter jsonWriter;
+    additionalData << jsonWriter.write(stats); 
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
