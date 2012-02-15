@@ -197,57 +197,6 @@ ServerEntries ServerList::GetListFromSystem()
     return ParseServerEntries(serverEntryListString.c_str());
 }
 
-// Adapted from here:
-// http://stackoverflow.com/questions/3381614/c-convert-string-to-hexadecimal-and-vice-versa
-string Hexlify(const string& input)
-{
-    static const char* const lut = "0123456789ABCDEF";
-    size_t len = input.length();
-
-    string output;
-    output.reserve(2 * len);
-    for (size_t i = 0; i < len; ++i)
-    {
-        const char c = input[i];
-        output.push_back(lut[c >> 4]);
-        output.push_back(lut[c & 15]);
-    }
-    return output;
-}
-
-string Dehexlify(const string& input)
-{
-    static const char* const lut = "0123456789ABCDEF";
-    size_t len = input.length();
-    if (len & 1)
-    {
-        throw std::invalid_argument("Dehexlify: odd length");
-    }
-
-    string output;
-    output.reserve(len / 2);
-    for (size_t i = 0; i < len; i += 2)
-    {
-        char a = toupper(input[i]);
-        const char* p = std::lower_bound(lut, lut + 16, a);
-        if (*p != a)
-        {
-            throw std::invalid_argument("Dehexlify: not a hex digit");
-        }
-
-        char b = toupper(input[i + 1]);
-        const char* q = std::lower_bound(lut, lut + 16, b);
-        if (*q != b)
-        {
-            throw std::invalid_argument("Dehexlify: not a hex digit");
-        }
-
-        output.push_back(((p - lut) << 4) | (q - lut));
-    }
-
-    return output;
-}
-
 // The errors below throw (preventing any Server connection from starting)
 ServerEntries ServerList::ParseServerEntries(const char* serverEntryListString)
 {
@@ -291,7 +240,10 @@ string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)
     string encodedServerList;
     for (ServerEntryIterator it = serverEntryList.begin(); it != serverEntryList.end(); ++it)
     {
-        encodedServerList += Hexlify(it->ToString()) + "\n";
+        string stringServerEntry = it->ToString();
+        encodedServerList += Hexlify(
+                                (const unsigned char*)stringServerEntry.c_str(),
+                                stringServerEntry.length()) + "\n";
     }
     return encodedServerList;
 }

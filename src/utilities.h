@@ -53,3 +53,6 @@ int LongestTextWidth(const TCHAR* texts[], int count);
 // Returns true if at least one item in the array is true.
 bool TestBoolArray(const vector<const bool*>& boolArray);
 
+string Hexlify(const unsigned char* input, size_t length);
+
+string Dehexlify(const string& input);

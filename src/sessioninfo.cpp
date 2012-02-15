@@ -20,12 +20,25 @@
 #include "stdafx.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
+#include "config.h"
+#include "utilities.h"
 #include <sstream>
 
 
 void SessionInfo::Set(const ServerEntry& serverEntry)
 {
     m_serverEntry = serverEntry;
+}
+
+void SessionInfo::GenerateClientSessionID()
+{
+    unsigned char bytes[CLIENT_SESSION_ID_BYTES];
+    assert(CLIENT_SESSION_ID_BYTES % sizeof(unsigned int) == 0);
+    for (int i=0; i < CLIENT_SESSION_ID_BYTES/sizeof(unsigned int); i++)
+    {
+        rand_s(((unsigned int*)bytes) + i);
+    }
+    m_clientSessionID = Hexlify(bytes, CLIENT_SESSION_ID_BYTES);
 }
 
 bool SessionInfo::ParseHandshakeResponse(const string& response)

@@ -35,6 +35,9 @@ public:
     SessionInfo() : m_sshPort(0), m_sshObfuscatedPort(0) {}
 
     void Set(const ServerEntry& serverEntry);
+    void GenerateClientSessionID();
+
+    string GetClientSessionID() const {return m_clientSessionID;}
 
     string GetServerAddress() const;
     int GetWebPort() const;
@@ -64,6 +67,7 @@ public:
 private:
     ServerEntry m_serverEntry;
 
+    string m_clientSessionID;
     string m_upgradeVersion;
     string m_psk;
     int m_sshPort;

@@ -55,6 +55,7 @@ protected:
     // Subclasses must implement this member
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
@@ -91,6 +92,7 @@ public:
 protected:
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
@@ -117,6 +119,7 @@ public:
 protected:
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 

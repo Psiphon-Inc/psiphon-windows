@@ -649,7 +649,8 @@ tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, con
     strSize << size;
 
     return tstring(HTTP_SPEED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -674,7 +675,8 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
     AutoMUTEX lock(m_mutex);
 
     return tstring(HTTP_FAILED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -687,7 +689,8 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
     AutoMUTEX lock(m_mutex);
 
     return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -702,7 +705,8 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
     // TODO: get error code from SSH client?
 
     return tstring(HTTP_STATUS_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -717,7 +721,8 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
     sessionInfo = m_currentSessionInfo;
     requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
-                    _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                    _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+                    _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                     _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                     _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
                     _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
@@ -755,6 +760,9 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
         throw Abort();
     }
 
+    // Generate a new client session ID to be included with all subsequent web requests
+    m_currentSessionInfo.GenerateClientSessionID();
+
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
     my_print(true, _T("%s: m_currentSessionInfo.Set"), __TFUNCTION__);
@@ -763,7 +771,8 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
     // Output values used in next TryNextServer step
 
     handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());

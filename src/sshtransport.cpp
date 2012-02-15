@@ -170,8 +170,16 @@ void SSHTransportBase::TransportConnectHelper(
     tstring serverAddress, serverHostKey, plonkCommandLine;
     int serverPort = 0;
 
+    // Client transmits its session ID prepended to the SSH password; the server
+    // uses this to associate the tunnel with web requests -- for GeoIP region stats
+    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
+
+    // TODO: enable this
+    sshPassword = sessionInfo.GetSSHPassword();
+
     if (!GetSSHParams(
             sessionInfo, 
+            sshPassword,
             serverAddress, 
             serverPort, 
             serverHostKey, 
@@ -312,6 +320,7 @@ bool SSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 
 bool SSHTransport::GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
@@ -328,7 +337,7 @@ bool SSHTransport::GetSSHParams(
     args << _T(" -ssh -C -N -batch")
          << _T(" -P ") << o_serverPort
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
-         << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
+         << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
          << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
          << _T(" ") << o_serverAddress.c_str();
 #ifdef _DEBUG
@@ -397,6 +406,7 @@ bool OSSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 
 bool OSSHTransport::GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
@@ -426,7 +436,7 @@ bool OSSHTransport::GetSSHParams(
          << _T(" -P ") << o_serverPort
          << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str()
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
-         << _T(" -pw ") << NarrowToTString(sessionInfo.GetSSHPassword()).c_str()
+         << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
          << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
          << _T(" ") << o_serverAddress.c_str();
 #ifdef _DEBUG
