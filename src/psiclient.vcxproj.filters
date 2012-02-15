@@ -38,6 +38,7 @@
     <ClCompile Include="3rdParty\json\jsoncpp.cpp">
       <Filter>json</Filter>
     </ClCompile>
+    <ClCompile Include="server_request.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="3rdParty\json\json.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="server_request.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
