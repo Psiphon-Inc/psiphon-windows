@@ -126,7 +126,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         m_sshObfuscatedKey = config.get("ssh_obfuscated_key", "").asString();
 
         // VPN PSK
-        m_psk = config.get("psk", "").asString();
+        m_psk = config.get("l2tp_ipsec_psk", "").asString();
 
         // Page view regexes        
         Json::Value regexes = config["page_view_regexes"];
