@@ -34,9 +34,10 @@ public:
     SSHTransportBase(); 
     virtual ~SSHTransportBase();
 
-    // Subclasses must implement this member
+    // Subclasses must implement these members
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
+    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
 
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;
     virtual int GetLocalProxyParentPort() const;
@@ -54,8 +55,9 @@ protected:
     // Subclasses must implement this member
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
-                    tstring& o_serverPort, 
+                    int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine) = 0;
 
@@ -85,11 +87,14 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
+    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+
 protected:
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
-                    tstring& o_serverPort, 
+                    int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine);
 };
@@ -109,11 +114,14 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
+    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+
 protected:
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const string& sshPassword,
                     tstring& o_serverAddress, 
-                    tstring& o_serverPort, 
+                    int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine);
 };

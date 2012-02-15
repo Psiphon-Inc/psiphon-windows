@@ -25,14 +25,23 @@ using namespace std;
 
 struct ServerEntry
 {
-    ServerEntry() {}
-    ServerEntry(const string& serverAddress_, int webServerPort_, const string& webServerSecret_, const string& webServerCertificate_) :
-        serverAddress(serverAddress_), webServerPort(webServerPort_), webServerSecret(webServerSecret_) , webServerCertificate(webServerCertificate_) {}
+    ServerEntry() : webServerPort(0), sshPort(0), sshObfuscatedPort(0) {}
+    ServerEntry(const ServerEntry& src) { Copy(src); }
+    void Copy(const ServerEntry& src);
+
+    string ToString() const;
+    void FromString(const string& str);
 
     string serverAddress;
     int webServerPort;
     string webServerSecret;
     string webServerCertificate;
+    int sshPort;
+    string sshUsername;
+    string sshPassword;
+    string sshHostKey;
+    int sshObfuscatedPort;
+    string sshObfuscatedKey;
 };
 
 typedef vector<ServerEntry> ServerEntries;

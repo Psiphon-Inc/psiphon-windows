@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
+#include "config.h"
+#include "utilities.h"
 #include <sstream>
 
 
@@ -28,122 +30,57 @@ void SessionInfo::Set(const ServerEntry& serverEntry)
     m_serverEntry = serverEntry;
 }
 
+void SessionInfo::GenerateClientSessionID()
+{
+    unsigned char bytes[CLIENT_SESSION_ID_BYTES];
+    assert(CLIENT_SESSION_ID_BYTES % sizeof(unsigned int) == 0);
+    for (int i=0; i < CLIENT_SESSION_ID_BYTES/sizeof(unsigned int); i++)
+    {
+        rand_s(((unsigned int*)bytes) + i);
+    }
+    m_clientSessionID = Hexlify(bytes, CLIENT_SESSION_ID_BYTES);
+}
+
 bool SessionInfo::ParseHandshakeResponse(const string& response)
 {
-    // Expected response:
-    //
-    // Upgrade: <url> \n        (zero or one)
-    // PSK: <hexstring>\n       (zero or one)
-    // HomePage: <url>\n        (zero or more)
-    // Server: <hexstring>\n    (zero or more)
-    // SSHPort: <string>\n         (zero or one)
-    // SSHUsername: <string>\n  (zero or one)
-    // SSHPassword: <string>\n  (zero or one)
-    // SSHHostKey: <string>\n   (zero or one)
-    // SSHSessionID: <string>\n   (zero or one)
-    // Config: <json>\n   (one)
+    // The handshake response will contain a bunch of legacy fields for
+    // backward-compatibility, and then a Config field with a JSON object
+    // holding the information we want.
 
-    static const char* UPGRADE_PREFIX = "Upgrade: ";
-    static const char* PSK_PREFIX = "PSK: ";
-    static const char* SSH_PORT_PREFIX = "SSHPort: ";
-    static const char* SSH_USERNAME_PREFIX = "SSHUsername: ";
-    static const char* SSH_PASSWORD_PREFIX = "SSHPassword: ";
-    static const char* SSH_HOST_KEY_PREFIX = "SSHHostKey: ";
-    static const char* SSH_SESSION_ID_PREFIX = "SSHSessionID: ";
-    static const char* SSH_OBFUSCATED_PORT_PREFIX = "SSHObfuscatedPort: ";
-    static const char* SSH_OBFUSCATED_KEY_PREFIX = "SSHObfuscatedKey: ";
-    static const char* HOMEPAGE_PREFIX = "Homepage: ";
-    static const char* SERVER_PREFIX = "Server: ";
     static const char* CONFIG_PREFIX = "Config: ";
-
-    m_upgradeVersion.clear();
-    m_psk.clear();
-    m_sshPort.clear();
-    m_sshUsername.clear();
-    m_sshPassword.clear();
-    m_sshHostKey.clear();
-    m_sshSessionID.clear();
-    m_sshObfuscatedPort.clear();
-    m_sshObfuscatedKey.clear();
-    m_homepages.clear();
-    m_servers.clear();
 
     stringstream stream(response);
     string item;
 
     while (getline(stream, item, '\n'))
     {
-        if (0 == item.find(UPGRADE_PREFIX))
-        {
-            item.erase(0, strlen(UPGRADE_PREFIX));
-            m_upgradeVersion = item;
-        }
-        else if (0 == item.find(PSK_PREFIX))
-        {
-            item.erase(0, strlen(PSK_PREFIX));
-            m_psk = item;
-        }
-        else if (0 == item.find(SSH_PORT_PREFIX))
-        {
-            item.erase(0, strlen(SSH_PORT_PREFIX));
-            m_sshPort = item;
-        }
-        else if (0 == item.find(SSH_USERNAME_PREFIX))
-        {
-            item.erase(0, strlen(SSH_USERNAME_PREFIX));
-            m_sshUsername = item;
-        }
-        else if (0 == item.find(SSH_PASSWORD_PREFIX))
-        {
-            item.erase(0, strlen(SSH_PASSWORD_PREFIX));
-            m_sshPassword = item;
-        }
-        else if (0 == item.find(SSH_HOST_KEY_PREFIX))
-        {
-            item.erase(0, strlen(SSH_HOST_KEY_PREFIX));
-            m_sshHostKey = item;
-        }
-        else if (0 == item.find(SSH_SESSION_ID_PREFIX))
-        {
-            item.erase(0, strlen(SSH_SESSION_ID_PREFIX));
-            m_sshSessionID = item;
-        }
-        else if (0 == item.find(SSH_OBFUSCATED_PORT_PREFIX))
-        {
-            item.erase(0, strlen(SSH_OBFUSCATED_PORT_PREFIX));
-            m_sshObfuscatedPort = item;
-        }
-        else if (0 == item.find(SSH_OBFUSCATED_KEY_PREFIX))
-        {
-            item.erase(0, strlen(SSH_OBFUSCATED_KEY_PREFIX));
-            m_sshObfuscatedKey = item;
-        }
-        else if (0 == item.find(HOMEPAGE_PREFIX))
-        {
-            item.erase(0, strlen(HOMEPAGE_PREFIX));
-            m_homepages.push_back(NarrowToTString(item));
-        }
-        else if  (0 == item.find(SERVER_PREFIX))
-        {
-            item.erase(0, strlen(SERVER_PREFIX));
-            m_servers.push_back(item);
-        }
-        else if (0 == item.find(CONFIG_PREFIX))
+        if (0 == item.find(CONFIG_PREFIX))
         {
             item.erase(0, strlen(CONFIG_PREFIX));
             if (!ProcessConfig(item))
             {
                 return false;
             }
+            break;
         }
     }
-    // TODO: more explicit validation?  Eg, got exactly one non-blank PSK
 
     return true;
 }
 
 bool SessionInfo::ProcessConfig(const string& config_json)
 {
+    m_upgradeVersion.clear();
+    m_psk.clear();
+    m_sshPort = 0;
+    m_sshUsername.clear();
+    m_sshPassword.clear();
+    m_sshHostKey.clear();
+    m_sshSessionID.clear();
+    m_sshObfuscatedPort = 0;
+    m_sshObfuscatedKey.clear();
+    m_homepages.clear();
+    m_servers.clear();
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
     m_speedTestServerAddress.clear();
@@ -162,10 +99,37 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
     try
     {
-        // Page view regexes
-        
-        Json::Value regexes = config["page_view_regexes"];
+        // Homepages
+        Json::Value homepages = config["homepages"];
+        for (Json::Value::ArrayIndex i = 0; i < homepages.size(); i++)
+        {
+            m_homepages.push_back(NarrowToTString(homepages[i].asString()));
+        }
 
+        // Upgrade
+        m_upgradeVersion = config.get("upgrade_client_version", "").asString();
+
+        // Servers
+        Json::Value servers = config["encoded_server_list"];
+        for (Json::Value::ArrayIndex i = 0; i < servers.size(); i++)
+        {
+            m_servers.push_back(servers[i].asString());
+        }
+
+        // SSH and OSSH values
+        m_sshPort = config.get("ssh_port", 0).asInt();
+        m_sshUsername = config.get("ssh_username", "").asString();
+        m_sshPassword = config.get("ssh_password", "").asString();
+        m_sshHostKey = config.get("ssh_host_key", "").asString();
+        m_sshSessionID = config.get("ssh_session_id", "").asString();
+        m_sshObfuscatedPort = config.get("ssh_obfuscated_port", 0).asInt();
+        m_sshObfuscatedKey = config.get("ssh_obfuscated_key", "").asString();
+
+        // VPN PSK
+        m_psk = config.get("psk", "").asString();
+
+        // Page view regexes        
+        Json::Value regexes = config["page_view_regexes"];
         for (Json::Value::ArrayIndex i = 0; i < regexes.size(); i++)
         {
             RegexReplace rx_re;
@@ -177,10 +141,8 @@ bool SessionInfo::ProcessConfig(const string& config_json)
             m_pageViewRegexes.push_back(rx_re);
         }
 
-        // HTTPS request regexes
-        
+        // HTTPS request regexes        
         regexes = config["https_request_regexes"];
-
         for (Json::Value::ArrayIndex i = 0; i < regexes.size(); i++)
         {
             RegexReplace rx_re;
@@ -193,7 +155,6 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         }
 
         // Speed Test URL
-
         Json::Value speedTestURL = config["speed_test_url"];
         if (Json::Value::null != speedTestURL)
         {
@@ -210,3 +171,66 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
     return true;
 }
+
+string SessionInfo::GetServerAddress() const 
+{
+    return m_serverEntry.serverAddress;
+}
+
+int SessionInfo::GetWebPort() const 
+{
+    return m_serverEntry.webServerPort;
+}
+
+string SessionInfo::GetWebServerSecret() const 
+{
+    return m_serverEntry.webServerSecret;
+}
+
+string SessionInfo::GetWebServerCertificate() const 
+{ 
+    return m_serverEntry.webServerCertificate;
+}
+
+// Returns the first value that is greater than zero
+static int Coalesce(int x, int y)
+{
+    return x > 0 ? x : y;
+}
+
+// Returns the first value that is non-empty.
+static string Coalesce(const string& x, const string& y)
+{
+    return !x.empty() ? x : y;
+}
+
+int SessionInfo::GetSSHPort() const 
+{
+    return Coalesce(m_sshPort, m_serverEntry.sshPort);
+}
+
+string SessionInfo::GetSSHUsername() const 
+{
+    return Coalesce(m_sshUsername, m_serverEntry.sshUsername);
+}
+
+string SessionInfo::GetSSHPassword() const 
+{
+    return Coalesce(m_sshPassword, m_serverEntry.sshPassword);
+}
+
+string SessionInfo::GetSSHHostKey() const 
+{
+    return Coalesce(m_sshHostKey, m_serverEntry.sshHostKey);
+}
+
+int SessionInfo::GetSSHObfuscatedPort() const 
+{
+    return Coalesce(m_sshObfuscatedPort, m_serverEntry.sshObfuscatedPort);
+}
+
+string SessionInfo::GetSSHObfuscatedKey() const 
+{
+    return Coalesce(m_sshObfuscatedKey, m_serverEntry.sshObfuscatedKey);
+}
+

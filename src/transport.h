@@ -55,6 +55,11 @@ public:
 
     virtual tstring GetLastTransportError() const = 0;
 
+    // Examines the available information in SessionInfo and determines if a
+    // request to the server for further info is needed before this transport
+    // can connect.
+    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
+
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort

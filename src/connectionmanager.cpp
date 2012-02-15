@@ -249,64 +249,62 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
         try
         {
-            //
-            // Handshake HTTPS request
-            //
+            // Get the next server to try
 
-            ServerEntry serverEntry;
-            HTTPSRequest httpsRequest;
             tstring handshakeRequestPath;
-            string handshakeResponse;
-
-            // Send list of known server IP addresses (used for stats logging on the server)
 
             my_print(true, _T("%s: LoadNextServer"), __TFUNCTION__);
-            manager->LoadNextServer(
-                            serverEntry,
-                            handshakeRequestPath);
+            manager->LoadNextServer(handshakeRequestPath);
 
-            // We now have the client retry on port 443 in case the
-            // configured port is blocked. If this works, then 443
-            // is used for subsequent web requests.
+            // Note that the SessionInfo will only be partly filled in at this point.
+            SessionInfo sessionInfo;
+            manager->CopyCurrentSessionInfo(sessionInfo);
 
-            // TODO: the client could 'remember' which port works
-            // and skip the blocked one next time to avoid waiting
-            // for inevitable timeouts.
+            SystemProxySettings systemProxySettings;
 
-            vector<int> ports;
-            ports.push_back(serverEntry.webServerPort);
-            if (serverEntry.webServerPort != 443) ports.push_back(443);
+            //
+            // Handshake and Transport-Connect (or vice versa)
+            //
 
-            for (size_t i = 0; i < ports.size(); i++)
+            if (manager->m_transport->IsHandshakeRequired(sessionInfo))
             {
-                int port = ports[i];
-                my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, port);
+                my_print(true, _T("%s: pre-connect handshake required for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+                my_print(true, _T("%s: doing handshake"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
-                if (httpsRequest.MakeRequest(
-                                    manager->GetUserSignalledStop(true),
-                                    NarrowToTString(serverEntry.serverAddress).c_str(),
-                                    port,
-                                    serverEntry.webServerCertificate,
-                                    handshakeRequestPath.c_str(),
-                                    handshakeResponse))
-                {
-                    // Handshake succeeded. Use this port for future requests.
-                    serverEntry.webServerPort = port;
-                    break;
-                }
-            }
+                manager->DoHandshake(
+                            handshakeRequestPath.c_str(),
+                            sessionInfo);
 
-            if (handshakeResponse.length() > 0)
-            {
-                my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
-                manager->HandleHandshakeResponse(handshakeResponse.c_str());
+                // Get a fresh copy of the now-more-filled-in session info
+                manager->CopyCurrentSessionInfo(sessionInfo);
+
+                my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+
+                manager->ConnectTransport(sessionInfo, &systemProxySettings);
             }
             else
             {
-                throw TryNextServer();
+                my_print(true, _T("%s: pre-connect handshake not required for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+                my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+
+                manager->ConnectTransport(sessionInfo, &systemProxySettings);
+
+                my_print(true, _T("%s: doing handshake"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+
+                manager->DoHandshake(
+                            handshakeRequestPath.c_str(),
+                            sessionInfo);
+
+                // Get a fresh copy of the now-more-filled-in session info
+                manager->CopyCurrentSessionInfo(sessionInfo);
             }
 
+            (void)manager->GetUserSignalledStop(true);
+
+            //
             // If handshake notified of new version, start the upgrade in a (background) thread
+            //
+
             if (manager->RequireUpgrade())
             {
                 if (!manager->m_upgradeThread ||
@@ -319,56 +317,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 }
             }
 
-            // Make a copy of the session info, so that we don't have to hold 
-            // the mutex while connecting.
-            SessionInfo sessionInfo;
-            {
-                AutoMUTEX(manager->m_mutex);
-                sessionInfo = manager->m_currentSessionInfo;
-            }
-
-            my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
-
-            // Force a stop check before trying to connect with transport
-            (void)manager->GetUserSignalledStop(true);
-
-            SystemProxySettings systemProxySettings;
-
-            // Attempt to connect to the current server using the current transport.
-            try
-            {
-                // Launches the transport thread and doesn't return until it
-                // observes a successful (or not) connection.
-                manager->m_transport->Connect(
-                                        sessionInfo, 
-                                        &systemProxySettings,
-                                        manager->GetUserSignalledStop(true));
-            }
-            catch (ITransport::TransportFailed&)
-            {
-                my_print(true, _T("%s: transport failed"), __TFUNCTION__);
-
-                // Report error code to server for logging/trouble-shooting.
-                tstring requestPath = manager->GetFailedRequestPath(manager->m_transport);    
-                string response;
-                HTTPSRequest httpsRequest;
-                (void)httpsRequest.MakeRequest( // Ignore failure
-                                    manager->GetUserSignalledStop(true),
-                                    NarrowToTString(serverEntry.serverAddress).c_str(),
-                                    serverEntry.webServerPort,
-                                    serverEntry.webServerCertificate,
-                                    requestPath.c_str(),
-                                    response);
-
-                throw TryNextServer();
-            }
-
-            // Force a stop check before trying to set up local proxy
-            (void)manager->GetUserSignalledStop(true);
-
             //
             // Set up the local proxy
             //
+
+            (void)manager->GetUserSignalledStop(true);
 
             my_print(true, _T("%s: setting up LocalProxy"), __TFUNCTION__);
             LocalProxy localProxy(
@@ -662,7 +615,8 @@ bool ConnectionManager::SendStatusMessage(
     stats["https_requests"] = https_requests;
 
     ostringstream additionalData; 
-    additionalData << stats; 
+    Json::FastWriter jsonWriter;
+    additionalData << jsonWriter.write(stats); 
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
@@ -696,7 +650,8 @@ tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, con
     strSize << size;
 
     return tstring(HTTP_SPEED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -721,7 +676,8 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
     AutoMUTEX lock(m_mutex);
 
     return tstring(HTTP_FAILED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -734,7 +690,8 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
     AutoMUTEX lock(m_mutex);
 
     return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -749,7 +706,8 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
     // TODO: get error code from SSH client?
 
     return tstring(HTTP_STATUS_REQUEST_PATH) + 
-           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
@@ -764,7 +722,8 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
     sessionInfo = m_currentSessionInfo;
     requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
-                    _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                    _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+                    _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                     _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                     _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
                     _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
@@ -779,15 +738,16 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 
 // ==== General Session Functions =============================================
 
-void ConnectionManager::LoadNextServer(
-        ServerEntry& serverEntry,
-        tstring& handshakeRequestPath)
+// Note that the SessionInfo structure will only be partly filled in by this function.
+void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
     // Select next server to try to connect to
 
     AutoMUTEX lock(m_mutex, __TFUNCTION__);
+
+    ServerEntry serverEntry;
     
     try
     {
@@ -801,6 +761,9 @@ void ConnectionManager::LoadNextServer(
         throw Abort();
     }
 
+    // Generate a new client session ID to be included with all subsequent web requests
+    m_currentSessionInfo.GenerateClientSessionID();
+
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
     my_print(true, _T("%s: m_currentSessionInfo.Set"), __TFUNCTION__);
@@ -809,7 +772,8 @@ void ConnectionManager::LoadNextServer(
     // Output values used in next TryNextServer step
 
     handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
@@ -1042,7 +1006,6 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         return;
     }
 
-
     tstring filePath = GetSplitTunnelingFilePath();
     if (filePath.length() == 0)
     {
@@ -1105,4 +1068,100 @@ tstring ConnectionManager::GetSplitTunnelingFilePath()
         return tstring(filePath);
     }
     return _T("");
+}
+
+// Connection thread helper
+// Throws TryNextServer if transport connect fails.
+// Throws Abort if user cancels.
+void ConnectionManager::ConnectTransport(
+                            SessionInfo& sessionInfo, 
+                            SystemProxySettings* systemProxySettings)
+{
+    try
+    {
+        // Launches the transport thread and doesn't return until it
+        // observes a successful (or not) connection.
+        m_transport->Connect(
+                        sessionInfo, 
+                        systemProxySettings,
+                        GetUserSignalledStop(true));
+    }
+    catch (ITransport::TransportFailed&)
+    {
+        my_print(true, _T("%s: transport failed"), __TFUNCTION__);
+
+        // Report error code to server for logging/trouble-shooting.
+        tstring requestPath = GetFailedRequestPath(m_transport);    
+        string response;
+        HTTPSRequest httpsRequest;
+        (void)httpsRequest.MakeRequest( // Ignore failure
+                            GetUserSignalledStop(true),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            sessionInfo.GetWebPort(),
+                            sessionInfo.GetWebServerCertificate(),
+                            requestPath.c_str(),
+                            response);
+
+        throw TryNextServer();
+    }
+}
+
+// Connection thread helper
+// Throws TryNextServer if transport connect fails.
+// Throws Abort if user cancels.
+void ConnectionManager::DoHandshake(
+                            const TCHAR* handshakeRequestPath, 
+                            SessionInfo& sessionInfo)
+{
+    HTTPSRequest httpsRequest;
+    string handshakeResponse;
+
+    // Send list of known server IP addresses (used for stats logging on the server)
+
+    // We now have the client retry on port 443 in case the
+    // configured port is blocked. If this works, then 443
+    // is used for subsequent web requests.
+
+    // TODO: the client could 'remember' which port works
+    // and skip the blocked one next time to avoid waiting
+    // for inevitable timeouts.
+
+    vector<int> ports;
+    ports.push_back(sessionInfo.GetWebPort());
+    if (sessionInfo.GetWebPort() != 443) ports.push_back(443);
+
+    for (size_t i = 0; i < ports.size(); i++)
+    {
+        int port = ports[i];
+        my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, port);
+
+        if (httpsRequest.MakeRequest(
+                            GetUserSignalledStop(true),
+                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                            port,
+                            sessionInfo.GetWebServerCertificate(),
+                            handshakeRequestPath,
+                            handshakeResponse))
+        {
+            // Handshake succeeded.
+            break;
+        }
+    }
+
+    if (handshakeResponse.length() > 0)
+    {
+        my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
+        HandleHandshakeResponse(handshakeResponse.c_str());
+    }
+    else
+    {
+        throw TryNextServer();
+    }
+}
+
+// Makes a thread-safe copy of m_currentSessionInfo
+void ConnectionManager::CopyCurrentSessionInfo(SessionInfo& sessionInfo)
+{
+    AutoMUTEX lock(m_mutex);
+    sessionInfo = m_currentSessionInfo;
 }

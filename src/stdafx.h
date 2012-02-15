@@ -32,6 +32,7 @@
 #include <CommCtrl.h>
 
 // C RunTime Header Files
+#define _CRT_RAND_S
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
