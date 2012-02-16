@@ -91,6 +91,7 @@
     <ClInclude Include="3rdParty\json\json.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="limitsingleinstance.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

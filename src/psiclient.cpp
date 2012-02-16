@@ -33,6 +33,7 @@
 #include "config.h"
 #include "utilities.h"
 #include "webbrowser.h"
+#include "limitsingleinstance.h"
 
 
 //==== Globals ================================================================
@@ -46,6 +47,8 @@ TCHAR g_szWindowClass[MAX_LOADSTRING];
 HWND g_hWnd;
 ConnectionManager g_connectionManager;
 tstring g_lastTransportSelection;
+
+LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
 // (...more globals in Controls section)
 
@@ -650,12 +653,23 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   g_hInst = hInstance;
+    // Don't allow multiple instances of this application to run
+    if (g_singleInstanceObject.IsAnotherInstanceRunning())
+    {
+        HWND otherWindow = FindWindow(g_szWindowClass, g_szTitle);
+        if (otherWindow)
+        {
+            SetForegroundWindow(otherWindow);
+        }
+        return FALSE;
+    }
 
-   RECT rect;
-   SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
+    g_hInst = hInstance;
 
-   g_hWnd = CreateWindowEx(
+    RECT rect;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
+
+    g_hWnd = CreateWindowEx(
         WS_EX_APPWINDOW,
         g_szWindowClass,
         g_szTitle,
@@ -666,10 +680,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         WINDOW_HEIGHT,
         NULL, NULL, hInstance, NULL);
 
-   ShowWindow(g_hWnd, nCmdShow);
-   UpdateWindow(g_hWnd);
+    ShowWindow(g_hWnd, nCmdShow);
+    UpdateWindow(g_hWnd);
 
-   return TRUE;
+    return TRUE;
 }
 
 
