@@ -61,7 +61,6 @@ private:
     static DWORD WINAPI ConnectionManager::UpgradeThread(void* object);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
-    class TryNextServer { };
     class Abort { };
 
     void DoPostConnect(const SessionInfo& sessionInfo);

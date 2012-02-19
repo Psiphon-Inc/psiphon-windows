@@ -19,6 +19,9 @@
 
 #pragma once
 
+class ITransport;
+class SessionInfo;
+
 
 class ServerRequest
 {
@@ -27,12 +30,11 @@ public:
     virtual ~ServerRequest();
     bool MakeRequest(
         const bool& cancel,
-        const TCHAR* serverAddress,
-        int serverWebPort,
-        const string& webServerCertificate,
+        const ITransport* currentTransport,
+        const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
         string& o_response,
-        int proxyPort=0, // 0 indicates no proxy
+        bool useLocalProxy=true,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);

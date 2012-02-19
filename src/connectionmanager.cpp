@@ -630,7 +630,7 @@ bool ConnectionManager::SendStatusMessage(
                                     webServerCertificate,
                                     requestPath.c_str(),
                                     response,
-                                    false, // useProxy=false
+                                    true, // use local proxy
                                     L"Content-Type: application/json",
                                     (LPVOID)additionalDataString.c_str(),
                                     additionalDataString.length());

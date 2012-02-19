@@ -56,3 +56,17 @@ bool TestBoolArray(const vector<const bool*>& boolArray);
 string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
+
+template<class T, class Allocator = allocator<T>>
+class auto_vector : public std::vector<T, Allocator>
+{
+public:
+    virtual ~auto_vector()
+    {
+        auto_vector<T, Allocator>::iterator it;
+        for (it = begin(); it != end(); it++)
+        {
+            delete *it;
+        }
+    }
+};

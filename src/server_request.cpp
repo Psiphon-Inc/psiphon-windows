@@ -37,36 +37,63 @@ If a transport is connected, the request method is simple:
 If a transport is not connected, the request method fails over among multiple
 methods:
 
-1. Directly
+1. Direct to server
 Connect directly with HTTPS. Fail over among specific ports (right now those
 are 8080 and 443).
 
 2. Via transport
 Some transports (e.g., SSH) have all necessary connection information 
-contained in their local ServerEntry; no separate handshake is required to
-connect with these transports. If direct connection attempts fail, we will
-fail over to attempting to connect each of these types of transports and 
-proxying our request through them.
+contained in their local ServerEntry; no separate handshake 
+(i.e., extra-transport connection) is required to connect with these 
+transports. If direct connection attempts fail, we will fail over to 
+attempting to connect each of these types of transports and proxying our 
+request through them.
 */
 
 #include "stdafx.h"
 #include "server_request.h"
+#include "transport.h"
+#include "transport_registry.h"
+#include "utilities.h"
 
 
 ServerRequest::ServerRequest()
 {
 }
 
+ServerRequest::~ServerRequest()
+{
+}
+
 bool ServerRequest::MakeRequest(
         const bool& cancel,
-        const TCHAR* serverAddress,
-        int serverWebPort,
-        const string& webServerCertificate,
+        const ITransport* currentTransport,
+        const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
         string& response,
-        int proxyPort/*=0*/,
+        bool useLocalProxy/*=true*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
 {
+    if (!currentTransport->IsConnected())
+    {
+        auto_vector<ITransport*> all_transports;
+        TransportRegistry::NewAll(all_transports);
+        auto_vector<ITransport*>::iterator it;
+        for (it = all_transports.begin(); it != all_transports.end(); it++)
+        {
+            // Only try transports that aren't the same as the current 
+            // transport (because there's a reason it's not connected) 
+            // and doesn't require a handshake.
+            if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
+                && !((*it)->IsHandshakeRequired(sessionInfo)))
+            {
+                break;
+            }
+        }
+    }
+
+    return true;
 }
+

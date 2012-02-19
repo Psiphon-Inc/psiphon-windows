@@ -30,7 +30,8 @@
  TransportFactory
 ******************************************************************************/
 
-map<tstring, TransportFactory> TransportRegistry::m_registeredTransports;
+map<tstring, TransportRegistry::TransportEntry, TransportRegistry::RegistryEntryComparison> 
+    TransportRegistry::m_registeredTransports;
 
 // static
 template<class TRANSPORT_TYPE>
@@ -41,7 +42,11 @@ int TransportRegistry::Register()
 
     TRANSPORT_TYPE::GetFactory(transportName, transportFactory);
 
-    TransportRegistry::m_registeredTransports[transportName] = transportFactory;
+    TransportEntry entry;
+    entry.transportFactory = transportFactory;
+    entry.priority = m_registeredTransports.size();
+
+    m_registeredTransports[transportName] = entry;
 
     // The return value is essentially meaningless, but some return value 
     // is needed, so that an assignment can be done -- because only assignments
@@ -52,25 +57,27 @@ int TransportRegistry::Register()
 // static 
 ITransport* TransportRegistry::New(tstring transportName)
 {
-    return m_registeredTransports[transportName]();
+    return m_registeredTransports[transportName].transportFactory();
 }
 
 // static 
 void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
 {
     all_transports.clear();
-    map<tstring, TransportFactory>::const_iterator it;
+
+    map<tstring, TransportEntry, RegistryEntryComparison>::const_iterator it;
     for (it = m_registeredTransports.begin(); it != m_registeredTransports.end(); it++)
     {
-        all_transports.push_back(it->second());
+        all_transports.push_back(it->second.transportFactory());
     }
 }
 
 // This is the actual registration of the available transports.
+// NOTE: The order of these lines indicates the priority of the transports.
 
-static int _vpn = TransportRegistry::Register<VPNTransport>();
 static int _ossh = TransportRegistry::Register<OSSHTransport>();
 static int _ssh = TransportRegistry::Register<SSHTransport>();
+static int _vpn = TransportRegistry::Register<VPNTransport>();
 
 
 

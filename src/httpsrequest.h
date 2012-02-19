@@ -21,6 +21,8 @@
 
 #include <string>
 #include <WinCrypt.h>
+#include <Winhttp.h>
+
 
 using namespace std;
 
@@ -29,6 +31,7 @@ class HTTPSRequest
 public:
     HTTPSRequest();
     virtual ~HTTPSRequest();
+
     bool MakeRequest(
         const bool& cancel,
         const TCHAR* serverAddress,
@@ -36,17 +39,25 @@ public:
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
-        int proxyPort=0, // 0 indicates no proxy
+        bool useLocalProxy=true,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);
 
-    // NOTE: these member functions could be private if the WinHttpStatusCallback
-    // function is a static member or friend
-    void SetClosedEvent(void) {SetEvent(m_closedEvent);}
-    void SetRequestSuccess(void) {m_requestSuccess = true;}
+private:
+    tstring GetSystemDefaultHTTPSProxy();
+
+    void SetClosedEvent() {SetEvent(m_closedEvent);}
+    void SetRequestSuccess() {m_requestSuccess = true;}
   	bool ValidateServerCert(PCCERT_CONTEXT pCert);
     void AppendResponse(const string& responseData);
+
+    friend void CALLBACK WinHttpStatusCallback(
+                            HINTERNET hRequest,
+                            DWORD_PTR dwContext,
+                            DWORD dwInternetStatus,
+                            LPVOID lpvStatusInformation,
+                            DWORD dwStatusInformationLength);
 
 private:
     HANDLE m_mutex;
