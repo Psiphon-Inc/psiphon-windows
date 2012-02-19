@@ -70,3 +70,8 @@ void ITransport::DoStop()
 
     my_print(false, _T("%s disconnected."), GetTransportDisplayName().c_str());
 }
+
+bool ITransport::IsConnected() const
+{
+    return IsRunning();
+}

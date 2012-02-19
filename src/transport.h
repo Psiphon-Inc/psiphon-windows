@@ -73,6 +73,8 @@ public:
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
 
+    bool IsConnected() const;
+
     //
     // Exception classes
     //

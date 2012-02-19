@@ -127,6 +127,13 @@ void IWorkerThread::Stop()
     m_externalStopSignalFlag = 0;
 }
 
+bool IWorkerThread::IsRunning() const
+{
+    bool started = (WaitForSingleObject(m_startedEvent, 0) == WAIT_OBJECT_0);
+    bool stopped = (WaitForSingleObject(m_stoppedEvent, 0) == WAIT_OBJECT_0);
+    return started && !stopped;
+}
+
 // static
 DWORD WINAPI IWorkerThread::Thread(void* object)
 {

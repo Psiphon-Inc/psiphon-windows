@@ -37,6 +37,8 @@ public:
     // The returned event will be set when the thread stops.
     virtual HANDLE GetStoppedEvent() const;
 
+    bool IsRunning() const;
+
     //
     // Exception classes
     //
