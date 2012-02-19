@@ -51,6 +51,8 @@ LocalProxy::LocalProxy(
     m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
     m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
 
+    m_mutex = CreateMutex(NULL, FALSE, 0);
+
     assert(statsCollector);
     assert(systemProxySettings);
 }
@@ -60,8 +62,17 @@ LocalProxy::~LocalProxy()
     IWorkerThread::Stop();
 
     Cleanup();
+
+    CloseHandle(m_mutex);
 }
 
+void LocalProxy::UpdateSessionInfo(const SessionInfo& sessionInfo)
+{
+    AutoMUTEX lock(m_mutex);
+
+    m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
+    m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
+}
 
 bool LocalProxy::DoStart()
 {
@@ -426,6 +437,8 @@ void LocalProxy::UpsertPageView(const string& entry)
 {
     if (entry.length() <= 0) return;
 
+    AutoMUTEX lock(m_mutex);
+
     my_print(true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
 
     string store_entry = "(OTHER)";
@@ -469,6 +482,8 @@ void LocalProxy::UpsertHttpsRequest(string entry)
     }
 
     if (entry.length() <= 0) return;
+
+    AutoMUTEX lock(m_mutex);
 
     string store_entry = "(OTHER)";
 

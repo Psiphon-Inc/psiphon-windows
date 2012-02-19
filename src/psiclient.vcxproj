@@ -111,6 +111,7 @@
     <ClInclude Include="systemproxysettings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="transport.h" />
+    <ClInclude Include="transport_connection.h" />
     <ClInclude Include="transport_registry.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
@@ -162,6 +163,7 @@
     </ClCompile>
     <ClCompile Include="systemproxysettings.cpp" />
     <ClCompile Include="transport.cpp" />
+    <ClCompile Include="transport_connection.cpp" />
     <ClCompile Include="transport_registry.cpp" />
     <ClCompile Include="usersettings.cpp" />
     <ClCompile Include="utilities.cpp" />

@@ -48,6 +48,11 @@ public:
         const tstring& splitTunnelingFilePath);
     virtual ~LocalProxy();
 
+    // Sometimes SessionInfo gets updated after the LocalProxy starts (i.e.,
+    // a handshake happens afterwards, with new page view regexes); in that 
+    // case we need to update the SessionInfo here.
+    void UpdateSessionInfo(const SessionInfo& sessionInfo);
+
 protected:
     // IWorkerThread implementation
     bool DoStart();
@@ -62,7 +67,6 @@ protected:
     void UpsertPageView(const string& entry);
     void UpsertHttpsRequest(string entry);
     void ParsePolipoStatsBuffer(const char* page_view_buffer);
-
 
 private:
     ILocalProxyStatsCollector* m_statsCollector;

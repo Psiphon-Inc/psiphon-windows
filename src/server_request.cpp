@@ -54,7 +54,7 @@ request through them.
 #include "server_request.h"
 #include "transport.h"
 #include "transport_registry.h"
-#include "utilities.h"
+#include "httpsrequest.h"
 
 
 ServerRequest::ServerRequest()
@@ -76,24 +76,54 @@ bool ServerRequest::MakeRequest(
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
 {
-    if (!currentTransport->IsConnected())
+    // See comments at the top of this file for full discussion of logic.
+
+    bool transportConnected = currentTransport && currentTransport->IsConnected();
+
+    if (transportConnected)
     {
-        auto_vector<ITransport*> all_transports;
-        TransportRegistry::NewAll(all_transports);
-        auto_vector<ITransport*>::iterator it;
-        for (it = all_transports.begin(); it != all_transports.end(); it++)
-        {
-            // Only try transports that aren't the same as the current 
-            // transport (because there's a reason it's not connected) 
-            // and doesn't require a handshake.
-            if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
-                && !((*it)->IsHandshakeRequired(sessionInfo)))
-            {
-                break;
-            }
-        }
+        // This is the simple case -- we just connect through the transport
+        // using the local proxy.
+        HTTPSRequest httpsRequest;
+        return httpsRequest.MakeRequest(
+                cancel,
+                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+
     }
 
     return true;
 }
 
+// Goes through all available transports (which are not the same as the current
+// transport) looking for one that can connect with the currently-available 
+// session info.
+// Returns 0 if none is found. Otherwise returns a heap-allocated transport
+// object that must be delete'd by the caller.
+ITransport* ServerRequest::GetTempTransport(
+                            const ITransport* currentTransport,
+                            const SessionInfo& sessionInfo)
+{
+    vector<ITransport*> all_transports;
+    TransportRegistry::NewAll(all_transports);
+
+    ITransport* tempTransport = 0;
+    vector<ITransport*>::iterator it;
+    for (it = all_transports.begin(); it != all_transports.end(); it++)
+    {
+        // Only try transports that aren't the same as the current 
+        // transport (because there's a reason it's not connected) 
+        // and doesn't require a handshake.
+        if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
+            && !(*it)->IsHandshakeRequired(sessionInfo))
+        {
+            tempTransport = *it;
+            // no early break, so that we delete all the unused transports
+        }
+        else
+        {
+            delete *it;
+        }
+    }
+
+    return tempTransport;
+}

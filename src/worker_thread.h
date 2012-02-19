@@ -78,6 +78,7 @@ protected:
     HANDLE m_thread;
     HANDLE m_startedEvent;
     HANDLE m_stoppedEvent;
+    HANDLE m_mutex;
 
     const bool* m_externalStopSignalFlag;
     bool m_internalSignalStopFlag;

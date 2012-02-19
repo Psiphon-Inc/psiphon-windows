@@ -39,6 +39,7 @@
       <Filter>json</Filter>
     </ClCompile>
     <ClCompile Include="server_request.cpp" />
+    <ClCompile Include="transport_connection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -93,6 +94,7 @@
       <Filter>json</Filter>
     </ClInclude>
     <ClInclude Include="server_request.h" />
+    <ClInclude Include="transport_connection.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
