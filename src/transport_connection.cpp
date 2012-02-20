@@ -67,41 +67,50 @@ void TransportConnection::Connect(
         handshakeDone = true;
     }
 
-    // Connect with the transport.
-    // May throw.
-    m_transport->Connect(
-                m_sessionInfo, 
-                &m_systemProxySettings,
-                stopSignalFlag);
-
-    // Set up and start the local proxy.
-    m_localProxy = new LocalProxy(
-                        statsCollector, 
-                        m_sessionInfo, 
-                        &m_systemProxySettings,
-                        m_transport->GetLocalProxyParentPort(), 
-                        splitTunnelingFilePath);
-
-    // Launches the local proxy thread and doesn't return until it
-    // observes a successful (or not) connection.
-    if (!m_localProxy->Start(stopSignalFlag))
+    try
     {
-        throw IWorkerThread::Error("LocalProxy::Start failed");
+        // Connect with the transport.
+        // May throw.
+        m_transport->Connect(
+                    m_sessionInfo, 
+                    &m_systemProxySettings,
+                    stopSignalFlag);
+
+        // Set up and start the local proxy.
+        m_localProxy = new LocalProxy(
+                            statsCollector, 
+                            m_sessionInfo, 
+                            &m_systemProxySettings,
+                            m_transport->GetLocalProxyParentPort(), 
+                            splitTunnelingFilePath);
+
+        // Launches the local proxy thread and doesn't return until it
+        // observes a successful (or not) connection.
+        if (!m_localProxy->Start(stopSignalFlag))
+        {
+            throw IWorkerThread::Error("LocalProxy::Start failed");
+        }
+
+        // Apply the system proxy settings that have been collected by the transport
+        // and the local proxy.
+        m_systemProxySettings.Apply();
+
+        // If we didn't do the handshake before, do it now.
+        if (!handshakeDone)
+        {
+            DoHandshake(handshakeRequestPath, stopSignalFlag);
+        }
+
+        // Now that we have extra info from the server via the handshake 
+        // (specifically page view regexes), we need to update the local proxy.
+        m_localProxy->UpdateSessionInfo(m_sessionInfo);
     }
-
-    // Apply the system proxy settings that have been collected by the transport
-    // and the local proxy.
-    m_systemProxySettings.Apply();
-
-    // If we didn't do the handshake before, do it now.
-    if (!handshakeDone)
+    catch(...)
     {
-        DoHandshake(handshakeRequestPath, stopSignalFlag);
+        // Make sure the transport is cleaned up and then just rethrow
+        m_transport->Cleanup();
+        throw;
     }
-
-    // Now that we have extra info from the server via the handshake 
-    // (specifically page view regexes), we need to update the local proxy.
-    m_localProxy->UpdateSessionInfo(m_sessionInfo);
 }
 
 void TransportConnection::WaitForDisconnect()
