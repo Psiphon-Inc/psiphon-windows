@@ -174,9 +174,6 @@ void SSHTransportBase::TransportConnectHelper(
     // uses this to associate the tunnel with web requests -- for GeoIP region stats
     string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
 
-    // TODO: enable this
-    sshPassword = sessionInfo.GetSSHPassword();
-
     if (!GetSSHParams(
             sessionInfo, 
             sshPassword,
@@ -459,7 +456,7 @@ bool SetPlonkSSHHostKey(
 {
     // Add Plonk registry entry for host for non-interactive host key validation
 
-    // Host key is base64 encoded set of fiels
+    // Host key is base64 encoded set of fields
 
     BYTE* decodedFields = NULL;
     DWORD size = 0;
@@ -468,7 +465,7 @@ bool SetPlonkSSHHostKey(
         || !(decodedFields = new (std::nothrow) BYTE[size])
         || !CryptStringToBinary(sshServerHostKey.c_str(), sshServerHostKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
     {
-        my_print(false, _T("SetPlonkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
+        my_print(false, _T("d (%d)"), GetLastError());
         return false;
     }
 
