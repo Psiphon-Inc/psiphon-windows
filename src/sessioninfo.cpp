@@ -159,7 +159,8 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         if (Json::Value::null != speedTestURL)
         {
             m_speedTestServerAddress = speedTestURL.get("server_address", "").asString();
-            m_speedTestServerPort = speedTestURL.get("server_port", 0).asInt();
+            string speedTestServerPort = speedTestURL.get("server_port", "").asString();
+            m_speedTestServerPort = atoi(speedTestServerPort.c_str());
             m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
         }
     }
