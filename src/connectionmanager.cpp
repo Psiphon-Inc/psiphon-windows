@@ -432,10 +432,12 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     // Perform tunneled speed test when requested
     // In VPN mode, the WinHttp request is implicitly tunneled.
 
-    tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
+    tstring speedTestServerAddress, speedTestRequestPath;
+    int speedTestServerPort = 0;
     GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
     // HTTPSRequest is always https
-    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; 
+    tstringstream speedTestURL;
+    speedTestURL << _T("https://") << speedTestServerAddress << _T(":") << speedTestServerPort << speedTestRequestPath;
 
     if (speedTestServerAddress.length() > 0)
     {
@@ -446,7 +448,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (httpsRequest.MakeRequest(
                             GetUserSignalledStop(true),
                             speedTestServerAddress.c_str(),
-                            _ttoi(speedTestServerPort.c_str()),
+                            speedTestServerPort,
                             "",
                             speedTestRequestPath.c_str(),
                             response))
@@ -465,7 +467,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             GetSpeedRequestPath(
                                 m_transport->GetTransportProtocolName(),
                                 success ? _T("speed_test") : _T("speed_test_failure"),
-                                speedTestURL.c_str(),
+                                speedTestURL.str().c_str(),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -571,12 +573,12 @@ tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, con
            _T("&size=") + NarrowToTString(strSize.str());
 }
 
-void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, tstring& serverPort, tstring& requestPath)
+void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath)
 {
     AutoMUTEX lock(m_mutex);
 
     serverAddress = NarrowToTString(m_currentSessionInfo.GetSpeedTestServerAddress());
-    serverPort = NarrowToTString(m_currentSessionInfo.GetSpeedTestServerPort());
+    serverPort = m_currentSessionInfo.GetSpeedTestServerPort();
     requestPath = NarrowToTString(m_currentSessionInfo.GetSpeedTestRequestPath());
 }
 

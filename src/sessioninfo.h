@@ -58,7 +58,7 @@ public:
     vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
     vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
     string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
-    string GetSpeedTestServerPort() const {return m_speedTestServerPort;}
+    int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
     string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
 
     bool ParseHandshakeResponse(const string& response);
@@ -82,6 +82,6 @@ private:
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
     string m_speedTestServerAddress;
-    string m_speedTestServerPort;
+    int m_speedTestServerPort;
     string m_speedTestRequestPath;
 };

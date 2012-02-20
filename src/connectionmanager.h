@@ -76,7 +76,7 @@ private:
         const tstring& info,
         DWORD milliseconds,
         DWORD size);
-    void GetSpeedTestURL(tstring& serverAddress, tstring& serverPort, tstring& requestPath);
+    void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
     void MarkCurrentServerFailed(void);
     void LoadNextServer(tstring& handshakeRequestPath);

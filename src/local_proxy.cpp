@@ -179,8 +179,9 @@ void LocalProxy::Cleanup()
 
     m_lastStatusSendTimeMS = 0;
 
-    // If we didn't get a chance to send our final stats, we'll try one last time.
-    if (!m_finalStatsSent && m_statsCollector)
+    // If we have stats, and we didn't get a chance to send our final stats, 
+    // we'll try one last time.
+    if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
         (void)m_statsCollector->SendStatusMessage(
                                 true, // Note: there's a timeout side-effect when final=false

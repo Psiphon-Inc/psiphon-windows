@@ -84,7 +84,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
     m_speedTestServerAddress.clear();
-    m_speedTestServerPort.clear();
+    m_speedTestServerPort = 0;
     m_speedTestRequestPath.clear();
 
     Json::Value config;
@@ -159,7 +159,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         if (Json::Value::null != speedTestURL)
         {
             m_speedTestServerAddress = speedTestURL.get("server_address", "").asString();
-            m_speedTestServerPort = speedTestURL.get("server_port", "").asString();
+            m_speedTestServerPort = speedTestURL.get("server_port", 0).asInt();
             m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
         }
     }
