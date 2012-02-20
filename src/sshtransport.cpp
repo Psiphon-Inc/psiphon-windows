@@ -465,7 +465,7 @@ bool SetPlonkSSHHostKey(
         || !(decodedFields = new (std::nothrow) BYTE[size])
         || !CryptStringToBinary(sshServerHostKey.c_str(), sshServerHostKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
     {
-        my_print(false, _T("d (%d)"), GetLastError());
+        my_print(false, _T("SetPlonkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
         return false;
     }
 
