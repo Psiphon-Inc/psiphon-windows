@@ -315,7 +315,7 @@ bool SSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
         && sessionInfo.GetSSHHostKey().length() > 0
         && sessionInfo.GetSSHUsername().length() > 0
         && sessionInfo.GetSSHPassword().length() > 0;
-    return sufficientInfo;
+    return !sufficientInfo;
 }
 
 bool SSHTransport::GetSSHParams(
