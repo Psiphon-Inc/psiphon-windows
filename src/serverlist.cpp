@@ -359,11 +359,11 @@ void ServerEntry::FromString(const string& str)
     try
     {
         sshPort = json_entry.get("sshPort", 0).asInt();
-        sshUsername = json_entry.get("sshUsername", 0).asString();
-        sshPassword = json_entry.get("sshPassword", 0).asString();
-        sshHostKey = json_entry.get("sshHostKey", 0).asString();
+        sshUsername = json_entry.get("sshUsername", "").asString();
+        sshPassword = json_entry.get("sshPassword", "").asString();
+        sshHostKey = json_entry.get("sshHostKey", "").asString();
         sshObfuscatedPort = json_entry.get("sshObfuscatedPort", 0).asInt();
-        sshObfuscatedKey = json_entry.get("sshObfuscatedKey", 0).asString();
+        sshObfuscatedKey = json_entry.get("sshObfuscatedKey", "").asString();
     }
     catch (exception& e)
     {
