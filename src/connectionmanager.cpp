@@ -22,7 +22,7 @@
 #include "config.h"
 #include "psiclient.h"
 #include "connectionmanager.h"
-#include "httpsrequest.h"
+#include "server_request.h"
 #include "webbrowser.h"
 #include "embeddedvalues.h"
 #include "usersettings.h"
@@ -389,12 +389,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         
     DWORD start = GetTickCount();
     string response;
-    HTTPSRequest httpsRequest;
-    if (httpsRequest.MakeRequest(
+    ServerRequest serverRequest;
+    if (serverRequest.MakeRequest(
                         GetUserSignalledStop(true),
-                        NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                        sessionInfo.GetWebPort(),
-                        sessionInfo.GetWebServerCertificate(),
+                        m_transport,
+                        sessionInfo,
                         connectedRequestPath.c_str(),
                         response))
     {
@@ -405,12 +404,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            HTTPSRequest httpsRequest;
-            httpsRequest.MakeRequest(
+            ServerRequest serverRequest;
+            (void)serverRequest.MakeRequest(
                             GetUserSignalledStop(true),
-                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                            sessionInfo.GetWebPort(),
-                            sessionInfo.GetWebServerCertificate(),
+                            m_transport,
+                            sessionInfo,
                             GetSpeedRequestPath(
                                 m_transport->GetTransportProtocolName(),
                                 _T("connected"),
@@ -435,7 +433,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
 
     tstring speedTestServerAddress, speedTestServerPort, speedTestRequestPath;
     GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
-    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; // HTTPSRequest is always https
+    // HTTPSRequest is always https
+    tstring speedTestURL = _T("https://") + speedTestServerAddress + _T(":") + speedTestServerPort + speedTestRequestPath; 
 
     if (speedTestServerAddress.length() > 0)
     {
@@ -457,12 +456,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            HTTPSRequest httpsRequest;
-            httpsRequest.MakeRequest(
+            ServerRequest serverRequest;
+            serverRequest.MakeRequest(
                             GetUserSignalledStop(true),
-                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                            sessionInfo.GetWebPort(),
-                            sessionInfo.GetWebServerCertificate(),
+                            m_transport,
+                            sessionInfo,
                             GetSpeedRequestPath(
                                 m_transport->GetTransportProtocolName(),
                                 success ? _T("speed_test") : _T("speed_test_failure"),
@@ -485,11 +483,11 @@ bool ConnectionManager::SendStatusMessage(
     string serverAddress;
     int webServerPort;
     string webServerCertificate;
+    // Make a copy of SessionInfo for threadsafety.
+    SessionInfo sessionInfo;
     {
         AutoMUTEX lock(m_mutex);
-        serverAddress = m_currentSessionInfo.GetServerAddress();
-        webServerPort = m_currentSessionInfo.GetWebPort();
-        webServerCertificate = m_currentSessionInfo.GetWebServerCertificate();
+        sessionInfo = m_currentSessionInfo;
     }
 
     // When disconnected, ignore the user cancel flag in the HTTP request
@@ -537,15 +535,13 @@ bool ConnectionManager::SendStatusMessage(
 
     tstring requestPath = GetStatusRequestPath(m_transport, !final);
     string response;
-    HTTPSRequest httpsRequest;
-    bool success = httpsRequest.MakeRequest(
+    ServerRequest serverRequest;
+    bool success = serverRequest.MakeRequest(
                                     cancel,
-                                    NarrowToTString(serverAddress).c_str(),
-                                    webServerPort,
-                                    webServerCertificate,
+                                    m_transport,
+                                    sessionInfo,
                                     requestPath.c_str(),
                                     response,
-                                    true, // use local proxy
                                     L"Content-Type: application/json",
                                     (LPVOID)additionalDataString.c_str(),
                                     additionalDataString.length());
@@ -735,12 +731,11 @@ DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
 
         // Download new binary
         DWORD start = GetTickCount();
-        HTTPSRequest httpsRequest;
-        if (!httpsRequest.MakeRequest(
+        ServerRequest serverRequest;
+        if (!serverRequest.MakeRequest(
                     manager->GetUserSignalledStop(true),
-                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                    sessionInfo.GetWebPort(),
-                    sessionInfo.GetWebServerCertificate(),
+                    manager->m_transport,
+                    sessionInfo,
                     downloadRequestPath.c_str(),
                     downloadResponse))
         {
@@ -760,11 +755,10 @@ DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
             if (now >= start) // GetTickCount can wrap
             {
                 string speedResponse;
-                (void)httpsRequest.MakeRequest( // Ignore failure
+                (void)serverRequest.MakeRequest( // Ignore failure
                                 manager->GetUserSignalledStop(true),
-                                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                                sessionInfo.GetWebPort(),
-                                sessionInfo.GetWebServerCertificate(),
+                                manager->m_transport,
+                                sessionInfo,
                                 manager->GetSpeedRequestPath(
                                     _T("(NONE)"),
                                     _T("download"),
