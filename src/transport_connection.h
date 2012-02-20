@@ -21,29 +21,36 @@
 
 #include "sessioninfo.h"
 #include "systemproxysettings.h"
+#include "utilities.h"
+#include "worker_thread.h"
 
 class LocalProxy;
 class ILocalProxyStatsCollector;
 class ITransport;
 
 
-// This class encapsulates many of the steps required to set up, run, and tear
-// down a transport connection (including local proxy).
-// Basically a convenience wrapper for Transport+LocalProxy+handshake.
-// This class is also responsible for the handshake.
+/*
+This class encapsulates many of the steps required to set up, run, and tear
+down a transport connection (including local proxy).
+Basically a convenience wrapper for Transport+LocalProxy+handshake.
+This class is also responsible for the handshake.
+*/
 class TransportConnection
 {
 public:
     TransportConnection();
     virtual ~TransportConnection();
 
-    // May throw the same exceptions as ITransport::Connect and WorkerThread::Start,
-    // and also TryNextServer.
-    // If statsCollector is null, then stats will not be collected.
-    // If handshakeRequestPath is null, then no handshake will be done. (This 
-    // means that transports that require a pre-handshake will fail, and others
-    // will have no following handshake. This should only be the case for 
-    // tempoary connections.)
+    /*
+    May throw the same exceptions as ITransport::Connect and WorkerThread::Start,
+    but *not* ITransport::TransportFailed. Also throws TryNextServer, in 
+    the case of a normal failure.
+    If statsCollector is null, then stats will not be collected.
+    If handshakeRequestPath is null, then no handshake will be done. (This 
+    means that transports that require a pre-handshake will fail, and others
+    will have no following handshake. This should only be the case for 
+    tempoary connections.)
+    */
     void Connect(
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
@@ -64,11 +71,13 @@ public:
 
 private:
     void DoHandshake(const TCHAR* handshakeRequestPath, const bool& stopSignalFlag);
+    void Cleanup();
 
 private:
     ITransport* m_transport;
     LocalProxy* m_localProxy;
     SessionInfo m_sessionInfo;
     SystemProxySettings m_systemProxySettings;
+    ReferenceCounter m_referenceCounter;
 };
 

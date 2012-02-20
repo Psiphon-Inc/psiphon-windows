@@ -31,10 +31,9 @@
 #include <algorithm>
 #include <sstream>
 #include <Shlwapi.h>
-
-
 #include "transport.h"
 #include "transport_registry.h"
+#include "transport_connection.h"
 
 
 // Upgrade process posts a Quit message
@@ -260,46 +259,23 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             SessionInfo sessionInfo;
             manager->CopyCurrentSessionInfo(sessionInfo);
 
-            SystemProxySettings systemProxySettings;
-
             //
-            // Handshake and Transport-Connect (or vice versa)
+            // Set up the transport connection
             //
 
-            if (manager->m_transport->IsHandshakeRequired(sessionInfo))
-            {
-                my_print(true, _T("%s: pre-connect handshake required for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
-                my_print(true, _T("%s: doing handshake"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+            my_print(true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
-                manager->DoHandshake(
-                            handshakeRequestPath.c_str(),
-                            sessionInfo);
+            // Note that the TransportConnection will do any necessary cleanup.
+            TransportConnection transportConnection;
 
-                // Get a fresh copy of the now-more-filled-in session info
-                manager->CopyCurrentSessionInfo(sessionInfo);
-
-                my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
-
-                manager->ConnectTransport(sessionInfo, &systemProxySettings);
-            }
-            else
-            {
-                my_print(true, _T("%s: pre-connect handshake not required for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
-                my_print(true, _T("%s: trying transport: %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
-
-                manager->ConnectTransport(sessionInfo, &systemProxySettings);
-
-                my_print(true, _T("%s: doing handshake"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
-
-                manager->DoHandshake(
-                            handshakeRequestPath.c_str(),
-                            sessionInfo);
-
-                // Get a fresh copy of the now-more-filled-in session info
-                manager->CopyCurrentSessionInfo(sessionInfo);
-            }
-
-            (void)manager->GetUserSignalledStop(true);
+            // May throw TryNextServer
+            transportConnection.Connect(
+                manager->m_transport,
+                manager,
+                sessionInfo,
+                handshakeRequestPath.c_str(),
+                manager->GetSplitTunnelingFilePath(),
+                manager->GetUserSignalledStop(true));
 
             //
             // If handshake notified of new version, start the upgrade in a (background) thread
@@ -318,37 +294,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             }
 
             //
-            // Set up the local proxy
-            //
-
-            (void)manager->GetUserSignalledStop(true);
-
-            my_print(true, _T("%s: setting up LocalProxy"), __TFUNCTION__);
-            LocalProxy localProxy(
-                        manager, 
-                        sessionInfo, 
-                        &systemProxySettings,
-                        manager->m_transport->GetLocalProxyParentPort(), 
-                        manager->GetSplitTunnelingFilePath()); // split tunneling file
-
-            // Launches the local proxy thread and doesn't return until it
-            // observes a successful (or not) connection.
-            if (!localProxy.Start(manager->GetUserSignalledStop(true)))
-            {
-                throw IWorkerThread::Error("LocalProxy::Start failed");
-            }
-
-            //
-            // Transport and local proxy in place.
-            //
-
-            //
-            // Apply the system proxy settings.
-            //
-
-            systemProxySettings.Apply();
-
-            //
             // Do post-connect work, like opening home pages.
             //
 
@@ -356,37 +301,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             manager->DoPostConnect(sessionInfo);
 
             //
-            // Wait for transport and/or local proxy to stop (or fail)
+            // Wait for transportConnection to stop (or fail)
             //
 
-            my_print(true, _T("%s: entering transport+localproxy wait"), __TFUNCTION__);
-
-            HANDLE waitHandles[] = { manager->m_transport->GetStoppedEvent(), 
-                                     localProxy.GetStoppedEvent() };
-            size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
-
-            DWORD result = WaitForMultipleObjects(
-                            waitHandlesCount, 
-                            waitHandles, 
-                            FALSE, // wait for any event
-                            INFINITE);
-
-            // At least one of the connection threads has stopped, or there's 
-            // an error. Tell both transport and localProxy and stop and wait 
-            // for them to do so.
-            localProxy.Stop();
-            manager->m_transport->Stop();
-            manager->m_transport->Cleanup();
-
-            if (result > (WAIT_OBJECT_0 + waitHandlesCount))
-            {
-                throw IWorkerThread::Error("WaitForMultipleObjects failed");
-            }
-
-            // Revert the system proxy settings.
-            // This will also be done by the systemProxySettings dtor, 
-            // but we'll make it explicit here.
-            systemProxySettings.Revert();
+            my_print(true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
+            transportConnection.WaitForDisconnect();
 
             //
             // Disconnected
@@ -401,7 +320,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         {
             // Unrecoverable error. Cleanup and exit.
             my_print(true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
-            manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -409,7 +327,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         {
             // User requested cancel. Cleanup and exit.
             my_print(true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
-            manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -417,15 +334,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         {
             // User requested cancel. Cleanup and exit.
             my_print(true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
-            manager->m_transport->Cleanup();
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
-        catch (ConnectionManager::TryNextServer&)
+        catch (TransportConnection::TryNextServer&)
         {
             // Failed to connect to the server. Try the next one.
             my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
-            manager->m_transport->Cleanup();
             manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
@@ -560,7 +475,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
 }
 
 bool ConnectionManager::SendStatusMessage(
-                            bool connected,
+                            bool final,
                             const map<string, int>& pageViewEntries,
                             const map<string, int>& httpsRequestEntries,
                             unsigned long long bytesTransferred)
@@ -582,7 +497,7 @@ bool ConnectionManager::SendStatusMessage(
     // TODO: the user may be left waiting too long after cancelling; add
     // a shorter timeout in this case
     bool ignoreCancel = false;
-    bool& cancel = connected ? GetUserSignalledStop(true) : ignoreCancel;
+    const bool& cancel = final ? ignoreCancel : GetUserSignalledStop(true);
 
     // Format stats data for consumption by the server. 
 
@@ -620,7 +535,7 @@ bool ConnectionManager::SendStatusMessage(
     string additionalDataString = additionalData.str();
     my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
-    tstring requestPath = GetStatusRequestPath(m_transport, connected);
+    tstring requestPath = GetStatusRequestPath(m_transport, !final);
     string response;
     HTTPSRequest httpsRequest;
     bool success = httpsRequest.MakeRequest(
@@ -789,32 +704,6 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
     }
 
     my_print(true, _T("%s: exit"), __TFUNCTION__);
-}
-
-void ConnectionManager::HandleHandshakeResponse(const char* handshakeResponse)
-{
-    // Parse handshake response
-    // - get PSK, which we use to connect to VPN
-    // - get homepage, which we'll launch later
-    // - add discovered servers to local list
-
-    AutoMUTEX lock(m_mutex);
-    
-    if (!m_currentSessionInfo.ParseHandshakeResponse(handshakeResponse))
-    {
-        my_print(false, _T("HandleHandshakeResponse: ParseHandshakeResponse failed."));
-        throw TryNextServer();
-    }
-
-    try
-    {
-        m_serverList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
-    }
-    catch (std::exception &ex)
-    {
-        my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
-        // This isn't fatal.  The transport connection can still be established.
-    }
 }
 
 bool ConnectionManager::RequireUpgrade(void)
@@ -1068,95 +957,6 @@ tstring ConnectionManager::GetSplitTunnelingFilePath()
         return tstring(filePath);
     }
     return _T("");
-}
-
-// Connection thread helper
-// Throws TryNextServer if transport connect fails.
-// Throws Abort if user cancels.
-void ConnectionManager::ConnectTransport(
-                            SessionInfo& sessionInfo, 
-                            SystemProxySettings* systemProxySettings)
-{
-    try
-    {
-        // Launches the transport thread and doesn't return until it
-        // observes a successful (or not) connection.
-        m_transport->Connect(
-                        sessionInfo, 
-                        systemProxySettings,
-                        GetUserSignalledStop(true));
-    }
-    catch (ITransport::TransportFailed&)
-    {
-        my_print(true, _T("%s: transport failed"), __TFUNCTION__);
-
-        // Report error code to server for logging/trouble-shooting.
-        tstring requestPath = GetFailedRequestPath(m_transport);    
-        string response;
-        HTTPSRequest httpsRequest;
-        (void)httpsRequest.MakeRequest( // Ignore failure
-                            GetUserSignalledStop(true),
-                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                            sessionInfo.GetWebPort(),
-                            sessionInfo.GetWebServerCertificate(),
-                            requestPath.c_str(),
-                            response);
-
-        throw TryNextServer();
-    }
-}
-
-// Connection thread helper
-// Throws TryNextServer if transport connect fails.
-// Throws Abort if user cancels.
-void ConnectionManager::DoHandshake(
-                            const TCHAR* handshakeRequestPath, 
-                            SessionInfo& sessionInfo)
-{
-    HTTPSRequest httpsRequest;
-    string handshakeResponse;
-
-    // Send list of known server IP addresses (used for stats logging on the server)
-
-    // We now have the client retry on port 443 in case the
-    // configured port is blocked. If this works, then 443
-    // is used for subsequent web requests.
-
-    // TODO: the client could 'remember' which port works
-    // and skip the blocked one next time to avoid waiting
-    // for inevitable timeouts.
-
-    vector<int> ports;
-    ports.push_back(sessionInfo.GetWebPort());
-    if (sessionInfo.GetWebPort() != 443) ports.push_back(443);
-
-    for (size_t i = 0; i < ports.size(); i++)
-    {
-        int port = ports[i];
-        my_print(true, _T("%s: handshake request on port %d"), __TFUNCTION__, port);
-
-        if (httpsRequest.MakeRequest(
-                            GetUserSignalledStop(true),
-                            NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                            port,
-                            sessionInfo.GetWebServerCertificate(),
-                            handshakeRequestPath,
-                            handshakeResponse))
-        {
-            // Handshake succeeded.
-            break;
-        }
-    }
-
-    if (handshakeResponse.length() > 0)
-    {
-        my_print(true, _T("%s: HandleHandshakeResponse"), __TFUNCTION__);
-        HandleHandshakeResponse(handshakeResponse.c_str());
-    }
-    else
-    {
-        throw TryNextServer();
-    }
 }
 
 // Makes a thread-safe copy of m_currentSessionInfo

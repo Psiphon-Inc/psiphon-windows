@@ -35,8 +35,7 @@ TransportConnection::TransportConnection()
 
 TransportConnection::~TransportConnection()
 {
-    if (m_transport) m_transport->Cleanup();
-    if (m_localProxy) delete m_localProxy;
+    Cleanup();
 }
 
 void TransportConnection::Connect(
@@ -48,33 +47,36 @@ void TransportConnection::Connect(
                             const bool& stopSignalFlag)
 {
     assert(m_transport == 0);
-    assert(m_localProxy == 0);
+    assert(m_localProxy == 0); 
 
     m_sessionInfo = sessionInfo;
     bool handshakeDone = false;
 
-    // Some transports require a handshake before connecting; with others we
-    // can connect before doing the handshake.    
-    if (m_transport->IsHandshakeRequired(m_sessionInfo))
-    {
-        if (!handshakeRequestPath)
-        {
-            // Need a handshake but can't do a handshake.
-            throw TryNextServer();
-        }
-
-        DoHandshake(handshakeRequestPath, stopSignalFlag);
-        handshakeDone = true;
-    }
-
     try
     {
+        // Some transports require a handshake before connecting; with others we
+        // can connect before doing the handshake.    
+        if (m_transport->IsHandshakeRequired(m_sessionInfo))
+        {
+            if (!handshakeRequestPath)
+            {
+                // Need a handshake but can't do a handshake.
+                throw TryNextServer();
+            }
+
+            DoHandshake(handshakeRequestPath, stopSignalFlag);
+            handshakeDone = true;
+        }
+
+        m_referenceCounter.Reset();
+
         // Connect with the transport.
         // May throw.
         m_transport->Connect(
                     m_sessionInfo, 
                     &m_systemProxySettings,
-                    stopSignalFlag);
+                    stopSignalFlag,
+                    &m_referenceCounter);
 
         // Set up and start the local proxy.
         m_localProxy = new LocalProxy(
@@ -86,7 +88,7 @@ void TransportConnection::Connect(
 
         // Launches the local proxy thread and doesn't return until it
         // observes a successful (or not) connection.
-        if (!m_localProxy->Start(stopSignalFlag))
+        if (!m_localProxy->Start(stopSignalFlag, &m_referenceCounter))
         {
             throw IWorkerThread::Error("LocalProxy::Start failed");
         }
@@ -99,16 +101,25 @@ void TransportConnection::Connect(
         if (!handshakeDone)
         {
             DoHandshake(handshakeRequestPath, stopSignalFlag);
+            handshakeDone = true;
         }
 
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
         m_localProxy->UpdateSessionInfo(m_sessionInfo);
     }
+    catch (ITransport::TransportFailed&)
+    {
+        Cleanup();
+
+        // We don't fail over transports, so...
+        throw TransportConnection::TryNextServer();
+    }
     catch(...)
     {
-        // Make sure the transport is cleaned up and then just rethrow
-        m_transport->Cleanup();
+        // Make sure the transport and proxy are cleaned up and then just rethrow
+        Cleanup();
+
         throw;
     }
 }
@@ -116,7 +127,7 @@ void TransportConnection::Connect(
 void TransportConnection::WaitForDisconnect()
 {
     HANDLE waitHandles[] = { m_transport->GetStoppedEvent(), 
-                                m_localProxy->GetStoppedEvent() };
+                             m_localProxy->GetStoppedEvent() };
     size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
 
     DWORD result = WaitForMultipleObjects(
@@ -125,8 +136,12 @@ void TransportConnection::WaitForDisconnect()
                     FALSE, // wait for any event
                     INFINITE);
 
+    // One of the transport or the local proxy has stopped. 
+    // Make sure they both are.
     m_localProxy->Stop();
     m_transport->Stop();
+
+    Cleanup();
 
     if (result > (WAIT_OBJECT_0 + waitHandlesCount - 1))
     {
@@ -150,7 +165,7 @@ void TransportConnection::DoHandshake(
                         handshakeRequestPath,
                         handshakeResponse);
 
-    if (handshakeResponse.length() == 0)
+    if (handshakeResponse.length() > 0)
     {
         if (!m_sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
         {
@@ -163,4 +178,11 @@ void TransportConnection::DoHandshake(
         my_print(false, _T("%s: handshake failed"), __TFUNCTION__);
         throw TryNextServer();
     }
+}
+
+void TransportConnection::Cleanup()
+{
+    if (m_transport) m_transport->Cleanup();
+    if (m_localProxy) delete m_localProxy;
+    m_localProxy = 0;
 }

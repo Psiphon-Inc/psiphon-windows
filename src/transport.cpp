@@ -35,13 +35,14 @@ ITransport::ITransport()
 void ITransport::Connect(
                     SessionInfo sessionInfo, 
                     SystemProxySettings* systemProxySettings,
-                    const bool& stopSignalFlag)
+                    const bool& stopSignalFlag,
+                    ReferenceCounter* synchronizedExitCounter)
 {
     m_sessionInfo = sessionInfo;
     m_systemProxySettings = systemProxySettings;
     assert(m_systemProxySettings);
 
-    if (!IWorkerThread::Start(stopSignalFlag))
+    if (!IWorkerThread::Start(stopSignalFlag, synchronizedExitCounter))
     {
         throw TransportFailed();
     }
@@ -61,6 +62,10 @@ bool ITransport::DoStart()
     my_print(false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 
     return true;
+}
+
+void ITransport::StopImminent()
+{
 }
 
 void ITransport::DoStop()

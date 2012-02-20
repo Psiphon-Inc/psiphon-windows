@@ -145,6 +145,10 @@ bool ServerRequest::MakeRequest(
 
         try
         {
+            // Note that it's important that we indicate that we're not 
+            // collecting stats -- otherwise we could end up with a loop of
+            // final /status request attempts.
+
             // Throws on failure
             connection.Connect(
                 *transport_iter,
@@ -174,7 +178,7 @@ bool ServerRequest::MakeRequest(
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.
         }
-        catch (ITransport::TransportFailed&)
+        catch (TransportConnection::TryNextServer&)
         {
             // pass and continue
         }

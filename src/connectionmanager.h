@@ -80,20 +80,12 @@ private:
 
     void MarkCurrentServerFailed(void);
     void LoadNextServer(tstring& handshakeRequestPath);
-    void HandleHandshakeResponse(
-        const char* handshakeResponse);
     bool RequireUpgrade(void);
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
     tstring GetSplitTunnelingFilePath();
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
-    void ConnectTransport(
-            SessionInfo& sessionInfo, 
-            SystemProxySettings* systemProxySettings);
-    void DoHandshake(
-            const TCHAR* handshakeRequestPath, 
-            SessionInfo& sessionInfo);
 
 private:
     HANDLE m_mutex;

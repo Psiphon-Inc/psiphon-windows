@@ -30,7 +30,7 @@ class ILocalProxyStatsCollector
 {
 public:
     virtual bool SendStatusMessage(
-                    bool connected,
+                    bool final,
                     const map<string, int>& pageViewEntries,
                     const map<string, int>& httpsRequestEntries,
                     unsigned long long bytesTransferred) = 0;
@@ -59,6 +59,7 @@ protected:
     // IWorkerThread implementation
     bool DoStart();
     bool DoPeriodicCheck();
+    void StopImminent();
     void DoStop();
 
     void Cleanup();
@@ -84,5 +85,6 @@ private:
     unsigned long long m_bytesTransferred;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
+    bool m_finalStatsSent;
 };
 

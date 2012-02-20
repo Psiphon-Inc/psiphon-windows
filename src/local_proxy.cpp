@@ -44,7 +44,8 @@ LocalProxy::LocalProxy(
       m_polipoPipe(NULL),
       m_bytesTransferred(0),
       m_lastStatusSendTimeMS(0),
-      m_splitTunnelingFilePath(splitTunnelingFilePath)
+      m_splitTunnelingFilePath(splitTunnelingFilePath),
+      m_finalStatsSent(false)
 {
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
 
@@ -117,7 +118,7 @@ bool LocalProxy::DoPeriodicCheck()
             // Everything normal; process stats and return
 
             // We don't care about the return value of ProcessStatsAndStatus
-            (void)ProcessStatsAndStatus(true);
+            (void)ProcessStatsAndStatus(false);
 
             return true;
         }
@@ -138,13 +139,17 @@ bool LocalProxy::DoPeriodicCheck()
     return false;
 }
 
-void LocalProxy::DoStop()
+void LocalProxy::StopImminent()
 {
     if (m_polipoProcessInfo.hProcess != 0)
     {
-        // We were (probably) connected, so send a final stats message
-        (void)ProcessStatsAndStatus(false);
+        // We are (probably) connected, so send a final stats message
+        (void)ProcessStatsAndStatus(true);
     }
+}
+
+void LocalProxy::DoStop()
+{
 }
 
 void LocalProxy::Cleanup()
@@ -173,6 +178,16 @@ void LocalProxy::Cleanup()
     m_polipoPipe = NULL;
 
     m_lastStatusSendTimeMS = 0;
+
+    // If we didn't get a chance to send our final stats, we'll try one last time.
+    if (!m_finalStatsSent && m_statsCollector)
+    {
+        (void)m_statsCollector->SendStatusMessage(
+                                true, // Note: there's a timeout side-effect when final=false
+                                m_pageViewEntries, 
+                                m_httpsRequestEntries, 
+                                m_bytesTransferred);
+    }
 }
 
 
@@ -349,13 +364,15 @@ bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 // time or size limits have been exceeded; if connected is false, the stats will
 // be sent regardlesss of limits.
 // Returns true on success, false otherwise.
-bool LocalProxy::ProcessStatsAndStatus(bool connected)
+bool LocalProxy::ProcessStatsAndStatus(bool final)
 {
     if (!m_statsCollector)
     {
         // We're not collecting stats.
         return true;
     }
+
+    m_finalStatsSent = m_finalStatsSent || final;
 
     // Stats get sent to the server when a time or size limit has been reached.
 
@@ -402,13 +419,13 @@ bool LocalProxy::ProcessStatsAndStatus(bool connected)
 
     // If the time or size thresholds have been exceeded, or if we're being 
     // forced to, send the stats.
-    if (!connected
+    if (!final
         || (m_lastStatusSendTimeMS + s_send_interval_ms) < now
         || m_pageViewEntries.size() >= s_send_max_entries
         || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
         if (m_statsCollector->SendStatusMessage(
-                                connected, // Note: there's a timeout side-effect when connected=false
+                                final, // Note: there's a timeout side-effect when final=false
                                 m_pageViewEntries, 
                                 m_httpsRequestEntries, 
                                 m_bytesTransferred))
