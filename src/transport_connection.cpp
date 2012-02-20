@@ -57,11 +57,18 @@ void TransportConnection::Connect(
     // can connect before doing the handshake.    
     if (m_transport->IsHandshakeRequired(m_sessionInfo))
     {
+        if (!handshakeRequestPath)
+        {
+            // Need a handshake but can't do a handshake.
+            throw TryNextServer();
+        }
+
         DoHandshake(handshakeRequestPath, stopSignalFlag);
         handshakeDone = true;
     }
 
     // Connect with the transport.
+    // May throw.
     m_transport->Connect(
                 m_sessionInfo, 
                 &m_systemProxySettings,

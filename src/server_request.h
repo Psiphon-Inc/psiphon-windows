@@ -34,10 +34,14 @@ public:
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
         string& o_response,
-        bool useLocalProxy=true,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);
 
 private:
+    void GetTempTransports(
+        const ITransport* currentTransport,
+        const SessionInfo& sessionInfo,
+        vector<ITransport*>& o_tempTransports);
+
 };

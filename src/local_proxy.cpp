@@ -53,7 +53,6 @@ LocalProxy::LocalProxy(
 
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
-    assert(statsCollector);
     assert(systemProxySettings);
 }
 
@@ -352,6 +351,12 @@ bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 // Returns true on success, false otherwise.
 bool LocalProxy::ProcessStatsAndStatus(bool connected)
 {
+    if (!m_statsCollector)
+    {
+        // We're not collecting stats.
+        return true;
+    }
+
     // Stats get sent to the server when a time or size limit has been reached.
 
     const DWORD DEFAULT_SEND_INTERVAL_MS = (30*60*1000); // 30 mins

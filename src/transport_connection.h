@@ -38,7 +38,12 @@ public:
     virtual ~TransportConnection();
 
     // May throw the same exceptions as ITransport::Connect and WorkerThread::Start,
-    // and also TryNextServer()
+    // and also TryNextServer.
+    // If statsCollector is null, then stats will not be collected.
+    // If handshakeRequestPath is null, then no handshake will be done. (This 
+    // means that transports that require a pre-handshake will fail, and others
+    // will have no following handshake. This should only be the case for 
+    // tempoary connections.)
     void Connect(
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 

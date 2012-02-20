@@ -55,6 +55,7 @@ request through them.
 #include "transport.h"
 #include "transport_registry.h"
 #include "httpsrequest.h"
+#include "transport_connection.h"
 
 
 ServerRequest::ServerRequest()
@@ -71,38 +72,158 @@ bool ServerRequest::MakeRequest(
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
         string& response,
-        bool useLocalProxy/*=true*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
 {
     // See comments at the top of this file for full discussion of logic.
 
+    assert(requestPath);
+
+    response.clear();
+
     bool transportConnected = currentTransport && currentTransport->IsConnected();
 
     if (transportConnected)
     {
-        // This is the simple case -- we just connect through the transport
-        // using the local proxy.
+        // This is the simple case: we just connect through the transport
         HTTPSRequest httpsRequest;
         return httpsRequest.MakeRequest(
                 cancel,
                 NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-
+                sessionInfo.GetWebPort(),
+                sessionInfo.GetWebServerCertificate(),
+                requestPath,
+                response,
+                true, // use local proxy
+                additionalHeaders,
+                additionalData,
+                additionalDataLength);
     }
 
-    return true;
+    // We don't have a connected transport. 
+    // We'll fail over between a bunch of methods.
+
+    // The ports we'll try to connect to directly, in order.
+    vector<int> ports;
+    ports.push_back(sessionInfo.GetWebPort());
+    ports.push_back(443);
+    vector<int>::const_iterator port_iter;
+    for (port_iter = ports.begin(); port_iter != ports.end(); port_iter++)
+    {
+        HTTPSRequest httpsRequest;
+        if (httpsRequest.MakeRequest(
+                cancel,
+                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                *port_iter,
+                sessionInfo.GetWebServerCertificate(),
+                requestPath,
+                response,
+                true, // use local proxy
+                additionalHeaders,
+                additionalData,
+                additionalDataLength))
+        {
+            return true;
+        }
+    }
+
+    // Connecting directly via HTTPS failed. 
+    // Now we'll try don't-need-handshake transports.
+
+    vector<ITransport*> tempTransports;
+    GetTempTransports(currentTransport, sessionInfo, tempTransports);
+
+    bool success = false;
+
+    vector<ITransport*>::iterator transport_iter;
+    for (transport_iter = tempTransports.begin(); 
+         transport_iter != tempTransports.end(); 
+         transport_iter++)
+    {
+        TransportConnection connection;
+
+        try
+        {
+            // Throws on failure
+            connection.Connect(
+                *transport_iter,
+                NULL, // not collecting stats
+                sessionInfo, 
+                NULL, // no handshake allowed
+                tstring(), // splitTunnelingFilePath -- not providing it
+                cancel);
+
+            HTTPSRequest httpsRequest;
+            if (httpsRequest.MakeRequest(
+                    cancel,
+                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                    sessionInfo.GetWebPort(),
+                    sessionInfo.GetWebServerCertificate(),
+                    requestPath,
+                    response,
+                    true, // use local proxy
+                    additionalHeaders,
+                    additionalData,
+                    additionalDataLength))
+            {
+                success = true;
+                break;
+            }
+
+            // Note that when we leave this scope, the TransportConnection will
+            // clean up the transport connection.
+        }
+        catch (ITransport::TransportFailed&)
+        {
+            // pass and continue
+        }
+        catch (...)
+        {
+            // Unexpected error. Clean up and re-raise.
+            vector<ITransport*>::iterator transport_iter;
+            for (transport_iter = tempTransports.begin(); 
+                 transport_iter != tempTransports.end(); 
+                 transport_iter++)
+            {
+                delete *transport_iter;
+            }
+
+            throw;
+        }
+    }
+    
+    // Free our array of transports
+    for (transport_iter = tempTransports.begin(); 
+            transport_iter != tempTransports.end(); 
+            transport_iter++)
+    {
+        delete *transport_iter;
+    }
+
+    // We've tried everything we can.
+
+    return success;
 }
 
-// Goes through all available transports (which are not the same as the current
-// transport) looking for one that can connect with the currently-available 
-// session info.
-// Returns 0 if none is found. Otherwise returns a heap-allocated transport
-// object that must be delete'd by the caller.
-ITransport* ServerRequest::GetTempTransport(
+/*
+Returns a vector of eligible temporary transports -- that is, ones that can
+connect with the available SessionInfo (with no preliminary handshake).
+o_tempTransports will be empty if there are no eligible transports.
+All elements of o_tempTransports are heap-allocated and must be delete'd by 
+the caller.
+NOTE: If you look at TransportConnection::Connect() you'll see that this logic
+isn't strictly necessary. If a null handshake is passed, TryNextServer is 
+thrown, so we could just iterate over all transports sanely. But this makes
+our logic more explicit. And not dependent on the internals of another function.
+*/
+void ServerRequest::GetTempTransports(
                             const ITransport* currentTransport,
-                            const SessionInfo& sessionInfo)
+                            const SessionInfo& sessionInfo,
+                            vector<ITransport*>& o_tempTransports)
 {
+    o_tempTransports.clear();
+
     vector<ITransport*> all_transports;
     TransportRegistry::NewAll(all_transports);
 
@@ -116,7 +237,8 @@ ITransport* ServerRequest::GetTempTransport(
         if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
             && !(*it)->IsHandshakeRequired(sessionInfo))
         {
-            tempTransport = *it;
+
+            o_tempTransports.push_back(*it);
             // no early break, so that we delete all the unused transports
         }
         else
@@ -124,6 +246,4 @@ ITransport* ServerRequest::GetTempTransport(
             delete *it;
         }
     }
-
-    return tempTransport;
 }

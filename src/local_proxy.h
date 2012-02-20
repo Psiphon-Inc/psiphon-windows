@@ -40,6 +40,8 @@ public:
 class LocalProxy : public IWorkerThread
 {
 public:
+    // If statsCollector is null, no stats will be collected. (This should only
+    // be the case for temporary connections.)
     LocalProxy(
         ILocalProxyStatsCollector* statsCollector, 
         const SessionInfo& sessionInfo, 
