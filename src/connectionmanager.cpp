@@ -977,7 +977,9 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
-        m_serverList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
+        m_serverList.AddEntriesToList(
+            m_currentSessionInfo.GetDiscoveredServerEntries(), 
+            &m_currentSessionInfo.GetServerEntry());
     }
     catch (std::exception &ex)
     {

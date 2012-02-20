@@ -235,3 +235,22 @@ string SessionInfo::GetSSHObfuscatedKey() const
     return Coalesce(m_sshObfuscatedKey, m_serverEntry.sshObfuscatedKey);
 }
 
+vector<string> SessionInfo::GetDiscoveredServerEntries() const 
+{
+    return m_servers;
+}
+
+ServerEntry SessionInfo::GetServerEntry() const 
+{
+    // It is sometimes the case that we know more about our current server than
+    // is contained in m_serverEntry or in the ServerEntry in the registry. So
+    // we'll construct a new ServerEntry with the best info we have.
+
+    ServerEntry newServerEntry(
+        GetServerAddress(), GetWebPort(), 
+        GetWebServerSecret(), GetWebServerCertificate(), 
+        GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
+        GetSSHHostKey(), GetSSHObfuscatedPort(), 
+        GetSSHObfuscatedKey());
+    return newServerEntry;
+}

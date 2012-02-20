@@ -70,8 +70,14 @@ void TransportConnection::Connect(
                 throw TryNextServer();
             }
 
+            my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
+
             DoHandshake(handshakeRequestPath, stopSignalFlag);
             handshakeDone = true;
+        }
+        else
+        {
+            my_print(true, _T("%s: Not doing pre-handshake; enough server info for immediate connection"), __TFUNCTION__);
         }
 
         m_referenceCounter.Reset();

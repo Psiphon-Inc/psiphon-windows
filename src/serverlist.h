@@ -27,6 +27,12 @@ struct ServerEntry
 {
     ServerEntry() : webServerPort(0), sshPort(0), sshObfuscatedPort(0) {}
     ServerEntry(const ServerEntry& src) { Copy(src); }
+    ServerEntry(
+        const string& serverAddress, int webServerPort, 
+        const string& webServerSecret, const string& webServerCertificate, 
+        int sshPort, const string& sshUsername, const string& sshPassword, 
+        const string& sshHostKey, int sshObfuscatedPort, 
+        const string& sshObfuscatedKey);
     void Copy(const ServerEntry& src);
 
     string ToString() const;
@@ -52,10 +58,16 @@ class ServerList
 public:
     ServerList();
     virtual ~ServerList();
-    void AddEntriesToList(const vector<string>& newServerEntryList);
+
     void MarkCurrentServerFailed();
     ServerEntry GetNextServer();
     ServerEntries GetList();
+
+    // serverEntry is optional. It is an extra server entry that should be
+    // stored. Typically this is the current server with additional info.
+    void AddEntriesToList(
+        const vector<string>& newServerEntryList, 
+        const ServerEntry* serverEntry);
 
 private:
     ServerEntries GetListFromEmbeddedValues();

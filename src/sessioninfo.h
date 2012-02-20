@@ -54,12 +54,13 @@ public:
     string GetUpgradeVersion() const {return m_upgradeVersion;}
     string GetPSK() const {return m_psk;}
     vector<tstring> GetHomepages() const {return m_homepages;}
-    vector<string> GetDiscoveredServerEntries() const {return m_servers;}
+    vector<string> GetDiscoveredServerEntries() const;
     vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
     vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
     string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
     int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
     string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
+    ServerEntry GetServerEntry() const;
 
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);

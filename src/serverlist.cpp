@@ -37,32 +37,50 @@ ServerList::~ServerList()
     CloseHandle(m_mutex);
 }
 
-void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
+void ServerList::AddEntriesToList(
+                    const vector<string>& newServerEntryList,
+                    const ServerEntry* serverEntry)
 {
     AutoMUTEX lock(m_mutex, __TFUNCTION__);
 
-    if (newServerEntryList.size() < 1)
+    if (newServerEntryList.size() < 1 && !serverEntry)
     {
         return;
     }
 
-    ServerEntries oldServerEntryList = GetList();
-    for (vector<string>::const_iterator newServerEntryString = newServerEntryList.begin();
-         newServerEntryString != newServerEntryList.end(); ++newServerEntryString)
-    {
-        ServerEntry newServerEntry = ParseServerEntry(*newServerEntryString);
+    // We're going to loop through the server entries twice -- once to decode
+    // them and once to process them (after adding in serverEntry). This is
+    // not optimally efficient, but the array will never be very large and the
+    // code will be cleaner.
 
+    vector<ServerEntry> decodedServerEntries;
+    vector<string>::const_iterator entryStringIter;
+    for (entryStringIter = newServerEntryList.begin();
+         entryStringIter != newServerEntryList.end(); 
+         ++entryStringIter)
+    {
+        decodedServerEntries.push_back(ParseServerEntry(*entryStringIter));
+    }
+
+    if (serverEntry) decodedServerEntries.push_back(*serverEntry);
+
+    ServerEntries oldServerEntryList = GetList();
+
+    vector<ServerEntry>::const_iterator decodedEntryIter;
+    for (decodedEntryIter = decodedServerEntries.begin();
+         decodedEntryIter != decodedServerEntries.end(); ++decodedEntryIter)
+    {
         // Check if we already know about this server
         bool alreadyKnown = false;
         for (ServerEntries::iterator oldServerEntry = oldServerEntryList.begin();
              oldServerEntry != oldServerEntryList.end(); ++oldServerEntry)
         {
-            if (newServerEntry.serverAddress == oldServerEntry->serverAddress)
+            if ((*decodedEntryIter).serverAddress == oldServerEntry->serverAddress)
             {
                 alreadyKnown = true;
                 // NOTE: We always update the values for known servers, because we trust the
                 //       discovery mechanisms
-                oldServerEntry->Copy(newServerEntry);
+                oldServerEntry->Copy(*decodedEntryIter);
                 break;
             }
         }
@@ -71,7 +89,7 @@ void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
         {
             // Insert the new entry as the second entry, so that the first entry can continue
             // to be used if it is reachable
-            oldServerEntryList.insert(oldServerEntryList.begin() + 1, newServerEntry);
+            oldServerEntryList.insert(oldServerEntryList.begin() + 1, *decodedEntryIter);
         }
     }
 
@@ -253,18 +271,28 @@ string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)
 ServerEntry members
 */
 
+ServerEntry::ServerEntry(
+    const string& serverAddress, int webServerPort, 
+    const string& webServerSecret, const string& webServerCertificate, 
+    int sshPort, const string& sshUsername, const string& sshPassword, 
+    const string& sshHostKey, int sshObfuscatedPort, 
+    const string& sshObfuscatedKey)
+{
+    this->serverAddress = serverAddress;
+    this->webServerPort = webServerPort;
+    this->webServerSecret = webServerSecret;
+    this->webServerCertificate = webServerCertificate;
+    this->sshPort = sshPort;
+    this->sshUsername = sshUsername;
+    this->sshPassword = sshPassword;
+    this->sshHostKey = sshHostKey;
+    this->sshObfuscatedPort = sshObfuscatedPort;
+    this->sshObfuscatedKey = sshObfuscatedKey;
+}
+
 void ServerEntry::Copy(const ServerEntry& src)
 {
-    this->serverAddress = src.serverAddress;
-    this->webServerPort = src.webServerPort;
-    this->webServerSecret = src.webServerSecret;
-    this->webServerCertificate = src.webServerCertificate;
-    this->sshPort = src.sshPort;
-    this->sshUsername = src.sshUsername;
-    this->sshPassword = src.sshPassword;
-    this->sshHostKey = src.sshHostKey;
-    this->sshObfuscatedPort = src.sshObfuscatedPort;
-    this->sshObfuscatedKey = src.sshObfuscatedKey;
+    *this = src;
 }
 
 string ServerEntry::ToString() const
