@@ -420,7 +420,7 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
 
     // If the time or size thresholds have been exceeded, or if we're being 
     // forced to, send the stats.
-    if (!final
+    if (final
         || (m_lastStatusSendTimeMS + s_send_interval_ms) < now
         || m_pageViewEntries.size() >= s_send_max_entries
         || m_httpsRequestEntries.size() >= s_send_max_entries)

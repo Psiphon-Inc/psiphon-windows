@@ -88,7 +88,8 @@ bool ServerRequest::MakeRequest(
     {
         // This is the simple case: we just connect through the transport
         HTTPSRequest httpsRequest;
-        return httpsRequest.MakeRequest(
+        bool requestSuccess = 
+            httpsRequest.MakeRequest(
                 cancel,
                 NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
                 sessionInfo.GetWebPort(),
@@ -99,6 +100,7 @@ bool ServerRequest::MakeRequest(
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
+        return requestSuccess;
     }
 
     // We don't have a connected transport. 

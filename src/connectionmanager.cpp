@@ -399,7 +399,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                         response))
     {
         // Speed feedback
-        // Note: the /connected request is not tunneled as it's not proxied
+        // Note: the /connected request *is* tunneled
 
         DWORD now = GetTickCount();
         if (now >= start) // GetTickCount can wrap
@@ -429,8 +429,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     
     OpenHomePages();
 
-    // Perform tunneled speed test when requested
-    // In VPN mode, the WinHttp request is implicitly tunneled.
+    // Perform non-tunneled speed test when requested
+    // Note that in VPN mode, the WinHttp request is implicitly tunneled.
 
     tstring speedTestServerAddress, speedTestRequestPath;
     int speedTestServerPort = 0;
@@ -451,7 +451,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             speedTestServerPort,
                             "",
                             speedTestRequestPath.c_str(),
-                            response))
+                            response,
+                            false)) // don't proxy
         {
             success = true;
         }
