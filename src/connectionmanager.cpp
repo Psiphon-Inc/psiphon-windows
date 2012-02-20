@@ -23,6 +23,7 @@
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "server_request.h"
+#include "httpsrequest.h"
 #include "webbrowser.h"
 #include "embeddedvalues.h"
 #include "usersettings.h"
@@ -480,9 +481,6 @@ bool ConnectionManager::SendStatusMessage(
 {
     // NOTE: no lock while waiting for network events
 
-    string serverAddress;
-    int webServerPort;
-    string webServerCertificate;
     // Make a copy of SessionInfo for threadsafety.
     SessionInfo sessionInfo;
     {
