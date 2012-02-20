@@ -86,6 +86,7 @@ private:
     tstring GetSplitTunnelingFilePath();
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
+    void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
 private:
     HANDLE m_mutex;

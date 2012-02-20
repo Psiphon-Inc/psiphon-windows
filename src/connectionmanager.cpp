@@ -279,6 +279,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 manager->GetUserSignalledStop(true));
 
             //
+            // The transport connection did a handshake, so its sessionInfo is 
+            // fuller than ours. Update ours and then update the server entries.
+            //
+
+            sessionInfo = transportConnection.GetUpdatedSessionInfo();
+            manager->UpdateCurrentSessionInfo(sessionInfo);
+
+            //
             // If handshake notified of new version, start the upgrade in a (background) thread
             //
 
@@ -959,4 +967,21 @@ void ConnectionManager::CopyCurrentSessionInfo(SessionInfo& sessionInfo)
 {
     AutoMUTEX lock(m_mutex);
     sessionInfo = m_currentSessionInfo;
+}
+
+// Makes a thread-safe copy of m_currentSessionInfo
+void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
+{
+    AutoMUTEX lock(m_mutex);
+    m_currentSessionInfo = sessionInfo;
+
+    try
+    {
+        m_serverList.AddEntriesToList(m_currentSessionInfo.GetDiscoveredServerEntries());
+    }
+    catch (std::exception &ex)
+    {
+        my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
+        // This isn't fatal.  The transport connection can still be established.
+    }
 }

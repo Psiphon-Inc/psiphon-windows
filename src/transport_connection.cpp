@@ -38,6 +38,11 @@ TransportConnection::~TransportConnection()
     Cleanup();
 }
 
+SessionInfo TransportConnection::GetUpdatedSessionInfo() const
+{
+    return m_sessionInfo;
+}
+
 void TransportConnection::Connect(
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
@@ -99,7 +104,7 @@ void TransportConnection::Connect(
         m_systemProxySettings.Apply();
 
         // If we didn't do the handshake before, do it now.
-        if (!handshakeDone)
+        if (!handshakeDone && handshakeRequestPath)
         {
             DoHandshake(handshakeRequestPath, stopSignalFlag);
             handshakeDone = true;
@@ -154,6 +159,11 @@ void TransportConnection::DoHandshake(
                             const TCHAR* handshakeRequestPath,
                             const bool& stopSignalFlag)
 {
+    if (!handshakeRequestPath)
+    {
+        return;
+    }
+
     ServerRequest serverRequest;
     string handshakeResponse;
 

@@ -147,6 +147,10 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         _this->m_synchronizedExitCounter->Increment();
     }
 
+    // We only attempt a synchronized exit on user cancel (i.e., on a nice,
+    // clean exit).
+    bool doSynchronizedExit = false;
+
     // Not allowed to throw out of the thread without cleaning up.
     try
     {
@@ -165,6 +169,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
             {
                 // Stop request signalled. Need to stop now.
                 _this->StopImminent();
+                doSynchronizedExit = true;
                 break;
             }
             else
@@ -185,9 +190,12 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
     if (_this->m_synchronizedExitCounter)
     {
         _this->m_synchronizedExitCounter->Decrement();
+    }
 
-        // Wait for all related threads to release the exit counter
-
+    if (doSynchronizedExit)
+    {
+        // Wait for all related threads to release the exit counter before 
+        // stopping completely.
         while (_this->m_synchronizedExitCounter->Check())
         {
             Sleep(100);
