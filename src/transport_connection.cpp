@@ -49,6 +49,7 @@ void TransportConnection::Connect(
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
 
+    m_transport = transport;
     m_sessionInfo = sessionInfo;
     bool handshakeDone = false;
 

@@ -241,7 +241,6 @@ void ServerRequest::GetTempTransports(
         if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
             && !(*it)->IsHandshakeRequired(sessionInfo))
         {
-
             o_tempTransports.push_back(*it);
             // no early break, so that we delete all the unused transports
         }

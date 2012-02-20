@@ -477,7 +477,7 @@ tstring HTTPSRequest::GetSystemDefaultHTTPSProxy()
     // Proxy settings look something like this:
     // http=127.0.0.1:8081;https=127.0.0.1:8082;ftp=127.0.0.1:8083;socks=127.0.0.1:8084
 
-    tstringstream stream(proxyConfig.lpszProxy);
+    tstringstream stream(proxyConfig.lpszProxy ? proxyConfig.lpszProxy : _T(""));
 
     if (proxyConfig.lpszProxy) GlobalFree(proxyConfig.lpszProxy);
     if (proxyConfig.lpszProxyBypass) GlobalFree(proxyConfig.lpszProxyBypass);
@@ -487,7 +487,7 @@ tstring HTTPSRequest::GetSystemDefaultHTTPSProxy()
     while (std::getline(stream, proxy_setting, _T(';')))
     {
         size_t proxy_type_end = proxy_setting.find(_T('='));
-        if (proxy_type_end > 0 && proxy_type_end < proxy_setting.length())
+        if (proxy_type_end != tstring::npos && proxy_type_end < proxy_setting.length())
         {
             // Convert to lowercase.
             std::transform(

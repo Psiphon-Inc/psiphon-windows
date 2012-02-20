@@ -30,7 +30,7 @@ public:
     void Decrement() { InterlockedDecrement(&m_counter); }
 
     // Returns false when there are no more references.
-    bool Check() const { return m_counter == 0; }
+    bool Check() const { return m_counter != 0; }
 
 private:
     LONG m_counter;
