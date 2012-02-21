@@ -20,6 +20,23 @@
 #pragma once
 
 
+class ReferenceCounter
+{
+public:
+    ReferenceCounter() { Reset(); }
+
+    void Reset() { m_counter = 0; }
+    void Increment() { InterlockedIncrement(&m_counter); }
+    void Decrement() { InterlockedDecrement(&m_counter); }
+
+    // Returns false when there are no more references.
+    bool Check() const { return m_counter != 0; }
+
+private:
+    LONG m_counter;
+};
+
+
 class IWorkerThread
 {
 public:
@@ -28,7 +45,10 @@ public:
 
     // Blocking call. Returns true if worker was successfully started,
     // false otherwise.
-    virtual bool Start(const bool& externalStopSignalFlag);
+    // synchronizedExitCounter can be null if not needed.
+    virtual bool Start(
+        const bool& externalStopSignalFlag, 
+        ReferenceCounter* synchronizedExitCounter);
 
     // Blocking call. Tell the thread to stop and wait for it to do so.
     // Implementing classes MUST call this from their destructor.
@@ -36,6 +56,8 @@ public:
 
     // The returned event will be set when the thread stops.
     virtual HANDLE GetStoppedEvent() const;
+
+    bool IsRunning() const;
 
     //
     // Exception classes
@@ -66,6 +88,10 @@ protected:
     // Called from the busy-wait loop every so often.
     virtual bool DoPeriodicCheck() = 0;
 
+    // Called before stop is full processed. Must not take any destructive
+    // actions.
+    virtual void StopImminent() = 0;
+
     // Called when the implementation should stop and clean up.
     virtual void DoStop() = 0;
 
@@ -76,9 +102,19 @@ protected:
     HANDLE m_thread;
     HANDLE m_startedEvent;
     HANDLE m_stoppedEvent;
+    HANDLE m_mutex;
 
     const bool* m_externalStopSignalFlag;
     bool m_internalSignalStopFlag;
     vector<const bool*> m_signalStopFlags;
+
+    // We will sometimes want multiple related threads to do some pre-stop
+    // work before we stop all threads. I.e., we want LocalProxy to do a final
+    // /status request before the transport is torn down. If the same 
+    // ReferenceCounter is passed to multiple threads, they will wait until
+    // all threads have processed StopImminent() before they shut down all 
+    // the way.
+    // Note that these steps are only followed on a user-signalled stop.
+    ReferenceCounter* m_synchronizedExitCounter;
 };
 

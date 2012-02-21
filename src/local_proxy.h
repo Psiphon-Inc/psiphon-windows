@@ -30,7 +30,7 @@ class ILocalProxyStatsCollector
 {
 public:
     virtual bool SendStatusMessage(
-                    bool connected,
+                    bool final,
                     const map<string, int>& pageViewEntries,
                     const map<string, int>& httpsRequestEntries,
                     unsigned long long bytesTransferred) = 0;
@@ -40,6 +40,8 @@ public:
 class LocalProxy : public IWorkerThread
 {
 public:
+    // If statsCollector is null, no stats will be collected. (This should only
+    // be the case for temporary connections.)
     LocalProxy(
         ILocalProxyStatsCollector* statsCollector, 
         const SessionInfo& sessionInfo, 
@@ -48,10 +50,16 @@ public:
         const tstring& splitTunnelingFilePath);
     virtual ~LocalProxy();
 
+    // Sometimes SessionInfo gets updated after the LocalProxy starts (i.e.,
+    // a handshake happens afterwards, with new page view regexes); in that 
+    // case we need to update the SessionInfo here.
+    void UpdateSessionInfo(const SessionInfo& sessionInfo);
+
 protected:
     // IWorkerThread implementation
     bool DoStart();
     bool DoPeriodicCheck();
+    void StopImminent();
     void DoStop();
 
     void Cleanup();
@@ -62,7 +70,6 @@ protected:
     void UpsertPageView(const string& entry);
     void UpsertHttpsRequest(string entry);
     void ParsePolipoStatsBuffer(const char* page_view_buffer);
-
 
 private:
     ILocalProxyStatsCollector* m_statsCollector;
@@ -78,5 +85,6 @@ private:
     unsigned long long m_bytesTransferred;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
+    bool m_finalStatsSent;
 };
 

@@ -25,9 +25,6 @@
 #include "config.h"
 #include "embeddedvalues.h"
 
-// TEMP: Reference to a specific transport shouldn't be necessary (after local proxy is broken out)
-#include "sshtransport.h"
-
 
 // NOTE: this code depends on built-in Windows crypto services
 // How do export restrictions impact general availability of crypto services?
@@ -250,7 +247,7 @@ bool HTTPSRequest::MakeRequest(
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
-        int proxyPort/*=0*/,
+        bool useLocalProxy/*=true*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
@@ -259,17 +256,17 @@ bool HTTPSRequest::MakeRequest(
                     SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;
 
-    tstringstream proxy;
-    if (proxyPort > 0)
+    tstring proxy;
+    if (useLocalProxy)
     {
-        proxy << _T("127.0.0.1:") << proxyPort;
+        proxy = GetSystemDefaultHTTPSProxy();
     }
 
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-                    proxy.str().length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                    proxy.str().length() ? proxy.str().c_str() : WINHTTP_NO_PROXY_NAME,
+                    proxy.length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    proxy.length() ? proxy.c_str() : WINHTTP_NO_PROXY_NAME,
                     WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 
@@ -467,4 +464,44 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     delete pbBinary;
 
     return bResult;
+}
+
+tstring HTTPSRequest::GetSystemDefaultHTTPSProxy()
+{
+    WINHTTP_CURRENT_USER_IE_PROXY_CONFIG proxyConfig;
+    if (!WinHttpGetIEProxyConfigForCurrentUser(&proxyConfig))
+    {
+        return _T("");
+    }
+
+    // Proxy settings look something like this:
+    // http=127.0.0.1:8081;https=127.0.0.1:8082;ftp=127.0.0.1:8083;socks=127.0.0.1:8084
+
+    tstringstream stream(proxyConfig.lpszProxy ? proxyConfig.lpszProxy : _T(""));
+
+    if (proxyConfig.lpszProxy) GlobalFree(proxyConfig.lpszProxy);
+    if (proxyConfig.lpszProxyBypass) GlobalFree(proxyConfig.lpszProxyBypass);
+    if (proxyConfig.lpszAutoConfigUrl) GlobalFree(proxyConfig.lpszAutoConfigUrl);
+
+    tstring proxy_setting;
+    while (std::getline(stream, proxy_setting, _T(';')))
+    {
+        size_t proxy_type_end = proxy_setting.find(_T('='));
+        if (proxy_type_end != tstring::npos && proxy_type_end < proxy_setting.length())
+        {
+            // Convert to lowercase.
+            std::transform(
+                proxy_setting.begin(), 
+                proxy_setting.begin() + proxy_type_end, 
+                proxy_setting.begin(), 
+                ::tolower);
+
+            if (proxy_setting.compare(0, proxy_type_end, _T("https")) == 0)
+            {
+                return proxy_setting.substr(proxy_type_end+1);
+            }
+        }
+    }
+
+    return _T("");
 }

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <sstream>
 
+
 ServerList::ServerList()
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
@@ -36,34 +37,50 @@ ServerList::~ServerList()
     CloseHandle(m_mutex);
 }
 
-void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
+void ServerList::AddEntriesToList(
+                    const vector<string>& newServerEntryList,
+                    const ServerEntry* serverEntry)
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
-    if (newServerEntryList.size() < 1)
+    if (newServerEntryList.size() < 1 && !serverEntry)
     {
         return;
     }
 
-    ServerEntries oldServerEntryList = GetList();
-    for (vector<string>::const_iterator newServerEntryString = newServerEntryList.begin();
-         newServerEntryString != newServerEntryList.end(); ++newServerEntryString)
-    {
-        ServerEntry newServerEntry = ParseServerEntry(*newServerEntryString);
+    // We're going to loop through the server entries twice -- once to decode
+    // them and once to process them (after adding in serverEntry). This is
+    // not optimally efficient, but the array will never be very large and the
+    // code will be cleaner.
 
+    vector<ServerEntry> decodedServerEntries;
+    vector<string>::const_iterator entryStringIter;
+    for (entryStringIter = newServerEntryList.begin();
+         entryStringIter != newServerEntryList.end(); 
+         ++entryStringIter)
+    {
+        decodedServerEntries.push_back(ParseServerEntry(*entryStringIter));
+    }
+
+    if (serverEntry) decodedServerEntries.push_back(*serverEntry);
+
+    ServerEntries oldServerEntryList = GetList();
+
+    vector<ServerEntry>::const_iterator decodedEntryIter;
+    for (decodedEntryIter = decodedServerEntries.begin();
+         decodedEntryIter != decodedServerEntries.end(); ++decodedEntryIter)
+    {
         // Check if we already know about this server
         bool alreadyKnown = false;
         for (ServerEntries::iterator oldServerEntry = oldServerEntryList.begin();
              oldServerEntry != oldServerEntryList.end(); ++oldServerEntry)
         {
-            if (newServerEntry.serverAddress == oldServerEntry->serverAddress)
+            if ((*decodedEntryIter).serverAddress == oldServerEntry->serverAddress)
             {
                 alreadyKnown = true;
                 // NOTE: We always update the values for known servers, because we trust the
                 //       discovery mechanisms
-                oldServerEntry->webServerPort = newServerEntry.webServerPort;
-                oldServerEntry->webServerSecret = newServerEntry.webServerSecret;
-                oldServerEntry->webServerCertificate = newServerEntry.webServerCertificate;
+                oldServerEntry->Copy(*decodedEntryIter);
                 break;
             }
         }
@@ -72,7 +89,7 @@ void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
         {
             // Insert the new entry as the second entry, so that the first entry can continue
             // to be used if it is reachable
-            oldServerEntryList.insert(oldServerEntryList.begin() + 1, newServerEntry);
+            oldServerEntryList.insert(oldServerEntryList.begin() + 1, *decodedEntryIter);
         }
     }
 
@@ -81,7 +98,7 @@ void ServerList::AddEntriesToList(const vector<string>& newServerEntryList)
 
 void ServerList::MarkCurrentServerFailed()
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() > 1)
@@ -95,7 +112,7 @@ void ServerList::MarkCurrentServerFailed()
 
 ServerEntry ServerList::GetNextServer()
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() < 1)
@@ -111,7 +128,7 @@ ServerEntry ServerList::GetNextServer()
 
 ServerEntries ServerList::GetList()
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     // Load persistent list of servers from system (registry)
 
@@ -198,57 +215,6 @@ ServerEntries ServerList::GetListFromSystem()
     return ParseServerEntries(serverEntryListString.c_str());
 }
 
-// Adapted from here:
-// http://stackoverflow.com/questions/3381614/c-convert-string-to-hexadecimal-and-vice-versa
-string Hexlify(const string& input)
-{
-    static const char* const lut = "0123456789ABCDEF";
-    size_t len = input.length();
-
-    string output;
-    output.reserve(2 * len);
-    for (size_t i = 0; i < len; ++i)
-    {
-        const char c = input[i];
-        output.push_back(lut[c >> 4]);
-        output.push_back(lut[c & 15]);
-    }
-    return output;
-}
-
-string Dehexlify(const string& input)
-{
-    static const char* const lut = "0123456789ABCDEF";
-    size_t len = input.length();
-    if (len & 1)
-    {
-        throw std::invalid_argument("Dehexlify: odd length");
-    }
-
-    string output;
-    output.reserve(len / 2);
-    for (size_t i = 0; i < len; i += 2)
-    {
-        char a = toupper(input[i]);
-        const char* p = std::lower_bound(lut, lut + 16, a);
-        if (*p != a)
-        {
-            throw std::invalid_argument("Dehexlify: not a hex digit");
-        }
-
-        char b = toupper(input[i + 1]);
-        const char* q = std::lower_bound(lut, lut + 16, b);
-        if (*q != b)
-        {
-            throw std::invalid_argument("Dehexlify: not a hex digit");
-        }
-
-        output.push_back(((p - lut) << 4) | (q - lut));
-    }
-
-    return output;
-}
-
 // The errors below throw (preventing any Server connection from starting)
 ServerEntries ServerList::ParseServerEntries(const char* serverEntryListString)
 {
@@ -273,33 +239,8 @@ ServerEntry ServerList::ParseServerEntry(const string& serverEntry)
 {
     string line = Dehexlify(serverEntry);
 
-    stringstream lineStream(line);
-    string lineItem;
     ServerEntry entry;
-        
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Server Address");
-    }
-    entry.serverAddress = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
-    }
-    entry.webServerPort = atoi(lineItem.c_str());
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Web Server Secret");
-    }
-    entry.webServerSecret = lineItem;
-
-    if (!getline(lineStream, lineItem, ' '))
-    {
-        throw std::exception("Server Entries are corrupt: can't parse Web Server Certificate");
-    }
-    entry.webServerCertificate = lineItem;
+    entry.FromString(line);
 
     return entry;
 }
@@ -317,11 +258,144 @@ string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)
     string encodedServerList;
     for (ServerEntryIterator it = serverEntryList.begin(); it != serverEntryList.end(); ++it)
     {
-        stringstream port;
-        port << it->webServerPort;
-        string serverEntry = it->serverAddress + " " + port.str() + " " + it->webServerSecret + " " + it->webServerCertificate;
-        encodedServerList += Hexlify(serverEntry) + "\n";
+        string stringServerEntry = it->ToString();
+        encodedServerList += Hexlify(
+                                (const unsigned char*)stringServerEntry.c_str(),
+                                stringServerEntry.length()) + "\n";
     }
     return encodedServerList;
 }
 
+
+/***********************************************
+ServerEntry members
+*/
+
+ServerEntry::ServerEntry(
+    const string& serverAddress, int webServerPort, 
+    const string& webServerSecret, const string& webServerCertificate, 
+    int sshPort, const string& sshUsername, const string& sshPassword, 
+    const string& sshHostKey, int sshObfuscatedPort, 
+    const string& sshObfuscatedKey)
+{
+    this->serverAddress = serverAddress;
+    this->webServerPort = webServerPort;
+    this->webServerSecret = webServerSecret;
+    this->webServerCertificate = webServerCertificate;
+    this->sshPort = sshPort;
+    this->sshUsername = sshUsername;
+    this->sshPassword = sshPassword;
+    this->sshHostKey = sshHostKey;
+    this->sshObfuscatedPort = sshObfuscatedPort;
+    this->sshObfuscatedKey = sshObfuscatedKey;
+}
+
+void ServerEntry::Copy(const ServerEntry& src)
+{
+    *this = src;
+}
+
+string ServerEntry::ToString() const
+{
+    stringstream ss;
+    
+    //
+    // Legacy values are simply space-separated strings
+    //
+
+    ss << serverAddress << " ";
+    ss << webServerPort << " ";
+    ss << webServerSecret << " ";
+    ss << webServerCertificate << " ";
+
+    //
+    // Extended values are JSON-encoded.
+    //
+
+    Json::Value entry;
+    
+    entry["sshPort"] = sshPort;
+    entry["sshUsername"] = sshUsername;
+    entry["sshPassword"] = sshPassword;
+    entry["sshHostKey"] = sshHostKey;
+    entry["sshObfuscatedPort"] = sshObfuscatedPort;
+    entry["sshObfuscatedKey"] = sshObfuscatedKey;
+
+    Json::FastWriter jsonWriter;
+    ss << jsonWriter.write(entry);
+
+    return ss.str();
+}
+
+void ServerEntry::FromString(const string& str)
+{
+    stringstream lineStream(str);
+    string lineItem;
+
+    //
+    // Legacy values are simply space-separated strings
+    //
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Server Address");
+    }
+    serverAddress = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
+    }
+    webServerPort = atoi(lineItem.c_str());
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Web Server Secret");
+    }
+    webServerSecret = lineItem;
+
+    if (!getline(lineStream, lineItem, ' '))
+    {
+        throw std::exception("Server Entries are corrupt: can't parse Web Server Certificate");
+    }
+    webServerCertificate = lineItem;
+
+    //
+    // Extended values are JSON-encoded.
+    //
+
+    if (!getline(lineStream, lineItem, '\0'))
+    {
+        my_print(true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
+        
+        // Assumption: we're not reading into a ServerEntry struct that already
+        // has values set. So we're relying on the default values being set by
+        // the constructor.
+        return;
+    }
+
+    Json::Value json_entry;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(lineItem, json_entry);
+    if (!parsingSuccessful)
+    {
+        string fail = reader.getFormattedErrorMessages();
+        my_print(false, _T("%s: Extended JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        throw std::exception("Server Entries are corrupt: can't parse JSON");
+    }
+
+    try
+    {
+        sshPort = json_entry.get("sshPort", 0).asInt();
+        sshUsername = json_entry.get("sshUsername", "").asString();
+        sshPassword = json_entry.get("sshPassword", "").asString();
+        sshHostKey = json_entry.get("sshHostKey", "").asString();
+        sshObfuscatedPort = json_entry.get("sshObfuscatedPort", 0).asInt();
+        sshObfuscatedKey = json_entry.get("sshObfuscatedKey", "").asString();
+    }
+    catch (exception& e)
+    {
+        my_print(false, _T("%s: Extended JSON parse exception: %S"), __TFUNCTION__, e.what());
+        throw std::exception("Server Entries are corrupt: parse JSON exception");
+    }
+}

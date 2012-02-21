@@ -25,7 +25,8 @@
 IWorkerThread::IWorkerThread()
     : m_thread(0),
       m_externalStopSignalFlag(0),
-      m_internalSignalStopFlag(false)
+      m_internalSignalStopFlag(false),
+      m_synchronizedExitCounter(0)
 {
     m_startedEvent = CreateEvent(
                         NULL, 
@@ -59,7 +60,9 @@ const vector<const bool*>& IWorkerThread::GetSignalStopFlags() const
     return m_signalStopFlags;
 }
 
-bool IWorkerThread::Start(const bool& externalStopSignalFlag)
+bool IWorkerThread::Start(
+                    const bool& externalStopSignalFlag, 
+                    ReferenceCounter* synchronizedExitCounter)
 {
     assert(m_thread == 0);
     assert(m_externalStopSignalFlag == 0);
@@ -69,11 +72,11 @@ bool IWorkerThread::Start(const bool& externalStopSignalFlag)
     
     m_externalStopSignalFlag = &externalStopSignalFlag;
     m_internalSignalStopFlag = false;
+    m_synchronizedExitCounter = synchronizedExitCounter;
 
     m_signalStopFlags.clear();
     m_signalStopFlags.push_back(&m_internalSignalStopFlag);
     m_signalStopFlags.push_back(m_externalStopSignalFlag);
-
 
     m_thread = CreateThread(0, 0, IWorkerThread::Thread, (void*)this, 0, 0);
     if (!m_thread)
@@ -127,10 +130,26 @@ void IWorkerThread::Stop()
     m_externalStopSignalFlag = 0;
 }
 
+bool IWorkerThread::IsRunning() const
+{
+    bool started = (WaitForSingleObject(m_startedEvent, 0) == WAIT_OBJECT_0);
+    bool stopped = (WaitForSingleObject(m_stoppedEvent, 0) == WAIT_OBJECT_0);
+    return started && !stopped;
+}
+
 // static
 DWORD WINAPI IWorkerThread::Thread(void* object)
 {
     IWorkerThread* _this = (IWorkerThread*)object;
+
+    if (_this->m_synchronizedExitCounter)
+    {
+        _this->m_synchronizedExitCounter->Increment();
+    }
+
+    // We only attempt a synchronized exit on user cancel (i.e., on a nice,
+    // clean exit).
+    bool doSynchronizedExit = false;
 
     // Not allowed to throw out of the thread without cleaning up.
     try
@@ -149,6 +168,8 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
             if (TestBoolArray(_this->GetSignalStopFlags()))
             {
                 // Stop request signalled. Need to stop now.
+                _this->StopImminent();
+                doSynchronizedExit = true;
                 break;
             }
             else
@@ -164,6 +185,21 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
     catch(...)
     {
         // Fall through and exit cleanly
+    }
+
+    if (_this->m_synchronizedExitCounter)
+    {
+        _this->m_synchronizedExitCounter->Decrement();
+    }
+
+    if (doSynchronizedExit)
+    {
+        // Wait for all related threads to release the exit counter before 
+        // stopping completely.
+        while (_this->m_synchronizedExitCounter->Check())
+        {
+            Sleep(100);
+        }
     }
 
     _this->DoStop();

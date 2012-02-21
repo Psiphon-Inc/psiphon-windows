@@ -30,7 +30,33 @@
  TransportFactory
 ******************************************************************************/
 
-map<tstring, TransportFactory> TransportRegistry::m_registeredTransports;
+map<tstring, TransportFactory, TransportRegistry::RegistryEntryComparison> 
+    TransportRegistry::m_registeredTransports;
+
+vector<tstring> TransportRegistry::m_registeredTransportsPriority;
+
+bool TransportRegistry::RegistryEntryComparison::operator() (const tstring& lhs, const tstring& rhs) const
+{
+    vector<tstring>::const_iterator it;
+    for (it = m_registeredTransportsPriority.begin();
+            it != m_registeredTransportsPriority.end();
+            it++)
+    {
+        // The order of these checks is important. "Strict weak ordering" is 
+        // required, so... need to return false if the values are the same?.
+        if (*it == rhs)
+        {
+            return false;
+        }
+        else if (*it == lhs)
+        {
+            return true;
+        }
+    }
+    assert(0); // shouldn't get here
+    return false;
+}
+
 
 // static
 template<class TRANSPORT_TYPE>
@@ -41,7 +67,12 @@ int TransportRegistry::Register()
 
     TRANSPORT_TYPE::GetFactory(transportName, transportFactory);
 
-    TransportRegistry::m_registeredTransports[transportName] = transportFactory;
+    // Map entry ordering comes into play when when we add a new item to the
+    // map in the next line. So make sure we add the name to the priority 
+    // vector first.
+    m_registeredTransportsPriority.push_back(transportName);
+
+    m_registeredTransports[transportName] = transportFactory;
 
     // The return value is essentially meaningless, but some return value 
     // is needed, so that an assignment can be done -- because only assignments
@@ -59,7 +90,8 @@ ITransport* TransportRegistry::New(tstring transportName)
 void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
 {
     all_transports.clear();
-    map<tstring, TransportFactory>::const_iterator it;
+
+    map<tstring, TransportFactory, RegistryEntryComparison>::const_iterator it;
     for (it = m_registeredTransports.begin(); it != m_registeredTransports.end(); it++)
     {
         all_transports.push_back(it->second());
@@ -67,10 +99,11 @@ void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
 }
 
 // This is the actual registration of the available transports.
+// NOTE: The order of these lines indicates the priority of the transports.
 
-static int _vpn = TransportRegistry::Register<VPNTransport>();
 static int _ossh = TransportRegistry::Register<OSSHTransport>();
 static int _ssh = TransportRegistry::Register<SSHTransport>();
+static int _vpn = TransportRegistry::Register<VPNTransport>();
 
 
 

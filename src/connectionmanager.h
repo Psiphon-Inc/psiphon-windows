@@ -61,7 +61,6 @@ private:
     static DWORD WINAPI ConnectionManager::UpgradeThread(void* object);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
-    class TryNextServer { };
     class Abort { };
 
     void DoPostConnect(const SessionInfo& sessionInfo);
@@ -77,18 +76,17 @@ private:
         const tstring& info,
         DWORD milliseconds,
         DWORD size);
-    void GetSpeedTestURL(tstring& serverAddress, tstring& serverPort, tstring& requestPath);
+    void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
     void MarkCurrentServerFailed(void);
-    void LoadNextServer(
-        ServerEntry& serverEntry,
-        tstring& handshakeRequestPath);
-    void HandleHandshakeResponse(
-        const char* handshakeResponse);
+    void LoadNextServer(tstring& handshakeRequestPath);
     bool RequireUpgrade(void);
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
     tstring GetSplitTunnelingFilePath();
+
+    void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
+    void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
 private:
     HANDLE m_mutex;

@@ -44,5 +44,13 @@ public:
     static void NewAll(vector<ITransport*>& all_transports);
 
 private:
-    static map<tstring, TransportFactory> m_registeredTransports;
+    struct RegistryEntryComparison 
+    {
+        bool operator() (const tstring& lhs, const tstring& rhs) const;
+    };
+
+    static map<tstring, TransportFactory, RegistryEntryComparison> m_registeredTransports;
+
+    // Used to keep track of the order of transport registration
+    static vector<tstring> m_registeredTransportsPriority;
 };

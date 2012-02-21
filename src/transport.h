@@ -55,6 +55,11 @@ public:
 
     virtual tstring GetLastTransportError() const = 0;
 
+    // Examines the available information in SessionInfo and determines if a
+    // request to the server for further info is needed before this transport
+    // can connect.
+    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
+
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort
@@ -62,11 +67,14 @@ public:
     void Connect(
             SessionInfo sessionInfo, 
             SystemProxySettings* systemProxySettings,
-            const bool& stopSignalFlag);
+            const bool& stopSignalFlag,
+            ReferenceCounter* synchronizedExitCounter);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
+
+    bool IsConnected() const;
 
     //
     // Exception classes
@@ -86,6 +94,7 @@ protected:
 
     // IWorkerThread implementation
     virtual bool DoStart();
+    virtual void StopImminent();
     virtual void DoStop();
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
@@ -94,4 +103,3 @@ protected:
     SessionInfo m_sessionInfo;
     SystemProxySettings* m_systemProxySettings;
 };
-

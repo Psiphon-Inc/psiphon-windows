@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,30 +17,31 @@
  *
  */
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
-#include "targetver.h"
+class ITransport;
+class SessionInfo;
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
-#include <CommCtrl.h>
 
-// C RunTime Header Files
-#define _CRT_RAND_S
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <tchar.h>
-#include <assert.h>
+class ServerRequest
+{
+public:
+    ServerRequest();
+    virtual ~ServerRequest();
+    bool MakeRequest(
+        const bool& cancel,
+        const ITransport* currentTransport,
+        const SessionInfo& sessionInfo,
+        const TCHAR* requestPath,
+        string& o_response,
+        LPCWSTR additionalHeaders=NULL,
+        LPVOID additionalData=NULL,
+        DWORD additionalDataLength=0);
 
-#include "tstring.h"
-#include <map>
-#include <regex>
-#include <sstream>
-#include <json.h>
+private:
+    void GetTempTransports(
+        const ITransport* currentTransport,
+        const SessionInfo& sessionInfo,
+        vector<ITransport*>& o_tempTransports);
+
+};
