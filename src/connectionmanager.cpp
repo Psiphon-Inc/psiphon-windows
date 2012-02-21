@@ -189,7 +189,6 @@ void ConnectionManager::Start(const tstring& transport)
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
         my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
-        my_print(true, _T("%s: exit"), __TFUNCTION__);
         return;
     }
 
@@ -253,7 +252,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             tstring handshakeRequestPath;
 
-            my_print(true, _T("%s: LoadNextServer"), __TFUNCTION__);
             manager->LoadNextServer(handshakeRequestPath);
 
             // Note that the SessionInfo will only be partly filled in at this point.
@@ -540,7 +538,6 @@ bool ConnectionManager::SendStatusMessage(
     Json::FastWriter jsonWriter;
     additionalData << jsonWriter.write(stats); 
     string additionalDataString = additionalData.str();
-    my_print(true, _T("%s:%d - PAGE VIEWS JSON: %S"), __TFUNCTION__, __LINE__, additionalDataString.c_str());
 
     tstring requestPath = GetStatusRequestPath(m_transport, !final);
     string response;
@@ -651,7 +648,7 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
 void ConnectionManager::MarkCurrentServerFailed(void)
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
     
     m_serverList.MarkCurrentServerFailed();
 }
@@ -661,17 +658,14 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 // Note that the SessionInfo structure will only be partly filled in by this function.
 void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
-
     // Select next server to try to connect to
 
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     ServerEntry serverEntry;
     
     try
     {
-        my_print(true, _T("%s: GetNextServer"), __TFUNCTION__);
         // Try the next server in our list.
         serverEntry = m_serverList.GetNextServer();
     }
@@ -686,7 +680,6 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
 
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
-    my_print(true, _T("%s: m_currentSessionInfo.Set"), __TFUNCTION__);
     m_currentSessionInfo.Set(serverEntry);
 
     // Output values used in next TryNextServer step
@@ -699,16 +692,12 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
                            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
-    my_print(true, _T("%s: m_serverList.GetList"), __TFUNCTION__);
     ServerEntries serverEntries =  m_serverList.GetList();
-    my_print(true, _T("%s: serverEntries loop"), __TFUNCTION__);
     for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
         handshakeRequestPath += _T("&known_server=");
         handshakeRequestPath += NarrowToTString(ii->serverAddress);
     }
-
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
 bool ConnectionManager::RequireUpgrade(void)

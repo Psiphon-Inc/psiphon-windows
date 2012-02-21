@@ -41,7 +41,7 @@ void ServerList::AddEntriesToList(
                     const vector<string>& newServerEntryList,
                     const ServerEntry* serverEntry)
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     if (newServerEntryList.size() < 1 && !serverEntry)
     {
@@ -98,7 +98,7 @@ void ServerList::AddEntriesToList(
 
 void ServerList::MarkCurrentServerFailed()
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() > 1)
@@ -112,7 +112,7 @@ void ServerList::MarkCurrentServerFailed()
 
 ServerEntry ServerList::GetNextServer()
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() < 1)
@@ -128,7 +128,7 @@ ServerEntry ServerList::GetNextServer()
 
 ServerEntries ServerList::GetList()
 {
-    AutoMUTEX lock(m_mutex, __TFUNCTION__);
+    AutoMUTEX lock(m_mutex);
 
     // Load persistent list of servers from system (registry)
 
