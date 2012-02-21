@@ -36,15 +36,22 @@ void ITransport::Connect(
                     SessionInfo sessionInfo, 
                     SystemProxySettings* systemProxySettings,
                     const bool& stopSignalFlag,
-                    ReferenceCounter* synchronizedExitCounter)
+                    WorkerThreadSynch* workerThreadSynch)
 {
     m_sessionInfo = sessionInfo;
     m_systemProxySettings = systemProxySettings;
     assert(m_systemProxySettings);
 
-    if (!IWorkerThread::Start(stopSignalFlag, synchronizedExitCounter))
+    if (!IWorkerThread::Start(stopSignalFlag, workerThreadSynch))
     {
-        throw TransportFailed();
+        if (stopSignalFlag)
+        {
+            throw Abort();
+        }
+        else
+        {
+            throw TransportFailed();
+        }
     }
 }
 

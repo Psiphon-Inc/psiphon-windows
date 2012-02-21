@@ -144,6 +144,7 @@ void LocalProxy::StopImminent()
     if (m_polipoProcessInfo.hProcess != 0)
     {
         // We are (probably) connected, so send a final stats message
+        my_print(true, _T("%s: Stopping cleanly. Sending final stats."), __TFUNCTION__);
         (void)ProcessStatsAndStatus(true);
     }
 }
@@ -183,11 +184,13 @@ void LocalProxy::Cleanup()
     // we'll try one last time.
     if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
+        my_print(true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
         (void)m_statsCollector->SendStatusMessage(
                                 true, // Note: there's a timeout side-effect when final=false
                                 m_pageViewEntries, 
                                 m_httpsRequestEntries, 
                                 m_bytesTransferred);
+        my_print(true, _T("%s: Stopped dirtily. Final stats sent."), __TFUNCTION__);
     }
 }
 
@@ -425,12 +428,16 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
         || m_pageViewEntries.size() >= s_send_max_entries
         || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
+        my_print(true, _T("%s: Sending %s stats."), __TFUNCTION__, final ? _T("final") : _T("non-final"));
+
         if (m_statsCollector->SendStatusMessage(
                                 final, // Note: there's a timeout side-effect when final=false
                                 m_pageViewEntries, 
                                 m_httpsRequestEntries, 
                                 m_bytesTransferred))
         {
+            my_print(true, _T("%s: Stats send success"), __TFUNCTION__);
+
             // Reset thresholds
             s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
             s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
@@ -443,6 +450,8 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
         }
         else
         {
+            my_print(true, _T("%s: Stats send failure"), __TFUNCTION__);
+
             // Status sending failures are fairly common.
             // We'll back off the thresholds and try again later.
             s_send_interval_ms += DEFAULT_SEND_INTERVAL_MS;

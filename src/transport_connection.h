@@ -78,6 +78,6 @@ private:
     LocalProxy* m_localProxy;
     SessionInfo m_sessionInfo;
     SystemProxySettings m_systemProxySettings;
-    ReferenceCounter m_referenceCounter;
+    WorkerThreadSynch m_workerThreadSynch;
 };
 

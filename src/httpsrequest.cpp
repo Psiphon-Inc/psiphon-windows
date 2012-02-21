@@ -89,7 +89,7 @@ void CALLBACK WinHttpStatusCallback(
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    my_print(true, _T("HTTPS request... (%d)"), dwInternetStatus);
+    //my_print(true, _T("HTTPS request... (%d)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {

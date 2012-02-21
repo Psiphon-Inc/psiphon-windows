@@ -20,20 +20,30 @@
 #pragma once
 
 
-class ReferenceCounter
+class WorkerThreadSynch
 {
 public:
-    ReferenceCounter() { Reset(); }
+    WorkerThreadSynch();
+    ~WorkerThreadSynch();
 
-    void Reset() { m_counter = 0; }
-    void Increment() { InterlockedIncrement(&m_counter); }
-    void Decrement() { InterlockedDecrement(&m_counter); }
+    void Reset();
 
-    // Returns false when there are no more references.
-    bool Check() const { return m_counter != 0; }
+protected:
+    friend class IWorkerThread;
+
+    void ThreadStarting();
+    
+    void ThreadStoppingCleanly(bool clean);
+    bool BlockUntil_AllThreadsStoppingCleanly();
+
+    void ThreadReadyForStop();
+    void BlockUntil_AllThreadsReadyToStop();
 
 private:
-    LONG m_counter;
+    HANDLE m_mutex;
+    unsigned int m_threadsStartedCounter;
+    unsigned int m_threadsReadyToStopCounter;
+    vector<bool> m_threadCleanStops;
 };
 
 
@@ -48,7 +58,7 @@ public:
     // synchronizedExitCounter can be null if not needed.
     virtual bool Start(
         const bool& externalStopSignalFlag, 
-        ReferenceCounter* synchronizedExitCounter);
+        WorkerThreadSynch* workerThreadSynch);
 
     // Blocking call. Tell the thread to stop and wait for it to do so.
     // Implementing classes MUST call this from their destructor.
@@ -108,13 +118,6 @@ protected:
     bool m_internalSignalStopFlag;
     vector<const bool*> m_signalStopFlags;
 
-    // We will sometimes want multiple related threads to do some pre-stop
-    // work before we stop all threads. I.e., we want LocalProxy to do a final
-    // /status request before the transport is torn down. If the same 
-    // ReferenceCounter is passed to multiple threads, they will wait until
-    // all threads have processed StopImminent() before they shut down all 
-    // the way.
-    // Note that these steps are only followed on a user-signalled stop.
-    ReferenceCounter* m_synchronizedExitCounter;
+    WorkerThreadSynch* m_workerThreadSynch;
 };
 

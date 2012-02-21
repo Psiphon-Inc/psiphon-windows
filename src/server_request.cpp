@@ -109,7 +109,7 @@ bool ServerRequest::MakeRequest(
     // The ports we'll try to connect to directly, in order.
     vector<int> ports;
     ports.push_back(sessionInfo.GetWebPort());
-    ports.push_back(443);
+    ports.push_back(443); // Also try the standard HTTPS port.
     vector<int>::const_iterator port_iter;
     for (port_iter = ports.begin(); port_iter != ports.end(); port_iter++)
     {
