@@ -47,7 +47,8 @@ ConnectionManager::ConnectionManager(void) :
     m_thread(0),
     m_upgradeThread(0),
     m_startingTime(0),
-    m_transport(0)
+    m_transport(0),
+    m_upgradePending(false)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 

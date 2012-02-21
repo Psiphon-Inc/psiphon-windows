@@ -36,8 +36,18 @@ public:
         // Make sure that you use a name that is unique for this application otherwise
         // two apps may think they are the same if they are using same name for
         // 3rd parm to CreateMutex
-        m_hMutex = CreateMutex(NULL, FALSE, strMutexName); // do early
-        m_dwLastError = GetLastError(); // save for use later...
+        
+        // The app may be restarting (self-upgrade) so try this a few times
+        // while the mutex already exists.
+        for (int i = 0; i < 4; ++i)
+        {
+            Sleep(i * 100);
+            m_hMutex = CreateMutex(NULL, FALSE, strMutexName); // do early
+            if (ERROR_ALREADY_EXISTS != (m_dwLastError = GetLastError()))
+            {
+                break;
+            }
+        }
     }
 
     ~LimitSingleInstance()

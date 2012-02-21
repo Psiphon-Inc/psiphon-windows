@@ -660,6 +660,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         if (otherWindow)
         {
             SetForegroundWindow(otherWindow);
+            ShowWindow(otherWindow, SW_SHOW);
         }
         return FALSE;
     }
