@@ -284,7 +284,7 @@ bool LocalProxy::StartPolipo()
     }
     else if (ERROR_SUCCESS != connected)
     {
-        my_print(false, _T("%s - Failed to connect to Polipo (%d)"), __TFUNCTION__, GetLastError());
+        my_print(false, _T("%s - Failed to connect to Polipo (%d, %d)"), __TFUNCTION__, connected, GetLastError());
         return false;
     }
 

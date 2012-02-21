@@ -213,6 +213,7 @@ void SSHTransportBase::TransportConnectHelper(
     }
     else if (ERROR_SUCCESS != connected)
     {
+        my_print(false, _T("%s - Failed to connect to Plonk (%d, %d)"), __TFUNCTION__, connected, GetLastError());
         throw TransportFailed();
     }
 
