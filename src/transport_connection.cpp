@@ -199,6 +199,11 @@ void TransportConnection::DoHandshake(
 
 void TransportConnection::Cleanup()
 {
+    // NOTE: It is important that the system proxy settings get torn down
+    // before the transport and local proxy do. Otherwise, all web connections
+    // will have a window of being guaranteed to fail (including and especially
+    // our own -- like final /status requests).
+    m_systemProxySettings.Revert();
     if (m_transport) m_transport->Cleanup();
     if (m_localProxy) delete m_localProxy;
     m_localProxy = 0;
