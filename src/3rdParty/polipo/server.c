@@ -579,7 +579,7 @@ int httpServerSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr reque
     }
 
 
-    //Get IP from th request, check against our local networks list
+    //Get IP from the request, check against our local networks list
     int local_addr = 0;
     if(request->addr->string[0] == DNS_A)
     {

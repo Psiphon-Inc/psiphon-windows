@@ -1,9 +1,11 @@
 #include "polipo.h"
 
-static AtomPtr splitTunnelingFile = NULL;
 AtomPtr splitTunnelingDnsServer = NULL;
 NetworkList* localNetworks = NULL;
 int splitTunneling = 0; //flag for server.c && tunnel.c
+static AtomPtr splitTunnelingFile = NULL;
+static AtomPtr psiphonServer = NULL;
+struct in_addr psiphonServerAddr;
 
 static int parseSplitFile(AtomPtr filename);
 static void destroyNetworkList(void);
@@ -17,7 +19,8 @@ preinitSplitTunneling(void)
             "The name server to use with split tunneling over SOCKS.");
     CONFIG_VARIABLE(splitTunnelingFile, CONFIG_ATOM, 
             "Local networks file for split tunneling");
-
+    CONFIG_VARIABLE(psiphonServer, CONFIG_ATOM_LOWER, 
+            "Local networks file for split tunneling");
     return;
 }
 
@@ -34,6 +37,16 @@ initSplitTunneling(void)
     {
         do_log(L_ERROR, "No splitTunnelingDnsServer provided for split tunneling\n");
         exit(1);
+    }
+    if(psiphonServer && psiphonServer->string && strlen(psiphonServer->string) > 0)
+    {
+        memset(&psiphonServerAddr, 0, sizeof(psiphonServerAddr));
+        rc = inet_aton(psiphonServer->string, &psiphonServerAddr);
+        if(!rc)
+        {
+            do_log(L_ERROR, "Couldn't parse psiphonServer IP\n");
+            exit(1);
+        }
     }
 
     /* schedule splitFileObserver at this point*/
@@ -263,9 +276,18 @@ int
 isLocalAddress(struct in_addr addr)
 {
     if(localNetworks == NULL)
+    {
         return 0;
+    }
     if(!localNetworks->used)
+    {
         return 0;
+    }
+    //psiphonServer IP should never be split tunneled
+    if (0 == memcmp(&addr, &psiphonServerAddr, sizeof(struct in_addr)))
+    {
+        return 0;
+    }
     NetworkPtr *pNetwork = bsearch(&addr, localNetworks->networks, localNetworks->used, 
             sizeof(NetworkPtr), addressInNetwork); 
     return pNetwork != NULL;
