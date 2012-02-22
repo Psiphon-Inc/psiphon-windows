@@ -51,6 +51,7 @@ LocalProxy::LocalProxy(
 
     m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
     m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
+    m_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
 
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -221,6 +222,10 @@ bool LocalProxy::StartPolipo()
             //TODO: the DNS for split tunneling is hardcoded. Make it a part of handshake or 
             //create another tunnel for DNS in the future?
             polipoCommandLine << _T(" splitTunnelingDnsServer=8.8.8.8");
+        }
+        if(m_serverAddress.length() > 0)
+        {
+            polipoCommandLine << _T(" psiphonServer=") << m_serverAddress ;
         }
     }
 

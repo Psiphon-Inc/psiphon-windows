@@ -60,6 +60,12 @@ void TransportConnection::Connect(
 
     try
     {
+        //Delete any leftover split tunnelling rules
+        if(!DeleteFile(splitTunnelingFilePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+        {
+            throw std::exception("TransportConnection::Connect - DeleteFile failed");
+        }
+
         // Some transports require a handshake before connecting; with others we
         // can connect before doing the handshake.    
         if (m_transport->IsHandshakeRequired(m_sessionInfo))

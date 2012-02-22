@@ -86,5 +86,6 @@ private:
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
     bool m_finalStatsSent;
+    tstring m_serverAddress;
 };
 
