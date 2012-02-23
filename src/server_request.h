@@ -42,6 +42,6 @@ private:
     void GetTempTransports(
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
-        vector<ITransport*>& o_tempTransports);
+        vector<auto_ptr<ITransport>>& o_tempTransports);
 
 };

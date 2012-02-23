@@ -136,12 +136,12 @@ bool ServerRequest::MakeRequest(
     // Connecting directly via HTTPS failed. 
     // Now we'll try don't-need-handshake transports.
 
-    vector<ITransport*> tempTransports;
+    vector<auto_ptr<ITransport>> tempTransports;
     GetTempTransports(currentTransport, sessionInfo, tempTransports);
 
     bool success = false;
 
-    vector<ITransport*>::iterator transport_iter;
+    vector<auto_ptr<ITransport>>::iterator transport_iter;
     for (transport_iter = tempTransports.begin(); 
          transport_iter != tempTransports.end(); 
          transport_iter++)
@@ -156,7 +156,7 @@ bool ServerRequest::MakeRequest(
 
             // Throws on failure
             connection.Connect(
-                *transport_iter,
+                (*transport_iter).get(),
                 NULL, // not collecting stats
                 sessionInfo, 
                 NULL, // no handshake allowed
@@ -189,29 +189,8 @@ bool ServerRequest::MakeRequest(
         {
             // pass and continue
         }
-        catch (...)
-        {
-            // Unexpected error. Clean up and re-raise.
-            vector<ITransport*>::iterator transport_iter;
-            for (transport_iter = tempTransports.begin(); 
-                 transport_iter != tempTransports.end(); 
-                 transport_iter++)
-            {
-                delete *transport_iter;
-            }
-
-            throw;
-        }
     }
     
-    // Free our array of transports
-    for (transport_iter = tempTransports.begin(); 
-            transport_iter != tempTransports.end(); 
-            transport_iter++)
-    {
-        delete *transport_iter;
-    }
-
     // We've tried everything we can.
 
     return success;
@@ -231,7 +210,7 @@ our logic more explicit. And not dependent on the internals of another function.
 void ServerRequest::GetTempTransports(
                             const ITransport* currentTransport,
                             const SessionInfo& sessionInfo,
-                            vector<ITransport*>& o_tempTransports)
+                            vector<auto_ptr<ITransport>>& o_tempTransports)
 {
     o_tempTransports.clear();
 
@@ -248,7 +227,7 @@ void ServerRequest::GetTempTransports(
         if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
             && !(*it)->IsHandshakeRequired(sessionInfo))
         {
-            o_tempTransports.push_back(*it);
+            o_tempTransports.push_back(auto_ptr<ITransport>(*it));
             // no early break, so that we delete all the unused transports
         }
         else
