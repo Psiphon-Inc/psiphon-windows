@@ -79,6 +79,11 @@ bool IWorkerThread::Start(
     m_signalStopFlags.push_back(&m_internalSignalStopFlag);
     m_signalStopFlags.push_back(m_externalStopSignalFlag);
 
+    if (TestBoolArray(GetSignalStopFlags()))
+    {
+        throw Abort();
+    }
+
     m_thread = CreateThread(0, 0, IWorkerThread::Thread, (void*)this, 0, 0);
     if (!m_thread)
     {
@@ -156,6 +161,11 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
     // Not allowed to throw out of the thread without cleaning up.
     try
     {
+        if (TestBoolArray(_this->GetSignalStopFlags()))
+        {
+            throw Abort();
+        }
+
         bool success = _this->DoStart();
 
         if (success)
