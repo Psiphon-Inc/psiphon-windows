@@ -137,7 +137,7 @@ bool ServerRequest::MakeRequest(
     // Now we'll try don't-need-handshake transports.
 
     vector<auto_ptr<ITransport>> tempTransports;
-    GetTempTransports(currentTransport, sessionInfo, tempTransports);
+    GetTempTransports(sessionInfo, tempTransports);
 
     bool success = false;
 
@@ -208,7 +208,6 @@ thrown, so we could just iterate over all transports sanely. But this makes
 our logic more explicit. And not dependent on the internals of another function.
 */
 void ServerRequest::GetTempTransports(
-                            const ITransport* currentTransport,
                             const SessionInfo& sessionInfo,
                             vector<auto_ptr<ITransport>>& o_tempTransports)
 {
@@ -224,8 +223,7 @@ void ServerRequest::GetTempTransports(
         // Only try transports that aren't the same as the current 
         // transport (because there's a reason it's not connected) 
         // and doesn't require a handshake.
-        if ((*it)->GetTransportProtocolName() != currentTransport->GetTransportProtocolName()
-            && !(*it)->IsHandshakeRequired(sessionInfo))
+        if (!(*it)->IsHandshakeRequired(sessionInfo))
         {
             o_tempTransports.push_back(auto_ptr<ITransport>(*it));
             // no early break, so that we delete all the unused transports

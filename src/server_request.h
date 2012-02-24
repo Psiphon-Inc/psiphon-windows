@@ -40,7 +40,6 @@ public:
 
 private:
     void GetTempTransports(
-        const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         vector<auto_ptr<ITransport>>& o_tempTransports);
 
