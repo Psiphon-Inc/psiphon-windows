@@ -70,15 +70,15 @@ void TransportConnection::Connect(
         // can connect before doing the handshake.    
         if (m_transport->IsHandshakeRequired(m_sessionInfo))
         {
-            if (!handshakeRequestPath)
+            my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
+
+            if (!handshakeRequestPath
+                || !DoHandshake(handshakeRequestPath, stopSignalFlag))
             {
-                // Need a handshake but can't do a handshake.
+                // Need a handshake but can't do a handshake or handshake failing.
                 throw TryNextServer();
             }
 
-            my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
-
-            DoHandshake(handshakeRequestPath, stopSignalFlag);
             handshakeDone = true;
         }
         else
@@ -118,7 +118,8 @@ void TransportConnection::Connect(
         // If we didn't do the handshake before, do it now.
         if (!handshakeDone && handshakeRequestPath)
         {
-            DoHandshake(handshakeRequestPath, stopSignalFlag);
+            // We do not fail regardless of whether the handshake succeeds.
+            (void)DoHandshake(handshakeRequestPath, stopSignalFlag);
             handshakeDone = true;
         }
 
@@ -167,13 +168,13 @@ void TransportConnection::WaitForDisconnect()
     }
 }
 
-void TransportConnection::DoHandshake(
+bool TransportConnection::DoHandshake(
                             const TCHAR* handshakeRequestPath,
                             const bool& stopSignalFlag)
 {
     if (!handshakeRequestPath)
     {
-        return;
+        return true;
     }
 
     ServerRequest serverRequest;
@@ -181,26 +182,26 @@ void TransportConnection::DoHandshake(
 
     // Send list of known server IP addresses (used for stats logging on the server)
 
-    (void)serverRequest.MakeRequest(
+    if (!serverRequest.MakeRequest(
                         stopSignalFlag,
                         m_transport,
                         m_sessionInfo,
                         handshakeRequestPath,
-                        handshakeResponse);
-
-    if (handshakeResponse.length() > 0)
-    {
-        if (!m_sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
-        {
-            my_print(false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
-            throw TryNextServer();
-        }
-    }
-    else
+                        handshakeResponse)
+        || handshakeResponse.length() <= 0)
     {
         my_print(false, _T("%s: handshake failed"), __TFUNCTION__);
+        return false;
+    }
+
+    if (!m_sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
+    {
+        // If the handshake parsing has failed, something is very wrong.
+        my_print(false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
         throw TryNextServer();
     }
+
+    return true;
 }
 
 void TransportConnection::Cleanup()

@@ -70,7 +70,7 @@ public:
     class TryNextServer { };
 
 private:
-    void DoHandshake(const TCHAR* handshakeRequestPath, const bool& stopSignalFlag);
+    bool DoHandshake(const TCHAR* handshakeRequestPath, const bool& stopSignalFlag);
     void Cleanup();
 
 private:
