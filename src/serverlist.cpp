@@ -176,6 +176,15 @@ ServerEntries ServerList::GetList()
             if (embeddedServerEntry->serverAddress == systemServerEntry->serverAddress)
             {
                 alreadyKnown = true;
+
+                // Special case: if the embedded server entry has new info that the
+                // existing system entry does not, we know the embedded entry is actually newer
+                if (embeddedServerEntry->sshObfuscatedKey.length() > 0 &&
+                    systemServerEntry->sshObfuscatedKey.length() == 0)
+                {
+                    systemServerEntry->Copy(*embeddedServerEntry);
+                }
+
                 break;
             }
         }
