@@ -22,6 +22,24 @@ The purpose of ServerRequest is to wrap the various ways to make a HTTPS request
 to the server, which will depend on what state we're in, what transports are 
 available, etc.
 
+Two design statements:
+
+1. If a transport can connect without first making an extra-transport request,
+   then it should.
+    - In order to connect with VPN, an initial handshake is required in order to 
+      get server credentials. So that doesn't qualify.
+    - SSH and OSSH, on the other hand, do not, in theory, require an initial 
+      handshake. So we will embed those credentials and then connect without an
+      initial handshake.
+
+2. Any extra-transport requests should try HTTPS (8080, then 443) and then fail
+   over to setting up and making request through any available transports that
+   don't require an extra-transport request to connect.
+    - Failure requests, post-disconnect stats request, and VPN handshake requests
+      all must be done extra-transport. Until now, those depended on HTTPS being
+      available. This change will make it so that those requests succeed if HTTPS
+      *or* SSH *or* OSSH are available.
+
 Design assumptions:
 - All transports will run a local proxy.
   - This is true at this time, but it's imaginable that it could change in the
