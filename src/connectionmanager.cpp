@@ -274,7 +274,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 manager,
                 sessionInfo,
                 handshakeRequestPath.c_str(),
-                manager->GetSplitTunnelingFilePath(),
+                UserEnableSplitTunneling() ? manager->GetSplitTunnelingFilePath() : tstring(),
                 manager->GetUserSignalledStop(true));
 
             //
