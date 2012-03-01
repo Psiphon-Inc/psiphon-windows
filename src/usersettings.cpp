@@ -56,8 +56,3 @@ bool UserSkipProxySettings(void)
 {
     return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
 }
-
-bool UserEnableSplitTunneling(void)
-{
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_ENABLE_SPLIT_TUNNELING);
-}

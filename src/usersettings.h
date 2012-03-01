@@ -28,4 +28,3 @@ bool GetUserSetting(const string& settingName);
 void SetUserSetting(const string& settingName, bool settingValue);
 bool UserSkipBrowser(void);
 bool UserSkipProxySettings(void);
-bool UserEnableSplitTunneling(void);

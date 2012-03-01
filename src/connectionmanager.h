@@ -42,9 +42,11 @@ class ConnectionManager : public ILocalProxyStatsCollector
 public:
     ConnectionManager(void);
     virtual ~ConnectionManager(void);
-    void Toggle(const tstring& transport);
+    void Toggle(const tstring& transport, bool startSplitTunnel);
     void Stop(void);
-    void Start(const tstring& transport);
+    void Start(const tstring& transport, bool startSplitTunnel);
+    void StartSplitTunnel();
+    void StopSplitTunnel();
     time_t GetStartingTime(void);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState(void);
@@ -84,6 +86,8 @@ private:
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
     tstring GetSplitTunnelingFilePath();
+    bool WriteSplitTunnelRoutes(const char* routes);
+    bool DeleteSplitTunnelRoutes();
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
@@ -97,7 +101,8 @@ private:
     HANDLE m_thread;
     HANDLE m_upgradeThread;
     time_t m_startingTime;
-    string m_splitTunnelRoutes;
     ITransport* m_transport;
     bool m_upgradePending;
+    bool m_startSplitTunnel;
+    string m_splitTunnelRoutes;
 };

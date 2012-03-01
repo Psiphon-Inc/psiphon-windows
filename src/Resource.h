@@ -42,6 +42,7 @@
 #define IDC_BANNER_STATIC                   601
 #define IDC_LOG_LISTBOX                     602
 #define IDC_INFO_LINK_STATIC                603
+#define IDC_SPLIT_TUNNEL_CHECKBOX           604
 #define IDC_TRANSPORT_OPTION_RADIO_FIRST    700
 // 701-798 are reserved
 #define IDC_TRANSPORT_OPTION_RADIO_LAST     799

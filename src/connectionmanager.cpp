@@ -48,7 +48,8 @@ ConnectionManager::ConnectionManager(void) :
     m_upgradeThread(0),
     m_startingTime(0),
     m_transport(0),
-    m_upgradePending(false)
+    m_upgradePending(false),
+    m_startSplitTunnel(false)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -76,13 +77,13 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
     }
 }
 
-void ConnectionManager::Toggle(const tstring& transport)
+void ConnectionManager::Toggle(const tstring& transport, bool startSplitTunnel)
 {
     // NOTE: no lock, to allow thread to access object
 
     if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        Start(transport);
+        Start(transport,startSplitTunnel);
     }
     else
     {
@@ -174,7 +175,7 @@ void ConnectionManager::Stop(void)
     my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
-void ConnectionManager::Start(const tstring& transport)
+void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
@@ -184,6 +185,7 @@ void ConnectionManager::Start(const tstring& transport)
     AutoMUTEX lock(m_mutex);
 
     m_transport = TransportRegistry::New(transport);
+    m_startSplitTunnel = startSplitTunnel;
 
     m_userSignalledStop = false;
 
@@ -205,6 +207,22 @@ void ConnectionManager::Start(const tstring& transport)
     my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
+void ConnectionManager::StartSplitTunnel()
+{
+    AutoMUTEX lock(m_mutex);
+    
+    // Polipo is watching for changes to this file.
+    // Note: there's some delay before the file change takes effect.
+    WriteSplitTunnelRoutes(m_splitTunnelRoutes.c_str());
+}
+
+void ConnectionManager::StopSplitTunnel()
+{
+    AutoMUTEX lock(m_mutex);
+    
+    // See comment in StartSplitTunnel.
+    DeleteSplitTunnelRoutes();
+}
 
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
@@ -274,7 +292,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 manager,
                 sessionInfo,
                 handshakeRequestPath.c_str(),
-                UserEnableSplitTunneling() ? manager->GetSplitTunnelingFilePath() : tstring(),
+                manager->GetSplitTunnelingFilePath(),
                 manager->GetUserSignalledStop(true));
 
             //
@@ -428,6 +446,12 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
 
         // Process split tunnel response
         ProcessSplitTunnelResponse(response);
+
+        // Process flag to start split tunnel after initial connection
+        if (m_startSplitTunnel)
+        {
+            StartSplitTunnel();
+        }
     }
 
     //
@@ -679,6 +703,10 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
     // Generate a new client session ID to be included with all subsequent web requests
     m_currentSessionInfo.GenerateClientSessionID();
 
+    // Ensure split tunnel routes are reset before new session
+    m_splitTunnelRoutes = "";
+    StopSplitTunnel();
+
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
     m_currentSessionInfo.Set(serverEntry);
@@ -866,6 +894,8 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
     // Decompress split tunnel route info
     // Defaults to blank route list on any error --> no split tunneling
 
+    m_splitTunnelRoutes = "";
+
     if (compressedRoutes.length() == 0)
     {
         return;
@@ -873,37 +903,21 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
 
     const int CHUNK_SIZE = 1024;
     const int SANITY_CHECK_SIZE = 10*1024*1024;
-    DWORD ret;
-    unsigned have = 0, total = 0;
+    int ret;
     z_stream stream;
-    char out[CHUNK_SIZE];
+    char out[CHUNK_SIZE+1];
 
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
     stream.opaque = Z_NULL;
     stream.avail_in = compressedRoutes.length();
     stream.next_in = (unsigned char*)compressedRoutes.c_str();
+
     if (Z_OK != inflateInit(&stream))
     {
         return;
     }
 
-    tstring filePath = GetSplitTunnelingFilePath();
-    if (filePath.length() == 0)
-    {
-        my_print(false, _T("ProcessSplitTunnelResponse - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
-        return;
-    }
-
-    AutoHANDLE file = CreateFile(filePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (file == INVALID_HANDLE_VALUE)
-    {
-        my_print(false, _T("ProcessSplitTunnelResponse - CreateFile failed (%d)"), GetLastError());
-        return;
-    }
-
-    DWORD written;
     do
     {
         stream.avail_out = CHUNK_SIZE;
@@ -912,27 +926,26 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         if (ret != Z_OK && ret != Z_STREAM_END)
         {
             my_print(true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
-            DeleteFile(filePath.c_str());
+            m_splitTunnelRoutes = "";
             break;
         }
-        have = CHUNK_SIZE - stream.avail_out;
-        if (!WriteFile(file, (unsigned char*)out, have, &written, NULL) || written != have)
-        {
-            throw std::exception("ProcessSplitTunnelResponse - WriteFile failed");
-        }
 
-        total += have;
+        out[CHUNK_SIZE - stream.avail_out] = '\0';
 
-        if (total > SANITY_CHECK_SIZE)
+        m_splitTunnelRoutes += out;
+
+        if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
         {
             my_print(true, _T("ProcessSplitTunnelResponse overflow"));
-            DeleteFile(filePath.c_str());
+            m_splitTunnelRoutes = "";
             break;
         }
+
     } while (ret != Z_STREAM_END);
 
     inflateEnd(&stream);
 }
+
 tstring ConnectionManager::GetSplitTunnelingFilePath()
 {
     TCHAR filePath[MAX_PATH];
@@ -950,6 +963,62 @@ tstring ConnectionManager::GetSplitTunnelingFilePath()
         return tstring(filePath);
     }
     return _T("");
+}
+
+bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
+{
+    AutoMUTEX lock(m_mutex);
+
+    tstring filePath = GetSplitTunnelingFilePath();
+    if (filePath.length() == 0)
+    {
+        my_print(false, _T("WriteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        return false;
+    }
+
+    AutoHANDLE file = CreateFile(filePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (file == INVALID_HANDLE_VALUE)
+    {
+        my_print(false, _T("WriteSplitTunnelRoutes - CreateFile failed (%d)"), GetLastError());
+        return false;
+    }
+
+    DWORD length = strlen(routes);
+    DWORD written;
+    if (!WriteFile(
+            file,
+            (unsigned char*)routes,
+            length,
+            &written,
+            NULL)
+          || written != length)
+    {
+        my_print(false, _T("WriteSplitTunnelRoutes - WriteFile failed (%d)"), GetLastError());
+        return false;
+    }
+
+    return true;
+}
+
+bool ConnectionManager::DeleteSplitTunnelRoutes()
+{
+    AutoMUTEX lock(m_mutex);
+
+    tstring filePath = GetSplitTunnelingFilePath();
+    if (filePath.length() == 0)
+    {
+        my_print(false, _T("DeleteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        return false;
+    }
+
+    if (!DeleteFile(filePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+    {
+        my_print(false, _T("DeleteSplitTunnelRoutes - DeleteFile failed (%d)"), GetLastError());
+        return false;
+    }
+
+    return true;
 }
 
 // Makes a thread-safe copy of m_currentSessionInfo

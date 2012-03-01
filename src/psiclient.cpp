@@ -61,6 +61,7 @@ LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887
 // [toggle button] ' | transport selection ' [banner]
 //                 ' v                     '
 //                 + - - - - - - - - - - - +
+//                 [split tunnel check box.......]
 // +------------------------------------------------+
 // | ^                                              |
 // | | log list box                                 |
@@ -100,6 +101,15 @@ const int BANNER_HEIGHT = 48;
 const int BANNER_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > BANNER_HEIGHT ?
                                           (TRANSPORT_TOTAL_HEIGHT - BANNER_HEIGHT)/2 : 0);
 
+const TCHAR* splitTunnelPrompt = _T("Split tunnel");
+
+const int SPLIT_TUNNEL_X = TRANSPORT_FIRST_ITEM_X + SPACER;
+const int SPLIT_TUNNEL_Y = max(TOGGLE_BUTTON_HEIGHT,
+                               max(BANNER_HEIGHT,
+                                   transportOptionCount*(TRANSPORT_ITEM_HEIGHT+SPACER))) + SPACER;
+const int SPLIT_TUNNEL_WIDTH = TextWidth(splitTunnelPrompt);
+const int SPLIT_TUNNEL_HEIGHT = TextHeight() + SPACER;
+
 const int WINDOW_WIDTH = BANNER_X + BANNER_WIDTH + SPACER + 20; // non-client-area hack adjustment
 const int WINDOW_HEIGHT = 200;
 
@@ -109,9 +119,7 @@ const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
 const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
 
 const int LOG_LIST_BOX_X = 0;
-const int LOG_LIST_BOX_Y = max(TOGGLE_BUTTON_HEIGHT,
-                               max(BANNER_HEIGHT,
-                                   transportOptionCount*(TRANSPORT_ITEM_HEIGHT+SPACER))) + SPACER;
+const int LOG_LIST_BOX_Y = SPLIT_TUNNEL_Y + SPLIT_TUNNEL_HEIGHT + SPACER;
 const int LOG_LIST_BOX_WIDTH = WINDOW_WIDTH;
 const int LOG_LIST_BOX_HEIGHT = WINDOW_HEIGHT - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT);
 
@@ -126,6 +134,7 @@ HWND g_hBannerStatic = NULL;
 HBITMAP g_hBannerBitmap = NULL;
 HBITMAP g_hEmailBitmap = NULL;
 HWND g_hTransportRadioButtons[transportOptionCount];
+HWND g_hSplitTunnelCheckBox = NULL;
 HWND g_hLogListBox = NULL;
 HWND g_hInfoLinkStatic = NULL;
 HWND g_hInfoLinkTooltip = NULL;
@@ -260,6 +269,23 @@ void CreateControls(HWND hWndParent)
                 0);
         }
     }
+
+    // Split Tunnel Check Box
+
+    g_hSplitTunnelCheckBox = CreateWindow(
+        L"Button",
+        splitTunnelPrompt,
+        WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,
+        SPLIT_TUNNEL_X,
+        SPLIT_TUNNEL_Y,
+        SPLIT_TUNNEL_WIDTH,
+        SPLIT_TUNNEL_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_SPLIT_TUNNEL_CHECKBOX,
+        g_hInst,
+        NULL);
+    
+    SendMessage(g_hSplitTunnelCheckBox, WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
 
     // Log List
 
@@ -497,6 +523,8 @@ void StoreSelectedTransport(void)
 }
 
 
+void EnableSplitTunnelForSelectedTransport();
+
 void RestoreSelectedTransport(void)
 {
     string selectedTransport;
@@ -529,7 +557,54 @@ void RestoreSelectedTransport(void)
             (i == matchIndex) ? BST_CHECKED : BST_UNCHECKED,
             0);
     }    
+
+    EnableSplitTunnelForSelectedTransport();
 }
+
+
+void EnableSplitTunnelForSelectedTransport()
+{
+    // Split tunnel isn't implemented for VPN
+
+    if (_T("VPN") == GetSelectedTransport())
+    {
+        EnableWindow(g_hSplitTunnelCheckBox, FALSE);
+        SendMessage( g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
+    }
+    else
+    {
+        EnableWindow(g_hSplitTunnelCheckBox, TRUE);
+    }
+}
+
+
+bool GetSplitTunnel()
+{
+    return (BST_CHECKED == SendMessage(g_hSplitTunnelCheckBox, BM_GETCHECK, 0, 0)) ? 1 : 0;
+}
+
+
+void StoreSplitTunnel()
+{
+    WriteRegistryDwordValue(LOCAL_SETTINGS_REGISTRY_VALUE_SPLIT_TUNNEL, GetSplitTunnel() ? 1 : 0);
+}
+
+
+void RestoreSplitTunnel()
+{
+    DWORD splitTunnel = 0;
+    if (!ReadRegistryDwordValue(LOCAL_SETTINGS_REGISTRY_VALUE_SPLIT_TUNNEL, splitTunnel))
+    {
+        return;
+    }
+
+    SendMessage(
+        g_hSplitTunnelCheckBox,
+        BM_SETCHECK,
+        splitTunnel ? BST_CHECKED : BST_UNCHECKED,
+        0);
+}
+
 
 //==== my_print (logging) =====================================================
 
@@ -717,11 +792,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // If there's a transport preference setting, restore it
 
         RestoreSelectedTransport();
+        RestoreSplitTunnel();
 
         // Start a connection on the selected transport
 
         g_lastTransportSelection = GetSelectedTransport();
-        g_connectionManager.Toggle(g_lastTransportSelection);
+        g_connectionManager.Toggle(g_lastTransportSelection, GetSplitTunnel());
 
         break;
 
@@ -776,7 +852,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // See comment below about Stop() blocking the UI
             SetCursor(LoadCursor(0, IDC_WAIT));
 
-            g_connectionManager.Toggle(GetSelectedTransport());
+            g_connectionManager.Toggle(GetSelectedTransport(), GetSplitTunnel());
         }
 
         // Transport radio button clicked
@@ -786,10 +862,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                  && wmEvent == BN_CLICKED)
         {
             // Store the selection for next app run
-
             StoreSelectedTransport();
 
             tstring newTransportSelection = GetSelectedTransport();
+
+            EnableSplitTunnelForSelectedTransport();
 
             if (newTransportSelection != g_lastTransportSelection)
             {
@@ -800,7 +877,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 // animation. WM_SETCURSOR will reset the cursor automatically.
                 SetCursor(LoadCursor(0, IDC_WAIT));
 
-                g_connectionManager.Start(newTransportSelection);
+                g_connectionManager.Start(newTransportSelection, GetSplitTunnel());
 
                 g_lastTransportSelection = newTransportSelection;
             }
@@ -821,6 +898,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             else
             {
                 OpenBrowser(INFO_LINK_URL);
+            }
+        }
+
+        // Split tunnel checkbox clicked
+        
+        else if (lParam == (LPARAM)g_hSplitTunnelCheckBox && wmEvent == STN_CLICKED)
+        {
+            // Store the selection for next app run
+            StoreSplitTunnel();
+
+            if (GetSplitTunnel())
+            {
+                g_connectionManager.StartSplitTunnel();
+            }
+            else
+            {
+                g_connectionManager.StopSplitTunnel();
             }
         }
 

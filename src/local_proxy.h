@@ -87,5 +87,6 @@ private:
     vector<RegexReplace> m_httpsRequestRegexes;
     bool m_finalStatsSent;
     tstring m_serverAddress;
+    map<string, bool> m_reportedUnproxiedDomains;
 };
 

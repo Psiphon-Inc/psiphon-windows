@@ -181,6 +181,9 @@ void LocalProxy::Cleanup()
 
     m_lastStatusSendTimeMS = 0;
 
+    // Reset reporting of split tunnel status
+    m_reportedUnproxiedDomains.clear();
+
     // If we have stats, and we didn't get a chance to send our final stats, 
     // we'll try one last time.
     if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
@@ -555,6 +558,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
     const char* HTTP_PREFIX = "PSIPHON-PAGE-VIEW-HTTP:>>";
     const char* HTTPS_PREFIX = "PSIPHON-PAGE-VIEW-HTTPS:>>";
     const char* BYTES_TRANSFERRED_PREFIX = "PSIPHON-BYTES-TRANSFERRED:>>";
+    const char* UNPROXIED_PREFIX = "PSIPHON-UNPROXIED:>>";
     const char* DEBUG_PREFIX = "PSIPHON-DEBUG:>>";
     const char* ENTRY_END = "<<";
 
@@ -566,16 +570,19 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
         const char* http_entry_start = strstr(curr_pos, HTTP_PREFIX);
         const char* https_entry_start = strstr(curr_pos, HTTPS_PREFIX);
         const char* bytes_transferred_start = strstr(curr_pos, BYTES_TRANSFERRED_PREFIX);
+        const char* unproxied_start = strstr(curr_pos, UNPROXIED_PREFIX);
         const char* debug_start = strstr(curr_pos, DEBUG_PREFIX);
         const char* entry_end = NULL;
 
         if (http_entry_start == NULL) http_entry_start = end_pos;
         if (https_entry_start == NULL) https_entry_start = end_pos;
         if (bytes_transferred_start == NULL) bytes_transferred_start = end_pos;
+        if (unproxied_start == NULL) unproxied_start = end_pos;
         if (debug_start == NULL) debug_start = end_pos;
 
         const char* next = min(http_entry_start, https_entry_start);
         next = min(next, bytes_transferred_start);
+        next = min(next, unproxied_start);
         next = min(next, debug_start);
 
         if (next >= end_pos)
@@ -630,6 +637,25 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
             if (bytes > 0)
             {
                 m_bytesTransferred += bytes;
+            }
+        }
+        else if (next == unproxied_start)
+        {
+            const char* entry_start = next + strlen(UNPROXIED_PREFIX);
+            entry_end = strstr(entry_start, ENTRY_END);
+
+            if (!entry_end)
+            {
+                // Something is rather wrong. Maybe an incomplete entry.
+                // Stop processing;
+                break;
+            }
+
+            string unproxiedDomain(entry_start, entry_end-entry_start);
+            if (m_reportedUnproxiedDomains.count(unproxiedDomain) == 0)
+            {
+                m_reportedUnproxiedDomains[unproxiedDomain] = true;
+                my_print(false, _T("Unproxied: %S"), unproxiedDomain.c_str());
             }
         }
         else // if (next == debug_start)

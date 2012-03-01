@@ -60,7 +60,7 @@ void TransportConnection::Connect(
 
     try
     {
-        //Delete any leftover split tunnelling rules
+        // Delete any leftover split tunnelling rules
         if(splitTunnelingFilePath.length() > 0 && !DeleteFile(splitTunnelingFilePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
         {
             throw std::exception("TransportConnection::Connect - DeleteFile failed");
