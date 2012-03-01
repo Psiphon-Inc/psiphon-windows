@@ -37,7 +37,7 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
                               1, NULL, url->string, url->length, NULL);
     releaseAtom(url);
     if(n >= 0) {
-        /* This is completely wrong.  The write is non-blocking, and we 
+        /* This is completely wrong.  The write is non-blocking, and we
            don't reschedule it if it fails.  But then, if the write
            blocks, we'll simply drop the connection with no error message. */
         write(fd, buf, n);
@@ -118,7 +118,7 @@ destroyTunnel(TunnelPtr tunnel)
     free(tunnel);
 }
 
-void 
+void
 do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
 {
     TunnelPtr tunnel;
@@ -161,8 +161,8 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
     }
 
     //Psiphon
-    //checking if tunnel is allowed on a particular port 
-    //is no needed if the proxy accepts connections made only from localhost 
+    //checking if tunnel is allowed on a particular port
+    //is no needed if the proxy accepts connections made only from localhost
     /*
     if(!intListMember(port, tunnelAllowedPorts)) {
         releaseAtom(url);
@@ -172,7 +172,7 @@ do_tunnel(int fd, char *buf, int offset, int len, AtomPtr url)
     */
 
     tunnel->port = port;
-    
+
     releaseAtom(url);
 
     if(socksParentProxy) {
@@ -205,7 +205,7 @@ tunnelDnsHandler(int status, GethostbynameRequestPtr request)
 
     if(status <= 0) {
         tunnelError(tunnel, 504,
-                    internAtomError(-status, 
+                    internAtomError(-status,
                                     "Host %s lookup failed",
                                     atomString(tunnel->hostname)));
         return 1;
@@ -232,7 +232,7 @@ tunnelSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request)
 
     if(status <= 0) {
         tunnelError(tunnel, 504,
-                    internAtomError(-status, 
+                    internAtomError(-status,
                                     "Host %s lookup failed",
                                     atomString(tunnel->hostname)));
         return 1;
@@ -250,9 +250,9 @@ tunnelSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request)
     int local_addr = 0;
     if(request->addr->string[0] == DNS_A)
     {
-        HostAddressPtr host_addr;    
+        HostAddressPtr host_addr;
         host_addr = (HostAddressPtr) &request->addr->string[1];
-        //we deal only with IPv4 addresses 
+        //we deal only with IPv4 addresses
         if(host_addr->af == 4)
         {
             struct in_addr servaddr;
@@ -260,8 +260,12 @@ tunnelSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request)
             local_addr =  isLocalAddress(servaddr);
         }
     }
-    printf("PSIPHON-DEBUG:>>Domain %s is %s<<", request->name->string, local_addr == 0 ? "not local": "local");
-    fflush(NULL);
+
+    if (local_addr != 0)
+    {
+        printf("PSIPHON-UNPROXIED:>>%s<<", request->name->string);
+        fflush(NULL);
+    }
 
     //Use SOCKS for IPs that are not local and connect directly to the ones that are
     //At this point the DNS record for the request should be cached, default TTL for DNS requests
@@ -273,7 +277,7 @@ tunnelSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request)
                     parentHost ? parentPort : tunnel->port,
                     tunnelSocksHandler, tunnel);
     }
-    else 
+    else
     {
         do_connect(retainAtom(request->addr), 0,
                 parentHost ? parentPort : tunnel->port,
@@ -399,7 +403,7 @@ bufRead(int fd, CircularBufferPtr buf,
                   fd, buf->head,
                   buf->buf, tail,
                   handler, data);
-    else 
+    else
         do_stream_2(IO_READ | IO_NOTNOW,
                     fd, buf->head,
                     buf->buf, CHUNK_SIZE,
@@ -424,12 +428,12 @@ bufWrite(int fd, CircularBufferPtr buf,
                     buf->buf, buf->head,
                     handler, data);
 }
-                    
+
 static void
 tunnelDispatch(TunnelPtr tunnel)
 {
     if(circularBufferEmpty(&tunnel->buf1)) {
-        if(tunnel->buf1.buf && 
+        if(tunnel->buf1.buf &&
            !(tunnel->flags & (TUNNEL_READER1 | TUNNEL_WRITER2))) {
             dispose_chunk(tunnel->buf1.buf);
             tunnel->buf1.buf = NULL;
@@ -447,7 +451,7 @@ tunnelDispatch(TunnelPtr tunnel)
     }
 
     if(tunnel->fd1 >= 0) {
-        if(!(tunnel->flags & (TUNNEL_READER1 | TUNNEL_EOF1)) && 
+        if(!(tunnel->flags & (TUNNEL_READER1 | TUNNEL_EOF1)) &&
            !circularBufferFull(&tunnel->buf1)) {
             tunnel->flags |= TUNNEL_READER1;
             bufRead(tunnel->fd1, &tunnel->buf1, tunnelRead1Handler, tunnel);
@@ -479,7 +483,7 @@ tunnelDispatch(TunnelPtr tunnel)
     }
 
     if(tunnel->fd2 >= 0) {
-        if(!(tunnel->flags & (TUNNEL_READER2 | TUNNEL_EOF2)) && 
+        if(!(tunnel->flags & (TUNNEL_READER2 | TUNNEL_EOF2)) &&
            !circularBufferFull(&tunnel->buf2)) {
             tunnel->flags |= TUNNEL_READER2;
             bufRead(tunnel->fd2, &tunnel->buf2, tunnelRead2Handler, tunnel);
@@ -515,7 +519,7 @@ tunnelDispatch(TunnelPtr tunnel)
 }
 
 static int
-tunnelRead1Handler(int status, 
+tunnelRead1Handler(int status,
                    FdEventHandlerPtr event, StreamRequestPtr request)
 {
     TunnelPtr tunnel = request->data;
@@ -536,7 +540,7 @@ tunnelRead1Handler(int status,
 }
 
 static int
-tunnelRead2Handler(int status, 
+tunnelRead2Handler(int status,
                    FdEventHandlerPtr event, StreamRequestPtr request)
 {
     TunnelPtr tunnel = request->data;
@@ -575,7 +579,7 @@ tunnelWrite1Handler(int status,
     tunnelDispatch(tunnel);
     return 1;
 }
-        
+
 static int
 tunnelWrite2Handler(int status,
                    FdEventHandlerPtr event, StreamRequestPtr request)
@@ -595,7 +599,7 @@ tunnelWrite2Handler(int status,
     tunnelDispatch(tunnel);
     return 1;
 }
-        
+
 static int
 tunnelError(TunnelPtr tunnel, int code, AtomPtr message)
 {
