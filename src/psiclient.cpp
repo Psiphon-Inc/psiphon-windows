@@ -101,7 +101,7 @@ const int BANNER_HEIGHT = 48;
 const int BANNER_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > BANNER_HEIGHT ?
                                           (TRANSPORT_TOTAL_HEIGHT - BANNER_HEIGHT)/2 : 0);
 
-const TCHAR* splitTunnelPrompt = _T("Split tunnel");
+const TCHAR* splitTunnelPrompt = _T("Don't proxy domestic web sites");
 
 const int SPLIT_TUNNEL_X = TRANSPORT_FIRST_ITEM_X + SPACER;
 const int SPLIT_TUNNEL_Y = max(TOGGLE_BUTTON_HEIGHT,
