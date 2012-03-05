@@ -868,6 +868,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             EnableSplitTunnelForSelectedTransport();
 
+            RestoreSplitTunnel();
+
             if (newTransportSelection != g_lastTransportSelection)
             {
                 // Restart with the new transport immediately
