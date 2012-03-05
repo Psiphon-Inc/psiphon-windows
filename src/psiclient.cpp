@@ -568,12 +568,12 @@ void EnableSplitTunnelForSelectedTransport()
 
     if (_T("VPN") == GetSelectedTransport())
     {
-        EnableWindow(g_hSplitTunnelCheckBox, FALSE);
-        SendMessage( g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
+        ShowWindow(g_hSplitTunnelCheckBox, FALSE);
+        SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
     }
     else
     {
-        EnableWindow(g_hSplitTunnelCheckBox, TRUE);
+        ShowWindow(g_hSplitTunnelCheckBox, TRUE);
     }
 }
 
