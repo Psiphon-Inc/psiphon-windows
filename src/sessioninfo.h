@@ -32,7 +32,7 @@ struct RegexReplace
 class SessionInfo
 {
 public:
-    SessionInfo() : m_sshPort(0), m_sshObfuscatedPort(0) {}
+    SessionInfo() : m_sshPort(0), m_sshObfuscatedPort(0), m_speedTestServerPort(0) {}
 
     void Set(const ServerEntry& serverEntry);
     void GenerateClientSessionID();
