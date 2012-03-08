@@ -28,6 +28,24 @@
 void SessionInfo::Set(const ServerEntry& serverEntry)
 {
     m_serverEntry = serverEntry;
+
+    m_clientSessionID.clear();
+    m_upgradeVersion.clear();
+    m_psk.clear();
+    m_sshPort = 0;
+    m_sshUsername.clear();
+    m_sshPassword.clear();
+    m_sshHostKey.clear();
+    m_sshSessionID.clear();
+    m_sshObfuscatedPort = 0;
+    m_sshObfuscatedKey.clear();
+    m_homepages.clear();
+    m_servers.clear();
+    m_pageViewRegexes.clear();
+    m_httpsRequestRegexes.clear();
+    m_speedTestServerAddress.clear();
+    m_speedTestServerPort = 0;
+    m_speedTestRequestPath.clear();
 }
 
 void SessionInfo::GenerateClientSessionID()

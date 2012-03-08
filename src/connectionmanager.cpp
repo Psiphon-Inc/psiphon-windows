@@ -700,9 +700,6 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
         throw Abort();
     }
 
-    // Generate a new client session ID to be included with all subsequent web requests
-    m_currentSessionInfo.GenerateClientSessionID();
-
     // Ensure split tunnel routes are reset before new session
     m_splitTunnelRoutes = "";
     StopSplitTunnel();
@@ -710,6 +707,9 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
     // Current session holds server entry info and will also be loaded
     // with homepage and other info.
     m_currentSessionInfo.Set(serverEntry);
+
+    // Generate a new client session ID to be included with all subsequent web requests
+    m_currentSessionInfo.GenerateClientSessionID();
 
     // Output values used in next TryNextServer step
 
