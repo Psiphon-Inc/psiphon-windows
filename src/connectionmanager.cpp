@@ -718,7 +718,8 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
                            _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+                           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+                           _T("&relay_protocol=") + m_transport->GetTransportProtocolName();
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
     ServerEntries serverEntries =  m_serverList.GetList();
