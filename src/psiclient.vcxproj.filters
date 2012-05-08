@@ -40,7 +40,7 @@
     </ClCompile>
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="transport_connection.cpp" />
-    <ClCompile Include="server_entry_authentication.cpp" />
+    <ClCompile Include="server_entry_auth.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -499,7 +499,7 @@
     <ClInclude Include="3rdParty\cryptopp\zlib.h">
       <Filter>cryptopp</Filter>
     </ClInclude>
-    <ClInclude Include="server_entry_authentication.h" />
+    <ClInclude Include="server_entry_auth.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
