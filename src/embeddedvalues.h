@@ -31,9 +31,10 @@ static const char* CLIENT_VERSION = "2";
 
 static const char* EMBEDDED_SERVER_LIST = "";
 
+// When this flag is set, only the embedded server list is used. This is for testing only.
+static const int IGNORE_SYSTEM_SERVER_LIST = 0;
+
 static const char* REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY = "";
 
 static const char* REMOTE_SERVER_LIST_URL =
     "https://s3.amazonaws.com/invalid_bucket_name/server_entries";
-
-static const int IGNORE_SYSTEM_SERVER_LIST = 0;
