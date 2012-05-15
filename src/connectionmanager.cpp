@@ -35,6 +35,7 @@
 #include "transport.h"
 #include "transport_registry.h"
 #include "transport_connection.h"
+#include "server_entry_auth.h"
 
 
 // Upgrade process posts a Quit message
@@ -175,6 +176,45 @@ void ConnectionManager::Stop(void)
     my_print(true, _T("%s: exit"), __TFUNCTION__);
 }
 
+void ConnectionManager::FetchRemoteServerList(void)
+{
+    // TODO: Depending on where this is called from, we'll need a mutex
+    // AutoMUTEX lock(m_mutex);
+
+    if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
+    {
+        return;
+    }
+
+    string response;
+    HTTPSRequest httpsRequest;
+    // NOTE: Not using local proxy
+    if (!httpsRequest.MakeRequest(
+            GetUserSignalledStop(false),
+            NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
+            443,
+            0,
+            NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
+            response,
+            false) || 
+        response.length() <= 0)
+    {
+        my_print(false, _T("%s: fetch remote server list failed"), __TFUNCTION__);
+        // TODO: log or throw
+        return;
+    }
+
+    vector<string> newServerEntryList;
+    if (!verifySignedServerList(response.c_str(), newServerEntryList))
+    {
+        my_print(false, _T("%s: verify remote server list failed"), __TFUNCTION__);
+        // TODO: log or throw
+        return;
+    }
+
+    m_serverList.AddEntriesToList(newServerEntryList, 0);
+}
+
 void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
@@ -196,6 +236,8 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
     }
 
     SetState(CONNECTION_MANAGER_STATE_STARTING);
+
+    FetchRemoteServerList();
 
     if (!(m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0)))
     {
@@ -312,7 +354,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 if (!manager->m_upgradeThread ||
                     WAIT_OBJECT_0 == WaitForSingleObject(manager->m_upgradeThread, 0))
                 {
-                    if (!(manager->m_upgradeThread = CreateThread(0, 0, UpgradeThread, manager, 0, 0)))
+                    if (!(manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0)))
                     {
                         my_print(false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
@@ -736,7 +778,7 @@ bool ConnectionManager::RequireUpgrade(void)
     return !m_upgradePending && m_currentSessionInfo.GetUpgradeVersion().size() > 0;
 }
 
-DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
+DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 

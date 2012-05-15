@@ -30,7 +30,7 @@ const char* base64DerPublicKey = "MIICIDANBgkqhkiG9w0BAQEFAAOCAg0AMIICCAKCAgEAsa
 const char* data = "abcdef";
 const char* base64Signature = "lPSrQhb5ZNnkUkp5u/jFZ9oU+8eTVuIA3PrEXRObNIrygkudlC/QRlNCAegPspUMD9Ajj33fgkPVtWpn60C7l3SQOUsO7IxOeqn3sWS9dDF+DYjZf+qPNFRncbWNkb8O/KMITlM1AwMLebxUSqzQQhmT4RnTqnwtuRSCpd1cG2f/UZkPljnBQHnew7B7GcO1aHOJxmVvdTSamPdR8Ol9ArFY4jserNkagf1mYr8gH2wVolgI//Zmals73Ku+3Yih72/6P4iOAAvCxq8HN+gslml7xTygliNQRqzRKt6oZPxRd5VAkOYjb0lL6VpWZ4BKj6Gt9ie8Q0IT6ScF3WkKw0EAUEjrVBFfxASJJ2JEEYAhzi/6IoFv6vCeocJxhitZzTmeF3A6oS9XgPSzVxzG1s0SICs17dNdH2fbannCy34UoKGGflLOssKxZ8b+nQTwN0Zy2zQPMlwVhWtGGvdc2I4ixEBqYBXMQFQzNPVzAd9dyDhJswJfXzixRJMTLon8Bkp92pDWptGh6+tkpbQKxZMp7VrGjWz0AsR3vEkf6RQjMhHs8Y+2fgkTGaaCpZI9/TYsYSJuTBlZ0RrIbn0VqhzhkQzjgXH6lcRYQLHcLW1/nXYo6oI7pGedK41a56C1bG9DknayNooTU71VQkfPMs2mTRFplqFQiNam2hFlkw8=";
 
-bool getServerList(const char* signedServerList, string& authenticServerList)
+bool verifySignedServerList(const char* signedServerList, vector<string>& authenticServerList)
 {
     // TODO: match public key hash
 
