@@ -21,4 +21,4 @@
 
 #include <string>
 
-bool verifySignedServerList(const char* signedServerList, vector<string>& authenticServerList);
+bool verifySignedServerList(const char* signedServerList, string& authenticServerList);

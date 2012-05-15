@@ -193,7 +193,7 @@ void ConnectionManager::FetchRemoteServerList(void)
             GetUserSignalledStop(false),
             NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
             443,
-            0,
+            "",
             NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
             response,
             false) || 
@@ -204,15 +204,25 @@ void ConnectionManager::FetchRemoteServerList(void)
         return;
     }
 
-    vector<string> newServerEntryList;
-    if (!verifySignedServerList(response.c_str(), newServerEntryList))
+    string serverEntryList;
+    if (!verifySignedServerList(response.c_str(), serverEntryList))
     {
         my_print(false, _T("%s: verify remote server list failed"), __TFUNCTION__);
         // TODO: log or throw
         return;
     }
 
-    m_serverList.AddEntriesToList(newServerEntryList, 0);
+    vector<string> newServerEntryVector;
+    istringstream serverEntryListStream(serverEntryList);
+    string line;
+    while (getline(serverEntryListStream, line))
+    {
+        if (!line.empty())
+        {
+            newServerEntryVector.push_back(line);
+        }
+    }
+    m_serverList.AddEntriesToList(newServerEntryVector, 0);
 }
 
 void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
