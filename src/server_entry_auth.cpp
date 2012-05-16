@@ -29,6 +29,9 @@
 
 bool verifySignedServerList(const char* signedServerList, string& authenticServerList)
 {
+    // Read the values out of the JSON-formatted signedServerList
+    // See psi_ops_server_entry_auth.py for details
+
     Json::Value json_entry;
     Json::Reader reader;
     bool parsingSuccessful = reader.parse(signedServerList, json_entry);
@@ -55,7 +58,22 @@ bool verifySignedServerList(const char* signedServerList, string& authenticServe
         return false;
     }
 
-    // TODO: match public key hash
+    // Match the presented public key digest against the embedded public key
+
+    string expectedPublicKeyDigest;
+    CryptoPP::SHA256 hash;
+    CryptoPP::StringSource(
+        REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
+        true,
+        new CryptoPP::HashFilter(hash,
+            new CryptoPP::Base64Encoder(new CryptoPP::StringSink(expectedPublicKeyDigest), false)));
+    if (0 != expectedPublicKeyDigest.compare(signingPublicKeyDigest))
+    {
+        my_print(false, _T("%s: public key mismatch.  This build must be too old."), __TFUNCTION__);
+        return false;
+    }
+
+    // Verify the signature of the data and output the data
 
     CryptoPP::RSASS<CryptoPP::PKCS1v15, CryptoPP::SHA256>::Verifier verifier(
         CryptoPP::StringSource(
