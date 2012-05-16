@@ -178,8 +178,7 @@ void ConnectionManager::Stop(void)
 
 void ConnectionManager::FetchRemoteServerList(void)
 {
-    // TODO: Depending on where this is called from, we'll need a mutex
-    // AutoMUTEX lock(m_mutex);
+    AutoMUTEX lock(m_mutex);
 
     if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
     {
@@ -247,8 +246,6 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-    FetchRemoteServerList();
-
     if (!(m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0)))
     {
         my_print(false, _T("Start: CreateThread failed (%d)"), GetLastError());
@@ -297,6 +294,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     //
     // NOTE: this function doesn't hold the ConnectionManager
     // object lock to allow for cancel etc.
+
+    manager->FetchRemoteServerList();
 
     while (true) // Try servers loop
     {
