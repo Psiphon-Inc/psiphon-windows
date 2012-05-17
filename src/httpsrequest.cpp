@@ -289,8 +289,6 @@ bool HTTPSRequest::MakeRequest(
         return false;
     }
 
-    // Note: when certificate is empty, not using HTTPS
-
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(
                     hConnect,

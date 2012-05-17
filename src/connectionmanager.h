@@ -107,4 +107,5 @@ private:
     bool m_upgradePending;
     bool m_startSplitTunnel;
     string m_splitTunnelRoutes;
+    time_t m_nextFetchRemoteServerListAttempt;
 };
