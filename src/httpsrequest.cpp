@@ -276,6 +276,13 @@ bool HTTPSRequest::MakeRequest(
         return false;
     }
 
+    if (FALSE == WinHttpSetTimeouts(hSession, 0, HTTPS_REQUEST_CONNECT_TIMEOUT_MS,
+                            HTTPS_REQUEST_SEND_TIMEOUT_MS, HTTPS_REQUEST_RECEIVE_TIMEOUT_MS))
+    {
+        my_print(false, _T("WinHttpSetTimeouts failed (%d)"), GetLastError());
+        return false;
+    }
+
     AutoHINTERNET hConnect =
             WinHttpConnect(
                 hSession,
