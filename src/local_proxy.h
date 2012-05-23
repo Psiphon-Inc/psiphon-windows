@@ -64,7 +64,7 @@ protected:
 
     void Cleanup();
 
-    bool StartPolipo();
+    bool StartPolipo(int localHttpProxyPort);
     bool CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
     bool ProcessStatsAndStatus(bool connected);
     void UpsertPageView(const string& entry);

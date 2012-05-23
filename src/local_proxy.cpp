@@ -23,12 +23,11 @@
 #include "utilities.h"
 #include "sessioninfo.h"
 #include "systemproxysettings.h"
+#include "usersettings.h"
 #include <Shlwapi.h>
 
 
-
 #define POLIPO_CONNECTION_TIMEOUT_SECONDS   20
-#define POLIPO_HTTP_PROXY_PORT              8080
 #define POLIPO_EXE_NAME                     _T("psiphon3-polipo.exe")
 
 
@@ -87,8 +86,9 @@ bool LocalProxy::DoStart()
 
     // Ensure we start from a disconnected/clean state
     Cleanup();
-
-    if (!StartPolipo())
+    
+    int localHttpProxyPort = UserLocalHTTPProxyPort();
+    if (!StartPolipo(localHttpProxyPort))
     {
         Cleanup();
         return false;
@@ -97,8 +97,8 @@ bool LocalProxy::DoStart()
     // Now that we are connected, change the Windows Internet Settings
     // to use our HTTP proxy (not actually applied until later).
 
-    m_systemProxySettings->SetHttpProxyPort(POLIPO_HTTP_PROXY_PORT);
-    m_systemProxySettings->SetHttpsProxyPort(POLIPO_HTTP_PROXY_PORT);
+    m_systemProxySettings->SetHttpProxyPort(localHttpProxyPort);
+    m_systemProxySettings->SetHttpsProxyPort(localHttpProxyPort);
 
     my_print(true, _T("Polipo successfully started."));
 
@@ -199,7 +199,7 @@ void LocalProxy::Cleanup()
 }
 
 
-bool LocalProxy::StartPolipo()
+bool LocalProxy::StartPolipo(int localHttpProxyPort)
 {
     // Start polipo, with no disk cache and no web admin interface
     // (same recommended settings as Tor: http://www.pps.jussieu.fr/~jch/software/polipo/tor.html
@@ -208,7 +208,7 @@ bool LocalProxy::StartPolipo()
 
     polipoCommandLine << m_polipoPath
                       << _T(" psiphonStats=true")
-                      << _T(" proxyPort=") << POLIPO_HTTP_PROXY_PORT
+                      << _T(" proxyPort=") << localHttpProxyPort
                       << _T(" diskCacheRoot=\"\"")
                       << _T(" disableLocalInterface=true")
                       << _T(" logLevel=1");
@@ -281,7 +281,7 @@ bool LocalProxy::StartPolipo()
     WaitForInputIdle(m_polipoProcessInfo.hProcess, 5000);
 
     DWORD connected = WaitForConnectability(
-                        POLIPO_HTTP_PROXY_PORT,
+                        localHttpProxyPort,
                         POLIPO_CONNECTION_TIMEOUT_SECONDS*1000,
                         m_polipoProcessInfo.hProcess,
                         GetSignalStopFlags());

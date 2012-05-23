@@ -28,31 +28,38 @@ void InitializeUserSettings(void)
     // Read - and consequently write out default values for - all settings
     UserSkipBrowser();
     UserSkipProxySettings();
+    UserLocalHTTPProxyPort();
 }
 
 
-bool GetUserSetting(const string& settingName)
+int GetUserSetting(const string& settingName, int defaultValue /* = 0 */)
 {
     DWORD value = 0;
 
     if (!ReadRegistryDwordValue(settingName, value))
     {
-        // Write out the setting with a "false" settingValue so that it's there
+        // Write out the setting with a default value so that it's there
         // for users to see and use, if they want to set it.
-        WriteRegistryDwordValue(settingName, 0);
+        value = defaultValue;
+        WriteRegistryDwordValue(settingName, value);
     }
 
-    return value == 1;
+    return value;
 }
 
 
 bool UserSkipBrowser(void)
 {
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
+    return 1 == GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
 }
 
 
 bool UserSkipProxySettings(void)
 {
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
+    return 1 == GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
+}
+
+int UserLocalHTTPProxyPort(void)
+{
+    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, DEFAULT_LOCAL_HTTP_PROXY_PORT);
 }
