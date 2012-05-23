@@ -24,7 +24,7 @@
 using namespace std;
 
 void InitializeUserSettings(void);
-bool GetUserSetting(const string& settingName);
-void SetUserSetting(const string& settingName, bool settingValue);
+int GetUserSetting(const string& settingName, int defaultValue = 0);
 bool UserSkipBrowser(void);
 bool UserSkipProxySettings(void);
+int UserLocalHTTPProxyPort(void);
