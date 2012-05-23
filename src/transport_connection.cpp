@@ -211,7 +211,13 @@ void TransportConnection::Cleanup()
     // will have a window of being guaranteed to fail (including and especially
     // our own -- like final /status requests).
     m_systemProxySettings.Revert();
-    if (m_transport) m_transport->Cleanup();
+
+    if (m_transport)
+    {
+        m_transport->Stop();
+        m_transport->Cleanup();
+    }
+
     if (m_localProxy) delete m_localProxy;
     m_localProxy = 0;
 }
