@@ -44,8 +44,8 @@ void TerminateProcessByName(const TCHAR* executableName)
             if (_tcsicmp(entry.szExeFile, executableName) == 0)
             {
                 HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
-                TerminateProcess(process, 0);
-                if (WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+                if (!TerminateProcess(process, 0) ||
+                    WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
                 {
                     my_print(false, _T("TerminateProcess failed for process with name %s"), executableName);
                     my_print(false, _T("Please terminate this process manually"));
