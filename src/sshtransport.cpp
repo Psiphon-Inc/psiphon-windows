@@ -109,6 +109,7 @@ bool SSHTransportBase::Cleanup()
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
         WaitForSingleObject(m_plonkProcessInfo.hProcess, 100);
         TerminateProcess(m_plonkProcessInfo.hProcess, 0);
+        WaitForSingleObject(m_plonkProcessInfo.hProcess, INFINITE);
     }
 
     if (m_plonkProcessInfo.hProcess != 0

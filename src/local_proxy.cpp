@@ -163,6 +163,7 @@ void LocalProxy::Cleanup()
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_polipoProcessInfo.dwProcessId);
         WaitForSingleObject(m_polipoProcessInfo.hProcess, 100);
         TerminateProcess(m_polipoProcessInfo.hProcess, 0);
+        WaitForSingleObject(m_polipoProcessInfo.hProcess, INFINITE);
     }
 
     if (m_polipoProcessInfo.hProcess != 0
