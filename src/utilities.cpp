@@ -45,7 +45,11 @@ void TerminateProcessByName(const TCHAR* executableName)
             {
                 HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
                 TerminateProcess(process, 0);
-                WaitForSingleObject(process, INFINITE);
+                if (WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+                {
+                    my_print(false, _T("TerminateProcess failed for process with name %s"), executableName);
+                    my_print(false, _T("Please terminate this process manually"));
+                }
                 CloseHandle(process);
             }
         } while (Process32Next(snapshot, &entry));

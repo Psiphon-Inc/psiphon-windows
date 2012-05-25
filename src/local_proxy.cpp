@@ -24,6 +24,7 @@
 #include "sessioninfo.h"
 #include "systemproxysettings.h"
 #include "usersettings.h"
+#include "config.h"
 #include <Shlwapi.h>
 
 
@@ -163,7 +164,11 @@ void LocalProxy::Cleanup()
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_polipoProcessInfo.dwProcessId);
         WaitForSingleObject(m_polipoProcessInfo.hProcess, 100);
         TerminateProcess(m_polipoProcessInfo.hProcess, 0);
-        WaitForSingleObject(m_polipoProcessInfo.hProcess, INFINITE);
+        if (WAIT_OBJECT_0 != WaitForSingleObject(m_polipoProcessInfo.hProcess, TERMINATE_PROCESS_WAIT_MS))
+        {
+            my_print(false, _T("TerminateProcess failed for process with PID %d"), m_polipoProcessInfo.dwProcessId);
+            my_print(false, _T("Please terminate this process manually"));
+        }
     }
 
     if (m_polipoProcessInfo.hProcess != 0

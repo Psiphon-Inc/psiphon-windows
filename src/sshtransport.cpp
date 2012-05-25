@@ -26,6 +26,7 @@
 #include <WinCrypt.h>
 #include "utilities.h"
 #include "systemproxysettings.h"
+#include "config.h"
 
 
 #define PLONK_SOCKS_PROXY_PORT          1080
@@ -109,7 +110,11 @@ bool SSHTransportBase::Cleanup()
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
         WaitForSingleObject(m_plonkProcessInfo.hProcess, 100);
         TerminateProcess(m_plonkProcessInfo.hProcess, 0);
-        WaitForSingleObject(m_plonkProcessInfo.hProcess, INFINITE);
+        if (WAIT_OBJECT_0 != WaitForSingleObject(m_plonkProcessInfo.hProcess, TERMINATE_PROCESS_WAIT_MS))
+        {
+            my_print(false, _T("TerminateProcess failed for process with PID %d"), m_plonkProcessInfo.dwProcessId);
+            my_print(false, _T("Please terminate this process manually"));
+        }
     }
 
     if (m_plonkProcessInfo.hProcess != 0
