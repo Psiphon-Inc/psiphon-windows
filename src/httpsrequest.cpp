@@ -276,6 +276,13 @@ bool HTTPSRequest::MakeRequest(
         return false;
     }
 
+    if (FALSE == WinHttpSetTimeouts(hSession, 0, HTTPS_REQUEST_CONNECT_TIMEOUT_MS,
+                            HTTPS_REQUEST_SEND_TIMEOUT_MS, HTTPS_REQUEST_RECEIVE_TIMEOUT_MS))
+    {
+        my_print(false, _T("WinHttpSetTimeouts failed (%d)"), GetLastError());
+        return false;
+    }
+
     AutoHINTERNET hConnect =
             WinHttpConnect(
                 hSession,
@@ -288,8 +295,6 @@ bool HTTPSRequest::MakeRequest(
         my_print(false, _T("WinHttpConnect failed (%d)"), GetLastError());
         return false;
     }
-
-    // Note: when certificate is empty, not using HTTPS
 
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(

@@ -60,7 +60,9 @@ public:
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
-    static DWORD WINAPI ConnectionManager::UpgradeThread(void* object);
+    static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);
+
+    void FetchRemoteServerList(void);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };
@@ -105,4 +107,5 @@ private:
     bool m_upgradePending;
     bool m_startSplitTunnel;
     string m_splitTunnelRoutes;
+    time_t m_nextFetchRemoteServerListAttempt;
 };
