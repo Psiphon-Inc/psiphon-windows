@@ -64,8 +64,12 @@ void ServerList::AddEntriesToList(
 
     if (serverEntry) decodedServerEntries.push_back(*serverEntry);
 
-    ServerEntries oldServerEntryList = GetList();
+    // This list may contain more than one discovered server
+    // Randomize this list for load-balancing
+    random_shuffle(decodedServerEntries.begin(), decodedServerEntries.end());
 
+    ServerEntries oldServerEntryList = GetList();
+    
     vector<ServerEntry>::const_iterator decodedEntryIter;
     for (decodedEntryIter = decodedServerEntries.begin();
          decodedEntryIter != decodedServerEntries.end(); ++decodedEntryIter)
