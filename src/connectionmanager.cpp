@@ -35,6 +35,7 @@
 #include "transport.h"
 #include "transport_registry.h"
 #include "transport_connection.h"
+#include "server_entry_auth.h"
 
 
 // Upgrade process posts a Quit message
@@ -49,7 +50,8 @@ ConnectionManager::ConnectionManager(void) :
     m_startingTime(0),
     m_transport(0),
     m_upgradePending(false),
-    m_startSplitTunnel(false)
+    m_startSplitTunnel(false),
+    m_nextFetchRemoteServerListAttempt(0)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -173,6 +175,65 @@ void ConnectionManager::Stop(void)
     m_transport = 0;
 
     my_print(true, _T("%s: exit"), __TFUNCTION__);
+}
+
+void ConnectionManager::FetchRemoteServerList(void)
+{
+    AutoMUTEX lock(m_mutex);
+
+    if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
+    {
+        return;
+    }
+
+    // After at least one failed connection attempt, and no more than once
+    // per few hours (if successful), or not more than once per few minutes
+    // (if unsuccessful), check for a new remote server list.
+    if (m_nextFetchRemoteServerListAttempt != 0 &&
+        m_nextFetchRemoteServerListAttempt > time(0))
+    {
+        return;
+    }
+
+    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
+
+    string response;
+    HTTPSRequest httpsRequest;
+    // NOTE: Not using local proxy
+    if (!httpsRequest.MakeRequest(
+            GetUserSignalledStop(false),
+            NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
+            443,
+            "",
+            NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
+            response,
+            false) || 
+        response.length() <= 0)
+    {
+        my_print(false, _T("%s: fetch remote server list failed"), __TFUNCTION__);
+        return;
+    }
+
+    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
+
+    string serverEntryList;
+    if (!verifySignedServerList(response.c_str(), serverEntryList))
+    {
+        my_print(false, _T("%s: verify remote server list failed"), __TFUNCTION__);
+        return;
+    }
+
+    vector<string> newServerEntryVector;
+    istringstream serverEntryListStream(serverEntryList);
+    string line;
+    while (getline(serverEntryListStream, line))
+    {
+        if (!line.empty())
+        {
+            newServerEntryVector.push_back(line);
+        }
+    }
+    m_serverList.AddEntriesToList(newServerEntryVector, 0);
 }
 
 void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
@@ -312,7 +373,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 if (!manager->m_upgradeThread ||
                     WAIT_OBJECT_0 == WaitForSingleObject(manager->m_upgradeThread, 0))
                 {
-                    if (!(manager->m_upgradeThread = CreateThread(0, 0, UpgradeThread, manager, 0, 0)))
+                    if (!(manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0)))
                     {
                         my_print(false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
@@ -377,6 +438,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(false, _T("Trying next server..."));
 
             // Continue while loop to try next server
+
+            manager->FetchRemoteServerList();
 
             // Wait between 1 and 2 seconds before retrying. This is a quick
             // fix to deal with the following problem: when a client can
@@ -737,7 +800,7 @@ bool ConnectionManager::RequireUpgrade(void)
     return !m_upgradePending && m_currentSessionInfo.GetUpgradeVersion().size() > 0;
 }
 
-DWORD WINAPI ConnectionManager::UpgradeThread(void* object)
+DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 

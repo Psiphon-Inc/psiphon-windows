@@ -23,10 +23,41 @@
 #include "config.h"
 #include <Shlwapi.h>
 #include <WinSock2.h>
+#include <TlHelp32.h>
 #include "utilities.h"
 
 
 extern HINSTANCE g_hInst;
+
+// Adapted from here:
+// http://stackoverflow.com/questions/865152/how-can-i-get-a-process-handle-by-its-name-in-c
+void TerminateProcessByName(const TCHAR* executableName)
+{
+    PROCESSENTRY32 entry;
+    entry.dwSize = sizeof(PROCESSENTRY32);
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    if (Process32First(snapshot, &entry))
+    {
+        do
+        {
+            if (_tcsicmp(entry.szExeFile, executableName) == 0)
+            {
+                HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
+                if (!TerminateProcess(process, 0) ||
+                    WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+                {
+                    my_print(false, _T("TerminateProcess failed for process with name %s"), executableName);
+                    my_print(false, _T("Please terminate this process manually"));
+                }
+                CloseHandle(process);
+            }
+        } while (Process32Next(snapshot, &entry));
+    }
+
+    CloseHandle(snapshot);
+}
+
 
 bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
 {
@@ -72,11 +103,30 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
         return false;
     }
 
-    HANDLE tempFile = CreateFile(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (tempFile == INVALID_HANDLE_VALUE) 
-    { 
-        my_print(false, _T("ExtractExecutable - CreateFile failed (%d)"), GetLastError());
-        return false;
+    HANDLE tempFile = INVALID_HANDLE_VALUE;
+    bool attemptedTerminate = false;
+    while (true)
+    {
+        tempFile = CreateFile(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (tempFile == INVALID_HANDLE_VALUE)
+        {
+            int lastError = GetLastError();
+            if (!attemptedTerminate &&
+                ERROR_SHARING_VIOLATION == lastError)
+            {
+                TerminateProcessByName(exeFilename);
+                attemptedTerminate = true;
+            }
+            else
+            {
+                my_print(false, _T("ExtractExecutable - CreateFile failed (%d)"), lastError);
+                return false;
+            }
+        }
+        else
+        {
+            break;
+        }
     }
 
     DWORD written = 0;
