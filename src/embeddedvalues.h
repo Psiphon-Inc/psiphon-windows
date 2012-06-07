@@ -41,3 +41,7 @@ static const char* REMOTE_SERVER_LIST_ADDRESS =
 
 static const char* REMOTE_SERVER_LIST_REQUEST_PATH =
     "invalid_bucket_name/server_list";
+
+// NOTE: Info link may be opened when not tunneled
+static const TCHAR* INFO_LINK_URL
+    = _T("https://sites.google.com/a/psiphon3.com/psiphon3/");

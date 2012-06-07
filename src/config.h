@@ -22,8 +22,6 @@
 #include <tchar.h>
 
 static const TCHAR* INFO_LINK_PROMPT = _T("About Psiphon 3");
-// NOTE: Info link may be opened when not tunneled
-static const TCHAR* INFO_LINK_URL = _T("https://sites.google.com/a/psiphon3.com/psiphon3/");
 static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT = "Transport";
