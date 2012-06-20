@@ -841,6 +841,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         }
         else
         {
+            my_print(false, _T("Download complete"));
+
             // Speed feedback
             DWORD now = GetTickCount();
             if (now >= start) // GetTickCount can wrap
