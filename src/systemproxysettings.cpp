@@ -151,10 +151,12 @@ void SystemProxySettings::PreviousCrashCheckHack(connection_proxy& proxySettings
     // Don't save settings that are the same as we will be setting.
     // Instead, save default (no proxy) settings.
     if (   (proxySettings.flags == PROXY_TYPE_PROXY)
-        && (proxySettings.proxy == proxyAddress))
+        && (proxySettings.proxy == proxyAddress)
+        && (proxySettings.bypass == SYSTEM_PROXY_SETTINGS_PROXY_BYPASS))
     {
         proxySettings.flags = PROXY_TYPE_DIRECT;
         proxySettings.proxy = L"";
+        proxySettings.bypass = L"";
     }
 }
 
@@ -210,6 +212,7 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
         proxySettings.name = *ii;
         proxySettings.flags = PROXY_TYPE_PROXY;
         proxySettings.proxy = proxyAddress;
+        proxySettings.bypass = SYSTEM_PROXY_SETTINGS_PROXY_BYPASS;
 
         if (!SetConnectionProxy(proxySettings))
         {
@@ -237,6 +240,9 @@ bool SystemProxySettings::SetConnectionProxy(const connection_proxy& setting)
 
     list.pOptions[1].dwOption = INTERNET_PER_CONN_PROXY_SERVER;
     list.pOptions[1].Value.pszValue = const_cast<TCHAR*>(setting.proxy.c_str());
+
+    list.pOptions[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
+    list.pOptions[2].Value.pszValue = const_cast<TCHAR*>(setting.bypass.c_str());
 
     bool success = (0 != InternetSetOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, list.dwSize));
 
@@ -270,6 +276,7 @@ bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
 
     options[0].dwOption = INTERNET_PER_CONN_FLAGS;
     options[1].dwOption = INTERNET_PER_CONN_PROXY_SERVER;
+    options[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
 
     if (0 == InternetQueryOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, &length))
     {
@@ -282,11 +289,16 @@ bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
 
     setting.flags = options[0].Value.dwValue;
     setting.proxy = options[1].Value.pszValue ? options[1].Value.pszValue : _T("");
+    setting.bypass = options[2].Value.pszValue ? options[2].Value.pszValue : _T("");
 
     // Cleanup
     if (options[1].Value.pszValue)
     {
         GlobalFree(options[1].Value.pszValue);
+    }
+    if (options[2].Value.pszValue)
+    {
+        GlobalFree(options[2].Value.pszValue);
     }
 
     return true;

@@ -24,6 +24,8 @@
 
 using namespace std;
 
+static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
+
 class SystemProxySettings
 {
 public:
@@ -42,13 +44,14 @@ public:
     bool Revert();
 
 private:
-    static const int INTERNET_OPTIONS_NUMBER = 2;
+    static const int INTERNET_OPTIONS_NUMBER = 3;
 
     struct connection_proxy
     {
         tstring name;
         DWORD flags;
         tstring proxy;
+        tstring bypass;
     };
 
     typedef vector<connection_proxy>::iterator connection_proxy_iter;
