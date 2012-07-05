@@ -1,0 +1,78 @@
+<!--TOOLBAR_START--><!--TOOLBAR_EXEMPT--><!--TOOLBAR_END-->
+<HTML id=dlgAbout STYLE="width: 25.9em; height: 22em">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<HEAD>
+    <TITLE>Sample HTML Dialog</TITLE>
+</HEAD>
+
+<SCRIPT language="JavaScript">
+function loadBody()
+    {
+    //set the default return value
+    window.returnValue = 0;
+
+    //get the arguments
+    alert(window.dialogArguments);
+    if (!window.dialogArguments) return;
+    var arrArgs = new Array();
+    arrArgs = window.dialogArguments.split(";");
+
+    var s = '';
+    for (var x in window) {
+        s += x + '\n';
+    }
+    alert(s);
+
+    //clear the list
+    ArgumentList.options.length = 0;
+
+    //add the arguments to the list
+    var index;
+    index = 0;
+    while(index < arrArgs.length)
+        {
+        var tempOption = new Option(arrArgs[index]);
+        ArgumentList.options[ArgumentList.options.length] = tempOption;
+        index++;
+        }
+
+    //set the first argument to be selected
+    ArgumentList.options[0].selected = true;
+
+    alert(navigator.userAgent);
+    }
+
+function okButtonClick()
+    {
+    //this return value means that the OK button was clicked
+    window.returnValue = ArgumentList.options[ArgumentList.selectedIndex].text;
+    
+    //close the dialog
+    window.close();
+    }
+
+function cancelButtonClick()
+    {
+    //this return value means that the Cancel button was clicked
+    window.returnValue = 0;
+    
+    //close the dialog
+    window.close();
+    }
+</SCRIPT>
+
+<BODY onload="loadBody()" BGCOLOR="Teal" TEXT="White">
+
+    <FONT SIZE="5">Select the argument to be passed back to the calling application.</FONT>
+
+    <P><SELECT NAME="ArgumentList"></SELECT>    
+
+    <P><INPUT type=BUTTON value="OK" id="okButton" onClick="okButtonClick()" style="left; border: thin solid THREEDSHADOW">
+
+    &nbsp;&nbsp;
+
+    <INPUT type=BUTTON value="Cancel" id="cancelButton" class=button onClick="cancelButtonClick()" style="left; border: thin solid THREEDSHADOW">
+
+<P><HR><font color="black" face="ms sans serif" size="1">&copy; PSIPHON WOO</font>
+</body>
+</html>
