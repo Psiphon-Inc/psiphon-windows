@@ -643,6 +643,47 @@ bool ConnectionManager::SendStatusMessage(
     return success;
 }
 
+bool ConnectionManager::SendFeedback(LPCWSTR feedback)
+{
+    // NOTE: no lock while waiting for network events
+
+    // Make a copy of SessionInfo for threadsafety.
+    SessionInfo sessionInfo;
+    {
+        AutoMUTEX lock(m_mutex);
+        sessionInfo = m_currentSessionInfo;
+    }
+
+    // When disconnected, ignore the user cancel flag in the HTTP request
+    // wait loop.
+    // TODO: the user may be left waiting too long after cancelling; add
+    // a shorter timeout in this case
+    bool ignoreCancel = false;
+    const bool& cancel = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? GetUserSignalledStop(true) : ignoreCancel;
+
+    wstring wideFeedback;
+    string narrowFeedback;
+    if (feedback)
+    {
+        wideFeedback = feedback;
+        narrowFeedback = string(wideFeedback.begin(), wideFeedback.end());
+    }
+
+    tstring requestPath = GetFeedbackRequestPath(m_transport);
+    string response;
+    ServerRequest serverRequest;
+    bool success = serverRequest.MakeRequest(
+                                    cancel,
+                                    m_transport,
+                                    sessionInfo,
+                                    requestPath.c_str(),
+                                    response,
+                                    L"Content-Type: application/json",
+                                    (LPVOID)narrowFeedback.c_str(),
+                                    narrowFeedback.length());
+    
+    return success;
+}
 
 tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, const tstring& operation, const tstring& info, DWORD milliseconds, DWORD size)
 {
@@ -732,6 +773,21 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
                     _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                     _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
                     _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+}
+
+tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return tstring(HTTP_FEEDBACK_REQUEST_PATH) + 
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("(NONE)")) + 
+           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T("")) + 
+           _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
 void ConnectionManager::MarkCurrentServerFailed(void)

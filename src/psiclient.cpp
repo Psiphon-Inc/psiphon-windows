@@ -994,13 +994,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     NULL,
                     feedbackResult) == 1)
             {
-                SendMessage(
-                    g_hFeedbackButton,
-                    BM_SETIMAGE,
-                    IMAGE_ICON,
-                    (LPARAM)g_hFeedbackButtonIcons[1]);
+                my_print(false, _T("Sending feedback..."));
 
-                EnableWindow(g_hFeedbackButton, FALSE);
+                SetCursor(LoadCursor(0, IDC_WAIT));
+
+                bool success = g_connectionManager.SendFeedback(feedbackResult.c_str());
+
+                SetCursor(LoadCursor(0, IDC_HAND));
+
+                if (success)
+                {
+                    SendMessage(
+                        g_hFeedbackButton,
+                        BM_SETIMAGE,
+                        IMAGE_ICON,
+                        (LPARAM)g_hFeedbackButtonIcons[1]);
+
+                    EnableWindow(g_hFeedbackButton, FALSE);
+
+                    my_print(false, _T("Feedback sent. Thank you!"));
+                }
+                else
+                {
+                    my_print(false, _T("Failed to send feedback"));
+                }
             }
             // else error or user cancelled
         }

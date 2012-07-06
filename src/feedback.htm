@@ -1,6 +1,7 @@
 <!--TOOLBAR_START--><!--TOOLBAR_EXEMPT--><!--TOOLBAR_END-->
 <HTML id=dlgAbout STYLE="width: 25.9em; height: 22em">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
 <HEAD>
     <TITLE>Sample HTML Dialog</TITLE>
 </HEAD>
@@ -10,15 +11,13 @@
   {
     //set the default return value
     window.returnValue = 0;
-
-    alert(navigator.userAgent);
   }
 
   function okButtonClick()
   {
     //this return value means that the OK button was clicked
-    window.returnValue = 'win';
-      
+    window.returnValue = '{"responses" : [ { "question" : "ACEB17E301463746C54592C0C295607F45441C9D", "answer" : 0 }, { "question" : "C6E07CF27E49128F0E8F5B959E3F2BE6E3363CE4", "answer" : 1 } ] }';
+
     //close the dialog
     window.close();
   }
@@ -40,6 +39,8 @@
     &nbsp;&nbsp;
 
     <INPUT type=BUTTON value="Cancel" id="cancelButton" class=button onClick="cancelButtonClick()" style="left; border: thin solid THREEDSHADOW">
+
+    <a href="#anchoredyay">click me</a>
 
 <P><HR><font color="black" face="ms sans serif" size="1">&copy; PSIPHON WOO</font>
 </body>
