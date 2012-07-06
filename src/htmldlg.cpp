@@ -36,8 +36,8 @@ int LocalToBSTR(BSTR pWide, LPTSTR pLocal, DWORD dwChars);
 int ShowHTMLDlg(
         HWND hParentWnd, 
         LPCTSTR resourceName, 
-        LPCTSTR args,
-        tstring& o_result)
+        LPCWSTR args,
+        wstring& o_result)
 {
     o_result.clear();
 
@@ -45,7 +45,7 @@ int ShowHTMLDlg(
     // seems to always result in ShowHTMLDialog returning a "bad
     // variable type" error. So we're going to set args to empty 
     // string if not provided.
-    if (!args) args = _T("");
+    if (!args) args = L"";
 
     bool error = false;
 
@@ -99,11 +99,7 @@ int ShowHTMLDlg(
                     {
                     case VT_BSTR:
                         {
-                            TCHAR szData[MAX_PATH];
-
-                            BSTRToLocal(szData, varReturn.bstrVal, ARRAYSIZE(szData));
-
-                            o_result = szData;
+                            o_result = wstring(varReturn.bstrVal, SysStringLen(varReturn.bstrVal));
 
                             VariantClear(&varReturn);
                         }
@@ -150,22 +146,22 @@ int ShowHTMLDlg(
 
 int BSTRToLocal(LPTSTR pLocal, BSTR pWide, DWORD dwChars)
 {
-*pLocal = 0;
+    *pLocal = 0;
 
 #ifdef UNICODE
-lstrcpyn(pLocal, pWide, dwChars);
+    lstrcpyn(pLocal, pWide, dwChars);
 #else
-WideCharToMultiByte( CP_ACP, 
-                     0, 
-                     pWide, 
-                     -1, 
-                     pLocal, 
-                     dwChars, 
-                     NULL, 
-                     NULL);
+    WideCharToMultiByte( CP_ACP, 
+                         0, 
+                         pWide, 
+                         -1, 
+                         pLocal, 
+                         dwChars, 
+                         NULL, 
+                         NULL);
 #endif
 
-return lstrlen(pLocal);
+    return lstrlen(pLocal);
 }
 
 
@@ -177,18 +173,18 @@ return lstrlen(pLocal);
 
 int LocalToBSTR(BSTR pWide, LPTSTR pLocal, DWORD dwChars)
 {
-*pWide = 0;
+    *pWide = 0;
 
 #ifdef UNICODE
-lstrcpyn(pWide, pLocal, dwChars);
+    lstrcpyn(pWide, pLocal, dwChars);
 #else
-MultiByteToWideChar( CP_ACP, 
-                     0, 
-                     pLocal, 
-                     -1, 
-                     pWide, 
-                     dwChars); 
+    MultiByteToWideChar( CP_ACP, 
+                         0, 
+                         pLocal, 
+                         -1, 
+                         pWide, 
+                         dwChars); 
 #endif
 
-return lstrlenW(pWide);
+    return lstrlenW(pWide);
 }

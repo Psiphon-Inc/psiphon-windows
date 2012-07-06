@@ -57,6 +57,7 @@ public:
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
+    bool SendFeedback(LPCWSTR feedback);
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
@@ -73,6 +74,7 @@ private:
     tstring GetConnectRequestPath(ITransport* transport);
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
+    tstring GetFeedbackRequestPath(ITransport* transport);
 
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,

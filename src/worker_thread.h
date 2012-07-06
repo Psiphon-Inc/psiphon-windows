@@ -34,6 +34,7 @@ protected:
     void ThreadStarting();
     
     void ThreadStoppingCleanly(bool clean);
+    bool IsThreadStopping() const;
     bool BlockUntil_AllThreadsStoppingCleanly();
 
     void ThreadReadyForStop();
