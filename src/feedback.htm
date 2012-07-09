@@ -1,5 +1,6 @@
-<!--TOOLBAR_START--><!--TOOLBAR_EXEMPT--><!--TOOLBAR_END-->
-<HTML id=dlgAbout STYLE="width: 25.9em; height: 22em">
+<!doctype HTML>
+
+<HTML STYLE="width: 600px; height: 400px">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
 <HEAD>
@@ -22,14 +23,6 @@
     window.close();
   }
 
-  function cancelButtonClick()
-  {
-    //this return value means that the Cancel button was clicked
-    window.returnValue = 0;
-      
-    //close the dialog
-    window.close();
-  }
 </SCRIPT>
 
 <BODY onload="loadBody()" BGCOLOR="Teal" TEXT="White">
@@ -37,8 +30,6 @@
     <P><INPUT type=BUTTON value="OK" id="okButton" onClick="okButtonClick()" style="left; border: thin solid THREEDSHADOW">
 
     &nbsp;&nbsp;
-
-    <INPUT type=BUTTON value="Cancel" id="cancelButton" class=button onClick="cancelButtonClick()" style="left; border: thin solid THREEDSHADOW">
 
     <a href="#anchoredyay">click me</a>
 
