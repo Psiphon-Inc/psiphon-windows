@@ -991,6 +991,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (ShowHTMLDlg(
                     hWnd, 
                     _T("FEEDBACK_HTML_RESOURCE"), 
+                    GetLocaleName().c_str(),
                     NULL,
                     feedbackResult) == 1)
             {

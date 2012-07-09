@@ -56,3 +56,5 @@ bool TestBoolArray(const vector<const bool*>& boolArray);
 string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
+
+tstring GetLocaleName();

@@ -23,10 +23,6 @@
 #include "htmldlg.h"
 
 
-int BSTRToLocal(LPTSTR pLocal, BSTR pWide, DWORD dwChars);
-int LocalToBSTR(BSTR pWide, LPTSTR pLocal, DWORD dwChars);
-
-
 /**************************************************************************
 
    ShowHTMLDlg()
@@ -36,6 +32,7 @@ int LocalToBSTR(BSTR pWide, LPTSTR pLocal, DWORD dwChars);
 int ShowHTMLDlg(
         HWND hParentWnd, 
         LPCTSTR resourceName, 
+        LPCTSTR urlFragment,
         LPCWSTR args,
         wstring& o_result)
 {
@@ -59,18 +56,25 @@ int ShowHTMLDlg(
 
         if (pfnShowHTMLDialog)
         {
-            IMoniker *pmk;
-            TCHAR    szTemp[MAX_PATH*2];
-            OLECHAR  bstr[MAX_PATH*2];
+            tstring url;
 
-            lstrcpy(szTemp, TEXT("res://"));
-            GetModuleFileName(NULL, szTemp + lstrlen(szTemp), ARRAYSIZE(szTemp) - lstrlen(szTemp));
-            lstrcat(szTemp, _T("/"));
-            lstrcat(szTemp, resourceName);
+            url += _T("res://");
+            
+            TCHAR   szTemp[MAX_PATH*2];
+            GetModuleFileName(NULL, szTemp, ARRAYSIZE(szTemp));
+            url += szTemp;
 
-            LocalToBSTR(bstr, szTemp, ARRAYSIZE(bstr));
+            url += _T("/");
+            url += resourceName;
+            
+            if (urlFragment) 
+            {
+                url += _T("#");
+                url += urlFragment;
+            }
 
-            CreateURLMonikerEx(NULL, bstr, &pmk, URL_MK_UNIFORM);
+            IMoniker* pmk = NULL;
+            CreateURLMonikerEx(NULL, url.c_str(), &pmk, URL_MK_UNIFORM);
 
             if (pmk)
             {
@@ -135,56 +139,4 @@ int ShowHTMLDlg(
 
     if (error) return -1;
     return o_result.length() > 0 ? 1 : 0;
-}
-
-
-/**************************************************************************
-
-   BSTRToLocal()
-   
-**************************************************************************/
-
-int BSTRToLocal(LPTSTR pLocal, BSTR pWide, DWORD dwChars)
-{
-    *pLocal = 0;
-
-#ifdef UNICODE
-    lstrcpyn(pLocal, pWide, dwChars);
-#else
-    WideCharToMultiByte( CP_ACP, 
-                         0, 
-                         pWide, 
-                         -1, 
-                         pLocal, 
-                         dwChars, 
-                         NULL, 
-                         NULL);
-#endif
-
-    return lstrlen(pLocal);
-}
-
-
-/**************************************************************************
-
-   LocalToBSTR()
-   
-**************************************************************************/
-
-int LocalToBSTR(BSTR pWide, LPTSTR pLocal, DWORD dwChars)
-{
-    *pWide = 0;
-
-#ifdef UNICODE
-    lstrcpyn(pWide, pLocal, dwChars);
-#else
-    MultiByteToWideChar( CP_ACP, 
-                         0, 
-                         pLocal, 
-                         -1, 
-                         pWide, 
-                         dwChars); 
-#endif
-
-    return lstrlenW(pWide);
 }

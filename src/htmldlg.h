@@ -42,5 +42,6 @@
 int ShowHTMLDlg(
         HWND hParentWnd, 
         LPCTSTR resourceName, 
+        LPCTSTR urlFragment,
         LPCTSTR args,
         tstring& o_result);

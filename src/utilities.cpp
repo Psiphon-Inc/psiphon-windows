@@ -476,3 +476,37 @@ string Dehexlify(const string& input)
 
     return output;
 }
+
+
+tstring GetLocaleName()
+{
+    int size = GetLocaleInfo(
+                LOCALE_USER_DEFAULT,
+                LOCALE_SISO639LANGNAME,
+                NULL,
+                0);
+
+    if (size <= 0)
+    {
+        return _T("");
+    }
+
+    LPTSTR buf = new TCHAR[size];
+    
+    size = GetLocaleInfo(
+                LOCALE_USER_DEFAULT,
+                LOCALE_SISO639LANGNAME,
+                buf,
+                size);
+
+    if (size <= 0)
+    {
+        return _T("");
+    }
+    
+    tstring ret = buf;
+
+    delete[] buf;
+
+    return ret;
+}
