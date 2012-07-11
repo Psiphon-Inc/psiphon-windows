@@ -329,7 +329,7 @@ bool WriteRegistryStringValue(const string& name, const string& value)
 }
 
 
-bool ReadRegistryStringValue(const string& name, string& value)
+bool ReadRegistryStringValue(LPCSTR name, string& value)
 {
     bool success = false;
     HKEY key = 0;
@@ -346,7 +346,7 @@ bool ReadRegistryStringValue(const string& name, string& value)
 
         ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name.c_str(), 
+                            name, 
                             0,
                             0,
                             NULL,
@@ -356,7 +356,52 @@ bool ReadRegistryStringValue(const string& name, string& value)
 
         ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name.c_str(), 
+                            name, 
+                            0,
+                            &type,
+                            (LPBYTE)buffer,
+                            &bufferLength) &&
+        type == REG_SZ)
+    {
+        buffer[bufferLength] = '\0';
+        value = buffer;
+        success = true;
+    }
+
+    delete[] buffer;
+    RegCloseKey(key);
+
+    return success;
+}
+
+bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
+{
+    bool success = false;
+    HKEY key = 0;
+    DWORD bufferLength = 0;
+    wchar_t* buffer = 0;
+    DWORD type;
+
+    if (ERROR_SUCCESS == RegOpenKeyEx(
+                            HKEY_CURRENT_USER,
+                            LOCAL_SETTINGS_REGISTRY_KEY,
+                            0,
+                            KEY_READ,
+                            &key) &&
+
+        ERROR_SUCCESS == RegQueryValueExW(
+                            key,
+                            name, 
+                            0,
+                            0,
+                            NULL,
+                            &bufferLength) &&
+
+        (buffer = new wchar_t[bufferLength + 1]) &&
+
+        ERROR_SUCCESS == RegQueryValueExW(
+                            key,
+                            name, 
                             0,
                             &type,
                             (LPBYTE)buffer,
@@ -507,6 +552,28 @@ tstring GetLocaleName()
     tstring ret = buf;
 
     delete[] buf;
+
+    return ret;
+}
+
+
+tstring GetISO8601DatetimeString()
+{
+    SYSTEMTIME systime;
+    GetSystemTime(&systime);
+
+    TCHAR ret[64];
+    _sntprintf_s(
+        ret, 
+        sizeof(ret)/sizeof(ret[0]), 
+        _T("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"), 
+        systime.wYear, 
+        systime.wMonth, 
+        systime.wDay,
+        systime.wHour,
+        systime.wMinute,
+        systime.wSecond,
+        systime.wMilliseconds);
 
     return ret;
 }
