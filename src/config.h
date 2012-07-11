@@ -29,6 +29,7 @@ static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SPLIT_TUNNEL = "SplitTunnel";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER = "UserSkipBrowser";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS = "UserSkipProxySettings";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT = "UserLocalHTTPProxyPort";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED = "LastConnected";
 static const TCHAR* SPLIT_TUNNELING_FILE_NAME = _T("psiphon.route");
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");

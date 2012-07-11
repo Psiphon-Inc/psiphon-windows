@@ -486,6 +486,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                         connectedRequestPath.c_str(),
                         response))
     {
+        // Record the request time.
+        (void)WriteRegistryStringValue(
+                LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
+                TStringToNarrow(GetISO8601DatetimeString()));
+
         // Speed feedback
         // Note: the /connected request *is* tunneled
 
@@ -735,6 +740,12 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
 
+    // Get info about the previous connected event
+    string lastConnected;
+    // Don't check the return value -- use the default empty string if not found.
+    (void)ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, lastConnected);
+    if (lastConnected.length() == 0) lastConnected = "None";
+
     return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
            _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
            _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
@@ -742,7 +753,8 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
-           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo);
+           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
+           _T("&last_connected=") + NarrowToTString(lastConnected);
 }
 
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
