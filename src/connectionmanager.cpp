@@ -506,7 +506,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             GetSpeedRequestPath(
                                 m_transport->GetTransportProtocolName(),
                                 _T("connected"),
-                                _T("(NONE)"),
+                                _T(""),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -797,7 +797,7 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("(NONE)")) + 
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("")) + 
            _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T("")) + 
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
@@ -921,9 +921,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    _T("(NONE)"),
+                                    _T(""),
                                     _T("download"),
-                                    _T("(NONE)"),
+                                    _T(""),
                                     now-start,
                                     downloadResponse.length()).c_str(),
                                 speedResponse);
