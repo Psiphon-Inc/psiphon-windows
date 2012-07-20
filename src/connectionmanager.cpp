@@ -47,6 +47,7 @@ ConnectionManager::ConnectionManager(void) :
     m_userSignalledStop(false),
     m_thread(0),
     m_upgradeThread(0),
+    m_feedbackThread(0),
     m_startingTime(0),
     m_transport(0),
     m_upgradePending(false),
@@ -169,6 +170,14 @@ void ConnectionManager::Stop(void)
         WaitForSingleObject(m_upgradeThread, INFINITE);
         my_print(true, _T("%s: Upgrade thread died"), __TFUNCTION__);
         m_upgradeThread = 0;
+    }
+
+    if (m_feedbackThread)
+    {
+        my_print(true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
+        WaitForSingleObject(m_feedbackThread, INFINITE);
+        my_print(true, _T("%s: Feedback thread died"), __TFUNCTION__);
+        m_feedbackThread = 0;
     }
 
     delete m_transport;
@@ -644,48 +653,6 @@ bool ConnectionManager::SendStatusMessage(
                                     L"Content-Type: application/json",
                                     (LPVOID)additionalDataString.c_str(),
                                     additionalDataString.length());
-    
-    return success;
-}
-
-bool ConnectionManager::SendFeedback(LPCWSTR feedback)
-{
-    // NOTE: no lock while waiting for network events
-
-    // Make a copy of SessionInfo for threadsafety.
-    SessionInfo sessionInfo;
-    {
-        AutoMUTEX lock(m_mutex);
-        sessionInfo = m_currentSessionInfo;
-    }
-
-    // When disconnected, ignore the user cancel flag in the HTTP request
-    // wait loop.
-    // TODO: the user may be left waiting too long after cancelling; add
-    // a shorter timeout in this case
-    bool ignoreCancel = false;
-    const bool& cancel = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? GetUserSignalledStop(true) : ignoreCancel;
-
-    wstring wideFeedback;
-    string narrowFeedback;
-    if (feedback)
-    {
-        wideFeedback = feedback;
-        narrowFeedback = string(wideFeedback.begin(), wideFeedback.end());
-    }
-
-    tstring requestPath = GetFeedbackRequestPath(m_transport);
-    string response;
-    ServerRequest serverRequest;
-    bool success = serverRequest.MakeRequest(
-                                    cancel,
-                                    m_transport,
-                                    sessionInfo,
-                                    requestPath.c_str(),
-                                    response,
-                                    L"Content-Type: application/json",
-                                    (LPVOID)narrowFeedback.c_str(),
-                                    narrowFeedback.length());
     
     return success;
 }
@@ -1179,4 +1146,88 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
         my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
         // This isn't fatal.  The transport connection can still be established.
     }
+}
+
+struct FeedbackThreadData
+{
+    ConnectionManager* connectionManager;
+    wstring feedback;
+} g_feedbackThreadData;
+
+void ConnectionManager::SendFeedback(LPCWSTR feedback)
+{
+    g_feedbackThreadData.connectionManager = this;
+    g_feedbackThreadData.feedback = feedback;
+
+    if (!m_feedbackThread ||
+        WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
+    {
+        if (!(m_upgradeThread = CreateThread(0, 0, ConnectionManager::ConnectionManagerFeedbackThread, (void*)&g_feedbackThreadData, 0, 0)))
+        {
+            my_print(false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+            return;
+        }
+    }
+}
+
+DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
+{
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
+    FeedbackThreadData* data = (FeedbackThreadData*)object;
+
+    if (data->connectionManager->DoSendFeedback(data->feedback.c_str()))
+    {
+        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+    }
+    else
+    {
+        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+    }
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    return 0;
+}
+
+bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
+{
+    // NOTE: no lock while waiting for network events
+
+    // Make a copy of SessionInfo for threadsafety.
+    SessionInfo sessionInfo;
+    {
+        AutoMUTEX lock(m_mutex);
+        sessionInfo = m_currentSessionInfo;
+    }
+
+    // When disconnected, ignore the user cancel flag in the HTTP request
+    // wait loop.
+    // TODO: the user may be left waiting too long after cancelling; add
+    // a shorter timeout in this case
+    bool ignoreCancel = false;
+    const bool& cancel = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? GetUserSignalledStop(true) : ignoreCancel;
+
+    string narrowFeedback;
+    if (feedback)
+    {
+        narrowFeedback = WStringToNarrow(feedback);
+    }
+
+    tstring requestPath = GetFeedbackRequestPath(m_transport);
+    string response;
+    HTTPSRequest httpsRequest;
+    bool success = httpsRequest.MakeRequest(
+                                    cancel,
+                                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                                    sessionInfo.GetWebPort() ,
+                                    sessionInfo.GetWebServerCertificate(),
+                                    requestPath.c_str(),
+                                    response,
+                                    true,
+                                    L"Content-Type: application/json",
+                                    (LPVOID)narrowFeedback.c_str(),
+                                    narrowFeedback.length());
+    
+    return success;
 }

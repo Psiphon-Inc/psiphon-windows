@@ -25,6 +25,8 @@
 //==== global constants ================================================
 
 #define WM_PSIPHON_MY_PRINT            WM_USER + 100
+#define WM_PSIPHON_FEEDBACK_SUCCESS    WM_USER + 101
+#define WM_PSIPHON_FEEDBACK_FAILED     WM_USER + 102
 
 
 //==== logging =========================================================

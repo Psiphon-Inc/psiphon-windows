@@ -997,28 +997,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 my_print(false, _T("Sending feedback..."));
 
-                SetCursor(LoadCursor(0, IDC_WAIT));
+                g_connectionManager.SendFeedback(feedbackResult.c_str());
 
-                bool success = g_connectionManager.SendFeedback(feedbackResult.c_str());
-
-                SetCursor(LoadCursor(0, IDC_HAND));
-
-                if (success)
-                {
-                    SendMessage(
-                        g_hFeedbackButton,
-                        BM_SETIMAGE,
-                        IMAGE_ICON,
-                        (LPARAM)g_hFeedbackButtonIcons[1]);
-
-                    EnableWindow(g_hFeedbackButton, FALSE);
-
-                    my_print(false, _T("Feedback sent. Thank you!"));
-                }
-                else
-                {
-                    my_print(false, _T("Failed to send feedback"));
-                }
+                SendMessage(
+                    g_hFeedbackButton,
+                    BM_SETIMAGE,
+                    IMAGE_ICON,
+                    (LPARAM)g_hFeedbackButtonIcons[1]);
+                EnableWindow(g_hFeedbackButton, FALSE);
             }
             // else error or user cancelled
         }
@@ -1034,6 +1020,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         free(myPrintMessage);
         SendMessage(g_hLogListBox, LB_SETCURSEL,
         SendMessage(g_hLogListBox, LB_GETCOUNT, NULL, NULL)-1, NULL);
+        break;
+
+    case WM_PSIPHON_FEEDBACK_SUCCESS:
+        SendMessage(
+            g_hFeedbackButton,
+            BM_SETIMAGE,
+            IMAGE_ICON,
+            (LPARAM)g_hFeedbackButtonIcons[1]);
+        EnableWindow(g_hFeedbackButton, FALSE);
+        my_print(false, _T("Feedback sent. Thank you!"));
+        break;
+
+    case WM_PSIPHON_FEEDBACK_FAILED:
+        SendMessage(
+            g_hFeedbackButton,
+            BM_SETIMAGE,
+            IMAGE_ICON,
+            (LPARAM)g_hFeedbackButtonIcons[0]);
+        EnableWindow(g_hFeedbackButton, TRUE);
+        my_print(false, _T("Failed to send feedback."));
         break;
 
     case WM_PAINT:
