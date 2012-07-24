@@ -52,6 +52,16 @@ static string TStringToNarrow(const tstring& tString)
 #endif
 }
 
+static string WStringToNarrow(const wstring& wString)
+{
+    return string(wString.begin(), wString.end());
+}
+
+static string WStringToNarrow(LPCWSTR wString)
+{
+    return WStringToNarrow(wstring(wString));
+}
+
 #ifdef UNICODE
     #define WIDEN2(x) L##x
     #define WIDEN(x) WIDEN2(x)

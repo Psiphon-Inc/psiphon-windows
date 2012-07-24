@@ -1,0 +1,31 @@
+﻿<!doctype HTML>
+
+<HTML STYLE="width: 600px; height: 400px">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<HEAD>
+    <TITLE>Sample HTML Dialog</TITLE>
+</HEAD>
+
+<SCRIPT language="JavaScript">
+  function loadBody()
+  {
+    //set the default return value
+    window.returnValue = 0;
+  }
+
+  function okButtonClick()
+  {
+    //this return value means that the OK button was clicked
+    window.returnValue = '{"responses" : [ { "question" : "ACEB17E301463746C54592C0C295607F45441C9D", "answer" : 0 }, { "question" : "C6E07CF27E49128F0E8F5B959E3F2BE6E3363CE4", "answer" : 1 } ] }';
+
+    //close the dialog
+    window.close();
+  }
+
+</SCRIPT>
+
+<BODY onload="loadBody()" BGCOLOR="Teal" TEXT="White">
+<P><INPUT type="BUTTON" value="OK" id="okButton" onClick="okButtonClick()" style="left; border: thin solid THREEDSHADOW">
+</body>
+</html>

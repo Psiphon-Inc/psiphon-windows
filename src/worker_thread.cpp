@@ -161,7 +161,8 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
     // Not allowed to throw out of the thread without cleaning up.
     try
     {
-        if (TestBoolArray(_this->GetSignalStopFlags()))
+        if (TestBoolArray(_this->GetSignalStopFlags())
+            || (_this->m_workerThreadSynch && _this->m_workerThreadSynch->IsThreadStopping()))
         {
             throw Abort();
         }
@@ -177,7 +178,8 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         {
             Sleep(100);
 
-            if (TestBoolArray(_this->GetSignalStopFlags()))
+            if (TestBoolArray(_this->GetSignalStopFlags())
+                || (_this->m_workerThreadSynch && _this->m_workerThreadSynch->IsThreadStopping()))
             {
                 // Stop request signalled. Need to stop now.
                 stoppingCleanly = true;
@@ -277,6 +279,11 @@ void WorkerThreadSynch::ThreadStoppingCleanly(bool clean)
     AutoMUTEX lock(m_mutex);
     assert(m_threadCleanStops.size() < m_threadsStartedCounter);
     m_threadCleanStops.push_back(clean);
+}
+
+bool WorkerThreadSynch::IsThreadStopping() const
+{
+    return m_threadCleanStops.size() > 0;
 }
 
 // Does an early return if there's a single unclean stop indicated.

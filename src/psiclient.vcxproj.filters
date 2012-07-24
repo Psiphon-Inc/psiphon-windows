@@ -41,6 +41,9 @@
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="transport_connection.cpp" />
     <ClCompile Include="server_entry_auth.cpp" />
+    <ClCompile Include="htmldlg.cpp">
+      <Filter>WebCtrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -500,6 +503,9 @@
       <Filter>cryptopp</Filter>
     </ClInclude>
     <ClInclude Include="server_entry_auth.h" />
+    <ClInclude Include="htmldlg.h">
+      <Filter>WebCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
@@ -517,6 +523,9 @@
     </Filter>
     <Filter Include="cryptopp">
       <UniqueIdentifier>{1983563a-6c6d-4741-9327-207e0bce70e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WebCtrl">
+      <UniqueIdentifier>{9cab73d3-bc74-49ac-b02d-501929a49dd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

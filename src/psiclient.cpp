@@ -34,6 +34,7 @@
 #include "utilities.h"
 #include "webbrowser.h"
 #include "limitsingleinstance.h"
+#include "htmldlg.h"
 
 
 //==== Globals ================================================================
@@ -56,17 +57,17 @@ LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887
 //==== UI layout ===============================================================
 
 //
-//                 + - - - - - - - - - - - +
-//                 ' ^                     '
-// [toggle button] ' | transport selection ' [banner]
-//                 ' v                     '
-//                 + - - - - - - - - - - - +
-//                 [split tunnel check box.......]
-// +------------------------------------------------+
-// | ^                                              |
-// | | log list box                                 |
-// | v                                              |
-// +------------------------------------------------+
+//                 + - - - - - - - - - - - +           +----------+
+//                 ' ^                     '           |          |
+// [toggle button] ' | transport selection ' [banner]  | feedback |
+//                 ' v                     '           | button   |  
+//                 + - - - - - - - - - - - +           |          |
+//                 [split tunnel check box.......]     +----------+ 
+// +--------------------------------------------------------------+   
+// | ^                                                            |   
+// | | log list box                                               |   
+// | v                                                            |   
+// +--------------------------------------------------------------+   
 //                   [info link]
 //
 
@@ -110,7 +111,13 @@ const int SPLIT_TUNNEL_Y = max(TOGGLE_BUTTON_HEIGHT,
 const int SPLIT_TUNNEL_WIDTH = TextWidth(splitTunnelPrompt);
 const int SPLIT_TUNNEL_HEIGHT = TextHeight() + SPACER;
 
-const int WINDOW_WIDTH = BANNER_X + BANNER_WIDTH + SPACER + 20; // non-client-area hack adjustment
+const int FEEDBACK_BUTTON_IMAGE_WIDTH = 48;
+const int FEEDBACK_BUTTON_WIDTH = 56;
+const int FEEDBACK_BUTTON_HEIGHT = 56;
+const int FEEDBACK_BUTTON_X = BANNER_X + BANNER_WIDTH + SPACER;
+const int FEEDBACK_BUTTON_Y = TOGGLE_BUTTON_Y;
+
+const int WINDOW_WIDTH = FEEDBACK_BUTTON_X + FEEDBACK_BUTTON_WIDTH + SPACER + 20; // non-client-area hack adjustment
 const int WINDOW_HEIGHT = 200;
 
 const int INFO_LINK_WIDTH = TextWidth(INFO_LINK_PROMPT);
@@ -141,6 +148,10 @@ HWND g_hInfoLinkTooltip = NULL;
 HFONT g_hDefaultFont = NULL;
 HFONT g_hUnderlineFont = NULL;
 bool g_bShowEmail = false;
+HWND g_hFeedbackButton = NULL;
+HIMAGELIST g_hFeedbackButtonImageList = NULL;
+const int FEEDBACK_BUTTON_ICON_COUNT = 2;
+HICON g_hFeedbackButtonIcons[FEEDBACK_BUTTON_ICON_COUNT];
 
 
 void ResizeControls(HWND hWndParent)
@@ -345,6 +356,46 @@ void CreateControls(HWND hWndParent)
     SendMessage(g_hInfoLinkTooltip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
 
     SubclassHyperlink(g_hInfoLinkStatic);
+
+    // Feedback Button
+
+    g_hFeedbackButton = CreateWindow(
+        L"Button",
+        L"",
+        WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON|BS_ICON,
+        FEEDBACK_BUTTON_X,
+        FEEDBACK_BUTTON_Y,
+        FEEDBACK_BUTTON_WIDTH,
+        FEEDBACK_BUTTON_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_FEEDBACK_BUTTON,
+        g_hInst,
+        NULL);
+
+    g_hFeedbackButtonImageList = ImageList_LoadImage(
+        g_hInst,
+        MAKEINTRESOURCE(IDB_FEEDBACK_BUTTON_IMAGES),
+        FEEDBACK_BUTTON_IMAGE_WIDTH,
+        0,
+        CLR_DEFAULT,
+        IMAGE_BITMAP,
+        LR_CREATEDIBSECTION);
+
+    assert(FEEDBACK_BUTTON_ICON_COUNT == ImageList_GetImageCount(g_hFeedbackButtonImageList));
+
+    for (int i = 0; i < FEEDBACK_BUTTON_ICON_COUNT; i++)
+    {
+        g_hFeedbackButtonIcons[i] = ImageList_GetIcon(
+            g_hFeedbackButtonImageList,
+            i,
+            ILD_NORMAL);
+    }
+
+    SendMessage(
+        g_hFeedbackButton,
+        BM_SETIMAGE,
+        IMAGE_ICON,
+        (LPARAM)g_hFeedbackButtonIcons[0]);
 }
 
 
@@ -929,6 +980,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             
             OpenBrowser(INFO_LINK_URL);
         }
+
+        // Feedback button clicked
+
+        else if (lParam == (LPARAM)g_hFeedbackButton && wmEvent == BN_CLICKED)
+        {
+            my_print(true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
+            
+            tstring feedbackResult;
+            if (ShowHTMLDlg(
+                    hWnd, 
+                    _T("FEEDBACK_HTML_RESOURCE"), 
+                    GetLocaleName().c_str(),
+                    NULL,
+                    feedbackResult) == 1)
+            {
+                my_print(false, _T("Sending feedback..."));
+
+                g_connectionManager.SendFeedback(feedbackResult.c_str());
+
+                SendMessage(
+                    g_hFeedbackButton,
+                    BM_SETIMAGE,
+                    IMAGE_ICON,
+                    (LPARAM)g_hFeedbackButtonIcons[1]);
+                EnableWindow(g_hFeedbackButton, FALSE);
+            }
+            // else error or user cancelled
+        }
+
         break;
 
     case WM_PSIPHON_MY_PRINT:
@@ -940,6 +1020,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         free(myPrintMessage);
         SendMessage(g_hLogListBox, LB_SETCURSEL,
         SendMessage(g_hLogListBox, LB_GETCOUNT, NULL, NULL)-1, NULL);
+        break;
+
+    case WM_PSIPHON_FEEDBACK_SUCCESS:
+        SendMessage(
+            g_hFeedbackButton,
+            BM_SETIMAGE,
+            IMAGE_ICON,
+            (LPARAM)g_hFeedbackButtonIcons[1]);
+        EnableWindow(g_hFeedbackButton, FALSE);
+        my_print(false, _T("Feedback sent. Thank you!"));
+        break;
+
+    case WM_PSIPHON_FEEDBACK_FAILED:
+        SendMessage(
+            g_hFeedbackButton,
+            BM_SETIMAGE,
+            IMAGE_ICON,
+            (LPARAM)g_hFeedbackButtonIcons[0]);
+        EnableWindow(g_hFeedbackButton, TRUE);
+        my_print(false, _T("Failed to send feedback."));
         break;
 
     case WM_PAINT:

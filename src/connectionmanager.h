@@ -58,6 +58,10 @@ public:
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
 
+    // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
+    // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
+    void SendFeedback(LPCWSTR feedback);
+
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
     static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);
@@ -73,6 +77,7 @@ private:
     tstring GetConnectRequestPath(ITransport* transport);
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
+    tstring GetFeedbackRequestPath(ITransport* transport);
 
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
@@ -94,6 +99,9 @@ private:
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
+    bool DoSendFeedback(LPCWSTR feedback);
+    static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
+
 private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
@@ -102,6 +110,7 @@ private:
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
     HANDLE m_upgradeThread;
+    HANDLE m_feedbackThread;
     time_t m_startingTime;
     ITransport* m_transport;
     bool m_upgradePending;

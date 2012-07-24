@@ -40,7 +40,8 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value);
 
 bool WriteRegistryStringValue(const string& name, const string& value);
 
-bool ReadRegistryStringValue(const string& name, string& value);
+bool ReadRegistryStringValue(LPCSTR name, string& value);
+bool ReadRegistryStringValue(LPCWSTR name, wstring& value);
 
 // Text metrics are relative to default font
 
@@ -56,3 +57,7 @@ bool TestBoolArray(const vector<const bool*>& boolArray);
 string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
+
+tstring GetLocaleName();
+
+tstring GetISO8601DatetimeString();

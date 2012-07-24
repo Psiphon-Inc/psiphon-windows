@@ -47,6 +47,7 @@ ConnectionManager::ConnectionManager(void) :
     m_userSignalledStop(false),
     m_thread(0),
     m_upgradeThread(0),
+    m_feedbackThread(0),
     m_startingTime(0),
     m_transport(0),
     m_upgradePending(false),
@@ -169,6 +170,14 @@ void ConnectionManager::Stop(void)
         WaitForSingleObject(m_upgradeThread, INFINITE);
         my_print(true, _T("%s: Upgrade thread died"), __TFUNCTION__);
         m_upgradeThread = 0;
+    }
+
+    if (m_feedbackThread)
+    {
+        my_print(true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
+        WaitForSingleObject(m_feedbackThread, INFINITE);
+        my_print(true, _T("%s: Feedback thread died"), __TFUNCTION__);
+        m_feedbackThread = 0;
     }
 
     delete m_transport;
@@ -486,6 +495,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                         connectedRequestPath.c_str(),
                         response))
     {
+        // Record the request time.
+        (void)WriteRegistryStringValue(
+                LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
+                TStringToNarrow(GetISO8601DatetimeString()));
+
         // Speed feedback
         // Note: the /connected request *is* tunneled
 
@@ -501,7 +515,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             GetSpeedRequestPath(
                                 m_transport->GetTransportProtocolName(),
                                 _T("connected"),
-                                _T("(NONE)"),
+                                _T(""),
                                 now-start,
                                 response.length()).c_str(),
                             speedResponse);
@@ -643,7 +657,6 @@ bool ConnectionManager::SendStatusMessage(
     return success;
 }
 
-
 tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, const tstring& operation, const tstring& info, DWORD milliseconds, DWORD size)
 {
     AutoMUTEX lock(m_mutex);
@@ -694,6 +707,12 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
 
+    // Get info about the previous connected event
+    string lastConnected;
+    // Don't check the return value -- use the default empty string if not found.
+    (void)ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, lastConnected);
+    if (lastConnected.length() == 0) lastConnected = "None";
+
     return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
            _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
            _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
@@ -701,7 +720,8 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
-           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo);
+           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
+           _T("&last_connected=") + NarrowToTString(lastConnected);
 }
 
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
@@ -732,6 +752,21 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
                     _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                     _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
                     _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+}
+
+tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return tstring(HTTP_FEEDBACK_REQUEST_PATH) + 
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("")) + 
+           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T("")) + 
+           _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
 void ConnectionManager::MarkCurrentServerFailed(void)
@@ -853,9 +888,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    _T("(NONE)"),
+                                    _T(""),
                                     _T("download"),
-                                    _T("(NONE)"),
+                                    _T(""),
                                     now-start,
                                     downloadResponse.length()).c_str(),
                                 speedResponse);
@@ -1111,4 +1146,88 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
         my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
         // This isn't fatal.  The transport connection can still be established.
     }
+}
+
+struct FeedbackThreadData
+{
+    ConnectionManager* connectionManager;
+    wstring feedback;
+} g_feedbackThreadData;
+
+void ConnectionManager::SendFeedback(LPCWSTR feedback)
+{
+    g_feedbackThreadData.connectionManager = this;
+    g_feedbackThreadData.feedback = feedback;
+
+    if (!m_feedbackThread ||
+        WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
+    {
+        if (!(m_upgradeThread = CreateThread(0, 0, ConnectionManager::ConnectionManagerFeedbackThread, (void*)&g_feedbackThreadData, 0, 0)))
+        {
+            my_print(false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+            return;
+        }
+    }
+}
+
+DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
+{
+    my_print(true, _T("%s: enter"), __TFUNCTION__);
+
+    FeedbackThreadData* data = (FeedbackThreadData*)object;
+
+    if (data->connectionManager->DoSendFeedback(data->feedback.c_str()))
+    {
+        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+    }
+    else
+    {
+        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+    }
+
+    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    return 0;
+}
+
+bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
+{
+    // NOTE: no lock while waiting for network events
+
+    // Make a copy of SessionInfo for threadsafety.
+    SessionInfo sessionInfo;
+    {
+        AutoMUTEX lock(m_mutex);
+        sessionInfo = m_currentSessionInfo;
+    }
+
+    // When disconnected, ignore the user cancel flag in the HTTP request
+    // wait loop.
+    // TODO: the user may be left waiting too long after cancelling; add
+    // a shorter timeout in this case
+    bool ignoreCancel = false;
+    const bool& cancel = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? GetUserSignalledStop(true) : ignoreCancel;
+
+    string narrowFeedback;
+    if (feedback)
+    {
+        narrowFeedback = WStringToNarrow(feedback);
+    }
+
+    tstring requestPath = GetFeedbackRequestPath(m_transport);
+    string response;
+    HTTPSRequest httpsRequest;
+    bool success = httpsRequest.MakeRequest(
+                                    cancel,
+                                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                                    sessionInfo.GetWebPort() ,
+                                    sessionInfo.GetWebServerCertificate(),
+                                    requestPath.c_str(),
+                                    response,
+                                    true,
+                                    L"Content-Type: application/json",
+                                    (LPVOID)narrowFeedback.c_str(),
+                                    narrowFeedback.length());
+    
+    return success;
 }

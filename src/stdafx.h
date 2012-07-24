@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,3 +44,6 @@
 #include <regex>
 #include <sstream>
 #include <json.h>
+#include <mshtmhst.h>
+#include <urlmon.h>
+
