@@ -89,6 +89,15 @@ bool LocalProxy::DoStart()
     Cleanup();
     
     int localHttpProxyPort = UserLocalHTTPProxyPort();
+
+    // Test if the localHttpProxyPort is already in use.  If it is, try to find
+    // one that is available.
+    if (!TestForOpenPort(localHttpProxyPort, 10, GetSignalStopFlags()))
+    {
+        my_print(false, _T("HTTP Proxy could not find an available port."));
+        return false;
+    }
+
     if (!StartPolipo(localHttpProxyPort))
     {
         Cleanup();
@@ -102,6 +111,7 @@ bool LocalProxy::DoStart()
     m_systemProxySettings->SetHttpsProxyPort(localHttpProxyPort);
 
     my_print(true, _T("Polipo successfully started."));
+    my_print(false, _T("HTTP Proxy is running on localhost port %d."), localHttpProxyPort);
 
     return true;
 }

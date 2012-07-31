@@ -240,6 +240,23 @@ DWORD WaitForConnectability(
 }
 
 
+bool TestForOpenPort(int& targetPort, int maxIncrement, const vector<const bool*>& signalStopFlags)
+{
+    int maxPort = targetPort + maxIncrement;
+    do
+    {
+        if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, signalStopFlags))
+        {
+            return true;
+        }
+        my_print(false, _T("Localhost port %d is already in use."), targetPort);
+    }
+    while (++targetPort <= maxPort);
+    
+    return false;
+}
+
+
 bool WriteRegistryDwordValue(const string& name, DWORD value)
 {
     HKEY key = 0;

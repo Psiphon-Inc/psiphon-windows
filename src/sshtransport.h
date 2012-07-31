@@ -55,6 +55,7 @@ protected:
     // Subclasses must implement this member
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const int localSocksProxyPort,
                     const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
@@ -70,6 +71,7 @@ protected:
 protected:
     tstring m_plonkPath;
     PROCESS_INFORMATION m_plonkProcessInfo;
+    int m_localSocksProxyPort;
 };
 
 
@@ -92,6 +94,7 @@ public:
 protected:
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const int localSocksProxyPort,
                     const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
@@ -119,6 +122,7 @@ public:
 protected:
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const int localSocksProxyPort,
                     const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
