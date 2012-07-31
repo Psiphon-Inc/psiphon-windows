@@ -180,7 +180,7 @@ void SSHTransportBase::TransportConnectHelper(
     // one that is available.
     if (!TestForOpenPort(m_localSocksProxyPort, 10, GetSignalStopFlags()))
     {
-        my_print(false, _T("Local SOCKS Proxy could not find an available port."));
+        my_print(false, _T("Local SOCKS proxy could not find an available port."));
         throw TransportFailed();
     }
 
@@ -224,13 +224,13 @@ void SSHTransportBase::TransportConnectHelper(
     }
     else if (ERROR_SUCCESS != connected)
     {
-        my_print(false, _T("%s - Failed to connect to Plonk (%d, %d)"), __TFUNCTION__, connected, GetLastError());
+        my_print(false, _T("Failed to connect (%d, %d)"), connected, GetLastError());
         throw TransportFailed();
     }
 
     systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
 
-    my_print(false, _T("SOCKS Proxy is running on localhost port %d."), m_localSocksProxyPort);
+    my_print(false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
 
 bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
