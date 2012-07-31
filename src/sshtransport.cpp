@@ -29,7 +29,7 @@
 #include "config.h"
 
 
-#define PLONK_SOCKS_PROXY_PORT          1080
+#define DEFAULT_PLONK_SOCKS_PROXY_PORT  1080
 #define SSH_CONNECTION_TIMEOUT_SECONDS  20
 #define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
 
@@ -47,6 +47,7 @@ static bool SetPlonkSSHHostKey(
 SSHTransportBase::SSHTransportBase()
 {
     ZeroMemory(&m_plonkProcessInfo, sizeof(m_plonkProcessInfo));
+    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
 }
 
 SSHTransportBase::~SSHTransportBase()
@@ -61,7 +62,7 @@ tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo) const
 
 int SSHTransportBase::GetLocalProxyParentPort() const
 {
-    return PLONK_SOCKS_PROXY_PORT;
+    return m_localSocksProxyPort;
 }
 
 tstring SSHTransportBase::GetLastTransportError() const
@@ -107,14 +108,7 @@ bool SSHTransportBase::Cleanup()
     if (m_plonkProcessInfo.hProcess != 0
         && m_plonkProcessInfo.hProcess != INVALID_HANDLE_VALUE)
     {
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
-        WaitForSingleObject(m_plonkProcessInfo.hProcess, 100);
-        if (!TerminateProcess(m_plonkProcessInfo.hProcess, 0) ||
-            WAIT_OBJECT_0 != WaitForSingleObject(m_plonkProcessInfo.hProcess, TERMINATE_PROCESS_WAIT_MS))
-        {
-            my_print(false, _T("TerminateProcess failed for process with PID %d"), m_plonkProcessInfo.dwProcessId);
-            my_print(false, _T("Please terminate this process manually"));
-        }
+        StopProcess(m_plonkProcessInfo.dwProcessId, m_plonkProcessInfo.hProcess);
     }
 
     if (m_plonkProcessInfo.hProcess != 0
@@ -180,8 +174,19 @@ void SSHTransportBase::TransportConnectHelper(
     // uses this to associate the tunnel with web requests -- for GeoIP region stats
     string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
 
+    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
+
+    // Test if the localSocksProxyPort is already in use.  If it is, try to find
+    // one that is available.
+    if (!TestForOpenPort(m_localSocksProxyPort, 10, GetSignalStopFlags()))
+    {
+        my_print(false, _T("Local SOCKS proxy could not find an available port."));
+        throw TransportFailed();
+    }
+
     if (!GetSSHParams(
-            sessionInfo, 
+            sessionInfo,
+            m_localSocksProxyPort,
             sshPassword,
             serverAddress, 
             serverPort, 
@@ -208,7 +213,7 @@ void SSHTransportBase::TransportConnectHelper(
     // where Polipo stopped responding when the ssh tunnel was torn down.
 
     DWORD connected = WaitForConnectability(
-                        PLONK_SOCKS_PROXY_PORT,
+                        m_localSocksProxyPort,
                         SSH_CONNECTION_TIMEOUT_SECONDS*1000,
                         m_plonkProcessInfo.hProcess,
                         GetSignalStopFlags());
@@ -219,11 +224,13 @@ void SSHTransportBase::TransportConnectHelper(
     }
     else if (ERROR_SUCCESS != connected)
     {
-        my_print(false, _T("%s - Failed to connect to Plonk (%d, %d)"), __TFUNCTION__, connected, GetLastError());
+        my_print(false, _T("Failed to connect (%d, %d)"), connected, GetLastError());
         throw TransportFailed();
     }
 
-    systemProxySettings->SetSocksProxyPort(PLONK_SOCKS_PROXY_PORT);
+    systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
+
+    my_print(false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
 
 bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
@@ -324,6 +331,7 @@ bool SSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 
 bool SSHTransport::GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const int localSocksProxyPort,
                     const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
@@ -342,7 +350,7 @@ bool SSHTransport::GetSSHParams(
          << _T(" -P ") << o_serverPort
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
          << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
-         << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
+         << _T(" -D ") << localSocksProxyPort
          << _T(" ") << o_serverAddress.c_str();
 #ifdef _DEBUG
          args << _T(" -v");
@@ -410,6 +418,7 @@ bool OSSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 
 bool OSSHTransport::GetSSHParams(
                     const SessionInfo& sessionInfo,
+                    const int localSocksProxyPort,
                     const string& sshPassword,
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
@@ -441,7 +450,7 @@ bool OSSHTransport::GetSSHParams(
          << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str()
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
          << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
-         << _T(" -D ") << PLONK_SOCKS_PROXY_PORT
+         << _T(" -D ") << localSocksProxyPort
          << _T(" ") << o_serverAddress.c_str();
 #ifdef _DEBUG
          args << _T(" -v");

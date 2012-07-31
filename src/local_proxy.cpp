@@ -89,6 +89,15 @@ bool LocalProxy::DoStart()
     Cleanup();
     
     int localHttpProxyPort = UserLocalHTTPProxyPort();
+
+    // Test if the localHttpProxyPort is already in use.  If it is, try to find
+    // one that is available.
+    if (!TestForOpenPort(localHttpProxyPort, 10, GetSignalStopFlags()))
+    {
+        my_print(false, _T("HTTP proxy could not find an available port."));
+        return false;
+    }
+
     if (!StartPolipo(localHttpProxyPort))
     {
         Cleanup();
@@ -102,6 +111,7 @@ bool LocalProxy::DoStart()
     m_systemProxySettings->SetHttpsProxyPort(localHttpProxyPort);
 
     my_print(true, _T("Polipo successfully started."));
+    my_print(false, _T("HTTP proxy is running on localhost port %d."), localHttpProxyPort);
 
     return true;
 }
@@ -161,14 +171,7 @@ void LocalProxy::Cleanup()
     if (m_polipoProcessInfo.hProcess != 0
         && m_polipoProcessInfo.hProcess != INVALID_HANDLE_VALUE)
     {
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_polipoProcessInfo.dwProcessId);
-        WaitForSingleObject(m_polipoProcessInfo.hProcess, 100);
-        if (!TerminateProcess(m_polipoProcessInfo.hProcess, 0) ||
-            WAIT_OBJECT_0 != WaitForSingleObject(m_polipoProcessInfo.hProcess, TERMINATE_PROCESS_WAIT_MS))
-        {
-            my_print(false, _T("TerminateProcess failed for process with PID %d"), m_polipoProcessInfo.dwProcessId);
-            my_print(false, _T("Please terminate this process manually"));
-        }
+        StopProcess(m_polipoProcessInfo.dwProcessId, m_polipoProcessInfo.hProcess);
     }
 
     if (m_polipoProcessInfo.hProcess != 0
@@ -298,7 +301,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     }
     else if (ERROR_SUCCESS != connected)
     {
-        my_print(false, _T("%s - Failed to connect to Polipo (%d, %d)"), __TFUNCTION__, connected, GetLastError());
+        my_print(false, _T("Failed to start the HTTP proxy (%d, %d)"), connected, GetLastError());
         return false;
     }
 

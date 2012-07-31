@@ -99,7 +99,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     TCHAR filePath[MAX_PATH];
     if (NULL == PathCombine(filePath, tempPath, exeFilename))
     {
-        my_print(false, _T("ExtractExecutable - GetTempFileName failed (%d)"), GetLastError());
+        my_print(false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
     }
 
@@ -237,6 +237,37 @@ DWORD WaitForConnectability(
     WSACleanup();
 
     return returnValue;
+}
+
+
+bool TestForOpenPort(int& targetPort, int maxIncrement, const vector<const bool*>& signalStopFlags)
+{
+    int maxPort = targetPort + maxIncrement;
+    do
+    {
+        if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, signalStopFlags))
+        {
+            return true;
+        }
+        my_print(false, _T("Localhost port %d is already in use."), targetPort);
+    }
+    while (++targetPort <= maxPort);
+    
+    return false;
+}
+
+
+void StopProcess(DWORD processID, HANDLE process)
+{
+    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, processID);
+    if (WAIT_OBJECT_0 != WaitForSingleObject(process, 100))
+    {
+        if (!TerminateProcess(process, 0) ||
+            WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+        {
+            my_print(false, _T("TerminateProcess failed for process with PID %d"), processID);
+        }
+    }
 }
 
 

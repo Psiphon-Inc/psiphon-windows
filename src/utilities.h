@@ -34,6 +34,11 @@ DWORD WaitForConnectability(
         HANDLE process, 
         const vector<const bool*>& signalStopFlags);
 
+// NOTE: targetPort is inout, outputing the first available port
+bool TestForOpenPort(int& targetPort, int maxIncrement, const vector<const bool*>& signalStopFlags);
+
+void StopProcess(DWORD processID, HANDLE process);
+
 bool WriteRegistryDwordValue(const string& name, DWORD value);
 
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
