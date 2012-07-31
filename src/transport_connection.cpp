@@ -190,7 +190,7 @@ bool TransportConnection::DoHandshake(
                         handshakeResponse)
         || handshakeResponse.length() <= 0)
     {
-        my_print(false, _T("%s: handshake failed"), __TFUNCTION__);
+        my_print(false, _T("Handshake failed"));
         return false;
     }
 
