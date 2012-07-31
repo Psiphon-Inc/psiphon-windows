@@ -99,7 +99,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     TCHAR filePath[MAX_PATH];
     if (NULL == PathCombine(filePath, tempPath, exeFilename))
     {
-        my_print(false, _T("ExtractExecutable - GetTempFileName failed (%d)"), GetLastError());
+        my_print(false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
     }
 
