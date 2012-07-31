@@ -257,6 +257,20 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const vector<const bool*
 }
 
 
+void StopProcess(DWORD processID, HANDLE process)
+{
+    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, processID);
+    if (WAIT_OBJECT_0 != WaitForSingleObject(process, 100))
+    {
+        if (!TerminateProcess(process, 0) ||
+            WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+        {
+            my_print(false, _T("TerminateProcess failed for process with PID %d"), processID);
+        }
+    }
+}
+
+
 bool WriteRegistryDwordValue(const string& name, DWORD value)
 {
     HKEY key = 0;

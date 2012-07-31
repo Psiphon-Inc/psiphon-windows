@@ -108,14 +108,7 @@ bool SSHTransportBase::Cleanup()
     if (m_plonkProcessInfo.hProcess != 0
         && m_plonkProcessInfo.hProcess != INVALID_HANDLE_VALUE)
     {
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_plonkProcessInfo.dwProcessId);
-        WaitForSingleObject(m_plonkProcessInfo.hProcess, 100);
-        if (!TerminateProcess(m_plonkProcessInfo.hProcess, 0) ||
-            WAIT_OBJECT_0 != WaitForSingleObject(m_plonkProcessInfo.hProcess, TERMINATE_PROCESS_WAIT_MS))
-        {
-            my_print(false, _T("TerminateProcess failed for process with PID %d"), m_plonkProcessInfo.dwProcessId);
-            my_print(false, _T("Please terminate this process manually"));
-        }
+        StopProcess(m_plonkProcessInfo.dwProcessId, m_plonkProcessInfo.hProcess);
     }
 
     if (m_plonkProcessInfo.hProcess != 0
