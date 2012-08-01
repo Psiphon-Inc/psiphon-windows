@@ -42,6 +42,8 @@ class ConnectionManager : public ILocalProxyStatsCollector
 public:
     ConnectionManager(void);
     virtual ~ConnectionManager(void);
+
+    ServerList& GetServerList();
     void Toggle(const tstring& transport, bool startSplitTunnel);
     void Stop(void);
     void Start(const tstring& transport, bool startSplitTunnel);

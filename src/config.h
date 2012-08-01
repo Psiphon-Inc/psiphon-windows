@@ -38,6 +38,7 @@ static const TCHAR* HTTP_SPEED_REQUEST_PATH = _T("/speed");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
 static const TCHAR* HTTP_DOWNLOAD_REQUEST_PATH = _T("/download");
 static const TCHAR* HTTP_FEEDBACK_REQUEST_PATH = _T("/feedback");
+static const TCHAR* HTTP_CHECK_REQUEST_PATH = _T("/check");
 static const int CLIENT_SESSION_ID_BYTES = 16;
 static const int DEFAULT_LOCAL_HTTP_PROXY_PORT = 8080;
 static const int SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH = 60*60*6;

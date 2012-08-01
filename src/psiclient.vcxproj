@@ -241,6 +241,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="serverlist.h" />
     <ClInclude Include="server_entry_auth.h" />
+    <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="server_request.h" />
     <ClInclude Include="sessioninfo.h" />
     <ClInclude Include="sshtransport.h" />
@@ -293,6 +294,7 @@
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="serverlist.cpp" />
     <ClCompile Include="server_entry_auth.cpp" />
+    <ClCompile Include="server_list_reordering.cpp" />
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
     <ClCompile Include="sshtransport.cpp" />

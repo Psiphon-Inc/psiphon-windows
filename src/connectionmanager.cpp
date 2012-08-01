@@ -65,6 +65,11 @@ ConnectionManager::~ConnectionManager(void)
     CloseHandle(m_mutex);
 }
 
+ServerList& ConnectionManager::GetServerList()
+{
+    return m_serverList;
+}
+
 void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
 {
     AutoMUTEX lock(m_mutex);

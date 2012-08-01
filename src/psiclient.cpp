@@ -35,6 +35,7 @@
 #include "webbrowser.h"
 #include "limitsingleinstance.h"
 #include "htmldlg.h"
+#include "server_list_reordering.h"
 
 
 //==== Globals ================================================================
@@ -857,6 +858,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_TIMER:
+
+        // TEMP: reorder server list
+        // TODO: background thread
+        {
+            static int x = 0;
+            if (!x)
+            {
+                bool temp = false;
+                ReorderServerList(g_connectionManager.GetServerList(), temp);
+                x = 1;
+            }
+        }
+
         if (IDT_BUTTON_ANIMATION == wParam)
         {
             UpdateButton(hWnd);
