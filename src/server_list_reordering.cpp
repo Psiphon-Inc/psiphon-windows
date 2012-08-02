@@ -25,8 +25,8 @@
 
 
 const int MAX_WORKER_THREADS = 30;
-const int MAX_CHECK_TIME_MILLISECONDS = 4000;
-const int MAX_RESPONSE_TIME_MILLISECONDS = 1000;
+const int MAX_CHECK_TIME_MILLISECONDS = 3000;
+const int MAX_RESPONSE_TIME_MILLISECONDS = 1500;
 
 
 ServerListReorder::ServerListReorder()
