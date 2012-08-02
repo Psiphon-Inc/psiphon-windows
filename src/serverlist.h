@@ -69,6 +69,9 @@ public:
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry);
 
+    void MoveEntriesToFront(
+        const ServerEntries& entries);
+
 private:
     ServerEntries GetListFromEmbeddedValues();
     ServerEntries GetListFromSystem();

@@ -22,6 +22,21 @@
 #include "serverlist.h"
 
 
-void ReorderServerList(
-        ServerList& serverList,
-        const bool& externalStopSignalFlag);
+class ServerListReorder
+{
+public:
+    ServerListReorder();
+    virtual ~ServerListReorder();
+
+    void Start(ServerList* serverList);
+    void Stop();
+
+private:
+    static DWORD WINAPI ReorderServerListThread(void* data);
+
+    HANDLE m_thread;
+    bool m_stopFlag;
+    ServerList* m_serverList;
+};
+
+void ReorderServerList(ServerList& serverList, bool& stopFlag);

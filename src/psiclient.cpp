@@ -49,6 +49,7 @@ TCHAR g_szWindowClass[MAX_LOADSTRING];
 HWND g_hWnd;
 ConnectionManager g_connectionManager;
 tstring g_lastTransportSelection;
+ServerListReorder g_serverListReorder;
 
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
@@ -851,6 +852,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_lastTransportSelection = GetSelectedTransport();
         g_connectionManager.Toggle(g_lastTransportSelection, GetSplitTunnel());
 
+        // Optimize the server list
+
+        g_serverListReorder.Start(&g_connectionManager.GetServerList());
+
         break;
 
     case WM_SIZE:
@@ -858,19 +863,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_TIMER:
-
-        // TEMP: reorder server list
-        // TODO: background thread
-        {
-            static int x = 0;
-            if (!x)
-            {
-                bool temp = false;
-                ReorderServerList(g_connectionManager.GetServerList(), temp);
-                x = 1;
-            }
-        }
-
         if (IDT_BUTTON_ANIMATION == wParam)
         {
             UpdateButton(hWnd);

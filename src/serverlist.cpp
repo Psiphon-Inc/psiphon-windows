@@ -100,6 +100,53 @@ void ServerList::AddEntriesToList(
     WriteListToSystem(oldServerEntryList);
 }
 
+void ServerList::MoveEntriesToFront(const ServerEntries& entries)
+{
+    AutoMUTEX lock(m_mutex);
+
+    ServerEntries persistentServerEntryList = GetList();
+
+    // Insert entries in input order
+
+    for (ServerEntries::const_reverse_iterator entry = entries.rbegin(); entry != entries.rend(); ++entry)
+    {
+        // Remove existing entry for server, if present. In the case where
+        // the existing entry has different data, we must assume that a
+        // discovery has happened that overwrote the data that's being
+        // passed in. In that edge case, we just keep the existing entry
+        // in its current position.
+
+        bool existingEntryChanged = false;
+
+        for (ServerEntries::iterator persistentEntry = persistentServerEntryList.begin();
+             persistentEntry != persistentServerEntryList.end();
+             ++persistentEntry)
+        {
+            if (entry->serverAddress == persistentEntry->serverAddress)
+            {
+                if (entry->ToString() != persistentEntry->ToString())
+                {
+                    existingEntryChanged = true;
+                }
+                else
+                {
+                    persistentServerEntryList.erase(persistentEntry);
+                }
+                break;
+            }
+        }
+
+        // Re-insert entry for server in new position
+
+        if (!existingEntryChanged)
+        {
+            persistentServerEntryList.insert(persistentServerEntryList.begin(), *entry);
+        }
+    }
+
+    WriteListToSystem(persistentServerEntryList);
+}
+
 void ServerList::MarkCurrentServerFailed()
 {
     AutoMUTEX lock(m_mutex);
