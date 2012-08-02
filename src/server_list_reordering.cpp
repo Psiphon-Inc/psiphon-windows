@@ -115,7 +115,7 @@ DWORD WINAPI CheckServerThread(void* object)
         tstring(HTTP_CHECK_REQUEST_PATH) + 
         _T("?server_secret=") + NarrowToTString(data->m_entry.webServerSecret);
 
-    HTTPSRequest httpsRequest;
+    HTTPSRequest httpsRequest(true); // silentMode: don't print errors
     string response;
     bool requestSuccess = 
         httpsRequest.MakeRequest(
@@ -218,8 +218,12 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
 
     for (vector<WorkerThreadData*>::iterator data = threadData.begin(); data != threadData.end(); ++data)
     {
-        // TEMP
-        my_print(false, _T("server: %s, responded: %s, response time: %d"), NarrowToTString((*data)->m_entry.serverAddress).c_str(), (*data)->m_responded ? L"yes" : L"no", (*data)->m_responseTime);
+        my_print(
+            true,
+            _T("server: %s, responded: %s, response time: %d"),
+            NarrowToTString((*data)->m_entry.serverAddress).c_str(),
+            (*data)->m_responded ? L"yes" : L"no",
+            (*data)->m_responseTime);
 
         if ((*data)->m_responded && (*data)->m_responseTime <= MAX_RESPONSE_TIME_MILLISECONDS)
         {

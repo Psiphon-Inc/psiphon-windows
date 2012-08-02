@@ -29,7 +29,7 @@ using namespace std;
 class HTTPSRequest
 {
 public:
-    HTTPSRequest();
+    HTTPSRequest(bool silentMode=false);
     virtual ~HTTPSRequest();
 
     bool MakeRequest(
@@ -60,6 +60,7 @@ private:
                             DWORD dwStatusInformationLength);
 
 private:
+    bool m_silentMode;
     HANDLE m_mutex;
     HANDLE m_closedEvent;
     bool m_requestSuccess;
