@@ -216,7 +216,7 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
     for (vector<WorkerThreadData*>::iterator data = threadData.begin(); data != threadData.end(); ++data)
     {
         my_print(
-            false,
+            true,
             _T("server: %s, responded: %s, response time: %d"),
             NarrowToTString((*data)->m_entry.serverAddress).c_str(),
             (*data)->m_responded ? L"yes" : L"no",
