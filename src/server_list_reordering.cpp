@@ -25,8 +25,8 @@
 
 
 const int MAX_WORKER_THREADS = 30;
-const int MAX_CHECK_TIME_MILLISECONDS = 3000;
-const int MAX_RESPONSE_TIME_MILLISECONDS = 1500;
+const int MAX_CHECK_TIME_MILLISECONDS = 5000;
+const int RESPONSE_TIME_THRESHOLD_FACTOR = 2;
 
 
 ServerListReorder::ServerListReorder()
@@ -99,7 +99,7 @@ struct WorkerThreadData
         : m_entry(entry),
           m_stopFlag(stopFlag),
           m_responded(false),
-          m_responseTime(0xFFFFFFFF)
+          m_responseTime(UINT_MAX)
     {
     }
 };
@@ -182,11 +182,6 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
 
     // Wait for all threads to finish
 
-    // NOTE: this operation doesn't respect any external stop
-    // flag, but as long as the MAX_CHECK_TIME is only a second
-    // or two, then it's ok to let this operation complete
-    // before terminating the app, etc.
-
     // TODO: stop waiting early if all threads finish?
 
     for (int waits = 0; waits < MAX_CHECK_TIME_MILLISECONDS/100; waits++)
@@ -209,23 +204,36 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
     }
 
     // Build a list of all servers that responded within the threshold
-    // time for promotion to the top of the server list. Then randomly
-    // shuffle the list for some client-side load balancing. Any server
+    // time (+100%) of the best server. Using the best server as a base
+    // is intended to factor out local network conditions, local cpu
+    // conditions (e.g., SSL overhead) etc. We randomly shuffle the
+    // rsulting list for some client-side load balancing. Any server
     // that meets the threshold is considered equally qualified for
     // any position towards the top of the list.
 
-    ServerEntries respondingServers;
+    unsigned int fastestResponseTime = UINT_MAX;
 
     for (vector<WorkerThreadData*>::iterator data = threadData.begin(); data != threadData.end(); ++data)
     {
         my_print(
-            true,
+            false,
             _T("server: %s, responded: %s, response time: %d"),
             NarrowToTString((*data)->m_entry.serverAddress).c_str(),
             (*data)->m_responded ? L"yes" : L"no",
             (*data)->m_responseTime);
 
-        if ((*data)->m_responded && (*data)->m_responseTime <= MAX_RESPONSE_TIME_MILLISECONDS)
+        if ((*data)->m_responded && (*data)->m_responseTime < fastestResponseTime)
+        {
+            fastestResponseTime = (*data)->m_responseTime;
+        }
+    }
+
+    ServerEntries respondingServers;
+
+    for (vector<WorkerThreadData*>::iterator data = threadData.begin(); data != threadData.end(); ++data)
+    {
+        if ((*data)->m_responded && (*data)->m_responseTime <=
+                fastestResponseTime*RESPONSE_TIME_THRESHOLD_FACTOR)
         {
             respondingServers.push_back((*data)->m_entry);
         }
@@ -240,7 +248,12 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
     // list. By using the ConnectionManager's ServerList object we ensure
     // there's no conflict while reading/writing the persistent server list.
 
-    serverList.MoveEntriesToFront(respondingServers);
+    if (respondingServers.size() > 0)
+    {
+        serverList.MoveEntriesToFront(respondingServers);
+
+        my_print(false, _T("Preferred servers: %d"), respondingServers.size());
+    }
 
     // Cleanup
 
