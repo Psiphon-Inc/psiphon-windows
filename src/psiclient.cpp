@@ -1064,6 +1064,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         // Stop VPN if running
+        g_serverListReorder.Stop();
         g_connectionManager.Stop();
         PostQuitMessage(0);
         break;
