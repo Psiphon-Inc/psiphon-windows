@@ -67,7 +67,7 @@ public:
     void Connect(
             SessionInfo sessionInfo, 
             SystemProxySettings* systemProxySettings,
-            const bool& stopSignalFlag,
+            const StopInfo& stopInfo,
             WorkerThreadSynch* workerThreadSynch);
 
     // Do any necessary final cleanup. 

@@ -44,12 +44,12 @@ SessionInfo TransportConnection::GetUpdatedSessionInfo() const
 }
 
 void TransportConnection::Connect(
+                            const StopInfo& stopInfo,
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
                             const SessionInfo& sessionInfo, 
                             const TCHAR* handshakeRequestPath,
-                            const tstring& splitTunnelingFilePath, 
-                            const bool& stopSignalFlag)
+                            const tstring& splitTunnelingFilePath)
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
@@ -73,7 +73,7 @@ void TransportConnection::Connect(
             my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
 
             if (!handshakeRequestPath
-                || !DoHandshake(handshakeRequestPath, stopSignalFlag))
+                || !DoHandshake(stopInfo, handshakeRequestPath))
             {
                 // Need a handshake but can't do a handshake or handshake failing.
                 throw TryNextServer();
@@ -93,7 +93,7 @@ void TransportConnection::Connect(
         m_transport->Connect(
                     m_sessionInfo, 
                     &m_systemProxySettings,
-                    stopSignalFlag,
+                    stopInfo,
                     &m_workerThreadSynch);
 
         // Set up and start the local proxy.
@@ -106,7 +106,7 @@ void TransportConnection::Connect(
 
         // Launches the local proxy thread and doesn't return until it
         // observes a successful (or not) connection.
-        if (!m_localProxy->Start(stopSignalFlag, &m_workerThreadSynch))
+        if (!m_localProxy->Start(stopInfo, &m_workerThreadSynch))
         {
             throw IWorkerThread::Error("LocalProxy::Start failed");
         }
@@ -119,7 +119,7 @@ void TransportConnection::Connect(
         if (!handshakeDone && handshakeRequestPath)
         {
             // We do not fail regardless of whether the handshake succeeds.
-            (void)DoHandshake(handshakeRequestPath, stopSignalFlag);
+            (void)DoHandshake(stopInfo, handshakeRequestPath);
             handshakeDone = true;
         }
 
@@ -169,8 +169,8 @@ void TransportConnection::WaitForDisconnect()
 }
 
 bool TransportConnection::DoHandshake(
-                            const TCHAR* handshakeRequestPath,
-                            const bool& stopSignalFlag)
+                            const StopInfo& stopInfo, 
+                            const TCHAR* handshakeRequestPath)
 {
     if (!handshakeRequestPath)
     {
@@ -183,11 +183,11 @@ bool TransportConnection::DoHandshake(
     // Send list of known server IP addresses (used for stats logging on the server)
 
     if (!serverRequest.MakeRequest(
-                        stopSignalFlag,
                         m_transport,
                         m_sessionInfo,
                         handshakeRequestPath,
-                        handshakeResponse)
+                        handshakeResponse,
+                        stopInfo)
         || handshakeResponse.length() <= 0)
     {
         my_print(false, _T("Handshake failed"));

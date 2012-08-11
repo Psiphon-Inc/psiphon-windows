@@ -25,6 +25,7 @@
 #include <WinSock2.h>
 #include <TlHelp32.h>
 #include "utilities.h"
+#include "stopsignal.h"
 
 
 extern HINSTANCE g_hInst;
@@ -151,7 +152,7 @@ DWORD WaitForConnectability(
         int port, 
         DWORD timeout, 
         HANDLE process, 
-        const vector<const bool*>& signalStopFlags)
+        const StopInfo& stopInfo)
 {
     // There are a number of options for monitoring the connected status
     // of plonk/polipo. We're going with a quick and dirty solution of
@@ -225,7 +226,7 @@ DWORD WaitForConnectability(
         
         // Check if cancel is signalled
 
-        if (TestBoolArray(signalStopFlags))
+        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
         {
             returnValue = ERROR_OPERATION_ABORTED;
             break;
@@ -240,12 +241,12 @@ DWORD WaitForConnectability(
 }
 
 
-bool TestForOpenPort(int& targetPort, int maxIncrement, const vector<const bool*>& signalStopFlags)
+bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo)
 {
     int maxPort = targetPort + maxIncrement;
     do
     {
-        if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, signalStopFlags))
+        if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, stopInfo))
         {
             return true;
         }

@@ -22,6 +22,7 @@
 #include <string>
 #include <WinCrypt.h>
 #include <Winhttp.h>
+#include "stopsignal.h"
 
 
 using namespace std;
@@ -33,12 +34,12 @@ public:
     virtual ~HTTPSRequest();
 
     bool MakeRequest(
-        const bool& cancel,
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
+        const StopInfo& stopInfo,
         bool useLocalProxy=true,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,

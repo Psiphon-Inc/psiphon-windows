@@ -246,6 +246,7 @@
     <ClInclude Include="sessioninfo.h" />
     <ClInclude Include="sshtransport.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stopsignal.h" />
     <ClInclude Include="systemproxysettings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="transport.h" />
@@ -302,6 +303,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="stopsignal.cpp" />
     <ClCompile Include="systemproxysettings.cpp" />
     <ClCompile Include="transport.cpp" />
     <ClCompile Include="transport_connection.cpp" />

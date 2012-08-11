@@ -28,9 +28,11 @@ const int MAX_WORKER_THREADS = 30;
 const int MAX_CHECK_TIME_MILLISECONDS = 5000;
 const int RESPONSE_TIME_THRESHOLD_FACTOR = 2;
 
+void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo);
+
 
 ServerListReorder::ServerListReorder()
-    : m_thread(NULL), m_stopFlag(false), m_serverList(0)
+    : m_thread(NULL), m_serverList(0)
 {
 }
 
@@ -59,16 +61,19 @@ void ServerListReorder::Start(ServerList* serverList)
 
 void ServerListReorder::Stop()
 {
+    // This signal causes the thread to terminate
+    m_stopSignal.SignalStop(STOP_REASON_ALL);
+
     if (m_thread != NULL)
     {
-        m_stopFlag = true;
         WaitForSingleObject(m_thread, INFINITE);
 
         // Reset for another run.
 
         m_thread = NULL;
-        m_stopFlag = false;
     }
+
+    m_stopSignal.ClearStopSignal(STOP_REASON_ALL);
 }
 
 
@@ -80,7 +85,7 @@ DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
     unsigned int seed = (unsigned)time(NULL);
     srand(seed);
 
-    ReorderServerList(*(object->m_serverList), object->m_stopFlag);
+    ReorderServerList(*(object->m_serverList), StopInfo(&object->m_stopSignal, STOP_REASON_ALL));
 
     return 0;
 }
@@ -89,17 +94,15 @@ DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
 struct WorkerThreadData
 {
     ServerEntry m_entry;
-    const bool& m_stopFlag;
     bool m_responded;
     unsigned int m_responseTime;
+    StopInfo m_stopInfo;
 
-    WorkerThreadData(
-            ServerEntry entry,
-            const bool& stopFlag)
+    WorkerThreadData(ServerEntry entry, StopInfo stopInfo)
         : m_entry(entry),
-          m_stopFlag(stopFlag),
           m_responded(false),
-          m_responseTime(UINT_MAX)
+          m_responseTime(UINT_MAX),
+          m_stopInfo(stopInfo)
     {
     }
 };
@@ -119,14 +122,13 @@ DWORD WINAPI CheckServerThread(void* object)
     string response;
     bool requestSuccess = 
         httpsRequest.MakeRequest(
-            data->m_stopFlag,
             NarrowToTString(data->m_entry.serverAddress).c_str(),
             data->m_entry.webServerPort,
             data->m_entry.webServerCertificate,
             requestPath.c_str(),
             response,
-            false // use local proxy
-            );
+            data->m_stopInfo, 
+            false); // don't use local proxy
 
     DWORD end_time = GetTickCount(); // GetTickCount can wrap
 
@@ -140,7 +142,7 @@ DWORD WINAPI CheckServerThread(void* object)
 }
 
 
-void ReorderServerList(ServerList& serverList, bool& stopFlag)
+void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
 {
     ServerEntries serverEntries = serverList.GetList();
 
@@ -163,7 +165,7 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
 
     for (ServerEntryIterator entry = serverEntries.begin(); entry != serverEntries.end(); ++entry)
     {
-        WorkerThreadData* data = new WorkerThreadData(*entry, stopFlag);
+        WorkerThreadData* data = new WorkerThreadData(*entry, stopInfo);
 
         HANDLE threadHandle;
         if (!(threadHandle = CreateThread(0, 0, CheckServerThread, (void*)data, 0, 0)))
@@ -188,14 +190,14 @@ void ReorderServerList(ServerList& serverList, bool& stopFlag)
     {
         Sleep(100);
 
-        if (stopFlag)
+        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
         {
             // Stop waiting early if exiting the app, etc.
             // NOTE: we still process results in this case
             break;
         }
     }
-    stopFlag = true;
+    stopInfo.stopSignal->SignalStop(stopInfo.stopReasons);
 
     for (vector<HANDLE>::iterator handle = threadHandles.begin(); handle != threadHandles.end(); ++handle)
     {

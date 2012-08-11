@@ -434,8 +434,9 @@ bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWO
             // Let the loop condition check.
             continue;
         }
-        else if (TestBoolArray(GetSignalStopFlags())) // stop event signalled
+        else if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons, false)) // stop event signalled
         {
+            // TODO: Maybe this should let CheckSignalStop throw
             throw Abort();
         }
         else

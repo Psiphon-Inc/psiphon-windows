@@ -86,11 +86,11 @@ ServerRequest::~ServerRequest()
 }
 
 bool ServerRequest::MakeRequest(
-        const bool& cancel,
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
         string& response,
+        const StopInfo& stopInfo,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
@@ -109,12 +109,12 @@ bool ServerRequest::MakeRequest(
         HTTPSRequest httpsRequest;
         bool requestSuccess = 
             httpsRequest.MakeRequest(
-                cancel,
                 NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
                 sessionInfo.GetWebPort(),
                 sessionInfo.GetWebServerCertificate(),
                 requestPath,
                 response,
+                stopInfo,
                 true, // use local proxy
                 additionalHeaders,
                 additionalData,
@@ -134,12 +134,12 @@ bool ServerRequest::MakeRequest(
     {
         HTTPSRequest httpsRequest;
         if (httpsRequest.MakeRequest(
-                cancel,
                 NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
                 *port_iter,
                 sessionInfo.GetWebServerCertificate(),
                 requestPath,
                 response,
+                stopInfo,
                 true, // use local proxy
                 additionalHeaders,
                 additionalData,
@@ -174,21 +174,21 @@ bool ServerRequest::MakeRequest(
 
             // Throws on failure
             connection.Connect(
+                stopInfo,
                 (*transport_iter).get(),
                 NULL, // not collecting stats
                 sessionInfo, 
                 NULL, // no handshake allowed
-                tstring(), // splitTunnelingFilePath -- not providing it
-                cancel);
+                tstring()); // splitTunnelingFilePath -- not providing it
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
-                    cancel,
                     NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
                     sessionInfo.GetWebPort(),
                     sessionInfo.GetWebServerCertificate(),
                     requestPath,
                     response,
+                    stopInfo,
                     true, // use local proxy
                     additionalHeaders,
                     additionalData,

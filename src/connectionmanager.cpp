@@ -36,6 +36,7 @@
 #include "transport_registry.h"
 #include "transport_connection.h"
 #include "server_entry_auth.h"
+#include "stopsignal.h"
 
 
 // Upgrade process posts a Quit message
@@ -44,7 +45,6 @@ extern HWND g_hWnd;
 
 ConnectionManager::ConnectionManager(void) :
     m_state(CONNECTION_MANAGER_STATE_STOPPED),
-    m_userSignalledStop(false),
     m_thread(0),
     m_upgradeThread(0),
     m_feedbackThread(0),
@@ -61,7 +61,7 @@ ConnectionManager::ConnectionManager(void) :
 
 ConnectionManager::~ConnectionManager(void)
 {
-    Stop();
+    Stop(STOP_REASON_NONE);
     CloseHandle(m_mutex);
 }
 
@@ -95,7 +95,7 @@ void ConnectionManager::Toggle(const tstring& transport, bool startSplitTunnel)
     }
     else
     {
-        Stop();
+        Stop(STOP_REASON_USER_DISCONNECT);
     }
 }
 
@@ -136,16 +136,7 @@ ConnectionManagerState ConnectionManager::GetState()
     return m_state;
 }
 
-const bool& ConnectionManager::GetUserSignalledStop(bool throwIfTrue) 
-{
-    if (throwIfTrue && m_userSignalledStop)
-    {
-        throw Abort();
-    }
-    return m_userSignalledStop;
-}
-
-void ConnectionManager::Stop(void)
+void ConnectionManager::Stop(long reason)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
@@ -157,8 +148,8 @@ void ConnectionManager::Stop(void)
     // While a connection is active, there is a thread running waiting for the
     // connection to terminate.
 
-    // Cancel flag is also termination flag
-    m_userSignalledStop = true;
+    // This will signal (some) running tasks to terminate.
+    GlobalStopSignal::Instance().SignalStop(reason);
 
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
@@ -215,14 +206,14 @@ void ConnectionManager::FetchRemoteServerList(void)
     HTTPSRequest httpsRequest;
     // NOTE: Not using local proxy
     if (!httpsRequest.MakeRequest(
-            GetUserSignalledStop(false),
             NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
             443,
             "",
             NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
             response,
-            false) || 
-        response.length() <= 0)
+            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
+            false) // don't use local proxy
+        || response.length() <= 0)
     {
         my_print(false, _T("Fetch remote server list failed"));
         return;
@@ -255,14 +246,14 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
     // Call Stop to cleanup in case thread failed on last Start attempt
-    Stop();
+    Stop(STOP_REASON_USER_DISCONNECT);
 
     AutoMUTEX lock(m_mutex);
 
     m_transport = TransportRegistry::New(transport);
     m_startSplitTunnel = startSplitTunnel;
 
-    m_userSignalledStop = false;
+    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_USER_DISCONNECT | STOP_REASON_UNEXPECTED_DISCONNECT);
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
@@ -363,12 +354,12 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             // May throw TryNextServer
             transportConnection.Connect(
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                 manager->m_transport,
                 manager,
                 sessionInfo,
                 handshakeRequestPath.c_str(),
-                manager->GetSplitTunnelingFilePath(),
-                manager->GetUserSignalledStop(true));
+                manager->GetSplitTunnelingFilePath());
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
@@ -431,9 +422,16 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
+        // Catch the StopException base class
+        catch (StopSignal::StopException&)
+        {
+            // User requested cancel or transport died, etc. Cleanup and exit.
+            my_print(true, _T("%s: caught StopSignal::StopException"), __TFUNCTION__);
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            break;
+        }
         catch (ConnectionManager::Abort&)
         {
-            // User requested cancel. Cleanup and exit.
             my_print(true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
@@ -494,11 +492,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     string response;
     ServerRequest serverRequest;
     if (serverRequest.MakeRequest(
-                        GetUserSignalledStop(true),
                         m_transport,
                         sessionInfo,
                         connectedRequestPath.c_str(),
-                        response))
+                        response,
+                        StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
     {
         // Record the request time.
         (void)WriteRegistryStringValue(
@@ -514,7 +512,6 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
             string speedResponse;
             ServerRequest serverRequest;
             (void)serverRequest.MakeRequest(
-                            GetUserSignalledStop(true),
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -523,7 +520,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                                 _T(""),
                                 now-start,
                                 response.length()).c_str(),
-                            speedResponse);
+                            speedResponse,
+                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
 
         // Process split tunnel response
@@ -559,12 +557,17 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         HTTPSRequest httpsRequest;
         bool success = false;
         if (httpsRequest.MakeRequest(
-                            GetUserSignalledStop(true),
                             speedTestServerAddress.c_str(),
                             speedTestServerPort,
                             "",
                             speedTestRequestPath.c_str(),
                             response,
+                            // Because it's not tunneled, in theory this doesn't 
+                            // need to be STOP_REASON_ALL -- it could instead be 
+                            // _EXIT. But we spawn a new speed test on each 
+                            // connection, so we'd better clean this up each time
+                            // the connection comes down (before the next comes up).
+                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                             false)) // don't proxy
         {
             success = true;
@@ -575,7 +578,6 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
             string speedResponse;
             ServerRequest serverRequest;
             serverRequest.MakeRequest(
-                            GetUserSignalledStop(true),
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -584,7 +586,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                                 speedTestURL.str().c_str(),
                                 now-start,
                                 response.length()).c_str(),
-                            speedResponse);
+                            speedResponse,
+                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
     }
 }
@@ -603,13 +606,6 @@ bool ConnectionManager::SendStatusMessage(
         AutoMUTEX lock(m_mutex);
         sessionInfo = m_currentSessionInfo;
     }
-
-    // When disconnected, ignore the user cancel flag in the HTTP request
-    // wait loop.
-    // TODO: the user may be left waiting too long after cancelling; add
-    // a shorter timeout in this case
-    bool ignoreCancel = false;
-    const bool& cancel = final ? ignoreCancel : GetUserSignalledStop(true);
 
     // Format stats data for consumption by the server. 
 
@@ -649,12 +645,19 @@ bool ConnectionManager::SendStatusMessage(
     tstring requestPath = GetStatusRequestPath(m_transport, !final);
     string response;
     ServerRequest serverRequest;
+
+    // When disconnected, ignore the user cancel flag in the HTTP request
+    // wait loop.
+    // TODO: the user may be left waiting too long after cancelling; add
+    // a shorter timeout in this case
+    long stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
+
     bool success = serverRequest.MakeRequest(
-                                    cancel,
                                     m_transport,
                                     sessionInfo,
                                     requestPath.c_str(),
                                     response,
+                                    StopInfo(&GlobalStopSignal::Instance(), stopReason),
                                     L"Content-Type: application/json",
                                     (LPVOID)additionalDataString.c_str(),
                                     additionalDataString.length());
@@ -864,11 +867,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         DWORD start = GetTickCount();
         ServerRequest serverRequest;
         if (!serverRequest.MakeRequest(
-                    manager->GetUserSignalledStop(true),
                     manager->m_transport,
                     sessionInfo,
                     downloadRequestPath.c_str(),
-                    downloadResponse))
+                    downloadResponse,
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
         {
             // If the download failed, we simply do nothing.
             // Rationale:
@@ -889,7 +892,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
             {
                 string speedResponse;
                 (void)serverRequest.MakeRequest( // Ignore failure
-                                manager->GetUserSignalledStop(true),
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
@@ -898,7 +900,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                     _T(""),
                                     now-start,
                                     downloadResponse.length()).c_str(),
-                                speedResponse);
+                                speedResponse,
+                                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
             }
 
             // Perform upgrade.
@@ -906,7 +909,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
             manager->PaveUpgrade(downloadResponse);
         }
     }
-    catch (Abort&)
+    catch (StopSignal::StopException&)
     {
         // do nothing, just exit
     }
@@ -1206,13 +1209,6 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
         sessionInfo = m_currentSessionInfo;
     }
 
-    // When disconnected, ignore the user cancel flag in the HTTP request
-    // wait loop.
-    // TODO: the user may be left waiting too long after cancelling; add
-    // a shorter timeout in this case
-    bool ignoreCancel = false;
-    const bool& cancel = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? GetUserSignalledStop(true) : ignoreCancel;
-
     string narrowFeedback;
     if (feedback)
     {
@@ -1222,14 +1218,21 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     tstring requestPath = GetFeedbackRequestPath(m_transport);
     string response;
     HTTPSRequest httpsRequest;
+
+    // When disconnected, ignore the user cancel flag in the HTTP request
+    // wait loop.
+    // TODO: the user may be left waiting too long after cancelling; add
+    // a shorter timeout in this case
+    long stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
+
     bool success = httpsRequest.MakeRequest(
-                                    cancel,
                                     NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
                                     sessionInfo.GetWebPort() ,
                                     sessionInfo.GetWebServerCertificate(),
                                     requestPath.c_str(),
                                     response,
-                                    true,
+                                    StopInfo(&GlobalStopSignal::Instance(), stopReason),
+                                    true, // use proxy
                                     L"Content-Type: application/json",
                                     (LPVOID)narrowFeedback.c_str(),
                                     narrowFeedback.length());

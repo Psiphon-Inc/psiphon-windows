@@ -52,12 +52,12 @@ public:
     tempoary connections.)
     */
     void Connect(
+            const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
             const SessionInfo& sessionInfo, 
             const TCHAR* handshakeRequestPath,
-            const tstring& splitTunnelingFilePath, 
-            const bool& stopSignalFlag);
+            const tstring& splitTunnelingFilePath);
 
     // Blocks until the transport disconnects.
     void WaitForDisconnect();
@@ -70,7 +70,7 @@ public:
     class TryNextServer { };
 
 private:
-    bool DoHandshake(const TCHAR* handshakeRequestPath, const bool& stopSignalFlag);
+    bool DoHandshake(const StopInfo& stopInfo, const TCHAR* handshakeRequestPath);
     void Cleanup();
 
 private:

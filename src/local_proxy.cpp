@@ -92,7 +92,7 @@ bool LocalProxy::DoStart()
 
     // Test if the localHttpProxyPort is already in use.  If it is, try to find
     // one that is available.
-    if (!TestForOpenPort(localHttpProxyPort, 10, GetSignalStopFlags()))
+    if (!TestForOpenPort(localHttpProxyPort, 10, m_stopInfo))
     {
         my_print(false, _T("HTTP proxy could not find an available port."));
         return false;
@@ -163,6 +163,7 @@ void LocalProxy::StopImminent()
 
 void LocalProxy::DoStop()
 {
+    Cleanup();
 }
 
 void LocalProxy::Cleanup()
@@ -293,7 +294,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
                         localHttpProxyPort,
                         POLIPO_CONNECTION_TIMEOUT_SECONDS*1000,
                         m_polipoProcessInfo.hProcess,
-                        GetSignalStopFlags());
+                        m_stopInfo);
 
     if (ERROR_OPERATION_ABORTED == connected)
     {

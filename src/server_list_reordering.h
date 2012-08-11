@@ -20,6 +20,7 @@
 #pragma once
 
 #include "serverlist.h"
+#include "stopsignal.h"
 
 
 class ServerListReorder
@@ -35,8 +36,9 @@ private:
     static DWORD WINAPI ReorderServerListThread(void* data);
 
     HANDLE m_thread;
-    bool m_stopFlag;
     ServerList* m_serverList;
-};
 
-void ReorderServerList(ServerList& serverList, bool& stopFlag);
+    // We use a custom stop signal because we only want to respond to Stop()
+    // being called, and no other events.
+    StopSignal m_stopSignal;
+};

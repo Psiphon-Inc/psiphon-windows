@@ -21,11 +21,48 @@
 #include "worker_thread.h"
 #include "utilities.h"
 #include "psiclient.h"
+#include "stopsignal.h"
+
+/*
+IWorkerThread needs to mix in its own stop signals to the one that's passed in.
+This custom stop signal class will encapsulate that.
+*/
+class WorkerThreadStopSignal : public StopSignal
+{
+public:
+    // Note that ownership of parentStopSignal is *not* taken (won't be deleted)
+    WorkerThreadStopSignal(const StopSignal* parentStopSignal, const bool& additionalStopFlag);
+
+    virtual long CheckSignal(long reasons, bool throwIfTrue=false) const;
+
+private:
+    const StopSignal* m_parentStopSignal;
+    const bool& m_additionalStopFlag;
+};
+
+WorkerThreadStopSignal::WorkerThreadStopSignal(
+                            const StopSignal* parentStopSignal, 
+                            const bool& additionalStopFlag)
+    : m_parentStopSignal(parentStopSignal),
+      m_additionalStopFlag(additionalStopFlag)
+{
+}
+
+long WorkerThreadStopSignal::CheckSignal(long reasons, bool throwIfTrue/*=false*/) const
+{
+    if (throwIfTrue && m_additionalStopFlag)
+    {
+        throw IWorkerThread::Abort();
+    }
+    
+    // TODO: Maybe this should throw Abort() if true and not whatever CheckSignal throws?
+    return m_parentStopSignal->CheckSignal(reasons, throwIfTrue) 
+           || m_additionalStopFlag;
+}
 
 
 IWorkerThread::IWorkerThread()
     : m_thread(0),
-      m_externalStopSignalFlag(0),
       m_internalSignalStopFlag(false),
       m_workerThreadSynch(0)
 {
@@ -47,6 +84,12 @@ IWorkerThread::~IWorkerThread()
     // Subclasses MUST call IWorkerThread::Stop() in their destructor.
     assert(m_thread == 0);
 
+    if (m_stopInfo.stopSignal) 
+    {
+        delete m_stopInfo.stopSignal;
+        m_stopInfo.stopSignal = 0;
+    }
+
     CloseHandle(m_startedEvent);
     CloseHandle(m_stoppedEvent);
 }
@@ -56,33 +99,30 @@ HANDLE IWorkerThread::GetStoppedEvent() const
     return m_stoppedEvent;
 }
 
-const vector<const bool*>& IWorkerThread::GetSignalStopFlags() const
-{
-    return m_signalStopFlags;
-}
-
 bool IWorkerThread::Start(
-                    const bool& externalStopSignalFlag, 
-                    WorkerThreadSynch* workerThreadSynch)
+                       const StopInfo& stopInfo,
+                       WorkerThreadSynch* workerThreadSynch)
 {
     assert(m_thread == 0);
-    assert(m_externalStopSignalFlag == 0);
 
     ResetEvent(m_startedEvent);
     ResetEvent(m_stoppedEvent);
     
-    m_externalStopSignalFlag = &externalStopSignalFlag;
     m_internalSignalStopFlag = false;
     m_workerThreadSynch = workerThreadSynch;
 
-    m_signalStopFlags.clear();
-    m_signalStopFlags.push_back(&m_internalSignalStopFlag);
-    m_signalStopFlags.push_back(m_externalStopSignalFlag);
-
-    if (TestBoolArray(GetSignalStopFlags()))
+    if (m_stopInfo.stopSignal) 
     {
-        throw Abort();
+        delete m_stopInfo.stopSignal;
+        m_stopInfo.stopSignal = 0;
     }
+
+    m_stopInfo = StopInfo(
+                    new WorkerThreadStopSignal(stopInfo.stopSignal, m_internalSignalStopFlag),
+                    stopInfo.stopReasons);
+
+    // Throws if true
+    m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons, true);
 
     m_thread = CreateThread(0, 0, IWorkerThread::Thread, (void*)this, 0, 0);
     if (!m_thread)
@@ -133,7 +173,11 @@ void IWorkerThread::Stop()
 
     m_thread = 0;
 
-    m_externalStopSignalFlag = 0;
+    if (m_stopInfo.stopSignal) 
+    {
+        delete m_stopInfo.stopSignal;
+        m_stopInfo.stopSignal = 0;
+    }
 }
 
 bool IWorkerThread::IsRunning() const
@@ -161,7 +205,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
     // Not allowed to throw out of the thread without cleaning up.
     try
     {
-        if (TestBoolArray(_this->GetSignalStopFlags())
+        if (_this->m_stopInfo.stopSignal->CheckSignal(_this->m_stopInfo.stopReasons, false)
             || (_this->m_workerThreadSynch && _this->m_workerThreadSynch->IsThreadStopping()))
         {
             throw Abort();
@@ -178,12 +222,12 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         {
             Sleep(100);
 
-            if (TestBoolArray(_this->GetSignalStopFlags())
+            if (_this->m_stopInfo.stopSignal->CheckSignal(_this->m_stopInfo.stopReasons, false)
                 || (_this->m_workerThreadSynch && _this->m_workerThreadSynch->IsThreadStopping()))
             {
                 // Stop request signalled. Need to stop now.
                 stoppingCleanly = true;
-                my_print(true, _T("%s: GetSignalStopFlags returned true"), __TFUNCTION__);
+                my_print(true, _T("%s: CheckSignal or IsThreadStopping returned true"), __TFUNCTION__);
                 break;
             }
             else

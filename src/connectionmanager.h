@@ -40,19 +40,18 @@ enum ConnectionManagerState
 class ConnectionManager : public ILocalProxyStatsCollector
 {
 public:
-    ConnectionManager(void);
-    virtual ~ConnectionManager(void);
+    ConnectionManager();
+    virtual ~ConnectionManager();
 
     ServerList& GetServerList();
     void Toggle(const tstring& transport, bool startSplitTunnel);
-    void Stop(void);
+    void Stop(long reason);
     void Start(const tstring& transport, bool startSplitTunnel);
     void StartSplitTunnel();
     void StopSplitTunnel();
-    time_t GetStartingTime(void);
+    time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
-    ConnectionManagerState GetState(void);
-    const bool& GetUserSignalledStop(bool throwIfTrue);
+    ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);
     bool SendStatusMessage(
             bool connected,
@@ -68,7 +67,7 @@ private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
     static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);
 
-    void FetchRemoteServerList(void);
+    void FetchRemoteServerList();
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };
@@ -89,9 +88,9 @@ private:
         DWORD size);
     void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
-    void MarkCurrentServerFailed(void);
+    void MarkCurrentServerFailed();
     void LoadNextServer(tstring& handshakeRequestPath);
-    bool RequireUpgrade(void);
+    bool RequireUpgrade();
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
     tstring GetSplitTunnelingFilePath();
@@ -108,7 +107,6 @@ private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
     ServerList m_serverList;
-    bool m_userSignalledStop;
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
     HANDLE m_upgradeThread;

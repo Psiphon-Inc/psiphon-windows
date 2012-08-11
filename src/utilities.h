@@ -19,6 +19,8 @@
 
 #pragma once
 
+struct StopInfo;
+
 
 bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
 
@@ -32,10 +34,10 @@ DWORD WaitForConnectability(
         int port, 
         DWORD timeout, 
         HANDLE process, 
-        const vector<const bool*>& signalStopFlags);
+        const StopInfo& stopInfo);
 
 // NOTE: targetPort is inout, outputing the first available port
-bool TestForOpenPort(int& targetPort, int maxIncrement, const vector<const bool*>& signalStopFlags);
+bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo);
 
 void StopProcess(DWORD processID, HANDLE process);
 

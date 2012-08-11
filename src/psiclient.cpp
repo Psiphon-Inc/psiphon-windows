@@ -36,6 +36,7 @@
 #include "limitsingleinstance.h"
 #include "htmldlg.h"
 #include "server_list_reordering.h"
+#include "stopsignal.h"
 
 
 //==== Globals ================================================================
@@ -1064,8 +1065,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         // Stop VPN if running
+        // The order of these calls is important. The serverListReorder
+        // requires connectionManager to stay up while it shuts down.
         g_serverListReorder.Stop();
-        g_connectionManager.Stop();
+        g_connectionManager.Stop(STOP_REASON_EXIT);
         PostQuitMessage(0);
         break;
 
