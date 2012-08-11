@@ -253,6 +253,9 @@ bool HTTPSRequest::MakeRequest(
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/)
 {
+    // Throws if signaled
+    stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
+
     DWORD dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
                     SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;

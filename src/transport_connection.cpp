@@ -73,7 +73,7 @@ void TransportConnection::Connect(
             my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
 
             if (!handshakeRequestPath
-                || !DoHandshake(stopInfo, handshakeRequestPath))
+                || !DoHandshake(true, stopInfo, handshakeRequestPath))
             {
                 // Need a handshake but can't do a handshake or handshake failing.
                 throw TryNextServer();
@@ -119,7 +119,7 @@ void TransportConnection::Connect(
         if (!handshakeDone && handshakeRequestPath)
         {
             // We do not fail regardless of whether the handshake succeeds.
-            (void)DoHandshake(stopInfo, handshakeRequestPath);
+            (void)DoHandshake(false, stopInfo, handshakeRequestPath);
             handshakeDone = true;
         }
 
@@ -169,6 +169,7 @@ void TransportConnection::WaitForDisconnect()
 }
 
 bool TransportConnection::DoHandshake(
+                            bool preTransport,
                             const StopInfo& stopInfo, 
                             const TCHAR* handshakeRequestPath)
 {
@@ -183,6 +184,7 @@ bool TransportConnection::DoHandshake(
     // Send list of known server IP addresses (used for stats logging on the server)
 
     if (!serverRequest.MakeRequest(
+                        preTransport, // allow adhoc if this is a pre-transport handshake (i.e, for VPN)
                         m_transport,
                         m_sessionInfo,
                         handshakeRequestPath,

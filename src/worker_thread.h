@@ -104,7 +104,9 @@ protected:
     virtual void StopImminent() = 0;
 
     // Called when the implementation should stop and clean up.
-    virtual void DoStop() = 0;
+    // `cleanly` indicates whether the stop is clean (expected, triggered)
+    // or not (something died).
+    virtual void DoStop(bool cleanly) = 0;
 
     // The actual thread function.
     static DWORD WINAPI Thread(void* object);

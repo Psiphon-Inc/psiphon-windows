@@ -95,7 +95,7 @@ protected:
     // IWorkerThread implementation
     virtual bool DoStart();
     virtual void StopImminent();
-    virtual void DoStop();
+    virtual void DoStop(bool cleanly);
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
 

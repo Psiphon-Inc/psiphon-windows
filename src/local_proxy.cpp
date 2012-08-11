@@ -161,8 +161,13 @@ void LocalProxy::StopImminent()
     }
 }
 
-void LocalProxy::DoStop()
+void LocalProxy::DoStop(bool cleanly)
 {
+    if (!cleanly) 
+    {
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
+    }
+
     Cleanup();
 }
 
@@ -199,12 +204,18 @@ void LocalProxy::Cleanup()
     if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
         my_print(true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
-        (void)m_statsCollector->SendStatusMessage(
+        if (m_statsCollector->SendStatusMessage(
                                 true, // Note: there's a timeout side-effect when final=false
                                 m_pageViewEntries, 
                                 m_httpsRequestEntries, 
-                                m_bytesTransferred);
-        my_print(true, _T("%s: Stopped dirtily. Final stats sent."), __TFUNCTION__);
+                                m_bytesTransferred))
+        {
+            my_print(true, _T("%s: Stopped dirtily. Final stats sent."), __TFUNCTION__);
+        }
+        else
+        {
+            my_print(true, _T("%s: Stopped dirtily. Final stats send failed."), __TFUNCTION__);
+        }
     }
 }
 

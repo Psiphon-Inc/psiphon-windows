@@ -492,6 +492,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     string response;
     ServerRequest serverRequest;
     if (serverRequest.MakeRequest(
+                        false, // don't allow adhoc
                         m_transport,
                         sessionInfo,
                         connectedRequestPath.c_str(),
@@ -512,6 +513,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
             string speedResponse;
             ServerRequest serverRequest;
             (void)serverRequest.MakeRequest(
+                            false, // don't allow adhoc
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -578,6 +580,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
             string speedResponse;
             ServerRequest serverRequest;
             serverRequest.MakeRequest(
+                            false, // don't allow adhoc
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -653,6 +656,7 @@ bool ConnectionManager::SendStatusMessage(
     long stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
 
     bool success = serverRequest.MakeRequest(
+                                    final, // allow adhoc if this is the final stats request
                                     m_transport,
                                     sessionInfo,
                                     requestPath.c_str(),
@@ -867,6 +871,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         DWORD start = GetTickCount();
         ServerRequest serverRequest;
         if (!serverRequest.MakeRequest(
+                    false, // don't allow adhoc
                     manager->m_transport,
                     sessionInfo,
                     downloadRequestPath.c_str(),
@@ -892,6 +897,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
             {
                 string speedResponse;
                 (void)serverRequest.MakeRequest( // Ignore failure
+                                false, // don't allow adhoc
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(

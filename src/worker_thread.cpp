@@ -31,17 +31,18 @@ class WorkerThreadStopSignal : public StopSignal
 {
 public:
     // Note that ownership of parentStopSignal is *not* taken (won't be deleted)
-    WorkerThreadStopSignal(const StopSignal* parentStopSignal, const bool& additionalStopFlag);
+    WorkerThreadStopSignal(StopSignal* parentStopSignal, const bool& additionalStopFlag);
 
     virtual long CheckSignal(long reasons, bool throwIfTrue=false) const;
+    virtual void SignalStop(long reason, bool throwSignal=false);
 
 private:
-    const StopSignal* m_parentStopSignal;
+    StopSignal* m_parentStopSignal;
     const bool& m_additionalStopFlag;
 };
 
 WorkerThreadStopSignal::WorkerThreadStopSignal(
-                            const StopSignal* parentStopSignal, 
+                            StopSignal* parentStopSignal, 
                             const bool& additionalStopFlag)
     : m_parentStopSignal(parentStopSignal),
       m_additionalStopFlag(additionalStopFlag)
@@ -58,6 +59,11 @@ long WorkerThreadStopSignal::CheckSignal(long reasons, bool throwIfTrue/*=false*
     // TODO: Maybe this should throw Abort() if true and not whatever CheckSignal throws?
     return m_parentStopSignal->CheckSignal(reasons, throwIfTrue) 
            || m_additionalStopFlag;
+}
+
+void WorkerThreadStopSignal::SignalStop(long reason, bool throwSignal/*=false*/)
+{
+    m_parentStopSignal->SignalStop(reason, throwSignal);
 }
 
 
@@ -270,7 +276,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         }
     }
 
-    _this->DoStop();
+    _this->DoStop(stoppingCleanly);
     SetEvent(_this->m_stoppedEvent);
 
     return 0;

@@ -60,7 +60,7 @@ protected:
     bool DoStart();
     bool DoPeriodicCheck();
     void StopImminent();
-    void DoStop();
+    void DoStop(bool cleanly);
 
     void Cleanup();
 

@@ -86,6 +86,7 @@ ServerRequest::~ServerRequest()
 }
 
 bool ServerRequest::MakeRequest(
+        bool adhocIfNeeded,
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
@@ -96,6 +97,9 @@ bool ServerRequest::MakeRequest(
         DWORD additionalDataLength/*=0*/)
 {
     // See comments at the top of this file for full discussion of logic.
+
+    // Throws if signaled
+    stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
 
     assert(requestPath);
 
@@ -120,6 +124,12 @@ bool ServerRequest::MakeRequest(
                 additionalData,
                 additionalDataLength);
         return requestSuccess;
+    }
+    else if (!adhocIfNeeded)
+    {
+        // If ad hoc/temporary connections aren't allowed, and the transport
+        // isn't currently connected, bail.
+        return false;
     }
 
     // We don't have a connected transport. 

@@ -69,7 +69,7 @@ void ITransport::StopImminent()
 {
 }
 
-void ITransport::DoStop()
+void ITransport::DoStop(bool cleanly)
 {
     Cleanup();
     m_systemProxySettings = 0;

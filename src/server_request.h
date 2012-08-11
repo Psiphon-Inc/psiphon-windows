@@ -31,6 +31,7 @@ public:
     ServerRequest();
     virtual ~ServerRequest();
     bool MakeRequest(
+        bool adhocTransportIfNecessary,
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,

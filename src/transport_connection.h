@@ -70,7 +70,10 @@ public:
     class TryNextServer { };
 
 private:
-    bool DoHandshake(const StopInfo& stopInfo, const TCHAR* handshakeRequestPath);
+    bool DoHandshake(
+            bool preTransport, 
+            const StopInfo& stopInfo, 
+            const TCHAR* handshakeRequestPath);
     void Cleanup();
 
 private:
