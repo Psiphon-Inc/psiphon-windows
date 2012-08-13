@@ -210,10 +210,14 @@ void LocalProxy::Cleanup()
                                 m_httpsRequestEntries, 
                                 m_bytesTransferred))
         {
+            m_finalStatsSent = true;
             my_print(true, _T("%s: Stopped dirtily. Final stats sent."), __TFUNCTION__);
         }
         else
         {
+            // Not setting m_finalStatsSent to true if SendStatusMessage failed.
+            // This will allow the possibility of trying again a bit later (this
+            // function is called from both DoStop and the destructor).
             my_print(true, _T("%s: Stopped dirtily. Final stats send failed."), __TFUNCTION__);
         }
     }
