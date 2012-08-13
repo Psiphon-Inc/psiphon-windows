@@ -646,6 +646,12 @@ bool ConnectionManager::SendStatusMessage(
     string additionalDataString = additionalData.str();
 
     tstring requestPath = GetStatusRequestPath(m_transport, !final);
+    if (requestPath.length() <= 0)
+    {
+        // Can't send the status
+        return false;
+    }
+
     string response;
     ServerRequest serverRequest;
 
@@ -739,6 +745,13 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
 {
     AutoMUTEX lock(m_mutex);
+
+    // If there's no session ID, we can't send the status.
+    if (transport->GetSessionID(m_currentSessionInfo).length() <= 0)
+    {
+        my_print(true, _T("%s: no session ID; not sending status"), __TFUNCTION__);
+        return _T("");
+    }
 
     // TODO: get error code from SSH client?
 
