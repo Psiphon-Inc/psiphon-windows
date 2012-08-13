@@ -385,6 +385,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 }
             }
 
+            // Before doing post-connect work, make sure there's no stop signal.
+            // Throws if there's a signal set.
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
+
             //
             // Do post-connect work, like opening home pages.
             //
