@@ -150,7 +150,7 @@ bool ServerRequest::MakeRequest(
                 requestPath,
                 response,
                 stopInfo,
-                true, // use local proxy
+                false, // don't use local proxy -- there's no transport, and there may be bad/remnant system proxy settings
                 additionalHeaders,
                 additionalData,
                 additionalDataLength))
