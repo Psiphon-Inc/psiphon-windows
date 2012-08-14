@@ -79,15 +79,10 @@ DWORD StopSignal::CheckSignal(DWORD reasons, bool throwIfTrue/*=false*/) const
     return (reasons & m_stop);
 }
 
-void StopSignal::SignalStop(DWORD reason, bool throwSignal/*=false*/)
+void StopSignal::SignalStop(DWORD reason)
 {
     AutoMUTEX lock(m_mutex);
     m_stop = m_stop | reason;
-    
-    if (throwSignal && m_stop)
-    {
-        ThrowSignalException(m_stop);
-    }
 }
 
 void StopSignal::ClearStopSignal(DWORD reason)

@@ -86,8 +86,7 @@ public:
 
     // Sets the stop signal to the given reason. (More specifically, ORs
     // the stop signal into the currently set reasons.)
-    // If `throwSignal` is true, an exception is thrown.
-    virtual void SignalStop(DWORD reason, bool throwSignal=false);
+    virtual void SignalStop(DWORD reason);
 
     // Removes `reason` from the set of currently set reasons.
     virtual void ClearStopSignal(DWORD reason);

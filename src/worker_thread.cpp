@@ -34,7 +34,7 @@ public:
     WorkerThreadStopSignal(StopSignal* parentStopSignal, const bool& additionalStopFlag);
 
     virtual DWORD CheckSignal(DWORD reasons, bool throwIfTrue=false) const;
-    virtual void SignalStop(DWORD reason, bool throwSignal=false);
+    virtual void SignalStop(DWORD reason);
 
 private:
     StopSignal* m_parentStopSignal;
@@ -61,9 +61,9 @@ DWORD WorkerThreadStopSignal::CheckSignal(DWORD reasons, bool throwIfTrue/*=fals
            || m_additionalStopFlag;
 }
 
-void WorkerThreadStopSignal::SignalStop(DWORD reason, bool throwSignal/*=false*/)
+void WorkerThreadStopSignal::SignalStop(DWORD reason)
 {
-    m_parentStopSignal->SignalStop(reason, throwSignal);
+    m_parentStopSignal->SignalStop(reason);
 }
 
 
