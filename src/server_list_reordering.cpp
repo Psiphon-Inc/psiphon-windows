@@ -62,7 +62,7 @@ void ServerListReorder::Start(ServerList* serverList)
 void ServerListReorder::Stop()
 {
     // This signal causes the thread to terminate
-    m_stopSignal.SignalStop(STOP_REASON_ALL);
+    m_stopSignal.SignalStop(STOP_REASON_EXIT);
 
     if (m_thread != NULL)
     {
@@ -73,7 +73,7 @@ void ServerListReorder::Stop()
         m_thread = NULL;
     }
 
-    m_stopSignal.ClearStopSignal(STOP_REASON_ALL);
+    m_stopSignal.ClearStopSignal(STOP_REASON_EXIT);
 }
 
 

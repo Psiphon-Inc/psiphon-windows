@@ -136,7 +136,7 @@ ConnectionManagerState ConnectionManager::GetState()
     return m_state;
 }
 
-void ConnectionManager::Stop(long reason)
+void ConnectionManager::Stop(DWORD reason)
 {
     my_print(true, _T("%s: enter"), __TFUNCTION__);
 
@@ -203,19 +203,28 @@ void ConnectionManager::FetchRemoteServerList(void)
     m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
 
     string response;
-    HTTPSRequest httpsRequest;
-    // NOTE: Not using local proxy
-    if (!httpsRequest.MakeRequest(
-            NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
-            443,
-            "",
-            NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
-            response,
-            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
-            false) // don't use local proxy
-        || response.length() <= 0)
+
+    try
     {
-        my_print(false, _T("Fetch remote server list failed"));
+        HTTPSRequest httpsRequest;
+        // NOTE: Not using local proxy
+        if (!httpsRequest.MakeRequest(
+                NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
+                443,
+                "",
+                NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
+                response,
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
+                false) // don't use local proxy
+            || response.length() <= 0)
+        {
+            my_print(false, _T("Fetch remote server list failed"));
+            return;
+        }
+    }
+    catch (StopSignal::StopException&)
+    {
+        // Application is exiting.
         return;
     }
 
@@ -663,7 +672,7 @@ bool ConnectionManager::SendStatusMessage(
     // wait loop.
     // TODO: the user may be left waiting too long after cancelling; add
     // a shorter timeout in this case
-    long stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
+    DWORD stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
 
     bool success = serverRequest.MakeRequest(
                                     final, // allow adhoc if this is the final stats request
@@ -750,8 +759,10 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
 {
     AutoMUTEX lock(m_mutex);
 
+    tstring sessionID = transport->GetSessionID(m_currentSessionInfo);
+
     // If there's no session ID, we can't send the status.
-    if (transport->GetSessionID(m_currentSessionInfo).length() <= 0)
+    if (sessionID.length() <= 0)
     {
         my_print(true, _T("%s: no session ID; not sending status"), __TFUNCTION__);
         return _T("");
@@ -766,7 +777,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
-           _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) + 
+           _T("&session_id=") + sessionID + 
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
@@ -1246,7 +1257,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     // wait loop.
     // TODO: the user may be left waiting too long after cancelling; add
     // a shorter timeout in this case
-    long stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
+    DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
 
     bool success = httpsRequest.MakeRequest(
                                     NarrowToTString(sessionInfo.GetServerAddress()).c_str(),

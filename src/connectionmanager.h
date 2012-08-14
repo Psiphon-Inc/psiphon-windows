@@ -45,7 +45,7 @@ public:
 
     ServerList& GetServerList();
     void Toggle(const tstring& transport, bool startSplitTunnel);
-    void Stop(long reason);
+    void Stop(DWORD reason);
     void Start(const tstring& transport, bool startSplitTunnel);
     void StartSplitTunnel();
     void StopSplitTunnel();

@@ -23,10 +23,12 @@
 // Stop conditions
 //
 
-// Matches all reasons (in a bitwise-AND check)
+// Matches all reasons (in a bitwise-AND check).
+// Not to be used an actual signal.
 #define STOP_REASON_ALL                     0xFFFFFFFFL
 
-// Indicates no reasons should be matched (in a bitwise-AND check)
+// Indicates no reasons should be matched (in a bitwise-AND check).
+// Not to be used an actual signal.
 #define STOP_REASON_NONE                    0x0L
 
 // The user clicked the disconnect button
@@ -47,14 +49,14 @@ public:
     class StopException 
     {
     public:
-        virtual long GetType() const = 0;
+        virtual DWORD GetType() const = 0;
     };
 
     // will never be thrown
     class NoStopException : public StopException
     {
     public:
-        virtual long GetType() const { return STOP_REASON_NONE; }
+        virtual DWORD GetType() const { return STOP_REASON_NONE; }
     };
 
     // TODO: Should these subclasses be in the subclasses of StopSignal?
@@ -62,51 +64,51 @@ public:
     class UserDisconnectException : public StopException
     {
     public:
-        virtual long GetType() const { return STOP_REASON_USER_DISCONNECT; }
+        virtual DWORD GetType() const { return STOP_REASON_USER_DISCONNECT; }
     };
 
     class ExitStopException : public StopException
     {
     public:
-        virtual long GetType() const { return STOP_REASON_EXIT; }
+        virtual DWORD GetType() const { return STOP_REASON_EXIT; }
     };
 
     class UnexpectedDisconnectStopException : public StopException
     {
     public:
-        virtual long GetType() const { return STOP_REASON_UNEXPECTED_DISCONNECT; }
+        virtual DWORD GetType() const { return STOP_REASON_UNEXPECTED_DISCONNECT; }
     };
 
     // Check if the current state of the stop signal matches any of the 
     // bitwise-OR'd `reasons`. Returns the matching reasons, or 0 if no match.
     // If `throwIfTrue` is true, an exception is thrown.
-    virtual long CheckSignal(long reasons, bool throwIfTrue=false) const;
+    virtual DWORD CheckSignal(DWORD reasons, bool throwIfTrue=false) const;
 
     // Sets the stop signal to the given reason. (More specifically, ORs
     // the stop signal into the currently set reasons.)
     // If `throwSignal` is true, an exception is thrown.
-    virtual void SignalStop(long reason, bool throwSignal=false);
+    virtual void SignalStop(DWORD reason, bool throwSignal=false);
 
     // Removes `reason` from the set of currently set reasons.
-    virtual void ClearStopSignal(long reason);
+    virtual void ClearStopSignal(DWORD reason);
 
-    static void ThrowSignalException(long reason);
+    static void ThrowSignalException(DWORD reason);
 
     StopSignal(); 
     virtual ~StopSignal();
 
 private:
     HANDLE m_mutex;
-    long m_stop;
+    DWORD m_stop;
 };
 
 // Convenience struct for passing around a stop signal and set of reasons
 struct StopInfo
 {
     StopSignal* stopSignal;
-    long stopReasons;
+    DWORD stopReasons;
     StopInfo() : stopSignal(NULL), stopReasons(STOP_REASON_NONE) {}
-    StopInfo(StopSignal* stopSignal, long stopReasons) : stopSignal(stopSignal), stopReasons(stopReasons) {}
+    StopInfo(StopSignal* stopSignal, DWORD stopReasons) : stopSignal(stopSignal), stopReasons(stopReasons) {}
 };
 
 //

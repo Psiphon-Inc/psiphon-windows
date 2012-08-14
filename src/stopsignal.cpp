@@ -69,7 +69,7 @@ StopSignal::~StopSignal()
     m_mutex = 0;
 }
 
-long StopSignal::CheckSignal(long reasons, bool throwIfTrue/*=false*/) const
+DWORD StopSignal::CheckSignal(DWORD reasons, bool throwIfTrue/*=false*/) const
 {
     AutoMUTEX lock(m_mutex);
     if (throwIfTrue && (reasons & m_stop)) 
@@ -79,7 +79,7 @@ long StopSignal::CheckSignal(long reasons, bool throwIfTrue/*=false*/) const
     return (reasons & m_stop);
 }
 
-void StopSignal::SignalStop(long reason, bool throwSignal/*=false*/)
+void StopSignal::SignalStop(DWORD reason, bool throwSignal/*=false*/)
 {
     AutoMUTEX lock(m_mutex);
     m_stop = m_stop | reason;
@@ -90,14 +90,14 @@ void StopSignal::SignalStop(long reason, bool throwSignal/*=false*/)
     }
 }
 
-void StopSignal::ClearStopSignal(long reason)
+void StopSignal::ClearStopSignal(DWORD reason)
 {
     AutoMUTEX lock(m_mutex);
     m_stop = m_stop & ~reason;
 }
 
 // static
-void StopSignal::ThrowSignalException(long reason)
+void StopSignal::ThrowSignalException(DWORD reason)
 {
     // `reason` may match more than one reason, but we'll just throw the first match
 

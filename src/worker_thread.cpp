@@ -33,8 +33,8 @@ public:
     // Note that ownership of parentStopSignal is *not* taken (won't be deleted)
     WorkerThreadStopSignal(StopSignal* parentStopSignal, const bool& additionalStopFlag);
 
-    virtual long CheckSignal(long reasons, bool throwIfTrue=false) const;
-    virtual void SignalStop(long reason, bool throwSignal=false);
+    virtual DWORD CheckSignal(DWORD reasons, bool throwIfTrue=false) const;
+    virtual void SignalStop(DWORD reason, bool throwSignal=false);
 
 private:
     StopSignal* m_parentStopSignal;
@@ -49,7 +49,7 @@ WorkerThreadStopSignal::WorkerThreadStopSignal(
 {
 }
 
-long WorkerThreadStopSignal::CheckSignal(long reasons, bool throwIfTrue/*=false*/) const
+DWORD WorkerThreadStopSignal::CheckSignal(DWORD reasons, bool throwIfTrue/*=false*/) const
 {
     if (throwIfTrue && m_additionalStopFlag)
     {
@@ -61,7 +61,7 @@ long WorkerThreadStopSignal::CheckSignal(long reasons, bool throwIfTrue/*=false*
            || m_additionalStopFlag;
 }
 
-void WorkerThreadStopSignal::SignalStop(long reason, bool throwSignal/*=false*/)
+void WorkerThreadStopSignal::SignalStop(DWORD reason, bool throwSignal/*=false*/)
 {
     m_parentStopSignal->SignalStop(reason, throwSignal);
 }
