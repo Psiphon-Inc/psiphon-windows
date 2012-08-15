@@ -55,7 +55,7 @@ SSHTransportBase::~SSHTransportBase()
     (void)Cleanup();
 }
 
-tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo) const
+tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo)
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());
 }

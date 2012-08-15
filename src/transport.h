@@ -46,7 +46,7 @@ public:
     //static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
     // Only valid when connected
-    virtual tstring GetSessionID(SessionInfo sessionInfo) const = 0;
+    virtual tstring GetSessionID(SessionInfo sessionInfo) = 0;
 
     // Find out what port, if any, the local proxy should connect to in order 
     // to use this transport.
