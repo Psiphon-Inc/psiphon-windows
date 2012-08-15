@@ -40,7 +40,7 @@ public:
     virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
     virtual bool IsServerRequestTunnelled() const;
 
-    virtual tstring GetSessionID(SessionInfo sessionInfo) const;
+    virtual tstring GetSessionID(SessionInfo sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
 

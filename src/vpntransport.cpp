@@ -89,9 +89,13 @@ tstring VPNTransport::GetTransportDisplayName() const
     return TRANSPORT_DISPLAY_NAME;
 }
 
-tstring VPNTransport::GetSessionID(SessionInfo sessionInfo) const
+tstring VPNTransport::GetSessionID(SessionInfo sessionInfo)
 {
-    return GetPPPIPAddress();
+    if (m_pppIPAddress.empty())
+    {
+        m_pppIPAddress = GetPPPIPAddress();
+    }
+    return m_pppIPAddress;
 }
 
 int VPNTransport::GetLocalProxyParentPort() const

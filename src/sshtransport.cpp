@@ -60,7 +60,7 @@ bool SSHTransportBase::IsServerRequestTunnelled() const
     return true;
 }
 
-tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo) const
+tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo)
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());
 }
