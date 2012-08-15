@@ -38,6 +38,7 @@ public:
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
     virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
+    virtual bool IsServerRequestTunnelled() const;
 
     virtual tstring GetSessionID(SessionInfo sessionInfo) const;
     virtual int GetLocalProxyParentPort() const;

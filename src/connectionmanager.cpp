@@ -1259,6 +1259,15 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     // a shorter timeout in this case
     DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
 
+    // Use the system proxy unless the currently connected transport forbids it.
+    bool useProxy = true;
+    if (m_transport 
+        && m_transport->IsConnected() 
+        && !m_transport->IsServerRequestTunnelled())
+    {
+        useProxy = false;
+    }
+
     bool success = httpsRequest.MakeRequest(
                                     NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
                                     sessionInfo.GetWebPort() ,
@@ -1266,7 +1275,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
                                     requestPath.c_str(),
                                     response,
                                     StopInfo(&GlobalStopSignal::Instance(), stopReason),
-                                    true, // use proxy
+                                    useProxy,
                                     L"Content-Type: application/json",
                                     (LPVOID)narrowFeedback.c_str(),
                                     narrowFeedback.length());

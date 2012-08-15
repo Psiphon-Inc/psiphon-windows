@@ -55,6 +55,11 @@ SSHTransportBase::~SSHTransportBase()
     (void)Cleanup();
 }
 
+bool SSHTransportBase::IsServerRequestTunnelled() const
+{
+    return true;
+}
+
 tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo) const
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());

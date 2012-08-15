@@ -119,7 +119,7 @@ bool ServerRequest::MakeRequest(
                 requestPath,
                 response,
                 stopInfo,
-                true, // use local proxy
+                currentTransport->IsServerRequestTunnelled(), // use local proxy?
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
@@ -199,7 +199,7 @@ bool ServerRequest::MakeRequest(
                     requestPath,
                     response,
                     stopInfo,
-                    true, // use local proxy
+                    (*transport_iter).get()->IsServerRequestTunnelled(), // use local proxy?
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))

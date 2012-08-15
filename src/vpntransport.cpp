@@ -111,6 +111,11 @@ bool VPNTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
     return true;
 }
 
+bool VPNTransport::IsServerRequestTunnelled() const
+{
+    return false;
+}
+
 bool VPNTransport::Cleanup()
 {
     DWORD returnCode = ERROR_SUCCESS;

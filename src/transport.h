@@ -60,6 +60,10 @@ public:
     // can connect.
     virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
 
+    // Returns true if requests to the server should be tunnelled/proxied
+    // through the transport. If not, then the local proxy should not be used.
+    virtual bool IsServerRequestTunnelled() const = 0;
+
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort

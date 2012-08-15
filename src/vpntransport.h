@@ -48,6 +48,7 @@ public:
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
     virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual bool IsServerRequestTunnelled() const;
 
     virtual bool Cleanup();
 
