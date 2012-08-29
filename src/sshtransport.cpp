@@ -189,6 +189,11 @@ void SSHTransportBase::TransportConnectHelper(
         throw TransportFailed();
     }
 
+	tstring proxy_type, proxy_host;
+	int proxy_port;
+	bool is_parent_proxy = systemProxySettings->GetUserLanProxy(proxy_type, proxy_host, proxy_port);
+	int a =1;
+
     if (!GetSSHParams(
             sessionInfo,
             m_localSocksProxyPort,
