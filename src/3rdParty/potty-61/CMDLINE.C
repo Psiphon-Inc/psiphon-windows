@@ -469,34 +469,34 @@ int cmdline_process_param(char *p, char *value, int need_save, Config *cfg)
     // end hinky
 
 	//Psiphon proxy chaining options
-	if (!strcmp(p, "-proxy_type")) {
-	RETURN(2);
-	UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
-	SAVEABLE(0);
-	cfg->proxy_type = PROXY_NONE;
-	if(!strcmp(value, "https"))
-	{
-		cfg->proxy_type = PROXY_HTTP;
-	}
-	else if(!strcmp(value, "socks"))
-	{
-		cfg->proxy_type = PROXY_SOCKS4;
-	}
-	}
+    if (!strcmp(p, "-proxy_type")) {
+        RETURN(2);
+        UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
+        SAVEABLE(0);
+        cfg->proxy_type = PROXY_NONE;
+        if(!strcmp(value, "https"))
+        {
+            cfg->proxy_type = PROXY_HTTP;
+        }
+        else if(!strcmp(value, "socks"))
+        {
+            cfg->proxy_type = PROXY_SOCKS4;
+        }
+    }
 
-	if (!strcmp(p, "-proxy_host")) {
-	RETURN(2);
-	UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
-	SAVEABLE(0);
-	strcpy(cfg->proxy_host, value);
-	}
+    if (!strcmp(p, "-proxy_host")) {
+        RETURN(2);
+        UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
+        SAVEABLE(0);
+        strcpy(cfg->proxy_host, value);
+    }
 
-	if (!strcmp(p, "-proxy_port")) {
-	RETURN(2);
-	UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
-	SAVEABLE(0);
-	cfg->proxy_port = atoi(value);
-	}
+    if (!strcmp(p, "-proxy_port")) {
+        RETURN(2);
+        UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
+        SAVEABLE(0);
+        cfg->proxy_port = atoi(value);
+    }
 	//end Psiphon proxy chaining options
 
     if (!strcmp(p, "-4") || !strcmp(p, "-ipv4")) {

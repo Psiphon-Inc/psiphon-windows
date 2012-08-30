@@ -343,7 +343,7 @@ bool SSHTransport::GetSSHParams(
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine,
-					SystemProxySettings* systemProxySettings)
+                    SystemProxySettings* systemProxySettings)
 {
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
     o_serverPort = sessionInfo.GetSSHPort();
@@ -443,7 +443,7 @@ bool OSSHTransport::GetSSHParams(
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine,
-					SystemProxySettings* systemProxySettings)
+                    SystemProxySettings* systemProxySettings)
 {
     o_serverAddress.clear();
     o_serverPort = 0;
