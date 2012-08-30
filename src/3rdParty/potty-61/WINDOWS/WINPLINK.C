@@ -195,6 +195,12 @@ static void usage(void)
     printf("            open tunnel in place of session (SSH-2 only)\n");
     printf("  -z        obfuscate key exchange (SSH-2 only)\n");
 	printf("  -Z keywd  obfuscate with keyword (SSH-2 only)\n");
+    printf("  -proxy_type type\n");
+    printf("            Specify parent proxy type: https or socks\n");
+    printf("  -proxy_host host\n");
+    printf("            Parent proxy hostname\n");
+    printf("  -proxy_port port\n");
+    printf("            Parent proxy port\n");
     printf("  -sercfg configuration-string (e.g. 19200,8,n,1,X)\n");
     printf("            Specify the serial configuration (serial only)\n");
     exit(1);

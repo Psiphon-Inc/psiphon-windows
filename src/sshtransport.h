@@ -61,7 +61,8 @@ protected:
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine) = 0;
+                    tstring& o_plonkCommandLine,
+					SystemProxySettings* systemProxySettings) = 0;
 
     void TransportConnectHelper(
             const SessionInfo& sessionInfo,
@@ -100,7 +101,8 @@ protected:
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine);
+                    tstring& o_plonkCommandLine,
+					SystemProxySettings* systemProxySettings);
 };
 
 
@@ -128,5 +130,6 @@ protected:
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine);
+                    tstring& o_plonkCommandLine,
+					SystemProxySettings* systemProxySettings);
 };

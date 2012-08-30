@@ -189,11 +189,6 @@ void SSHTransportBase::TransportConnectHelper(
         throw TransportFailed();
     }
 
-	tstring proxy_type, proxy_host;
-	int proxy_port;
-	bool is_parent_proxy = systemProxySettings->GetUserLanProxy(proxy_type, proxy_host, proxy_port);
-	int a =1;
-
     if (!GetSSHParams(
             sessionInfo,
             m_localSocksProxyPort,
@@ -201,7 +196,8 @@ void SSHTransportBase::TransportConnectHelper(
             serverAddress, 
             serverPort, 
             serverHostKey, 
-            plonkCommandLine))
+            plonkCommandLine, 
+			systemProxySettings))
     {
         throw TransportFailed();
     }
@@ -346,7 +342,8 @@ bool SSHTransport::GetSSHParams(
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine)
+                    tstring& o_plonkCommandLine,
+					SystemProxySettings* systemProxySettings)
 {
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
     o_serverPort = sessionInfo.GetSSHPort();
@@ -365,6 +362,18 @@ bool SSHTransport::GetSSHParams(
 #ifdef _DEBUG
          args << _T(" -v");
 #endif
+		 	
+	tstring proxy_type, proxy_host;
+	int proxy_port;
+	if(systemProxySettings->GetUserLanProxy(proxy_type, proxy_host, proxy_port))
+	{
+		my_print(true, _T("User LAN proxy detected type: %s, hostname: %s, port: %d"), 
+			proxy_type.c_str(), proxy_host.c_str(), proxy_port);
+
+		args << _T(" -proxy_type ") << proxy_type.c_str();
+		args << _T(" -proxy_host ") << proxy_host.c_str();
+		args << _T(" -proxy_port ") << proxy_port;
+	}
 
     o_plonkCommandLine = m_plonkPath + args.str();
 
@@ -433,7 +442,8 @@ bool OSSHTransport::GetSSHParams(
                     tstring& o_serverAddress, 
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine)
+                    tstring& o_plonkCommandLine,
+					SystemProxySettings* systemProxySettings)
 {
     o_serverAddress.clear();
     o_serverPort = 0;
@@ -465,6 +475,19 @@ bool OSSHTransport::GetSSHParams(
 #ifdef _DEBUG
          args << _T(" -v");
 #endif
+
+	tstring proxy_type, proxy_host;
+	int proxy_port;
+	if(systemProxySettings->GetUserLanProxy(proxy_type, proxy_host, proxy_port))
+	{
+		my_print(true, _T("User LAN proxy detected type: %s, hostname: %s, port: %d"), 
+		proxy_type.c_str(), proxy_host.c_str(), proxy_port);
+
+		args << _T(" -proxy_type ") << proxy_type.c_str();
+		args << _T(" -proxy_host ") << proxy_host.c_str();
+		args << _T(" -proxy_port ") << proxy_port;
+	}
+
     o_plonkCommandLine = m_plonkPath + args.str();
 
     return true;
