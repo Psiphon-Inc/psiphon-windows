@@ -480,7 +480,7 @@ int cmdline_process_param(char *p, char *value, int need_save, Config *cfg)
         }
         else if(!strcmp(value, "socks"))
         {
-            cfg->proxy_type = PROXY_SOCKS4;
+            cfg->proxy_type = PROXY_SOCKS5;
         }
     }
 
@@ -496,6 +496,20 @@ int cmdline_process_param(char *p, char *value, int need_save, Config *cfg)
         UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
         SAVEABLE(0);
         cfg->proxy_port = atoi(value);
+    }
+	
+	if (!strcmp(p, "-proxy_username")) {
+        RETURN(2);
+        UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
+        SAVEABLE(0);
+		strcpy(cfg->proxy_username, value);
+    }
+
+	if (!strcmp(p, "-proxy_password")) {
+        RETURN(2);
+        UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
+        SAVEABLE(0);
+		strcpy(cfg->proxy_password, value);
     }
 	//end Psiphon proxy chaining options
 

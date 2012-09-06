@@ -25,14 +25,19 @@
 
 void InitializeUserSettings(void)
 {
-    // Read - and consequently write out default values for - all settings
-    UserSkipBrowser();
-    UserSkipProxySettings();
-    UserLocalHTTPProxyPort();
+	// Read - and consequently write out default values for - all settings
+	UserSkipBrowser();
+	UserSkipProxySettings();
+	UserLocalHTTPProxyPort();
+	UserParentProxyHostname();
+	UserParentProxyPort();
+	UserParentProxyUsername();
+	UserParentProxyPassword();
+	UserParentProxyType();
 }
 
 
-int GetUserSetting(const string& settingName, int defaultValue /* = 0 */)
+int GetUserSettingDword(const string& settingName, int defaultValue /* = 0 */)
 {
     DWORD value = 0;
 
@@ -47,19 +52,60 @@ int GetUserSetting(const string& settingName, int defaultValue /* = 0 */)
     return value;
 }
 
+string GetUserSettingString(const string& settingName, string defaultValue /* = 0 */)
+{
+    string value;
+
+    if (!ReadRegistryStringValue(settingName.c_str(), value))
+    {
+        // Write out the setting with a default value so that it's there
+        // for users to see and use, if they want to set it.
+        value = defaultValue;
+        WriteRegistryStringValue(settingName, value);
+    }
+
+    return value;
+}
+
 
 bool UserSkipBrowser(void)
 {
-    return 1 == GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
 }
 
 
 bool UserSkipProxySettings(void)
 {
-    return 1 == GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
 }
 
 int UserLocalHTTPProxyPort(void)
 {
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, DEFAULT_LOCAL_HTTP_PROXY_PORT);
+    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, DEFAULT_LOCAL_HTTP_PROXY_PORT);
 }
+
+string UserParentProxyHostname(void)
+{
+	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_HOSTNAME);
+}
+
+int UserParentProxyPort(void)
+{
+    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_PORT);
+}
+
+string UserParentProxyUsername(void)
+{
+	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_USERNAME);
+}
+
+string UserParentProxyPassword(void)
+{
+	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_PASSWORD);
+}
+
+string UserParentProxyType(void)
+{
+	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_TYPE, LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_DEFAULT_TYPE);
+}
+

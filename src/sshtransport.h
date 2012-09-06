@@ -21,6 +21,7 @@
 
 #include "transport.h"
 #include "transport_registry.h"
+#include "usersettings.h"
 
 class SessionInfo;
 
@@ -43,6 +44,14 @@ public:
     virtual tstring GetSessionID(SessionInfo sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
+	virtual bool GetUserParentProxySettings(
+		SystemProxySettings* systemProxySettings,
+		tstring& o_UserParentProxyType,
+		tstring& o_UserParentProxyHostname,
+		int& o_UserParentProxyPort,
+		tstring& o_UserParentProxyUsername,
+		tstring& o_UserParentProxyPassword );
+
 
     virtual bool Cleanup();
 
@@ -53,7 +62,6 @@ protected:
                     SystemProxySettings* systemProxySettings);
     virtual bool DoPeriodicCheck();
 
-    // Subclasses must implement this member
     virtual bool GetSSHParams(
                     const SessionInfo& sessionInfo,
                     const int localSocksProxyPort,
@@ -62,7 +70,7 @@ protected:
                     int& o_serverPort, 
                     tstring& o_serverHostKey, 
                     tstring& o_plonkCommandLine,
-                    SystemProxySettings* systemProxySettings) = 0;
+                    SystemProxySettings* systemProxySettings);
 
     void TransportConnectHelper(
             const SessionInfo& sessionInfo,
