@@ -25,15 +25,15 @@
 
 void InitializeUserSettings(void)
 {
-	// Read - and consequently write out default values for - all settings
-	UserSkipBrowser();
-	UserSkipProxySettings();
-	UserLocalHTTPProxyPort();
-	UserParentProxyHostname();
-	UserParentProxyPort();
-	UserParentProxyUsername();
-	UserParentProxyPassword();
-	UserParentProxyType();
+    // Read - and consequently write out default values for - all settings
+    UserSkipBrowser();
+    UserSkipProxySettings();
+    UserLocalHTTPProxyPort();
+    UserParentProxyHostname();
+    UserParentProxyPort();
+    UserParentProxyUsername();
+    UserParentProxyPassword();
+    UserParentProxyType();
 }
 
 
@@ -81,12 +81,14 @@ bool UserSkipProxySettings(void)
 
 int UserLocalHTTPProxyPort(void)
 {
-    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, DEFAULT_LOCAL_HTTP_PROXY_PORT);
+    return GetUserSettingDword(
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, 
+        DEFAULT_LOCAL_HTTP_PROXY_PORT);
 }
 
 string UserParentProxyHostname(void)
 {
-	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_HOSTNAME);
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_HOSTNAME);
 }
 
 int UserParentProxyPort(void)
@@ -96,16 +98,18 @@ int UserParentProxyPort(void)
 
 string UserParentProxyUsername(void)
 {
-	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_USERNAME);
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_USERNAME);
 }
 
 string UserParentProxyPassword(void)
 {
-	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_PASSWORD);
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_PASSWORD);
 }
 
 string UserParentProxyType(void)
 {
-	return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_TYPE, LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_DEFAULT_TYPE);
+    return GetUserSettingString(
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_TYPE, 
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_DEFAULT_TYPE);
 }
 

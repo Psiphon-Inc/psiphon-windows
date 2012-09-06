@@ -43,7 +43,7 @@ public:
 
     bool Revert();
 
-	bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
+    bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
 
 private:
     static const int INTERNET_OPTIONS_NUMBER = 3;

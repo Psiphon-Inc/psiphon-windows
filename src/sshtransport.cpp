@@ -189,18 +189,18 @@ void SSHTransportBase::TransportConnectHelper(
         throw TransportFailed();
     }
 
-	if (!GetSSHParams(
-		sessionInfo,
-		m_localSocksProxyPort,
-		sshPassword,
-		serverAddress, 
-		serverPort, 
-		serverHostKey, 
-		plonkCommandLine, 
-		systemProxySettings))
-	{
-		throw TransportFailed();
-	}
+    if (!GetSSHParams(
+        sessionInfo,
+        m_localSocksProxyPort,
+        sshPassword,
+        serverAddress, 
+        serverPort, 
+        serverHostKey, 
+        plonkCommandLine, 
+        systemProxySettings))
+    {
+        throw TransportFailed();
+    }
 
     // Add host to Plonk's known host registry set
     // Note: currently we're not removing this after the session, so we're leaving a trace
@@ -324,64 +324,64 @@ bool SSHTransportBase::GetUserParentProxySettings(
 }
 
 bool SSHTransportBase::GetSSHParams(
-	const SessionInfo& sessionInfo,
-	const int localSocksProxyPort,
-	const string& sshPassword,
-	tstring& o_serverAddress, 
-	int& o_serverPort, 
-	tstring& o_serverHostKey, 
-	tstring& o_plonkCommandLine,
-	SystemProxySettings* systemProxySettings)
+    const SessionInfo& sessionInfo,
+    const int localSocksProxyPort,
+    const string& sshPassword,
+    tstring& o_serverAddress, 
+    int& o_serverPort, 
+    tstring& o_serverHostKey, 
+    tstring& o_plonkCommandLine,
+    SystemProxySettings* systemProxySettings)
 {
-	o_serverAddress.clear();
-	o_serverPort = 0;
-	o_serverHostKey.clear();
-	o_plonkCommandLine.clear();
+    o_serverAddress.clear();
+    o_serverPort = 0;
+    o_serverHostKey.clear();
+    o_plonkCommandLine.clear();
 
-	o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
-	o_serverPort = sessionInfo.GetSSHObfuscatedPort();
-	o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
+    o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
+    o_serverPort = sessionInfo.GetSSHObfuscatedPort();
+    o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
-	// Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
-	// the expected value we just set in the registry
+    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
+    // the expected value we just set in the registry
 
-	tstringstream args;
-	args << _T(" -ssh -C -N -batch")
-		<< _T(" -P ") << o_serverPort
-		<< _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
-		<< _T(" -pw ") << NarrowToTString(sshPassword).c_str()
-		<< _T(" -D ") << localSocksProxyPort;
+    tstringstream args;
+    args << _T(" -ssh -C -N -batch")
+         << _T(" -P ") << o_serverPort
+         << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
+         << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
+         << _T(" -D ") << localSocksProxyPort;
 #ifdef _DEBUG
-	args << _T(" -v");
+    args << _T(" -v");
 #endif
 
-	tstring proxy_type, proxy_host, proxy_username, proxy_password;
-	int proxy_port;
+    tstring proxy_type, proxy_host, proxy_username, proxy_password;
+    int proxy_port;
 
-	if(GetUserParentProxySettings(
-		systemProxySettings, 
-		proxy_type, 
-		proxy_host, 
-		proxy_port, 
-		proxy_username, 
-		proxy_password))
-	{
-		args << _T(" -proxy_type ") << proxy_type.c_str();
-		args << _T(" -proxy_host ") << proxy_host.c_str();
-		args << _T(" -proxy_port ") << proxy_port;
-		if(!proxy_username.empty())
-		{
-			args << _T(" -proxy_username ") << proxy_username.c_str();
-		}
-		if(!proxy_password.empty())
-		{
-			args << _T(" -proxy_password ") << proxy_password.c_str();
-		}
+    if(GetUserParentProxySettings(
+        systemProxySettings, 
+        proxy_type, 
+        proxy_host, 
+        proxy_port, 
+        proxy_username, 
+        proxy_password))
+    {
+        args << _T(" -proxy_type ") << proxy_type.c_str();
+        args << _T(" -proxy_host ") << proxy_host.c_str();
+        args << _T(" -proxy_port ") << proxy_port;
+        if(!proxy_username.empty())
+        {
+            args << _T(" -proxy_username ") << proxy_username.c_str();
+        }
+        if(!proxy_password.empty())
+        {
+            args << _T(" -proxy_password ") << proxy_password.c_str();
+        }
 
-	}
-	o_plonkCommandLine = m_plonkPath + args.str();
-
-	return true;
+    }
+    
+    o_plonkCommandLine = m_plonkPath + args.str();
+    return true;
 }
 
 /******************************************************************************
@@ -439,34 +439,34 @@ bool SSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 }
 
 bool SSHTransport::GetSSHParams(
-	const SessionInfo& sessionInfo,
-	const int localSocksProxyPort,
-	const string& sshPassword,
-	tstring& o_serverAddress, 
-	int& o_serverPort, 
-	tstring& o_serverHostKey, 
-	tstring& o_plonkCommandLine,
-	SystemProxySettings* systemProxySettings)
+    const SessionInfo& sessionInfo,
+    const int localSocksProxyPort,
+    const string& sshPassword,
+    tstring& o_serverAddress, 
+    int& o_serverPort, 
+    tstring& o_serverHostKey, 
+    tstring& o_plonkCommandLine,
+    SystemProxySettings* systemProxySettings)
 {
-	tstring o_plonk_options;
+    tstring o_plonk_options;
 
-	if(!SSHTransportBase::GetSSHParams(
-		sessionInfo,
-		localSocksProxyPort,
-		sshPassword,
-		o_serverAddress, 
-		o_serverPort, 
-		o_serverHostKey, 
-		o_plonk_options,
-		systemProxySettings))
-	{
-		return false;
-	}
-	tstringstream args;
-	args << o_plonk_options << _T(" ") << o_serverAddress;
-	o_plonkCommandLine = args.str();
+    if(!SSHTransportBase::GetSSHParams(
+        sessionInfo,
+        localSocksProxyPort,
+        sshPassword,
+        o_serverAddress, 
+        o_serverPort, 
+        o_serverHostKey, 
+        o_plonk_options,
+        systemProxySettings))
+    {
+        return false;
+    }
+    tstringstream args;
+    args << o_plonk_options << _T(" ") << o_serverAddress;
+    o_plonkCommandLine = args.str();
 
-	return true;
+    return true;
 }
 
 
@@ -525,46 +525,46 @@ bool OSSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 }
 
 bool OSSHTransport::GetSSHParams(
-	const SessionInfo& sessionInfo,
-	const int localSocksProxyPort,
-	const string& sshPassword,
-	tstring& o_serverAddress, 
-	int& o_serverPort, 
-	tstring& o_serverHostKey, 
-	tstring& o_plonkCommandLine,
-	SystemProxySettings* systemProxySettings)
+    const SessionInfo& sessionInfo,
+    const int localSocksProxyPort,
+    const string& sshPassword,
+    tstring& o_serverAddress, 
+    int& o_serverPort, 
+    tstring& o_serverHostKey, 
+    tstring& o_plonkCommandLine,
+    SystemProxySettings* systemProxySettings)
 {
 
-	if (sessionInfo.GetSSHObfuscatedPort() <= 0 
-		|| sessionInfo.GetSSHObfuscatedKey().size() <= 0)
-	{
-		my_print(false, _T("%s - missing parameters"), __TFUNCTION__);
-		return false;
-	}
+    if (sessionInfo.GetSSHObfuscatedPort() <= 0 
+        || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
+    {
+        my_print(false, _T("%s - missing parameters"), __TFUNCTION__);
+        return false;
+    }
 
-	tstring o_plonk_options;
+    tstring o_plonk_options;
 
-	if(!SSHTransportBase::GetSSHParams(
-		sessionInfo,
-		localSocksProxyPort,
-		sshPassword,
-		o_serverAddress, 
-		o_serverPort, 
-		o_serverHostKey, 
-		o_plonk_options,
-		systemProxySettings))
-	{
-		return false;
-	}
+    if(!SSHTransportBase::GetSSHParams(
+        sessionInfo,
+        localSocksProxyPort,
+        sshPassword,
+        o_serverAddress, 
+        o_serverPort, 
+        o_serverHostKey, 
+        o_plonk_options,
+        systemProxySettings))
+    {
+        return false;
+    }
 
-	tstringstream args;
+    tstringstream args;
 
-	args << o_plonk_options; 
-	args << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str();
-	args << _T(" ") << o_serverAddress.c_str();
-	o_plonkCommandLine = args.str();
+    args << o_plonk_options; 
+    args << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str();
+    args << _T(" ") << o_serverAddress.c_str();
+    o_plonkCommandLine = args.str();
 
-	return true;
+    return true;
 }
 
 
