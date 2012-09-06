@@ -50,7 +50,7 @@ public:
 		tstring& o_UserParentProxyHostname,
 		int& o_UserParentProxyPort,
 		tstring& o_UserParentProxyUsername,
-		tstring& o_UserParentProxyPassword );
+		tstring& o_UserParentProxyPassword);
 
 
     virtual bool Cleanup();
