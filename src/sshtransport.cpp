@@ -282,45 +282,46 @@ bool SSHTransportBase::LaunchPlonk(const TCHAR* plonkCommandLine)
 
 bool SSHTransportBase::GetUserParentProxySettings(
     SystemProxySettings* systemProxySettings,
-    tstring& o_UserParentProxyType,
-    tstring& o_UserParentProxyHostname,
-    int& o_UserParentProxyPort,
-    tstring& o_UserParentProxyUsername,
-    tstring& o_UserParentProxyPassword)
+    tstring& o_UserSSHParentProxyType,
+    tstring& o_UserSSHParentProxyHostname,
+    int& o_UserSSHParentProxyPort,
+    tstring& o_UserSSHParentProxyUsername,
+    tstring& o_UserSSHParentProxyPassword)
 {
-    o_UserParentProxyType.clear();
-    o_UserParentProxyHostname.clear();
-    o_UserParentProxyUsername.clear();
-    o_UserParentProxyPassword.clear();
-    o_UserParentProxyPort = 0;
+    o_UserSSHParentProxyType.clear();
+    o_UserSSHParentProxyHostname.clear();
+    o_UserSSHParentProxyUsername.clear();
+    o_UserSSHParentProxyPassword.clear();
+    o_UserSSHParentProxyPort = 0;
 
+    
+    //Check if user wants to use parent proxy
+    if(UserSkipSSHParentProxySettings())
+    {
+        return false;
+    }
     //Registry values take precedence over system settings
     //Username and password for 'Basic' HTTP or SOCKS authentication
     //must be stored in registry
 
-    o_UserParentProxyType = NarrowToTString(UserParentProxyType());
-    o_UserParentProxyHostname = NarrowToTString(UserParentProxyHostname());
-    o_UserParentProxyPort =  UserLocalHTTPProxyPort();
-    o_UserParentProxyUsername = NarrowToTString(UserParentProxyUsername());
-    o_UserParentProxyPassword =  NarrowToTString(UserParentProxyPassword());
+    o_UserSSHParentProxyType = NarrowToTString(UserSSHParentProxyType());
+    o_UserSSHParentProxyHostname = NarrowToTString(UserSSHParentProxyHostname());
+    o_UserSSHParentProxyPort =  UserSSHParentProxyPort();
+    o_UserSSHParentProxyUsername = NarrowToTString(UserSSHParentProxyUsername());
+    o_UserSSHParentProxyPassword =  NarrowToTString(UserSSHParentProxyPassword());
 
-    if(!o_UserParentProxyType.empty() 
-        && !o_UserParentProxyHostname.empty()
-        && 0 != o_UserParentProxyPort)
+    if(!o_UserSSHParentProxyType.empty() 
+        && !o_UserSSHParentProxyHostname.empty()
+        && 0 != o_UserSSHParentProxyPort)
     {
         return true;
     }
 
     //if no registry values try system settings
-    if(systemProxySettings->GetUserLanProxy(
-        o_UserParentProxyType, 
-        o_UserParentProxyHostname, 
-        o_UserParentProxyPort))
-    {
-        return true;
-    }
-
-    return false;
+    return(systemProxySettings->GetUserLanProxy(
+        o_UserSSHParentProxyType, 
+        o_UserSSHParentProxyHostname, 
+        o_UserSSHParentProxyPort));
 }
 
 bool SSHTransportBase::GetSSHParams(

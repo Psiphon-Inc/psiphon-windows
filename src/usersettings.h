@@ -29,11 +29,12 @@ string GetUserSettingString(const string& settingName, string defaultValue = str
 bool UserSkipBrowser(void);
 bool UserSkipProxySettings(void);
 int UserLocalHTTPProxyPort(void);
-string UserParentProxyHostname(void);
-int UserParentProxyPort(void);
-string UserParentProxyUsername(void);
-string UserParentProxyPassword(void);
-string UserParentProxyType(void);
+bool UserSkipSSHParentProxySettings(void);
+string UserSSHParentProxyHostname(void);
+int UserSSHParentProxyPort(void);
+string UserSSHParentProxyUsername(void);
+string UserSSHParentProxyPassword(void);
+string UserSSHParentProxyType(void);
 
 
 

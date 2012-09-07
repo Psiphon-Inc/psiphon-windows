@@ -29,11 +29,12 @@ void InitializeUserSettings(void)
     UserSkipBrowser();
     UserSkipProxySettings();
     UserLocalHTTPProxyPort();
-    UserParentProxyHostname();
-    UserParentProxyPort();
-    UserParentProxyUsername();
-    UserParentProxyPassword();
-    UserParentProxyType();
+    UserSkipSSHParentProxySettings();
+    UserSSHParentProxyHostname();
+    UserSSHParentProxyPort();
+    UserSSHParentProxyUsername();
+    UserSSHParentProxyPassword();
+    UserSSHParentProxyType();
 }
 
 
@@ -86,30 +87,36 @@ int UserLocalHTTPProxyPort(void)
         DEFAULT_LOCAL_HTTP_PROXY_PORT);
 }
 
-string UserParentProxyHostname(void)
+bool UserSkipSSHParentProxySettings(void)
 {
-    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_HOSTNAME);
+    //don't use parent proxy for SSH by default
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_SSH_PARENT_PROXY_SETTINGS, true);
 }
 
-int UserParentProxyPort(void)
+string UserSSHParentProxyHostname(void)
 {
-    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_PORT);
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_HOSTNAME);
 }
 
-string UserParentProxyUsername(void)
+int UserSSHParentProxyPort(void)
 {
-    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_USERNAME);
+    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PORT);
 }
 
-string UserParentProxyPassword(void)
+string UserSSHParentProxyUsername(void)
 {
-    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_PASSWORD);
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_USERNAME);
 }
 
-string UserParentProxyType(void)
+string UserSSHParentProxyPassword(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PASSWORD);
+}
+
+string UserSSHParentProxyType(void)
 {
     return GetUserSettingString(
-        LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_TYPE, 
-        LOCAL_SETTINGS_REGISTRY_VALUE_USER_PARENT_PROXY_DEFAULT_TYPE);
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_TYPE, 
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_DEFAULT_TYPE);
 }
 
