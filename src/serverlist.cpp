@@ -37,6 +37,7 @@ ServerList::~ServerList()
     CloseHandle(m_mutex);
 }
 
+// This function may throw
 void ServerList::AddEntriesToList(
                     const vector<string>& newServerEntryList,
                     const ServerEntry* serverEntry)
@@ -177,6 +178,7 @@ ServerEntry ServerList::GetNextServer()
     return serverEntryList[0];
 }
 
+// This function should not throw
 ServerEntries ServerList::GetList()
 {
     AutoMUTEX lock(m_mutex);
@@ -211,8 +213,8 @@ ServerEntries ServerList::GetList()
     }
     catch (std::exception &ex)
     {
-        string message = string("Corrupt Embedded Server List: ") + ex.what();
-        throw std::exception(message.c_str());
+        my_print(false, string("Not using corrupt Embedded Server List: ") + ex.what());
+        embeddedServerEntryList.clear();
     }
 
     for (ServerEntries::iterator embeddedServerEntry = embeddedServerEntryList.begin();
