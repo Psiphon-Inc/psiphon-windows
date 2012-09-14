@@ -29,22 +29,21 @@
 // resulting process. Returns 0 on error; call GetLastError to find out why.
 HANDLE LaunchApplication(LPCTSTR command)
 {
-   STARTUPINFO startupInfo = {0};
-   PROCESS_INFORMATION processInfo = {0};
+    STARTUPINFO startupInfo = {0};
+    PROCESS_INFORMATION processInfo = {0};
 
-   // The command argument is in-out, so we need to pass a modifiable buffer.
-   TCHAR command_buffer[MAX_PATH] = {0};
-   _tcsncpy_s(command_buffer, MAX_PATH, command, MAX_PATH);
+    // The command argument is in-out, so we need to pass a modifiable buffer.
+    tstring command_buffer(command);
 
-   if(::CreateProcess(NULL, 
-                      command_buffer,
-                      NULL, NULL, FALSE, 0, NULL, NULL,
-                      &startupInfo, &processInfo))
-   {
-      return processInfo.hProcess;
-   }
+    if(::CreateProcess(NULL, 
+                       const_cast<TCHAR *>(command_buffer.c_str()),
+                       NULL, NULL, FALSE, 0, NULL, NULL,
+                       &startupInfo, &processInfo))
+    {
+        return processInfo.hProcess;
+    }
 
-   return 0;
+    return 0;
 }
 
 // Wait for the browser to become available for more page launching.
