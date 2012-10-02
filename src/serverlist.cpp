@@ -148,17 +148,29 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MarkCurrentServerFailed()
+void ServerList::MarkServerFailed(const string& serverAddress)
 {
     AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() > 1)
     {
-        // Move the first server to the end of the list
-        serverEntryList.push_back(serverEntryList[0]);
-        serverEntryList.erase(serverEntryList.begin());
-        WriteListToSystem(serverEntryList);
+        for (ServerEntries::iterator entry = serverEntryList.begin();
+             entry != serverEntryList.end();
+             ++entry)
+        {
+            if (serverAddress == entry->serverAddress)
+            {
+                ServerEntry failedServer;
+                failedServer.Copy(*entry);
+
+                // Move the failed server to the end of the list
+                serverEntryList.erase(entry);
+                serverEntryList.push_back(failedServer);
+                WriteListToSystem(serverEntryList);
+                return;
+            }
+        }
     }
 }
 

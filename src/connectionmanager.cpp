@@ -822,7 +822,7 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 {
     AutoMUTEX lock(m_mutex);
     
-    m_serverList.MarkCurrentServerFailed();
+    m_serverList.MarkServerFailed(m_currentSessionInfo.GetServerAddress());
 }
 
 // ==== General Session Functions =============================================
