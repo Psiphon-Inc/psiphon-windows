@@ -247,7 +247,16 @@ void ConnectionManager::FetchRemoteServerList(void)
             newServerEntryVector.push_back(line);
         }
     }
-    m_serverList.AddEntriesToList(newServerEntryVector, 0);
+
+    try
+    {
+        m_serverList.AddEntriesToList(newServerEntryVector, 0);
+    }
+    catch (std::exception &ex)
+    {
+        my_print(false, string("Corrupt remote server list: ") + ex.what());
+        // This isn't fatal.
+    }
 }
 
 void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
@@ -813,7 +822,7 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 {
     AutoMUTEX lock(m_mutex);
     
-    m_serverList.MarkCurrentServerFailed();
+    m_serverList.MarkServerFailed(m_currentSessionInfo.GetServerAddress());
 }
 
 // ==== General Session Functions =============================================

@@ -59,7 +59,7 @@ public:
     ServerList();
     virtual ~ServerList();
 
-    void MarkCurrentServerFailed();
+    void MarkServerFailed(const string& serverAddress);
     ServerEntry GetNextServer();
     ServerEntries GetList();
 

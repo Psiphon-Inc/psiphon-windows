@@ -33,16 +33,28 @@ HANDLE LaunchApplication(LPCTSTR command)
     PROCESS_INFORMATION processInfo = {0};
 
     // The command argument is in-out, so we need to pass a modifiable buffer.
-    tstring command_buffer(command);
+    int command_length = _tcslen(command) + 1; // includes the null terminator
+    TCHAR *command_buffer = new TCHAR[command_length];
 
-    if(::CreateProcess(NULL, 
-                       const_cast<TCHAR *>(command_buffer.c_str()),
-                       NULL, NULL, FALSE, 0, NULL, NULL,
-                       &startupInfo, &processInfo))
+    try
     {
-        return processInfo.hProcess;
+        _tcsncpy_s(command_buffer, command_length, command, command_length);
+
+        if(::CreateProcess(NULL, 
+                           command_buffer,
+                           NULL, NULL, FALSE, 0, NULL, NULL,
+                           &startupInfo, &processInfo))
+        {
+            delete[] command_buffer;
+            return processInfo.hProcess;
+        }
+    }
+    catch (...)
+    {
+        // Fall through to error condition
     }
 
+    delete[] command_buffer;
     return 0;
 }
 

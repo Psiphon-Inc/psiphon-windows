@@ -37,6 +37,7 @@ ServerList::~ServerList()
     CloseHandle(m_mutex);
 }
 
+// This function may throw
 void ServerList::AddEntriesToList(
                     const vector<string>& newServerEntryList,
                     const ServerEntry* serverEntry)
@@ -147,17 +148,29 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MarkCurrentServerFailed()
+void ServerList::MarkServerFailed(const string& serverAddress)
 {
     AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
     if (serverEntryList.size() > 1)
     {
-        // Move the first server to the end of the list
-        serverEntryList.push_back(serverEntryList[0]);
-        serverEntryList.erase(serverEntryList.begin());
-        WriteListToSystem(serverEntryList);
+        for (ServerEntries::iterator entry = serverEntryList.begin();
+             entry != serverEntryList.end();
+             ++entry)
+        {
+            if (serverAddress == entry->serverAddress)
+            {
+                ServerEntry failedServer;
+                failedServer.Copy(*entry);
+
+                // Move the failed server to the end of the list
+                serverEntryList.erase(entry);
+                serverEntryList.push_back(failedServer);
+                WriteListToSystem(serverEntryList);
+                return;
+            }
+        }
     }
 }
 
@@ -177,6 +190,7 @@ ServerEntry ServerList::GetNextServer()
     return serverEntryList[0];
 }
 
+// This function should not throw
 ServerEntries ServerList::GetList()
 {
     AutoMUTEX lock(m_mutex);
@@ -211,8 +225,8 @@ ServerEntries ServerList::GetList()
     }
     catch (std::exception &ex)
     {
-        string message = string("Corrupt Embedded Server List: ") + ex.what();
-        throw std::exception(message.c_str());
+        my_print(false, string("Not using corrupt Embedded Server List: ") + ex.what());
+        embeddedServerEntryList.clear();
     }
 
     for (ServerEntries::iterator embeddedServerEntry = embeddedServerEntryList.begin();
