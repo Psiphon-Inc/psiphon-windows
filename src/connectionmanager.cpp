@@ -269,6 +269,13 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
     AutoMUTEX lock(m_mutex);
 
     m_transport = TransportRegistry::New(transport);
+
+    if (!m_transport->ServerWithCapabilitiesExists(GetServerList()))
+    {
+        my_print(false, _T("No servers support this protocol."));
+        return;
+    }
+
     m_startSplitTunnel = startSplitTunnel;
 
     GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_USER_DISCONNECT | STOP_REASON_UNEXPECTED_DISCONNECT);
@@ -351,6 +358,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
         try
         {
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
+
             // Get the next server to try
 
             tstring handshakeRequestPath;
@@ -360,6 +369,19 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Note that the SessionInfo will only be partly filled in at this point.
             SessionInfo sessionInfo;
             manager->CopyCurrentSessionInfo(sessionInfo);
+
+            // We're looping around to run again. We're assuming that the calling
+            // function knows that there's at least one server to try. We're 
+            // not reporting anything, as the user doesn't need to know what's
+            // going on under the hood at this point.
+            if (!manager->m_transport->ServerHasCapabilities(sessionInfo.GetServerEntry()))
+            {
+                my_print(true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
+
+                manager->MarkCurrentServerFailed();
+
+                continue;
+            }
 
             //
             // Set up the transport connection

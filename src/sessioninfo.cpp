@@ -269,6 +269,7 @@ ServerEntry SessionInfo::GetServerEntry() const
         GetWebServerSecret(), GetWebServerCertificate(), 
         GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
         GetSSHHostKey(), GetSSHObfuscatedPort(), 
-        GetSSHObfuscatedKey());
+        GetSSHObfuscatedKey(),
+        m_serverEntry.capabilities);
     return newServerEntry;
 }

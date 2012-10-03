@@ -25,6 +25,7 @@
 #include "ras.h"
 #include "raserror.h"
 #include "utilities.h"
+#include "server_request.h"
 
 
 #define VPN_CONNECTION_TIMEOUT_SECONDS  20
@@ -110,7 +111,7 @@ tstring VPNTransport::GetLastTransportError() const
     return NarrowToTString(s.str());
 }
 
-bool VPNTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
+bool VPNTransport::IsHandshakeRequired(const ServerEntry& entry) const
 {
     return true;
 }
@@ -118,6 +119,15 @@ bool VPNTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
 bool VPNTransport::IsServerRequestTunnelled() const
 {
     return false;
+}
+
+bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
+{
+    // VPN requires a pre-tunnel handshake
+
+    bool canHandshake = ServerRequest::ServerHasRequestCapabilities(entry);
+
+    return canHandshake && entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
 }
 
 bool VPNTransport::Cleanup()
