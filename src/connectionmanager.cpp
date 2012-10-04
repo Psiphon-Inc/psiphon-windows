@@ -548,6 +548,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                 LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
                 TStringToNarrow(GetISO8601DatetimeString()));
 
+#ifdef SPEEDTEST
         // Speed feedback
         // Note: the /connected request *is* tunneled
 
@@ -569,6 +570,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             speedResponse,
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
+#endif //SPEEDTEST
 
         // Process split tunnel response
         ProcessSplitTunnelResponse(response);
@@ -586,6 +588,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     
     OpenHomePages();
 
+#ifdef SPEEDTEST
     // Perform non-tunneled speed test when requested
     // Note that in VPN mode, the WinHttp request is implicitly tunneled.
 
@@ -637,6 +640,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
     }
+#endif //SPEEDTEST
 }
 
 bool ConnectionManager::SendStatusMessage(
@@ -950,6 +954,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         {
             my_print(false, _T("Download complete"));
 
+#ifdef SPEEDTEST
             // Speed feedback
             DWORD now = GetTickCount();
             if (now >= start) // GetTickCount can wrap
@@ -960,7 +965,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    _T(""),
+                                    manager->m_transport->GetTransportProtocolName(),
                                     _T("download"),
                                     _T(""),
                                     now-start,
@@ -968,6 +973,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 speedResponse,
                                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
             }
+#endif //SPEEDTEST
 
             // Perform upgrade.
         
