@@ -1286,7 +1286,6 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
 
     tstring requestPath = GetFeedbackRequestPath(m_transport);
     string response;
-    HTTPSRequest httpsRequest;
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -1294,26 +1293,16 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     // a shorter timeout in this case
     DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
 
-    // Use the system proxy unless the currently connected transport forbids it.
-    bool useProxy = true;
-    if (m_transport 
-        && m_transport->IsConnected() 
-        && !m_transport->IsServerRequestTunnelled())
-    {
-        useProxy = false;
-    }
+    bool success = ServerRequest::MakeRequest(
+                        ServerRequest::NO_TEMP_TUNNEL,
+                        m_transport,
+                        sessionInfo,
+                        requestPath.c_str(),
+                        response,
+                        StopInfo(&GlobalStopSignal::Instance(), stopReason),
+                        L"Content-Type: application/json",
+                        (LPVOID)narrowFeedback.c_str(),
+                        narrowFeedback.length());
 
-    bool success = httpsRequest.MakeRequest(
-                                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                                    sessionInfo.GetWebPort() ,
-                                    sessionInfo.GetWebServerCertificate(),
-                                    requestPath.c_str(),
-                                    response,
-                                    StopInfo(&GlobalStopSignal::Instance(), stopReason),
-                                    useProxy,
-                                    L"Content-Type: application/json",
-                                    (LPVOID)narrowFeedback.c_str(),
-                                    narrowFeedback.length());
-    
     return success;
 }
