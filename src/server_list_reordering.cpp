@@ -18,8 +18,8 @@
  */
 
 #include "stdafx.h"
+#include <WinSock2.h>
 #include "config.h"
-#include "httpsrequest.h"
 #include "psiclient.h"
 #include "server_list_reordering.h"
 
@@ -112,23 +112,58 @@ DWORD WINAPI CheckServerThread(void* object)
 {
     WorkerThreadData* data = (WorkerThreadData*)object;
 
+    // Test for reachability by establishing a TCP socket
+    // connection to the specified port on the target host.
+
     DWORD start_time = GetTickCount();
 
-    tstring requestPath =
-        tstring(HTTP_CHECK_REQUEST_PATH) + 
-        _T("?server_secret=") + NarrowToTString(data->m_entry.webServerSecret);
+    bool connectSuccess = true;
 
-    HTTPSRequest httpsRequest(true); // silentMode: don't print errors
-    string response;
-    bool requestSuccess = 
-        httpsRequest.MakeRequest(
-            NarrowToTString(data->m_entry.serverAddress).c_str(),
-            data->m_entry.webServerPort,
-            data->m_entry.webServerCertificate,
-            requestPath.c_str(),
-            response,
-            data->m_stopInfo, 
-            false); // don't use local proxy
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = inet_addr(data->m_entry.serverAddress.c_str());
+    serverAddr.sin_port = htons(data->m_entry.webServerPort);
+
+    WSAEVENT connectedEvent = WSACreateEvent();
+    WSANETWORKEVENTS networkEvents;
+
+    SOCKET sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    if (INVALID_SOCKET == sock ||
+        0 != WSAEventSelect(sock, connectedEvent, FD_CONNECT) ||
+        SOCKET_ERROR != connect(sock, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) ||
+        WSAEWOULDBLOCK == WSAGetLastError())
+    {
+        connectSuccess = false;
+    }
+
+    while (connectSuccess)
+    {
+        DWORD waitResult = WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE);
+
+        if (WSA_WAIT_EVENT_0 == waitResult
+            && 0 == WSAEnumNetworkEvents(sock, connectedEvent, &networkEvents)
+            && (networkEvents.lNetworkEvents & FD_CONNECT)
+            && networkEvents.iErrorCode[FD_CONNECT_BIT] == 0)
+        {
+            // Successfully connected
+            break;
+        }
+
+        // Check for stop (abort) signal
+        if (data->m_stopInfo.stopSignal->CheckSignal(data->m_stopInfo.stopReasons, false))
+        {
+            connectSuccess = false;
+            break;
+        }
+    }
+
+    closesocket(sock);
+    WSACloseEvent(connectedEvent);
+    WSACleanup();
 
     DWORD end_time = GetTickCount(); // GetTickCount can wrap
 
@@ -136,7 +171,7 @@ DWORD WINAPI CheckServerThread(void* object)
                            (end_time - start_time) :
                            (0xFFFFFFFF - start_time + end_time);
 
-    data->m_responded = requestSuccess;
+    data->m_responded = connectSuccess;
 
     return 0;
 }
