@@ -108,7 +108,7 @@ struct WorkerThreadData
 };
 
 
-DWORD WINAPI CheckServerThread(void* object)
+DWORD WINAPI CheckServerReachabilityThread(void* object)
 {
     WorkerThreadData* data = (WorkerThreadData*)object;
 
@@ -117,30 +117,32 @@ DWORD WINAPI CheckServerThread(void* object)
 
     DWORD start_time = GetTickCount();
 
-    bool connectSuccess = true;
+    bool success = true;
 
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
-
     sockaddr_in serverAddr;
+    WSAEVENT connectedEvent = NULL;
+    WSANETWORKEVENTS networkEvents;
+    SOCKET sock = INVALID_SOCKET;
+
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr(data->m_entry.serverAddress.c_str());
-    serverAddr.sin_port = htons(data->m_entry.webServerPort);
+    serverAddr.sin_port = htons((unsigned short)data->m_entry.GetPreferredReachablityTestPort());
 
-    WSAEVENT connectedEvent = WSACreateEvent();
-    WSANETWORKEVENTS networkEvents;
+    connectedEvent = WSACreateEvent();
 
-    SOCKET sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
     if (INVALID_SOCKET == sock ||
         0 != WSAEventSelect(sock, connectedEvent, FD_CONNECT) ||
         SOCKET_ERROR != connect(sock, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) ||
-        WSAEWOULDBLOCK == WSAGetLastError())
+        WSAEWOULDBLOCK != WSAGetLastError())
     {
-        connectSuccess = false;
+        success = false;
     }
 
-    while (connectSuccess)
+    while (success)
     {
         DWORD waitResult = WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE);
 
@@ -156,7 +158,7 @@ DWORD WINAPI CheckServerThread(void* object)
         // Check for stop (abort) signal
         if (data->m_stopInfo.stopSignal->CheckSignal(data->m_stopInfo.stopReasons, false))
         {
-            connectSuccess = false;
+            success = false;
             break;
         }
     }
@@ -171,7 +173,7 @@ DWORD WINAPI CheckServerThread(void* object)
                            (end_time - start_time) :
                            (0xFFFFFFFF - start_time + end_time);
 
-    data->m_responded = connectSuccess;
+    data->m_responded = success;
 
     return 0;
 }
@@ -200,20 +202,23 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
 
     for (ServerEntryIterator entry = serverEntries.begin(); entry != serverEntries.end(); ++entry)
     {
-        WorkerThreadData* data = new WorkerThreadData(*entry, stopInfo);
-
-        HANDLE threadHandle;
-        if (!(threadHandle = CreateThread(0, 0, CheckServerThread, (void*)data, 0, 0)))
+        if (-1 != entry->GetPreferredReachablityTestPort())
         {
-            continue;
-        }
+            WorkerThreadData* data = new WorkerThreadData(*entry, stopInfo);
 
-        threadHandles.push_back(threadHandle);
-        threadData.push_back(data);
+            HANDLE threadHandle;
+            if (!(threadHandle = CreateThread(0, 0, CheckServerReachabilityThread, (void*)data, 0, 0)))
+            {
+                continue;
+            }
 
-        if (threadHandles.size() >= MAX_WORKER_THREADS)
-        {
-            break;
+            threadHandles.push_back(threadHandle);
+            threadData.push_back(data);
+
+            if (threadHandles.size() >= MAX_WORKER_THREADS)
+            {
+                break;
+            }
         }
     }
 

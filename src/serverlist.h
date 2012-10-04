@@ -41,6 +41,9 @@ struct ServerEntry
 
     bool HasCapability(const string& capability) const;
 
+    // returns -1 if there's no port
+    int GetPreferredReachablityTestPort() const;
+
     string serverAddress;
     int webServerPort;
     string webServerSecret;

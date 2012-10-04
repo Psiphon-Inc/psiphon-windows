@@ -471,7 +471,7 @@ void ServerEntry::FromString(const string& str)
     // At the time of introduction of the server capabilities feature
     // these are the default capabilities possessed by all servers.
     Json::Value defaultCapabilities(Json::arrayValue);
-    defaultCapabilities.append("SSH+");
+    defaultCapabilities.append("OSSH");
     defaultCapabilities.append("SSH");
     defaultCapabilities.append("VPN");
     defaultCapabilities.append("handshake");
@@ -516,4 +516,22 @@ bool ServerEntry::HasCapability(const string& capability) const
     }
 
     return false;
+}
+
+int ServerEntry::GetPreferredReachablityTestPort() const
+{
+    if (HasCapability("OSSH"))
+    {
+        return sshObfuscatedPort;
+    }
+    else if (HasCapability("SSH"))
+    {
+        return sshPort;
+    }
+    else if (HasCapability("handshake"))
+    {
+        return webServerPort;
+    }
+
+    return -1;
 }
