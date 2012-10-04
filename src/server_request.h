@@ -23,6 +23,7 @@
 
 class ITransport;
 class SessionInfo;
+struct ServerEntry;
 
 
 class ServerRequest
@@ -41,9 +42,10 @@ public:
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);
 
-private:
-    void GetTempTransports(
-        const SessionInfo& sessionInfo,
-        vector<auto_ptr<ITransport>>& o_tempTransports);
+    static bool ServerHasRequestCapabilities(const ServerEntry& serverEntry);
 
+private:
+    static void GetTempTransports(
+                const ServerEntry& serverEntry,
+                vector<auto_ptr<ITransport>>& o_tempTransports);
 };

@@ -18,8 +18,8 @@
  */
 
 #include "stdafx.h"
+#include <WinSock2.h>
 #include "config.h"
-#include "httpsrequest.h"
 #include "psiclient.h"
 #include "server_list_reordering.h"
 
@@ -108,27 +108,65 @@ struct WorkerThreadData
 };
 
 
-DWORD WINAPI CheckServerThread(void* object)
+DWORD WINAPI CheckServerReachabilityThread(void* object)
 {
     WorkerThreadData* data = (WorkerThreadData*)object;
 
+    // Test for reachability by establishing a TCP socket
+    // connection to the specified port on the target host.
+
     DWORD start_time = GetTickCount();
 
-    tstring requestPath =
-        tstring(HTTP_CHECK_REQUEST_PATH) + 
-        _T("?server_secret=") + NarrowToTString(data->m_entry.webServerSecret);
+    bool success = true;
 
-    HTTPSRequest httpsRequest(true); // silentMode: don't print errors
-    string response;
-    bool requestSuccess = 
-        httpsRequest.MakeRequest(
-            NarrowToTString(data->m_entry.serverAddress).c_str(),
-            data->m_entry.webServerPort,
-            data->m_entry.webServerCertificate,
-            requestPath.c_str(),
-            response,
-            data->m_stopInfo, 
-            false); // don't use local proxy
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    sockaddr_in serverAddr;
+    WSAEVENT connectedEvent = NULL;
+    WSANETWORKEVENTS networkEvents;
+    SOCKET sock = INVALID_SOCKET;
+
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = inet_addr(data->m_entry.serverAddress.c_str());
+    // NOTE: we've already checked for the presence of a reachability port below
+    serverAddr.sin_port = htons((unsigned short)data->m_entry.GetPreferredReachablityTestPort());
+
+    connectedEvent = WSACreateEvent();
+
+    sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    if (INVALID_SOCKET == sock ||
+        0 != WSAEventSelect(sock, connectedEvent, FD_CONNECT) ||
+        SOCKET_ERROR != connect(sock, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) ||
+        WSAEWOULDBLOCK != WSAGetLastError())
+    {
+        success = false;
+    }
+
+    while (success)
+    {
+        DWORD waitResult = WSAWaitForMultipleEvents(1, &connectedEvent, TRUE, 100, FALSE);
+
+        if (WSA_WAIT_EVENT_0 == waitResult
+            && 0 == WSAEnumNetworkEvents(sock, connectedEvent, &networkEvents)
+            && (networkEvents.lNetworkEvents & FD_CONNECT)
+            && networkEvents.iErrorCode[FD_CONNECT_BIT] == 0)
+        {
+            // Successfully connected
+            break;
+        }
+
+        // Check for stop (abort) signal
+        if (data->m_stopInfo.stopSignal->CheckSignal(data->m_stopInfo.stopReasons, false))
+        {
+            success = false;
+            break;
+        }
+    }
+
+    closesocket(sock);
+    WSACloseEvent(connectedEvent);
+    WSACleanup();
 
     DWORD end_time = GetTickCount(); // GetTickCount can wrap
 
@@ -136,7 +174,7 @@ DWORD WINAPI CheckServerThread(void* object)
                            (end_time - start_time) :
                            (0xFFFFFFFF - start_time + end_time);
 
-    data->m_responded = requestSuccess;
+    data->m_responded = success;
 
     return 0;
 }
@@ -165,20 +203,23 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
 
     for (ServerEntryIterator entry = serverEntries.begin(); entry != serverEntries.end(); ++entry)
     {
-        WorkerThreadData* data = new WorkerThreadData(*entry, stopInfo);
-
-        HANDLE threadHandle;
-        if (!(threadHandle = CreateThread(0, 0, CheckServerThread, (void*)data, 0, 0)))
+        if (-1 != entry->GetPreferredReachablityTestPort())
         {
-            continue;
-        }
+            WorkerThreadData* data = new WorkerThreadData(*entry, stopInfo);
 
-        threadHandles.push_back(threadHandle);
-        threadData.push_back(data);
+            HANDLE threadHandle;
+            if (!(threadHandle = CreateThread(0, 0, CheckServerReachabilityThread, (void*)data, 0, 0)))
+            {
+                continue;
+            }
 
-        if (threadHandles.size() >= MAX_WORKER_THREADS)
-        {
-            break;
+            threadHandles.push_back(threadHandle);
+            threadData.push_back(data);
+
+            if (threadHandles.size() >= MAX_WORKER_THREADS)
+            {
+                break;
+            }
         }
     }
 

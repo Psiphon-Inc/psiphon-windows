@@ -60,6 +60,11 @@ bool SSHTransportBase::IsServerRequestTunnelled() const
     return true;
 }
 
+bool SSHTransportBase::ServerHasCapabilities(const ServerEntry& entry) const
+{
+    return entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
+}
+
 tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo)
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());
@@ -323,14 +328,14 @@ tstring SSHTransport::GetTransportDisplayName() const
     return SSH_TRANSPORT_DISPLAY_NAME; 
 }
 
-bool SSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
+bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 {
     bool sufficientInfo = 
-        sessionInfo.GetServerAddress().length() > 0
-        && sessionInfo.GetSSHPort() > 0
-        && sessionInfo.GetSSHHostKey().length() > 0
-        && sessionInfo.GetSSHUsername().length() > 0
-        && sessionInfo.GetSSHPassword().length() > 0;
+        entry.serverAddress.length() > 0
+        && entry.sshPort > 0
+        && entry.sshHostKey.length() > 0
+        && entry.sshUsername.length() > 0
+        && entry.sshPassword.length() > 0;
     return !sufficientInfo;
 }
 
@@ -409,15 +414,15 @@ tstring OSSHTransport::GetTransportDisplayName() const
     return OSSH_TRANSPORT_DISPLAY_NAME;
 }
 
-bool OSSHTransport::IsHandshakeRequired(SessionInfo sessionInfo) const
+bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 {
     bool sufficientInfo = 
-        sessionInfo.GetServerAddress().length() > 0
-        && sessionInfo.GetSSHObfuscatedPort() > 0
-        && sessionInfo.GetSSHHostKey().length() > 0
-        && sessionInfo.GetSSHUsername().length() > 0
-        && sessionInfo.GetSSHPassword().length() > 0
-        && sessionInfo.GetSSHObfuscatedKey().length() > 0;
+        entry.serverAddress.length() > 0
+        && entry.sshObfuscatedPort > 0
+        && entry.sshHostKey.length() > 0
+        && entry.sshUsername.length() > 0
+        && entry.sshPassword.length() > 0
+        && entry.sshObfuscatedKey.length() > 0;
     return !sufficientInfo;
 }
 

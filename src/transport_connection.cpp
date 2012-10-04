@@ -68,7 +68,7 @@ void TransportConnection::Connect(
 
         // Some transports require a handshake before connecting; with others we
         // can connect before doing the handshake.    
-        if (m_transport->IsHandshakeRequired(m_sessionInfo))
+        if (m_transport->IsHandshakeRequired(m_sessionInfo.GetServerEntry()))
         {
             my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
 

@@ -32,11 +32,17 @@ struct ServerEntry
         const string& webServerSecret, const string& webServerCertificate, 
         int sshPort, const string& sshUsername, const string& sshPassword, 
         const string& sshHostKey, int sshObfuscatedPort, 
-        const string& sshObfuscatedKey);
+        const string& sshObfuscatedKey,
+        const vector<string>& capabilities);
     void Copy(const ServerEntry& src);
 
     string ToString() const;
     void FromString(const string& str);
+
+    bool HasCapability(const string& capability) const;
+
+    // returns -1 if there's no port
+    int GetPreferredReachablityTestPort() const;
 
     string serverAddress;
     int webServerPort;
@@ -48,6 +54,7 @@ struct ServerEntry
     string sshHostKey;
     int sshObfuscatedPort;
     string sshObfuscatedKey;
+    vector<string> capabilities;
 };
 
 typedef vector<ServerEntry> ServerEntries;
