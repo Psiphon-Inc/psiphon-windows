@@ -534,9 +534,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         
     DWORD start = GetTickCount();
     string response;
-    ServerRequest serverRequest;
-    if (serverRequest.MakeRequest(
-                        false, // don't allow adhoc
+    if (ServerRequest::MakeRequest(
+                        ServerRequest::ONLY_IF_TRANSPORT,
                         m_transport,
                         sessionInfo,
                         connectedRequestPath.c_str(),
@@ -556,9 +555,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            ServerRequest serverRequest;
-            (void)serverRequest.MakeRequest(
-                            false, // don't allow adhoc
+            (void)ServerRequest::MakeRequest(
+                            ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -625,9 +623,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            ServerRequest serverRequest;
-            serverRequest.MakeRequest(
-                            false, // don't allow adhoc
+            (void)ServerRequest::MakeRequest(
+                            ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -701,7 +698,6 @@ bool ConnectionManager::SendStatusMessage(
     }
 
     string response;
-    ServerRequest serverRequest;
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -709,8 +705,11 @@ bool ConnectionManager::SendStatusMessage(
     // a shorter timeout in this case
     DWORD stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
 
-    bool success = serverRequest.MakeRequest(
-                                    final, // allow adhoc if this is the final stats request
+    // Allow adhoc tunnels if this is the final stats request
+    ServerRequest::ReqLevel reqLevel = final ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
+
+    bool success = ServerRequest::MakeRequest(
+                                    reqLevel,
                                     m_transport,
                                     sessionInfo,
                                     requestPath.c_str(),
@@ -932,9 +931,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
         // Download new binary
         DWORD start = GetTickCount();
-        ServerRequest serverRequest;
-        if (!serverRequest.MakeRequest(
-                    false, // don't allow adhoc
+        if (!ServerRequest::MakeRequest(
+                    ServerRequest::ONLY_IF_TRANSPORT,
                     manager->m_transport,
                     sessionInfo,
                     downloadRequestPath.c_str(),
@@ -960,8 +958,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
             if (now >= start) // GetTickCount can wrap
             {
                 string speedResponse;
-                (void)serverRequest.MakeRequest( // Ignore failure
-                                false, // don't allow adhoc
+                (void)ServerRequest::MakeRequest( // Ignore failure
+                                ServerRequest::ONLY_IF_TRANSPORT,
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(

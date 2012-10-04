@@ -88,7 +88,7 @@ ServerRequest::~ServerRequest()
 }
 
 bool ServerRequest::MakeRequest(
-        bool adhocIfNeeded,
+        ReqLevel reqLevel,
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
@@ -139,7 +139,7 @@ bool ServerRequest::MakeRequest(
                 additionalDataLength);
         return requestSuccess;
     }
-    else if (!adhocIfNeeded)
+    else if (reqLevel == ONLY_IF_TRANSPORT)
     {
         // If ad hoc/temporary connections aren't allowed, and the transport
         // isn't currently connected, bail.
@@ -178,6 +178,12 @@ bool ServerRequest::MakeRequest(
 
             my_print(true, _T("%s: HTTPS:%d failed"), __TFUNCTION__, *port_iter);
         }
+    }
+
+    if (reqLevel == NO_TEMP_TUNNEL)
+    {
+        // Caller doesn't want a temp tunnel.
+        return false;
     }
 
     // Connecting directly via HTTPS failed. 
