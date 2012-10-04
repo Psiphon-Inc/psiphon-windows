@@ -938,7 +938,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    _T(""),
+                                    manager->m_transport->GetTransportProtocolName(),
                                     _T("download"),
                                     _T(""),
                                     now-start,
