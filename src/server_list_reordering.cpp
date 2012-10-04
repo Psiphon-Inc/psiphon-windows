@@ -128,6 +128,7 @@ DWORD WINAPI CheckServerReachabilityThread(void* object)
 
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr(data->m_entry.serverAddress.c_str());
+    // NOTE: we've already checked for the presence of a reachability port below
     serverAddr.sin_port = htons((unsigned short)data->m_entry.GetPreferredReachablityTestPort());
 
     connectedEvent = WSACreateEvent();
