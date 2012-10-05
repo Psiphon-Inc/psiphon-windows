@@ -58,11 +58,17 @@ public:
     // Examines the available information in SessionInfo and determines if a
     // request to the server for further info is needed before this transport
     // can connect.
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
 
     // Returns true if requests to the server should be tunnelled/proxied
     // through the transport. If not, then the local proxy should not be used.
     virtual bool IsServerRequestTunnelled() const = 0;
+
+    // Returns true if at least one server supports this transport.
+    virtual bool ServerWithCapabilitiesExists(ServerList& serverList) const;
+
+    // Returns true if the specified server supports this transport.
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const = 0;
 
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.

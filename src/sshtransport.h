@@ -37,8 +37,9 @@ public:
     // Subclasses must implement these members
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
     virtual bool IsServerRequestTunnelled() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual tstring GetSessionID(SessionInfo sessionInfo);
     virtual int GetLocalProxyParentPort() const;
@@ -90,7 +91,7 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 
 protected:
     virtual bool GetSSHParams(
@@ -118,7 +119,7 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 
 protected:
     virtual bool GetSSHParams(

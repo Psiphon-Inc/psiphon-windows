@@ -47,8 +47,9 @@ public:
     virtual tstring GetSessionID(SessionInfo sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
     virtual bool IsServerRequestTunnelled() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual bool Cleanup();
 

@@ -269,6 +269,13 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
     AutoMUTEX lock(m_mutex);
 
     m_transport = TransportRegistry::New(transport);
+
+    if (!m_transport->ServerWithCapabilitiesExists(GetServerList()))
+    {
+        my_print(false, _T("No servers support this protocol."));
+        return;
+    }
+
     m_startSplitTunnel = startSplitTunnel;
 
     GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_USER_DISCONNECT | STOP_REASON_UNEXPECTED_DISCONNECT);
@@ -351,6 +358,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
         try
         {
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
+
             // Get the next server to try
 
             tstring handshakeRequestPath;
@@ -360,6 +369,19 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Note that the SessionInfo will only be partly filled in at this point.
             SessionInfo sessionInfo;
             manager->CopyCurrentSessionInfo(sessionInfo);
+
+            // We're looping around to run again. We're assuming that the calling
+            // function knows that there's at least one server to try. We're 
+            // not reporting anything, as the user doesn't need to know what's
+            // going on under the hood at this point.
+            if (!manager->m_transport->ServerHasCapabilities(sessionInfo.GetServerEntry()))
+            {
+                my_print(true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
+
+                manager->MarkCurrentServerFailed();
+
+                continue;
+            }
 
             //
             // Set up the transport connection
@@ -512,9 +534,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         
     DWORD start = GetTickCount();
     string response;
-    ServerRequest serverRequest;
-    if (serverRequest.MakeRequest(
-                        false, // don't allow adhoc
+    if (ServerRequest::MakeRequest(
+                        ServerRequest::ONLY_IF_TRANSPORT,
                         m_transport,
                         sessionInfo,
                         connectedRequestPath.c_str(),
@@ -526,6 +547,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                 LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
                 TStringToNarrow(GetISO8601DatetimeString()));
 
+#ifdef SPEEDTEST
         // Speed feedback
         // Note: the /connected request *is* tunneled
 
@@ -533,9 +555,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            ServerRequest serverRequest;
-            (void)serverRequest.MakeRequest(
-                            false, // don't allow adhoc
+            (void)ServerRequest::MakeRequest(
+                            ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -547,6 +568,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             speedResponse,
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
+#endif //SPEEDTEST
 
         // Process split tunnel response
         ProcessSplitTunnelResponse(response);
@@ -564,6 +586,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     
     OpenHomePages();
 
+#ifdef SPEEDTEST
     // Perform non-tunneled speed test when requested
     // Note that in VPN mode, the WinHttp request is implicitly tunneled.
 
@@ -600,9 +623,8 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            ServerRequest serverRequest;
-            serverRequest.MakeRequest(
-                            false, // don't allow adhoc
+            (void)ServerRequest::MakeRequest(
+                            ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
@@ -615,6 +637,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
     }
+#endif //SPEEDTEST
 }
 
 bool ConnectionManager::SendStatusMessage(
@@ -675,7 +698,6 @@ bool ConnectionManager::SendStatusMessage(
     }
 
     string response;
-    ServerRequest serverRequest;
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -683,8 +705,11 @@ bool ConnectionManager::SendStatusMessage(
     // a shorter timeout in this case
     DWORD stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
 
-    bool success = serverRequest.MakeRequest(
-                                    final, // allow adhoc if this is the final stats request
+    // Allow adhoc tunnels if this is the final stats request
+    ServerRequest::ReqLevel reqLevel = final ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
+
+    bool success = ServerRequest::MakeRequest(
+                                    reqLevel,
                                     m_transport,
                                     sessionInfo,
                                     requestPath.c_str(),
@@ -906,9 +931,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
         // Download new binary
         DWORD start = GetTickCount();
-        ServerRequest serverRequest;
-        if (!serverRequest.MakeRequest(
-                    false, // don't allow adhoc
+        if (!ServerRequest::MakeRequest(
+                    ServerRequest::ONLY_IF_TRANSPORT,
                     manager->m_transport,
                     sessionInfo,
                     downloadRequestPath.c_str(),
@@ -928,17 +952,18 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         {
             my_print(false, _T("Download complete"));
 
+#ifdef SPEEDTEST
             // Speed feedback
             DWORD now = GetTickCount();
             if (now >= start) // GetTickCount can wrap
             {
                 string speedResponse;
-                (void)serverRequest.MakeRequest( // Ignore failure
-                                false, // don't allow adhoc
+                (void)ServerRequest::MakeRequest( // Ignore failure
+                                ServerRequest::ONLY_IF_TRANSPORT,
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    _T(""),
+                                    manager->m_transport->GetTransportProtocolName(),
                                     _T("download"),
                                     _T(""),
                                     now-start,
@@ -946,6 +971,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 speedResponse,
                                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
             }
+#endif //SPEEDTEST
 
             // Perform upgrade.
         
@@ -1260,7 +1286,6 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
 
     tstring requestPath = GetFeedbackRequestPath(m_transport);
     string response;
-    HTTPSRequest httpsRequest;
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -1268,26 +1293,16 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     // a shorter timeout in this case
     DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
 
-    // Use the system proxy unless the currently connected transport forbids it.
-    bool useProxy = true;
-    if (m_transport 
-        && m_transport->IsConnected() 
-        && !m_transport->IsServerRequestTunnelled())
-    {
-        useProxy = false;
-    }
+    bool success = ServerRequest::MakeRequest(
+                        ServerRequest::NO_TEMP_TUNNEL,
+                        m_transport,
+                        sessionInfo,
+                        requestPath.c_str(),
+                        response,
+                        StopInfo(&GlobalStopSignal::Instance(), stopReason),
+                        L"Content-Type: application/json",
+                        (LPVOID)narrowFeedback.c_str(),
+                        narrowFeedback.length());
 
-    bool success = httpsRequest.MakeRequest(
-                                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                                    sessionInfo.GetWebPort() ,
-                                    sessionInfo.GetWebServerCertificate(),
-                                    requestPath.c_str(),
-                                    response,
-                                    StopInfo(&GlobalStopSignal::Instance(), stopReason),
-                                    useProxy,
-                                    L"Content-Type: application/json",
-                                    (LPVOID)narrowFeedback.c_str(),
-                                    narrowFeedback.length());
-    
     return success;
 }

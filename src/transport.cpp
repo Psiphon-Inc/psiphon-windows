@@ -33,6 +33,21 @@ ITransport::ITransport()
 {
 }
 
+bool ITransport::ServerWithCapabilitiesExists(ServerList& serverList) const
+{
+    ServerEntries entries = serverList.GetList();
+
+    for (size_t i = 0; i < entries.size(); i++)
+    {
+        if (ServerHasCapabilities(entries[i]))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void ITransport::Connect(
                     SessionInfo sessionInfo, 
                     SystemProxySettings* systemProxySettings,

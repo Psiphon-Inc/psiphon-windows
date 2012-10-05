@@ -68,7 +68,7 @@ void TransportConnection::Connect(
 
         // Some transports require a handshake before connecting; with others we
         // can connect before doing the handshake.    
-        if (m_transport->IsHandshakeRequired(m_sessionInfo))
+        if (m_transport->IsHandshakeRequired(m_sessionInfo.GetServerEntry()))
         {
             my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
 
@@ -178,13 +178,15 @@ bool TransportConnection::DoHandshake(
         return true;
     }
 
-    ServerRequest serverRequest;
     string handshakeResponse;
 
     // Send list of known server IP addresses (used for stats logging on the server)
 
-    if (!serverRequest.MakeRequest(
-                        preTransport, // allow adhoc if this is a pre-transport handshake (i.e, for VPN)
+    // Allow an adhoc tunnel if this is a pre-transport handshake (i.e, for VPN)
+    ServerRequest::ReqLevel reqLevel = preTransport ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
+
+    if (!ServerRequest::MakeRequest(
+                        reqLevel,
                         m_transport,
                         m_sessionInfo,
                         handshakeRequestPath,
