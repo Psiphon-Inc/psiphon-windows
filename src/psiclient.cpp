@@ -830,13 +830,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         CreateControls(hWnd);
 
+        // We shouldn't try to start connecting while processing the WM_CREATE
+        // message because otherwise messages logged by called functions will be lost.
+        PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
+
+        break;
+
+    case WM_PSIPHON_CREATED:
         // Display client version number 
 
-        SendMessage(
-            g_hLogListBox,
-            LB_ADDSTRING,
-            NULL,
-            (LPARAM)(tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
+        my_print(false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // NOTE: we leave the connection animation timer running even after fully connected
         // when the icon no longer animates -- since the timer handler also updates the UI
