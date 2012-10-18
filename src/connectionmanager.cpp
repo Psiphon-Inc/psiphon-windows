@@ -301,6 +301,26 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 void ConnectionManager::StartSplitTunnel()
 {
     AutoMUTEX lock(m_mutex);
+
+    if(m_splitTunnelRoutes.length() == 0)
+    {
+
+        tstring routesRequestPath = GetRoutesRequestPath(m_transport);
+                
+        string response;
+        if (ServerRequest::MakeRequest(
+                    ServerRequest::ONLY_IF_TRANSPORT,
+                    m_transport,
+                    sessionInfo,
+                    routesRequestPath.c_str(),
+                    response,
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+        {
+            // Process split tunnel response
+            ProcessSplitTunnelResponse(response);
+        }
+    }
+
     
     // Polipo is watching for changes to this file.
     // Note: there's some delay before the file change takes effect.
@@ -542,10 +562,33 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                         response,
                         StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
     {
-        // Record the request time.
-        (void)WriteRegistryStringValue(
-                LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
-                TStringToNarrow(GetISO8601DatetimeString()));
+        // Get the server time from response json and record it
+        // connected_timestamp 
+        Json::Value json_entry;
+        Json::Reader reader;
+        string connected_timestamp;
+
+        bool parsingSuccessful = reader.parse(response, json_entry);
+        if(parsingSuccessful)
+        {
+            try
+            {
+                connected_timestamp = json_entry.get("connected_timestamp", 0).asString();
+                (void)WriteRegistryStringValue(
+                        LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
+                        connected_timestamp);
+            }
+            catch (exception& e)
+            {
+                my_print(false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
+            }
+        }
+        else
+        {
+            string fail = reader.getFormattedErrorMessages();
+            my_print(false, _T("%s:%d: 'connected' response parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+        }
+
 
 #ifdef SPEEDTEST
         // Speed feedback
@@ -569,9 +612,6 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
 #endif //SPEEDTEST
-
-        // Process split tunnel response
-        ProcessSplitTunnelResponse(response);
 
         // Process flag to start split tunnel after initial connection
         if (m_startSplitTunnel)
@@ -787,6 +827,20 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
            _T("&last_connected=") + NarrowToTString(lastConnected);
+}
+
+tstring ConnectionManager::GetRoutesRequestPath(ITransport* transport)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return tstring(HTTP_ROUTES_REQUEST_PATH) + 
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("")) + 
+           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T(""));
 }
 
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)

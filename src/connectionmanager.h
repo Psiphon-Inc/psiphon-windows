@@ -76,6 +76,7 @@ private:
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);
+    tstring GetRoutesRequestPath(ITransport* transport);
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
@@ -103,6 +104,8 @@ private:
 
     bool DoSendFeedback(LPCWSTR feedback);
     static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
+
+    void FetchSplitTunnelRoutes();
 
 private:
     HANDLE m_mutex;

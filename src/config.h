@@ -33,6 +33,7 @@ static const char* LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED = "LastConnected
 static const TCHAR* SPLIT_TUNNELING_FILE_NAME = _T("psiphon.route");
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");
+static const TCHAR* HTTP_ROUTES_REQUEST_PATH = _T("/routes");
 static const TCHAR* HTTP_STATUS_REQUEST_PATH = _T("/status");
 static const TCHAR* HTTP_SPEED_REQUEST_PATH = _T("/speed");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
