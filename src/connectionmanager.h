@@ -105,8 +105,6 @@ private:
     bool DoSendFeedback(LPCWSTR feedback);
     static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
 
-    void FetchSplitTunnelRoutes();
-
 private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
