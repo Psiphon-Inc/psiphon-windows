@@ -60,6 +60,11 @@ bool SSHTransportBase::IsServerRequestTunnelled() const
     return true;
 }
 
+bool SSHTransportBase::IsSplitTunnelSupported() const
+{
+    return true;
+}
+
 bool SSHTransportBase::ServerHasCapabilities(const ServerEntry& entry) const
 {
     return entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));

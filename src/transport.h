@@ -64,6 +64,9 @@ public:
     // through the transport. If not, then the local proxy should not be used.
     virtual bool IsServerRequestTunnelled() const = 0;
 
+    // Returns true if split tunnelling is supported for the transport.
+    virtual bool IsSplitTunnelSupported() const = 0;
+
     // Returns true if at least one server supports this transport.
     virtual bool ServerWithCapabilitiesExists(ServerList& serverList) const;
 
