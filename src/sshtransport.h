@@ -39,6 +39,7 @@ public:
     virtual tstring GetTransportDisplayName() const = 0;
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
     virtual bool IsServerRequestTunnelled() const;
+    virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual tstring GetSessionID(SessionInfo sessionInfo);

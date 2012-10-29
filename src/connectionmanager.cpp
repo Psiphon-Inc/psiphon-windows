@@ -302,7 +302,7 @@ void ConnectionManager::StartSplitTunnel()
 {
     AutoMUTEX lock(m_mutex);
 
-    if(m_splitTunnelRoutes.length() == 0)
+    if (m_splitTunnelRoutes.length() == 0)
     {
         tstring routesRequestPath = GetRoutesRequestPath(m_transport);
 
@@ -323,7 +323,6 @@ void ConnectionManager::StartSplitTunnel()
         }
     }
 
-    
     // Polipo is watching for changes to this file.
     // Note: there's some delay before the file change takes effect.
     WriteSplitTunnelRoutes(m_splitTunnelRoutes.c_str());
@@ -616,7 +615,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
 #endif //SPEEDTEST
 
         // Process flag to start split tunnel after initial connection
-        if (m_startSplitTunnel)
+        if (m_transport->IsSplitTunnelSupported() && m_startSplitTunnel)
         {
             StartSplitTunnel();
         }
