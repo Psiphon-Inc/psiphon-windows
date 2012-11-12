@@ -26,6 +26,13 @@
 #include <TlHelp32.h>
 #include "utilities.h"
 #include "stopsignal.h"
+#include "cryptlib.h"
+#include "cryptlib.h"
+#include "rsa.h"
+#include "base64.h"
+#include "osrng.h"
+#include "modes.h"
+#include "hmac.h"
 
 
 extern HINSTANCE g_hInst;
@@ -608,4 +615,129 @@ tstring GetISO8601DatetimeString()
         systime.wMilliseconds);
 
     return ret;
+}
+
+
+/* 
+ * Feedback Encryption
+ */
+
+bool PublicKeyEncryptData(const char* publicKey, const char* plaintext)
+{
+    CryptoPP::AutoSeededRandomPool rng;
+
+    string b64Ciphertext, b64Mac, b64WrappedEncryptionKey, b64WrappedMacKey, b64IV;
+
+    try
+    {
+        string ciphertext, mac, wrappedEncryptionKey, wrappedMacKey;
+
+        //
+        // Encrypt
+        //
+
+        CryptoPP::SecByteBlock encryptionKey(CryptoPP::AES::MIN_KEYLENGTH);
+        rng.GenerateBlock(encryptionKey, encryptionKey.size());
+
+        byte iv[CryptoPP::AES::BLOCKSIZE];
+        rng.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
+
+        CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption encryptor;
+        encryptor.SetKeyWithIV(encryptionKey, encryptionKey.size(), iv);
+
+        CryptoPP::StringSource(
+            plaintext, 
+            true, 
+            new CryptoPP::StreamTransformationFilter( 
+                encryptor,
+                new CryptoPP::StringSink(ciphertext),
+                CryptoPP::StreamTransformationFilter::PKCS_PADDING));
+
+        CryptoPP::StringSource(
+            ciphertext, 
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64Ciphertext), 
+                false));
+
+        CryptoPP::StringSource(
+            iv, 
+            sizeof(iv)*sizeof(iv[0]),
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64IV), 
+                false));
+
+        //
+        // HMAC
+        //
+
+        CryptoPP::SecByteBlock macKey(CryptoPP::AES::MIN_KEYLENGTH);
+        rng.GenerateBlock(macKey, macKey.size());
+
+        CryptoPP::HMAC<CryptoPP::SHA256> hmac(macKey, macKey.size());
+
+        CryptoPP::StringSource(
+            ciphertext, 
+            true, 
+            new CryptoPP::HashFilter(
+                hmac,
+                new CryptoPP::StringSink(mac)));
+
+        CryptoPP::StringSource(
+            mac, 
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64Mac),
+                false));
+
+        // 
+        // Wrap the keys
+        //
+
+        CryptoPP::RSAES_OAEP_SHA_Encryptor rsaEncryptor(
+            CryptoPP::StringSource(
+                publicKey,
+                true,
+                new CryptoPP::Base64Decoder()));
+
+        CryptoPP::StringSource(
+            encryptionKey, 
+            encryptionKey.size(),
+            true,
+            new CryptoPP::PK_EncryptorFilter(
+                rng, 
+                rsaEncryptor,
+                new CryptoPP::StringSink(wrappedEncryptionKey)));
+
+        CryptoPP::StringSource(
+            macKey, 
+            macKey.size(),
+            true,
+            new CryptoPP::PK_EncryptorFilter(
+                rng, 
+                rsaEncryptor,
+                new CryptoPP::StringSink(wrappedMacKey)));
+
+        CryptoPP::StringSource(
+            wrappedEncryptionKey, 
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64WrappedEncryptionKey),
+                false));
+
+        CryptoPP::StringSource(
+            wrappedMacKey, 
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64WrappedMacKey),
+                false));
+    }
+    catch( const CryptoPP::Exception& e )
+    {
+        cerr << e.what() << endl;
+        exit(1);
+    }
+
+    return true;
 }
