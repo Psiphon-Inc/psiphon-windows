@@ -702,7 +702,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext)
                 new CryptoPP::Base64Decoder()));
 
         CryptoPP::StringSource(
-            encryptionKey, 
+            encryptionKey.data(), 
             encryptionKey.size(),
             true,
             new CryptoPP::PK_EncryptorFilter(
@@ -711,7 +711,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext)
                 new CryptoPP::StringSink(wrappedEncryptionKey)));
 
         CryptoPP::StringSource(
-            macKey, 
+            macKey.data(), 
             macKey.size(),
             true,
             new CryptoPP::PK_EncryptorFilter(
