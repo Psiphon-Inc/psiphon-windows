@@ -622,8 +622,10 @@ tstring GetISO8601DatetimeString()
  * Feedback Encryption
  */
 
-bool PublicKeyEncryptData(const char* publicKey, const char* plaintext)
+bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted)
 {
+    o_encrypted.clear();
+
     CryptoPP::AutoSeededRandomPool rng;
 
     string b64Ciphertext, b64Mac, b64WrappedEncryptionKey, b64WrappedMacKey, b64IV;
@@ -735,9 +737,20 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext)
     }
     catch( const CryptoPP::Exception& e )
     {
-        cerr << e.what() << endl;
-        exit(1);
+        my_print(false, _T("%s - Encryption failed (%d): %S"), __TFUNCTION__, GetLastError(), e.what());
+        return false;
     }
+
+    stringstream ss;
+    ss << "{  \n";
+    ss << "  \"contentCiphertext\": \"" << b64Ciphertext << "\",\n";
+    ss << "  \"iv\": \"" << b64IV << "\",\n";
+    ss << "  \"wrappedEncryptionKey\": \"" << b64WrappedEncryptionKey << "\",\n";
+    ss << "  \"contentMac\": \"" << b64Mac << "\",\n";
+    ss << "  \"wrappedMacKey\": \"" << b64WrappedMacKey << "\"\n";
+    ss << "}";
+
+    o_encrypted = ss.str();
 
     return true;
 }

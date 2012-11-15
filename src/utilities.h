@@ -69,4 +69,4 @@ tstring GetLocaleName();
 
 tstring GetISO8601DatetimeString();
 
-bool PublicKeyEncryptData(const char* publicKey, const char* plaintext);
+bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
