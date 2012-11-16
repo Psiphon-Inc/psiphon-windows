@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psiclient", "psiclient\psiclient2012.vcxproj", "{CBFF3154-EF97-4580-B97D-C821754A3BF3}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psiclient2012", "psiclient\psiclient2012.vcxproj", "{CBFF3154-EF97-4580-B97D-C821754A3BF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
