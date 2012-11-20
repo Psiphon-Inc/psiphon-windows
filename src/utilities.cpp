@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -156,9 +156,9 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 
 
 DWORD WaitForConnectability(
-        int port, 
-        DWORD timeout, 
-        HANDLE process, 
+        int port,
+        DWORD timeout,
+        HANDLE process,
         const StopInfo& stopInfo)
 {
     // There are a number of options for monitoring the connected status
@@ -230,7 +230,7 @@ DWORD WaitForConnectability(
             returnValue = ERROR_SYSTEM_PROCESS_TERMINATED;
             break;
         }
-        
+
         // Check if cancel is signalled
 
         if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
@@ -260,7 +260,7 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
         my_print(false, _T("Localhost port %d is already in use."), targetPort);
     }
     while (++targetPort <= maxPort);
-    
+
     return false;
 }
 
@@ -285,7 +285,7 @@ bool WriteRegistryDwordValue(const string& name, DWORD value)
     DWORD disposition = 0;
     DWORD bufferLength = sizeof(value);
 
-    bool success = 
+    bool success =
         (ERROR_SUCCESS == RegCreateKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
@@ -316,7 +316,7 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value)
     DWORD bufferLength = sizeof(value);
     DWORD type;
 
-    bool success = 
+    bool success =
         (ERROR_SUCCESS == RegOpenKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
@@ -326,7 +326,7 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value)
 
          ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name.c_str(), 
+                            name.c_str(),
                             0,
                             &type,
                             (LPBYTE)&value,
@@ -344,7 +344,7 @@ bool WriteRegistryStringValue(const string& name, const string& value)
 {
     HKEY key = 0;
 
-    bool success = 
+    bool success =
         (ERROR_SUCCESS == RegCreateKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
@@ -359,8 +359,8 @@ bool WriteRegistryStringValue(const string& name, const string& value)
                             key,
                             name.c_str(),
                             0,
-                            REG_SZ, 
-                            (LPBYTE)value.c_str(), 
+                            REG_SZ,
+                            (LPBYTE)value.c_str(),
                             value.length() + 1)); // Write the null terminator
     RegCloseKey(key);
 
@@ -385,7 +385,7 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
 
         ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name, 
+                            name,
                             0,
                             0,
                             NULL,
@@ -395,7 +395,7 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
 
         ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name, 
+                            name,
                             0,
                             &type,
                             (LPBYTE)buffer,
@@ -430,7 +430,7 @@ bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
 
         ERROR_SUCCESS == RegQueryValueExW(
                             key,
-                            name, 
+                            name,
                             0,
                             0,
                             NULL,
@@ -440,7 +440,7 @@ bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
 
         ERROR_SUCCESS == RegQueryValueExW(
                             key,
-                            name, 
+                            name,
                             0,
                             &type,
                             (LPBYTE)buffer,
@@ -576,7 +576,7 @@ tstring GetLocaleName()
     }
 
     LPTSTR buf = new TCHAR[size];
-    
+
     size = GetLocaleInfo(
                 LOCALE_USER_DEFAULT,
                 LOCALE_SISO639LANGNAME,
@@ -587,7 +587,7 @@ tstring GetLocaleName()
     {
         return _T("");
     }
-    
+
     tstring ret = buf;
 
     delete[] buf;
@@ -603,11 +603,11 @@ tstring GetISO8601DatetimeString()
 
     TCHAR ret[64];
     _sntprintf_s(
-        ret, 
-        sizeof(ret)/sizeof(ret[0]), 
-        _T("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"), 
-        systime.wYear, 
-        systime.wMonth, 
+        ret,
+        sizeof(ret)/sizeof(ret[0]),
+        _T("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"),
+        systime.wYear,
+        systime.wMonth,
         systime.wDay,
         systime.wHour,
         systime.wMinute,
@@ -618,7 +618,7 @@ tstring GetISO8601DatetimeString()
 }
 
 
-/* 
+/*
  * Feedback Encryption
  */
 
@@ -634,6 +634,8 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
     {
         string ciphertext, mac, wrappedEncryptionKey, wrappedMacKey;
 
+        // NOTE: We are doing encrypt-then-MAC.
+
         //
         // Encrypt
         //
@@ -648,26 +650,26 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
         encryptor.SetKeyWithIV(encryptionKey, encryptionKey.size(), iv);
 
         CryptoPP::StringSource(
-            plaintext, 
-            true, 
-            new CryptoPP::StreamTransformationFilter( 
+            plaintext,
+            true,
+            new CryptoPP::StreamTransformationFilter(
                 encryptor,
                 new CryptoPP::StringSink(ciphertext),
                 CryptoPP::StreamTransformationFilter::PKCS_PADDING));
 
         CryptoPP::StringSource(
-            ciphertext, 
+            ciphertext,
             true,
             new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64Ciphertext), 
+                new CryptoPP::StringSink(b64Ciphertext),
                 false));
 
         CryptoPP::StringSource(
-            iv, 
+            iv,
             sizeof(iv)*sizeof(iv[0]),
             true,
             new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64IV), 
+                new CryptoPP::StringSink(b64IV),
                 false));
 
         //
@@ -680,20 +682,20 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
         CryptoPP::HMAC<CryptoPP::SHA256> hmac(macKey, macKey.size());
 
         CryptoPP::StringSource(
-            ciphertext, 
-            true, 
+            ciphertext,
+            true,
             new CryptoPP::HashFilter(
                 hmac,
                 new CryptoPP::StringSink(mac)));
 
         CryptoPP::StringSource(
-            mac, 
+            mac,
             true,
             new CryptoPP::Base64Encoder(
                 new CryptoPP::StringSink(b64Mac),
                 false));
 
-        // 
+        //
         // Wrap the keys
         //
 
@@ -704,32 +706,32 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
                 new CryptoPP::Base64Decoder()));
 
         CryptoPP::StringSource(
-            encryptionKey.data(), 
+            encryptionKey.data(),
             encryptionKey.size(),
             true,
             new CryptoPP::PK_EncryptorFilter(
-                rng, 
+                rng,
                 rsaEncryptor,
                 new CryptoPP::StringSink(wrappedEncryptionKey)));
 
         CryptoPP::StringSource(
-            macKey.data(), 
+            macKey.data(),
             macKey.size(),
             true,
             new CryptoPP::PK_EncryptorFilter(
-                rng, 
+                rng,
                 rsaEncryptor,
                 new CryptoPP::StringSink(wrappedMacKey)));
 
         CryptoPP::StringSource(
-            wrappedEncryptionKey, 
+            wrappedEncryptionKey,
             true,
             new CryptoPP::Base64Encoder(
                 new CryptoPP::StringSink(b64WrappedEncryptionKey),
                 false));
 
         CryptoPP::StringSource(
-            wrappedMacKey, 
+            wrappedMacKey,
             true,
             new CryptoPP::Base64Encoder(
                 new CryptoPP::StringSink(b64WrappedMacKey),
