@@ -636,11 +636,13 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 
         // NOTE: We are doing encrypt-then-MAC.
 
+        int AES_128 = CryptoPP::AES::MIN_KEYLENGTH;
+
         //
         // Encrypt
         //
 
-        CryptoPP::SecByteBlock encryptionKey(CryptoPP::AES::MIN_KEYLENGTH);
+        CryptoPP::SecByteBlock encryptionKey(AES_128);
         rng.GenerateBlock(encryptionKey, encryptionKey.size());
 
         byte iv[CryptoPP::AES::BLOCKSIZE];
@@ -676,7 +678,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
         // HMAC
         //
 
-        CryptoPP::SecByteBlock macKey(CryptoPP::AES::MIN_KEYLENGTH);
+        CryptoPP::SecByteBlock macKey(AES_128);
         rng.GenerateBlock(macKey, macKey.size());
 
         CryptoPP::HMAC<CryptoPP::SHA256> hmac(macKey, macKey.size());
