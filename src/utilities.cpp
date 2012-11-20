@@ -667,9 +667,10 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
                 new CryptoPP::StringSink(b64Ciphertext),
                 false));
 
+        size_t ivLength = sizeof(iv)*sizeof(iv[0]);
         CryptoPP::StringSource(
             iv,
-            sizeof(iv)*sizeof(iv[0]),
+            ivLength,
             true,
             new CryptoPP::Base64Encoder(
                 new CryptoPP::StringSink(b64IV),
@@ -679,17 +680,30 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
         // HMAC
         //
 
+        // Include the IV in the MAC'd data, as per http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-01
+        size_t ciphertextLength = ciphertext.length() * sizeof(ciphertext[0]);
+        byte* ivPlusCiphertext = new byte[ivLength + ciphertextLength];
+        if (!ivPlusCiphertext)
+        {
+            return false;
+        }
+        memcpy(ivPlusCiphertext, iv, ivLength);
+        memcpy(ivPlusCiphertext+ivLength, ciphertext.data(), ciphertextLength);
+
         CryptoPP::SecByteBlock macKey(KEY_LENGTH);
         rng.GenerateBlock(macKey, macKey.size());
 
         CryptoPP::HMAC<CryptoPP::SHA256> hmac(macKey, macKey.size());
 
         CryptoPP::StringSource(
-            ciphertext,
+            ivPlusCiphertext,
+            ivLength + ciphertextLength,
             true,
             new CryptoPP::HashFilter(
                 hmac,
                 new CryptoPP::StringSink(mac)));
+
+        delete[] ivPlusCiphertext;
 
         CryptoPP::StringSource(
             mac,
