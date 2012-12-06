@@ -36,6 +36,8 @@ static const int IGNORE_SYSTEM_SERVER_LIST = 0;
 
 static const char* REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY = "";
 
+static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
+
 static const char* REMOTE_SERVER_LIST_ADDRESS =
     "s3.amazonaws.com";
 

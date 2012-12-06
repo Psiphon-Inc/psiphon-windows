@@ -68,3 +68,5 @@ string Dehexlify(const string& input);
 tstring GetLocaleName();
 
 tstring GetISO8601DatetimeString();
+
+bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
