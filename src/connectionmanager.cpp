@@ -1294,7 +1294,7 @@ void ConnectionManager::SendFeedback(LPCWSTR feedback)
     if (!m_feedbackThread ||
         WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
     {
-        if (!(m_upgradeThread = CreateThread(0, 0, ConnectionManager::ConnectionManagerFeedbackThread, (void*)&g_feedbackThreadData, 0, 0)))
+        if (!(m_feedbackThread = CreateThread(0, 0, ConnectionManager::ConnectionManagerFeedbackThread, (void*)&g_feedbackThreadData, 0, 0)))
         {
             my_print(false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
             PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
