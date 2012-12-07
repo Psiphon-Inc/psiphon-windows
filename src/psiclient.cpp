@@ -995,6 +995,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         else if (lParam == (LPARAM)g_hFeedbackButton && wmEvent == BN_CLICKED)
         {
+            // DEBUG
+            OpenEmailAndSendDiagnosticInfo("test@example.com", true, StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT));
+
             my_print(true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
             
             tstring feedbackResult;

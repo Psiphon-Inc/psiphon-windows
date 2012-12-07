@@ -33,6 +33,8 @@
 #include "osrng.h"
 #include "modes.h"
 #include "hmac.h"
+#include "embeddedvalues.h"
+#include "httpsrequest.h"
 
 
 extern HINSTANCE g_hInst;
@@ -770,6 +772,97 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
     ss << "}";
 
     o_encrypted = ss.str();
+
+    return true;
+}
+
+
+/*
+Attempts to initiate an email to the given address. Also puts the address into
+the clipboad in case there is no mailto handler.
+Optionally uploads associated diagnostic info.
+*/
+bool OpenEmailAndSendDiagnosticInfo(
+        const string& emailAddress, 
+        bool sendDiagnosticInfo, 
+        const StopInfo& stopInfo)
+{
+    //
+    // First put the address into the clipboard
+    //
+
+    if (!OpenClipboard(NULL))
+    {
+        return false;
+    }
+
+    // Remove the current Clipboard contents 
+    if( !EmptyClipboard() )
+    {
+        return false;
+    }
+   
+    // Get the currently selected data
+    HGLOBAL hGlob = GlobalAlloc(GMEM_FIXED, emailAddress.length()+1);
+    strcpy_s((char*)hGlob, emailAddress.length()+1, emailAddress.c_str());
+    
+    // Note that the system takes ownership of hGlob
+    if (::SetClipboardData( CF_TEXT, hGlob ) == NULL)
+    {
+        CloseClipboard();
+        GlobalFree(hGlob);
+        return false;
+    }
+
+    CloseClipboard();
+
+    //
+    // Launch the email handler
+    //
+
+    string command = "mailto:" + emailAddress;
+
+    HINSTANCE hInst = ::ShellExecuteA( 
+                            NULL, 
+                            "open", 
+                            command.c_str(), 
+                            NULL, 
+                            NULL, 
+                            SW_SHOWNORMAL); 
+
+    // TODO: What does ShellExecute return if there's no registered mailto handler?
+    // For now: Don't bother checking the return value at all. We've copied the
+    // address to the clipboard and that will have to be good enough.
+
+    //
+    // Upload the diagnostic info
+    //
+
+    if (sendDiagnosticInfo)
+    {
+        string diagnosticInfo = "PUT SOME STUFF HERE";
+
+        tstring uploadLocation = NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
+                                    + NarrowToTString(emailAddress);
+        
+        string response;
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.MakeRequest(
+                NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
+                443,
+                FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_CERT,
+                uploadLocation.c_str(),
+                response,
+                stopInfo,
+                false, // don't use local proxy
+                NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
+                (LPVOID)diagnosticInfo.c_str(),
+                diagnosticInfo.length(),
+                L"PUT"))
+        {
+            return false;
+        }
+    }
 
     return true;
 }

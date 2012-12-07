@@ -251,7 +251,8 @@ bool HTTPSRequest::MakeRequest(
         bool useLocalProxy/*=true*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
-        DWORD additionalDataLength/*=0*/)
+        DWORD additionalDataLength/*=0*/,
+        LPCWSTR httpVerb/*=NULL*/)
 {
     // Throws if signaled
     stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
@@ -300,10 +301,15 @@ bool HTTPSRequest::MakeRequest(
         return false;
     }
 
+    if (!httpVerb)
+    {
+        httpVerb = additionalData ? _T("POST") : _T("GET");
+    }
+
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(
                     hConnect,
-                    additionalData ? _T("POST") : _T("GET"),
+                    httpVerb,
                     requestPath,
                     NULL,
                     WINHTTP_NO_REFERER,

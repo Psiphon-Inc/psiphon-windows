@@ -70,3 +70,8 @@ tstring GetLocaleName();
 tstring GetISO8601DatetimeString();
 
 bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
+
+bool OpenEmailAndSendDiagnosticInfo(
+        const string& emailAddress, 
+        bool sendDiagnosticInfo,
+        const StopInfo& stopInfo);

@@ -38,6 +38,12 @@ static const char* REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY = "";
 
 static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
 
+// These values are used when uploading diagnostic info
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER = "";
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH = "";
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_CERT = "";
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS = "";
+
 static const char* REMOTE_SERVER_LIST_ADDRESS =
     "s3.amazonaws.com";
 

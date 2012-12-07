@@ -46,4 +46,4 @@
 #include <json.h>
 #include <mshtmhst.h>
 #include <urlmon.h>
-
+#include <shellapi.h>
