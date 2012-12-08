@@ -71,6 +71,11 @@ tstring GetISO8601DatetimeString();
 
 bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
 
+/**
+Attempts to initiate an email to the given address. Also puts the address into
+the clipboad in case there is no mailto handler.
+Optionally uploads associated diagnostic info.
+*/
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 
         bool sendDiagnosticInfo,

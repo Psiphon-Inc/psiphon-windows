@@ -37,6 +37,7 @@
 #include "htmldlg.h"
 #include "server_list_reordering.h"
 #include "stopsignal.h"
+#include "osrng.h"
 
 
 //==== Globals ================================================================
@@ -995,29 +996,61 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         else if (lParam == (LPARAM)g_hFeedbackButton && wmEvent == BN_CLICKED)
         {
-            // DEBUG
-            OpenEmailAndSendDiagnosticInfo("test@example.com", true, StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT));
-
             my_print(true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
+
+            CryptoPP::AutoSeededRandomPool rng;
+            const size_t randBytesLen = 8;
+            byte randBytes[randBytesLen];
+            rng.GenerateBlock(randBytes, randBytesLen);
+            
+            tstring args = _T("{\"emailModifier\": \"+") + NarrowToTString(Hexlify(randBytes, randBytesLen)) + _T("\"}");
             
             tstring feedbackResult;
             if (ShowHTMLDlg(
                     hWnd, 
                     _T("FEEDBACK_HTML_RESOURCE"), 
                     GetLocaleName().c_str(),
-                    NULL,
+                    args.c_str(),
                     feedbackResult) == 1)
             {
-                my_print(false, _T("Sending feedback..."));
+                // Two different actions might be required at this point:
+                // 1) The user wishes to send a feedback email (optionally uploading diagnostic info).
+                // 2) The user completed the questionnaire and wishes to submit it.
 
-                g_connectionManager.SendFeedback(feedbackResult.c_str());
+                string emailAddress;
+                bool sendDiagnosticInfo = false;
 
-                SendMessage(
-                    g_hFeedbackButton,
-                    BM_SETIMAGE,
-                    IMAGE_ICON,
-                    (LPARAM)g_hFeedbackButtonIcons[1]);
-                EnableWindow(g_hFeedbackButton, FALSE);
+                Json::Value json_entry;
+                Json::Reader reader;
+                if (reader.parse(TStringToNarrow(feedbackResult), json_entry))
+                {
+                    emailAddress = json_entry.get("emailAddress", "").asString();
+                    sendDiagnosticInfo = json_entry.get("sendDiagnostic", false).asBool();
+                }
+
+                if (emailAddress.length() > 0)
+                {
+                    if (OpenEmailAndSendDiagnosticInfo(
+                            emailAddress, 
+                            sendDiagnosticInfo,
+                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT)))
+                    {
+                        my_print(false, _T("Email address has been copied to clipboard"));
+                    }
+                }
+                else // Feedback questionnaire
+                {
+                    my_print(false, _T("Sending feedback..."));
+
+                    g_connectionManager.SendFeedback(feedbackResult.c_str());
+
+                    SendMessage(
+                        g_hFeedbackButton,
+                        BM_SETIMAGE,
+                        IMAGE_ICON,
+                        (LPARAM)g_hFeedbackButtonIcons[1]);
+                    EnableWindow(g_hFeedbackButton, FALSE);
+                }
             }
             // else error or user cancelled
         }

@@ -777,11 +777,6 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 }
 
 
-/*
-Attempts to initiate an email to the given address. Also puts the address into
-the clipboad in case there is no mailto handler.
-Optionally uploads associated diagnostic info.
-*/
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 
         bool sendDiagnosticInfo, 
@@ -842,6 +837,15 @@ bool OpenEmailAndSendDiagnosticInfo(
     {
         string diagnosticInfo = "PUT SOME STUFF HERE";
 
+        string encryptedPayload;
+        if (!PublicKeyEncryptData(
+                FEEDBACK_ENCRYPTION_PUBLIC_KEY, 
+                diagnosticInfo.c_str(), 
+                encryptedPayload))
+        {
+            return false;
+        }
+
         tstring uploadLocation = NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
                                     + NarrowToTString(emailAddress);
         
@@ -856,8 +860,8 @@ bool OpenEmailAndSendDiagnosticInfo(
                 stopInfo,
                 false, // don't use local proxy
                 NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
-                (LPVOID)diagnosticInfo.c_str(),
-                diagnosticInfo.length(),
+                (LPVOID)encryptedPayload.c_str(),
+                encryptedPayload.length(),
                 L"PUT"))
         {
             return false;
