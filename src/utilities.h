@@ -78,5 +78,6 @@ Optionally uploads associated diagnostic info.
 */
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 
+        const string& emailAddressEncoded, 
         bool sendDiagnosticInfo,
         const StopInfo& stopInfo);

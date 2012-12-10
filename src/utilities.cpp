@@ -779,6 +779,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 
+        const string& emailAddressEncoded, 
         bool sendDiagnosticInfo, 
         const StopInfo& stopInfo)
 {

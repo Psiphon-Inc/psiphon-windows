@@ -1017,7 +1017,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 // 1) The user wishes to send a feedback email (optionally uploading diagnostic info).
                 // 2) The user completed the questionnaire and wishes to submit it.
 
-                string emailAddress;
+                string emailAddress, emailAddressEncoded;
                 bool sendDiagnosticInfo = false;
 
                 Json::Value json_entry;
@@ -1025,6 +1025,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (reader.parse(TStringToNarrow(feedbackResult), json_entry))
                 {
                     emailAddress = json_entry.get("emailAddress", "").asString();
+                    emailAddressEncoded = json_entry.get("emailAddressEncoded", "").asString();
                     sendDiagnosticInfo = json_entry.get("sendDiagnostic", false).asBool();
                 }
 
@@ -1032,6 +1033,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     if (OpenEmailAndSendDiagnosticInfo(
                             emailAddress, 
+                            emailAddressEncoded,
                             sendDiagnosticInfo,
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT)))
                     {
