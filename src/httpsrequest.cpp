@@ -99,40 +99,40 @@ void CALLBACK WinHttpStatusCallback(
         httpRequest->SetClosedEvent();
         break;
     case WINHTTP_CALLBACK_STATUS_SENDING_REQUEST:
-
         // NOTE: from experimentation, this is really the earliest we can inject our custom server cert validation.
         // As far as we know, this is before any data is sent over the SSL connection, so it's soon enough.
         // E.g., we tried to verify the cert earlier but:
         // WinHttpQueryOption(WINHTTP_OPTION_SERVER_CERT_CONTEXT) gives ERROR_WINHTTP_INCORRECT_HANDLE_STATE
         // during WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER...
-
-        // Validate server certificate (before requesting)
-
-        CERT_CONTEXT* pCert = NULL;
-        dwLen = sizeof(pCert);
-        if (!WinHttpQueryOption(
-                    hRequest,
-                    WINHTTP_OPTION_SERVER_CERT_CONTEXT,
-                    &pCert,
-                    &dwLen)
-            || NULL == pCert)
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryOption failed (%d)"), GetLastError());
-            WinHttpCloseHandle(hRequest);
-            return;
-        }
+            // Validate server certificate (before requesting)
 
-        bool valid = httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert);
-        CertFreeCertificateContext(pCert);
+            CERT_CONTEXT* pCert = NULL;
+            dwLen = sizeof(pCert);
+            if (!WinHttpQueryOption(
+                        hRequest,
+                        WINHTTP_OPTION_SERVER_CERT_CONTEXT,
+                        &pCert,
+                        &dwLen)
+                || NULL == pCert)
+            {
+                my_print(httpRequest->m_silentMode, _T("WinHttpQueryOption failed (%d)"), GetLastError());
+                WinHttpCloseHandle(hRequest);
+                return;
+            }
 
-        if (!valid)
-        {
-            my_print(httpRequest->m_silentMode, _T("ValidateServerCert failed"));
-            // Close request handle immediately to prevent sending of data
-            WinHttpCloseHandle(hRequest);
-            return;
+            bool valid = httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert);
+            CertFreeCertificateContext(pCert);
+
+            if (!valid)
+            {
+                my_print(httpRequest->m_silentMode, _T("ValidateServerCert failed"));
+                // Close request handle immediately to prevent sending of data
+                WinHttpCloseHandle(hRequest);
+                return;
+            }
+            break;
         }
-        break;
     case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
 
         // Start downloding response
