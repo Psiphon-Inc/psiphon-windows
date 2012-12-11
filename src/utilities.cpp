@@ -855,7 +855,7 @@ bool OpenEmailAndSendDiagnosticInfo(
         if (!httpsRequest.MakeRequest(
                 NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
                 443,
-                FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_CERT,
+                string(), // Do standard cert validation
                 uploadLocation.c_str(),
                 response,
                 stopInfo,

@@ -104,6 +104,7 @@ void CALLBACK WinHttpStatusCallback(
         // E.g., we tried to verify the cert earlier but:
         // WinHttpQueryOption(WINHTTP_OPTION_SERVER_CERT_CONTEXT) gives ERROR_WINHTTP_INCORRECT_HANDLE_STATE
         // during WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER...
+        if (httpRequest->m_expectedServerCertificate.length() > 0)
         {
             // Validate server certificate (before requesting)
 
@@ -259,9 +260,15 @@ bool HTTPSRequest::MakeRequest(
     // Throws if signaled
     stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
 
-    DWORD dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
+    DWORD dwFlags = 0;
+    
+    if (webServerCertificate.length() > 0)
+    {
+        // We're doing our own validation, so don't choke on cert errors.
+        dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
                     SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+    }
 
     tstring proxy;
     if (useLocalProxy)
@@ -430,7 +437,9 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
 
     if (m_expectedServerCertificate.length() == 0)
     {
-        return true;
+        // We shouldn't be here if there's no cert to check against.
+        assert(0);
+        return false;
     }
 
     BYTE* pbBinary = NULL; //base64 decoded pem
