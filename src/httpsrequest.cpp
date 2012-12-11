@@ -85,7 +85,6 @@ void CALLBACK WinHttpStatusCallback(
     }
 
     HTTPSRequest* httpRequest = (HTTPSRequest*)dwContext;
-    CERT_CONTEXT *pCert = {0};
     DWORD dwStatusCode;
     DWORD dwLen;
     LPVOID pBuffer = NULL;
@@ -109,6 +108,7 @@ void CALLBACK WinHttpStatusCallback(
 
         // Validate server certificate (before requesting)
 
+        CERT_CONTEXT* pCert = NULL;
         dwLen = sizeof(pCert);
         if (!WinHttpQueryOption(
                     hRequest,
@@ -122,9 +122,11 @@ void CALLBACK WinHttpStatusCallback(
             return;
         }
 
-        if (!httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert))
+        bool valid = httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert);
+        CertFreeCertificateContext(pCert);
+
+        if (!valid)
         {
-            CertFreeCertificateContext(pCert);
             my_print(httpRequest->m_silentMode, _T("ValidateServerCert failed"));
             // Close request handle immediately to prevent sending of data
             WinHttpCloseHandle(hRequest);
