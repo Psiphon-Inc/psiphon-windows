@@ -780,61 +780,65 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 
         const string& emailAddressEncoded, 
-        bool sendDiagnosticInfo, 
+        const string& diagnosticInfoID, 
         const StopInfo& stopInfo)
 {
-    //
-    // First put the address into the clipboard
-    //
-
-    if (!OpenClipboard(NULL))
+    if (emailAddress.length() > 0)
     {
-        return false;
-    }
+        assert(emailAddressEncoded.length() > 0);
+        //
+        // First put the address into the clipboard
+        //
 
-    // Remove the current Clipboard contents 
-    if( !EmptyClipboard() )
-    {
-        return false;
-    }
+        if (!OpenClipboard(NULL))
+        {
+            return false;
+        }
+
+        // Remove the current Clipboard contents 
+        if( !EmptyClipboard() )
+        {
+            return false;
+        }
    
-    // Get the currently selected data
-    HGLOBAL hGlob = GlobalAlloc(GMEM_FIXED, emailAddress.length()+1);
-    strcpy_s((char*)hGlob, emailAddress.length()+1, emailAddress.c_str());
+        // Get the currently selected data
+        HGLOBAL hGlob = GlobalAlloc(GMEM_FIXED, emailAddress.length()+1);
+        strcpy_s((char*)hGlob, emailAddress.length()+1, emailAddress.c_str());
     
-    // Note that the system takes ownership of hGlob
-    if (::SetClipboardData( CF_TEXT, hGlob ) == NULL)
-    {
+        // Note that the system takes ownership of hGlob
+        if (::SetClipboardData( CF_TEXT, hGlob ) == NULL)
+        {
+            CloseClipboard();
+            GlobalFree(hGlob);
+            return false;
+        }
+
         CloseClipboard();
-        GlobalFree(hGlob);
-        return false;
+
+        //
+        // Launch the email handler
+        //
+
+        string command = "mailto:" + emailAddress;
+
+        (void)::ShellExecuteA( 
+                    NULL, 
+                    "open", 
+                    command.c_str(), 
+                    NULL, 
+                    NULL, 
+                    SW_SHOWNORMAL); 
+
+        // TODO: What does ShellExecute return if there's no registered mailto handler?
+        // For now: Don't bother checking the return value at all. We've copied the
+        // address to the clipboard and that will have to be good enough.
     }
-
-    CloseClipboard();
-
-    //
-    // Launch the email handler
-    //
-
-    string command = "mailto:" + emailAddress;
-
-    HINSTANCE hInst = ::ShellExecuteA( 
-                            NULL, 
-                            "open", 
-                            command.c_str(), 
-                            NULL, 
-                            NULL, 
-                            SW_SHOWNORMAL); 
-
-    // TODO: What does ShellExecute return if there's no registered mailto handler?
-    // For now: Don't bother checking the return value at all. We've copied the
-    // address to the clipboard and that will have to be good enough.
 
     //
     // Upload the diagnostic info
     //
 
-    if (sendDiagnosticInfo)
+    if (diagnosticInfoID.length() > 0)
     {
         string diagnosticInfo = "PUT SOME STUFF HERE";
 
@@ -848,7 +852,7 @@ bool OpenEmailAndSendDiagnosticInfo(
         }
 
         tstring uploadLocation = NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
-                                    + NarrowToTString(emailAddress);
+                                    + NarrowToTString(diagnosticInfoID);
         
         string response;
         HTTPSRequest httpsRequest;

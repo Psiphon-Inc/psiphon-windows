@@ -1283,18 +1283,22 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 struct FeedbackThreadData
 {
     ConnectionManager* connectionManager;
-    wstring feedback;
+    wstring feedbackJSON;
 } g_feedbackThreadData;
 
-void ConnectionManager::SendFeedback(LPCWSTR feedback)
+void ConnectionManager::SendFeedback(LPCWSTR feedbackJSON)
 {
     g_feedbackThreadData.connectionManager = this;
-    g_feedbackThreadData.feedback = feedback;
+    g_feedbackThreadData.feedbackJSON = feedbackJSON;
 
     if (!m_feedbackThread ||
         WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
     {
-        if (!(m_feedbackThread = CreateThread(0, 0, ConnectionManager::ConnectionManagerFeedbackThread, (void*)&g_feedbackThreadData, 0, 0)))
+        if (!(m_feedbackThread = CreateThread(
+                                    0, 
+                                    0, 
+                                    ConnectionManager::ConnectionManagerFeedbackThread, 
+                                    (void*)&g_feedbackThreadData, 0, 0)))
         {
             my_print(false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
             PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
@@ -1309,7 +1313,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
 
     FeedbackThreadData* data = (FeedbackThreadData*)object;
 
-    if (data->connectionManager->DoSendFeedback(data->feedback.c_str()))
+    if (data->connectionManager->DoSendFeedback(data->feedbackJSON.c_str()))
     {
         PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
     }
@@ -1322,7 +1326,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
     return 0;
 }
 
-bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
+bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
 {
     // NOTE: no lock while waiting for network events
 
@@ -1333,14 +1337,18 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
         sessionInfo = m_currentSessionInfo;
     }
 
-    string narrowFeedback;
-    if (feedback)
+    string narrowFeedbackJSON = TStringToNarrow(feedbackJSON);
+    Json::Value json_entry;
+    Json::Reader reader;
+    if (!reader.parse(narrowFeedbackJSON, json_entry))
     {
-        narrowFeedback = WStringToNarrow(feedback);
+        assert(0);
+        return false;
     }
 
-    tstring requestPath = GetFeedbackRequestPath(m_transport);
-    string response;
+    string emailAddress = json_entry.get("emailAddress", "").asString();
+    string emailAddressEncoded = json_entry.get("emailAddressEncoded", "").asString();
+    string diagnosticInfoID = json_entry.get("diagnosticInfoID", "").asString();
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -1348,16 +1356,50 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     // a shorter timeout in this case
     DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
 
-    bool success = ServerRequest::MakeRequest(
-                        ServerRequest::NO_TEMP_TUNNEL,
-                        m_transport,
-                        sessionInfo,
-                        requestPath.c_str(),
-                        response,
-                        StopInfo(&GlobalStopSignal::Instance(), stopReason),
-                        L"Content-Type: application/json",
-                        (LPVOID)narrowFeedback.c_str(),
-                        narrowFeedback.length());
+    bool success = true;
+
+    // Two different actions might be required at this point:
+    // 1) The user wishes to send a feedback email (optionally uploading diagnostic info).
+    // 2) The user completed the questionnaire and wishes to submit it.
+
+    if (emailAddress.length() > 0)
+    {
+        // We don't care if this succeeds.
+        (void)OpenEmailAndSendDiagnosticInfo(
+                emailAddress,
+                emailAddressEncoded,
+                diagnosticInfoID,
+                StopInfo(&GlobalStopSignal::Instance(), stopReason));
+    }
+    else
+    {
+        // Send the feedback questionnaire responses
+
+        tstring requestPath = GetFeedbackRequestPath(m_transport);
+        string response;
+
+        success = ServerRequest::MakeRequest(
+                            ServerRequest::NO_TEMP_TUNNEL,
+                            m_transport,
+                            sessionInfo,
+                            requestPath.c_str(),
+                            response,
+                            StopInfo(&GlobalStopSignal::Instance(), stopReason),
+                            L"Content-Type: application/json",
+                            (LPVOID)narrowFeedbackJSON.c_str(),
+                            narrowFeedbackJSON.length());
+
+        // Upload diagnostic info
+        if (diagnosticInfoID.length() > 0) 
+        {
+            // We don't care if this succeeds.
+            (void)OpenEmailAndSendDiagnosticInfo(
+                    string(),  // don't email
+                    string(), 
+                    diagnosticInfoID,
+                    StopInfo(&GlobalStopSignal::Instance(), stopReason));
+        }
+    }
 
     return success;
 }

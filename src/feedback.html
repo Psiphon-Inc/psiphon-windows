@@ -137,6 +137,8 @@ function getLanguageNameFromURL(url)
     return 'en';
 }
 
+var diagnosticInfoID = '';
+
 //sets page content and highlights coerresponding language button
 function setLanguage(langName)
 {
@@ -181,9 +183,10 @@ function setLanguage(langName)
     var PLATFORM_WINDOWS = 'windows', PLATFORM_ANDROID = 'android';
     var platform = (window.dialogArguments !== undefined) ? PLATFORM_WINDOWS : PLATFORM_ANDROID;
 
-    var emailModifier = '';
+    var diagnosticInfoIDEmailModifier = '';
     if (platform === PLATFORM_WINDOWS) {
-      emailModifier = $.parseJSON(window.dialogArguments)['emailModifier'];
+      diagnosticInfoID = $.parseJSON(window.dialogArguments)['diagnosticInfoID'];
+      diagnosticInfoIDEmailModifier = '+' + diagnosticInfoID;
     }
 
     $.each(currentLanguage, function(name, val){
@@ -220,7 +223,7 @@ function setLanguage(langName)
             // Replace the feedback address with a platform specific value.
             val = val.replace(
                         /([a-z0-9]+)@([^\.]+)\.([a-z]+)/g,
-                        "$1+" + platform + emailModifier + "@$2.$3");
+                        "$1+" + platform + diagnosticInfoIDEmailModifier + "@$2.$3");
             $(selector).html(val);
         }
         else {
@@ -269,11 +272,14 @@ $(function() {
         responses.push({question:hash, answer: 2});
       }
     });
-    s = $.stringify({"responses":responses});
+    s = $.stringify({
+      'responses':responses,
+      'diagnosticInfoID': $('#sendDiagnostic').attr('checked') ? diagnosticInfoID : ''
+    });
 
     //Windows client expects result in the window.returnValue magic variable
     //No need to actually submit data
-    if(window.dialogArguments !== undefined) {
+    if (window.dialogArguments !== undefined) {
       window.returnValue = s;
       window.close();
     }
@@ -288,9 +294,9 @@ $(function() {
     e.preventDefault();
     if(window.dialogArguments !== undefined) {
       window.returnValue = $.stringify({
-        "emailAddress": $('#emailAddress').text(),
-        "emailAddressEncoded": encodeURIComponent($('#emailAddress').text()),
-        "sendDiagnostic": !!$('#sendDiagnostic').attr('checked')
+        'emailAddress': $('#emailAddress').text(),
+        'emailAddressEncoded': encodeURIComponent($('#emailAddress').text()),
+        'diagnosticInfoID': $('#sendDiagnostic').attr('checked') ? diagnosticInfoID : ''
       });
       window.close();
     }
