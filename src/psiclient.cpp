@@ -1013,7 +1013,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     args.c_str(),
                     feedbackResult) == 1)
             {
-                my_print(false, _T("Thank you for the feedback!"));
+                my_print(false, _T("Sending feedback..."));
 
                 g_connectionManager.SendFeedback(feedbackResult.c_str());
 
