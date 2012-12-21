@@ -35,6 +35,7 @@
 #include "hmac.h"
 #include "embeddedvalues.h"
 #include "httpsrequest.h"
+#include "yaml-cpp/yaml.h"
 
 
 extern HINSTANCE g_hInst;
@@ -840,7 +841,19 @@ bool OpenEmailAndSendDiagnosticInfo(
 
     if (diagnosticInfoID.length() > 0)
     {
-        string diagnosticInfo = "PUT SOME STUFF HERE";
+        YAML::Emitter out;
+        
+        out << YAML::BeginMap;
+        out << YAML::Key << "Metadata";
+        out << YAML::Value;
+        out << YAML::BeginMap;
+        out << YAML::Key << "platform" << YAML::Value << "windows";
+        out << YAML::Key << "version" << YAML::Value << 1;
+        out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
+        out << YAML::EndMap;
+        out << YAML::EndMap;
+
+        string diagnosticInfo = out.c_str();
 
         string encryptedPayload;
         if (!PublicKeyEncryptData(
