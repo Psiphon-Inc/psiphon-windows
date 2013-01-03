@@ -778,6 +778,434 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 }
 
 
+
+static string GetOSVersionString()
+{
+    string output;
+
+    OSVERSIONINFOEX osvi;
+    BOOL bOsVersionInfoEx;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    if (!(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
+    {
+        osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
+        if (!GetVersionEx ( (OSVERSIONINFO *) &osvi) ) 
+        {
+            return output;
+        }
+    }
+    switch (osvi.dwPlatformId)
+    {
+    case VER_PLATFORM_WIN32_NT:
+        if ( osvi.dwMajorVersion <= 4 ) output += ("Microsoft Windows NT ");
+        if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 ) output += ("Microsoft Windows 2000 ");
+        if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 ) output += ("Microsoft Windows XP ");
+        if( bOsVersionInfoEx )
+        {
+            if ( osvi.wProductType == VER_NT_WORKSTATION )
+            {
+                if( osvi.wSuiteMask & VER_SUITE_PERSONAL ) output += ( "Personal " );
+                else output += ( "Professional " );
+            }
+            else if ( osvi.wProductType == VER_NT_SERVER )
+            {
+                if( osvi.wSuiteMask & VER_SUITE_DATACENTER ) output += ( "DataCenter Server " );
+                else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE ) output += ( "Advanced Server " );
+                else output += ( "Server " );
+            }
+        }
+        else
+        {
+            HKEY hKey;
+            char szProductType[80];
+            DWORD dwBufLen;
+            RegOpenKeyExA( HKEY_LOCAL_MACHINE,"SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
+            RegQueryValueExA( hKey, "ProductType", NULL, NULL, (LPBYTE) szProductType, &dwBufLen);
+            RegCloseKey( hKey );
+            if ( lstrcmpiA( "WINNT", szProductType) == 0 ) output += ( "Professional " );
+            if ( lstrcmpiA( "LANMANNT", szProductType) == 0 ) output += ( "Server " );
+            if ( lstrcmpiA( "SERVERNT", szProductType) == 0 ) output += ( "Advanced Server " );
+        }
+
+        if ( osvi.dwMajorVersion <= 4 )
+        {
+            std::ostringstream ss;
+            ss << "version " << osvi.dwMajorVersion << "." << osvi.dwMinorVersion << " " << osvi.szCSDVersion << "(Build " << (osvi.dwBuildNumber & 0xFFFF) << ")";
+            output += ss.str();
+        }
+        else
+        { 
+            std::ostringstream ss;
+            ss << osvi.szCSDVersion << " (Build " << (osvi.dwBuildNumber & 0xFFFF) << ")";
+            output += ss.str();
+        }
+        break;
+
+    case VER_PLATFORM_WIN32_WINDOWS:
+        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
+        {
+            output += ("Microsoft Windows 95 ");
+            if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' ) output += ("OSR2 " );
+        } 
+
+        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
+        {
+            output += ("Microsoft Windows 98 ");
+            if ( osvi.szCSDVersion[1] == 'A' ) output += ("SE " );
+        }
+        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
+        {
+            output += ("Microsoft Windows Me ");
+        } 
+        break;
+
+    case VER_PLATFORM_WIN32s:
+        output += ("Microsoft Win32s ");
+        break;
+    }
+
+    return output; 
+}
+
+// Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
+string GetOSDisplayString()
+{
+    typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+    typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+
+    OSVERSIONINFOEX osvi;
+    SYSTEM_INFO si;
+    PGNSI pGNSI;
+    PGPI pGPI;
+    BOOL bOsVersionInfoEx;
+    DWORD dwType;
+
+    ostringstream ss;
+
+    ZeroMemory(&si, sizeof(SYSTEM_INFO));
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
+
+    if(bOsVersionInfoEx == 0) 
+    {
+        return "";
+    }
+
+    // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
+
+    pGNSI = (PGNSI)GetProcAddress(
+                        GetModuleHandle(TEXT("kernel32.dll")), 
+                        "GetNativeSystemInfo");
+    if(NULL != pGNSI)
+    {
+        pGNSI(&si);
+    }
+    else 
+    {
+        GetSystemInfo(&si);
+    }
+
+    if (VER_PLATFORM_WIN32_NT == osvi.dwPlatformId && osvi.dwMajorVersion > 4)
+    {
+        ss << "Microsoft ";
+
+        // Test for the specific product.
+
+        if (osvi.dwMajorVersion >= 6)
+        {
+            if (osvi.dwMinorVersion == 0)
+            {
+                if (osvi.wProductType == VER_NT_WORKSTATION)
+                {
+                    ss << "Windows Vista ";
+                }
+                else 
+                {
+                    ss << "Windows Server 2008 ";
+                }
+            }
+            else if (osvi.dwMinorVersion == 1)
+            {
+                if (osvi.wProductType == VER_NT_WORKSTATION)
+                {
+                    ss << "Windows 7 ";
+                }
+                else 
+                {
+                    ss << "Windows Server 2008 R2 ";
+                }
+            }
+            else if (osvi.dwMinorVersion == 2)
+            {
+                if (osvi.wProductType == VER_NT_WORKSTATION)
+                {
+                    ss << "Windows 8 ";
+                }
+                else 
+                {
+                    ss << "Windows Server 2012 ";
+                }
+            }
+
+            pGPI = (PGPI)GetProcAddress(
+                            GetModuleHandle(TEXT("kernel32.dll")), 
+                            "GetProductInfo");
+
+            pGPI(osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.wServicePackMajor, osvi.wServicePackMinor, &dwType);
+
+            switch(dwType)
+            {
+            case PRODUCT_ULTIMATE:
+                ss << "Ultimate Edition";
+                break;
+            case PRODUCT_PROFESSIONAL:
+                ss << "Professional";
+                break;
+            case PRODUCT_HOME_PREMIUM:
+                ss << "Home Premium Edition";
+                break;
+            case PRODUCT_HOME_BASIC:
+                ss << "Home Basic Edition";
+                break;
+            case PRODUCT_ENTERPRISE:
+                ss << "Enterprise Edition";
+                break;
+            case PRODUCT_BUSINESS:
+                ss << "Business Edition";
+                break;
+            case PRODUCT_STARTER:
+                ss << "Starter Edition";
+                break;
+            case PRODUCT_CLUSTER_SERVER:
+                ss << "Cluster Server Edition";
+                break;
+            case PRODUCT_DATACENTER_SERVER:
+                ss << "Datacenter Edition";
+                break;
+            case PRODUCT_DATACENTER_SERVER_CORE:
+                ss << "Datacenter Edition (core installation)";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER:
+                ss << "Enterprise Edition";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER_CORE:
+                ss << "Enterprise Edition (core installation)";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER_IA64:
+                ss << "Enterprise Edition for Itanium-based Systems";
+                break;
+            case PRODUCT_SMALLBUSINESS_SERVER:
+                ss << "Small Business Server";
+                break;
+            case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+                ss << "Small Business Server Premium Edition";
+                break;
+            case PRODUCT_STANDARD_SERVER:
+                ss << "Standard Edition";
+                break;
+            case PRODUCT_STANDARD_SERVER_CORE:
+                ss << "Standard Edition (core installation)";
+                break;
+            case PRODUCT_WEB_SERVER:
+                ss << "Web Server Edition";
+                break;
+            }
+        }
+
+        if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
+        {
+            if (GetSystemMetrics(SM_SERVERR2))
+            {
+                ss << "Windows Server 2003 R2, ";
+            }
+            else if (osvi.wSuiteMask & VER_SUITE_STORAGE_SERVER)
+            {
+                ss << "Windows Storage Server 2003";
+            }
+            else if (osvi.wSuiteMask & VER_SUITE_WH_SERVER)
+            {
+                ss << "Windows Home Server";
+            }
+            else if (osvi.wProductType == VER_NT_WORKSTATION &&
+                     si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+            {
+                ss << "Windows XP Professional x64 Edition";
+            }
+            else 
+            {
+                ss << "Windows Server 2003, ";
+            }
+
+            // Test for the server type.
+            if (osvi.wProductType != VER_NT_WORKSTATION)
+            {
+                if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+                {
+                    if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
+                    {
+                        ss << "Datacenter Edition for Itanium-based Systems";
+                    }
+                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
+                    {
+                        ss << "Enterprise Edition for Itanium-based Systems";
+                    }
+                }
+
+                else if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+                {
+                    if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
+                    {
+                        ss << "Datacenter x64 Edition";
+                    }
+                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
+                    {
+                        ss << "Enterprise x64 Edition";
+                    }
+                    else
+                    {
+                        ss << "Standard x64 Edition";
+                    }
+                }
+
+                else
+                {
+                    if (osvi.wSuiteMask & VER_SUITE_COMPUTE_SERVER)
+                    {
+                        ss << "Compute Cluster Edition";
+                    }
+                    else if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
+                    {
+                        ss << "Datacenter Edition";
+                    }
+                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
+                    {
+                        ss << "Enterprise Edition";
+                    }
+                    else if (osvi.wSuiteMask & VER_SUITE_BLADE)
+                    {
+                        ss << "Web Edition";
+                    }
+                    else 
+                    {
+                        ss << "Standard Edition";
+                    }
+                }
+            }
+        }
+
+        if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
+        {
+            ss << "Windows XP ";
+            if (osvi.wSuiteMask & VER_SUITE_PERSONAL)
+            {
+                ss << "Home Edition";
+            }
+            else
+            {
+                ss << "Professional";
+            }
+        }
+
+        if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
+        {
+            ss << "Windows 2000 ";
+
+            if (osvi.wProductType == VER_NT_WORKSTATION)
+            {
+                ss << "Professional" ;
+            }
+            else 
+            {
+                if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
+                {
+                    ss << "Datacenter Server";
+                }
+                else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
+                {
+                    ss << "Advanced Server";
+                }
+                else 
+                {
+                    ss << "Server";
+                }
+            }
+        }
+
+        // Include service pack (if any) and build number.
+
+        if (_tcslen(osvi.szCSDVersion) > 0)
+        {
+            ss << " ";
+            ss << osvi.szCSDVersion;
+        }
+
+        ss << " (build " << osvi.dwBuildNumber << ")";
+
+        if (osvi.dwMajorVersion >= 6)
+        {
+            if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+            {
+                ss << " 64-bit";
+            }
+            else if (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_INTEL)
+            {
+                ss << " 32-bit";
+            }
+        }
+
+        return ss.str(); 
+    }
+
+    return "";
+}
+
+string GetDiagnosticInfo(const string& diagnosticInfoID)
+{
+        YAML::Emitter out;
+        
+        out << YAML::BeginMap;
+
+        /*
+         * Metadata
+         */
+
+        out << YAML::Key << "Metadata";
+        out << YAML::Value;
+        out << YAML::BeginMap;
+        out << YAML::Key << "platform" << YAML::Value << "windows";
+        out << YAML::Key << "version" << YAML::Value << 1;
+        out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
+        out << YAML::EndMap;
+
+        /*
+         * System Information
+         */
+
+        out << YAML::Key << "SystemInformation";
+        out << YAML::Value;
+        out << YAML::BeginMap;
+        out << YAML::Key << "OSVersion";
+        out << YAML::Value << GetOSDisplayString();
+        out << YAML::Key << "psiphonEmbeddedValues";
+        out << YAML::Value;
+        out << YAML::BeginMap;
+        out << YAML::Key << "PROPAGATION_CHANNEL_ID";
+        out << YAML::Value << PROPAGATION_CHANNEL_ID;
+        out << YAML::Key << "SPONSOR_ID";
+        out << YAML::Value << SPONSOR_ID;
+        out << YAML::Key << "CLIENT_VERSION";
+        out << YAML::Value << CLIENT_VERSION;
+        out << YAML::EndMap;
+        out << YAML::EndMap;
+
+        out << YAML::EndMap;
+
+        return out.c_str();
+}
+
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 
         const string& emailAddressEncoded, 
@@ -841,19 +1269,7 @@ bool OpenEmailAndSendDiagnosticInfo(
 
     if (diagnosticInfoID.length() > 0)
     {
-        YAML::Emitter out;
-        
-        out << YAML::BeginMap;
-        out << YAML::Key << "Metadata";
-        out << YAML::Value;
-        out << YAML::BeginMap;
-        out << YAML::Key << "platform" << YAML::Value << "windows";
-        out << YAML::Key << "version" << YAML::Value << 1;
-        out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
-        out << YAML::EndMap;
-        out << YAML::EndMap;
-
-        string diagnosticInfo = out.c_str();
+        string diagnosticInfo = GetDiagnosticInfo(diagnosticInfoID);
 
         string encryptedPayload;
         if (!PublicKeyEncryptData(
