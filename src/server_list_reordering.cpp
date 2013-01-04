@@ -21,6 +21,7 @@
 #include <WinSock2.h>
 #include "config.h"
 #include "psiclient.h"
+#include "utilities.h"
 #include "server_list_reordering.h"
 
 
@@ -30,6 +31,29 @@ const int RESPONSE_TIME_THRESHOLD_FACTOR = 2;
 
 void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo);
 
+
+HANDLE g_serverResponseCheckHistoryMutex = CreateMutex(NULL, FALSE, 0);
+vector<ServerReponseCheck> g_serverResponseCheckHistory;
+
+void GetServerResponseCheckHistory(vector<ServerReponseCheck>& history)
+{
+    AutoMUTEX mutex(g_serverResponseCheckHistoryMutex);
+    history = g_serverResponseCheckHistory;
+}
+
+void AddServerResponseCheckResult(
+        string serverAddress, 
+        bool responded, 
+        unsigned int responseTime)
+{
+    AutoMUTEX mutex(g_serverResponseCheckHistoryMutex);
+    ServerReponseCheck check;
+    check.serverAddress = serverAddress;
+    check.responded = responded;
+    check.responseTime = responseTime;
+    check.timestamp = TStringToNarrow(GetISO8601DatetimeString());
+    g_serverResponseCheckHistory.push_back(check);
+}
 
 ServerListReorder::ServerListReorder()
     : m_thread(NULL), m_serverList(0)
@@ -269,6 +293,11 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
         {
             fastestResponseTime = (*data)->m_responseTime;
         }
+
+        AddServerResponseCheckResult(
+            (*data)->m_entry.serverAddress, 
+            (*data)->m_responded,
+            (*data)->m_responseTime);
     }
 
     ServerEntries respondingServers;

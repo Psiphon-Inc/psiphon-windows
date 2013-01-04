@@ -36,6 +36,7 @@
 #include "embeddedvalues.h"
 #include "httpsrequest.h"
 #include "yaml-cpp/yaml.h"
+#include "server_list_reordering.h"
 
 
 extern HINSTANCE g_hInst;
@@ -868,9 +869,26 @@ static string GetOSVersionString()
     return output; 
 }
 
-// Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
-string GetOSDisplayString()
+struct OSInfo
 {
+    string name;
+    DWORD platformId;
+    DWORD majorVersion;
+    DWORD minorVersion;
+    DWORD productType;
+    WORD servicePackMajor;
+    WORD servicePackMinor;
+    DWORD edition;
+    DWORD suiteMask;
+    string csdVersion;
+    DWORD buildNumber;
+};
+
+// Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
+bool GetOSInfo(OSInfo& osInfo)
+{
+    ZeroMemory(&osInfo, sizeof(osInfo));
+
     typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
     typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 
@@ -889,9 +907,9 @@ string GetOSDisplayString()
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
     bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
 
-    if(bOsVersionInfoEx == 0) 
+    if (bOsVersionInfoEx == 0) 
     {
-        return "";
+        return false;
     }
 
     // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
@@ -1156,54 +1174,115 @@ string GetOSDisplayString()
             }
         }
 
-        return ss.str(); 
+        osInfo.name = ss.str(); 
+        osInfo.platformId = osvi.dwPlatformId;
+        osInfo.majorVersion = osvi.dwMajorVersion;
+        osInfo.minorVersion = osvi.dwMinorVersion;
+        osInfo.productType = osvi.wProductType;
+        osInfo.servicePackMajor = osvi.wServicePackMajor;
+        osInfo.servicePackMinor = osvi.wServicePackMinor;
+        osInfo.edition = dwType;
+        osInfo.suiteMask = osvi.wSuiteMask;
+        osInfo.csdVersion = TStringToNarrow(osvi.szCSDVersion);
+        osInfo.buildNumber = osvi.dwBuildNumber;
+
+        return true;
     }
 
-    return "";
+    return false;
 }
 
 string GetDiagnosticInfo(const string& diagnosticInfoID)
 {
-        YAML::Emitter out;
+    int x = 0;
+    x = GetSystemMetrics(SM_NETWORK);
+ 
+    YAML::Emitter out;
         
+    out << YAML::BeginMap;
+
+    /*
+        * Metadata
+        */
+
+    out << YAML::Key << "Metadata";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "platform" << YAML::Value << "windows";
+    out << YAML::Key << "version" << YAML::Value << 1;
+    out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
+    out << YAML::EndMap;
+
+    /*
+    * System Information
+    */
+
+    out << YAML::Key << "SystemInformation";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+
+    OSInfo osInfo;
+    ZeroMemory(&osInfo, sizeof(osInfo));
+    // We'll fill in the values even if this call fails.
+    (void)GetOSInfo(osInfo);
+    out << YAML::Key << "OSInfo";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "name" << YAML::Value << osInfo.name.c_str();
+    out << YAML::Key << "platformId" << YAML::Value << osInfo.platformId;
+    out << YAML::Key << "majorVersion" << YAML::Value << osInfo.majorVersion;
+    out << YAML::Key << "minorVersion" << YAML::Value << osInfo.minorVersion;
+    out << YAML::Key << "productType" << YAML::Value << osInfo.productType;
+    out << YAML::Key << "servicePackMajor" << YAML::Value << osInfo.servicePackMajor;
+    out << YAML::Key << "servicePackMinor" << YAML::Value << osInfo.servicePackMinor;
+    out << YAML::Key << "ediition" << YAML::Value << osInfo.edition;
+    out << YAML::Key << "suiteMask" << YAML::Value << osInfo.suiteMask;
+    out << YAML::Key << "csdVersion" << YAML::Value << osInfo.csdVersion.c_str();
+    out << YAML::Key << "buildNumber" << YAML::Value << osInfo.buildNumber;
+    out << YAML::Key << "mideastEnabled" << YAML::Value << GetSystemMetrics(SM_MIDEASTENABLED);
+    out << YAML::Key << "slowMachine" << YAML::Value << GetSystemMetrics(SM_SLOWMACHINE);
+    out << YAML::Key << "starter" << YAML::Value << GetSystemMetrics(SM_STARTER);
+    out << YAML::EndMap;
+
+    out << YAML::Key << "psiphonEmbeddedValues";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "PROPAGATION_CHANNEL_ID";
+    out << YAML::Value << PROPAGATION_CHANNEL_ID;
+    out << YAML::Key << "SPONSOR_ID";
+    out << YAML::Value << SPONSOR_ID;
+    out << YAML::Key << "CLIENT_VERSION";
+    out << YAML::Value << CLIENT_VERSION;
+    out << YAML::EndMap;
+    out << YAML::EndMap;
+
+    /*
+    * Server Response Check
+    */
+
+    out << YAML::Key << "ServerResponseCheck";
+    out << YAML::Value;
+    out << YAML::BeginSeq;
+
+    vector<ServerReponseCheck> serverReponseCheckHistory;
+    GetServerResponseCheckHistory(serverReponseCheckHistory);
+    for (vector<ServerReponseCheck>::const_iterator entry = serverReponseCheckHistory.begin();
+         entry != serverReponseCheckHistory.end();
+         entry++)
+    {
         out << YAML::BeginMap;
-
-        /*
-         * Metadata
-         */
-
-        out << YAML::Key << "Metadata";
-        out << YAML::Value;
-        out << YAML::BeginMap;
-        out << YAML::Key << "platform" << YAML::Value << "windows";
-        out << YAML::Key << "version" << YAML::Value << 1;
-        out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
+        out << YAML::Key << "ipAddress" << YAML::Value << entry->serverAddress.c_str();
+        out << YAML::Key << "responded" << YAML::Value << entry->responded;
+        out << YAML::Key << "responseTime" << YAML::Value << entry->responseTime;
+        out << YAML::Key << "timestamp" << YAML::Value << entry->timestamp.c_str();
         out << YAML::EndMap;
+    }
 
-        /*
-         * System Information
-         */
+    out << YAML::EndSeq;
 
-        out << YAML::Key << "SystemInformation";
-        out << YAML::Value;
-        out << YAML::BeginMap;
-        out << YAML::Key << "OSVersion";
-        out << YAML::Value << GetOSDisplayString();
-        out << YAML::Key << "psiphonEmbeddedValues";
-        out << YAML::Value;
-        out << YAML::BeginMap;
-        out << YAML::Key << "PROPAGATION_CHANNEL_ID";
-        out << YAML::Value << PROPAGATION_CHANNEL_ID;
-        out << YAML::Key << "SPONSOR_ID";
-        out << YAML::Value << SPONSOR_ID;
-        out << YAML::Key << "CLIENT_VERSION";
-        out << YAML::Value << CLIENT_VERSION;
-        out << YAML::EndMap;
-        out << YAML::EndMap;
+    out << YAML::EndMap;
 
-        out << YAML::EndMap;
-
-        return out.c_str();
+    return out.c_str();
 }
 
 bool OpenEmailAndSendDiagnosticInfo(
