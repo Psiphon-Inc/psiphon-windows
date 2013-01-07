@@ -77,7 +77,7 @@ void ServerListReorder::Start(ServerList* serverList)
 
     if (!(m_thread = CreateThread(0, 0, ReorderServerListThread, this, 0, 0)))
     {
-        my_print(false, _T("Server List Reorder: CreateThread failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("Server List Reorder: CreateThread failed (%d)"), GetLastError());
         return;
     }
 }
@@ -283,6 +283,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
     for (vector<WorkerThreadData*>::iterator data = threadData.begin(); data != threadData.end(); ++data)
     {
         my_print(
+            SENSITIVE_LOG, 
             true,
             _T("server: %s, responded: %s, response time: %d"),
             NarrowToTString((*data)->m_entry.serverAddress).c_str(),
@@ -324,7 +325,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
     {
         serverList.MoveEntriesToFront(respondingServers);
 
-        my_print(false, _T("Preferred servers: %d"), respondingServers.size());
+        my_print(NOT_SENSITIVE, false, _T("Preferred servers: %d"), respondingServers.size());
     }
 
     // Cleanup

@@ -38,7 +38,7 @@ bool verifySignedServerList(const char* signedServerList, string& authenticServe
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(false, _T("%s: JSON parse failed: %S"), __TFUNCTION__, fail.c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s: JSON parse failed: %S"), __TFUNCTION__, fail.c_str());
         return false;
     }
 
@@ -54,7 +54,7 @@ bool verifySignedServerList(const char* signedServerList, string& authenticServe
     }
     catch (exception& e)
     {
-        my_print(false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
+        my_print(NOT_SENSITIVE, false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
         return false;
     }
 
@@ -69,7 +69,7 @@ bool verifySignedServerList(const char* signedServerList, string& authenticServe
             new CryptoPP::Base64Encoder(new CryptoPP::StringSink(expectedPublicKeyDigest), false)));
     if (0 != expectedPublicKeyDigest.compare(signingPublicKeyDigest))
     {
-        my_print(false, _T("%s: public key mismatch.  This build must be too old."), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, false, _T("%s: public key mismatch.  This build must be too old."), __TFUNCTION__);
         return false;
     }
 

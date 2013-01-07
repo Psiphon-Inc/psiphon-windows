@@ -80,7 +80,7 @@ void CALLBACK WinHttpStatusCallback(
     // the dwContext parameter of the callback function."
     if (dwContext == NULL)
     {
-        my_print(true, _T("%s: received no context; thread exiting"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: received no context; thread exiting"), __TFUNCTION__);
         return;
     }
 
@@ -89,7 +89,7 @@ void CALLBACK WinHttpStatusCallback(
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    //my_print(true, _T("HTTPS request... (%d)"), dwInternetStatus);
+    //my_print(NOT_SENSITIVE, true, _T("HTTPS request... (%d)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {
@@ -117,7 +117,7 @@ void CALLBACK WinHttpStatusCallback(
                         &dwLen)
                 || NULL == pCert)
             {
-                my_print(httpRequest->m_silentMode, _T("WinHttpQueryOption failed (%d)"), GetLastError());
+                my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryOption failed (%d)"), GetLastError());
                 WinHttpCloseHandle(hRequest);
                 return;
             }
@@ -127,7 +127,7 @@ void CALLBACK WinHttpStatusCallback(
 
             if (!valid)
             {
-                my_print(httpRequest->m_silentMode, _T("ValidateServerCert failed"));
+                my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("ValidateServerCert failed"));
                 // Close request handle immediately to prevent sending of data
                 WinHttpCloseHandle(hRequest);
                 return;
@@ -140,7 +140,7 @@ void CALLBACK WinHttpStatusCallback(
 
         if (!WinHttpReceiveResponse(hRequest, NULL))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -158,21 +158,21 @@ void CALLBACK WinHttpStatusCallback(
                         &dwLen, 
                         NULL))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
 
         if (200 != dwStatusCode)
         {
-            my_print(httpRequest->m_silentMode, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
             WinHttpCloseHandle(hRequest);
             return;
         }
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -202,7 +202,7 @@ void CALLBACK WinHttpStatusCallback(
     
         if (!WinHttpReadData(hRequest, pBuffer, dwLen, &dwLen))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpReadData failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpReadData failed (%d)"), GetLastError());
             HeapFree(GetProcessHeap(), 0, pBuffer);
             WinHttpCloseHandle(hRequest);
             return;
@@ -219,7 +219,7 @@ void CALLBACK WinHttpStatusCallback(
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -228,14 +228,15 @@ void CALLBACK WinHttpStatusCallback(
         // Get error value as per http://msdn.microsoft.com/en-us/library/aa383917%28v=VS.85%29.aspx
         if (ERROR_WINHTTP_OPERATION_CANCELLED != ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError)
         {
-            my_print(httpRequest->m_silentMode, _T("HTTP request error (%d, %d)"),
+            my_print(NOT_SENSITIVE, 
+                     httpRequest->m_silentMode, _T("HTTP request error (%d, %d)"),
                      ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
                      ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
         }
         WinHttpCloseHandle(hRequest);
         break;
     case WINHTTP_CALLBACK_STATUS_SECURE_FAILURE:
-        my_print(httpRequest->m_silentMode, _T("HTTP secure failure (%d)"), lpvStatusInformation);
+        my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("HTTP secure failure (%d)"), lpvStatusInformation);
         WinHttpCloseHandle(hRequest);
         break;
     default:
@@ -286,14 +287,14 @@ bool HTTPSRequest::MakeRequest(
 
     if (NULL == hSession)
     {
-        my_print(m_silentMode, _T("WinHttpOpen failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpOpen failed (%d)"), GetLastError());
         return false;
     }
 
     if (FALSE == WinHttpSetTimeouts(hSession, 0, HTTPS_REQUEST_CONNECT_TIMEOUT_MS,
                             HTTPS_REQUEST_SEND_TIMEOUT_MS, HTTPS_REQUEST_RECEIVE_TIMEOUT_MS))
     {
-        my_print(m_silentMode, _T("WinHttpSetTimeouts failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetTimeouts failed (%d)"), GetLastError());
         return false;
     }
 
@@ -306,7 +307,7 @@ bool HTTPSRequest::MakeRequest(
 
     if (NULL == hConnect)
     {
-        my_print(m_silentMode, _T("WinHttpConnect failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpConnect failed (%d)"), GetLastError());
         return false;
     }
 
@@ -327,7 +328,7 @@ bool HTTPSRequest::MakeRequest(
 
     if (NULL == hRequest)
     {
-        my_print(m_silentMode, _T("WinHttpOpenRequest failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpOpenRequest failed (%d)"), GetLastError());
         return false;
     }
 
@@ -337,7 +338,7 @@ bool HTTPSRequest::MakeRequest(
                     &dwFlags,
                     sizeof(DWORD)))
     {
-        my_print(m_silentMode, _T("WinHttpSetOption failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption failed (%d)"), GetLastError());
         return false;
     }
 
@@ -347,7 +348,7 @@ bool HTTPSRequest::MakeRequest(
                                                 WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
                                                 NULL))
     {
-        my_print(m_silentMode, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
         return false;
     }
 
@@ -372,7 +373,7 @@ bool HTTPSRequest::MakeRequest(
     {
         CloseHandle(m_closedEvent);
         m_closedEvent = NULL;
-        my_print(m_silentMode, _T("WinHttpSendRequest failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSendRequest failed (%d)"), GetLastError());
         return false;
     }
 
@@ -453,14 +454,14 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
             (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
             CRYPT_STRING_BASE64, NULL, &cbBinary, NULL, NULL))
     {
-        my_print(m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
         return false;
     }
 
     pbBinary = new (std::nothrow) BYTE[cbBinary];
     if (!pbBinary)
     {
-        my_print(m_silentMode, _T("ValidateServerCert: memory allocation failed"));
+        my_print(NOT_SENSITIVE, m_silentMode, _T("ValidateServerCert: memory allocation failed"));
         return false;
     }
 
@@ -469,7 +470,7 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
         (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
         CRYPT_STRING_BASE64, pbBinary, &cbBinary, NULL, NULL))
     {
-        my_print(m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
         return false;
     }
     

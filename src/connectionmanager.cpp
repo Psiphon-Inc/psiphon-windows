@@ -138,7 +138,7 @@ ConnectionManagerState ConnectionManager::GetState()
 
 void ConnectionManager::Stop(DWORD reason)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     // NOTE: no lock, to allow thread to access object
 
@@ -154,32 +154,32 @@ void ConnectionManager::Stop(DWORD reason)
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
     {
-        my_print(true, _T("%s: Waiting for thread to die"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_thread, INFINITE);
-        my_print(true, _T("%s: Thread died"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Thread died"), __TFUNCTION__);
         m_thread = 0;
     }
 
     if (m_upgradeThread)
     {
-        my_print(true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_upgradeThread, INFINITE);
-        my_print(true, _T("%s: Upgrade thread died"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Upgrade thread died"), __TFUNCTION__);
         m_upgradeThread = 0;
     }
 
     if (m_feedbackThread)
     {
-        my_print(true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_feedbackThread, INFINITE);
-        my_print(true, _T("%s: Feedback thread died"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Feedback thread died"), __TFUNCTION__);
         m_feedbackThread = 0;
     }
 
     delete m_transport;
     m_transport = 0;
 
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::FetchRemoteServerList(void)
@@ -218,7 +218,7 @@ void ConnectionManager::FetchRemoteServerList(void)
                 false) // don't use local proxy
             || response.length() <= 0)
         {
-            my_print(false, _T("Fetch remote server list failed"));
+            my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
             return;
         }
     }
@@ -233,7 +233,7 @@ void ConnectionManager::FetchRemoteServerList(void)
     string serverEntryList;
     if (!verifySignedServerList(response.c_str(), serverEntryList))
     {
-        my_print(false, _T("Verify remote server list failed"));
+        my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
         return;
     }
 
@@ -254,14 +254,14 @@ void ConnectionManager::FetchRemoteServerList(void)
     }
     catch (std::exception &ex)
     {
-        my_print(false, string("Corrupt remote server list: ") + ex.what());
+        my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
         // This isn't fatal.
     }
 }
 
 void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     // Call Stop to cleanup in case thread failed on last Start attempt
     Stop(STOP_REASON_USER_DISCONNECT);
@@ -272,7 +272,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     if (!m_transport->ServerWithCapabilitiesExists(GetServerList()))
     {
-        my_print(false, _T("No servers support this protocol."));
+        my_print(NOT_SENSITIVE, false, _T("No servers support this protocol."));
         return;
     }
 
@@ -282,7 +282,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
-        my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
+        my_print(NOT_SENSITIVE, false, _T("Invalid connection manager state in Start (%d)"), m_state);
         return;
     }
 
@@ -290,12 +290,12 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     if (!(m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0)))
     {
-        my_print(false, _T("Start: CreateThread failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("Start: CreateThread failed (%d)"), GetLastError());
 
         SetState(CONNECTION_MANAGER_STATE_STOPPED);
     }
 
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::StartSplitTunnel()
@@ -338,7 +338,7 @@ void ConnectionManager::StopSplitTunnel()
 
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     ConnectionManager* manager = (ConnectionManager*)object;
 
@@ -375,7 +375,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             }
         }
 
-        my_print(true, _T("%s: enter server loop"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: enter server loop"), __TFUNCTION__);
 
         try
         {
@@ -397,7 +397,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // going on under the hood at this point.
             if (!manager->m_transport->ServerHasCapabilities(sessionInfo.GetServerEntry()))
             {
-                my_print(true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
 
                 manager->MarkCurrentServerFailed();
 
@@ -408,7 +408,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Set up the transport connection
             //
 
-            my_print(true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
             // Note that the TransportConnection will do any necessary cleanup.
             TransportConnection transportConnection;
@@ -441,7 +441,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 {
                     if (!(manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0)))
                     {
-                        my_print(false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
+                        my_print(NOT_SENSITIVE, false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
                 }
             }
@@ -454,14 +454,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Do post-connect work, like opening home pages.
             //
 
-            my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
             manager->DoPostConnect(sessionInfo);
 
             //
             // Wait for transportConnection to stop (or fail)
             //
 
-            my_print(true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
             transportConnection.WaitForDisconnect();
 
             //
@@ -470,20 +470,20 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
 
-            my_print(true, _T("%s: breaking"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: breaking"), __TFUNCTION__);
             break;
         }
         catch (IWorkerThread::Error& error)
         {
             // Unrecoverable error. Cleanup and exit.
-            my_print(true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (IWorkerThread::Abort&)
         {
             // User requested cancel. Cleanup and exit.
-            my_print(true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -491,20 +491,20 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         catch (StopSignal::StopException&)
         {
             // User requested cancel or transport died, etc. Cleanup and exit.
-            my_print(true, _T("%s: caught StopSignal::StopException"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught StopSignal::StopException"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (ConnectionManager::Abort&)
         {
-            my_print(true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (TransportConnection::TryNextServer&)
         {
             // Failed to connect to the server. Try the next one.
-            my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
             manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
@@ -512,7 +512,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // the arrow animation spinning. A user-authored FAQ mentioned
             // this error in particular and recommended waiting. So here's
             // a lightly more encouraging message.
-            my_print(false, _T("Trying next server..."));
+            my_print(NOT_SENSITIVE, false, _T("Trying next server..."));
 
             // Continue while loop to try next server
 
@@ -535,7 +535,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         }
     }
 
-    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exiting thread"), __TFUNCTION__);
     return 0;
 }
 
@@ -581,13 +581,13 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
             }
             catch (exception& e)
             {
-                my_print(false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
+                my_print(NOT_SENSITIVE, false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
             }
         }
         else
         {
             string fail = reader.getFormattedErrorMessages();
-            my_print(false, _T("%s:%d: 'connected' response parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+            my_print(NOT_SENSITIVE, false, _T("%s:%d: 'connected' response parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
         }
 
 
@@ -700,7 +700,7 @@ bool ConnectionManager::SendStatusMessage(
 
     Json::Value stats;
     stats["bytes_transferred"] = bytesTransferred;
-    my_print(true, _T("BYTES: %llu"), bytesTransferred);
+    my_print(SENSITIVE_LOG, true, _T("BYTES: %llu"), bytesTransferred);
 
     map<string, int>::const_iterator pos = pageViewEntries.begin();
     Json::Value page_views(Json::arrayValue);
@@ -710,7 +710,7 @@ bool ConnectionManager::SendStatusMessage(
         entry["page"] = pos->first;
         entry["count"] = pos->second;
         page_views.append(entry);
-        my_print(true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
+        my_print(SENSITIVE_LOG, true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
     }
     stats["page_views"] = page_views;
 
@@ -722,7 +722,7 @@ bool ConnectionManager::SendStatusMessage(
         entry["domain"] = pos->first;
         entry["count"] = pos->second;
         https_requests.append(entry);
-        my_print(true, _T("HTTPS REQUEST: %d: %S"), pos->second, pos->first.c_str());
+        my_print(SENSITIVE_LOG, true, _T("HTTPS REQUEST: %d: %S"), pos->second, pos->first.c_str());
     }
     stats["https_requests"] = https_requests;
 
@@ -853,7 +853,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
     // If there's no session ID, we can't send the status.
     if (sessionID.length() <= 0)
     {
-        my_print(true, _T("%s: no session ID; not sending status"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: no session ID; not sending status"), __TFUNCTION__);
         return _T("");
     }
 
@@ -923,7 +923,7 @@ void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
     }
     catch (std::exception &ex)
     {
-        my_print(false, string("LoadNextServer caught exception: ") + ex.what());
+        my_print(NOT_SENSITIVE, false, string("LoadNextServer caught exception: ") + ex.what());
         throw Abort();
     }
 
@@ -966,9 +966,9 @@ bool ConnectionManager::RequireUpgrade(void)
 
 DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
-    my_print(false, _T("Downloading new version..."));
+    my_print(NOT_SENSITIVE, false, _T("Downloading new version..."));
 
     ConnectionManager* manager = (ConnectionManager*)object;
 
@@ -1005,7 +1005,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         }
         else
         {
-            my_print(false, _T("Download complete"));
+            my_print(NOT_SENSITIVE, false, _T("Download complete"));
 
 #ifdef SPEEDTEST
             // Speed feedback
@@ -1038,7 +1038,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         // do nothing, just exit
     }
 
-    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exiting thread"), __TFUNCTION__);
     return 0;
 }
 
@@ -1105,7 +1105,7 @@ void ConnectionManager::PaveUpgrade(const string& download)
     {
         std::stringstream s;
         s << ex.what() << " (" << GetLastError() << ")";
-        my_print(false, s.str().c_str());
+        my_print(NOT_SENSITIVE, false, s.str().c_str());
         
         // Try to restore the original version
         if (bArchiveCreated)
@@ -1158,7 +1158,7 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         ret = inflate(&stream, Z_NO_FLUSH);
         if (ret != Z_OK && ret != Z_STREAM_END)
         {
-            my_print(true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
+            my_print(NOT_SENSITIVE, true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
             m_splitTunnelRoutes = "";
             break;
         }
@@ -1169,7 +1169,7 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
 
         if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
         {
-            my_print(true, _T("ProcessSplitTunnelResponse overflow"));
+            my_print(NOT_SENSITIVE, true, _T("ProcessSplitTunnelResponse overflow"));
             m_splitTunnelRoutes = "";
             break;
         }
@@ -1205,7 +1205,7 @@ bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
     tstring filePath = GetSplitTunnelingFilePath();
     if (filePath.length() == 0)
     {
-        my_print(false, _T("WriteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1213,7 +1213,7 @@ bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
 
     if (file == INVALID_HANDLE_VALUE)
     {
-        my_print(false, _T("WriteSplitTunnelRoutes - CreateFile failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - CreateFile failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1227,7 +1227,7 @@ bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
             NULL)
           || written != length)
     {
-        my_print(false, _T("WriteSplitTunnelRoutes - WriteFile failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - WriteFile failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1241,13 +1241,13 @@ bool ConnectionManager::DeleteSplitTunnelRoutes()
     tstring filePath = GetSplitTunnelingFilePath();
     if (filePath.length() == 0)
     {
-        my_print(false, _T("DeleteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("DeleteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
         return false;
     }
 
     if (!DeleteFile(filePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
     {
-        my_print(false, _T("DeleteSplitTunnelRoutes - DeleteFile failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("DeleteSplitTunnelRoutes - DeleteFile failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1275,7 +1275,7 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
     }
     catch (std::exception &ex)
     {
-        my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
+        my_print(NOT_SENSITIVE, false, string("HandleHandshakeResponse caught exception: ") + ex.what());
         // This isn't fatal.  The transport connection can still be established.
     }
 }
@@ -1300,7 +1300,7 @@ void ConnectionManager::SendFeedback(LPCWSTR feedbackJSON)
                                     ConnectionManager::ConnectionManagerFeedbackThread, 
                                     (void*)&g_feedbackThreadData, 0, 0)))
         {
-            my_print(false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
             PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
             return;
         }
@@ -1309,7 +1309,7 @@ void ConnectionManager::SendFeedback(LPCWSTR feedbackJSON)
 
 DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     FeedbackThreadData* data = (FeedbackThreadData*)object;
 
@@ -1322,7 +1322,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
         PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
     }
 
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
     return 0;
 }
 

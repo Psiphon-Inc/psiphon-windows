@@ -59,8 +59,8 @@ void TerminateProcessByName(const TCHAR* executableName)
                 if (!TerminateProcess(process, 0) ||
                     WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
                 {
-                    my_print(false, _T("TerminateProcess failed for process with name %s"), executableName);
-                    my_print(false, _T("Please terminate this process manually"));
+                    my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with name %s"), executableName);
+                    my_print(NOT_SENSITIVE, false, _T("Please terminate this process manually"));
                 }
                 CloseHandle(process);
             }
@@ -83,14 +83,14 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     res = FindResource(g_hInst, MAKEINTRESOURCE(resourceID), RT_RCDATA);
     if (!res)
     {
-        my_print(false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());
         return false;
     }
 
     handle = LoadResource(NULL, res);
     if (!handle)
     {
-        my_print(false, _T("ExtractExecutable - LoadResource failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - LoadResource failed (%d)"), GetLastError());
         return false;
     }
 
@@ -104,14 +104,14 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     ret = GetTempPath(MAX_PATH, tempPath);
     if (ret > MAX_PATH-14 || ret == 0)
     {
-        my_print(false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
         return false;
     }
 
     TCHAR filePath[MAX_PATH];
     if (NULL == PathCombine(filePath, tempPath, exeFilename))
     {
-        my_print(false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
     }
 
@@ -131,7 +131,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
             }
             else
             {
-                my_print(false, _T("ExtractExecutable - CreateFile failed (%d)"), lastError);
+                my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - CreateFile failed (%d)"), lastError);
                 return false;
             }
         }
@@ -147,7 +147,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
         || !FlushFileBuffers(tempFile))
     {
         CloseHandle(tempFile);
-        my_print(false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), GetLastError());
         return false;
     }
 
@@ -261,7 +261,7 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
         {
             return true;
         }
-        my_print(false, _T("Localhost port %d is already in use."), targetPort);
+        my_print(NOT_SENSITIVE, false, _T("Localhost port %d is already in use."), targetPort);
     }
     while (++targetPort <= maxPort);
 
@@ -277,7 +277,7 @@ void StopProcess(DWORD processID, HANDLE process)
         if (!TerminateProcess(process, 0) ||
             WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
         {
-            my_print(false, _T("TerminateProcess failed for process with PID %d"), processID);
+            my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with PID %d"), processID);
         }
     }
 }
@@ -760,7 +760,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
     }
     catch( const CryptoPP::Exception& e )
     {
-        my_print(false, _T("%s - Encryption failed (%d): %S"), __TFUNCTION__, GetLastError(), e.what());
+        my_print(NOT_SENSITIVE, false, _T("%s - Encryption failed (%d): %S"), __TFUNCTION__, GetLastError(), e.what());
         return false;
     }
 
@@ -1257,8 +1257,8 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::EndMap;
 
     /*
-    * Server Response Check
-    */
+     * Server Response Check
+     */
 
     out << YAML::Key << "ServerResponseCheck";
     out << YAML::Value;
@@ -1279,6 +1279,30 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     }
 
     out << YAML::EndSeq;
+
+    /*
+     * Server Response Check
+     */
+
+    out << YAML::Key << "StatusHistory";
+    out << YAML::Value;
+    out << YAML::BeginSeq;
+
+    vector<MessageHistoryEntry> messageHistory;
+    GetMessageHistory(messageHistory);
+    for (vector<MessageHistoryEntry>::const_iterator entry = messageHistory.begin();
+         entry != messageHistory.end();
+         entry++)
+    {
+        out << YAML::BeginMap;
+        out << YAML::Key << "message" << YAML::Value << TStringToNarrow(entry->message).c_str();
+        out << YAML::Key << "debug" << YAML::Value << entry->debug;
+        out << YAML::Key << "timestamp" << YAML::Value << TStringToNarrow(entry->timestamp).c_str();
+        out << YAML::EndMap;
+    }
+
+    out << YAML::EndSeq;
+
 
     out << YAML::EndMap;
 

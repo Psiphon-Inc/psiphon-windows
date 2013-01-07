@@ -207,7 +207,7 @@ ServerEntries ServerList::GetList()
         }
         catch (std::exception &ex)
         {
-            my_print(false, string("Not using corrupt System Server List: ") + ex.what());
+            my_print(NOT_SENSITIVE, false, string("Not using corrupt System Server List: ") + ex.what());
         }
     }
 
@@ -225,7 +225,7 @@ ServerEntries ServerList::GetList()
     }
     catch (std::exception &ex)
     {
-        my_print(false, string("Not using corrupt Embedded Server List: ") + ex.what());
+        my_print(NOT_SENSITIVE, false, string("Not using corrupt Embedded Server List: ") + ex.what());
         embeddedServerEntryList.clear();
     }
 
@@ -449,7 +449,7 @@ void ServerEntry::FromString(const string& str)
 
     if (!getline(lineStream, lineItem, '\0'))
     {
-        my_print(true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
         
         // Assumption: we're not reading into a ServerEntry struct that already
         // has values set. So we're relying on the default values being set by
@@ -463,7 +463,7 @@ void ServerEntry::FromString(const string& str)
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(false, _T("%s: Extended JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s: Extended JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
         throw std::exception("Server Entries are corrupt: can't parse JSON");
     }
 
@@ -500,7 +500,7 @@ void ServerEntry::FromString(const string& str)
     }
     catch (exception& e)
     {
-        my_print(false, _T("%s: Extended JSON parse exception: %S"), __TFUNCTION__, e.what());
+        my_print(NOT_SENSITIVE, false, _T("%s: Extended JSON parse exception: %S"), __TFUNCTION__, e.what());
         throw std::exception("Server Entries are corrupt: parse JSON exception");
     }
 }

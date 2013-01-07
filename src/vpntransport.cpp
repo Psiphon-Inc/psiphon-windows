@@ -162,7 +162,7 @@ bool VPNTransport::Cleanup()
     }
     else if (ERROR_SUCCESS != returnCode)
     {
-        my_print(false, _T("RasHangUp failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasHangUp failed (%d)"), returnCode);
 
         // Don't delete entry when in this state -- Windows gets confused
         return false;
@@ -186,7 +186,7 @@ bool VPNTransport::Cleanup()
         // Don't hang forever
         if (totalSleepTime >= maxSleepTime)
         {
-            my_print(false, _T("RasHangUp/RasGetConnectStatus timed out (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("RasHangUp/RasGetConnectStatus timed out (%d)"), GetLastError());
 
             // Don't delete entry when in this state -- Windows gets confused
             return false;
@@ -198,7 +198,7 @@ bool VPNTransport::Cleanup()
     if (ERROR_SUCCESS != returnCode &&
         ERROR_CANNOT_FIND_PHONEBOOK_ENTRY != returnCode)
     {
-        my_print(false, _T("RasDeleteEntry failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasDeleteEntry failed (%d)"), returnCode);
         return false;
     }
 
@@ -243,7 +243,7 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
             versionInfo.dwMajorVersion < 5 ||
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
-        my_print(false, _T("VPN requires Windows XP or greater"));
+        my_print(NOT_SENSITIVE, false, _T("VPN requires Windows XP or greater"));
         throw TransportFailed();
     }
 
@@ -310,7 +310,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
 
     if (GetConnectionState() != CONNECTION_STATE_STOPPED && GetConnectionState() != CONNECTION_STATE_FAILED)
     {
-        my_print(false, _T("Invalid VPN connection state in Establish (%d)"), GetConnectionState());
+        my_print(NOT_SENSITIVE, false, _T("Invalid VPN connection state in Establish (%d)"), GetConnectionState());
         return false;
     }
 
@@ -320,7 +320,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     if (ERROR_SUCCESS != returnCode &&
         ERROR_ALREADY_EXISTS != returnCode)
     {
-        my_print(false, _T("RasValidateEntryName failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasValidateEntryName failed (%d)"), returnCode);
         SetLastErrorCode(returnCode);
         return false;
     }
@@ -354,7 +354,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     returnCode = RasSetEntryProperties(0, VPN_CONNECTION_NAME, &rasEntry, sizeof(rasEntry), 0, 0);
     if (ERROR_SUCCESS != returnCode)
     {
-        my_print(false, _T("RasSetEntryProperties failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasSetEntryProperties failed (%d)"), returnCode);
         SetLastErrorCode(returnCode);
         return false;
     }
@@ -368,7 +368,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     returnCode = RasSetCredentials(0, VPN_CONNECTION_NAME, &vpnCredentials, FALSE);
     if (ERROR_SUCCESS != returnCode)
     {
-        my_print(false, _T("RasSetCredentials failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasSetCredentials failed (%d)"), returnCode);
         SetLastErrorCode(returnCode);
         return false;
     }
@@ -391,7 +391,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     returnCode = RasDial(0, 0, &vpnParams, 2, &(VPNTransport::RasDialCallback), &m_rasConnection);
     if (ERROR_SUCCESS != returnCode)
     {
-        my_print(false, _T("RasDial failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasDial failed (%d)"), returnCode);
         SetConnectionState(CONNECTION_STATE_FAILED);
         SetLastErrorCode(returnCode);
         return false;
@@ -487,7 +487,7 @@ tstring VPNTransport::GetPPPIPAddress() const
         DWORD returnCode = RasGetProjectionInfo(m_rasConnection, RASP_PppIp, &projectionInfo, &projectionInfoSize);
         if (ERROR_SUCCESS != returnCode)
         {
-            my_print(false, _T("RasGetProjectionInfo failed (%d)"), returnCode);
+            my_print(NOT_SENSITIVE, false, _T("RasGetProjectionInfo failed (%d)"), returnCode);
         }
 
         IPAddress = projectionInfo.szIpAddress;
@@ -529,7 +529,7 @@ HRASCONN VPNTransport::GetActiveRasConnection()
     //       and the second call.
     if (ERROR_BUFFER_TOO_SMALL != returnCode && connections > 0)
     {
-        my_print(false, _T("RasEnumConnections failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("RasEnumConnections failed (%d)"), returnCode);
     }
     else if (ERROR_BUFFER_TOO_SMALL == returnCode && connections > 0)
     {
@@ -543,7 +543,7 @@ HRASCONN VPNTransport::GetActiveRasConnection()
         rasConnections = (LPRASCONN)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bufferSize);
         if (!rasConnections)
         {
-            my_print(false, _T("HeapAlloc failed"));
+            my_print(NOT_SENSITIVE, false, _T("HeapAlloc failed"));
             return rasConnection;
         }
  
@@ -556,7 +556,7 @@ HRASCONN VPNTransport::GetActiveRasConnection()
         // If successful, find the one with VPN_CONNECTION_NAME.
         if (ERROR_SUCCESS != returnCode)
         {
-            my_print(false, _T("RasEnumConnections failed (%d)"), returnCode);
+            my_print(NOT_SENSITIVE, false, _T("RasEnumConnections failed (%d)"), returnCode);
         }
         else
         {
@@ -590,10 +590,10 @@ void CALLBACK VPNTransport::RasDialCallback(
 {
     VPNTransport* vpnTransport = (VPNTransport*)userData;
 
-    my_print(true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
+    my_print(NOT_SENSITIVE, true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
     if (0 != dwError)
     {
-        my_print(false, _T("VPN connection failed (%d)"), dwError);
+        my_print(NOT_SENSITIVE, false, _T("VPN connection failed (%d)"), dwError);
         vpnTransport->SetConnectionState(CONNECTION_STATE_FAILED);
         vpnTransport->SetLastErrorCode(dwError);
     }
@@ -604,7 +604,7 @@ void CALLBACK VPNTransport::RasDialCallback(
         DWORD returnCode = RasConnectionNotification(rasConnection, rasEvent, RASCN_Disconnection);
         if (ERROR_SUCCESS != returnCode)
         {
-            my_print(false, _T("RasConnectionNotification failed (%d)"), returnCode);
+            my_print(NOT_SENSITIVE, false, _T("RasConnectionNotification failed (%d)"), returnCode);
             return;
         }
 
@@ -612,7 +612,7 @@ void CALLBACK VPNTransport::RasDialCallback(
 
         if (WAIT_FAILED == WaitForSingleObject(rasEvent, INFINITE))
         {
-            my_print(false, _T("WaitForSingleObject failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("WaitForSingleObject failed (%d)"), GetLastError());
             // Fall through to VPN_CONNECTION_STATE_STOPPED.
             // Otherwise we'd be stuck in a connected state.
         }
@@ -623,9 +623,9 @@ void CALLBACK VPNTransport::RasDialCallback(
     {
         if (rasConnState == 0)
         {
-            my_print(false, _T("VPN connecting..."));
+            my_print(NOT_SENSITIVE, false, _T("VPN connecting..."));
         }
-        my_print(true, _T("VPN establishing connection... (%x)"), rasConnState);
+        my_print(NOT_SENSITIVE, true, _T("VPN establishing connection... (%x)"), rasConnState);
         vpnTransport->SetConnectionState(CONNECTION_STATE_STARTING);
     }
 }
@@ -712,7 +712,7 @@ void FixProhibitIpsec()
     }
     catch(std::exception& ex)
     {
-        my_print(false, string("Fix ProhibitIpSec failed: ") + ex.what());
+        my_print(NOT_SENSITIVE, false, string("Fix ProhibitIpSec failed: ") + ex.what());
     }
 
     // cleanup
@@ -887,7 +887,7 @@ void FixVPNServices()
         }
         catch(std::exception& ex)
         {
-            my_print(false, string("Fix VPN Services failed: ") + ex.what());
+            my_print(NOT_SENSITIVE, false, string("Fix VPN Services failed: ") + ex.what());
         }
 
         // cleanup
@@ -1088,7 +1088,7 @@ static void PatchDNS()
         }
         catch(std::exception& ex)
         {
-            my_print(false, string("Fix DNS failed: ") + ex.what());
+            my_print(NOT_SENSITIVE, false, string("Fix DNS failed: ") + ex.what());
         }
 
         // cleanup
@@ -1109,7 +1109,7 @@ static bool FlushDNS()
 
 	if ((hDnsDll = LoadLibrary(_T("dnsapi"))) == NULL)
     {
-        my_print(false, _T("LoadLibrary DNSAPI failed"));
+        my_print(NOT_SENSITIVE, false, _T("LoadLibrary DNSAPI failed"));
         return result;
     }
 
@@ -1117,7 +1117,7 @@ static bool FlushDNS()
 	{
 		if (FALSE == (pDnsFlushProc)())
 		{
-            my_print(false, _T("DnsFlushResolverCache failed: %d"), GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("DnsFlushResolverCache failed: %d"), GetLastError());
         }
         else
         {
@@ -1126,7 +1126,7 @@ static bool FlushDNS()
 	}
     else
     {
-        my_print(false, _T("GetProcAddress DnsFlushResolverCache failed"));
+        my_print(NOT_SENSITIVE, false, _T("GetProcAddress DnsFlushResolverCache failed"));
     }
 
 	FreeLibrary(hDnsDll);

@@ -164,8 +164,8 @@ bool SystemProxySettings::Save(const vector<tstring>& connections)
 {
     if (!m_originalSettings.empty())
     {
-        my_print(false, _T("Error: can't save Proxy Settings because they are already saved."));
-        my_print(false, _T("Original proxy settings may not be restored correctly."));
+        my_print(NOT_SENSITIVE, false, _T("Error: can't save Proxy Settings because they are already saved."));
+        my_print(NOT_SENSITIVE, false, _T("Original proxy settings may not be restored correctly."));
         return false;
     }
 
@@ -253,7 +253,7 @@ bool SystemProxySettings::SetConnectionProxy(const connection_proxy& setting)
     }
     else
     {
-        my_print(false, _T("InternetSetOption error: %d"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("InternetSetOption error: %d"), GetLastError());
         // NOTE: We are calling the Unicode version of InternetSetOption.
         // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
         // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
@@ -280,7 +280,7 @@ bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
 
     if (0 == InternetQueryOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, &length))
     {
-        my_print(false, _T("InternetQueryOption error: %d"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("InternetQueryOption error: %d"), GetLastError());
         // NOTE: We are calling the Unicode version of InternetQueryOption.
         // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
         // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
@@ -317,7 +317,7 @@ static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWO
 
     if (!rasEntryNames)
     {
-        my_print(false, _T("HeapAlloc failed when trying to enumerate RAS connections"));
+        my_print(NOT_SENSITIVE, false, _T("HeapAlloc failed when trying to enumerate RAS connections"));
         throw 0;
     }
 
@@ -350,7 +350,7 @@ vector<tstring> SystemProxySettings::GetRasConnectionNames()
 
         if (ERROR_SUCCESS != returnCode)
         {
-            my_print(false, _T("failed to enumerate RAS connections (%d)"), returnCode);
+            NOT_SENSITIVE, (false, _T("failed to enumerate RAS connections (%d)"), returnCode);
             throw 0;
         }
 
