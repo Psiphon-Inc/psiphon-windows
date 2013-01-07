@@ -37,6 +37,7 @@
 #include "httpsrequest.h"
 #include "yaml-cpp/yaml.h"
 #include "server_list_reordering.h"
+#include "wininet_network_check.h"
 
 
 extern HINSTANCE g_hInst;
@@ -869,7 +870,7 @@ static string GetOSVersionString()
     return output; 
 }
 
-struct OSInfo
+struct SystemInfo
 {
     string name;
     DWORD platformId;
@@ -882,12 +883,17 @@ struct OSInfo
     DWORD suiteMask;
     string csdVersion;
     DWORD buildNumber;
+    bool starter;
+    bool mideastEnabled;
+    bool slowMachine;
+    bool wininet_success;
+    WininetNetworkInfo wininet_info;
 };
 
 // Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
-bool GetOSInfo(OSInfo& osInfo)
+bool GetSystemInfo(SystemInfo& sysInfo)
 {
-    ZeroMemory(&osInfo, sizeof(osInfo));
+    ZeroMemory(&sysInfo, sizeof(sysInfo));
 
     typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
     typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
@@ -1174,17 +1180,28 @@ bool GetOSInfo(OSInfo& osInfo)
             }
         }
 
-        osInfo.name = ss.str(); 
-        osInfo.platformId = osvi.dwPlatformId;
-        osInfo.majorVersion = osvi.dwMajorVersion;
-        osInfo.minorVersion = osvi.dwMinorVersion;
-        osInfo.productType = osvi.wProductType;
-        osInfo.servicePackMajor = osvi.wServicePackMajor;
-        osInfo.servicePackMinor = osvi.wServicePackMinor;
-        osInfo.edition = dwType;
-        osInfo.suiteMask = osvi.wSuiteMask;
-        osInfo.csdVersion = TStringToNarrow(osvi.szCSDVersion);
-        osInfo.buildNumber = osvi.dwBuildNumber;
+        sysInfo.name = ss.str(); 
+        sysInfo.platformId = osvi.dwPlatformId;
+        sysInfo.majorVersion = osvi.dwMajorVersion;
+        sysInfo.minorVersion = osvi.dwMinorVersion;
+        sysInfo.productType = osvi.wProductType;
+        sysInfo.servicePackMajor = osvi.wServicePackMajor;
+        sysInfo.servicePackMinor = osvi.wServicePackMinor;
+        sysInfo.edition = dwType;
+        sysInfo.suiteMask = osvi.wSuiteMask;
+        sysInfo.csdVersion = TStringToNarrow(osvi.szCSDVersion);
+        sysInfo.buildNumber = osvi.dwBuildNumber;
+        sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
+
+        sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
+        sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
+
+        WininetNetworkInfo netInfo;
+        if (WininetGetNetworkInfo(netInfo))
+        {
+            sysInfo.wininet_success = true;
+            sysInfo.wininet_info = netInfo;
+        }
 
         return true;
     }
@@ -1194,9 +1211,6 @@ bool GetOSInfo(OSInfo& osInfo)
 
 string GetDiagnosticInfo(const string& diagnosticInfoID)
 {
-    int x = 0;
-    x = GetSystemMetrics(SM_NETWORK);
- 
     YAML::Emitter out;
         
     out << YAML::BeginMap;
@@ -1214,35 +1228,12 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::EndMap;
 
     /*
-    * System Information
-    */
+     * System Information
+     */
 
     out << YAML::Key << "SystemInformation";
     out << YAML::Value;
     out << YAML::BeginMap;
-
-    OSInfo osInfo;
-    ZeroMemory(&osInfo, sizeof(osInfo));
-    // We'll fill in the values even if this call fails.
-    (void)GetOSInfo(osInfo);
-    out << YAML::Key << "OSInfo";
-    out << YAML::Value;
-    out << YAML::BeginMap;
-    out << YAML::Key << "name" << YAML::Value << osInfo.name.c_str();
-    out << YAML::Key << "platformId" << YAML::Value << osInfo.platformId;
-    out << YAML::Key << "majorVersion" << YAML::Value << osInfo.majorVersion;
-    out << YAML::Key << "minorVersion" << YAML::Value << osInfo.minorVersion;
-    out << YAML::Key << "productType" << YAML::Value << osInfo.productType;
-    out << YAML::Key << "servicePackMajor" << YAML::Value << osInfo.servicePackMajor;
-    out << YAML::Key << "servicePackMinor" << YAML::Value << osInfo.servicePackMinor;
-    out << YAML::Key << "ediition" << YAML::Value << osInfo.edition;
-    out << YAML::Key << "suiteMask" << YAML::Value << osInfo.suiteMask;
-    out << YAML::Key << "csdVersion" << YAML::Value << osInfo.csdVersion.c_str();
-    out << YAML::Key << "buildNumber" << YAML::Value << osInfo.buildNumber;
-    out << YAML::Key << "mideastEnabled" << YAML::Value << GetSystemMetrics(SM_MIDEASTENABLED);
-    out << YAML::Key << "slowMachine" << YAML::Value << GetSystemMetrics(SM_SLOWMACHINE);
-    out << YAML::Key << "starter" << YAML::Value << GetSystemMetrics(SM_STARTER);
-    out << YAML::EndMap;
 
     out << YAML::Key << "psiphonEmbeddedValues";
     out << YAML::Value;
@@ -1254,6 +1245,60 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::Key << "CLIENT_VERSION";
     out << YAML::Value << CLIENT_VERSION;
     out << YAML::EndMap;
+
+    SystemInfo sysInfo;
+    ZeroMemory(&sysInfo, sizeof(sysInfo));
+    // We'll fill in the values even if this call fails.
+    (void)GetSystemInfo(sysInfo);
+    out << YAML::Key << "OSInfo";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "name" << YAML::Value << sysInfo.name.c_str();
+    out << YAML::Key << "platformId" << YAML::Value << sysInfo.platformId;
+    out << YAML::Key << "majorVersion" << YAML::Value << sysInfo.majorVersion;
+    out << YAML::Key << "minorVersion" << YAML::Value << sysInfo.minorVersion;
+    out << YAML::Key << "productType" << YAML::Value << sysInfo.productType;
+    out << YAML::Key << "servicePackMajor" << YAML::Value << sysInfo.servicePackMajor;
+    out << YAML::Key << "servicePackMinor" << YAML::Value << sysInfo.servicePackMinor;
+    out << YAML::Key << "ediition" << YAML::Value << sysInfo.edition;
+    out << YAML::Key << "suiteMask" << YAML::Value << sysInfo.suiteMask;
+    out << YAML::Key << "csdVersion" << YAML::Value << sysInfo.csdVersion.c_str();
+    out << YAML::Key << "buildNumber" << YAML::Value << sysInfo.buildNumber;
+    out << YAML::Key << "starter" << YAML::Value << sysInfo.starter;
+    out << YAML::EndMap;
+
+    out << YAML::Key << "NetworkInfo";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+    if (sysInfo.wininet_success)
+    {
+        out << YAML::Key << "internetConnected" << YAML::Value << true;
+        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << sysInfo.wininet_info.internetConnectionConfigured;
+        out << YAML::Key << "internetConnectionLAN" << YAML::Value << sysInfo.wininet_info.internetConnectionLAN;
+        out << YAML::Key << "internetConnectionModem" << YAML::Value << sysInfo.wininet_info.internetConnectionModem;
+        out << YAML::Key << "internetConnectionOffline" << YAML::Value << sysInfo.wininet_info.internetConnectionOffline;
+        out << YAML::Key << "internetConnectionProxy" << YAML::Value << sysInfo.wininet_info.internetConnectionProxy;
+        out << YAML::Key << "internetRASInstalled" << YAML::Value << sysInfo.wininet_info.internetRASInstalled;
+    }
+    else 
+    {
+        out << YAML::Key << "internetConnected" << YAML::Value << false;
+        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionOffline" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
+    }
+
+    out << YAML::Key << "Misc";
+    out << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "mideastEnabled" << YAML::Value << sysInfo.mideastEnabled;
+    out << YAML::Key << "slowMachine" << YAML::Value << sysInfo.slowMachine;
+    out << YAML::EndMap;
+
+
     out << YAML::EndMap;
 
     /*
