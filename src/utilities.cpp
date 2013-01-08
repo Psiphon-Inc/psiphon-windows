@@ -870,6 +870,245 @@ static string GetOSVersionString()
     return output; 
 }
 
+
+// Adapted from http://www.codeproject.com/Articles/66016/A-Quick-Start-Guide-of-Process-Mandatory-Level-Che
+// Original comments:
+/*
+* Copyright (c) Microsoft Corporation.
+* 
+* User Account Control (UAC) is a new security component in Windows Vista and 
+* newer operating systems. With UAC fully enabled, interactive administrators 
+* normally run with least user privileges. This example demonstrates how to 
+* check the privilege level of the current process, and how to self-elevate 
+* the process by giving explicit consent with the Consent UI. 
+* 
+* This source is subject to the Microsoft Public License.
+* See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL.
+* All other rights reserved.
+* 
+* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
+* EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+* WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+\***************************************************************************/
+//
+//   FUNCTION: IsUserInAdminGroup()
+//
+//   PURPOSE: The function checks whether the primary access token of the 
+//   process belongs to user account that is a member of the local 
+//   Administrators group, even if it currently is not elevated.
+//
+//   RETURN VALUE: Returns TRUE if the primary access token of the process 
+//   belongs to user account that is a member of the local Administrators 
+//   group. Returns FALSE if the token does not.
+//
+//   EXCEPTION: If this function fails, it throws a C++ DWORD exception which 
+//   contains the Win32 error code of the failure.
+//
+//   EXAMPLE CALL:
+//     try 
+//     {
+//         if (IsUserInAdminGroup())
+//             wprintf (L"User is a member of the Administrators group\n");
+//         else
+//             wprintf (L"User is not a member of the Administrators group\n");
+//     }
+//     catch (DWORD dwError)
+//     {
+//         wprintf(L"IsUserInAdminGroup failed w/err %lu\n", dwError);
+//     }
+//
+struct UserGroupInfo {
+    bool inAdminsGroup;
+    bool inUsersGroup;
+    bool inGuestsGroup;
+    bool inPowerUsersGroup;
+};
+
+bool GetUserGroupInfo(UserGroupInfo& groupInfo)
+{
+    BOOL fInGroup = FALSE;
+    DWORD dwError = ERROR_SUCCESS;
+    HANDLE hToken = NULL;
+    HANDLE hTokenToCheck = NULL;
+    DWORD cbSize = 0;
+
+    // Open the primary access token of the process for query and duplicate.
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE, 
+        &hToken))
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    // Determine whether system is running Windows Vista or later operating 
+    // systems (major version >= 6) because they support linked tokens, but 
+    // previous versions (major version < 6) do not.
+    OSVERSIONINFO osver = { sizeof(osver) };
+    if (!GetVersionEx(&osver))
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    if (osver.dwMajorVersion >= 6)
+    {
+        // Running Windows Vista or later (major version >= 6). 
+        // Determine token type: limited, elevated, or default. 
+        TOKEN_ELEVATION_TYPE elevType;
+        if (!GetTokenInformation(hToken, TokenElevationType, &elevType, 
+            sizeof(elevType), &cbSize))
+        {
+            dwError = GetLastError();
+            goto Cleanup;
+        }
+
+        // If limited, get the linked elevated token for further check.
+        if (TokenElevationTypeLimited == elevType)
+        {
+            if (!GetTokenInformation(hToken, TokenLinkedToken, &hTokenToCheck, 
+                sizeof(hTokenToCheck), &cbSize))
+            {
+                dwError = GetLastError();
+                goto Cleanup;
+            }
+        }
+    }
+    
+    // CheckTokenMembership requires an impersonation token. If we just got a 
+    // linked token, it already is an impersonation token.  If we did not get 
+    // a linked token, duplicate the original into an impersonation token for 
+    // CheckTokenMembership.
+    if (!hTokenToCheck)
+    {
+        if (!DuplicateToken(hToken, SecurityIdentification, &hTokenToCheck))
+        {
+            dwError = GetLastError();
+            goto Cleanup;
+        }
+    }
+
+    // Create the SID corresponding to the Administrators group.
+    BYTE groupSID[SECURITY_MAX_SID_SIZE];
+    
+    //
+    // ADMINS
+    //
+
+    cbSize = sizeof(groupSID);
+    if (!CreateWellKnownSid(WinBuiltinAdministratorsSid, NULL, &groupSID,  
+        &cbSize))
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    // Check if the token to be checked contains admin SID.
+    // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
+    // To determine whether a SID is enabled in a token, that is, whether it 
+    // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    groupInfo.inAdminsGroup = !!fInGroup;
+
+    //
+    // USERS
+    //
+
+    cbSize = sizeof(groupSID);
+    if (!CreateWellKnownSid(WinBuiltinUsersSid, NULL, &groupSID,  
+        &cbSize))
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    // Check if the token to be checked contains admin SID.
+    // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
+    // To determine whether a SID is enabled in a token, that is, whether it 
+    // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    groupInfo.inUsersGroup = !!fInGroup;
+
+    //
+    // GUESTS
+    //
+
+    cbSize = sizeof(groupSID);
+    if (!CreateWellKnownSid(WinBuiltinGuestsSid, NULL, &groupSID,  
+        &cbSize))
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    // Check if the token to be checked contains admin SID.
+    // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
+    // To determine whether a SID is enabled in a token, that is, whether it 
+    // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    groupInfo.inGuestsGroup = !!fInGroup;
+
+    //
+    // POWER USERS
+    //
+
+    cbSize = sizeof(groupSID);
+    if (!CreateWellKnownSid(WinBuiltinPowerUsersSid, NULL, &groupSID,  
+        &cbSize))
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    // Check if the token to be checked contains admin SID.
+    // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
+    // To determine whether a SID is enabled in a token, that is, whether it 
+    // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    {
+        dwError = GetLastError();
+        goto Cleanup;
+    }
+
+    groupInfo.inPowerUsersGroup = !!fInGroup;
+
+Cleanup:
+    // Centralized cleanup for all allocated resources.
+    if (hToken)
+    {
+        CloseHandle(hToken);
+        hToken = NULL;
+    }
+    if (hTokenToCheck)
+    {
+        CloseHandle(hTokenToCheck);
+        hTokenToCheck = NULL;
+    }
+
+    // Throw the error if something failed in the function.
+    if (ERROR_SUCCESS != dwError)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
 struct SystemInfo
 {
     string name;
@@ -888,6 +1127,9 @@ struct SystemInfo
     bool slowMachine;
     bool wininet_success;
     WininetNetworkInfo wininet_info;
+    bool userIsAdmin;
+    bool groupInfo_success;
+    UserGroupInfo groupInfo;
 };
 
 // Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
@@ -1197,10 +1439,17 @@ bool GetSystemInfo(SystemInfo& sysInfo)
         sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
 
         WininetNetworkInfo netInfo;
+        sysInfo.wininet_success = false;
         if (WininetGetNetworkInfo(netInfo))
         {
             sysInfo.wininet_success = true;
             sysInfo.wininet_info = netInfo;
+        }
+
+        sysInfo.groupInfo_success = false;
+        if (GetUserGroupInfo(sysInfo.groupInfo))
+        {
+            sysInfo.groupInfo_success = true;
         }
 
         return true;
@@ -1213,19 +1462,19 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
 {
     YAML::Emitter out;
         
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // overall
 
     /*
-        * Metadata
-        */
+     * Metadata
+     */
 
     out << YAML::Key << "Metadata";
     out << YAML::Value;
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // metadata
     out << YAML::Key << "platform" << YAML::Value << "windows";
     out << YAML::Key << "version" << YAML::Value << 1;
     out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
-    out << YAML::EndMap;
+    out << YAML::EndMap; // metadata
 
     /*
      * System Information
@@ -1233,18 +1482,18 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
 
     out << YAML::Key << "SystemInformation";
     out << YAML::Value;
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // sysinfo
 
     out << YAML::Key << "psiphonEmbeddedValues";
     out << YAML::Value;
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // embedded
     out << YAML::Key << "PROPAGATION_CHANNEL_ID";
     out << YAML::Value << PROPAGATION_CHANNEL_ID;
     out << YAML::Key << "SPONSOR_ID";
     out << YAML::Value << SPONSOR_ID;
     out << YAML::Key << "CLIENT_VERSION";
     out << YAML::Value << CLIENT_VERSION;
-    out << YAML::EndMap;
+    out << YAML::EndMap; // embedded
 
     SystemInfo sysInfo;
     ZeroMemory(&sysInfo, sizeof(sysInfo));
@@ -1252,7 +1501,7 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     (void)GetSystemInfo(sysInfo);
     out << YAML::Key << "OSInfo";
     out << YAML::Value;
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // osinfo
     out << YAML::Key << "name" << YAML::Value << sysInfo.name.c_str();
     out << YAML::Key << "platformId" << YAML::Value << sysInfo.platformId;
     out << YAML::Key << "majorVersion" << YAML::Value << sysInfo.majorVersion;
@@ -1265,11 +1514,11 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::Key << "csdVersion" << YAML::Value << sysInfo.csdVersion.c_str();
     out << YAML::Key << "buildNumber" << YAML::Value << sysInfo.buildNumber;
     out << YAML::Key << "starter" << YAML::Value << sysInfo.starter;
-    out << YAML::EndMap;
+    out << YAML::EndMap; // osinfo
 
     out << YAML::Key << "NetworkInfo";
     out << YAML::Value;
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // netinfo
     if (sysInfo.wininet_success)
     {
         out << YAML::Key << "internetConnected" << YAML::Value << true;
@@ -1290,16 +1539,39 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
         out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
         out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
     }
+    out << YAML::EndMap; // netinfo
+
+    out << YAML::Key << "UserInfo";
+    out << YAML::Value;
+    out << YAML::BeginMap; //userinfo
+    if (sysInfo.groupInfo_success)
+    {
+        out << YAML::Key << "inAdminsGroup" << YAML::Value << sysInfo.groupInfo.inAdminsGroup;
+        out << YAML::Key << "inUsersGroup" << YAML::Value << sysInfo.groupInfo.inUsersGroup;
+        out << YAML::Key << "inGuestsGroup" << YAML::Value << sysInfo.groupInfo.inGuestsGroup;
+        out << YAML::Key << "inPowerUsersGroup" << YAML::Value << sysInfo.groupInfo.inPowerUsersGroup;
+    }
+    else 
+    {
+        out << YAML::Key << "internetConnected" << YAML::Value << false;
+        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionOffline" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
+    }
+    out << YAML::EndMap; // userinfo
 
     out << YAML::Key << "Misc";
     out << YAML::Value;
-    out << YAML::BeginMap;
+    out << YAML::BeginMap; // misc
     out << YAML::Key << "mideastEnabled" << YAML::Value << sysInfo.mideastEnabled;
     out << YAML::Key << "slowMachine" << YAML::Value << sysInfo.slowMachine;
-    out << YAML::EndMap;
+    out << YAML::EndMap; // misc
 
 
-    out << YAML::EndMap;
+    out << YAML::EndMap; // sysinfo
 
     /*
      * Server Response Check
@@ -1349,7 +1621,7 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::EndSeq;
 
 
-    out << YAML::EndMap;
+    out << YAML::EndMap; // overall
 
     return out.c_str();
 }
