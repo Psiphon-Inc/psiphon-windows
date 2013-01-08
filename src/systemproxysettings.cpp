@@ -25,60 +25,34 @@
 #include "ras.h"
 #include "raserror.h"
 #include "usersettings.h"
+#include "utilities.h"
+
+
+void AddOriginalProxyInfo(const connection_proxy& proxyInfo);
+bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo);
+bool SetConnectionProxy(const connection_proxy& setting);
 
 
 static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
+static const int INTERNET_OPTIONS_NUMBER = 3;
 
 
-HANDLE g_originalProxyInfoMutex = CreateMutex(NULL, FALSE, 0);
-vector<connection_proxy> g_originalProxyInfo;
-
-/**
-Returns a santized/de-personalized copy of the original proxy info.
-*/
-void GetOriginalProxyInfo(vector<connection_proxy>& originalProxyInfo)
+struct connection_proxy
 {
-    // Only grab the mutex temporarily.
+    tstring name;
+    DWORD flags;
+    tstring proxy;
+    tstring bypass;
+
+    bool operator==(const connection_proxy& rhs)
     {
-        AutoMUTEX mutex(g_originalProxyInfoMutex);
-        originalProxyInfo = g_originalProxyInfo;
+        return 
+            this->name == rhs.name &&
+            this->flags == rhs.flags &&
+            this->proxy == rhs.proxy &&
+            this->bypass == rhs.bypass;
     }
-
-    // ASSUMPTION: Proxy entries will always have a port number
-    basic_regex<TCHAR> proxy_regex = basic_regex<TCHAR>(
-                    _T("(?:(?:[^:^;^=^\\/^\\[^\\]]+)|(?:\\[[a-fA-F0-9:]+\\]))(:[0-9]+)(;|$)"), 
-                    regex::ECMAScript | regex::icase | regex::optimize);
-    
-    tstring proxy_replace = _T("[REDACTED]$1$2");
-
-    for (vector<connection_proxy>::iterator it = originalProxyInfo.begin();
-         it != originalProxyInfo.end();
-         it++)
-    {
-        it->name = _T("[REDACTED]");
-        
-        it->proxy = regex_replace(
-                        it->proxy.c_str(), 
-                        proxy_regex, 
-                        proxy_replace.c_str());
-    }
-}
-
-void AddOriginalProxyInfo(const connection_proxy& proxyInfo)
-{
-    AutoMUTEX mutex(g_originalProxyInfoMutex);
-
-    vector<connection_proxy>::iterator match = find(g_originalProxyInfo.begin(), g_originalProxyInfo.end(), proxyInfo);
-    if (match == g_originalProxyInfo.end())
-    {
-        // Entry doesn't already exist in vector
-        g_originalProxyInfo.push_back(proxyInfo);
-    }
-
-    // TEMP
-    vector<connection_proxy> originalProxyInfo;
-    GetOriginalProxyInfo(originalProxyInfo);
-}
+};
 
 
 SystemProxySettings::SystemProxySettings()
@@ -126,13 +100,24 @@ bool SystemProxySettings::Apply()
 
     m_settingsApplied = true;
 
-    // Get a list of connections, starting with the dial-up connections
-    vector<tstring> connections = GetRasConnectionNames();
+    vector<tstring> connections;
+    vector<connection_proxy> proxyInfo;
+    if (!GetConnectionsAndProxyInfo(connections, proxyInfo))
+    {
+        return false;
+    }
     
-    // NULL indicates the default or LAN connection
-    connections.push_back(_T(""));
+    if (!Save(proxyInfo))
+    {
+        return false;
+    }
 
-    return (Save(connections) && SetConnectionsProxies(connections, proxyAddress));
+    if (!SetConnectionsProxies(connections, proxyAddress))
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 tstring SystemProxySettings::MakeProxySettingString()
@@ -214,7 +199,7 @@ void SystemProxySettings::PreviousCrashCheckHack(connection_proxy& proxySettings
     }
 }
 
-bool SystemProxySettings::Save(const vector<tstring>& connections)
+bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
 {
     if (!m_originalSettings.empty())
     {
@@ -226,43 +211,27 @@ bool SystemProxySettings::Save(const vector<tstring>& connections)
     bool success = true;
     connection_proxy proxySettings;
 
-    for (tstring_iter ii = connections.begin();
-         ii != connections.end();
+    for (vector<connection_proxy>::const_iterator ii = proxyInfo.begin();
+         ii != proxyInfo.end();
          ++ii)
     {
-        proxySettings.name = *ii;
-        if (GetConnectionProxy(proxySettings))
-        {
-            PreviousCrashCheckHack(proxySettings);
-            m_originalSettings.push_back(proxySettings);
-            AddOriginalProxyInfo(proxySettings);
-        }
-        else
-        {
-            success = false;
-            break;
-        }
+        connection_proxy proxySettings = *ii;
+        PreviousCrashCheckHack(proxySettings);
+        m_originalSettings.push_back(proxySettings);
     }
 
-    if (!success)
-    {
-        // If we failed to save any connection, discard everything.
-        // Nothing should proceed.
-        m_originalSettings.clear();
-    }
-
-    return success;
+    return true;
 }
 
 bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress)
 {
     bool success = true;
-    connection_proxy proxySettings;
 
-    for (tstring_iter ii = connections.begin();
+    for (vector<tstring>::const_iterator ii = connections.begin();
          ii != connections.end();
          ++ii)
     {
+        connection_proxy proxySettings;
         // These are the new proxy settings we want to use
         proxySettings.name = *ii;
         proxySettings.flags = PROXY_TYPE_PROXY;
@@ -279,85 +248,12 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
     return success;
 }
 
-bool SystemProxySettings::SetConnectionProxy(const connection_proxy& setting)
-{
-    INTERNET_PER_CONN_OPTION_LIST list;
-    INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
-    list.dwSize = sizeof(list);
-    // Pointer to a string that contains the name of the RAS connection
-    // or NULL, which indicates the default or LAN connection, to set or query options on.
-    list.pszConnection = setting.name.length() ? const_cast<TCHAR*>(setting.name.c_str()) : 0;
-    list.dwOptionCount = sizeof(options)/sizeof(INTERNET_PER_CONN_OPTION);
-    list.pOptions = options;
 
-    list.pOptions[0].dwOption = INTERNET_PER_CONN_FLAGS;
-    list.pOptions[0].Value.dwValue = setting.flags;
-
-    list.pOptions[1].dwOption = INTERNET_PER_CONN_PROXY_SERVER;
-    list.pOptions[1].Value.pszValue = const_cast<TCHAR*>(setting.proxy.c_str());
-
-    list.pOptions[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
-    list.pOptions[2].Value.pszValue = const_cast<TCHAR*>(setting.bypass.c_str());
-
-    bool success = (0 != InternetSetOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, list.dwSize));
-
-    if (success)
-    {
-        InternetSetOption(NULL, INTERNET_OPTION_SETTINGS_CHANGED, NULL, 0);
-        InternetSetOption(NULL, INTERNET_OPTION_REFRESH , NULL, 0);
-    }
-    else
-    {
-        my_print(NOT_SENSITIVE, false, _T("InternetSetOption error: %d"), GetLastError());
-        // NOTE: We are calling the Unicode version of InternetSetOption.
-        // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
-        // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
-    }
-
-    return success;
-}
-
-bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
-{
-    INTERNET_PER_CONN_OPTION_LIST list;
-    INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
-    unsigned long length = sizeof(list);
-    list.dwSize = length;
-    // Pointer to a string that contains the name of the RAS connection
-    // or NULL, which indicates the default or LAN connection, to set or query options on.
-    list.pszConnection = setting.name.length() ? const_cast<TCHAR*>(setting.name.c_str()) : 0;
-    list.dwOptionCount = sizeof(options)/sizeof(INTERNET_PER_CONN_OPTION);
-    list.pOptions = options;
-
-    options[0].dwOption = INTERNET_PER_CONN_FLAGS;
-    options[1].dwOption = INTERNET_PER_CONN_PROXY_SERVER;
-    options[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
-
-    if (0 == InternetQueryOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, &length))
-    {
-        my_print(NOT_SENSITIVE, false, _T("InternetQueryOption error: %d"), GetLastError());
-        // NOTE: We are calling the Unicode version of InternetQueryOption.
-        // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
-        // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
-        return false;
-    }
-
-    setting.flags = options[0].Value.dwValue;
-    setting.proxy = options[1].Value.pszValue ? options[1].Value.pszValue : _T("");
-    setting.bypass = options[2].Value.pszValue ? options[2].Value.pszValue : _T("");
-
-    // Cleanup
-    if (options[1].Value.pszValue)
-    {
-        GlobalFree(options[1].Value.pszValue);
-    }
-    if (options[2].Value.pszValue)
-    {
-        GlobalFree(options[2].Value.pszValue);
-    }
-
-    return true;
-}
+/**********************************************************
+*
+* Proxy settings helpers
+*
+**********************************************************/
 
 static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWORD& entries)
 {
@@ -383,7 +279,8 @@ static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWO
     return RasEnumEntries(0, 0, rasEntryNames, &bufferSize, &entries);
 }
 
-vector<tstring> SystemProxySettings::GetRasConnectionNames()
+
+vector<tstring> GetRasConnectionNames()
 {
     vector<tstring> connections;
     LPRASENTRYNAME rasEntryNames = 0;
@@ -430,4 +327,305 @@ vector<tstring> SystemProxySettings::GetRasConnectionNames()
     }
 
     return connections;
+}
+
+
+bool SetConnectionProxy(const connection_proxy& setting)
+{
+    INTERNET_PER_CONN_OPTION_LIST list;
+    INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
+    list.dwSize = sizeof(list);
+    // Pointer to a string that contains the name of the RAS connection
+    // or NULL, which indicates the default or LAN connection, to set or query options on.
+    list.pszConnection = setting.name.length() ? const_cast<TCHAR*>(setting.name.c_str()) : 0;
+    list.dwOptionCount = sizeof(options)/sizeof(INTERNET_PER_CONN_OPTION);
+    list.pOptions = options;
+
+    list.pOptions[0].dwOption = INTERNET_PER_CONN_FLAGS;
+    list.pOptions[0].Value.dwValue = setting.flags;
+
+    list.pOptions[1].dwOption = INTERNET_PER_CONN_PROXY_SERVER;
+    list.pOptions[1].Value.pszValue = const_cast<TCHAR*>(setting.proxy.c_str());
+
+    list.pOptions[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
+    list.pOptions[2].Value.pszValue = const_cast<TCHAR*>(setting.bypass.c_str());
+
+    bool success = (0 != InternetSetOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, list.dwSize));
+
+    if (success)
+    {
+        InternetSetOption(NULL, INTERNET_OPTION_SETTINGS_CHANGED, NULL, 0);
+        InternetSetOption(NULL, INTERNET_OPTION_REFRESH , NULL, 0);
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("InternetSetOption error: %d"), GetLastError());
+        // NOTE: We are calling the Unicode version of InternetSetOption.
+        // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
+        // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
+    }
+
+    return success;
+}
+
+bool GetConnectionProxy(connection_proxy& setting)
+{
+    INTERNET_PER_CONN_OPTION_LIST list;
+    INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
+    unsigned long length = sizeof(list);
+    list.dwSize = length;
+    // Pointer to a string that contains the name of the RAS connection
+    // or NULL, which indicates the default or LAN connection, to set or query options on.
+    list.pszConnection = setting.name.length() ? const_cast<TCHAR*>(setting.name.c_str()) : 0;
+    list.dwOptionCount = sizeof(options)/sizeof(INTERNET_PER_CONN_OPTION);
+    list.pOptions = options;
+
+    options[0].dwOption = INTERNET_PER_CONN_FLAGS;
+    options[1].dwOption = INTERNET_PER_CONN_PROXY_SERVER;
+    options[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
+
+    if (0 == InternetQueryOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, &length))
+    {
+        my_print(NOT_SENSITIVE, false, _T("InternetQueryOption error: %d"), GetLastError());
+        // NOTE: We are calling the Unicode version of InternetQueryOption.
+        // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
+        // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
+        return false;
+    }
+
+    setting.flags = options[0].Value.dwValue;
+    setting.proxy = options[1].Value.pszValue ? options[1].Value.pszValue : _T("");
+    setting.bypass = options[2].Value.pszValue ? options[2].Value.pszValue : _T("");
+
+    // Cleanup
+    if (options[1].Value.pszValue)
+    {
+        GlobalFree(options[1].Value.pszValue);
+    }
+    if (options[2].Value.pszValue)
+    {
+        GlobalFree(options[2].Value.pszValue);
+    }
+
+    return true;
+}
+
+
+bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo)
+{
+    connections.clear();
+    proxyInfo.clear();
+
+    // Get a list of connections, starting with the dial-up connections
+    connections = GetRasConnectionNames();
+    
+    // NULL indicates the default or LAN connection
+    connections.push_back(_T(""));
+
+    for (vector<tstring>::const_iterator ii = connections.begin();
+         ii != connections.end();
+         ++ii)
+    {
+        connection_proxy entry;
+
+        entry.name = *ii;
+        if (GetConnectionProxy(entry))
+        {
+            proxyInfo.push_back(entry);
+            AddOriginalProxyInfo(entry);
+        }
+        else
+        {
+            connections.clear();
+            proxyInfo.clear();
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+/**********************************************************
+*
+* Original proxy info for use with diagnostic feedback info
+*
+**********************************************************/
+
+HANDLE g_originalProxyInfoMutex = CreateMutex(NULL, FALSE, 0);
+vector<connection_proxy> g_originalProxyInfo;
+
+/**
+Returns a santized/de-personalized copy of the original proxy info.
+*/
+void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
+{
+    originalProxyInfo.clear();
+
+    vector<connection_proxy> rawOriginalProxyInfo;
+    // Only grab the mutex temporarily.
+    {
+        AutoMUTEX mutex(g_originalProxyInfoMutex);
+        rawOriginalProxyInfo = g_originalProxyInfo;
+    }
+
+    // This might be called before SystemProxySettings has filled in the 
+    // desired values (which only happens after a successful connection).
+    // In that case, we'll get them here.
+    if (rawOriginalProxyInfo.empty())
+    {
+        if (!GetConnectionsAndProxyInfo(vector<tstring>(), rawOriginalProxyInfo))
+        {
+            return;
+        }
+    }
+
+    /*
+    De-personalize system proxy server info
+    */
+
+    // ASSUMPTION: Proxy entries will always have a port number.
+    // There are a number of forms (of interest to us) that a proxy server entry can take:
+    // localhost or 127.0.0.1
+    basic_regex<TCHAR> localhost_regex = basic_regex<TCHAR>(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:(?:localhost)|(?:127\\.0\\.0\\.1))(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // IPv4 (Note: very rough, but probably good enough)
+    basic_regex<TCHAR> ipv4_regex = basic_regex<TCHAR>(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // IPv6 (Note: also very rough but probably good enough)
+    basic_regex<TCHAR> ipv6_regex = basic_regex<TCHAR>(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\[[a-fA-F0-9:]+\\])(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // not-fully-qualified domain name
+    basic_regex<TCHAR> nonfqdn_regex = basic_regex<TCHAR>(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-]+)(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // fully qualified domain name
+    basic_regex<TCHAR> fqdn_regex = basic_regex<TCHAR>(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-\\.]+)(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+
+    for (vector<connection_proxy>::iterator it = rawOriginalProxyInfo.begin();
+         it != rawOriginalProxyInfo.end();
+         it++)
+    {
+        ConnectionProxyInfo info;
+
+        // We can't usefully redact this value. Maybe it shouldn't be included?
+        if (it->name.empty())
+        {
+            info.connectionName = _T("");
+        }
+        else
+        {
+            info.connectionName = _T("[REDACTED]");
+        }
+
+        vector<tstring> proxyElems = split<TCHAR>(it->proxy, _T(';'));
+        tstringstream ss;
+        for (vector<tstring>::iterator elem = proxyElems.begin();
+             elem != proxyElems.end();
+             elem++)
+        {
+            if (elem != proxyElems.begin())
+            {
+                ss << _T(";");
+            }
+
+            if (regex_match(*elem, localhost_regex))
+            {
+                ss << regex_replace(*elem, localhost_regex, _T("$1[LOCALHOST]$2$3"));
+            }
+            else if (regex_match(*elem, ipv4_regex))
+            {
+                ss << regex_replace(*elem, ipv4_regex, _T("$1[IPV4]$2$3"));
+            }
+            else if (regex_match(*elem, ipv6_regex))
+            {
+                ss << regex_replace(*elem, ipv6_regex, _T("$1[IPV6]$2$3"));
+            }
+            else if (regex_match(*elem, nonfqdn_regex))
+            {
+                ss << regex_replace(*elem, nonfqdn_regex, _T("$1[NONFQDN]$2$3"));
+            }
+            else if (regex_match(*elem, fqdn_regex))
+            {
+                ss << regex_replace(*elem, fqdn_regex, _T("$1[FQDN]$2$3"));
+            }
+            else
+            {
+                ss << _T("[UNMATCHED]");
+            }
+        }
+
+        info.proxy = ss.str();
+
+        /*
+        De-personalize system proxy bypass info
+        */
+
+        ss.str(_T(""));
+        ss.clear();
+
+        vector<tstring> bypassElems = split<TCHAR>(it->bypass, _T(';'));
+        for (vector<tstring>::iterator elem = bypassElems.begin();
+             elem != bypassElems.end();
+             elem++)
+        {
+            if (*elem == SYSTEM_PROXY_SETTINGS_PROXY_BYPASS)
+            {
+                ss << SYSTEM_PROXY_SETTINGS_PROXY_BYPASS << ";";
+            }
+            else
+            {
+                ss << "[REDACTED];";
+            }
+        }
+
+        info.bypass = ss.str();
+
+        /*
+        Make proxy flags human-readable
+        */
+
+        ss.str(_T(""));
+        ss.clear();
+
+        if (it->flags & PROXY_TYPE_DIRECT)
+        {
+            ss << _T("PROXY_TYPE_DIRECT|");
+        }
+        else if (it->flags & PROXY_TYPE_PROXY)
+        {
+            ss << _T("PROXY_TYPE_PROXY|");
+        }
+        else if (it->flags & PROXY_TYPE_AUTO_PROXY_URL)
+        {
+            ss << _T("PROXY_TYPE_AUTO_PROXY_URL|");
+        }
+        else if (it->flags & PROXY_TYPE_AUTO_DETECT)
+        {
+            ss << _T("PROXY_TYPE_AUTO_DETECT|");
+        }
+        // Yes, it sloppily ends with "|"...
+
+        info.flags = ss.str();
+
+        originalProxyInfo.push_back(info);
+    }
+}
+
+void AddOriginalProxyInfo(const connection_proxy& proxyInfo)
+{
+    AutoMUTEX mutex(g_originalProxyInfoMutex);
+
+    vector<connection_proxy>::iterator match = find(g_originalProxyInfo.begin(), g_originalProxyInfo.end(), proxyInfo);
+    if (match == g_originalProxyInfo.end())
+    {
+        // Entry doesn't already exist in vector
+        g_originalProxyInfo.push_back(proxyInfo);
+    }
 }

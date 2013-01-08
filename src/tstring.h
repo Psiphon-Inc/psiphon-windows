@@ -26,8 +26,10 @@ using namespace std;
 
 #ifdef _UNICODE
 #define tstring wstring
+#define tistringstream wistringstream
 #else
 #define tstring string
+#define tistringstream istringstream
 #endif
 
 typedef basic_stringstream<TCHAR> tstringstream;

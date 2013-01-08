@@ -82,3 +82,26 @@ bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddressEncoded, 
         const string& diagnosticInfoID, 
         const StopInfo& stopInfo);
+
+
+/*
+String Utilities
+*/
+
+// Adapted from http://stackoverflow.com/questions/236129/splitting-a-string-in-c
+
+template <typename charT>
+vector<basic_string<charT>>& split(const basic_string<charT> &s, charT delim, std::vector<basic_string<charT>> &elems) {
+    basic_stringstream<charT> ss(s);
+    basic_string<charT> item;
+    while(std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+template <typename charT>
+std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim) {
+    vector<basic_string<charT>> elems;
+    return split(s, delim, elems);
+}

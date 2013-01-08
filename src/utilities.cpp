@@ -38,6 +38,7 @@
 #include "yaml-cpp/yaml.h"
 #include "server_list_reordering.h"
 #include "wininet_network_check.h"
+#include "systemproxysettings.h"
 
 
 extern HINSTANCE g_hInst;
@@ -1130,13 +1131,12 @@ struct SystemInfo
     bool userIsAdmin;
     bool groupInfo_success;
     UserGroupInfo groupInfo;
+    vector<ConnectionProxyInfo> originalProxyInfo;
 };
 
 // Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
 bool GetSystemInfo(SystemInfo& sysInfo)
 {
-    ZeroMemory(&sysInfo, sizeof(sysInfo));
-
     typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
     typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 
@@ -1452,6 +1452,8 @@ bool GetSystemInfo(SystemInfo& sysInfo)
             sysInfo.groupInfo_success = true;
         }
 
+        GetOriginalProxyInfo(sysInfo.originalProxyInfo);
+
         return true;
     }
 
@@ -1496,7 +1498,6 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::EndMap; // embedded
 
     SystemInfo sysInfo;
-    ZeroMemory(&sysInfo, sizeof(sysInfo));
     // We'll fill in the values even if this call fails.
     (void)GetSystemInfo(sysInfo);
     out << YAML::Key << "OSInfo";
@@ -1539,6 +1540,23 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
         out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
         out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
     }
+
+    out << YAML::Key << "OriginalProxyInfo";
+    out << YAML::Value;
+    out << YAML::BeginSeq;
+    for (vector<ConnectionProxyInfo>::const_iterator it = sysInfo.originalProxyInfo.begin();
+         it != sysInfo.originalProxyInfo.end();
+         it++)
+    {
+        out << YAML::BeginMap; // OriginalProxyInfo
+        out << YAML::Key << "connectionName" << YAML::Value << TStringToNarrow(it->connectionName).c_str();
+        out << YAML::Key << "flags" << YAML::Value << TStringToNarrow(it->flags).c_str();
+        out << YAML::Key << "proxy" << YAML::Value << TStringToNarrow(it->proxy).c_str();
+        out << YAML::Key << "bypass" << YAML::Value << TStringToNarrow(it->bypass).c_str();
+        out << YAML::EndMap; // OriginalProxyInfo
+    }
+    out << YAML::EndSeq;
+
     out << YAML::EndMap; // netinfo
 
     out << YAML::Key << "UserInfo";
