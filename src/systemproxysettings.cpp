@@ -27,6 +27,60 @@
 #include "usersettings.h"
 
 
+static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
+
+
+HANDLE g_originalProxyInfoMutex = CreateMutex(NULL, FALSE, 0);
+vector<connection_proxy> g_originalProxyInfo;
+
+/**
+Returns a santized/de-personalized copy of the original proxy info.
+*/
+void GetOriginalProxyInfo(vector<connection_proxy>& originalProxyInfo)
+{
+    // Only grab the mutex temporarily.
+    {
+        AutoMUTEX mutex(g_originalProxyInfoMutex);
+        originalProxyInfo = g_originalProxyInfo;
+    }
+
+    // ASSUMPTION: Proxy entries will always have a port number
+    basic_regex<TCHAR> proxy_regex = basic_regex<TCHAR>(
+                    _T("(?:(?:[^:^;^=^\\/^\\[^\\]]+)|(?:\\[[a-fA-F0-9:]+\\]))(:[0-9]+)(;|$)"), 
+                    regex::ECMAScript | regex::icase | regex::optimize);
+    
+    tstring proxy_replace = _T("[REDACTED]$1$2");
+
+    for (vector<connection_proxy>::iterator it = originalProxyInfo.begin();
+         it != originalProxyInfo.end();
+         it++)
+    {
+        it->name = _T("[REDACTED]");
+        
+        it->proxy = regex_replace(
+                        it->proxy.c_str(), 
+                        proxy_regex, 
+                        proxy_replace.c_str());
+    }
+}
+
+void AddOriginalProxyInfo(const connection_proxy& proxyInfo)
+{
+    AutoMUTEX mutex(g_originalProxyInfoMutex);
+
+    vector<connection_proxy>::iterator match = find(g_originalProxyInfo.begin(), g_originalProxyInfo.end(), proxyInfo);
+    if (match == g_originalProxyInfo.end())
+    {
+        // Entry doesn't already exist in vector
+        g_originalProxyInfo.push_back(proxyInfo);
+    }
+
+    // TEMP
+    vector<connection_proxy> originalProxyInfo;
+    GetOriginalProxyInfo(originalProxyInfo);
+}
+
+
 SystemProxySettings::SystemProxySettings()
     : m_settingsApplied(false)
 {
@@ -181,6 +235,7 @@ bool SystemProxySettings::Save(const vector<tstring>& connections)
         {
             PreviousCrashCheckHack(proxySettings);
             m_originalSettings.push_back(proxySettings);
+            AddOriginalProxyInfo(proxySettings);
         }
         else
         {

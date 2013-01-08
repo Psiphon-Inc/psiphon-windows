@@ -27,7 +27,6 @@
 #include "webbrowser.h"
 #include "embeddedvalues.h"
 #include "usersettings.h"
-#include "systemproxysettings.h"
 #include "zlib.h"
 #include <algorithm>
 #include <sstream>
