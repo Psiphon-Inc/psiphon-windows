@@ -26,6 +26,9 @@
 #pragma comment (lib, "Comctl32.lib")
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+// This is for COM functions
+# pragma comment(lib, "wbemuuid.lib")
+
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
@@ -782,6 +785,30 @@ int APIENTRY _tWinMain(
         return FALSE;
     }
 
+    HRESULT hr;
+    hr = CoInitializeEx(0, COINIT_MULTITHREADED); 
+    if (FAILED(hr)) 
+    { 
+        assert(0);
+        return FALSE;
+    }
+
+    hr =  CoInitializeSecurity(
+            NULL, 
+            -1,                          // COM authentication
+            NULL,                        // Authentication services
+            NULL,                        // Reserved
+            RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
+            RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
+            NULL,                        // Authentication info
+            EOAC_NONE,                   // Additional capabilities 
+            NULL);                       // Reserved
+    if (FAILED(hr)) 
+    { 
+        assert(0);
+        return FALSE;
+    }
+
     HACCEL hAccelTable;
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
 
@@ -796,6 +823,8 @@ int APIENTRY _tWinMain(
             DispatchMessage(&msg);
         }
     }
+
+    CoUninitialize();
 
     return (int) msg.wParam;
 }

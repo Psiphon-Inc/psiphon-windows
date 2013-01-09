@@ -1460,6 +1460,348 @@ bool GetSystemInfo(SystemInfo& sysInfo)
     return false;
 }
 
+// Not all of these fields will be used, depending on the OS version
+struct SecurityInfo
+{
+    tstring displayName;
+    tstring version; // "v1" or "v2"
+    struct V1 {
+        bool productUpToDate;
+        bool enabled;
+        tstring versionNumber;
+        V1() : productUpToDate(false), enabled(false) {}
+    } v1;
+    struct V2 {
+        DWORD productState;
+        tstring securityProvider;
+        bool enabled;
+        bool definitionsUpToDate;
+        V2() : productState(0), enabled(false), definitionsUpToDate(false) {}
+    } v2;
+};
+
+void GetOSSecurityInfo(
+        vector<SecurityInfo>& antiVirusInfo, 
+        vector<SecurityInfo>& antiSpywareInfo, 
+        vector<SecurityInfo>& firewallInfo)
+{
+    antiVirusInfo.clear();
+    antiSpywareInfo.clear();
+    firewallInfo.clear();
+
+    // This code adapted from: http://msdn.microsoft.com/en-us/library/aa390423.aspx
+
+    HRESULT hr;
+
+    // Obtain the initial locator to WMI
+
+    IWbemLocator *pLoc = NULL;
+
+    hr = CoCreateInstance(
+        CLSID_WbemLocator,             
+        0, 
+        CLSCTX_INPROC_SERVER, 
+        IID_IWbemLocator, 
+        (LPVOID *) &pLoc);
+ 
+    if (FAILED(hr))
+    {
+        return;
+    }
+
+    // Connect to WMI through the IWbemLocator::ConnectServer method
+
+    IWbemServices *pSvc = NULL;
+
+    // Connect to the root\SecurityCenter namespace with
+    // the current user and obtain pointer pSvc
+    // to make IWbemServices calls.
+
+    // NOTE: pre-Windows Vista, the namespace used was "SecurityCenter". With
+    // Windows Vista, the namespace changed to "SecurityCenter2". (The former
+    // still exists, but it's empty.)
+    // We will try to determine which to use by first attempting to get
+    // the newer namespace, and if that fails we'll get the older one.
+
+    bool securityCenter2 = true;
+    BSTR wmiNamespace = SysAllocString(L"ROOT\\SecurityCenter2");
+    hr = pLoc->ConnectServer(
+             wmiNamespace,               // Object path of WMI namespace
+             NULL,                    // User name. NULL = current user
+             NULL,                    // User password. NULL = current
+             0,                       // Locale. NULL indicates current
+             NULL,                    // Security flags.
+             0,                       // Authority (for example, Kerberos)
+             0,                       // Context object 
+             &pSvc                    // pointer to IWbemServices proxy
+             );
+    SysFreeString(wmiNamespace);
+
+    if (FAILED(hr))
+    {
+        securityCenter2 = false;
+
+        wmiNamespace = SysAllocString(L"ROOT\\SecurityCenter");
+        hr = pLoc->ConnectServer(
+                 wmiNamespace,               // Object path of WMI namespace
+                 NULL,                    // User name. NULL = current user
+                 NULL,                    // User password. NULL = current
+                 0,                       // Locale. NULL indicates current
+                 NULL,                    // Security flags.
+                 0,                       // Authority (for example, Kerberos)
+                 0,                       // Context object 
+                 &pSvc                    // pointer to IWbemServices proxy
+                 );
+        SysFreeString(wmiNamespace);
+
+        if (FAILED(hr))
+        {
+            pLoc->Release();
+            return;
+        }
+    }
+
+    // Set security levels on the proxy
+
+    hr = CoSetProxyBlanket(
+       pSvc,                        // Indicates the proxy to set
+       RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
+       RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
+       NULL,                        // Server principal name 
+       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+       RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
+       NULL,                        // client identity
+       EOAC_NONE                    // proxy capabilities 
+    );
+
+    if (FAILED(hr))
+    {
+        pSvc->Release();
+        pLoc->Release();
+        return;
+    }
+
+    // Use the IWbemServices pointer to make requests of WMI
+
+    struct WmiLookup {
+        wstring query;
+        vector<SecurityInfo>& results;
+        WmiLookup(wstring query, vector<SecurityInfo>& results) : query(query), results(results) {}
+    };
+    vector<WmiLookup> wmiLookups;
+    wmiLookups.push_back(WmiLookup(L"SELECT * FROM AntiVirusProduct", antiVirusInfo));
+    wmiLookups.push_back(WmiLookup(L"SELECT * FROM AntiSpywareProduct", antiSpywareInfo));
+    wmiLookups.push_back(WmiLookup(L"SELECT * FROM FirewallProduct", firewallInfo));
+
+    for (vector<WmiLookup>::const_iterator it = wmiLookups.begin();
+         it != wmiLookups.end();
+         it++)
+    {
+        BSTR queryLanguage = SysAllocString(L"WQL");
+        BSTR query = SysAllocString(it->query.c_str());
+
+        IEnumWbemClassObject* pEnumerator = NULL;
+        hr = pSvc->ExecQuery(
+            queryLanguage, 
+            query,
+            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, 
+            NULL,
+            &pEnumerator);
+
+        SysFreeString(queryLanguage);
+        SysFreeString(query);
+
+        if (FAILED(hr))
+        {
+            pSvc->Release();
+            pLoc->Release();
+            return;
+        }
+
+        // Get the data from the query
+
+        IWbemClassObject *pclsObj;
+        ULONG uReturn = 0;
+
+        while (pEnumerator)
+        {
+            hr = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
+
+            if (0 == uReturn)
+            {
+                break;
+            }
+
+            // The available properties differ between the SecurityCenter and
+            // SecurityCenter2 namespaces. For details see:
+            // http://neophob.com/2010/03/wmi-query-windows-securitycenter2/
+
+            SecurityInfo securityInfo;
+
+            VARIANT vtProp;
+
+            // The displayName property is common to the versions.
+            hr = pclsObj->Get(L"displayName", 0, &vtProp, 0, 0);
+            if (SUCCEEDED(hr))
+            {
+                securityInfo.displayName = vtProp.bstrVal;
+                VariantClear(&vtProp);
+            }
+
+            if (securityCenter2)
+            {
+                securityInfo.version = _T("v2");
+
+                VARIANT vtProp;
+                hr = pclsObj->Get(L"productState", 0, &vtProp, 0, 0);
+
+                if (SUCCEEDED(hr))
+                {
+                    securityInfo.v2.productState = vtProp.uintVal;
+                    VariantClear(&vtProp);
+
+                    // See the link above for details on what we're doing here.
+
+                    // Product state
+
+                    DWORD flags = 0;
+
+                    // From Wscapi.h
+                    enum
+                    {
+                        // Represents the aggregation of all firewalls for this computer.
+                        WSC_SECURITY_PROVIDER_FIREWALL =                   0x1,
+                        // Represents the Automatic updating settings for this computer.
+                        WSC_SECURITY_PROVIDER_AUTOUPDATE_SETTINGS  =       0x2,
+                        // Represents the aggregation of all antivirus products for this comptuer.
+                        WSC_SECURITY_PROVIDER_ANTIVIRUS =                  0x4,
+                        // Represents the aggregation of all antispyware products for this comptuer.
+                        WSC_SECURITY_PROVIDER_ANTISPYWARE =                0x8,
+                        // Represents the settings that restrict the access of web sites in each of the internet zones.
+                        WSC_SECURITY_PROVIDER_INTERNET_SETTINGS =          0x10,
+                        // Represents the User Account Control settings on this machine.
+                        WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL =       0x20,
+                        // Represents the running state of the Security Center service on this machine.
+                        WSC_SECURITY_PROVIDER_SERVICE =                    0x40,
+
+                        WSC_SECURITY_PROVIDER_NONE =                       0
+                    };
+
+                    flags = (securityInfo.v2.productState >> 16) & 0xFF;
+
+                    if (flags == 0)
+                    {
+                        securityInfo.v2.securityProvider = _T("WSC_SECURITY_PROVIDER_NONE|");
+                    }
+
+                    if (flags  & WSC_SECURITY_PROVIDER_FIREWALL)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_FIREWALL|");
+                    }
+
+                    if (flags  & WSC_SECURITY_PROVIDER_AUTOUPDATE_SETTINGS)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_AUTOUPDATE_SETTINGS|");
+                    }
+            
+                    if (flags  & WSC_SECURITY_PROVIDER_ANTIVIRUS)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_ANTIVIRUS|");
+                    }
+            
+                    if (flags  & WSC_SECURITY_PROVIDER_ANTISPYWARE)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_ANTISPYWARE|");
+                    }
+            
+                    if (flags  & WSC_SECURITY_PROVIDER_INTERNET_SETTINGS)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_INTERNET_SETTINGS|");
+                    }
+            
+                    if (flags  & WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL|");
+                    }
+            
+                    if (flags  & WSC_SECURITY_PROVIDER_SERVICE)
+                    {
+                        securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_SERVICE|");
+                    }
+
+                    if (securityInfo.v2.securityProvider.length() > 0)
+                    {
+                        // Strip the trailing "|"
+                        securityInfo.v2.securityProvider.resize(securityInfo.v2.securityProvider.size()-1);
+                    }
+
+                    // Scanner enabled
+
+                    flags = (securityInfo.v2.productState >> 8) & 0xFF;
+
+                    if (flags == 0x10 || flags == 0x11)
+                    {
+                        securityInfo.v2.enabled = true;
+                    }
+                    else // if (flags == 0x00 || flags == 0x01)
+                    {
+                        securityInfo.v2.enabled = false;
+                    }
+
+                    // Up-to-date
+
+                    flags = securityInfo.v2.productState & 0xFF;
+
+                    if (flags == 0x00)
+                    {
+                        securityInfo.v2.definitionsUpToDate = true;
+                    }
+                    else // if (flags == 0x10)
+                    {
+                        securityInfo.v2.definitionsUpToDate = false;
+                    }
+                }
+            }
+            else 
+            {
+                securityInfo.version = _T("v1");
+
+                hr = pclsObj->Get(L"productUpToDate", 0, &vtProp, 0, 0);
+                if (SUCCEEDED(hr))
+                {
+                    securityInfo.v1.productUpToDate = !!vtProp.boolVal;
+                    VariantClear(&vtProp);
+                }
+
+                hr = pclsObj->Get(L"onAccessScanningEnabled", 0, &vtProp, 0, 0);
+                if (SUCCEEDED(hr))
+                {
+                    securityInfo.v1.enabled = !!vtProp.boolVal;
+                    VariantClear(&vtProp);
+                }
+
+                hr = pclsObj->Get(L"versionNumber", 0, &vtProp, 0, 0);
+                if (SUCCEEDED(hr))
+                {
+                    securityInfo.v1.versionNumber = vtProp.bstrVal;
+                    VariantClear(&vtProp);
+                }
+            }
+
+            pclsObj->Release();
+
+            it->results.push_back(securityInfo);
+        }
+
+        pEnumerator->Release();
+    }
+
+    // Cleanup
+
+    pSvc->Release();
+    pLoc->Release();
+}
+
 string GetDiagnosticInfo(const string& diagnosticInfoID)
 {
     YAML::Emitter out;
@@ -1580,6 +1922,59 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
         out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
     }
     out << YAML::EndMap; // userinfo
+
+    vector<SecurityInfo> antiVirusInfo, antiSpywareInfo, firewallInfo;
+    GetOSSecurityInfo(antiVirusInfo, antiSpywareInfo, firewallInfo);
+
+    struct SecurityInfoSet {
+        string name;
+        vector<SecurityInfo>& results;
+        SecurityInfoSet(string name, vector<SecurityInfo>& results) : name(name), results(results) {}
+    };
+    vector<SecurityInfoSet> securityInfoSets;
+    securityInfoSets.push_back(SecurityInfoSet("AntiVirusInfo", antiVirusInfo));
+    securityInfoSets.push_back(SecurityInfoSet("AntiSpywareInfo", antiSpywareInfo));
+    securityInfoSets.push_back(SecurityInfoSet("FirewallInfo", firewallInfo));
+
+    out << YAML::Key << "SecurityInfo";
+    out << YAML::Value;
+    out << YAML::BeginMap; // SecurityInfo
+
+    for (vector<SecurityInfoSet>::const_iterator securityInfoSet = securityInfoSets.begin();
+         securityInfoSet != securityInfoSets.end();
+         securityInfoSet++)
+    {
+        out << YAML::Key << securityInfoSet->name.c_str();
+        out << YAML::Value;
+        out << YAML::BeginSeq;
+        for (vector<SecurityInfo>::const_iterator it = securityInfoSet->results.begin();
+             it != securityInfoSet->results.end();
+             it++)
+        {
+            out << YAML::BeginMap;
+            out << YAML::Key << "displayName" << YAML::Value << TStringToNarrow(it->displayName).c_str();
+            out << YAML::Key << "version" << YAML::Value << TStringToNarrow(it->version).c_str();
+            out << YAML::Key << "v1";
+            out << YAML::Value;
+            out << YAML::BeginMap;
+            out << YAML::Key << "productUpToDate" << YAML::Value << it->v1.productUpToDate;
+            out << YAML::Key << "enabled" << YAML::Value << it->v1.enabled;
+            out << YAML::Key << "versionNumber" << YAML::Value << TStringToNarrow(it->v1.versionNumber).c_str();
+            out << YAML::EndMap;
+            out << YAML::Key << "v2";
+            out << YAML::Value;
+            out << YAML::BeginMap;
+            out << YAML::Key << "productState" << YAML::Value << it->v2.productState;
+            out << YAML::Key << "securityProvider" << YAML::Value << TStringToNarrow(it->v2.securityProvider).c_str();
+            out << YAML::Key << "enabled" << YAML::Value << it->v2.enabled;
+            out << YAML::Key << "definitionsUpToDate" << YAML::Value << it->v2.definitionsUpToDate;
+            out << YAML::EndMap;
+            out << YAML::EndMap;
+        }
+        out << YAML::EndSeq;
+    }
+
+    out << YAML::EndMap; // SecurityInfo
 
     out << YAML::Key << "Misc";
     out << YAML::Value;

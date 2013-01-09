@@ -83,7 +83,6 @@ bool OpenEmailAndSendDiagnosticInfo(
         const string& diagnosticInfoID, 
         const StopInfo& stopInfo);
 
-
 /*
 String Utilities
 */

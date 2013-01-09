@@ -609,10 +609,14 @@ void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
         else if (it->flags & PROXY_TYPE_AUTO_DETECT)
         {
             ss << _T("PROXY_TYPE_AUTO_DETECT|");
-        }
-        // Yes, it sloppily ends with "|"...
+        }        
 
         info.flags = ss.str();
+        if (info.flags.length() > 0)
+        {
+            // Strip the trailing "|"
+            info.flags.resize(info.flags.size()-1);
+        }
 
         originalProxyInfo.push_back(info);
     }

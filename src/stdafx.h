@@ -39,6 +39,9 @@
 #include <tchar.h>
 #include <assert.h>
 
+#define _WIN32_DCOM
+#include <wbemidl.h>
+
 #include "tstring.h"
 #include <map>
 #include <regex>
