@@ -2129,7 +2129,7 @@ bool OpenEmailAndSendDiagnosticInfo(
                 NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
                 (LPVOID)encryptedPayload.c_str(),
                 encryptedPayload.length(),
-                L"PUT"))
+                _T("PUT")))
         {
             return false;
         }
