@@ -132,8 +132,8 @@ void CALLBACK WinHttpStatusCallback(
                 WinHttpCloseHandle(hRequest);
                 return;
             }
-            break;
         }
+        break;
     case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
 
         // Start downloding response
