@@ -232,6 +232,7 @@
     <ClInclude Include="3rdParty\zlib\zutil.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="connectionmanager.h" />
+    <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="htmldlg.h" />
     <ClInclude Include="httpsrequest.h" />
@@ -290,6 +291,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="connectionmanager.cpp" />
+    <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="htmldlg.cpp" />
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="local_proxy.cpp" />

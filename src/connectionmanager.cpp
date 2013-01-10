@@ -36,6 +36,7 @@
 #include "transport_connection.h"
 #include "server_entry_auth.h"
 #include "stopsignal.h"
+#include "diagnostic_info.h"
 
 
 // Upgrade process posts a Quit message

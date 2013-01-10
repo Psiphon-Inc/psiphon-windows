@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -19,13 +19,14 @@
 
 #pragma once
 
-struct WininetNetworkInfo {
-    bool internetConnectionConfigured;
-    bool internetConnectionLAN;
-    bool internetConnectionModem;
-    bool internetConnectionOffline;
-    bool internetConnectionProxy;
-    bool internetRASInstalled;
-};
-
-bool WininetGetNetworkInfo(WininetNetworkInfo& netInfo);
+/**
+Attempts to initiate an email to the given address. Puts the email address into
+the clipboad in case there is no mailto handler. 
+Also uploads encrypted diagnostic information.
+Both `emailAddress` and `diagnosticInfoID` are optional.
+*/
+bool OpenEmailAndSendDiagnosticInfo(
+        const string& emailAddress, 
+        const string& emailAddressEncoded, 
+        const string& diagnosticInfoID, 
+        const StopInfo& stopInfo);
