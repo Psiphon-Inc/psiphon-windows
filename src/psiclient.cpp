@@ -786,7 +786,7 @@ int APIENTRY _tWinMain(
     }
 
     HRESULT hr;
-    hr = CoInitializeEx(0, COINIT_MULTITHREADED); 
+    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
     if (FAILED(hr)) 
     { 
         assert(0);
