@@ -29,96 +29,6 @@
 #include "diagnostic_info.h"
 
 
-static string GetOSVersionString()
-{
-    string output;
-
-    OSVERSIONINFOEX osvi;
-    BOOL bOsVersionInfoEx;
-    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    if (!(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
-    {
-        osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-        if (!GetVersionEx ( (OSVERSIONINFO *) &osvi) ) 
-        {
-            return output;
-        }
-    }
-    switch (osvi.dwPlatformId)
-    {
-    case VER_PLATFORM_WIN32_NT:
-        if ( osvi.dwMajorVersion <= 4 ) output += ("Microsoft Windows NT ");
-        if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 ) output += ("Microsoft Windows 2000 ");
-        if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 ) output += ("Microsoft Windows XP ");
-        if( bOsVersionInfoEx )
-        {
-            if ( osvi.wProductType == VER_NT_WORKSTATION )
-            {
-                if( osvi.wSuiteMask & VER_SUITE_PERSONAL ) output += ( "Personal " );
-                else output += ( "Professional " );
-            }
-            else if ( osvi.wProductType == VER_NT_SERVER )
-            {
-                if( osvi.wSuiteMask & VER_SUITE_DATACENTER ) output += ( "DataCenter Server " );
-                else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE ) output += ( "Advanced Server " );
-                else output += ( "Server " );
-            }
-        }
-        else
-        {
-            HKEY hKey;
-            char szProductType[80];
-            DWORD dwBufLen;
-            RegOpenKeyExA( HKEY_LOCAL_MACHINE,"SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueExA( hKey, "ProductType", NULL, NULL, (LPBYTE) szProductType, &dwBufLen);
-            RegCloseKey( hKey );
-            if ( lstrcmpiA( "WINNT", szProductType) == 0 ) output += ( "Professional " );
-            if ( lstrcmpiA( "LANMANNT", szProductType) == 0 ) output += ( "Server " );
-            if ( lstrcmpiA( "SERVERNT", szProductType) == 0 ) output += ( "Advanced Server " );
-        }
-
-        if ( osvi.dwMajorVersion <= 4 )
-        {
-            std::ostringstream ss;
-            ss << "version " << osvi.dwMajorVersion << "." << osvi.dwMinorVersion << " " << osvi.szCSDVersion << "(Build " << (osvi.dwBuildNumber & 0xFFFF) << ")";
-            output += ss.str();
-        }
-        else
-        { 
-            std::ostringstream ss;
-            ss << osvi.szCSDVersion << " (Build " << (osvi.dwBuildNumber & 0xFFFF) << ")";
-            output += ss.str();
-        }
-        break;
-
-    case VER_PLATFORM_WIN32_WINDOWS:
-        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
-        {
-            output += ("Microsoft Windows 95 ");
-            if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' ) output += ("OSR2 " );
-        } 
-
-        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
-        {
-            output += ("Microsoft Windows 98 ");
-            if ( osvi.szCSDVersion[1] == 'A' ) output += ("SE " );
-        }
-        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
-        {
-            output += ("Microsoft Windows Me ");
-        } 
-        break;
-
-    case VER_PLATFORM_WIN32s:
-        output += ("Microsoft Win32s ");
-        break;
-    }
-
-    return output; 
-}
-
-
 // Adapted from http://www.codeproject.com/Articles/66016/A-Quick-Start-Guide-of-Process-Mandatory-Level-Che
 // Original comments:
 /*
@@ -359,17 +269,19 @@ Cleanup:
 
 struct SystemInfo
 {
-    string name;
-    DWORD platformId;
-    DWORD majorVersion;
-    DWORD minorVersion;
-    DWORD productType;
-    WORD servicePackMajor;
-    WORD servicePackMinor;
-    DWORD edition;
-    DWORD suiteMask;
-    string csdVersion;
-    DWORD buildNumber;
+    wstring name;
+    wstring version;
+    wstring codeSet;
+    wstring countryCode;
+    wstring freePhysicalMemoryKB;
+    wstring freeVirtualMemoryKB;
+    wstring locale;
+    wstring architecture;
+    UINT32 language;
+    UINT16 servicePackMajor;
+    UINT16 servicePackMinor;
+    wstring status;
+
     bool starter;
     bool mideastEnabled;
     bool slowMachine;
@@ -381,331 +293,275 @@ struct SystemInfo
     vector<ConnectionProxyInfo> originalProxyInfo;
 };
 
-// Adapted from http://msdn.microsoft.com/en-us/library/windows/desktop/ms724429%28v=vs.85%29.aspx
 bool GetSystemInfo(SystemInfo& sysInfo)
 {
-    typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
-    typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+    // This code adapted from: http://msdn.microsoft.com/en-us/library/aa390423.aspx
 
-    OSVERSIONINFOEX osvi;
-    SYSTEM_INFO si;
-    PGNSI pGNSI;
-    PGPI pGPI;
-    BOOL bOsVersionInfoEx;
-    DWORD dwType;
+    HRESULT hr;
 
-    ostringstream ss;
+    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
+    if (FAILED(hr)) 
+    { 
+        assert(0);
+        return FALSE;
+    }
 
-    ZeroMemory(&si, sizeof(SYSTEM_INFO));
-    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    hr =  CoInitializeSecurity(
+            NULL, 
+            -1,                          // COM authentication
+            NULL,                        // Authentication services
+            NULL,                        // Reserved
+            RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
+            RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
+            NULL,                        // Authentication info
+            EOAC_NONE,                   // Additional capabilities 
+            NULL);                       // Reserved
+    if (FAILED(hr)) 
+    { 
+        assert(0);
+        CoUninitialize();
+        return FALSE;
+    }
 
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
+    // Obtain the initial locator to WMI
 
-    if (bOsVersionInfoEx == 0) 
+    IWbemLocator *pLoc = NULL;
+
+    hr = CoCreateInstance(
+        CLSID_WbemLocator,             
+        0, 
+        CLSCTX_INPROC_SERVER, 
+        IID_IWbemLocator, 
+        (LPVOID *) &pLoc);
+ 
+    if (FAILED(hr))
     {
+        CoUninitialize();
         return false;
     }
 
-    // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
+    // Connect to WMI through the IWbemLocator::ConnectServer method
 
-    pGNSI = (PGNSI)GetProcAddress(
-                        GetModuleHandle(TEXT("kernel32.dll")), 
-                        "GetNativeSystemInfo");
-    if(NULL != pGNSI)
+    IWbemServices *pSvc = NULL;
+
+    // Connect to the root\CIMV2 namespace with
+    // the current user and obtain pointer pSvc
+    // to make IWbemServices calls.
+
+    BSTR wmiNamespace = SysAllocString(L"ROOT\\CIMV2");
+    hr = pLoc->ConnectServer(
+             wmiNamespace,               // Object path of WMI namespace
+             NULL,                    // User name. NULL = current user
+             NULL,                    // User password. NULL = current
+             0,                       // Locale. NULL indicates current
+             NULL,                    // Security flags.
+             0,                       // Authority (for example, Kerberos)
+             0,                       // Context object 
+             &pSvc                    // pointer to IWbemServices proxy
+             );
+    SysFreeString(wmiNamespace);
+
+    if (FAILED(hr))
     {
-        pGNSI(&si);
-    }
-    else 
-    {
-        GetSystemInfo(&si);
-    }
-
-    if (VER_PLATFORM_WIN32_NT == osvi.dwPlatformId && osvi.dwMajorVersion > 4)
-    {
-        ss << "Microsoft ";
-
-        // Test for the specific product.
-
-        if (osvi.dwMajorVersion >= 6)
-        {
-            if (osvi.dwMinorVersion == 0)
-            {
-                if (osvi.wProductType == VER_NT_WORKSTATION)
-                {
-                    ss << "Windows Vista ";
-                }
-                else 
-                {
-                    ss << "Windows Server 2008 ";
-                }
-            }
-            else if (osvi.dwMinorVersion == 1)
-            {
-                if (osvi.wProductType == VER_NT_WORKSTATION)
-                {
-                    ss << "Windows 7 ";
-                }
-                else 
-                {
-                    ss << "Windows Server 2008 R2 ";
-                }
-            }
-            else if (osvi.dwMinorVersion == 2)
-            {
-                if (osvi.wProductType == VER_NT_WORKSTATION)
-                {
-                    ss << "Windows 8 ";
-                }
-                else 
-                {
-                    ss << "Windows Server 2012 ";
-                }
-            }
-
-            pGPI = (PGPI)GetProcAddress(
-                            GetModuleHandle(TEXT("kernel32.dll")), 
-                            "GetProductInfo");
-
-            pGPI(osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.wServicePackMajor, osvi.wServicePackMinor, &dwType);
-
-            switch(dwType)
-            {
-            case PRODUCT_ULTIMATE:
-                ss << "Ultimate Edition";
-                break;
-            case PRODUCT_PROFESSIONAL:
-                ss << "Professional";
-                break;
-            case PRODUCT_HOME_PREMIUM:
-                ss << "Home Premium Edition";
-                break;
-            case PRODUCT_HOME_BASIC:
-                ss << "Home Basic Edition";
-                break;
-            case PRODUCT_ENTERPRISE:
-                ss << "Enterprise Edition";
-                break;
-            case PRODUCT_BUSINESS:
-                ss << "Business Edition";
-                break;
-            case PRODUCT_STARTER:
-                ss << "Starter Edition";
-                break;
-            case PRODUCT_CLUSTER_SERVER:
-                ss << "Cluster Server Edition";
-                break;
-            case PRODUCT_DATACENTER_SERVER:
-                ss << "Datacenter Edition";
-                break;
-            case PRODUCT_DATACENTER_SERVER_CORE:
-                ss << "Datacenter Edition (core installation)";
-                break;
-            case PRODUCT_ENTERPRISE_SERVER:
-                ss << "Enterprise Edition";
-                break;
-            case PRODUCT_ENTERPRISE_SERVER_CORE:
-                ss << "Enterprise Edition (core installation)";
-                break;
-            case PRODUCT_ENTERPRISE_SERVER_IA64:
-                ss << "Enterprise Edition for Itanium-based Systems";
-                break;
-            case PRODUCT_SMALLBUSINESS_SERVER:
-                ss << "Small Business Server";
-                break;
-            case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-                ss << "Small Business Server Premium Edition";
-                break;
-            case PRODUCT_STANDARD_SERVER:
-                ss << "Standard Edition";
-                break;
-            case PRODUCT_STANDARD_SERVER_CORE:
-                ss << "Standard Edition (core installation)";
-                break;
-            case PRODUCT_WEB_SERVER:
-                ss << "Web Server Edition";
-                break;
-            }
-        }
-
-        if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
-        {
-            if (GetSystemMetrics(SM_SERVERR2))
-            {
-                ss << "Windows Server 2003 R2, ";
-            }
-            else if (osvi.wSuiteMask & VER_SUITE_STORAGE_SERVER)
-            {
-                ss << "Windows Storage Server 2003";
-            }
-            else if (osvi.wSuiteMask & VER_SUITE_WH_SERVER)
-            {
-                ss << "Windows Home Server";
-            }
-            else if (osvi.wProductType == VER_NT_WORKSTATION &&
-                     si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-            {
-                ss << "Windows XP Professional x64 Edition";
-            }
-            else 
-            {
-                ss << "Windows Server 2003, ";
-            }
-
-            // Test for the server type.
-            if (osvi.wProductType != VER_NT_WORKSTATION)
-            {
-                if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-                {
-                    if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
-                    {
-                        ss << "Datacenter Edition for Itanium-based Systems";
-                    }
-                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
-                    {
-                        ss << "Enterprise Edition for Itanium-based Systems";
-                    }
-                }
-
-                else if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-                {
-                    if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
-                    {
-                        ss << "Datacenter x64 Edition";
-                    }
-                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
-                    {
-                        ss << "Enterprise x64 Edition";
-                    }
-                    else
-                    {
-                        ss << "Standard x64 Edition";
-                    }
-                }
-
-                else
-                {
-                    if (osvi.wSuiteMask & VER_SUITE_COMPUTE_SERVER)
-                    {
-                        ss << "Compute Cluster Edition";
-                    }
-                    else if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
-                    {
-                        ss << "Datacenter Edition";
-                    }
-                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
-                    {
-                        ss << "Enterprise Edition";
-                    }
-                    else if (osvi.wSuiteMask & VER_SUITE_BLADE)
-                    {
-                        ss << "Web Edition";
-                    }
-                    else 
-                    {
-                        ss << "Standard Edition";
-                    }
-                }
-            }
-        }
-
-        if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
-        {
-            ss << "Windows XP ";
-            if (osvi.wSuiteMask & VER_SUITE_PERSONAL)
-            {
-                ss << "Home Edition";
-            }
-            else
-            {
-                ss << "Professional";
-            }
-        }
-
-        if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0)
-        {
-            ss << "Windows 2000 ";
-
-            if (osvi.wProductType == VER_NT_WORKSTATION)
-            {
-                ss << "Professional" ;
-            }
-            else 
-            {
-                if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
-                {
-                    ss << "Datacenter Server";
-                }
-                else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
-                {
-                    ss << "Advanced Server";
-                }
-                else 
-                {
-                    ss << "Server";
-                }
-            }
-        }
-
-        // Include service pack (if any) and build number.
-
-        if (_tcslen(osvi.szCSDVersion) > 0)
-        {
-            ss << " ";
-            ss << osvi.szCSDVersion;
-        }
-
-        ss << " (build " << osvi.dwBuildNumber << ")";
-
-        if (osvi.dwMajorVersion >= 6)
-        {
-            if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-            {
-                ss << " 64-bit";
-            }
-            else if (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_INTEL)
-            {
-                ss << " 32-bit";
-            }
-        }
-
-        sysInfo.name = ss.str(); 
-        sysInfo.platformId = osvi.dwPlatformId;
-        sysInfo.majorVersion = osvi.dwMajorVersion;
-        sysInfo.minorVersion = osvi.dwMinorVersion;
-        sysInfo.productType = osvi.wProductType;
-        sysInfo.servicePackMajor = osvi.wServicePackMajor;
-        sysInfo.servicePackMinor = osvi.wServicePackMinor;
-        sysInfo.edition = dwType;
-        sysInfo.suiteMask = osvi.wSuiteMask;
-        sysInfo.csdVersion = TStringToNarrow(osvi.szCSDVersion);
-        sysInfo.buildNumber = osvi.dwBuildNumber;
-        sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
-
-        sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
-        sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
-
-        WininetNetworkInfo netInfo;
-        sysInfo.wininet_success = false;
-        if (WininetGetNetworkInfo(netInfo))
-        {
-            sysInfo.wininet_success = true;
-            sysInfo.wininet_info = netInfo;
-        }
-
-        sysInfo.groupInfo_success = false;
-        if (GetUserGroupInfo(sysInfo.groupInfo))
-        {
-            sysInfo.groupInfo_success = true;
-        }
-
-        GetOriginalProxyInfo(sysInfo.originalProxyInfo);
-
-        return true;
+        pLoc->Release();
+        CoUninitialize();
+        return false;
     }
 
-    return false;
+    // Set security levels on the proxy
+
+    hr = CoSetProxyBlanket(
+       pSvc,                        // Indicates the proxy to set
+       RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
+       RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
+       NULL,                        // Server principal name 
+       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+       RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
+       NULL,                        // client identity
+       EOAC_NONE                    // proxy capabilities 
+    );
+
+    if (FAILED(hr))
+    {
+        pSvc->Release();
+        pLoc->Release();
+        CoUninitialize();
+        return false;
+    }
+
+    // Use the IWbemServices pointer to make requests of WMI
+
+    BSTR queryLanguage = SysAllocString(L"WQL");
+    BSTR query = SysAllocString(L"SELECT * FROM Win32_OperatingSystem");
+
+    IEnumWbemClassObject* pEnumerator = NULL;
+    hr = pSvc->ExecQuery(
+        queryLanguage, 
+        query,
+        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, 
+        NULL,
+        &pEnumerator);
+
+    SysFreeString(queryLanguage);
+    SysFreeString(query);
+
+    if (FAILED(hr))
+    {
+        pSvc->Release();
+        pLoc->Release();
+        CoUninitialize();
+        return false;
+    }
+
+    // Get the data from the query
+
+    IWbemClassObject *pclsObj;
+    ULONG uReturn = 0;
+
+    while (pEnumerator)
+    {
+        hr = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
+
+        if (0 == uReturn)
+        {
+            break;
+        }
+
+        // For descriptions of the fields, see: 
+        // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394239%28v=vs.85%29.aspx
+
+        VARIANT vtProp;
+
+        hr = pclsObj->Get(L"Caption", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.name = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"Version", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.version = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"CodeSet", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.codeSet = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"CountryCode", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.countryCode = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        // The MSDN documentation says that FreePhysicalMemory and FreeVirtualMemory
+        // are uint64, but in practice vtProp.ullVal is getting bad values. We'll 
+        // use the string value.
+        hr = pclsObj->Get(L"FreePhysicalMemory", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.freePhysicalMemoryKB = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"FreeVirtualMemory", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.freeVirtualMemoryKB = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"Locale", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.locale = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"OSArchitecture", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.architecture = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"OSLanguage", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.language = vtProp.uintVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"ServicePackMajorVersion", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.servicePackMajor = vtProp.uiVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"ServicePackMinorVersion", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.servicePackMinor = vtProp.uiVal;
+            VariantClear(&vtProp);
+        }
+
+        hr = pclsObj->Get(L"Status", 0, &vtProp, 0, 0);
+        if (SUCCEEDED(hr))
+        {
+            sysInfo.status = vtProp.bstrVal;
+            VariantClear(&vtProp);
+        }
+
+        pclsObj->Release();
+
+        // We only want one result
+        break;
+    }
+
+    pEnumerator->Release();
+
+    // Cleanup
+
+    pSvc->Release();
+    pLoc->Release();
+
+    CoUninitialize();
+
+    // Miscellaneous
+
+    sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
+
+    sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
+    sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
+
+    // Network info
+
+    WininetNetworkInfo netInfo;
+    sysInfo.wininet_success = false;
+    if (WininetGetNetworkInfo(netInfo))
+    {
+        sysInfo.wininet_success = true;
+        sysInfo.wininet_info = netInfo;
+    }
+
+    sysInfo.groupInfo_success = false;
+    if (GetUserGroupInfo(sysInfo.groupInfo))
+    {
+        sysInfo.groupInfo_success = true;
+    }
+
+    GetOriginalProxyInfo(sysInfo.originalProxyInfo);
+
+    return true;
 }
+
 
 // Not all of these fields will be used, depending on the OS version
 struct SecurityInfo
@@ -740,6 +596,30 @@ void GetOSSecurityInfo(
 
     HRESULT hr;
 
+    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
+    if (FAILED(hr)) 
+    { 
+        assert(0);
+        return;
+    }
+
+    hr =  CoInitializeSecurity(
+            NULL, 
+            -1,                          // COM authentication
+            NULL,                        // Authentication services
+            NULL,                        // Reserved
+            RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
+            RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
+            NULL,                        // Authentication info
+            EOAC_NONE,                   // Additional capabilities 
+            NULL);                       // Reserved
+    if (FAILED(hr)) 
+    { 
+        assert(0);
+        CoUninitialize();
+        return;
+    }
+
     // Obtain the initial locator to WMI
 
     IWbemLocator *pLoc = NULL;
@@ -753,6 +633,7 @@ void GetOSSecurityInfo(
  
     if (FAILED(hr))
     {
+        CoUninitialize();
         return;
     }
 
@@ -804,6 +685,7 @@ void GetOSSecurityInfo(
         if (FAILED(hr))
         {
             pLoc->Release();
+            CoUninitialize();
             return;
         }
     }
@@ -825,6 +707,7 @@ void GetOSSecurityInfo(
     {
         pSvc->Release();
         pLoc->Release();
+        CoUninitialize();
         return;
     }
 
@@ -862,6 +745,7 @@ void GetOSSecurityInfo(
         {
             pSvc->Release();
             pLoc->Release();
+            CoUninitialize();
             return;
         }
 
@@ -1047,6 +931,7 @@ void GetOSSecurityInfo(
 
     pSvc->Release();
     pLoc->Release();
+    CoUninitialize();
 }
 
 string GetDiagnosticInfo(const string& diagnosticInfoID)
@@ -1092,17 +977,18 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::Key << "OSInfo";
     out << YAML::Value;
     out << YAML::BeginMap; // osinfo
-    out << YAML::Key << "name" << YAML::Value << sysInfo.name.c_str();
-    out << YAML::Key << "platformId" << YAML::Value << sysInfo.platformId;
-    out << YAML::Key << "majorVersion" << YAML::Value << sysInfo.majorVersion;
-    out << YAML::Key << "minorVersion" << YAML::Value << sysInfo.minorVersion;
-    out << YAML::Key << "productType" << YAML::Value << sysInfo.productType;
+    out << YAML::Key << "name" << YAML::Value << WStringToNarrow(sysInfo.name).c_str();
+    out << YAML::Key << "version" << YAML::Value << WStringToNarrow(sysInfo.version).c_str();
+    out << YAML::Key << "codeSet" << YAML::Value << WStringToNarrow(sysInfo.codeSet).c_str();
+    out << YAML::Key << "countryCode" << YAML::Value << WStringToNarrow(sysInfo.countryCode).c_str();
+    out << YAML::Key << "freePhysicalMemoryKB" << YAML::Value << WStringToNarrow(sysInfo.freePhysicalMemoryKB).c_str();
+    out << YAML::Key << "freeVirtualMemoryKB" << YAML::Value << WStringToNarrow(sysInfo.freeVirtualMemoryKB).c_str();
+    out << YAML::Key << "locale" << YAML::Value << WStringToNarrow(sysInfo.locale).c_str();
+    out << YAML::Key << "architecture" << YAML::Value << WStringToNarrow(sysInfo.architecture).c_str();
+    out << YAML::Key << "language" << YAML::Value << sysInfo.language;
     out << YAML::Key << "servicePackMajor" << YAML::Value << sysInfo.servicePackMajor;
     out << YAML::Key << "servicePackMinor" << YAML::Value << sysInfo.servicePackMinor;
-    out << YAML::Key << "ediition" << YAML::Value << sysInfo.edition;
-    out << YAML::Key << "suiteMask" << YAML::Value << sysInfo.suiteMask;
-    out << YAML::Key << "csdVersion" << YAML::Value << sysInfo.csdVersion.c_str();
-    out << YAML::Key << "buildNumber" << YAML::Value << sysInfo.buildNumber;
+    out << YAML::Key << "status" << YAML::Value << WStringToNarrow(sysInfo.status).c_str();
     out << YAML::Key << "starter" << YAML::Value << sysInfo.starter;
     out << YAML::EndMap; // osinfo
 
@@ -1279,7 +1165,6 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     }
 
     out << YAML::EndSeq;
-
 
     out << YAML::EndMap; // overall
 
