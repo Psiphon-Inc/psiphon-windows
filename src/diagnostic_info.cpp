@@ -306,23 +306,6 @@ bool GetSystemInfo(SystemInfo& sysInfo)
         return FALSE;
     }
 
-    hr =  CoInitializeSecurity(
-            NULL, 
-            -1,                          // COM authentication
-            NULL,                        // Authentication services
-            NULL,                        // Reserved
-            RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
-            RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
-            NULL,                        // Authentication info
-            EOAC_NONE,                   // Additional capabilities 
-            NULL);                       // Reserved
-    if (FAILED(hr)) 
-    { 
-        assert(0);
-        CoUninitialize();
-        return FALSE;
-    }
-
     // Obtain the initial locator to WMI
 
     IWbemLocator *pLoc = NULL;
@@ -336,6 +319,7 @@ bool GetSystemInfo(SystemInfo& sysInfo)
  
     if (FAILED(hr))
     {
+        assert(0);
         CoUninitialize();
         return false;
     }
@@ -603,23 +587,6 @@ void GetOSSecurityInfo(
         return;
     }
 
-    hr =  CoInitializeSecurity(
-            NULL, 
-            -1,                          // COM authentication
-            NULL,                        // Authentication services
-            NULL,                        // Reserved
-            RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
-            RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
-            NULL,                        // Authentication info
-            EOAC_NONE,                   // Additional capabilities 
-            NULL);                       // Reserved
-    if (FAILED(hr)) 
-    { 
-        assert(0);
-        CoUninitialize();
-        return;
-    }
-
     // Obtain the initial locator to WMI
 
     IWbemLocator *pLoc = NULL;
@@ -633,6 +600,7 @@ void GetOSSecurityInfo(
  
     if (FAILED(hr))
     {
+        assert(0);
         CoUninitialize();
         return;
     }
