@@ -179,6 +179,7 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     HANDLE hToken = NULL;
     HANDLE hTokenToCheck = NULL;
     DWORD cbSize = 0;
+    OSVERSIONINFO osver = { sizeof(osver) };
 
     // Open the primary access token of the process for query and duplicate.
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE, 
@@ -191,7 +192,6 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     // Determine whether system is running Windows Vista or later operating 
     // systems (major version >= 6) because they support linked tokens, but 
     // previous versions (major version < 6) do not.
-    OSVERSIONINFO osver = { sizeof(osver) };
     if (!GetVersionEx(&osver))
     {
         dwError = GetLastError();
