@@ -928,15 +928,13 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::Value;
     out << YAML::BeginMap; // sysinfo
 
-    out << YAML::Key << "psiphonEmbeddedValues";
+    out << YAML::Key << "PsiphonInfo";
     out << YAML::Value;
     out << YAML::BeginMap; // embedded
-    out << YAML::Key << "PROPAGATION_CHANNEL_ID";
-    out << YAML::Value << PROPAGATION_CHANNEL_ID;
-    out << YAML::Key << "SPONSOR_ID";
-    out << YAML::Value << SPONSOR_ID;
-    out << YAML::Key << "CLIENT_VERSION";
-    out << YAML::Value << CLIENT_VERSION;
+    out << YAML::Key << "PROPAGATION_CHANNEL_ID" << YAML::Value << PROPAGATION_CHANNEL_ID;
+    out << YAML::Key << "SPONSOR_ID" << YAML::Value << SPONSOR_ID;
+    out << YAML::Key << "CLIENT_VERSION" << YAML::Value << CLIENT_VERSION;
+    out << YAML::Key << "splitTunnel" << YAML::Value << GetSplitTunnel();
     out << YAML::EndMap; // embedded
 
     SystemInfo sysInfo;

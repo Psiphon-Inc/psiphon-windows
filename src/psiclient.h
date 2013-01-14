@@ -30,6 +30,10 @@
 #define WM_PSIPHON_CREATED             WM_USER + 103
 
 
+//==== miscellaneous====================================================
+
+bool GetSplitTunnel();
+
 
 //==== logging =========================================================
 
@@ -101,3 +105,8 @@ private:
 };
 
 #define AUTOMUTEX(mutex) 
+
+
+//==== miscellaneous====================================================
+
+bool GetSplitTunnel();
