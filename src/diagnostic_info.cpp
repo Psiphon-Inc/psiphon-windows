@@ -290,7 +290,6 @@ struct SystemInfo
     bool userIsAdmin;
     bool groupInfo_success;
     UserGroupInfo groupInfo;
-    vector<ConnectionProxyInfo> originalProxyInfo;
 };
 
 bool GetSystemInfo(SystemInfo& sysInfo)
@@ -540,8 +539,6 @@ bool GetSystemInfo(SystemInfo& sysInfo)
     {
         sysInfo.groupInfo_success = true;
     }
-
-    GetOriginalProxyInfo(sysInfo.originalProxyInfo);
 
     return true;
 }
@@ -902,6 +899,31 @@ void GetOSSecurityInfo(
     CoUninitialize();
 }
 
+
+struct StartupDiagnosticInfo {
+    vector<ConnectionProxyInfo> originalProxyInfo;
+    bool wininet_success;
+    WininetNetworkInfo wininet_info;
+} g_startupDiagnosticInfo;
+
+// NOTE: Not threadsafe
+void DoStartupDiagnosticCollection()
+{
+    // Reset
+    g_startupDiagnosticInfo = StartupDiagnosticInfo();
+
+    GetOriginalProxyInfo(g_startupDiagnosticInfo.originalProxyInfo);
+
+    WininetNetworkInfo netInfo;
+    g_startupDiagnosticInfo.wininet_success = false;
+    if (WininetGetNetworkInfo(netInfo))
+    {
+        g_startupDiagnosticInfo.wininet_success = true;
+        g_startupDiagnosticInfo.wininet_info = netInfo;
+    }
+}
+
+
 string GetDiagnosticInfo(const string& diagnosticInfoID)
 {
     YAML::Emitter out;
@@ -960,7 +982,15 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
 
     out << YAML::Key << "NetworkInfo";
     out << YAML::Value;
-    out << YAML::BeginMap; // netinfo
+    out << YAML::BeginMap; // NetworkInfo
+
+    out << YAML::Key << "Current";
+    out << YAML::Value;
+    out << YAML::BeginMap; // NetworkInfo:Current
+    
+    out << YAML::Key << "Internet";
+    out << YAML::Value;
+    out << YAML::BeginMap; // NetworkInfo:Current:Internet
     if (sysInfo.wininet_success)
     {
         out << YAML::Key << "internetConnected" << YAML::Value << true;
@@ -973,7 +1003,7 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     }
     else 
     {
-        out << YAML::Key << "internetConnected" << YAML::Value << false;
+        out << YAML::Key << "internetConnected" << YAML::Value << YAML::Null;
         out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
         out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
         out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
@@ -981,28 +1011,61 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
         out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
         out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
     }
+    out << YAML::EndMap; // NetworkInfo:Current:Internet
+    out << YAML::EndMap; // NetworkInfo:Current
 
-    out << YAML::Key << "OriginalProxyInfo";
+
+    out << YAML::Key << "Original";
+    out << YAML::Value;
+    out << YAML::BeginMap; // NetworkInfo:Original
+
+    out << YAML::Key << "Proxy";
     out << YAML::Value;
     out << YAML::BeginSeq;
-    for (vector<ConnectionProxyInfo>::const_iterator it = sysInfo.originalProxyInfo.begin();
-         it != sysInfo.originalProxyInfo.end();
+    for (vector<ConnectionProxyInfo>::const_iterator it = g_startupDiagnosticInfo.originalProxyInfo.begin();
+         it != g_startupDiagnosticInfo.originalProxyInfo.end();
          it++)
     {
-        out << YAML::BeginMap; // OriginalProxyInfo
+        out << YAML::BeginMap; // NetworkInfo:Original:Proxy
         out << YAML::Key << "connectionName" << YAML::Value << TStringToNarrow(it->connectionName).c_str();
         out << YAML::Key << "flags" << YAML::Value << TStringToNarrow(it->flags).c_str();
         out << YAML::Key << "proxy" << YAML::Value << TStringToNarrow(it->proxy).c_str();
         out << YAML::Key << "bypass" << YAML::Value << TStringToNarrow(it->bypass).c_str();
-        out << YAML::EndMap; // OriginalProxyInfo
+        out << YAML::EndMap; // NetworkInfo:Original:Proxy
     }
     out << YAML::EndSeq;
 
-    out << YAML::EndMap; // netinfo
+    out << YAML::Key << "Internet";
+    out << YAML::Value;
+    out << YAML::BeginMap; // NetworkInfo:Original:Internet
+    if (g_startupDiagnosticInfo.wininet_success)
+    {
+        out << YAML::Key << "internetConnected" << YAML::Value << true;
+        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionConfigured;
+        out << YAML::Key << "internetConnectionLAN" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionLAN;
+        out << YAML::Key << "internetConnectionModem" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionModem;
+        out << YAML::Key << "internetConnectionOffline" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionOffline;
+        out << YAML::Key << "internetConnectionProxy" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionProxy;
+        out << YAML::Key << "internetRASInstalled" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetRASInstalled;
+    }
+    else 
+    {
+        out << YAML::Key << "internetConnected" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionOffline" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
+        out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
+    }
+    out << YAML::EndMap; // NetworkInfo:Original:Internet
+    out << YAML::EndMap; // NetworkInfo:Original
+
+    out << YAML::EndMap; // NetworkInfo
 
     out << YAML::Key << "UserInfo";
     out << YAML::Value;
-    out << YAML::BeginMap; //userinfo
+    out << YAML::BeginMap; //UserInfo
     if (sysInfo.groupInfo_success)
     {
         out << YAML::Key << "inAdminsGroup" << YAML::Value << sysInfo.groupInfo.inAdminsGroup;
@@ -1012,15 +1075,12 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     }
     else 
     {
-        out << YAML::Key << "internetConnected" << YAML::Value << false;
-        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionOffline" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
+        out << YAML::Key << "inAdminsGroup" << YAML::Value << YAML::Null;
+        out << YAML::Key << "inUsersGroup" << YAML::Value << YAML::Null;
+        out << YAML::Key << "inGuestsGroup" << YAML::Value << YAML::Null;
+        out << YAML::Key << "inPowerUsersGroup" << YAML::Value << YAML::Null;
     }
-    out << YAML::EndMap; // userinfo
+    out << YAML::EndMap; // UserInfo
 
     vector<SecurityInfo> antiVirusInfo, antiSpywareInfo, firewallInfo;
     GetOSSecurityInfo(antiVirusInfo, antiSpywareInfo, firewallInfo);
@@ -1136,6 +1196,7 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
 
     return out.c_str();
 }
+
 
 bool OpenEmailAndSendDiagnosticInfo(
         const string& emailAddress, 

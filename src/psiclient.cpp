@@ -41,6 +41,7 @@
 #include "server_list_reordering.h"
 #include "stopsignal.h"
 #include "osrng.h"
+#include "diagnostic_info.h"
 
 
 //==== Globals ================================================================
@@ -787,6 +788,8 @@ int APIENTRY _tWinMain(
 
     HACCEL hAccelTable;
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
+
+    DoStartupDiagnosticCollection();
 
     // Main message loop
 

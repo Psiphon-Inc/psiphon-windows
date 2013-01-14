@@ -19,6 +19,14 @@
 
 #pragma once
 
+
+/**
+Should be called before Psiphon has attempted to connect or made any system
+network changes.
+*/
+void DoStartupDiagnosticCollection();
+
+
 /**
 Attempts to initiate an email to the given address. Puts the email address into
 the clipboad in case there is no mailto handler. 
