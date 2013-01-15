@@ -957,6 +957,7 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     out << YAML::Key << "SPONSOR_ID" << YAML::Value << SPONSOR_ID;
     out << YAML::Key << "CLIENT_VERSION" << YAML::Value << CLIENT_VERSION;
     out << YAML::Key << "splitTunnel" << YAML::Value << GetSplitTunnel();
+    out << YAML::Key << "selectedTransport" << YAML::Value << TStringToNarrow(GetSelectedTransport()).c_str();
     out << YAML::EndMap; // embedded
 
     SystemInfo sysInfo;

@@ -110,3 +110,4 @@ private:
 //==== miscellaneous====================================================
 
 bool GetSplitTunnel();
+tstring GetSelectedTransport();
