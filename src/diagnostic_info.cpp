@@ -404,6 +404,8 @@ bool GetSystemInfo(SystemInfo& sysInfo)
     while (pEnumerator)
     {
         hr = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
+        // TODO: Do we need to check the value of hr? For example, will it 
+        // be FAILED if the table name is bad? The sample code does not check.
 
         if (0 == uReturn)
         {
