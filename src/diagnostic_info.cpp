@@ -27,6 +27,8 @@
 #include "systemproxysettings.h"
 #include "utilities.h"
 #include "diagnostic_info.h"
+#include "osrng.h"
+
 
 
 // Adapted from http://www.codeproject.com/Articles/66016/A-Quick-Start-Guide-of-Process-Mandatory-Level-Che
@@ -926,24 +928,12 @@ void DoStartupDiagnosticCollection()
 }
 
 
-string GetDiagnosticInfo(const string& diagnosticInfoID)
+/**
+Assumes that `out` is already initialized with YAML::BeginMap.
+Adds diagnostic info to `out`.
+*/
+void GetDiagnosticInfo(YAML::Emitter& out)
 {
-    YAML::Emitter out;
-        
-    out << YAML::BeginMap; // overall
-
-    /*
-     * Metadata
-     */
-
-    out << YAML::Key << "Metadata";
-    out << YAML::Value;
-    out << YAML::BeginMap; // metadata
-    out << YAML::Key << "platform" << YAML::Value << "windows";
-    out << YAML::Key << "version" << YAML::Value << 1;
-    out << YAML::Key << "id" << YAML::Value << diagnosticInfoID;
-    out << YAML::EndMap; // metadata
-
     /*
      * System Information
      */
@@ -1194,107 +1184,93 @@ string GetDiagnosticInfo(const string& diagnosticInfoID)
     }
 
     out << YAML::EndSeq;
-
-    out << YAML::EndMap; // overall
-
-    return out.c_str();
 }
 
 
-bool OpenEmailAndSendDiagnosticInfo(
-        const string& emailAddress, 
-        const string& emailAddressEncoded, 
-        const string& diagnosticInfoID, 
+bool SendFeedbackAndDiagnosticInfo(
+        const string& feedback, 
+        bool sendDiagnosticInfo, 
         const StopInfo& stopInfo)
 {
-    if (emailAddress.length() > 0)
+    if (feedback.empty() && !sendDiagnosticInfo)
     {
-        assert(emailAddressEncoded.length() > 0);
-        //
-        // First put the address into the clipboard
-        //
-
-        if (!OpenClipboard(NULL))
-        {
-            return false;
-        }
-
-        // Remove the current Clipboard contents 
-        if( !EmptyClipboard() )
-        {
-            return false;
-        }
-   
-        // Get the currently selected data
-        HGLOBAL hGlob = GlobalAlloc(GMEM_FIXED, emailAddress.length()+1);
-        strcpy_s((char*)hGlob, emailAddress.length()+1, emailAddress.c_str());
-    
-        // Note that the system takes ownership of hGlob
-        if (::SetClipboardData( CF_TEXT, hGlob ) == NULL)
-        {
-            CloseClipboard();
-            GlobalFree(hGlob);
-            return false;
-        }
-
-        CloseClipboard();
-
-        //
-        // Launch the email handler
-        //
-
-        string command = "mailto:" + emailAddress;
-
-        (void)::ShellExecuteA( 
-                    NULL, 
-                    "open", 
-                    command.c_str(), 
-                    NULL, 
-                    NULL, 
-                    SW_SHOWNORMAL); 
-
-        // TODO: What does ShellExecute return if there's no registered mailto handler?
-        // For now: Don't bother checking the return value at all. We've copied the
-        // address to the clipboard and that will have to be good enough.
+        // nothing to do
+        return true;
     }
 
-    //
-    // Upload the diagnostic info
-    //
+    CryptoPP::AutoSeededRandomPool rng;
+    const size_t randBytesLen = 8;
+    byte randBytes[randBytesLen];
+    rng.GenerateBlock(randBytes, randBytesLen);
+    string feedbackID = Hexlify(randBytes, randBytesLen);
 
-    if (diagnosticInfoID.length() > 0)
+    YAML::Emitter out;
+
+    out << YAML::BeginMap; // overall
+
+    // Metadata
+    out << YAML::Key << "Metadata";
+    out << YAML::Value;
+    out << YAML::BeginMap; // metadata
+    out << YAML::Key << "platform" << YAML::Value << "windows";
+    out << YAML::Key << "version" << YAML::Value << 1;
+    out << YAML::Key << "id" << YAML::Value << feedbackID;
+    out << YAML::EndMap; // metadata
+
+    // Diagnostic info
+    if (sendDiagnosticInfo)
     {
-        string diagnosticInfo = GetDiagnosticInfo(diagnosticInfoID);
+        out << YAML::Key << "DiagnosticInfo";
+        out << YAML::Value;
+        out << YAML::BeginMap; // DiagnosticInfo
+        GetDiagnosticInfo(out);
+        out << YAML::EndMap; // DiagnosticInfo
+    }
 
-        string encryptedPayload;
-        if (!PublicKeyEncryptData(
-                FEEDBACK_ENCRYPTION_PUBLIC_KEY, 
-                diagnosticInfo.c_str(), 
-                encryptedPayload))
-        {
-            return false;
-        }
+    // Feedback
+    if (!feedback.empty())
+    {
+        out << YAML::Key << "Feedback";
+        out << YAML::Value;
+        out << YAML::BeginMap; // metadata
+        out << YAML::Key << "message" << YAML::Value << feedback.c_str();
+        out << YAML::EndMap; // metadata
+    }
 
-        tstring uploadLocation = NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
-                                    + NarrowToTString(diagnosticInfoID);
+    out << YAML::EndMap; // overall
+
+    //
+    // Upload the feedback/diagnostic info 
+    //
+
+    string encryptedPayload;
+    if (!PublicKeyEncryptData(
+            FEEDBACK_ENCRYPTION_PUBLIC_KEY, 
+            out.c_str(), 
+            encryptedPayload))
+    {
+        return false;
+    }
+
+    tstring uploadLocation = NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
+                                + NarrowToTString(feedbackID);
         
-        string response;
-        HTTPSRequest httpsRequest;
-        if (!httpsRequest.MakeRequest(
-                NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
-                443,
-                string(), // Do standard cert validation
-                uploadLocation.c_str(),
-                response,
-                stopInfo,
-                false, // don't use local proxy
-                NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
-                (LPVOID)encryptedPayload.c_str(),
-                encryptedPayload.length(),
-                _T("PUT")))
-        {
-            return false;
-        }
+    string response;
+    HTTPSRequest httpsRequest;
+    if (!httpsRequest.MakeRequest(
+            NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
+            443,
+            string(), // Do standard cert validation
+            uploadLocation.c_str(),
+            response,
+            stopInfo,
+            false, // don't use local proxy
+            NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
+            (LPVOID)encryptedPayload.c_str(),
+            encryptedPayload.length(),
+            _T("PUT")))
+    {
+        return false;
     }
 
     return true;

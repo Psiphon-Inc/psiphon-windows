@@ -1337,7 +1337,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
         sessionInfo = m_currentSessionInfo;
     }
 
-    string narrowFeedbackJSON = TStringToNarrow(feedbackJSON);
+    string narrowFeedbackJSON = WStringToNarrow(feedbackJSON);
     Json::Value json_entry;
     Json::Reader reader;
     if (!reader.parse(narrowFeedbackJSON, json_entry))
@@ -1346,9 +1346,8 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
         return false;
     }
 
-    string emailAddress = json_entry.get("emailAddress", "").asString();
-    string emailAddressEncoded = json_entry.get("emailAddressEncoded", "").asString();
-    string diagnosticInfoID = json_entry.get("diagnosticInfoID", "").asString();
+    string feedback = json_entry.get("feedback", "").asString();
+    bool sendDiagnosticInfo = json_entry.get("sendDiagnosticInfo", false).asBool();
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -1359,19 +1358,22 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
     bool success = true;
 
     // Two different actions might be required at this point:
-    // 1) The user wishes to send a feedback email (optionally uploading diagnostic info).
-    // 2) The user completed the questionnaire and wishes to submit it.
+    // 1) The user wishes to send freeform feedback text (optionally uploading 
+    //    diagnostic info).
+    // 2) The user completed the questionnaire and wishes to submit it 
+    //    (optionally uploading diagnostic info).
 
-    if (emailAddress.length() > 0)
+    // Upload diagnostic info
+    if (!feedback.empty() || sendDiagnosticInfo) 
     {
         // We don't care if this succeeds.
-        (void)OpenEmailAndSendDiagnosticInfo(
-                emailAddress,
-                emailAddressEncoded,
-                diagnosticInfoID,
+        (void)SendFeedbackAndDiagnosticInfo(
+                feedback,
+                sendDiagnosticInfo,
                 StopInfo(&GlobalStopSignal::Instance(), stopReason));
     }
-    else
+
+    if (feedback.empty())
     {
         // Send the feedback questionnaire responses
 
@@ -1388,17 +1390,6 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
                             L"Content-Type: application/json",
                             (LPVOID)narrowFeedbackJSON.c_str(),
                             narrowFeedbackJSON.length());
-
-        // Upload diagnostic info
-        if (diagnosticInfoID.length() > 0) 
-        {
-            // We don't care if this succeeds.
-            (void)OpenEmailAndSendDiagnosticInfo(
-                    string(),  // don't email
-                    string(), 
-                    diagnosticInfoID,
-                    StopInfo(&GlobalStopSignal::Instance(), stopReason));
-        }
     }
 
     return success;

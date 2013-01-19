@@ -42,6 +42,7 @@
 #define _WIN32_DCOM
 #include <wbemidl.h>
 
+#include <codecvt>
 #include "tstring.h"
 #include <map>
 #include <regex>

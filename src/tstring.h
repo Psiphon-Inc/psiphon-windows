@@ -64,6 +64,21 @@ static string WStringToNarrow(LPCWSTR wString)
     return WStringToNarrow(wstring(wString));
 }
 
+static string WStringToUTF8(LPCWSTR wString)
+{
+    wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    const string utf8_string = converter.to_bytes(wString);
+    return utf8_string;
+}
+
+static wstring UTF8ToWString(LPCSTR utf8String)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+    std::u16string utf16 = utf16conv.from_bytes(utf8String);
+    wstring wide_string(utf16.begin(), utf16.end());
+    return wide_string;
+}
+
 #ifdef UNICODE
     #define WIDEN2(x) L##x
     #define WIDEN(x) WIDEN2(x)

@@ -40,7 +40,6 @@
 #include "htmldlg.h"
 #include "server_list_reordering.h"
 #include "stopsignal.h"
-#include "osrng.h"
 #include "diagnostic_info.h"
 
 
@@ -1048,19 +1047,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
 
-            CryptoPP::AutoSeededRandomPool rng;
-            const size_t randBytesLen = 8;
-            byte randBytes[randBytesLen];
-            rng.GenerateBlock(randBytes, randBytesLen);
-            
-            tstring args = _T("{\"diagnosticInfoID\": \"") + NarrowToTString(Hexlify(randBytes, randBytesLen)) + _T("\"}");
-            
             tstring feedbackResult;
             if (ShowHTMLDlg(
                     hWnd, 
                     _T("FEEDBACK_HTML_RESOURCE"), 
                     GetLocaleName().c_str(),
-                    args.c_str(),
+                    NULL,
                     feedbackResult) == 1)
             {
                 my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
