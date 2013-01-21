@@ -1211,11 +1211,11 @@ bool SendFeedbackAndDiagnosticInfo(
     // Metadata
     out << YAML::Key << "Metadata";
     out << YAML::Value;
-    out << YAML::BeginMap; // metadata
+    out << YAML::BeginMap; // Metadata
     out << YAML::Key << "platform" << YAML::Value << "windows";
     out << YAML::Key << "version" << YAML::Value << 1;
     out << YAML::Key << "id" << YAML::Value << feedbackID;
-    out << YAML::EndMap; // metadata
+    out << YAML::EndMap; // Metadata
 
     // Diagnostic info
     if (sendDiagnosticInfo)
@@ -1232,9 +1232,13 @@ bool SendFeedbackAndDiagnosticInfo(
     {
         out << YAML::Key << "Feedback";
         out << YAML::Value;
-        out << YAML::BeginMap; // metadata
-        out << YAML::Key << "message" << YAML::Value << feedback.c_str();
-        out << YAML::EndMap; // metadata
+        out << YAML::BeginMap; // Feedback
+        out << YAML::Key << "Message";
+        out << YAML::Value;
+        out << YAML::BeginMap; // Feedback.Message
+        out << YAML::Key << "text" << YAML::Value << feedback.c_str();
+        out << YAML::EndMap; // Feedback.Message
+        out << YAML::EndMap; // Feedback
     }
 
     out << YAML::EndMap; // overall
