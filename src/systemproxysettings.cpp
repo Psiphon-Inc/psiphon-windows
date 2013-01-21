@@ -488,23 +488,23 @@ void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
     // ASSUMPTION: Proxy entries will always have a port number.
     // There are a number of forms (of interest to us) that a proxy server entry can take:
     // localhost or 127.0.0.1
-    basic_regex<TCHAR> localhost_regex = basic_regex<TCHAR>(
+    tregex localhost_regex = tregex(
                     _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:(?:localhost)|(?:127\\.0\\.0\\.1))(:[0-9]+)$"), 
                     regex::ECMAScript | regex::icase);
     // IPv4 (Note: very rough, but probably good enough)
-    basic_regex<TCHAR> ipv4_regex = basic_regex<TCHAR>(
+    tregex ipv4_regex = tregex(
                     _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(:[0-9]+)$"), 
                     regex::ECMAScript | regex::icase);
     // IPv6 (Note: also very rough but probably good enough)
-    basic_regex<TCHAR> ipv6_regex = basic_regex<TCHAR>(
+    tregex ipv6_regex = tregex(
                     _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\[[a-fA-F0-9:]+\\])(:[0-9]+)$"), 
                     regex::ECMAScript | regex::icase);
     // not-fully-qualified domain name
-    basic_regex<TCHAR> nonfqdn_regex = basic_regex<TCHAR>(
+    tregex nonfqdn_regex = tregex(
                     _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-]+)(:[0-9]+)$"), 
                     regex::ECMAScript | regex::icase);
     // fully qualified domain name
-    basic_regex<TCHAR> fqdn_regex = basic_regex<TCHAR>(
+    tregex fqdn_regex = tregex(
                     _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-\\.]+)(:[0-9]+)$"), 
                     regex::ECMAScript | regex::icase);
 
@@ -537,23 +537,23 @@ void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
 
             if (regex_match(*elem, localhost_regex))
             {
-                ss << regex_replace(*elem, localhost_regex, _T("$1[LOCALHOST]$2$3"));
+                ss << regex_replace(*elem, localhost_regex, tstring(_T("$1[LOCALHOST]$2$3")));
             }
             else if (regex_match(*elem, ipv4_regex))
             {
-                ss << regex_replace(*elem, ipv4_regex, _T("$1[IPV4]$2$3"));
+                ss << regex_replace(*elem, ipv4_regex, tstring(_T("$1[IPV4]$2$3")));
             }
             else if (regex_match(*elem, ipv6_regex))
             {
-                ss << regex_replace(*elem, ipv6_regex, _T("$1[IPV6]$2$3"));
+                ss << regex_replace(*elem, ipv6_regex, tstring(_T("$1[IPV6]$2$3")));
             }
             else if (regex_match(*elem, nonfqdn_regex))
             {
-                ss << regex_replace(*elem, nonfqdn_regex, _T("$1[NONFQDN]$2$3"));
+                ss << regex_replace(*elem, nonfqdn_regex, tstring(_T("$1[NONFQDN]$2$3")));
             }
             else if (regex_match(*elem, fqdn_regex))
             {
-                ss << regex_replace(*elem, fqdn_regex, _T("$1[FQDN]$2$3"));
+                ss << regex_replace(*elem, fqdn_regex, tstring(_T("$1[FQDN]$2$3")));
             }
             else
             {

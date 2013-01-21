@@ -27,9 +27,11 @@ using namespace std;
 #ifdef _UNICODE
 #define tstring wstring
 #define tistringstream wistringstream
+#define tregex wregex
 #else
 #define tstring string
 #define tistringstream istringstream
+#define tregex regex
 #endif
 
 typedef basic_stringstream<TCHAR> tstringstream;
