@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -26,6 +26,13 @@
 #include <TlHelp32.h>
 #include "utilities.h"
 #include "stopsignal.h"
+#include "cryptlib.h"
+#include "cryptlib.h"
+#include "rsa.h"
+#include "base64.h"
+#include "osrng.h"
+#include "modes.h"
+#include "hmac.h"
 
 
 extern HINSTANCE g_hInst;
@@ -48,8 +55,8 @@ void TerminateProcessByName(const TCHAR* executableName)
                 if (!TerminateProcess(process, 0) ||
                     WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
                 {
-                    my_print(false, _T("TerminateProcess failed for process with name %s"), executableName);
-                    my_print(false, _T("Please terminate this process manually"));
+                    my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with name %s"), executableName);
+                    my_print(NOT_SENSITIVE, false, _T("Please terminate this process manually"));
                 }
                 CloseHandle(process);
             }
@@ -72,14 +79,14 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     res = FindResource(g_hInst, MAKEINTRESOURCE(resourceID), RT_RCDATA);
     if (!res)
     {
-        my_print(false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());
         return false;
     }
 
     handle = LoadResource(NULL, res);
     if (!handle)
     {
-        my_print(false, _T("ExtractExecutable - LoadResource failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - LoadResource failed (%d)"), GetLastError());
         return false;
     }
 
@@ -93,14 +100,14 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     ret = GetTempPath(MAX_PATH, tempPath);
     if (ret > MAX_PATH-14 || ret == 0)
     {
-        my_print(false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
         return false;
     }
 
     TCHAR filePath[MAX_PATH];
     if (NULL == PathCombine(filePath, tempPath, exeFilename))
     {
-        my_print(false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
     }
 
@@ -120,7 +127,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
             }
             else
             {
-                my_print(false, _T("ExtractExecutable - CreateFile failed (%d)"), lastError);
+                my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - CreateFile failed (%d)"), lastError);
                 return false;
             }
         }
@@ -136,7 +143,7 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
         || !FlushFileBuffers(tempFile))
     {
         CloseHandle(tempFile);
-        my_print(false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), GetLastError());
         return false;
     }
 
@@ -149,9 +156,9 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 
 
 DWORD WaitForConnectability(
-        int port, 
-        DWORD timeout, 
-        HANDLE process, 
+        int port,
+        DWORD timeout,
+        HANDLE process,
         const StopInfo& stopInfo)
 {
     // There are a number of options for monitoring the connected status
@@ -223,7 +230,7 @@ DWORD WaitForConnectability(
             returnValue = ERROR_SYSTEM_PROCESS_TERMINATED;
             break;
         }
-        
+
         // Check if cancel is signalled
 
         if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
@@ -250,10 +257,10 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
         {
             return true;
         }
-        my_print(false, _T("Localhost port %d is already in use."), targetPort);
+        my_print(NOT_SENSITIVE, false, _T("Localhost port %d is already in use."), targetPort);
     }
     while (++targetPort <= maxPort);
-    
+
     return false;
 }
 
@@ -266,7 +273,7 @@ void StopProcess(DWORD processID, HANDLE process)
         if (!TerminateProcess(process, 0) ||
             WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
         {
-            my_print(false, _T("TerminateProcess failed for process with PID %d"), processID);
+            my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with PID %d"), processID);
         }
     }
 }
@@ -278,7 +285,7 @@ bool WriteRegistryDwordValue(const string& name, DWORD value)
     DWORD disposition = 0;
     DWORD bufferLength = sizeof(value);
 
-    bool success = 
+    bool success =
         (ERROR_SUCCESS == RegCreateKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
@@ -309,7 +316,7 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value)
     DWORD bufferLength = sizeof(value);
     DWORD type;
 
-    bool success = 
+    bool success =
         (ERROR_SUCCESS == RegOpenKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
@@ -319,7 +326,7 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value)
 
          ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name.c_str(), 
+                            name.c_str(),
                             0,
                             &type,
                             (LPBYTE)&value,
@@ -337,7 +344,7 @@ bool WriteRegistryStringValue(const string& name, const string& value)
 {
     HKEY key = 0;
 
-    bool success = 
+    bool success =
         (ERROR_SUCCESS == RegCreateKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
@@ -352,8 +359,8 @@ bool WriteRegistryStringValue(const string& name, const string& value)
                             key,
                             name.c_str(),
                             0,
-                            REG_SZ, 
-                            (LPBYTE)value.c_str(), 
+                            REG_SZ,
+                            (LPBYTE)value.c_str(),
                             value.length() + 1)); // Write the null terminator
     RegCloseKey(key);
 
@@ -378,7 +385,7 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
 
         ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name, 
+                            name,
                             0,
                             0,
                             NULL,
@@ -388,7 +395,7 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
 
         ERROR_SUCCESS == RegQueryValueExA(
                             key,
-                            name, 
+                            name,
                             0,
                             &type,
                             (LPBYTE)buffer,
@@ -423,7 +430,7 @@ bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
 
         ERROR_SUCCESS == RegQueryValueExW(
                             key,
-                            name, 
+                            name,
                             0,
                             0,
                             NULL,
@@ -433,7 +440,7 @@ bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
 
         ERROR_SUCCESS == RegQueryValueExW(
                             key,
-                            name, 
+                            name,
                             0,
                             &type,
                             (LPBYTE)buffer,
@@ -569,7 +576,7 @@ tstring GetLocaleName()
     }
 
     LPTSTR buf = new TCHAR[size];
-    
+
     size = GetLocaleInfo(
                 LOCALE_USER_DEFAULT,
                 LOCALE_SISO639LANGNAME,
@@ -580,7 +587,7 @@ tstring GetLocaleName()
     {
         return _T("");
     }
-    
+
     tstring ret = buf;
 
     delete[] buf;
@@ -596,11 +603,11 @@ tstring GetISO8601DatetimeString()
 
     TCHAR ret[64];
     _sntprintf_s(
-        ret, 
-        sizeof(ret)/sizeof(ret[0]), 
-        _T("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"), 
-        systime.wYear, 
-        systime.wMonth, 
+        ret,
+        sizeof(ret)/sizeof(ret[0]),
+        _T("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"),
+        systime.wYear,
+        systime.wMonth,
         systime.wDay,
         systime.wHour,
         systime.wMinute,
@@ -608,4 +615,161 @@ tstring GetISO8601DatetimeString()
         systime.wMilliseconds);
 
     return ret;
+}
+
+
+/*
+ * Feedback Encryption
+ */
+
+bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted)
+{
+    o_encrypted.clear();
+
+    CryptoPP::AutoSeededRandomPool rng;
+
+    string b64Ciphertext, b64Mac, b64WrappedEncryptionKey, b64WrappedMacKey, b64IV;
+
+    try
+    {
+        string ciphertext, mac, wrappedEncryptionKey, wrappedMacKey;
+
+        // NOTE: We are doing encrypt-then-MAC.
+
+        // CryptoPP::AES::MIN_KEYLENGTH is 128 bits.
+        int KEY_LENGTH = CryptoPP::AES::MIN_KEYLENGTH;
+
+        //
+        // Encrypt
+        //
+
+        CryptoPP::SecByteBlock encryptionKey(KEY_LENGTH);
+        rng.GenerateBlock(encryptionKey, encryptionKey.size());
+
+        byte iv[CryptoPP::AES::BLOCKSIZE];
+        rng.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
+
+        CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption encryptor;
+        encryptor.SetKeyWithIV(encryptionKey, encryptionKey.size(), iv);
+
+        CryptoPP::StringSource(
+            plaintext,
+            true,
+            new CryptoPP::StreamTransformationFilter(
+                encryptor,
+                new CryptoPP::StringSink(ciphertext),
+                CryptoPP::StreamTransformationFilter::PKCS_PADDING));
+
+        CryptoPP::StringSource(
+            ciphertext,
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64Ciphertext),
+                false));
+
+        size_t ivLength = sizeof(iv)*sizeof(iv[0]);
+        CryptoPP::StringSource(
+            iv,
+            ivLength,
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64IV),
+                false));
+
+        //
+        // HMAC
+        //
+
+        // Include the IV in the MAC'd data, as per http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-01
+        size_t ciphertextLength = ciphertext.length() * sizeof(ciphertext[0]);
+        byte* ivPlusCiphertext = new byte[ivLength + ciphertextLength];
+        if (!ivPlusCiphertext)
+        {
+            return false;
+        }
+        memcpy(ivPlusCiphertext, iv, ivLength);
+        memcpy(ivPlusCiphertext+ivLength, ciphertext.data(), ciphertextLength);
+
+        CryptoPP::SecByteBlock macKey(KEY_LENGTH);
+        rng.GenerateBlock(macKey, macKey.size());
+
+        CryptoPP::HMAC<CryptoPP::SHA256> hmac(macKey, macKey.size());
+
+        CryptoPP::StringSource(
+            ivPlusCiphertext,
+            ivLength + ciphertextLength,
+            true,
+            new CryptoPP::HashFilter(
+                hmac,
+                new CryptoPP::StringSink(mac)));
+
+        delete[] ivPlusCiphertext;
+
+        CryptoPP::StringSource(
+            mac,
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64Mac),
+                false));
+
+        //
+        // Wrap the keys
+        //
+
+        CryptoPP::RSAES_OAEP_SHA_Encryptor rsaEncryptor(
+            CryptoPP::StringSource(
+                publicKey,
+                true,
+                new CryptoPP::Base64Decoder()));
+
+        CryptoPP::StringSource(
+            encryptionKey.data(),
+            encryptionKey.size(),
+            true,
+            new CryptoPP::PK_EncryptorFilter(
+                rng,
+                rsaEncryptor,
+                new CryptoPP::StringSink(wrappedEncryptionKey)));
+
+        CryptoPP::StringSource(
+            macKey.data(),
+            macKey.size(),
+            true,
+            new CryptoPP::PK_EncryptorFilter(
+                rng,
+                rsaEncryptor,
+                new CryptoPP::StringSink(wrappedMacKey)));
+
+        CryptoPP::StringSource(
+            wrappedEncryptionKey,
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64WrappedEncryptionKey),
+                false));
+
+        CryptoPP::StringSource(
+            wrappedMacKey,
+            true,
+            new CryptoPP::Base64Encoder(
+                new CryptoPP::StringSink(b64WrappedMacKey),
+                false));
+    }
+    catch( const CryptoPP::Exception& e )
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - Encryption failed (%d): %S"), __TFUNCTION__, GetLastError(), e.what());
+        return false;
+    }
+
+    stringstream ss;
+    ss << "{  \n";
+    ss << "  \"contentCiphertext\": \"" << b64Ciphertext << "\",\n";
+    ss << "  \"iv\": \"" << b64IV << "\",\n";
+    ss << "  \"wrappedEncryptionKey\": \"" << b64WrappedEncryptionKey << "\",\n";
+    ss << "  \"contentMac\": \"" << b64Mac << "\",\n";
+    ss << "  \"wrappedMacKey\": \"" << b64WrappedMacKey << "\"\n";
+    ss << "}";
+
+    o_encrypted = ss.str();
+
+    return true;
 }

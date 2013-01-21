@@ -78,7 +78,7 @@ void LaunchWebPage(const tstring& url)
     // http://msdn.microsoft.com/en-us/library/bb762153(v=vs.85).aspx
     if ((int)returnValue <= 32)
     {
-        my_print(false, _T("ShellExecute failed (%d)"), (int)returnValue);
+        my_print(NOT_SENSITIVE, false, _T("ShellExecute failed (%d)"), (int)returnValue);
     }
 }
 
@@ -135,7 +135,7 @@ void OpenBrowser(const vector<tstring>& urls)
 
         if (hProcess == 0)
         {
-            my_print(true, _T("LaunchApplication failed"));
+            my_print(NOT_SENSITIVE, true, _T("LaunchApplication failed"));
             // But we'll continue anyway. Hopefully ShellExecute will still succeed.
         }
     }

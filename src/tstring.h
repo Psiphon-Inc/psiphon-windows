@@ -26,8 +26,12 @@ using namespace std;
 
 #ifdef _UNICODE
 #define tstring wstring
+#define tistringstream wistringstream
+#define tregex wregex
 #else
 #define tstring string
+#define tistringstream istringstream
+#define tregex regex
 #endif
 
 typedef basic_stringstream<TCHAR> tstringstream;
@@ -60,6 +64,21 @@ static string WStringToNarrow(const wstring& wString)
 static string WStringToNarrow(LPCWSTR wString)
 {
     return WStringToNarrow(wstring(wString));
+}
+
+static string WStringToUTF8(LPCWSTR wString)
+{
+    wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    const string utf8_string = converter.to_bytes(wString);
+    return utf8_string;
+}
+
+static wstring UTF8ToWString(LPCSTR utf8String)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+    std::u16string utf16 = utf16conv.from_bytes(utf8String);
+    wstring wide_string(utf16.begin(), utf16.end());
+    return wide_string;
 }
 
 #ifdef UNICODE

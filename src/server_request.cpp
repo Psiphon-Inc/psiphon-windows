@@ -118,7 +118,7 @@ bool ServerRequest::MakeRequest(
 
             if (!sessionInfo.GetServerEntry().HasCapability(UNTUNNELED_WEB_REQUEST_CAPABILITY))
             {
-                my_print(true, _T("%s: insufficient capabilities for untunnelled web request"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%s: insufficient capabilities for untunnelled web request"), __TFUNCTION__);
                 return false;
             }
         }
@@ -176,7 +176,7 @@ bool ServerRequest::MakeRequest(
                 return true;
             }
 
-            my_print(true, _T("%s: HTTPS:%d failed"), __TFUNCTION__, *port_iter);
+            my_print(NOT_SENSITIVE, true, _T("%s: HTTPS:%d failed"), __TFUNCTION__, *port_iter);
         }
     }
 
@@ -233,7 +233,7 @@ bool ServerRequest::MakeRequest(
                 break;
             }
 
-            my_print(true, _T("%s: transport:%s failed"), __TFUNCTION__, (*transport_iter)->GetTransportProtocolName().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: transport:%s failed"), __TFUNCTION__, (*transport_iter)->GetTransportProtocolName().c_str());
 
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.

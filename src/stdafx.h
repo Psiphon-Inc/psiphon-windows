@@ -39,6 +39,10 @@
 #include <tchar.h>
 #include <assert.h>
 
+#define _WIN32_DCOM
+#include <wbemidl.h>
+
+#include <codecvt>
 #include "tstring.h"
 #include <map>
 #include <regex>
@@ -46,4 +50,4 @@
 #include <json.h>
 #include <mshtmhst.h>
 #include <urlmon.h>
-
+#include <shellapi.h>

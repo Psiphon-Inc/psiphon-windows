@@ -24,7 +24,8 @@
 
 using namespace std;
 
-static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
+struct connection_proxy;
+
 
 class SystemProxySettings
 {
@@ -46,25 +47,11 @@ public:
     bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
 
 private:
-    static const int INTERNET_OPTIONS_NUMBER = 3;
-
-    struct connection_proxy
-    {
-        tstring name;
-        DWORD flags;
-        tstring proxy;
-        tstring bypass;
-    };
-
     typedef vector<connection_proxy>::iterator connection_proxy_iter;
-    typedef vector<tstring>::const_iterator tstring_iter;
 
     void PreviousCrashCheckHack(connection_proxy& proxySettings);
-    bool Save(const vector<tstring>& connections);
+    bool Save(const vector<connection_proxy>& proxyInfo);
     bool SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress);
-    bool SetConnectionProxy(const connection_proxy& setting);
-    bool GetConnectionProxy(connection_proxy& setting);
-    vector<tstring> GetRasConnectionNames();
     tstring MakeProxySettingString();
 
     bool m_settingsApplied;
@@ -74,3 +61,14 @@ private:
     int m_httpsProxyPort;
     int m_socksProxyPort;
 };
+
+
+struct ConnectionProxyInfo
+{
+    tstring connectionName;
+    tstring flags;
+    tstring proxy;
+    tstring bypass;
+};
+
+void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo);

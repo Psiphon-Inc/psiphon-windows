@@ -160,7 +160,7 @@ void SSHTransportBase::TransportConnectHelper(
                         const SessionInfo& sessionInfo,
                         SystemProxySettings* systemProxySettings)
 {
-    my_print(false, _T("%s connecting..."), GetTransportDisplayName().c_str());
+    my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
 
     // Extract executables and put to disk if not already
 
@@ -195,7 +195,7 @@ void SSHTransportBase::TransportConnectHelper(
     // one that is available.
     if (!TestForOpenPort(m_localSocksProxyPort, 10, m_stopInfo))
     {
-        my_print(false, _T("Local SOCKS proxy could not find an available port."));
+        my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
         throw TransportFailed();
     }
 
@@ -221,7 +221,7 @@ void SSHTransportBase::TransportConnectHelper(
 
     if (!LaunchPlonk(plonkCommandLine.c_str()))
     {
-        my_print(false, _T("%s - LaunchPlonk failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s - LaunchPlonk failed (%d)"), __TFUNCTION__, GetLastError());
         throw TransportFailed();
     }
 
@@ -240,13 +240,13 @@ void SSHTransportBase::TransportConnectHelper(
     }
     else if (ERROR_SUCCESS != connected)
     {
-        my_print(false, _T("Failed to connect (%d, %d)"), connected, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("Failed to connect (%d, %d)"), connected, GetLastError());
         throw TransportFailed();
     }
 
     systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
 
-    my_print(false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
+    my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
 
 bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
@@ -549,7 +549,7 @@ bool OSSHTransport::GetSSHParams(
     if (sessionInfo.GetSSHObfuscatedPort() <= 0 
         || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
     {
-        my_print(false, _T("%s - missing parameters"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, false, _T("%s - missing parameters"), __TFUNCTION__);
         return false;
     }
 
@@ -599,7 +599,7 @@ bool SetPlonkSSHHostKey(
         || !(decodedFields = new (std::nothrow) BYTE[size])
         || !CryptStringToBinary(sshServerHostKey.c_str(), sshServerHostKey.length(), CRYPT_STRING_BASE64, decodedFields, &size, NULL, NULL))
     {
-        my_print(false, _T("SetPlonkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("SetPlonkSSHHostKey: CryptStringToBinary failed (%d)"), GetLastError());
         return false;
     }
 
@@ -615,7 +615,7 @@ bool SetPlonkSSHHostKey(
     {
         delete [] decodedFields;
 
-        my_print(false, _T("SetPlonkSSHHostKey: unexpected key type"));
+        my_print(NOT_SENSITIVE, false, _T("SetPlonkSSHHostKey: unexpected key type"));
         return false;
     }
 
@@ -659,7 +659,7 @@ bool SetPlonkSSHHostKey(
     LONG returnCode = RegCreateKeyEx(HKEY_CURRENT_USER, plonkRegistryKey, 0, 0, 0, KEY_WRITE, 0, &key, NULL);
     if (ERROR_SUCCESS != returnCode)
     {
-        my_print(false, _T("SetPlonkSSHHostKey: Create Registry Key failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("SetPlonkSSHHostKey: Create Registry Key failed (%d)"), returnCode);
         return false;
     }
 
@@ -668,7 +668,7 @@ bool SetPlonkSSHHostKey(
     {
         RegCloseKey(key);
 
-        my_print(false, _T("SetPlonkSSHHostKey: Set Registry Value failed (%d)"), returnCode);
+        my_print(NOT_SENSITIVE, false, _T("SetPlonkSSHHostKey: Set Registry Value failed (%d)"), returnCode);
         return false;
     }
 
