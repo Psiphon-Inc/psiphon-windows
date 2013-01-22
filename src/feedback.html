@@ -115,35 +115,337 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 <script>
 var langJSON = {"ug@Latn": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_content_title": "Give Us Your Feedback", "top_content": "<p>\n  Please complete the form below to let us know how Psiphon 3 is working for you so we can make the system better.\n</p>\n\n<p>\n If you have any specific comments, further information about web sites that do not work, or if this form is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools."}, "ru": {"connectivity_ok": "Psiphon \u0447\u0430\u0449\u0435 \u0441\u043e\u0435\u0434\u0438\u043d\u044f\u0435\u0442\u0441\u044f, \u0447\u0435\u043c \u043d\u0435\u0442, \u043d\u043e \u0438\u043d\u043e\u0433\u0434\u0430 \u0441\u0432\u044f\u0437\u044c \u043f\u0440\u0435\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u0438 \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u0438\u0442 \u043f\u0435\u0440\u0435\u043f\u043e\u0434\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u0435.", "speed_sad": "\u0418\u043d\u0442\u0435\u0440\u043d\u0435\u0442 \u0447\u0435\u0440\u0435\u0437 Psiphon \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u043c\u0435\u0434\u043b\u0435\u043d\u043d\u043e \u0434\u043b\u044f \u043c\u0435\u043d\u044f \u0438 \u044f \u0431\u043e\u043b\u044c\u0448\u0435 \u043d\u0435 \u0431\u0443\u0434\u0443 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c\u0441\u044f Psiphon.", "compatibility_happy": "\u0412\u0441\u0435 \u0432\u0435\u0431 \u0441\u0430\u0439\u0442\u044b \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d\u043d\u044b\u0435 \u0447\u0435\u0440\u0435\u0437 Psiphon \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0442 \u0431\u0435\u0437 \u043f\u0440\u043e\u0431\u043b\u0435\u043c.", "connectivity_sad": "Psiphon  \u0447\u0430\u0441\u0442\u043e \u043d\u0435 \u043c\u043e\u0436\u0435\u0442 \u0441\u043e\u0435\u0434\u0438\u043d\u0438\u0442\u044c\u0441\u044f \u0438\u043b\u0438 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e \u0440\u0430\u0437\u044a\u0435\u0434\u0438\u043d\u044f\u0435\u0442\u0441\u044f.", "submit_button": "\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c", "compatibility_title": "\u0421\u043e\u0432\u043c\u0435\u0441\u0442\u0438\u043c\u043e\u0441\u0442\u044c", "speed_ok": "\u042f \u043c\u043e\u0433\u0443 \u043f\u0440\u043e\u0441\u043c\u0430\u0442\u0440\u0438\u0432\u0430\u0442\u044c \u0438\u043d\u0442\u0435\u0440\u043d\u0435\u0442 \u0447\u0435\u0440\u0435\u0437 Psiphon, \u043d\u043e \u0441\u0430\u0439\u0442\u044b \u0433\u0440\u0443\u0437\u044f\u0442\u0441\u044f \u043c\u0435\u0434\u043b\u0435\u043d\u043d\u043e.", "compatibility_ok": "\u0424\u0443\u043d\u043a\u0446\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c \u0432\u0435\u0431 \u0441\u0430\u0439\u0442\u043e\u0432 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d\u043d\u044b\u0445 \u0447\u0435\u0440\u0435\u0437 Psiphon \u0443\u0434\u043e\u0432\u043b\u0435\u0442\u0432\u043e\u0440\u0438\u0442\u0435\u043b\u044c\u043d\u0430.", "connectivity_happy": "Psiphon \u0441\u0442\u0430\u0431\u0438\u043b\u044c\u043d\u043e \u0441\u043e\u0435\u0434\u0438\u043d\u044f\u0435\u0442\u0441\u044f \u0438 \u0441\u0432\u044f\u0437\u044c \u043d\u0435 \u043f\u0440\u0435\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f.", "compatibility_sad": "\u041c\u043e\u0438 \u0432\u0435\u0431 \u0441\u0430\u0439\u0442\u044b \u0437\u0430\u0433\u0440\u0443\u0436\u0430\u044e\u0442\u0441\u044f, \u043d\u043e \u044f \u043d\u0435 \u043c\u043e\u0433\u0443 \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0438\u0442\u044c \u043d\u0435\u043a\u043e\u0442\u043e\u0440\u044b\u0435, \u0432\u0430\u0436\u043d\u044b\u0435 \u0434\u043b\u044f \u043f\u043e\u043b\u043d\u043e\u0446\u0435\u043d\u043d\u043e\u0439 \u0444\u0443\u043d\u043a\u0446\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u0438, \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f.", "speed_title": "\u0421\u043a\u043e\u0440\u043e\u0441\u0442\u044c", "title": "\u041e\u0442\u0437\u044b\u0432\u044b \u043e Psiphon 3", "connectivity_title": "\u041a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u0441\u0432\u044f\u0437\u0438", "top_content_title": "\u041f\u0440\u0435\u0434\u043e\u0441\u0442\u0430\u0432\u044c\u0442\u0435 \u043d\u0430\u043c \u0432\u0430\u0448\u0438 \u043e\u0442\u0437\u044b\u0432\u044b", "top_content": "<p>\n\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0437\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0444\u043e\u0440\u043c\u0443 \u043d\u0438\u0436\u0435, \u0447\u0442\u043e\u0431\u044b \u043c\u044b \u0437\u043d\u0430\u043b\u0438, \u043a\u0430\u043a Psiphon 3 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0434\u043b\u044f \u0432\u0430\u0441, \u0430 \u0442\u0430\u043a\u0436\u0435 \u0434\u043b\u044f \u0441\u043e\u0432\u0435\u0440\u0448\u0435\u043d\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u044f \u043d\u0430\u0448\u0435\u0439 \u0441\u0438\u0441\u0442\u0435\u043c\u044b \u0432 \u0431\u0443\u0434\u0443\u0449\u0435\u043c.\n</p>\n<p>\n\u0415\u0441\u043b\u0438 \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044c \u043a\u0430\u043a\u0438\u0435-\u043b\u0438\u0431\u043e \u043e\u0441\u043e\u0431\u044b\u0435  \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438, \u0434\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f \u043e \u0441\u0430\u0439\u0442\u0430\u0445, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043d\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0430\u044e\u0442\u0441\u044f \u0438\u043b\u0438 \u044d\u0442\u0430 \u0444\u043e\u0440\u043c\u0430 \u043d\u0435 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0434\u043b\u044f \u0432\u0430\u0441, \u043f\u0438\u0448\u0438\u0442\u0435 \u043d\u0430\u043c \u043d\u0430 <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "\u042f \u043c\u043e\u0433\u0443 \u043f\u0440\u043e\u0441\u043c\u0430\u0442\u0440\u0438\u0432\u0430\u0442\u044c \u0438\u043d\u0442\u0435\u0440\u043d\u0435\u0442 \u0447\u0435\u0440\u0435\u0437 Psiphon \u0438 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432\u0438\u0434\u0435\u043e; Psiphon \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0434\u043b\u044f \u043c\u0435\u043d\u044f \u0431\u044b\u0441\u0442\u0440\u043e \u0438\u043b\u0438 \u0434\u0430\u0436\u0435 \u0431\u044b\u0441\u0442\u0440\u0435\u0435, \u0447\u0435\u043c \u0434\u0440\u0443\u0433\u0438\u0435 \u0441\u043f\u043e\u0441\u043e\u0431\u044b \u043f\u043e \u043e\u0431\u0445\u043e\u0434\u0443 \u0446\u0435\u043d\u0437\u0443\u0440\u044b."}, "en": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "text_feedback_diagnostic_check": "Also upload diagnostic information. Please note that this diagnostic\ninformation does not contain private information about you, and it will\nhelp us to keep Psiphon running smoothly.\n", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_para_1": "Please complete the form below to let us know how Psiphon 3 is working\nfor you so we can make the system better!\n", "text_feedback_top_para_android": "If you have any specific comments, further information about web sites that do not work, or if the questionnaire is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\nPlease note that some diagnostic information will be attached to the email. This attachment does not contain private information about you, and it will help us to keep Psiphon running smoothly.\n", "text_feedback_bottom_para_windows": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"emailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n", "questionnaire_diagnostic_check": "Also upload diagnostic information. Please note that this diagnostic\ninformation does not contain private information about you, and it will\nhelp us to keep Psiphon running smoothly.\n", "text_feedback_top_para_windows": "If you have any specific comments, further information about web sites that do not work, or if the questionnaire is not working for you, please fill in the form below.\n", "text_feedback_submit": "Submit", "top_content_title": "Give Us Your Feedback", "top_para_2": "If you have any other feedback, bug reports, etc., that you'd like to\ngive us, <a id=\"showTextFeedback\" href=\"#\">just click here</a>.\n"}, "zh": {"connectivity_ok": "Psiphon\u7ecf\u5e38\u8fde\u63a5\uff0c\u4f46\u662f\u6709\u65f6\u65ad\u5f00\u5e76\u91cd\u65b0\u8fde\u63a5\u3002", "speed_sad": "\u901a\u8fc7Psiphon\u4e0a\u7f51\u6d4f\u89c8\u592a\u6162\u5e76\u4e0d\u8981\u7ee7\u7eed\u4f7f\u7528\u5b83\u3002", "compatibility_happy": "\u5f53\u6211\u8bbf\u95ee\u7f51\u7ad9\u901a\u8fc7Psiphon\u65f6\uff0c\u90fd\u662f\u5145\u5206\u529f\u80fd\u7684\u3002", "connectivity_sad": "Psiphon\u7ecf\u5e38\u8fde\u63a5\u5931\u8d25\u6216\u5e38\u5e38\u65ad\u5f00\u3002", "submit_button": "\u63d0\u4ea4", "compatibility_title": "\u517c\u5bb9\u6027", "speed_ok": "\u6211\u53ef\u4ee5\u901a\u8fc7Psiphon\u4e0a\u7f51\u6d4f\u89c8\uff0c\u4f46\u5f88\u6162\u3002", "compatibility_ok": "\u5f53\u8bbf\u95ee\u7f51\u7ad9\u901a\u8fc7Psiphon\u65f6\uff0c\u6709\u529f\u80fd\u7684\u3002", "connectivity_happy": "Psiphon\u59cb\u7ec8\u8fde\u63a5\u5e76\u4fdd\u6301\u8fde\u63a5\u3002", "compatibility_sad": "\u6211\u7684\u7f51\u7ad9\u52a0\u8f7d\u597d\uff0c\u4f46\u6211\u4e0d\u80fd\u4f7f\u7528\u67d0\u4e9b\u91cd\u8981\u529f\u80fd\u3002", "speed_title": "\u901f\u5ea6", "title": "Psiphon 3\u53cd\u9988", "connectivity_title": "\u8fde\u63a5\u6027", "top_content_title": "\u7ed9\u6211\u4eec\u60a8\u53cd\u9988", "diagnostic_info_warning_android": "\u8bf7\u6ce8\u610f\u4e00\u4e9b\u8bca\u65ad\u4fe1\u606f\u5c06\u88ab\u9644\u52a0\u5230\u7535\u5b50\u90ae\u4ef6\u3002\u6b64\u9644\u4ef6\u4e0d\u5305\u542b\u60a8\u7684\u79c1\u4eba\u4fe1\u606f\uff0c\u800c\u5b83\u5c06\u5e2e\u52a9\u6211\u4eec\u4fdd\u6301\u8d5b\u98ce\u8f6f\u4ef6\u8fd0\u884c\u987a\u5229\u3002", "top_content": "<p>\n  \u6240\u4ee5\u6211\u4eec\u53ef\u4ee5\u4f7f\u7cfb\u7edf\u66f4\u597d\u5730\uff0c\u8bf7\u5b8c\u6210\u4e0b\u9762\u7684\u8868\u5355\u4ee5\u8ba9\u6211\u4eec\u77e5\u9053\u600e\u4e48\u597dPsiphon 3\u5de5\u4f5c\u3002\n</p>\n\n<p>\n\u5982\u679c\u4f60\u6709\u4efb\u4f55\u5177\u4f53\u610f\u89c1\uff0c\u9700\u8981\u66f4\u591a\u4fe1\u606f\u4e0d\u5de5\u4f5c\u7684\u7f51\u7ad9\uff0c\u6216\u8005\u8868\u5355\u4e5f\u4e0d\u5de5\u4f5c\uff0c\u8bf7\u53d1\u7535\u5b50\u90ae\u4ef6<a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\u3002\n</p>\n", "speed_happy": "\u6211\u53ef\u4ee5\u901a\u8fc7Psiphon\u4e0a\u7f51\u6d4f\u89c8\u548c\u89c2\u770b\u89c6\u9891\uff1b\u5b83\u662f\u5feb\u901f\u6216\u6bd4\u5176\u4ed6\u7ffb\u5899\u5de5\u5177\u66f4\u5feb\u3002"}, "uz@cyrillic": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_content_title": "Give Us Your Feedback", "top_content": "<p>\n  Please complete the form below to let us know how Psiphon 3 is working for you so we can make the system better.\n</p>\n\n<p>\n If you have any specific comments, further information about web sites that do not work, or if this form is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools."}, "kk": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_content_title": "Give Us Your Feedback", "top_content": "<p>\n  Please complete the form below to let us know how Psiphon 3 is working for you so we can make the system better.\n</p>\n\n<p>\n If you have any specific comments, further information about web sites that do not work, or if this form is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools."}, "vi": {"connectivity_ok": "Psiphon th\u01b0\u1eddng k\u1ebft n\u1ed1i, nh\u01b0ng \u0111\u00f4i khi ng\u1eaft k\u1ebft n\u1ed1i v\u00e0 t\u00e1i k\u1ebft n\u1ed1i.", "speed_sad": "Duy\u1ec7t web qua Psiphon qu\u00e1 ch\u1eadm v\u00e0 t\u00f4i s\u1ebd kh\u00f4ng ti\u1ebfp t\u1ee5c s\u1eed d\u1ee5ng n\u00f3.", "compatibility_happy": "C\u00e1c trang web c\u1ee7a t\u00f4i ho\u1ea1t \u0111\u1ed9ng b\u00ecnh th\u01b0\u1eddng khi t\u00f4i truy c\u1eadp ch\u00fang qua Psiphon.", "connectivity_sad": "Psiphon th\u01b0\u1eddng kh\u00f4ng th\u1ec3 k\u1ebft n\u1ed1i ho\u1eb7c th\u01b0\u1eddng xuy\u00ean b\u1ecb ng\u1eaft k\u1ebft n\u1ed1i.", "submit_button": "G\u1eedi", "compatibility_title": "Kh\u1ea3 n\u0103ng t\u01b0\u01a1ng th\u00edch", "speed_ok": "T\u00f4i c\u00f3 th\u1ec3 duy\u1ec7t web qua Psiphon nh\u01b0ng c\u00f3 t\u1ed1c \u0111\u1ed9 ch\u1eadm.", "compatibility_ok": "C\u00e1c trang web c\u1ea3u t\u00f4i ho\u1ea1t \u0111\u1ed9ng \u0111\u1ea7y \u0111\u1ee7 khi t\u00f4i truy c\u1eadp ch\u00fang qua Psiphon.", "connectivity_happy": "Psiphon k\u1ebft n\u1ed1i m\u1ed9t c\u00e1ch nh\u1ea5t qu\u00e1n v\u00e0 \u0111\u1ea3m b\u1ea3o k\u1ebft n\u1ed1i.", "compatibility_sad": "C\u00e1c trang web c\u1ee7a t\u00f4i t\u1ea3i n\u1ed9i dung nh\u01b0ng t\u00f4i kh\u00f4ng th\u1ec3 s\u1eed d\u1ee5ng c\u00e1c ch\u1ee9c n\u0103ng quan tr\u1ecdng nh\u1ea5t \u0111\u1ecbnh.", "speed_title": "T\u1ed1c \u0111\u1ed9", "title": "Th\u00f4ng Tin Ph\u1ea3n H\u1ed3i v\u1ec1 Psiphon 3", "connectivity_title": "Kh\u1ea3 n\u0103ng k\u1ebft n\u1ed1i", "top_content_title": "Cho Ch\u00fang T\u00f4i Bi\u1ebft Th\u00f4ng Tin Ph\u1ea3n H\u1ed3i c\u1ee7a B\u1ea1n", "top_content": "<p>\nVui l\u00f2ng \u0111i\u1ec1n v\u00e0o m\u1eabu b\u00ean d\u01b0\u1edbi \u0111\u1ec3 cho ch\u00fang t\u00f4i bi\u1ebft hi\u1ec7u su\u1ea5t c\u1ee7a Psiphon 3 \u0111\u1ed1i v\u1edbi b\u1ea1n \u0111\u1ec3 ch\u00fang t\u00f4i c\u00f3 th\u1ec3 c\u1ea3i thi\u1ec7n h\u1ec7 th\u1ed1ng.\n </p>\n\n<p>N\u1ebfu b\u1ea1n c\u00f3 b\u1ea5t k\u1ef3 nh\u1eadn x\u00e9t c\u1ee5 th\u1ec3 n\u00e0o, mu\u1ed1n bi\u1ebft th\u00eam th\u00f4ng tin v\u1ec1 c\u00e1c trang web kh\u00f4ng ho\u1ea1t \u0111\u1ed9ng, ho\u1eb7c n\u1ebfu m\u1eabu \u0111\u01a1n n\u00e0y kh\u00f4ng c\u00f3 t\u00e1c d\u1ee5ng, vui l\u00f2ng g\u1eedi th\u01b0 \u0111i\u1ec7n t\u1eed \u0111\u1ebfn <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "T\u00f4i c\u00f3 th\u1ec3 duy\u1ec7t web qua Psiphon v\u00e0 xem video; n\u00f3 nhanh b\u1eb1ng ho\u1eb7c nhanh h\u01a1n c\u00e1c c\u00f4ng c\u1ee5 gi\u1ea3i quy\u1ebft kh\u00e1c."}, "fa": {"connectivity_ok": "\u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0627\u063a\u0644\u0628 \u0648\u0635\u0644 \u0645\u06cc\u0634\u0648\u062f\u060c \u0648\u0644\u06cc \u0628\u0639\u0636\u06cc \u0648\u0642\u062a \u0647\u0627 \u0642\u0637\u0639 \u0648 \u0648\u0635\u0644 \u0645\u06cc\u0634\u0648\u062f", "speed_sad": "\u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0628\u0633\u06cc\u0627\u0631 \u06a9\u0646\u062f \u0627\u0633\u062a \u0648 \u0645\u0646 \u062f\u06cc\u06af\u0631 \u0627\u0632\u0634 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0646\u062e\u0648\u0627\u0647\u0645 \u06a9\u0631\u062f.", "compatibility_happy": "\u0645\u0646 \u0627\u0635\u0644\u0627 \u062f\u0686\u0627\u0631 \u0645\u0634\u06a9\u0644\u06cc \u0628\u0627 \u0648\u0628\u0633\u0627\u06cc\u062a \u0647\u0627 \u0646\u0645\u06cc\u0634\u0645 \u0648\u0642\u062a\u06cc \u0627\u0632 \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0645\u06cc\u06a9\u0646\u0645.", "connectivity_sad": "\u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0645\u0639\u0645\u0648\u0644\u0627 \u0648\u0635\u0644 \u0646\u0645\u06cc\u0634\u0648\u062f \u06cc\u0627 \u0647\u0645\u06cc\u0634\u0647 \u0642\u0637\u0639 \u0645\u06cc\u0634\u0648\u062f", "submit_button": "\u0627\u0631\u0633\u0627\u0644", "compatibility_title": "\u0633\u0627\u0632\u06af\u0627\u0631\u06cc", "speed_ok": "\u0645\u0646 \u0645\u06cc\u062a\u0648\u0627\u0646\u0645 \u0627\u0632 \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0628\u0631\u0627\u06cc \u0645\u0631\u0648\u0631 \u062f\u0631 \u0627\u06cc\u0646\u062a\u0631\u0646\u062a \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u06a9\u0646\u0645 \u0648\u0644\u06cc \u06a9\u0646\u062f \u0627\u0633\u062a", "compatibility_ok": "\u0648\u0628 \u0633\u0627\u06cc\u062a \u0647\u0627 \u0645\u0639\u0645\u0648\u0644\u0627 \u0628\u0631\u0627\u06cc \u0645\u0646 \u0628\u0647 \u0637\u0648\u0631\u0639\u0627\u062f\u06cc \u0639\u0645\u0644 \u0645\u06cc\u06a9\u0646\u0646\u062f \u0648\u0642\u062a\u06cc \u0627\u0632 \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0645\u06cc\u06a9\u0646\u0645.", "connectivity_happy": "\u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0628\u06cc\u0634\u062a\u0631 \u0627\u0648\u0642\u0627\u062a \u0648\u0635\u0644 \u0645\u06cc\u0634\u0648\u062f \u0648 \u0648\u0635\u0644 \u0645\u06cc\u0645\u0627\u0646\u0646\u062f.", "compatibility_sad": "\u0648\u0628\u0633\u0627\u06cc\u062a \u0647\u0627 \u0642\u0627\u0628\u0644 \u062f\u0633\u062a\u0631\u0633\u06cc \u0647\u0633\u062a\u0646\u062f \u0648\u0644\u06cc \u0628\u0631\u0627\u06cc \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0627\u0632 \u0622\u0646\u0647\u0627 \u0628\u0627 \u0645\u0634\u06a9\u0644 \u0631\u0648\u0628\u0631\u0648 \u0645\u06cc\u0634\u0648\u0645 \u0648 \u0642\u0627\u0628\u0644\u06cc\u062a \u0647\u0627\u06cc \u0645\u0647\u0645 \u0622\u0646\u0647\u0627 \u06a9\u0627\u0631 \u0646\u0645\u06cc\u06a9\u0646\u0646\u062f.", "speed_title": "\u0633\u0631\u0639\u062a", "title": "\u0628\u0627\u0632\u062e\u0648\u0631\u062f \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3", "connectivity_title": "\u0627\u062a\u0635\u0627\u0644", "top_content_title": "\u0646\u0638\u0631\u0627\u062a \u062e\u0648\u062f \u0631\u0627 \u0628\u0627 \u0645\u0627 \u062f\u0631 \u0645\u06cc\u0627\u0646 \u0628\u06af\u0630\u0627\u0631\u06cc\u062f", "diagnostic_info_warning_android": "\u0644\u0637\u0641\u0622 \u062a\u0648\u062c\u0647 \u062f\u0627\u0634\u062a\u0647 \u0628\u0627\u0634\u06cc\u062f \u06a9\u0647 \u0628\u0631\u062e\u06cc \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u062a\u0634\u062e\u06cc\u0635\u06cc \u0628\u0647 \u0627\u06cc\u0646 \u0627\u06cc\u0645\u06cc\u0644 \u067e\u06cc\u0648\u0633\u062a \u062e\u0648\u0627\u0647\u062f \u0634\u062f. \u062f\u0631 \u0627\u06cc\u0646 \u067e\u06cc\u0648\u0633\u062a \u0647\u06cc\u0686 \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0634\u062e\u0635\u06cc \u0645\u0631\u0628\u0648\u0637 \u0628\u0647 \u0634\u0645\u0627 \u0648\u062c\u0648\u062f \u0646\u062f\u0627\u0631\u062f\u060c \u0648 \u0627\u06cc\u0646 \u067e\u06cc\u0648\u0633\u062a \u0641\u0642\u0637 \u0628\u0631\u0627\u06cc \u0627\u062c\u0631\u0627\u06cc \u0628\u0647\u062a\u0631 \u0633\u0627\u06cc\u0641\u0648\u0646 \u0627\u0633\u062a. \u0628\u0627 \u0633\u067e\u0627\u0633\u060c \u0633\u0627\u06cc\u0641\u0648\u0646. ", "top_content": "<p>\n  \u0644\u0637\u0641\u0622 \u0646\u0638\u0631\u0627\u062a \u062e\u0648\u062f \u0631\u0627 \u062f\u0631 \u0632\u06cc\u0631 \u0628\u0627 \u0645\u0627 \u062f\u0631 \u0645\u06cc\u0627\u0646 \u0628\u06af\u0630\u0627\u0631\u06cc\u062f \u062a\u0627 \u0645\u0627 \u0628\u062a\u0648\u0627\u0646\u06cc\u0645 \u0633\u0631\u0648\u06cc\u0633 \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0631\u0627 \u0628\u0647\u062a\u0631 \u06a9\u0646\u06cc\u0645 \n</p>\n<p>\n\u0637\u0641\u0622 \u0627\u06af\u0631 \u0646\u0638\u0631 \u06cc\u0627 \u067e\u06cc\u0634\u0646\u0647\u0627\u062f\u06cc \u062f\u0627\u0631\u06cc\u062f\u060c \u06cc\u0627 \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0628\u06cc\u0634\u062a\u0631\u06cc \u062f\u0631 \u0645\u0648\u0631\u062f \u0648\u0628 \u0633\u0627\u06cc\u062a \u0647\u0627\u06cc\u06cc \u06a9\u0647 \u06a9\u0627\u0631 \u0646\u0645\u06cc\u06a9\u0646\u0646\u062f \u0631\u0627 \u0645\u06cc\u062e\u0648\u0627\u0647\u06cc\u062f \u0628\u0627 \u0645\u0627 \u062f\u0631 \u0645\u06cc\u0627\u0646 \u0628\u06af\u0630\u0627\u0631\u06cc\u062f\u060c  \u0628\u0647 \u0622\u062f\u0631\u0633 \u0632\u06cc\u0631 \u0627\u06cc\u0645\u06cc\u0644 \u0628\u0632\u0646\u06cc\u062f.  <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n</p>\n", "speed_happy": "\u0645\u0646 \u0628\u0647 \u0631\u0627\u062d\u062a\u06cc \u0645\u06cc\u062a\u0648\u0627\u0646\u0645 \u0627\u0632 \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0628\u0631\u0627\u06cc \u0645\u0631\u0648\u0631 \u062f\u0631 \u0627\u06cc\u0646\u062a\u0631\u0646\u062a \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u06a9\u0646\u0645 \u0648 \u0648\u06cc\u062f\u0626\u0648 \u0646\u06af\u0627\u0647 \u06a9\u0646\u0645. \u0633\u0627\u06cc\u0641\u0648\u0646 \u06f3 \u0633\u0631\u06cc\u0639\u062a\u0631 \u0627\u0632 \u0641\u06cc\u0644\u062a\u0631\u0634\u06a9\u0646 \u0647\u0627\u06cc \u062f\u06cc\u06af\u0631 \u0627\u0633\u062a"}, "ar": {"connectivity_ok": "\u064a\u0642\u0648\u0645 \u0633\u0627\u064a\u0641\u0648\u0646 \u0628\u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0641\u064a \u0645\u0639\u0638\u0645 \u0627\u0644\u062d\u0627\u0644\u0627\u062a\u066b \u0644\u0643\u0646\u0647 \u0623\u062d\u064a\u0627\u0646\u0627 \u064a\u0641\u0642\u062f \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0648\u064a\u0639\u064a\u062f\u0647.", "speed_sad": "\u062a\u0635\u0641\u062d \u0627\u0644\u0648\u064a\u0628 \u0645\u0646 \u062e\u0644\u0627\u0644 \u0633\u0627\u064a\u0641\u0648\u0646 \u0628\u0637\u064a\u0621 \u062c\u062f\u0627\u064b\u066b \u060c\u0648\u0644\u0646 \u0623\u0648\u0627\u0635\u0644 \u0627\u0633\u062a\u062e\u062f\u0627\u0645\u0647. ", "compatibility_happy": "\u0645\u0648\u0627\u0642\u0639 \u0627\u0644\u0648\u064a\u0628 \u0627\u0644\u062e\u0627\u0635\u0647 \u0628\u064a \u062a\u0639\u0645\u0644 \u0628\u0634\u0643\u0644 \u0637\u0628\u064a\u0639\u064a \u0639\u0646\u062f \u062f\u062e\u0648\u0644\u0647\u0627 \u0645\u0646 \u062e\u0644\u0627\u0644 \u0633\u0627\u064a\u0641\u0648\u0646.", "connectivity_sad": "\u0633\u0627\u064a\u0641\u0648\u0646 \u063a\u0627\u0644\u0628\u0627 \u0645\u0627 \u064a\u0641\u0634\u0644 \u0641\u064a \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0622\u0648 \u064a\u0641\u0642\u062f \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0639\u0644\u0649 \u0627\u0644\u062f\u0648\u0627\u0645.", "submit_button": "\u0625\u0631\u0633\u0627\u0644", "compatibility_title": "\u0627\u0644\u062a\u0648\u0627\u0641\u0642", "speed_ok": "\u0623\u0633\u062a\u0637\u064a\u0639 \u062a\u0635\u0641\u062d \u0627\u0644\u0648\u064a\u0628 \u0645\u0646 \u062e\u0644\u0627\u0644 \u0633\u0627\u064a\u0641\u0648\u0646\u066b \u0644\u0643\u0646\u0647 \u0628\u0637\u064a\u0621.", "compatibility_ok": "\u0645\u0648\u0627\u0642\u0639 \u0627\u0644\u0648\u064a\u0628 \u0627\u0644\u062e\u0627\u0635\u0647 \u0628\u064a \u0641\u0639\u0627\u0644\u0647 \u0628\u0645\u0627 \u0641\u064a\u0647 \u0627\u0644\u0643\u0641\u0627\u064a\u0647 \u0639\u0646\u062f\u0645\u0627 \u0623\u062f\u062e\u0644\u0647\u0627 \u0645\u0646 \u062e\u0644\u0627\u0644 \u0633\u0627\u064a\u0641\u0648\u0646.", "connectivity_happy": "\u064a\u0642\u0648\u0645 \u0633\u0627\u064a\u0641\u0648\u0646 \u0628\u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0639\u0644\u0649 \u0627\u0644\u062f\u0627\u0648\u0627\u0645 \u0648\u064a\u0628\u0642\u0649 \u0645\u062a\u0635\u0644\u0627\u064b.", "compatibility_sad": "\u064a\u062a\u0645 \u062a\u062d\u0645\u064a\u0644 \u0645\u0648\u0627\u0642\u0639 \u0627\u0644\u0648\u064a\u0628 \u0627\u0644\u062e\u0627\u0635\u0647 \u0628\u064a\u066b \u0644\u0643\u0646 \u0647\u0646\u0627\u0643 \u0648\u0638\u0627\u0626\u0641 \u0645\u062d\u062f\u062f\u0647 \u0647\u0627\u0645\u0647 \u0644\u0627 \u0623\u062a\u0645\u0643\u0646 \u0645\u0646 \u0627\u0633\u062a\u062e\u062f\u0627\u0645\u0647\u0627.", "speed_title": "\u0627\u0644\u0633\u0631\u0639\u0647", "title": "\u0631\u062f\u0648\u062f \u0633\u0627\u064a\u0641\u0648\u0646 \u0663", "connectivity_title": "\u0627\u0644\u0627\u062a\u0635\u0627\u0644", "top_content_title": "\u0648\u0627\u0641\u064a\u0646\u0627 \u0628\u0631\u062f\u0643", "top_content": "<p>\n  \u0622\u062a\u0645\u0645 \u0627\u0644\u0627\u0633\u062a\u0645\u0627\u0631\u0647 \u0645\u0646 \u0641\u0636\u0644\u0643 \u0644\u0625\u0639\u0644\u0627\u0645\u0646\u0627 \u0628\u0639\u0645\u0644 \u0633\u0627\u064a\u0641\u0648\u0646 \u0628\u0627\u0644\u0646\u0633\u0628\u0647 \u0644\u0643 \u062d\u062a\u0649 \u0646\u062a\u0645\u0643\u0646 \u0645\u0646 \u062a\u062d\u0633\u0646 \u0627\u0644\u0646\u0638\u0627\u0645<\n</p>\n\n<p>\n \u0625\u0630\u0627 \u0643\u0627\u0646\u062a \u0644\u062f\u064a\u0643 \u0623\u064a \u062a\u0639\u0644\u064a\u0642\u0627\u062a \u0645\u062d\u062f\u062f\u0647\u060c \u0623\u0648 \u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0625\u0636\u0627\u0641\u064a\u0647 \u062d\u0648\u0644 \u0645\u0648\u0627\u0642\u0639 \u0648\u064a\u0628 \u0644\u0627 \u062a\u0639\u0645\u0644\u060c \u0623\u0648 \u0625\u0630\u0627 \u0644\u0645 \u062a\u0639\u0645\u0644 \u0647\u0630\u0647 \u0627\u0644\u0627\u0633\u062a\u0645\u0627\u0631\u0647 \u0628\u0627\u0644\u0646\u0633\u0628\u0647 \u0644\u0643\u060c \u0623\u0631\u0633\u0644 \u0622\u064a\u0645\u064a\u0644 \u0625\u0644\u0649: \n<a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "\u0628\u0625\u0645\u0643\u0627\u0646\u064a \u062a\u0635\u0641\u062d \u0627\u0644\u0625\u0646\u062a\u0631\u0646\u062a \u0645\u0646 \u062e\u0644\u0627\u0644 \u0633\u0627\u064a\u0641\u0648\u0646 \u0648\u0645\u0634\u0627\u0647\u062f\u0629 \u0627\u0644\u0641\u064a\u062f\u064a\u0648\u060c \u0625\u0646\u0647 \u0644\u0627 \u064a\u0642\u0644 \u0633\u0631\u0639\u0647 \u0639\u0646 \u0623\u062f\u0648\u0627\u062a \u0627\u0644\u062d\u0645\u0627\u064a\u0647 \u0627\u0644\u0623\u062e\u0631\u0649 \u0623\u0648 \u0623\u0633\u0631\u0639 \u0645\u0646\u0647\u0627."}, "tk": {"connectivity_ok": "Psiphon k\u00f6plen\u00e7 birig\u00fd\u00e4r, emma k\u00e4mahal birikme kesilip, t\u00e4zeden birig\u00fd\u00e4r.", "speed_sad": "Psiphon arkaly webe g\u00f6z a\u00fdlamak gaty ha\u00fdal, men ony ulanmaga dowam etjek d\u00e4l.", "compatibility_happy": "Psiphon arkaly girenimde web sa\u00fdtlarym adatdakysy \u00fdaly i\u015fle\u00fd\u00e4r.", "connectivity_sad": "Psiphon k\u00f6plen\u00e7 birigip bilme\u00fd\u00e4r \u00fda-da birikme yzygiderli kesil\u00fd\u00e4r.", "submit_button": "Tab\u015fyr", "compatibility_title": "Utga\u015fyk", "speed_ok": "Psiphon arkaly webe g\u00f6z a\u00fdlap bil\u00fd\u00e4rin, \u00fd\u00f6ne ol ha\u00fdal.", "compatibility_ok": "Psiphon arkaly girenimde web sa\u00fdtlarym \u00fdeterlik derejede i\u015fle\u00fd\u00e4r.", "connectivity_happy": "Psiphon yzygiderli birig\u00fd\u00e4r we birikdirilen bolup dur\u00fdar.", "compatibility_sad": "Web sa\u00fdtlarym \u00fd\u00fcklen\u00fd\u00e4r, \u00fd\u00f6ne belli m\u00f6h\u00fcm funksi\u00fdalary ulanyp bilemok.", "speed_title": "Tizlik", "title": "Psiphon 3 seslenme", "connectivity_title": "Birikme \u00fdagda\u00fdy", "top_content_title": "Seslenme beri\u0148", "top_content": "<p>\nPsiphon 3-i\u0148 sizde n\u00e4hili i\u015fle\u00fd\u00e4ndigini habar bermek \u00fc\u00e7in a\u015fakdaky maglumatnamany doldury\u0148, onso\u0148 ulgamy hasam k\u00e4mille\u015fdirip bileris.\n</p>\n\n<p>\nEger ha\u00fdsydyr a\u00fdratyn teswirleri\u0148iz, i\u015fleme\u00fd\u00e4n web sa\u00fdtlar barada has gi\u0148i\u015fle\u00fdin maglumat bolsa \u00fda-da bu maglumatnama sizi\u0148 \u00fc\u00e7in dogry i\u015fleme\u00fd\u00e4n bolsa, e-po\u00e7ta iberi\u0148 <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n\n", "speed_happy": "Psiphon arkaly webe g\u00f6z a\u00fdlap we wideolara toma\u015fa edip bil\u00fd\u00e4rin, ol be\u00fdleki dolany\u015fyk gurallary \u00fdaly \u00e7alt \u00fda-da olardan has \u00e7alt."}, "th": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_content_title": "Give Us Your Feedback", "top_content": "<p>\n  Please complete the form below to let us know how Psiphon 3 is working for you so we can make the system better.\n</p>\n\n<p>\n If you have any specific comments, further information about web sites that do not work, or if this form is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools."}, "az": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_content_title": "Give Us Your Feedback", "top_content": "<p>\n  Please complete the form below to let us know how Psiphon 3 is working for you so we can make the system better.\n</p>\n\n<p>\n If you have any specific comments, further information about web sites that do not work, or if this form is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools."}, "es": {"connectivity_ok": "Psiphon se conecta con frecuencia, pero en ocasiones se desconecta y se vuelve a conectar.", "speed_sad": "Navegar la red por medio de Psiphon es muy lento y no lo seguir\u00e9 usando.", "compatibility_happy": "Mis sitios de internet funcionan de manera normal cuando accedo a ellos con Psiphon.", "connectivity_sad": "Psiphon falla frecuentemente para conectarse o se desconecta constantemente.", "submit_button": "Enviar", "compatibility_title": "Compatibilidad", "speed_ok": "Puedo navegar la red con Psiphon pero es lento.", "compatibility_ok": "Mis sitios de internet funcionan lo suficientemente bien cuando accedo a ellos con Psiphon.", "connectivity_happy": "Psiphon se conecta consistentemente y se mantiene conectado.", "compatibility_sad": "Mis sitios de internet son desplegados pero no puedo usar algunas funciones importantes.", "speed_title": "Velocidad", "title": "Comentarios a Psiphon 3", "connectivity_title": "Conectividad", "top_content_title": "Denos sus comentarios", "top_content": "<p>\nPor favor llene la siguiente forma para indicarnos c\u00f3mo est\u00e1 trabajando Psiphon 3 para usted  y podamos hacer un mejor sistema.\n</p>\n\n<p>\n Si tiene comentarios espec\u00edficos, mayor informaci\u00f3n de sitios que no funcionan o si esta forma no est\u00e1 funcionando para usted, por favor env\u00ede un mensaje a <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "Puedo navegar la red por medio de Psiphon y ver video; es tan o m\u00e1s r\u00e1pido que otras herramientas similares."}, "uz@Latn": {"connectivity_ok": "Psiphon often connects, but sometimes disconnects and reconnects.", "speed_sad": "Browsing the web through Psiphon is too slow and I won\u2019t continue to use it.", "compatibility_happy": "My web sites work as normal when I access them through Psiphon.", "connectivity_sad": "Psiphon often fails to connect or constantly get disconnected.", "submit_button": "Submit", "compatibility_title": "Compatibility", "speed_ok": "I can browse the web through Psiphon but it\u2019s slow.", "compatibility_ok": "My web sites are sufficiently functional when I access them through Psiphon.", "connectivity_happy": "Psiphon consistently connects and stays connected.", "compatibility_sad": "My web sites load but I can't use certain important functions.", "speed_title": "Speed", "title": "Psiphon 3 Feedback", "connectivity_title": "Connectivity", "top_content_title": "Give Us Your Feedback", "top_content": "<p>\n  Please complete the form below to let us know how Psiphon 3 is working for you so we can make the system better.\n</p>\n\n<p>\n If you have any specific comments, further information about web sites that do not work, or if this form is not working for you, please email <a href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.\n</p>\n", "speed_happy": "I can browse the web through Psiphon and watch video; it is as fast or faster than other circumvention tools."}} ;
 
-//workaround for JSON.stringify on Windows
-//https://gist.github.com/953765
-jQuery.extend({
-  stringify: this.JSON && this.JSON.stringify ? this.JSON.stringify : function stringify(obj) {
-    var t = typeof(obj);
-    if (t != "object" || obj === null) {
-      if (t == "string") {
-        obj = '"' + obj + '"';
-      }
-      return String(obj);
-    }
-    else {
-      var n, v, json = [], arr = (obj && obj.constructor == Array);
 
-      for (n in obj) {
-        v = obj[n];
-        t = typeof(v);
-        if (obj.hasOwnProperty(n)) {
-          if (t == "string")
-            v = '"' + v + '"';
-          else if (t == "object" && v !== null)
-            v = jQuery.stringify(v);
-          json.push((arr ? "" : '"' + n + '":') + String(v));
-        }
-      }
-      return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
+////////////////////////////////////////////////////////////////////////////////
+// Workaround for the fact that there's no JSON support in the Windows HTML control
+// From https://github.com/douglascrockford/JSON-js
+if (typeof JSON !== 'object') {
+    JSON = {};
+}
+
+(function () {
+    'use strict';
+
+    function f(n) {
+        // Format integers to have at least two digits.
+        return n < 10 ? '0' + n : n;
     }
-  }
-});
+
+    if (typeof Date.prototype.toJSON !== 'function') {
+
+        Date.prototype.toJSON = function (key) {
+
+            return isFinite(this.valueOf())
+                ? this.getUTCFullYear() + '-' +
+                    f(this.getUTCMonth() + 1) + '-' +
+                    f(this.getUTCDate()) + 'T' +
+                    f(this.getUTCHours()) + ':' +
+                    f(this.getUTCMinutes()) + ':' +
+                    f(this.getUTCSeconds()) + 'Z'
+                : null;
+        };
+
+        String.prototype.toJSON =
+            Number.prototype.toJSON =
+            Boolean.prototype.toJSON = function (key) {
+                return this.valueOf();
+            };
+    }
+
+    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+        gap,
+        indent,
+        meta = { // table of character substitutions
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        rep;
+
+
+    function quote(string) {
+
+// If the string contains no control characters, no quote characters, and no
+// backslash characters, then we can safely slap some quotes around it.
+// Otherwise we must also replace the offending characters with safe escape
+// sequences.
+
+        escapable.lastIndex = 0;
+        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+            var c = meta[a];
+            return typeof c === 'string'
+                ? c
+                : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '"' : '"' + string + '"';
+    }
+
+
+    function str(key, holder) {
+
+// Produce a string from holder[key].
+
+        var i, // The loop counter.
+            k, // The member key.
+            v, // The member value.
+            length,
+            mind = gap,
+            partial,
+            value = holder[key];
+
+// If the value has a toJSON method, call it to obtain a replacement value.
+
+        if (value && typeof value === 'object' &&
+                typeof value.toJSON === 'function') {
+            value = value.toJSON(key);
+        }
+
+// If we were called with a replacer function, then call the replacer to
+// obtain a replacement value.
+
+        if (typeof rep === 'function') {
+            value = rep.call(holder, key, value);
+        }
+
+// What happens next depends on the value's type.
+
+        switch (typeof value) {
+        case 'string':
+            return quote(value);
+
+        case 'number':
+
+// JSON numbers must be finite. Encode non-finite numbers as null.
+
+            return isFinite(value) ? String(value) : 'null';
+
+        case 'boolean':
+        case 'null':
+
+// If the value is a boolean or null, convert it to a string. Note:
+// typeof null does not produce 'null'. The case is included here in
+// the remote chance that this gets fixed someday.
+
+            return String(value);
+
+// If the type is 'object', we might be dealing with an object or an array or
+// null.
+
+        case 'object':
+
+// Due to a specification blunder in ECMAScript, typeof null is 'object',
+// so watch out for that case.
+
+            if (!value) {
+                return 'null';
+            }
+
+// Make an array to hold the partial results of stringifying this object value.
+
+            gap += indent;
+            partial = [];
+
+// Is the value an array?
+
+            if (Object.prototype.toString.apply(value) === '[object Array]') {
+
+// The value is an array. Stringify every element. Use null as a placeholder
+// for non-JSON values.
+
+                length = value.length;
+                for (i = 0; i < length; i += 1) {
+                    partial[i] = str(i, value) || 'null';
+                }
+
+// Join all of the elements together, separated with commas, and wrap them in
+// brackets.
+
+                v = partial.length === 0
+                    ? '[]'
+                    : gap
+                    ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
+                    : '[' + partial.join(',') + ']';
+                gap = mind;
+                return v;
+            }
+
+// If the replacer is an array, use it to select the members to be stringified.
+
+            if (rep && typeof rep === 'object') {
+                length = rep.length;
+                for (i = 0; i < length; i += 1) {
+                    if (typeof rep[i] === 'string') {
+                        k = rep[i];
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            } else {
+
+// Otherwise, iterate through all of the keys in the object.
+
+                for (k in value) {
+                    if (Object.prototype.hasOwnProperty.call(value, k)) {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            }
+
+// Join all of the member texts together, separated with commas,
+// and wrap them in braces.
+
+            v = partial.length === 0
+                ? '{}'
+                : gap
+                ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
+                : '{' + partial.join(',') + '}';
+            gap = mind;
+            return v;
+        }
+    }
+
+// If the JSON object does not yet have a stringify method, give it one.
+
+    if (typeof JSON.stringify !== 'function') {
+        JSON.stringify = function (value, replacer, space) {
+
+// The stringify method takes a value and an optional replacer, and an optional
+// space parameter, and returns a JSON text. The replacer can be a function
+// that can replace values, or an array of strings that will select the keys.
+// A default replacer method can be provided. Use of the space parameter can
+// produce text that is more easily readable.
+
+            var i;
+            gap = '';
+            indent = '';
+
+// If the space parameter is a number, make an indent string containing that
+// many spaces.
+
+            if (typeof space === 'number') {
+                for (i = 0; i < space; i += 1) {
+                    indent += ' ';
+                }
+
+// If the space parameter is a string, it will be used as the indent string.
+
+            } else if (typeof space === 'string') {
+                indent = space;
+            }
+
+// If there is a replacer, it must be a function or an array.
+// Otherwise, throw an error.
+
+            rep = replacer;
+            if (replacer && typeof replacer !== 'function' &&
+                    (typeof replacer !== 'object' ||
+                    typeof replacer.length !== 'number')) {
+                throw new Error('JSON.stringify');
+            }
+
+// Make a fake root object containing our value under the key of ''.
+// Return the result of stringifying the value.
+
+            return str('', {'': value});
+        };
+    }
+
+
+// If the JSON object does not yet have a parse method, give it one.
+
+    if (typeof JSON.parse !== 'function') {
+        JSON.parse = function (text, reviver) {
+
+// The parse method takes a text and an optional reviver function, and returns
+// a JavaScript value if the text is a valid JSON text.
+
+            var j;
+
+            function walk(holder, key) {
+
+// The walk method is used to recursively walk the resulting structure so
+// that modifications can be made.
+
+                var k, v, value = holder[key];
+                if (value && typeof value === 'object') {
+                    for (k in value) {
+                        if (Object.prototype.hasOwnProperty.call(value, k)) {
+                            v = walk(value, k);
+                            if (v !== undefined) {
+                                value[k] = v;
+                            } else {
+                                delete value[k];
+                            }
+                        }
+                    }
+                }
+                return reviver.call(holder, key, value);
+            }
+
+
+// Parsing happens in four stages. In the first stage, we replace certain
+// Unicode characters with escape sequences. JavaScript handles many characters
+// incorrectly, either silently deleting them, or treating them as line endings.
+
+            text = String(text);
+            cx.lastIndex = 0;
+            if (cx.test(text)) {
+                text = text.replace(cx, function (a) {
+                    return '\\u' +
+                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                });
+            }
+
+// In the second stage, we run the text against regular expressions that look
+// for non-JSON patterns. We are especially concerned with '()' and 'new'
+// because they can cause invocation, and '=' because it can cause mutation.
+// But just to be safe, we want to reject all unexpected forms.
+
+// We split the second stage into 4 regexp operations in order to work around
+// crippling inefficiencies in IE's and Safari's regexp engines. First we
+// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
+// replace all simple value tokens with ']' characters. Third, we delete all
+// open brackets that follow a colon or comma or that begin the text. Finally,
+// we look to see that the remaining characters are only whitespace or ']' or
+// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+
+            if (/^[\],:{}\s]*$/
+                    .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+                        .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                        .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+
+// In the third stage we use the eval function to compile the text into a
+// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+// in JavaScript: it can begin a block or an object literal. We wrap the text
+// in parens to eliminate the ambiguity.
+
+                j = eval('(' + text + ')');
+
+// In the optional fourth stage, we recursively walk the new structure, passing
+// each name/value pair to a reviver function for possible transformation.
+
+                return typeof reviver === 'function'
+                    ? walk({'': j}, '')
+                    : j;
+            }
+
+// If the text is not JSON parseable, then a SyntaxError is thrown.
+
+            throw new SyntaxError('JSON.parse');
+        };
+    }
+}());
+////////////////////////////////////////////////////////////////////////////////
+
 
 //extract language from hash URL
 function getLanguageNameFromURL(url)
@@ -303,7 +605,7 @@ $(function() {
       }
     });
 
-    s = $.stringify({
+    s = JSON.stringify({
       'responses': responses,
       'sendDiagnosticInfo': $('#questionnaireSendDiagnostic').attr('checked')
     });
@@ -331,7 +633,7 @@ $(function() {
   $('#text_feedback_submit').click(function(e) {
     e.preventDefault();
     responses = new Array();
-    s = $.stringify({
+    s = JSON.stringify({
       'feedback': encode_utf8($('#text_feedback_textarea').val()),
       'sendDiagnosticInfo': $('#questionnaireSendDiagnostic').attr('checked')
     });

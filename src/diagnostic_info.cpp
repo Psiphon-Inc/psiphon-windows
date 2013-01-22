@@ -1242,7 +1242,6 @@ bool SendFeedbackAndDiagnosticInfo(
     }
 
     out << YAML::EndMap; // overall
-    string s = out.c_str();
 
     //
     // Upload the feedback/diagnostic info 
