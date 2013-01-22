@@ -44,6 +44,8 @@ public:
 
     bool Revert();
 
+    bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
+
 private:
     typedef vector<connection_proxy>::iterator connection_proxy_iter;
 

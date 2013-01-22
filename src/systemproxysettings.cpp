@@ -633,3 +633,114 @@ void AddOriginalProxyInfo(const connection_proxy& proxyInfo)
         g_originalProxyInfo.push_back(proxyInfo);
     }
 }
+
+bool SystemProxySettings::GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort)
+{
+    connection_proxy setting;
+    setting.name = _T("");
+    assert(m_settingsApplied == false);
+    if(!GetConnectionProxy(setting))
+    {
+        return false;
+    }
+
+    if( setting.flags & PROXY_TYPE_PROXY)
+    {
+        tstring proxy_str = setting.proxy;
+        std::size_t colon_pos;
+        std::size_t equal_pos;
+        map<tstring, tstring> Proxies;
+
+        colon_pos = proxy_str.find(':');
+        /*
+        case 1: no ':' in the proxy_str
+        ""
+        proxy host and port are not set
+        */
+        if(tstring::npos == colon_pos)
+            return false;
+
+        /*
+        case 2: '=' protocol identifier not found in the proxy_str
+        "host:port"
+        same proxy used for all protocols
+        */
+        equal_pos = proxy_str.find('=');
+        if(tstring::npos == equal_pos)
+        {
+            //store it
+            Proxies.insert(pair<tstring, tstring>(_T("https"), proxy_str));
+        }
+
+        /*
+        case 3: '=' protocol identifier found in the proxy_str,
+        "http=host:port;https=host:port;ftp=host:port;socks=host:port"
+        loop through proxy types, pick  https or socks in that order
+        */
+
+        //split by protocol
+        std::size_t prev = 0, pos;
+        tstring protocol, proxy;
+        while ((pos = proxy_str.find('=', prev)) != tstring::npos)
+        {
+            if (pos > prev)
+            {
+                protocol = (proxy_str.substr(prev, pos-prev));
+            }
+            prev = pos+1;
+
+            pos = proxy_str.find(';', prev);
+
+            if(pos == tstring::npos)
+            {
+                proxy = (proxy_str.substr(prev, tstring::npos));
+            }
+            else if(pos >= prev)
+            {
+                proxy =  (proxy_str.substr(prev, pos-prev));
+                prev = pos+1;
+            }
+
+            Proxies.insert(pair<tstring, tstring>(protocol, proxy));
+        }
+
+        map<tstring, tstring>::iterator it = Proxies.find(_T("https"));
+        if(it != Proxies.end())
+        {
+            proxyType = _T("https");
+        }
+        else
+        {
+            it = Proxies.find(_T("socks"));
+
+            if(it == Proxies.end())
+            {
+                //no usable proxies
+                return false;
+            }
+
+            proxyType = _T("socks");
+        }
+
+        proxy_str = it->second;
+
+        colon_pos = proxy_str.find(':');
+
+        if(colon_pos == tstring::npos)
+        {
+            return false;
+        }
+
+        tstring port_str = proxy_str.substr(colon_pos+1);
+        proxyPort = _wtoi(port_str.c_str());
+
+        if(proxyPort <= 0 || proxyPort > 65536) //check if port is valid
+        {
+            return false;
+        }
+
+        proxyHost = proxy_str.substr(0,colon_pos);
+        return true;
+    }
+    return false;
+}
