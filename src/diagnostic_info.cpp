@@ -1205,6 +1205,7 @@ bool SendFeedbackAndDiagnosticInfo(
     string feedbackID = Hexlify(randBytes, randBytesLen);
 
     YAML::Emitter out;
+    out.SetOutputCharset(YAML::EscapeNonAscii);
 
     out << YAML::BeginMap; // overall
 
