@@ -1337,7 +1337,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
         sessionInfo = m_currentSessionInfo;
     }
 
-    string narrowFeedbackJSON = WStringToNarrow(feedbackJSON);
+    string narrowFeedbackJSON = WStringToUTF8(feedbackJSON);
     Json::Value json_entry;
     Json::Reader reader;
     if (!reader.parse(narrowFeedbackJSON, json_entry))

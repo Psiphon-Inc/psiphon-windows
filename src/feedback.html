@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
   <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title></title>
 <style type="text/css">
@@ -547,13 +548,6 @@ function setLanguage(langName)
 }
 
 
-// From: http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
-function encode_utf8(s)
-{
-  return unescape(encodeURIComponent(s));
-}
-
-
 $(function() {
   platform = (window.dialogArguments !== undefined) ? PLATFORM_WINDOWS : PLATFORM_ANDROID;
 
@@ -635,7 +629,7 @@ $(function() {
     e.preventDefault();
     responses = new Array();
     s = JSON.stringify({
-      'feedback': encode_utf8($('#text_feedback_textarea').val()),
+      'feedback': $('#text_feedback_textarea').val(),
       'sendDiagnosticInfo': $('#questionnaireSendDiagnostic').attr('checked')
     });
 
