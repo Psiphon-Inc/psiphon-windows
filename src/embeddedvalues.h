@@ -36,18 +36,17 @@ static const int IGNORE_SYSTEM_SERVER_LIST = 0;
 
 static const char* REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY = "";
 
-static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
-
-// These values are used when uploading diagnostic info
-static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER = "";
-static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH = "";
-static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS = "";
-
 static const char* REMOTE_SERVER_LIST_ADDRESS =
     "s3.amazonaws.com";
 
 static const char* REMOTE_SERVER_LIST_REQUEST_PATH =
     "invalid_bucket_name/server_list";
+
+// These values are used when uploading diagnostic info
+static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER = "";
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH = "";
+static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS = "";
 
 // NOTE: Info link may be opened when not tunneled
 static const TCHAR* INFO_LINK_URL
