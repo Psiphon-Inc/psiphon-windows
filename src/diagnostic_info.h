@@ -29,5 +29,6 @@ void DoStartupDiagnosticCollection();
 
 bool SendFeedbackAndDiagnosticInfo(
         const string& feedback, 
+        const string& emailAddress,
         bool sendDiagnosticInfo, 
         const StopInfo& stopInfo);

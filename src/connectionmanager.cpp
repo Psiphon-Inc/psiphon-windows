@@ -1347,6 +1347,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
     }
 
     string feedback = json_entry.get("feedback", "").asString();
+    string email = json_entry.get("email", "").asString();
     bool sendDiagnosticInfo = json_entry.get("sendDiagnosticInfo", false).asBool();
 
     // When disconnected, ignore the user cancel flag in the HTTP request
@@ -1369,6 +1370,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
         // We don't care if this succeeds.
         (void)SendFeedbackAndDiagnosticInfo(
                 feedback,
+                email,
                 sendDiagnosticInfo,
                 StopInfo(&GlobalStopSignal::Instance(), stopReason));
     }

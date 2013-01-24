@@ -1189,6 +1189,7 @@ void GetDiagnosticInfo(YAML::Emitter& out)
 
 bool SendFeedbackAndDiagnosticInfo(
         const string& feedback, 
+        const string& emailAddress,
         bool sendDiagnosticInfo, 
         const StopInfo& stopInfo)
 {
@@ -1229,6 +1230,8 @@ bool SendFeedbackAndDiagnosticInfo(
     }
 
     // Feedback
+    // NOTE: If the user supplied an email address but no feedback, then the
+    // email address is discarded.
     if (!feedback.empty())
     {
         out << YAML::Key << "Feedback";
@@ -1239,10 +1242,12 @@ bool SendFeedbackAndDiagnosticInfo(
         out << YAML::BeginMap; // Feedback.Message
         out << YAML::Key << "text" << YAML::Value << feedback.c_str();
         out << YAML::EndMap; // Feedback.Message
+        out << YAML::Key << "email" << emailAddress.c_str();
         out << YAML::EndMap; // Feedback
     }
 
     out << YAML::EndMap; // overall
+    string s = out.c_str();
 
     //
     // Upload the feedback/diagnostic info 
