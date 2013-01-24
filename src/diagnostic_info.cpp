@@ -1190,6 +1190,7 @@ void GetDiagnosticInfo(YAML::Emitter& out)
 bool SendFeedbackAndDiagnosticInfo(
         const string& feedback, 
         const string& emailAddress,
+        const string& surveyJSON,
         bool sendDiagnosticInfo, 
         const StopInfo& stopInfo)
 {
@@ -1232,22 +1233,26 @@ bool SendFeedbackAndDiagnosticInfo(
     // Feedback
     // NOTE: If the user supplied an email address but no feedback, then the
     // email address is discarded.
-    if (!feedback.empty())
+    if (!feedback.empty() || !surveyJSON.empty())
     {
         out << YAML::Key << "Feedback";
         out << YAML::Value;
         out << YAML::BeginMap; // Feedback
+        out << YAML::Key << "email" << emailAddress.c_str();
         out << YAML::Key << "Message";
         out << YAML::Value;
         out << YAML::BeginMap; // Feedback.Message
         out << YAML::Key << "text" << YAML::Value << feedback.c_str();
         out << YAML::EndMap; // Feedback.Message
-        out << YAML::Key << "email" << emailAddress.c_str();
+        out << YAML::Key << "Survey";
+        out << YAML::Value;
+        out << YAML::BeginMap; // Feedback.Survey
+        out << YAML::Key << "json" << surveyJSON.c_str();
+        out << YAML::EndMap; // Feedback.Survey
         out << YAML::EndMap; // Feedback
     }
 
     out << YAML::EndMap; // overall
-    string s = out.c_str();
 
     //
     // Upload the feedback/diagnostic info 

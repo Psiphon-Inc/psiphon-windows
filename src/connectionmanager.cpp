@@ -1350,6 +1350,10 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
     string email = json_entry.get("email", "").asString();
     bool sendDiagnosticInfo = json_entry.get("sendDiagnosticInfo", false).asBool();
 
+    // Leave the survey responses as JSON.
+    Json::Value surveyResponses = json_entry.get("responses", Json::nullValue);
+    string surveyJSON = Json::FastWriter().write(surveyResponses);
+
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
     // TODO: the user may be left waiting too long after cancelling; add
@@ -1371,13 +1375,16 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
         (void)SendFeedbackAndDiagnosticInfo(
                 feedback,
                 email,
+                surveyJSON,
                 sendDiagnosticInfo,
                 StopInfo(&GlobalStopSignal::Instance(), stopReason));
     }
 
-    if (feedback.empty())
+    if (surveyResponses != Json::nullValue)
     {
-        // Send the feedback questionnaire responses
+        // Send the feedback questionnaire responses.
+        // Note that we send the entire JSON string, even though the server
+        // (at this time) only wants the 'responses' sub-structure.
 
         tstring requestPath = GetFeedbackRequestPath(m_transport);
         string response;

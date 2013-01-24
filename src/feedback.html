@@ -255,8 +255,11 @@ $(function() {
   });
 
   $('ul#connectivity.feedback').data('hash', '9bd9d0ebc081bd74f5bef4e136bb1aed');
+  $('ul#connectivity.feedback').data('title', 'Connectivity');
   $('ul#speed.feedback').data('hash', '44877c6aa8e93fa5a91c9361211464fb');
+  $('ul#speed.feedback').data('title', 'Speed');
   $('ul#compatibility.feedback').data('hash', 'df9c715f20aaf58fb3926cc02b08ec53');
+  $('ul#compatibility.feedback').data('title', 'Compatibility');
 
   //submit button clicked.
   $('#submit_button').click(function(e) {
@@ -266,22 +269,26 @@ $(function() {
     selected = $('li.selected');
     selected.each(function() {
       //get hash of parent ul
-      hash = $(this).parent('ul.feedback').data('hash');
+      var hash = $(this).parent('ul.feedback').data('hash');
+      var title = $(this).parent('ul.feedback').data('title');
+      var answer = null;
 
-      if($(this).hasClass('happy')) {
-        responses.push({question:hash, answer: 0});
+      if ($(this).hasClass('happy')) {
+        answer = 0;
       }
-      if($(this).hasClass('ok')) {
-        responses.push({question:hash, answer: 1});
+      else if ($(this).hasClass('ok')) {
+        answer = 1;
       }
-      if($(this).hasClass('sad')) {
-        responses.push({question:hash, answer: 2});
+      else if ($(this).hasClass('sad')) {
+        answer = 2;
       }
+
+      responses.push({title: title, question: hash, answer: answer});
     });
 
     s = JSON.stringify({
       'responses': responses,
-      'sendDiagnosticInfo': $('#questionnaire_send_diagnostic').attr('checked')
+      'sendDiagnosticInfo': !!$('#questionnaire_send_diagnostic').attr('checked')
     });
 
     //Windows client expects result in the window.returnValue magic variable
@@ -311,7 +318,7 @@ $(function() {
     s = JSON.stringify({
       'feedback': $('#text_feedback_textarea').val(),
       'email': $('#text_feedback_email').val(),
-      'sendDiagnosticInfo': $('#text_feedback_send_diagnostic').attr('checked')
+      'sendDiagnosticInfo': !!$('#text_feedback_send_diagnostic').attr('checked')
     });
 
     //Windows client expects result in the window.returnValue magic variable

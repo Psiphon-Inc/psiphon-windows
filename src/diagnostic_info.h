@@ -30,5 +30,6 @@ void DoStartupDiagnosticCollection();
 bool SendFeedbackAndDiagnosticInfo(
         const string& feedback, 
         const string& emailAddress,
+        const string& surveyJSON,
         bool sendDiagnosticInfo, 
         const StopInfo& stopInfo);
