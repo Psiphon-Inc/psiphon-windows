@@ -391,6 +391,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             SessionInfo sessionInfo;
             manager->CopyCurrentSessionInfo(sessionInfo);
 
+            // Record which server we're attempting to connect to
+            ostringstream ss;
+            ss << "ipAddress: " << sessionInfo.GetServerAddress();
+            AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
             // We're looping around to run again. We're assuming that the calling
             // function knows that there's at least one server to try. We're 
             // not reporting anything, as the user doesn't need to know what's

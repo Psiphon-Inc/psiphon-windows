@@ -21,13 +21,40 @@
 #include "psiclient.h"
 #include "embeddedvalues.h"
 #include "httpsrequest.h"
-#include "yaml-cpp/yaml.h"
 #include "server_list_reordering.h"
 #include "wininet_network_check.h"
 #include "systemproxysettings.h"
 #include "utilities.h"
 #include "diagnostic_info.h"
 #include "osrng.h"
+
+
+HANDLE g_diagnosticHistoryMutex = CreateMutex(NULL, FALSE, 0);
+vector<string> g_diagnosticHistory;
+
+void _AddDiagnosticInfoHelper(const char* entry)
+{
+    AutoMUTEX mutex(g_diagnosticHistoryMutex);
+    g_diagnosticHistory.push_back(entry);
+}
+
+void AddDiagnosticInfoYaml(const char* message, const char* yaml)
+{
+    AddDiagnosticInfo(message, YAML::Load(yaml));
+}
+
+void GetDiagnosticHistory(YAML::Emitter& out)
+{
+    AutoMUTEX mutex(g_diagnosticHistoryMutex);
+    out << YAML::BeginSeq;
+    for (vector<string>::const_iterator it = g_diagnosticHistory.begin();
+         it != g_diagnosticHistory.end();
+         it++)
+    {
+        out << YAML::Load(*it);
+    }
+    out << YAML::EndSeq;
+}
 
 
 
@@ -1139,31 +1166,7 @@ void GetDiagnosticInfo(YAML::Emitter& out)
     out << YAML::EndMap; // sysinfo
 
     /*
-     * Server Response Check
-     */
-
-    out << YAML::Key << "ServerResponseCheck";
-    out << YAML::Value;
-    out << YAML::BeginSeq;
-
-    vector<ServerReponseCheck> serverReponseCheckHistory;
-    GetServerResponseCheckHistory(serverReponseCheckHistory);
-    for (vector<ServerReponseCheck>::const_iterator entry = serverReponseCheckHistory.begin();
-         entry != serverReponseCheckHistory.end();
-         entry++)
-    {
-        out << YAML::BeginMap;
-        out << YAML::Key << "ipAddress" << YAML::Value << entry->serverAddress.c_str();
-        out << YAML::Key << "responded" << YAML::Value << entry->responded;
-        out << YAML::Key << "responseTime" << YAML::Value << entry->responseTime;
-        out << YAML::Key << "timestamp" << YAML::Value << entry->timestamp.c_str();
-        out << YAML::EndMap;
-    }
-
-    out << YAML::EndSeq;
-
-    /*
-     * Server Response Check
+     * Status History
      */
 
     out << YAML::Key << "StatusHistory";
@@ -1227,6 +1230,9 @@ bool SendFeedbackAndDiagnosticInfo(
         out << YAML::Value;
         out << YAML::BeginMap; // DiagnosticInfo
         GetDiagnosticInfo(out);
+        out << YAML::Key << "DiagnosticHistory";
+        out << YAML::Value;
+        GetDiagnosticHistory(out);
         out << YAML::EndMap; // DiagnosticInfo
     }
 

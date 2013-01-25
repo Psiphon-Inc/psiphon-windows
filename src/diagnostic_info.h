@@ -19,6 +19,13 @@
 
 #pragma once
 
+// YAML-CPP produces some annoying warnings. 
+// (And... disabling C4996 doesn't actually seem to work...)
+#pragma warning(push)
+#pragma warning(disable: 4146 4996)
+#include "yaml-cpp/yaml.h"
+#pragma warning(pop)
+
 
 /**
 Should be called before Psiphon has attempted to connect or made any system
@@ -33,3 +40,38 @@ bool SendFeedbackAndDiagnosticInfo(
         const string& surveyJSON,
         bool sendDiagnosticInfo, 
         const StopInfo& stopInfo);
+
+
+// Forward declarations. Do not access directly.
+extern vector<string> g_diagnosticInfo;
+void _AddDiagnosticInfoHelper(const char* entry);
+
+/**
+`message` is the identifier for this entry.
+`entry` can be of any type that can a YAML::Emitter can handle. This includes
+most primitive types, std::string, std::map, std::vector, std::list.
+Note that it does *not* include std::wstring (or tstring).
+Other approaches for custom data types can be seen here:
+http://code.google.com/p/yaml-cpp/wiki/HowToEmitYAML#STL_Containers,_and_Other_Overloads
+and here:
+http://code.google.com/p/yaml-cpp/wiki/Tutorial#Converting_To/From_Native_Data_Types
+*/
+template<typename T>
+void AddDiagnosticInfo(const char* message, const T& entry)
+{
+    YAML::Emitter out;
+    out.SetOutputCharset(YAML::EscapeNonAscii);
+    out << YAML::BeginMap;
+    out << YAML::Key << "timestamp" << YAML::Value << TStringToNarrow(GetISO8601DatetimeString()).c_str();
+    out << YAML::Key << "msg" << YAML::Value << message;
+    out << YAML::Key << "data" << entry;
+    out << YAML::EndMap;
+    _AddDiagnosticInfoHelper(out.c_str());
+}
+
+/**
+`message` is the identifier for this entry.
+`yaml` can be any valid YAML string. Note that this allows for easy single-entry
+maps: "key: value". And for multi-entry maps: "{key1: val1, key2: val2}".
+*/
+void AddDiagnosticInfoYaml(const char* message, const char* yaml);

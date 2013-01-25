@@ -42,13 +42,3 @@ private:
     // being called, and no other events.
     StopSignal m_stopSignal;
 };
-
-struct ServerReponseCheck
-{
-    string serverAddress;
-    bool responded;
-    unsigned int responseTime;
-    string timestamp;
-};
-
-void GetServerResponseCheckHistory(vector<ServerReponseCheck>& history);
