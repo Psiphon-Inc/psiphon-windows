@@ -43,7 +43,8 @@ public:
         bool useLocalProxy=true,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
-        DWORD additionalDataLength=0);
+        DWORD additionalDataLength=0,
+        LPCWSTR httpVerb=NULL);
 
 private:
     tstring GetSystemDefaultHTTPSProxy();

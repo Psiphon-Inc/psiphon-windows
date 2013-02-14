@@ -23,6 +23,7 @@
 
 class ITransport;
 class SessionInfo;
+struct ServerEntry;
 
 
 class ServerRequest
@@ -30,8 +31,24 @@ class ServerRequest
 public:
     ServerRequest();
     virtual ~ServerRequest();
-    bool MakeRequest(
-        bool adhocTransportIfNecessary,
+
+    enum ReqLevel
+    {
+        // Do everything to try to make the request: current transport, HTTPS 
+        // ports, temp tunnels.
+        FULL,
+
+        // Don't make temp tunnels when trying to make the request. Only 
+        // current transport and HTTPS ports.
+        NO_TEMP_TUNNEL,
+
+        // Don't try to make the request if there's no currently connected
+        // transport.
+        ONLY_IF_TRANSPORT
+    };
+
+    static bool MakeRequest(
+        ReqLevel reqLevel,
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
@@ -41,9 +58,10 @@ public:
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0);
 
-private:
-    void GetTempTransports(
-        const SessionInfo& sessionInfo,
-        vector<auto_ptr<ITransport>>& o_tempTransports);
+    static bool ServerHasRequestCapabilities(const ServerEntry& serverEntry);
 
+private:
+    static void GetTempTransports(
+                const ServerEntry& serverEntry,
+                vector<auto_ptr<ITransport>>& o_tempTransports);
 };

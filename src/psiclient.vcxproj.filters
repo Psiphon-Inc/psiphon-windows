@@ -46,6 +46,8 @@
     </ClCompile>
     <ClCompile Include="server_list_reordering.cpp" />
     <ClCompile Include="stopsignal.cpp" />
+    <ClCompile Include="diagnostic_info.cpp" />
+    <ClCompile Include="wininet_network_check.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -510,6 +512,8 @@
     </ClInclude>
     <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="stopsignal.h" />
+    <ClInclude Include="diagnostic_info.h" />
+    <ClInclude Include="wininet_network_check.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

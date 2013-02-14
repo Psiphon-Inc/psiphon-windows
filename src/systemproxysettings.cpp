@@ -25,6 +25,34 @@
 #include "ras.h"
 #include "raserror.h"
 #include "usersettings.h"
+#include "utilities.h"
+
+
+void AddOriginalProxyInfo(const connection_proxy& proxyInfo);
+bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo);
+bool SetConnectionProxy(const connection_proxy& setting);
+
+
+static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
+static const int INTERNET_OPTIONS_NUMBER = 3;
+
+
+struct connection_proxy
+{
+    tstring name;
+    DWORD flags;
+    tstring proxy;
+    tstring bypass;
+
+    bool operator==(const connection_proxy& rhs)
+    {
+        return 
+            this->name == rhs.name &&
+            this->flags == rhs.flags &&
+            this->proxy == rhs.proxy &&
+            this->bypass == rhs.bypass;
+    }
+};
 
 
 SystemProxySettings::SystemProxySettings()
@@ -72,13 +100,24 @@ bool SystemProxySettings::Apply()
 
     m_settingsApplied = true;
 
-    // Get a list of connections, starting with the dial-up connections
-    vector<tstring> connections = GetRasConnectionNames();
+    vector<tstring> connections;
+    vector<connection_proxy> proxyInfo;
+    if (!GetConnectionsAndProxyInfo(connections, proxyInfo))
+    {
+        return false;
+    }
     
-    // NULL indicates the default or LAN connection
-    connections.push_back(_T(""));
+    if (!Save(proxyInfo))
+    {
+        return false;
+    }
 
-    return (Save(connections) && SetConnectionsProxies(connections, proxyAddress));
+    if (!SetConnectionsProxies(connections, proxyAddress))
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 tstring SystemProxySettings::MakeProxySettingString()
@@ -160,54 +199,39 @@ void SystemProxySettings::PreviousCrashCheckHack(connection_proxy& proxySettings
     }
 }
 
-bool SystemProxySettings::Save(const vector<tstring>& connections)
+bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
 {
     if (!m_originalSettings.empty())
     {
-        my_print(false, _T("Error: can't save Proxy Settings because they are already saved."));
-        my_print(false, _T("Original proxy settings may not be restored correctly."));
+        my_print(NOT_SENSITIVE, false, _T("Error: can't save Proxy Settings because they are already saved."));
+        my_print(NOT_SENSITIVE, false, _T("Original proxy settings may not be restored correctly."));
         return false;
     }
 
     bool success = true;
     connection_proxy proxySettings;
 
-    for (tstring_iter ii = connections.begin();
-         ii != connections.end();
+    for (vector<connection_proxy>::const_iterator ii = proxyInfo.begin();
+         ii != proxyInfo.end();
          ++ii)
     {
-        proxySettings.name = *ii;
-        if (GetConnectionProxy(proxySettings))
-        {
-            PreviousCrashCheckHack(proxySettings);
-            m_originalSettings.push_back(proxySettings);
-        }
-        else
-        {
-            success = false;
-            break;
-        }
+        connection_proxy proxySettings = *ii;
+        PreviousCrashCheckHack(proxySettings);
+        m_originalSettings.push_back(proxySettings);
     }
 
-    if (!success)
-    {
-        // If we failed to save any connection, discard everything.
-        // Nothing should proceed.
-        m_originalSettings.clear();
-    }
-
-    return success;
+    return true;
 }
 
 bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress)
 {
     bool success = true;
-    connection_proxy proxySettings;
 
-    for (tstring_iter ii = connections.begin();
+    for (vector<tstring>::const_iterator ii = connections.begin();
          ii != connections.end();
          ++ii)
     {
+        connection_proxy proxySettings;
         // These are the new proxy settings we want to use
         proxySettings.name = *ii;
         proxySettings.flags = PROXY_TYPE_PROXY;
@@ -224,7 +248,89 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
     return success;
 }
 
-bool SystemProxySettings::SetConnectionProxy(const connection_proxy& setting)
+
+/**********************************************************
+*
+* Proxy settings helpers
+*
+**********************************************************/
+
+static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWORD& entries)
+{
+    if (rasEntryNames)
+    {
+        // Deallocate memory for the entries buffer
+        HeapFree(GetProcessHeap(), 0, rasEntryNames);
+        rasEntryNames = 0;
+    }
+
+    rasEntryNames = (LPRASENTRYNAME)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bufferSize);
+
+    if (!rasEntryNames)
+    {
+        my_print(NOT_SENSITIVE, false, _T("HeapAlloc failed when trying to enumerate RAS connections"));
+        throw 0;
+    }
+
+    // The first RASENTRYNAME structure in the array must contain the structure size
+    rasEntryNames[0].dwSize = sizeof(RASENTRYNAME);
+
+    // Call RasEnumEntries to enumerate all RAS entry names
+    return RasEnumEntries(0, 0, rasEntryNames, &bufferSize, &entries);
+}
+
+
+vector<tstring> GetRasConnectionNames()
+{
+    vector<tstring> connections;
+    LPRASENTRYNAME rasEntryNames = 0;
+    // The RasEnumEntries API requires that we pass in a buffer first
+    // and if the buffer is too small, it tells us how big a buffer it needs.
+    // For the first call we will pass in a single RASENTRYNAME struct.
+    DWORD bufferSize = sizeof(RASENTRYNAME);
+    DWORD entries = 0;
+    DWORD returnCode = ERROR_SUCCESS;
+
+    try
+    {
+        returnCode = GetRasEntries(rasEntryNames, bufferSize, entries);
+
+        if (ERROR_BUFFER_TOO_SMALL == returnCode)
+        {
+            returnCode = GetRasEntries(rasEntryNames, bufferSize, entries);
+        }
+
+        if (ERROR_SUCCESS != returnCode)
+        {
+            NOT_SENSITIVE, (false, _T("failed to enumerate RAS connections (%d)"), returnCode);
+            throw 0;
+        }
+
+        for (DWORD i = 0; i < entries; i++)
+        {
+            connections.push_back(rasEntryNames[i].szEntryName);
+	    }
+    }
+    catch (...)
+    {
+    }
+    // TODO: Don't throw 0.  Throw and catch a std::exception.
+    // Maybe put the error message in the exception.
+
+    // Clean up
+
+    if (rasEntryNames)
+    {
+        //Deallocate memory for the entries buffer
+        HeapFree(GetProcessHeap(), 0, rasEntryNames);
+        rasEntryNames = 0;
+    }
+
+    return connections;
+}
+
+
+bool SetConnectionProxy(const connection_proxy& setting)
 {
     INTERNET_PER_CONN_OPTION_LIST list;
     INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
@@ -253,7 +359,7 @@ bool SystemProxySettings::SetConnectionProxy(const connection_proxy& setting)
     }
     else
     {
-        my_print(false, _T("InternetSetOption error: %d"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("InternetSetOption error: %d"), GetLastError());
         // NOTE: We are calling the Unicode version of InternetSetOption.
         // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
         // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
@@ -262,7 +368,7 @@ bool SystemProxySettings::SetConnectionProxy(const connection_proxy& setting)
     return success;
 }
 
-bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
+bool GetConnectionProxy(connection_proxy& setting)
 {
     INTERNET_PER_CONN_OPTION_LIST list;
     INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
@@ -280,7 +386,7 @@ bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
 
     if (0 == InternetQueryOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, &length))
     {
-        my_print(false, _T("InternetQueryOption error: %d"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("InternetQueryOption error: %d"), GetLastError());
         // NOTE: We are calling the Unicode version of InternetQueryOption.
         // In Microsoft Internet Explorer 5, only the ANSI versions of InternetQueryOption and InternetSetOption
         // will work with the INTERNET_PER_CONN_OPTION_LIST structure.
@@ -304,75 +410,337 @@ bool SystemProxySettings::GetConnectionProxy(connection_proxy& setting)
     return true;
 }
 
-static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWORD& entries)
+
+bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo)
 {
-    if (rasEntryNames)
+    connections.clear();
+    proxyInfo.clear();
+
+    // Get a list of connections, starting with the dial-up connections
+    connections = GetRasConnectionNames();
+    
+    // NULL indicates the default or LAN connection
+    connections.push_back(_T(""));
+
+    for (vector<tstring>::const_iterator ii = connections.begin();
+         ii != connections.end();
+         ++ii)
     {
-        // Deallocate memory for the entries buffer
-        HeapFree(GetProcessHeap(), 0, rasEntryNames);
-        rasEntryNames = 0;
+        connection_proxy entry;
+
+        entry.name = *ii;
+        if (GetConnectionProxy(entry))
+        {
+            proxyInfo.push_back(entry);
+            AddOriginalProxyInfo(entry);
+        }
+        else
+        {
+            connections.clear();
+            proxyInfo.clear();
+
+            return false;
+        }
     }
 
-    rasEntryNames = (LPRASENTRYNAME)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bufferSize);
-
-    if (!rasEntryNames)
-    {
-        my_print(false, _T("HeapAlloc failed when trying to enumerate RAS connections"));
-        throw 0;
-    }
-
-    // The first RASENTRYNAME structure in the array must contain the structure size
-    rasEntryNames[0].dwSize = sizeof(RASENTRYNAME);
-
-    // Call RasEnumEntries to enumerate all RAS entry names
-    return RasEnumEntries(0, 0, rasEntryNames, &bufferSize, &entries);
+    return true;
 }
 
-vector<tstring> SystemProxySettings::GetRasConnectionNames()
+
+/**********************************************************
+*
+* Original proxy info for use with diagnostic feedback info
+*
+**********************************************************/
+
+HANDLE g_originalProxyInfoMutex = CreateMutex(NULL, FALSE, 0);
+vector<connection_proxy> g_originalProxyInfo;
+
+/**
+Returns a santized/de-personalized copy of the original proxy info.
+*/
+void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
 {
-    vector<tstring> connections;
-    LPRASENTRYNAME rasEntryNames = 0;
-    // The RasEnumEntries API requires that we pass in a buffer first
-    // and if the buffer is too small, it tells us how big a buffer it needs.
-    // For the first call we will pass in a single RASENTRYNAME struct.
-    DWORD bufferSize = sizeof(RASENTRYNAME);
-    DWORD entries = 0;
-    DWORD returnCode = ERROR_SUCCESS;
+    originalProxyInfo.clear();
 
-    try
+    vector<connection_proxy> rawOriginalProxyInfo;
+    // Only grab the mutex temporarily.
     {
-        returnCode = GetRasEntries(rasEntryNames, bufferSize, entries);
+        AutoMUTEX mutex(g_originalProxyInfoMutex);
+        rawOriginalProxyInfo = g_originalProxyInfo;
+    }
 
-        if (ERROR_BUFFER_TOO_SMALL == returnCode)
+    // This might be called before SystemProxySettings has filled in the 
+    // desired values (which only happens after a successful connection).
+    // In that case, we'll get them here.
+    if (rawOriginalProxyInfo.empty())
+    {
+        if (!GetConnectionsAndProxyInfo(vector<tstring>(), rawOriginalProxyInfo))
         {
-            returnCode = GetRasEntries(rasEntryNames, bufferSize, entries);
+            return;
+        }
+    }
+
+    /*
+    De-personalize system proxy server info
+    */
+
+    // ASSUMPTION: Proxy entries will always have a port number.
+    // There are a number of forms (of interest to us) that a proxy server entry can take:
+    // localhost or 127.0.0.1
+    tregex localhost_regex = tregex(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:(?:localhost)|(?:127\\.0\\.0\\.1))(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // IPv4 (Note: very rough, but probably good enough)
+    tregex ipv4_regex = tregex(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // IPv6 (Note: also very rough but probably good enough)
+    tregex ipv6_regex = tregex(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\[[a-fA-F0-9:]+\\])(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // not-fully-qualified domain name
+    tregex nonfqdn_regex = tregex(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-]+)(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+    // fully qualified domain name
+    tregex fqdn_regex = tregex(
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-\\.]+)(:[0-9]+)$"), 
+                    regex::ECMAScript | regex::icase);
+
+    for (vector<connection_proxy>::iterator it = rawOriginalProxyInfo.begin();
+         it != rawOriginalProxyInfo.end();
+         it++)
+    {
+        ConnectionProxyInfo info;
+
+        // We can't usefully redact this value. Maybe it shouldn't be included?
+        if (it->name.empty())
+        {
+            info.connectionName = _T("");
+        }
+        else
+        {
+            info.connectionName = _T("[REDACTED]");
         }
 
-        if (ERROR_SUCCESS != returnCode)
+        vector<tstring> proxyElems = split<TCHAR>(it->proxy, _T(';'));
+        tstringstream ss;
+        for (vector<tstring>::iterator elem = proxyElems.begin();
+             elem != proxyElems.end();
+             elem++)
         {
-            my_print(false, _T("failed to enumerate RAS connections (%d)"), returnCode);
-            throw 0;
+            if (elem != proxyElems.begin())
+            {
+                ss << _T(";");
+            }
+
+            if (regex_match(*elem, localhost_regex))
+            {
+                ss << regex_replace(*elem, localhost_regex, tstring(_T("$1[LOCALHOST]$2$3")));
+            }
+            else if (regex_match(*elem, ipv4_regex))
+            {
+                ss << regex_replace(*elem, ipv4_regex, tstring(_T("$1[IPV4]$2$3")));
+            }
+            else if (regex_match(*elem, ipv6_regex))
+            {
+                ss << regex_replace(*elem, ipv6_regex, tstring(_T("$1[IPV6]$2$3")));
+            }
+            else if (regex_match(*elem, nonfqdn_regex))
+            {
+                ss << regex_replace(*elem, nonfqdn_regex, tstring(_T("$1[NONFQDN]$2$3")));
+            }
+            else if (regex_match(*elem, fqdn_regex))
+            {
+                ss << regex_replace(*elem, fqdn_regex, tstring(_T("$1[FQDN]$2$3")));
+            }
+            else
+            {
+                ss << _T("[UNMATCHED]");
+            }
         }
 
-        for (DWORD i = 0; i < entries; i++)
+        info.proxy = ss.str();
+
+        /*
+        De-personalize system proxy bypass info
+        */
+
+        ss.str(_T(""));
+        ss.clear();
+
+        vector<tstring> bypassElems = split<TCHAR>(it->bypass, _T(';'));
+        for (vector<tstring>::iterator elem = bypassElems.begin();
+             elem != bypassElems.end();
+             elem++)
         {
-            connections.push_back(rasEntryNames[i].szEntryName);
-	    }
+            if (*elem == SYSTEM_PROXY_SETTINGS_PROXY_BYPASS)
+            {
+                ss << SYSTEM_PROXY_SETTINGS_PROXY_BYPASS << ";";
+            }
+            else
+            {
+                ss << "[REDACTED];";
+            }
+        }
+
+        info.bypass = ss.str();
+
+        /*
+        Make proxy flags human-readable
+        */
+
+        ss.str(_T(""));
+        ss.clear();
+
+        if (it->flags & PROXY_TYPE_DIRECT)
+        {
+            ss << _T("PROXY_TYPE_DIRECT|");
+        }
+        else if (it->flags & PROXY_TYPE_PROXY)
+        {
+            ss << _T("PROXY_TYPE_PROXY|");
+        }
+        else if (it->flags & PROXY_TYPE_AUTO_PROXY_URL)
+        {
+            ss << _T("PROXY_TYPE_AUTO_PROXY_URL|");
+        }
+        else if (it->flags & PROXY_TYPE_AUTO_DETECT)
+        {
+            ss << _T("PROXY_TYPE_AUTO_DETECT|");
+        }        
+
+        info.flags = ss.str();
+        if (info.flags.length() > 0)
+        {
+            // Strip the trailing "|"
+            info.flags.resize(info.flags.size()-1);
+        }
+
+        originalProxyInfo.push_back(info);
     }
-    catch (...)
+}
+
+void AddOriginalProxyInfo(const connection_proxy& proxyInfo)
+{
+    AutoMUTEX mutex(g_originalProxyInfoMutex);
+
+    vector<connection_proxy>::iterator match = find(g_originalProxyInfo.begin(), g_originalProxyInfo.end(), proxyInfo);
+    if (match == g_originalProxyInfo.end())
     {
+        // Entry doesn't already exist in vector
+        g_originalProxyInfo.push_back(proxyInfo);
     }
-    // TODO: Don't throw 0.  Throw and catch a std::exception.
-    // Maybe put the error message in the exception.
+}
 
-    // Clean up
-
-    if (rasEntryNames)
+bool SystemProxySettings::GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort)
+{
+    connection_proxy setting;
+    setting.name = _T("");
+    assert(m_settingsApplied == false);
+    if(!GetConnectionProxy(setting))
     {
-        //Deallocate memory for the entries buffer
-        HeapFree(GetProcessHeap(), 0, rasEntryNames);
-        rasEntryNames = 0;
+        return false;
     }
 
-    return connections;
+    if( setting.flags & PROXY_TYPE_PROXY)
+    {
+        tstring proxy_str = setting.proxy;
+        std::size_t colon_pos;
+        std::size_t equal_pos;
+        map<tstring, tstring> Proxies;
+
+        colon_pos = proxy_str.find(':');
+        /*
+        case 1: no ':' in the proxy_str
+        ""
+        proxy host and port are not set
+        */
+        if(tstring::npos == colon_pos)
+            return false;
+
+        /*
+        case 2: '=' protocol identifier not found in the proxy_str
+        "host:port"
+        same proxy used for all protocols
+        */
+        equal_pos = proxy_str.find('=');
+        if(tstring::npos == equal_pos)
+        {
+            //store it
+            Proxies.insert(pair<tstring, tstring>(_T("https"), proxy_str));
+        }
+
+        /*
+        case 3: '=' protocol identifier found in the proxy_str,
+        "http=host:port;https=host:port;ftp=host:port;socks=host:port"
+        loop through proxy types, pick  https or socks in that order
+        */
+
+        //split by protocol
+        std::size_t prev = 0, pos;
+        tstring protocol, proxy;
+        while ((pos = proxy_str.find('=', prev)) != tstring::npos)
+        {
+            if (pos > prev)
+            {
+                protocol = (proxy_str.substr(prev, pos-prev));
+            }
+            prev = pos+1;
+
+            pos = proxy_str.find(';', prev);
+
+            if(pos == tstring::npos)
+            {
+                proxy = (proxy_str.substr(prev, tstring::npos));
+            }
+            else if(pos >= prev)
+            {
+                proxy =  (proxy_str.substr(prev, pos-prev));
+                prev = pos+1;
+            }
+
+            Proxies.insert(pair<tstring, tstring>(protocol, proxy));
+        }
+
+        map<tstring, tstring>::iterator it = Proxies.find(_T("https"));
+        if(it != Proxies.end())
+        {
+            proxyType = _T("https");
+        }
+        else
+        {
+            it = Proxies.find(_T("socks"));
+
+            if(it == Proxies.end())
+            {
+                //no usable proxies
+                return false;
+            }
+
+            proxyType = _T("socks");
+        }
+
+        proxy_str = it->second;
+
+        colon_pos = proxy_str.find(':');
+
+        if(colon_pos == tstring::npos)
+        {
+            return false;
+        }
+
+        tstring port_str = proxy_str.substr(colon_pos+1);
+        proxyPort = _wtoi(port_str.c_str());
+
+        if(proxyPort <= 0 || proxyPort > 65536) //check if port is valid
+        {
+            return false;
+        }
+
+        proxyHost = proxy_str.substr(0,colon_pos);
+        return true;
+    }
+    return false;
 }

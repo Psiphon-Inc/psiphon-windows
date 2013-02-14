@@ -26,6 +26,9 @@
 #pragma comment (lib, "Comctl32.lib")
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+// This is for COM functions
+# pragma comment(lib, "wbemuuid.lib")
+
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
@@ -37,6 +40,7 @@
 #include "htmldlg.h"
 #include "server_list_reordering.h"
 #include "stopsignal.h"
+#include "diagnostic_info.h"
 
 
 //==== Globals ================================================================
@@ -662,39 +666,83 @@ void RestoreSplitTunnel()
 
 //==== my_print (logging) =====================================================
 
+vector<MessageHistoryEntry> g_messageHistory;
+HANDLE g_messageHistoryMutex = CreateMutex(NULL, FALSE, 0);
+
+void GetMessageHistory(vector<MessageHistoryEntry>& history)
+{
+    AutoMUTEX mutex(g_messageHistoryMutex);
+    history = g_messageHistory;
+}
+
+void AddMessageEntryToHistory(
+        LogSensitivity sensitivity, 
+        bool bDebugMessage, 
+        const TCHAR* formatString,
+        const TCHAR* finalString)
+{
+    AutoMUTEX mutex(g_messageHistoryMutex);
+
+    const TCHAR* historicalMessage = NULL;
+    if (sensitivity == NOT_SENSITIVE)
+    {
+        historicalMessage = finalString;
+    }
+    else if (sensitivity == SENSITIVE_FORMAT_ARGS)
+    {
+        historicalMessage = formatString;
+    }
+    else // SENSITIVE_LOG
+    {
+        historicalMessage = NULL;
+    }
+
+    if (historicalMessage != NULL)
+    {
+        MessageHistoryEntry entry;
+        entry.message = historicalMessage;
+        entry.timestamp = GetISO8601DatetimeString();
+        entry.debug = bDebugMessage;
+        g_messageHistory.push_back(entry);
+    }
+}
+
+
 #ifdef _DEBUG
 bool g_bShowDebugMessages = true;
 #else
 bool g_bShowDebugMessages = false;
 #endif
 
-void my_print(bool bDebugMessage, const TCHAR* format, ...)
+void my_print(LogSensitivity sensitivity, bool bDebugMessage, const TCHAR* format, ...)
 {
+    TCHAR* debugPrefix = _T("DEBUG: ");
+    size_t debugPrefixLength = _tcsclen(debugPrefix);
+    TCHAR* buffer = NULL;
+    va_list args;
+    va_start(args, format);
+    int length = _vsctprintf(format, args) + 1;
+    if (bDebugMessage)
+    {
+        length += debugPrefixLength;
+    }
+    buffer = (TCHAR*)malloc(length * sizeof(TCHAR));
+    if (!buffer) return;
+    if (bDebugMessage)
+    {
+        _tcscpy_s(buffer, length, debugPrefix);
+        _vstprintf_s(buffer + debugPrefixLength, length - debugPrefixLength, format, args);
+    }
+    else
+    {
+        _vstprintf_s(buffer, length, format, args);
+    }
+    va_end(args);
+
+    AddMessageEntryToHistory(sensitivity, bDebugMessage, format, buffer);
+
     if (!bDebugMessage || g_bShowDebugMessages)
     {
-        TCHAR* debugPrefix = _T("DEBUG: ");
-        size_t debugPrefixLength = _tcsclen(debugPrefix);
-        TCHAR* buffer = NULL;
-        va_list args;
-        va_start(args, format);
-        int length = _vsctprintf(format, args) + 1;
-        if (bDebugMessage)
-        {
-            length += debugPrefixLength;
-        }
-        buffer = (TCHAR*)malloc(length * sizeof(TCHAR));
-        if (!buffer) return;
-        if (bDebugMessage)
-        {
-            _tcscpy_s(buffer, length, debugPrefix);
-            _vstprintf_s(buffer + debugPrefixLength, length - debugPrefixLength, format, args);
-        }
-        else
-        {
-            _vstprintf_s(buffer, length, format, args);
-        }
-        va_end(args);
-
         // NOTE:
         // Main window handles displaying the message. This avoids
         // deadlocks with SendMessage. Main window will deallocate
@@ -704,9 +752,9 @@ void my_print(bool bDebugMessage, const TCHAR* format, ...)
     }
 }
 
-void my_print(bool bDebugMessage, const string& message)
+void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& message)
 {
-    my_print(bDebugMessage, NarrowToTString(message).c_str());
+    my_print(sensitivity, bDebugMessage, NarrowToTString(message).c_str());
 }
 
 
@@ -739,6 +787,8 @@ int APIENTRY _tWinMain(
 
     HACCEL hAccelTable;
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
+
+    DoStartupDiagnosticCollection();
 
     // Main message loop
 
@@ -830,13 +880,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         CreateControls(hWnd);
 
+        // We shouldn't try to start connecting while processing the WM_CREATE
+        // message because otherwise messages logged by called functions will be lost.
+        PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
+
+        break;
+
+    case WM_PSIPHON_CREATED:
         // Display client version number 
 
-        SendMessage(
-            g_hLogListBox,
-            LB_ADDSTRING,
-            NULL,
-            (LPARAM)(tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
+        my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // NOTE: we leave the connection animation timer running even after fully connected
         // when the icon no longer animates -- since the timer handler also updates the UI
@@ -884,7 +937,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
             case IDM_SHOW_DEBUG_MESSAGES:
                 g_bShowDebugMessages = !g_bShowDebugMessages;
-                my_print(false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
+                my_print(NOT_SENSITIVE, false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
                 break;
             // TODO: remove help, about, and exit?  The menu is currently hidden
             case IDM_HELP:
@@ -905,7 +958,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         else if (lParam == (LPARAM)g_hToggleButton && wmEvent == BN_CLICKED)
         {
-            my_print(true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
 
             // See comment below about Stop() blocking the UI
             SetCursor(LoadCursor(0, IDC_WAIT));
@@ -992,8 +1045,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         else if (lParam == (LPARAM)g_hFeedbackButton && wmEvent == BN_CLICKED)
         {
-            my_print(true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
-            
+            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
+
             tstring feedbackResult;
             if (ShowHTMLDlg(
                     hWnd, 
@@ -1002,7 +1055,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     NULL,
                     feedbackResult) == 1)
             {
-                my_print(false, _T("Sending feedback..."));
+                my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
 
                 g_connectionManager.SendFeedback(feedbackResult.c_str());
 
@@ -1036,7 +1089,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             IMAGE_ICON,
             (LPARAM)g_hFeedbackButtonIcons[1]);
         EnableWindow(g_hFeedbackButton, FALSE);
-        my_print(false, _T("Feedback sent. Thank you!"));
+        my_print(NOT_SENSITIVE, false, _T("Feedback sent. Thank you!"));
         break;
 
     case WM_PSIPHON_FEEDBACK_FAILED:
@@ -1046,7 +1099,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             IMAGE_ICON,
             (LPARAM)g_hFeedbackButtonIcons[0]);
         EnableWindow(g_hFeedbackButton, TRUE);
-        my_print(false, _T("Failed to send feedback."));
+        my_print(NOT_SENSITIVE, false, _T("Failed to send feedback."));
         break;
 
     case WM_PAINT:

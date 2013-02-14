@@ -233,7 +233,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
             {
                 // Stop request signalled. Need to stop now.
                 stoppingCleanly = true;
-                my_print(true, _T("%s: CheckSignal or IsThreadStopping returned true"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%s: CheckSignal or IsThreadStopping returned true"), __TFUNCTION__);
                 break;
             }
             else
@@ -241,7 +241,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
                 if (!_this->DoPeriodicCheck())
                 {
                     // Implementation indicates that we need to stop.
-                    my_print(true, _T("%s: DoPeriodicCheck returned false"), __TFUNCTION__);
+                    my_print(NOT_SENSITIVE, true, _T("%s: DoPeriodicCheck returned false"), __TFUNCTION__);
                     break;
                 }
             }
@@ -261,14 +261,14 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         // But if we're not, then just get out of here.
         if (stoppingCleanly)
         {
-            my_print(true, _T("%s: Waiting for all threads to indicate clean stop"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Waiting for all threads to indicate clean stop"), __TFUNCTION__);
             if (_this->m_workerThreadSynch->BlockUntil_AllThreadsStoppingCleanly())
             {
-                my_print(true, _T("%s: All threads indicated clean stop"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%s: All threads indicated clean stop"), __TFUNCTION__);
                 
                 _this->StopImminent();
 
-                my_print(true, _T("%s: Waiting for all threads to indicate ready to stop"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%s: Waiting for all threads to indicate ready to stop"), __TFUNCTION__);
                 _this->m_workerThreadSynch->ThreadReadyForStop();
                 _this->m_workerThreadSynch->BlockUntil_AllThreadsReadyToStop();
             }

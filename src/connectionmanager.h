@@ -61,7 +61,7 @@ public:
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
-    void SendFeedback(LPCWSTR feedback);
+    void SendFeedback(LPCWSTR feedbackJSON);
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
@@ -76,6 +76,7 @@ private:
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);
+    tstring GetRoutesRequestPath(ITransport* transport);
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
@@ -101,7 +102,7 @@ private:
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
-    bool DoSendFeedback(LPCWSTR feedback);
+    bool DoSendFeedback(LPCWSTR feedbackJSON);
     static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
 
 private:

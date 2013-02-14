@@ -21,6 +21,7 @@
 
 #include "transport.h"
 #include "transport_registry.h"
+#include "usersettings.h"
 
 class SessionInfo;
 
@@ -37,35 +38,43 @@ public:
     // Subclasses must implement these members
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
     virtual bool IsServerRequestTunnelled() const;
+    virtual bool IsSplitTunnelSupported() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual tstring GetSessionID(SessionInfo sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
-
+    virtual bool GetUserParentProxySettings(
+        SystemProxySettings* systemProxySettings,
+        tstring& o_UserParentProxyType,
+        tstring& o_UserParentProxyHostname,
+        int& o_UserParentProxyPort,
+        tstring& o_UserParentProxyUsername,
+        tstring& o_UserParentProxyPassword);
     virtual bool Cleanup();
 
 protected:
     // ITransport implementation
     virtual void TransportConnect(
-                    const SessionInfo& sessionInfo, 
-                    SystemProxySettings* systemProxySettings);
+        const SessionInfo& sessionInfo, 
+        SystemProxySettings* systemProxySettings);
     virtual bool DoPeriodicCheck();
 
-    // Subclasses must implement this member
     virtual bool GetSSHParams(
-                    const SessionInfo& sessionInfo,
-                    const int localSocksProxyPort,
-                    const string& sshPassword,
-                    tstring& o_serverAddress, 
-                    int& o_serverPort, 
-                    tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine) = 0;
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        const string& sshPassword,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkCommandLine,
+        SystemProxySettings* systemProxySettings);
 
     void TransportConnectHelper(
-            const SessionInfo& sessionInfo,
-            SystemProxySettings* systemProxySettings);
+        const SessionInfo& sessionInfo,
+        SystemProxySettings* systemProxySettings);
     bool IsServerSSHCapable(const SessionInfo& sessionInfo) const;
     bool LaunchPlonk(const TCHAR* plonkCommandLine);
 
@@ -90,17 +99,18 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 
 protected:
     virtual bool GetSSHParams(
-                    const SessionInfo& sessionInfo,
-                    const int localSocksProxyPort,
-                    const string& sshPassword,
-                    tstring& o_serverAddress, 
-                    int& o_serverPort, 
-                    tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine);
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        const string& sshPassword,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkCommandLine,
+        SystemProxySettings* systemProxySettings);
 };
 
 
@@ -118,15 +128,16 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 
 protected:
     virtual bool GetSSHParams(
-                    const SessionInfo& sessionInfo,
-                    const int localSocksProxyPort,
-                    const string& sshPassword,
-                    tstring& o_serverAddress, 
-                    int& o_serverPort, 
-                    tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine);
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        const string& sshPassword,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkCommandLine,
+        SystemProxySettings* systemProxySettings);
 };

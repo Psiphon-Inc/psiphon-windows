@@ -68,9 +68,9 @@ void TransportConnection::Connect(
 
         // Some transports require a handshake before connecting; with others we
         // can connect before doing the handshake.    
-        if (m_transport->IsHandshakeRequired(m_sessionInfo))
+        if (m_transport->IsHandshakeRequired(m_sessionInfo.GetServerEntry()))
         {
-            my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
 
             if (!handshakeRequestPath
                 || !DoHandshake(true, stopInfo, handshakeRequestPath))
@@ -83,7 +83,7 @@ void TransportConnection::Connect(
         }
         else
         {
-            my_print(true, _T("%s: Not doing pre-handshake; enough server info for immediate connection"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Not doing pre-handshake; enough server info for immediate connection"), __TFUNCTION__);
         }
 
         m_workerThreadSynch.Reset();
@@ -178,13 +178,15 @@ bool TransportConnection::DoHandshake(
         return true;
     }
 
-    ServerRequest serverRequest;
     string handshakeResponse;
 
     // Send list of known server IP addresses (used for stats logging on the server)
 
-    if (!serverRequest.MakeRequest(
-                        preTransport, // allow adhoc if this is a pre-transport handshake (i.e, for VPN)
+    // Allow an adhoc tunnel if this is a pre-transport handshake (i.e, for VPN)
+    ServerRequest::ReqLevel reqLevel = preTransport ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
+
+    if (!ServerRequest::MakeRequest(
+                        reqLevel,
                         m_transport,
                         m_sessionInfo,
                         handshakeRequestPath,
@@ -192,14 +194,14 @@ bool TransportConnection::DoHandshake(
                         stopInfo)
         || handshakeResponse.length() <= 0)
     {
-        my_print(false, _T("Handshake failed"));
+        my_print(NOT_SENSITIVE, false, _T("Handshake failed"));
         return false;
     }
 
     if (!m_sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
     {
         // If the handshake parsing has failed, something is very wrong.
-        my_print(false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
         throw TryNextServer();
     }
 

@@ -111,7 +111,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
         return false;
     }
 
@@ -184,7 +184,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     }
     catch (exception& e)
     {
-        my_print(false, _T("%s:%d: Config parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: Config parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
         return false;
     }
 
@@ -269,6 +269,7 @@ ServerEntry SessionInfo::GetServerEntry() const
         GetWebServerSecret(), GetWebServerCertificate(), 
         GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
         GetSSHHostKey(), GetSSHObfuscatedPort(), 
-        GetSSHObfuscatedKey());
+        GetSSHObfuscatedKey(),
+        m_serverEntry.capabilities);
     return newServerEntry;
 }
