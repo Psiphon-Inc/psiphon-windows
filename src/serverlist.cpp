@@ -171,6 +171,8 @@ void ServerList::MarkServerFailed(const string& serverAddress)
                 return;
             }
         }
+
+        my_print(NOT_SENSITIVE, true, _T("%s: Couldn't find server"), __TFUNCTION__);
     }
 }
 
