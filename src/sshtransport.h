@@ -71,6 +71,7 @@ protected:
         tstring& o_serverHostKey, 
         tstring& o_plonkCommandLine,
         SystemProxySettings* systemProxySettings);
+    virtual int GetPort(const SessionInfo& sessionInfo) const = 0;
 
     void TransportConnectHelper(
         const SessionInfo& sessionInfo,
@@ -111,6 +112,7 @@ protected:
         tstring& o_serverHostKey, 
         tstring& o_plonkCommandLine,
         SystemProxySettings* systemProxySettings);
+    virtual int GetPort(const SessionInfo& sessionInfo) const;
 };
 
 
@@ -140,4 +142,5 @@ protected:
         tstring& o_serverHostKey, 
         tstring& o_plonkCommandLine,
         SystemProxySettings* systemProxySettings);
+    virtual int GetPort(const SessionInfo& sessionInfo) const;
 };

@@ -350,7 +350,7 @@ bool SSHTransportBase::GetSSHParams(
     o_plonkCommandLine.clear();
 
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
-    o_serverPort = sessionInfo.GetSSHObfuscatedPort();
+    o_serverPort = GetPort(sessionInfo);
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
 
     // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
@@ -480,6 +480,11 @@ bool SSHTransport::GetSSHParams(
     return true;
 }
 
+int SSHTransport::GetPort(const SessionInfo& sessionInfo) const
+{
+    return sessionInfo.GetSSHPort();
+}
+
 
 /******************************************************************************
  OSSHTransport
@@ -576,6 +581,11 @@ bool OSSHTransport::GetSSHParams(
     o_plonkCommandLine = args.str();
 
     return true;
+}
+
+int OSSHTransport::GetPort(const SessionInfo& sessionInfo) const
+{
+    return sessionInfo.GetSSHObfuscatedPort();
 }
 
 
