@@ -171,6 +171,8 @@ void ServerList::MarkServerFailed(const string& serverAddress)
                 return;
             }
         }
+
+        // TODO: log failure
     }
 }
 
