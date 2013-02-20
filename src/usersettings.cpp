@@ -62,7 +62,8 @@ string GetUserSettingString(const string& settingName, string defaultValue /* = 
         // Write out the setting with a default value so that it's there
         // for users to see and use, if they want to set it.
         value = defaultValue;
-        WriteRegistryStringValue(settingName, value);
+        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+        WriteRegistryStringValue(settingName, value, reason);
     }
 
     return value;

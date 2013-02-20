@@ -580,9 +580,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
             try
             {
                 connected_timestamp = json_entry.get("connected_timestamp", 0).asString();
+                RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
                 (void)WriteRegistryStringValue(
                         LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
-                        connected_timestamp);
+                        connected_timestamp,
+                        reason);
             }
             catch (exception& e)
             {

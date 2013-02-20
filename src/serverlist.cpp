@@ -271,7 +271,17 @@ ServerEntries ServerList::GetList()
     // (Also so MarkCurrentServerFailed reads the same list we're returning)
     WriteListToSystem(systemServerEntryList);
 
-    return systemServerEntryList;
+    // WriteListToSystem could truncate the list if it is too long to write to the registry.
+    // Try to return what is stored in the system for consistency.
+    try
+    {
+        return GetListFromSystem();
+    }
+    catch (std::exception &ex)
+    {
+        my_print(NOT_SENSITIVE, true, string("Just wrote a corrupt System Server List: ") + ex.what());
+        return systemServerEntryList;
+    }
 }
 
 ServerEntries ServerList::GetListFromEmbeddedValues()
@@ -326,7 +336,28 @@ void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
 {
     string encodedServerEntryList = EncodeServerEntries(serverEntryList);
 
-    WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList);
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+
+    if (!WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList, reason))
+    {
+        if (REGISTRY_FAILURE_WRITE_TOO_LONG == reason)
+        {
+            int bisect = serverEntryList.size()/2;
+            if (bisect > 1)
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s: List is too long to write to registry, truncating"), __TFUNCTION__);
+                ServerEntries truncatedServerEntryList(serverEntryList.begin(),
+                                                       serverEntryList.begin() + bisect);
+                WriteListToSystem(truncatedServerEntryList);
+            }
+            else
+            {
+                my_print(NOT_SENSITIVE, true,
+                    _T("%s: List is still too long to write to registry, but there are only %ld entries"),
+                    __TFUNCTION__, serverEntryList.size());
+            }
+        }
+    }
 }
 
 string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)

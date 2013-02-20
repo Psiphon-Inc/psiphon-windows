@@ -41,12 +41,15 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
 
 void StopProcess(DWORD processID, HANDLE process);
 
+typedef enum RegistryFailureReason
+{
+    REGISTRY_FAILURE_NO_REASON = 0,
+    REGISTRY_FAILURE_WRITE_TOO_LONG
+};
+
 bool WriteRegistryDwordValue(const string& name, DWORD value);
-
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
-
-bool WriteRegistryStringValue(const string& name, const string& value);
-
+bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason);
 bool ReadRegistryStringValue(LPCSTR name, string& value);
 bool ReadRegistryStringValue(LPCWSTR name, wstring& value);
 

@@ -576,7 +576,8 @@ void StoreSelectedTransport(void)
     string selectedTransport = TStringToNarrow(GetSelectedTransport());
     if (selectedTransport.length() > 0)
     {
-        WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport);
+        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+        WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport, reason);
     }
 }
 
