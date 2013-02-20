@@ -41,7 +41,7 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
 
 void StopProcess(DWORD processID, HANDLE process);
 
-typedef enum RegistryFailureReason
+enum RegistryFailureReason
 {
     REGISTRY_FAILURE_NO_REASON = 0,
     REGISTRY_FAILURE_WRITE_TOO_LONG
