@@ -346,6 +346,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     unsigned int seed = (unsigned)time(NULL);
     srand(seed);
 
+    // We only want to open the home page once per retry loop.
+    // This prevents auto-reconnect from opening the home page again.
+    bool homePageOpened = false;
+
     //
     // Loop through server list, attempting to connect.
     //
@@ -460,7 +464,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             //
 
             my_print(NOT_SENSITIVE, true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
-            manager->DoPostConnect(sessionInfo);
+            manager->DoPostConnect(sessionInfo, !homePageOpened);
+            homePageOpened = true;
 
             //
             // Wait for transportConnection to stop (or fail)
@@ -551,7 +556,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     return 0;
 }
 
-void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
+void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openHomePages)
 {
     // Called from connection thread
     // NOTE: no lock while waiting for network events
@@ -639,7 +644,10 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     // Open home pages in browser
     //
     
-    OpenHomePages();
+    if (openHomePages)
+    {
+        OpenHomePages();
+    }
 
 #ifdef SPEEDTEST
     // Perform non-tunneled speed test when requested
