@@ -469,6 +469,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
             transportConnection.WaitForDisconnect();
 
+            // If the stop signal hasn't been set, then this is an unexpected 
+            // disconnect. In which case, fail over and retry.
+            if (!GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, false))
+            {
+                throw TransportConnection::TryNextServer();
+            }
+
             //
             // Disconnected
             //
