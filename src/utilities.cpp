@@ -792,3 +792,20 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 
     return true;
 }
+
+
+DWORD GetTickCountDiff(DWORD start, DWORD end)
+{
+    if (start == 0)
+    {
+        return 0;
+    }
+
+    // Has tick count wrapped around?
+    if (end < start)
+    {
+        return (MAXDWORD - start) + end;
+    }
+
+    return end - start;
+}
