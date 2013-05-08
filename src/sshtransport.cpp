@@ -207,6 +207,10 @@ bool SSHTransportBase::DoPeriodicCheck()
             
             // TODO:  set previous to not listen
         }
+        else
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: next plonk connect failed"), __TFUNCTION__);
+        }
         // If next plonk connection failed, try again next time.
     }
 
