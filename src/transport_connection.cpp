@@ -118,14 +118,22 @@ void TransportConnection::Connect(
         // If we didn't do the handshake before, do it now.
         if (!handshakeDone && handshakeRequestPath)
         {
+            if (!DoHandshake(false, stopInfo, handshakeRequestPath))
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s: Post-handshake failed"), __TFUNCTION__);
+            }
             // We do not fail regardless of whether the handshake succeeds.
-            (void)DoHandshake(false, stopInfo, handshakeRequestPath);
+
             handshakeDone = true;
         }
 
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
         m_localProxy->UpdateSessionInfo(m_sessionInfo);
+
+        // We also need to update the transport session, in case anything has 
+        // changed or been filled in.
+        m_transport->UpdateSessionInfo(m_sessionInfo);
     }
     catch (ITransport::TransportFailed&)
     {

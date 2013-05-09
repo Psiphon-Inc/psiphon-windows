@@ -64,6 +64,11 @@ void ITransport::Connect(
     }
 }
 
+void ITransport::UpdateSessionInfo(const SessionInfo& sessionInfo)
+{
+    m_sessionInfo = sessionInfo;
+}
+
 bool ITransport::DoStart()
 {
     try

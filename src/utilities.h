@@ -74,6 +74,8 @@ tstring GetISO8601DatetimeString();
 
 bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
 
+DWORD GetTickCountDiff(DWORD start, DWORD end);
+
 /*
 String Utilities
 */
