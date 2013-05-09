@@ -46,11 +46,9 @@ class PlonkConnection
     /*
     0s ... fresh ... 30s ... retired ... 50s kill
     */
-    static const DWORD FRESH_LIMIT = 30000;
-    static const DWORD RETIRED_LIMIT = 50000;
 
 public:
-    PlonkConnection();
+    PlonkConnection(const SessionInfo& sessionInfo);
     virtual ~PlonkConnection();
 
     bool IsInitialized() const;
@@ -70,9 +68,14 @@ public:
         int serverPort,
         StopInfo stopInfo);
 
+protected:
+    DWORD GetFreshLimit() const;
+    DWORD GetRetiredLimit() const;
+
 private:
     PROCESS_INFORMATION m_processInfo;
     DWORD m_startTick;
+    const SessionInfo& m_sessionInfo;
 };
 
 
@@ -136,8 +139,6 @@ bool SSHTransportBase::DoPeriodicCheck()
 
     if (m_currentPlonk->InFreshEra())
     {
-        //my_print(NOT_SENSITIVE, true, _T("%s: m_currentPlonk is in fresh era"), __TFUNCTION__);
-
         // Previous connection may exist in retired state, and may need to be killed.
         if (m_previousPlonk.get() != NULL
             && m_previousPlonk->InKillEra())
@@ -179,7 +180,7 @@ bool SSHTransportBase::DoPeriodicCheck()
 
         // Time to bring up the next connection and retire the current.
 
-        auto_ptr<PlonkConnection> nextPlonk(new PlonkConnection());
+        auto_ptr<PlonkConnection> nextPlonk(new PlonkConnection(m_sessionInfo));
 
         // TODO: Check for out-of-memory allocation failure
 
@@ -316,7 +317,7 @@ void SSHTransportBase::TransportConnectHelper(
         throw TransportFailed();
     }
 
-    m_currentPlonk.reset(new PlonkConnection());
+    m_currentPlonk.reset(new PlonkConnection(m_sessionInfo));
 
     // TODO: Check for out-of-memory allocation failure
 
@@ -458,8 +459,9 @@ bool SSHTransportBase::GetSSHParams(
  PlonkConnection
 ******************************************************************************/
 
-PlonkConnection::PlonkConnection()
-    : m_startTick(0)
+PlonkConnection::PlonkConnection(const SessionInfo& sessionInfo)
+    : m_startTick(0),
+      m_sessionInfo(sessionInfo)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -495,17 +497,70 @@ bool PlonkConnection::IsOkay() const
     return false;
 }
 
+DWORD PlonkConnection::GetFreshLimit() const
+{
+    // This initialized value should never be used, but just to be safe...
+    DWORD freshLimit = MAXDWORD;
+
+    // If there's a registry value, it will override the value from the handshake.
+    if (!ReadRegistryDwordValue(string("SSHReconnectFreshLimit"), freshLimit))
+    {
+        if (m_sessionInfo.GetPreemptiveReconnectLifetimeMilliseconds() == 0)
+        {
+            // Functionality is disabled
+            freshLimit = MAXDWORD;
+        }
+        else
+        {
+            freshLimit = m_sessionInfo.GetPreemptiveReconnectLifetimeMilliseconds() / 2;
+        }
+    }
+
+    static DWORD s_loggedLimit = 0;
+    if (s_loggedLimit != freshLimit)
+    {
+        s_loggedLimit = freshLimit;
+        my_print(NOT_SENSITIVE, true, _T("%s: Fresh limit: %u"), __TFUNCTION__, freshLimit);
+    }
+
+    return freshLimit;
+}
+
+DWORD PlonkConnection::GetRetiredLimit() const
+{
+    // This initialized value should never be used, but just to be safe...
+    DWORD retiredLimit = MAXDWORD;
+
+    // If there's a registry value, it will override the value from the handshake.
+    if (!ReadRegistryDwordValue(string("SSHReconnectRetiredLimit"), retiredLimit))
+    {
+        if (m_sessionInfo.GetPreemptiveReconnectLifetimeMilliseconds() == 0)
+        {
+            // Functionality is disabled
+            retiredLimit = MAXDWORD;
+        }
+        else
+        {
+            assert(m_sessionInfo.GetPreemptiveReconnectLifetimeMilliseconds() > 10000);
+            retiredLimit = m_sessionInfo.GetPreemptiveReconnectLifetimeMilliseconds() - 10000;
+        }
+    }
+
+    static DWORD s_loggedLimit = 0;
+    if (s_loggedLimit != retiredLimit)
+    {
+        s_loggedLimit = retiredLimit;
+        my_print(NOT_SENSITIVE, true, _T("%s: Retired limit: %u"), __TFUNCTION__, retiredLimit);
+    }
+
+    return retiredLimit;
+}
+
 bool PlonkConnection::InFreshEra() const
 {
     DWORD age = GetTickCountDiff(m_startTick, GetTickCount());
 
-    DWORD freshLimit = FRESH_LIMIT;
-    if (!ReadRegistryDwordValue(string("SSHReconnectFreshLimit"), freshLimit))
-    {
-        freshLimit = FRESH_LIMIT;
-    }
-
-    return age > 0 && age < freshLimit;
+    return age > 0 && age < GetFreshLimit();
 }
 
 bool PlonkConnection::InRetiredEra() const
@@ -515,32 +570,14 @@ bool PlonkConnection::InRetiredEra() const
 
     DWORD age = GetTickCountDiff(m_startTick, GetTickCount());
 
-    DWORD freshLimit = FRESH_LIMIT;
-    if (!ReadRegistryDwordValue(string("SSHReconnectFreshLimit"), freshLimit))
-    {
-        freshLimit = FRESH_LIMIT;
-    }
-
-    DWORD retiredLimit = RETIRED_LIMIT;
-    if (!ReadRegistryDwordValue(string("SSHReconnectRetiredLimit"), retiredLimit))
-    {
-        retiredLimit = RETIRED_LIMIT;
-    }
-
-    return age >= freshLimit && age < retiredLimit;
+    return age >= GetFreshLimit() && age < GetRetiredLimit();
 }
 
 bool PlonkConnection::InKillEra() const
 {
     DWORD age = GetTickCountDiff(m_startTick, GetTickCount());
 
-    DWORD retiredLimit = RETIRED_LIMIT;
-    if (!ReadRegistryDwordValue(string("SSHReconnectRetiredLimit"), retiredLimit))
-    {
-        retiredLimit = RETIRED_LIMIT;
-    }
-
-    return age >= retiredLimit;
+    return age >= GetRetiredLimit();
 }
 
 void PlonkConnection::Kill()

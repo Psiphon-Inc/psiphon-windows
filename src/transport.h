@@ -89,6 +89,10 @@ public:
 
     bool IsConnected() const;
 
+    // Must be called after connecting, if there has been a handshake that 
+    // added more data to sessionInfo.
+    void UpdateSessionInfo(const SessionInfo& sessionInfo);
+
     //
     // Exception classes
     //
