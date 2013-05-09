@@ -498,7 +498,14 @@ bool PlonkConnection::IsOkay() const
 bool PlonkConnection::InFreshEra() const
 {
     DWORD age = GetTickCountDiff(m_startTick, GetTickCount());
-    return age > 0 && age < FRESH_LIMIT;
+
+    DWORD freshLimit = FRESH_LIMIT;
+    if (!ReadRegistryDwordValue(string("SSHReconnectFreshLimit"), freshLimit))
+    {
+        freshLimit = FRESH_LIMIT;
+    }
+
+    return age > 0 && age < freshLimit;
 }
 
 bool PlonkConnection::InRetiredEra() const
@@ -507,13 +514,33 @@ bool PlonkConnection::InRetiredEra() const
     // If so, probably need to change other era checks.
 
     DWORD age = GetTickCountDiff(m_startTick, GetTickCount());
-    return age >= FRESH_LIMIT && age < RETIRED_LIMIT;
+
+    DWORD freshLimit = FRESH_LIMIT;
+    if (!ReadRegistryDwordValue(string("SSHReconnectFreshLimit"), freshLimit))
+    {
+        freshLimit = FRESH_LIMIT;
+    }
+
+    DWORD retiredLimit = RETIRED_LIMIT;
+    if (!ReadRegistryDwordValue(string("SSHReconnectRetiredLimit"), retiredLimit))
+    {
+        retiredLimit = RETIRED_LIMIT;
+    }
+
+    return age >= freshLimit && age < retiredLimit;
 }
 
 bool PlonkConnection::InKillEra() const
 {
     DWORD age = GetTickCountDiff(m_startTick, GetTickCount());
-    return age >= RETIRED_LIMIT;
+
+    DWORD retiredLimit = RETIRED_LIMIT;
+    if (!ReadRegistryDwordValue(string("SSHReconnectRetiredLimit"), retiredLimit))
+    {
+        retiredLimit = RETIRED_LIMIT;
+    }
+
+    return age >= retiredLimit;
 }
 
 void PlonkConnection::Kill()
