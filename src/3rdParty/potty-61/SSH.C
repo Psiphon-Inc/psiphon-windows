@@ -2790,6 +2790,9 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
     ssh->state = SSH_STATE_BEFORE_SIZE;
     ssh->pinger = pinger_new(&ssh->cfg, &ssh_backend, ssh);
 
+    /* PSIPHON */
+    do_psiphon_setup(&(ssh->portfwds));
+
     sfree(s->vstring);
 
     crFinish(0);
@@ -5311,7 +5314,6 @@ static void do_ssh1_connection(Ssh ssh, unsigned char *in, int inlen,
 	    }
 	}
     }
-
     crFinishV;
 }
 

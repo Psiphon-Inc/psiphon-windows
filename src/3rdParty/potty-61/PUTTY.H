@@ -1309,4 +1309,13 @@ void timer_change_notify(long next);
 #define remove_session_from_jumplist(x) ((void)0)
 #endif
 
+
+/* PSIPHON ******************************/
+/* Exports from psiphon.c */
+void do_psiphon_setup();
+/* Exports from portfwd.c */
+void pfd_terminate(void *sv);
+struct ssh_portfwd;
+/* PSIPHON ******************************/
+
 #endif
