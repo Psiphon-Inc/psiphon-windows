@@ -19,14 +19,13 @@
 
 #pragma once
 
-static const char* PROPAGATION_CHANNEL_ID = 
-    "3A885577DD84EF13";
+static const char* PROPAGATION_CHANNEL_ID = "0";
 
-static const char* SPONSOR_ID = 
-    "8BB28C1A8E8A9ED9";
+static const char* SPONSOR_ID = "0";
 
 // NOTE: if we put this in resources instead/as well, it would show up
 //       in Explorer properties tab, etc.
+// NOTE: set version to > 44 to ensure we don't get routes from /connected
 static const char* CLIENT_VERSION = "45";
 
 static const char* EMBEDDED_SERVER_LIST = "";
@@ -36,11 +35,9 @@ static const int IGNORE_SYSTEM_SERVER_LIST = 0;
 
 static const char* REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY = "";
 
-static const char* REMOTE_SERVER_LIST_ADDRESS =
-    "s3.amazonaws.com";
+static const char* REMOTE_SERVER_LIST_ADDRESS = "s3.amazonaws.com";
 
-static const char* REMOTE_SERVER_LIST_REQUEST_PATH =
-    "invalid_bucket_name/server_list";
+static const char* REMOTE_SERVER_LIST_REQUEST_PATH = "invalid_bucket_name/server_list";
 
 // These values are used when uploading diagnostic info
 static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
@@ -51,3 +48,9 @@ static const char* FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS = "";
 // NOTE: Info link may be opened when not tunneled
 static const TCHAR* INFO_LINK_URL
     = _T("https://sites.google.com/a/psiphon3.com/psiphon3/");
+
+static const char* UPGRADE_SIGNATURE_PUBLIC_KEY = "";
+
+static const char* UPGRADE_HOST_ADDRESS = "s3.amazonaws.com";
+
+static const char* UPGRADE_REQUEST_PATH = "invalid_bucket_name/server_list";
