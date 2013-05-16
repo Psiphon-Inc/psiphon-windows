@@ -207,6 +207,9 @@ static void usage(void)
     printf("            Parent proxy authentication password\n");
     printf("  -sercfg configuration-string (e.g. 19200,8,n,1,X)\n");
     printf("            Specify the serial configuration (serial only)\n");
+    /* PSIPHON */
+    printf("  -portfwd_stop milliseconds\n");
+    printf("            Specify how long the local port forwarder should run\n");
     exit(1);
 }
 

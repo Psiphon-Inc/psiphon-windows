@@ -2791,7 +2791,7 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
     ssh->pinger = pinger_new(&ssh->cfg, &ssh_backend, ssh);
 
     /* PSIPHON */
-    do_psiphon_setup(&(ssh->portfwds));
+    do_psiphon_setup(&ssh->cfg, &(ssh->portfwds));
 
     sfree(s->vstring);
 

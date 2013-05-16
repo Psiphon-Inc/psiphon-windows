@@ -513,6 +513,14 @@ int cmdline_process_param(char *p, char *value, int need_save, Config *cfg)
     }
     //end Psiphon proxy chaining options
 
+    /* PSIPHON  */
+    if (!strcmp(p, "-portfwd_stop")) {
+        RETURN(2);
+        UNAVAILABLE_IN(TOOLTYPE_NONNETWORK);
+        SAVEABLE(0);
+        cfg->portfwd_stop = atoi(value);
+    }
+	
     if (!strcmp(p, "-4") || !strcmp(p, "-ipv4")) {
 	RETURN(1);
 	SAVEABLE(1);

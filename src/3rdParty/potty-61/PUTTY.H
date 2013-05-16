@@ -490,6 +490,10 @@ struct config_tag {
     int proxy_port;
     char proxy_username[128];
     char proxy_password[128];
+    
+    /* PSIPHON */
+    int portfwd_stop;
+
     char proxy_telnet_command[512];
     /* SSH options */
     char remote_cmd[512];

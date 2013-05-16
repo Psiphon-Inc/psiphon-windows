@@ -621,6 +621,15 @@ bool PlonkConnection::Connect(
         return false;
     }
 
+    tstringstream commandLine;
+    commandLine << plonkCommandLine;
+
+    // We're in charge of adding the preemptive-fast-reconnect command line argument.
+    // The argument is 0 for disabled, otherwise milliseconds.
+    DWORD portfwd_stop = GetFreshLimit();
+    portfwd_stop = portfwd_stop == MAXDWORD ? 0 : portfwd_stop;
+    commandLine << _T(" -portfwd_stop ") << portfwd_stop;
+    
     // Create the Plonk process and connect to server
     STARTUPINFO plonkStartupInfo;
     ZeroMemory(&plonkStartupInfo, sizeof(plonkStartupInfo));
@@ -628,7 +637,7 @@ bool PlonkConnection::Connect(
 
     if (!CreateProcess(
             plonkPath,
-            (TCHAR*)plonkCommandLine,
+            (TCHAR*)commandLine.str().c_str(),
             NULL,
             NULL,
             FALSE,

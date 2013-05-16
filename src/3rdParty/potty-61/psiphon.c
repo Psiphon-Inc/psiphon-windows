@@ -37,18 +37,17 @@ struct ssh_portfwd {
          sfree((pf)->sserv), sfree((pf)->dserv)) : (void)0 ), sfree(pf) )
 
 
-struct preemptive_listen_stop_ctx {
+struct portfwd_stop_ctx {
     tree234** pp_portfwds;
 };
 
+static DWORD start_tick = 0;
 
-static void preemptive_listen_stop_timer(void* void_ctx, long now)
+static void portfwd_stop_timer(void* void_ctx, long now)
 {
-    struct preemptive_listen_stop_ctx* ctx = (struct preemptive_listen_stop_ctx*)void_ctx;
+    struct portfwd_stop_ctx* ctx = (struct portfwd_stop_ctx*)void_ctx;
     
-    char ss[100];
-    sprintf(ss, "preemptive_listen_stop_timer: now: %d\n", now);
-    OutputDebugString(ss);
+    printf("portfwd_stop_timer: elapsed: %ums\n", GetTickCount() - start_tick);
 
     /* Taken from ssh.c ~2950 */
     if (ctx->pp_portfwds) {
@@ -66,26 +65,33 @@ static void preemptive_listen_stop_timer(void* void_ctx, long now)
 }
 
 
-static void setup_preemptive_listen_stop(tree234** pp_portfwds)
+static void setup_portfwd_stop(Config* cfg, tree234** pp_portfwds)
 {
+    struct portfwd_stop_ctx* ctx;
     int next;
-    char ss[100];
+
+    printf("setup_portfwd_stop: cfg->portfwd_stop: %dms\n", cfg->portfwd_stop);
+    start_tick = GetTickCount();
+
+    if (cfg->portfwd_stop <= 0)
+    {
+        // Disabled
+        return;
+    }
 
     // TODO: Don't memleak this. Or maybe it doesn't matter.
-    struct preemptive_listen_stop_ctx* ctx = snew(struct preemptive_listen_stop_ctx);
+    ctx = snew(struct portfwd_stop_ctx);
     ctx->pp_portfwds = pp_portfwds;
 
+    /* We don't care about the return value (the next timer time) */
     next = schedule_timer(
-            30 * TICKSPERSEC,
-            preemptive_listen_stop_timer, 
+            cfg->portfwd_stop,
+            portfwd_stop_timer, 
             ctx);
-
-    sprintf(ss, "setup_preemptive_listen_stop: next: %d\n", next);
-    OutputDebugString(ss);
 }
 
 
-void do_psiphon_setup(tree234** pp_portfwds)
+void do_psiphon_setup(Config* cfg, tree234** pp_portfwds)
 {
-    setup_preemptive_listen_stop(pp_portfwds);
+    setup_portfwd_stop(cfg, pp_portfwds);
 }
