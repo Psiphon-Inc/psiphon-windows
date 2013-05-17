@@ -68,14 +68,19 @@ public:
         int serverPort,
         StopInfo stopInfo);
 
+    void StopPortFoward();
+
 protected:
     DWORD GetFreshLimit() const;
     DWORD GetRetiredLimit() const;
+
+    bool WaitForConnected(DWORD timeout, HANDLE plonkOutput);
 
 private:
     PROCESS_INFORMATION m_processInfo;
     DWORD m_startTick;
     const SessionInfo& m_sessionInfo;
+    HANDLE m_plonkInputHandle;
 };
 
 
@@ -206,7 +211,10 @@ bool SSHTransportBase::DoPeriodicCheck()
             m_previousPlonk = m_currentPlonk;
             m_currentPlonk = nextPlonk;
             
-            // TODO:  set previous to not listen
+            // Cause the previous Plonk to stop listening locally, so the new
+            // Plonk can handle new connection. But we leave the old one running
+            // so that it can fulfill outstanding requests.
+            m_previousPlonk->StopPortFoward();
         }
         else
         {
@@ -461,7 +469,8 @@ bool SSHTransportBase::GetSSHParams(
 
 PlonkConnection::PlonkConnection(const SessionInfo& sessionInfo)
     : m_startTick(0),
-      m_sessionInfo(sessionInfo)
+      m_sessionInfo(sessionInfo),
+      m_plonkInputHandle(INVALID_HANDLE_VALUE)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -584,6 +593,9 @@ void PlonkConnection::Kill()
 {
     m_startTick = 0;
 
+    if (m_plonkInputHandle != INVALID_HANDLE_VALUE) CloseHandle(m_plonkInputHandle);
+    m_plonkInputHandle = INVALID_HANDLE_VALUE;
+
     // Give the process an opportunity for graceful shutdown, then terminate
     if (m_processInfo.hProcess != 0
         && m_processInfo.hProcess != INVALID_HANDLE_VALUE)
@@ -621,26 +633,36 @@ bool PlonkConnection::Connect(
         return false;
     }
 
-    tstringstream commandLine;
-    commandLine << plonkCommandLine;
-
-    // We're in charge of adding the preemptive-fast-reconnect command line argument.
-    // The argument is 0 for disabled, otherwise milliseconds.
-    DWORD portfwd_stop = GetFreshLimit();
-    portfwd_stop = portfwd_stop == MAXDWORD ? 0 : portfwd_stop;
-    commandLine << _T(" -portfwd_stop ") << portfwd_stop;
-    
     // Create the Plonk process and connect to server
     STARTUPINFO plonkStartupInfo;
     ZeroMemory(&plonkStartupInfo, sizeof(plonkStartupInfo));
     plonkStartupInfo.cb = sizeof(plonkStartupInfo);
 
+    // We'll read from this to determine when Plonk has connected
+    HANDLE plonkOutput = INVALID_HANDLE_VALUE;
+
+    // We'll write to this to tell Plonk when to shut down its port forwarder.
+    HANDLE plonkInput = INVALID_HANDLE_VALUE;
+
+    plonkStartupInfo.dwFlags = STARTF_USESTDHANDLES;
+
+    if (!CreateSubprocessPipes(
+            plonkOutput,
+            plonkInput,
+            plonkStartupInfo.hStdInput,
+            plonkStartupInfo.hStdOutput, 
+            plonkStartupInfo.hStdError))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - CreatePolipoPipe failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
     if (!CreateProcess(
             plonkPath,
-            (TCHAR*)commandLine.str().c_str(),
+            (TCHAR*)plonkCommandLine,
             NULL,
             NULL,
-            FALSE,
+            TRUE, // bInheritHandles
 #ifdef _DEBUG
             CREATE_NEW_PROCESS_GROUP,
 #else
@@ -651,6 +673,11 @@ bool PlonkConnection::Connect(
             &plonkStartupInfo,
             &m_processInfo))
     {
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
+        CloseHandle(plonkStartupInfo.hStdInput);
+        CloseHandle(plonkStartupInfo.hStdOutput);
+        CloseHandle(plonkStartupInfo.hStdError);
         return false;
     }
 
@@ -658,8 +685,39 @@ bool PlonkConnection::Connect(
     CloseHandle(m_processInfo.hThread);
     m_processInfo.hThread = NULL;
 
+    // Close child pipe handle (do not continue to modify the parent).
+    // You need to make sure that no handles to the write end of the
+    // output pipe are maintained in this process or else the pipe will
+    // not close when the child process exits and the ReadFile will hang.
+    if (!CloseHandle(plonkStartupInfo.hStdOutput))
+    {
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
+        CloseHandle(plonkStartupInfo.hStdInput);
+        CloseHandle(plonkStartupInfo.hStdError);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+    if (!CloseHandle(plonkStartupInfo.hStdError))
+    {
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
+        CloseHandle(plonkStartupInfo.hStdInput);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+    if (!CloseHandle(plonkStartupInfo.hStdInput))
+    {
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
     if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
     {
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
         return false;
     }
 
@@ -667,24 +725,104 @@ bool PlonkConnection::Connect(
 
     if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
     {
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
         return false;
     }
 
-    // Wait for Plonk to be connectable.
-
-    DWORD connected = WaitForConnectability(
-                        localSocksProxyPort,
-                        SSH_CONNECTION_TIMEOUT_SECONDS*1000,
-                        m_processInfo.hProcess,
-                        stopInfo);
-
-    if (ERROR_SUCCESS != connected)
+    // Wait for Plonk to connect.
+    if (!WaitForConnected(SSH_CONNECTION_TIMEOUT_SECONDS*1000, plonkOutput))
     {
-        my_print(NOT_SENSITIVE, false, _T("Failed to connect (%d, %d)"), connected, GetLastError());
+        CloseHandle(plonkOutput);
+        CloseHandle(plonkInput);
+        my_print(NOT_SENSITIVE, false, _T("Failed to connect (%d)"), GetLastError());
         return false;
     }
+
+    // We're done reading Plonk output
+    if (!CloseHandle(plonkOutput))
+    {
+        CloseHandle(plonkInput);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    m_plonkInputHandle = plonkInput;
 
     return true;
+}
+
+bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput)
+{
+    DWORD startTick = GetTickCount();
+
+    // Keep checking for the expected success output until we get it, or until
+    // the timeout expires.
+    while (GetTickCountDiff(startTick, GetTickCount()) < timeout)
+    {
+        DWORD bytes_avail = 0;
+
+        // ReadFile will block forever if there's no data to read, so we need
+        // to check if there's data available to read first.
+        if (!PeekNamedPipe(plonkOutput, NULL, 0, NULL, &bytes_avail, NULL))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+            return false;
+        }
+
+        // If there's data available from the Plonk pipe, process it.
+        if (bytes_avail > 0)
+        {
+            char* buffer = new char[bytes_avail+1];
+            DWORD num_read = 0;
+            if (!ReadFile(plonkOutput, buffer, bytes_avail, &num_read, NULL))
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+                false;
+            }
+            buffer[bytes_avail] = '\0';
+
+            bool connected = (strstr(buffer, "PSIPHON:CONNECTED") != NULL);
+
+            delete[] buffer;
+
+            if (connected)
+            {
+                //my_print(LogSensitivity::NOT_SENSITIVE, true, "SSH connect SUCCESS");
+                return true;
+            }
+        }
+
+        Sleep(100);
+    }
+
+    //my_print(LogSensitivity::NOT_SENSITIVE, true, "SSH connect FAIL");
+    return false;
+}
+
+
+void PlonkConnection::StopPortFoward()
+{
+    if (m_plonkInputHandle == INVALID_HANDLE_VALUE)
+    {
+        return;
+    }
+
+    DWORD bytesWritten = 0;
+
+    LPCSTR stopPortfwd = "PSIPHON:PORTFWDSTOP";
+    BOOL success = WriteFile(
+                        m_plonkInputHandle, 
+                        stopPortfwd,
+                        strlen(stopPortfwd),
+                        &bytesWritten,
+                        NULL);
+
+    assert(success);
+    assert(bytesWritten == strlen(stopPortfwd));
+
+    CloseHandle(m_plonkInputHandle);
+    m_plonkInputHandle = INVALID_HANDLE_VALUE;
 }
 
 

@@ -6369,8 +6369,14 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     logeventf(ssh, "Initialised %.200s server->client MAC algorithm",
 	      ssh->scmac->text_name);
     if (ssh->sccomp->text_name)
-	logeventf(ssh, "Initialised %s decompression",
+    {
+	    logeventf(ssh, "Initialised %s decompression",
 		  ssh->sccomp->text_name);
+
+        /* PSIPHON: Indicate connection is ready */
+        logeventf(ssh, "PSIPHON:CONNECTED");
+    }
+
 
     /*
      * Free shared secret.

@@ -490,10 +490,6 @@ struct config_tag {
     int proxy_port;
     char proxy_username[128];
     char proxy_password[128];
-    
-    /* PSIPHON */
-    int portfwd_stop;
-
     char proxy_telnet_command[512];
     /* SSH options */
     char remote_cmd[512];
@@ -1317,9 +1313,7 @@ void timer_change_notify(long next);
 /* PSIPHON ******************************/
 /* Exports from psiphon.c */
 void do_psiphon_setup();
-/* Exports from portfwd.c */
-void pfd_terminate(void *sv);
-struct ssh_portfwd;
+int psiphon_stdin_gotdata(struct handle *h, void *data, int len);
 /* PSIPHON ******************************/
 
 #endif

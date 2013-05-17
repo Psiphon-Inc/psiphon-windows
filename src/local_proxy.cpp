@@ -302,6 +302,11 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
+    if (!CloseHandle(polipoStartupInfo.hStdError))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
 
     WaitForInputIdle(m_polipoProcessInfo.hProcess, 5000);
 
@@ -332,65 +337,24 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
 // Returns true on success.
 bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 {
+    m_polipoPipe = INVALID_HANDLE_VALUE;
     o_outputPipe = INVALID_HANDLE_VALUE;
     o_errorPipe = INVALID_HANDLE_VALUE;
 
-    // Most of this code is adapted from:
-    // http://support.microsoft.com/kb/190351
+    HANDLE parentInputPipe = INVALID_HANDLE_VALUE, childStdinPipe = INVALID_HANDLE_VALUE;
 
-    // Set up the security attributes struct.
-    SECURITY_ATTRIBUTES sa;
-    sa.nLength= sizeof(SECURITY_ATTRIBUTES);
-    sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = TRUE;
-
-    HANDLE hOutputReadTmp, hOutputWrite, hOutputRead, hErrorWrite;
-
-    // Create the child output pipe.
-    if (!CreatePipe(&hOutputReadTmp, &hOutputWrite, &sa, 0))
+    if (!CreateSubprocessPipes(
+            m_polipoPipe,
+            parentInputPipe,
+            childStdinPipe,
+            o_outputPipe,
+            o_errorPipe))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
-    // Create a duplicate of the output write handle for the std error
-    // write handle. This is necessary in case the child application
-    // closes one of its std output handles.
-    if (!DuplicateHandle(
-            GetCurrentProcess(), hOutputWrite, 
-            GetCurrentProcess(), &hErrorWrite,
-            0, TRUE, DUPLICATE_SAME_ACCESS))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Create new output read handle and the input write handles. Set
-    // the Properties to FALSE. Otherwise, the child inherits the
-    // properties and, as a result, non-closeable handles to the pipes
-    // are created.
-    if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
-                         GetCurrentProcess(),
-                         &hOutputRead, // Address of new handle.
-                         0, 
-                         FALSE, // Make it uninheritable.
-                         DUPLICATE_SAME_ACCESS))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Close inheritable copies of the handles you do not want to be
-    // inherited.
-    if (!CloseHandle(hOutputReadTmp))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    m_polipoPipe = hOutputRead;
-    o_outputPipe = hOutputWrite;
-    o_errorPipe = hErrorWrite;
+    CloseHandle(parentInputPipe);
+    CloseHandle(childStdinPipe);
 
     return true;
 }

@@ -207,9 +207,6 @@ static void usage(void)
     printf("            Parent proxy authentication password\n");
     printf("  -sercfg configuration-string (e.g. 19200,8,n,1,X)\n");
     printf("            Specify the serial configuration (serial only)\n");
-    /* PSIPHON */
-    printf("  -portfwd_stop milliseconds\n");
-    printf("            Specify how long the local port forwarder should run\n");
     exit(1);
 }
 
@@ -611,6 +608,15 @@ int main(int argc, char **argv)
     stdout_handle = handle_output_new(outhandle, stdouterr_sent, NULL, 0);
     stderr_handle = handle_output_new(errhandle, stdouterr_sent, NULL, 0);
 
+    /* PSIPHON */
+    /* We use stdin to signal us to stop port-forwarding.
+       HACK: We are killing the normal stdin handling code path.
+    */
+	stdin_handle = handle_input_new(
+                    inhandle, 
+                    psiphon_stdin_gotdata, 
+                    NULL, 0);
+
     main_thread_id = GetCurrentThreadId();
 
     sending = FALSE;
@@ -623,11 +629,14 @@ int main(int argc, char **argv)
 	int n;
 	DWORD ticks;
 
+    /* PSIPHON */
+    /* Removing this code
 	if (!sending && back->sendok(backhandle)) {
 	    stdin_handle = handle_input_new(inhandle, stdin_gotdata, NULL,
 					    0);
 	    sending = TRUE;
 	}
+    */
 
 	if (run_timers(now, &next)) {
 	    ticks = next - GETTICKCOUNT();

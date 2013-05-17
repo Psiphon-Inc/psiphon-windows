@@ -382,7 +382,6 @@ void save_open_settings(void *sesskey, Config *cfg)
     write_setting_i(sesskey, "ProxyPort", cfg->proxy_port);
     write_setting_s(sesskey, "ProxyUsername", cfg->proxy_username);
     write_setting_s(sesskey, "ProxyPassword", cfg->proxy_password);
-    write_setting_i(sesskey, "PortfwdStop", cfg->portfwd_stop);
     write_setting_s(sesskey, "ProxyTelnetCommand", cfg->proxy_telnet_command);
     wmap(sesskey, "Environment", cfg->environmt, lenof(cfg->environmt));
     write_setting_s(sesskey, "UserName", cfg->username);
@@ -679,7 +678,6 @@ void load_open_settings(void *sesskey, Config *cfg)
 	 sizeof(cfg->proxy_username));
     gpps(sesskey, "ProxyPassword", "", cfg->proxy_password,
 	 sizeof(cfg->proxy_password));
-    gppi(sesskey, "PortfwdStop", 0, &cfg->portfwd_stop);
     gpps(sesskey, "ProxyTelnetCommand", "connect %host %port\\n",
 	 cfg->proxy_telnet_command, sizeof(cfg->proxy_telnet_command));
     gppmap(sesskey, "Environment", "", cfg->environmt, lenof(cfg->environmt));
