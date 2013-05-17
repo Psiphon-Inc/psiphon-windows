@@ -782,9 +782,8 @@ bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput)
             }
             buffer[bytes_avail] = '\0';
 
-#ifdef _DEBUG
-            OutputDebugStringA(buffer);
-#endif
+            // Note that we are only capturing Plonk output during the connect sequence.
+            my_print(NOT_SENSITIVE, true, _T("%s:%d Plonk output: >>>%S<<<"), __TFUNCTION__, __LINE__, buffer);
 
             bool connected = (strstr(buffer, "PSIPHON:CONNECTED") != NULL);
 
