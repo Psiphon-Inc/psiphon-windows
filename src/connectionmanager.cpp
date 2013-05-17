@@ -385,6 +385,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         {
             GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
 
+            manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
+
             // Get the next server to try
 
             tstring handshakeRequestPath;
@@ -522,6 +524,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         {
             // Failed to connect to the server. Try the next one.
             my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
+
+            manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
+
             manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
