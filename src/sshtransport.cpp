@@ -782,6 +782,10 @@ bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput)
             }
             buffer[bytes_avail] = '\0';
 
+#ifdef _DEBUG
+            OutputDebugStringA(buffer);
+#endif
+
             bool connected = (strstr(buffer, "PSIPHON:CONNECTED") != NULL);
 
             delete[] buffer;

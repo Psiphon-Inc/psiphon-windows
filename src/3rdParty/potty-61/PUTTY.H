@@ -1312,7 +1312,8 @@ void timer_change_notify(long next);
 
 /* PSIPHON ******************************/
 /* Exports from psiphon.c */
-void do_psiphon_setup();
+void do_psiphon_setup(tree234** pp_portfwds);
+const char* get_psiphon_connected_message();
 int psiphon_stdin_gotdata(struct handle *h, void *data, int len);
 /* PSIPHON ******************************/
 

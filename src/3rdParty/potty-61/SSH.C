@@ -2791,7 +2791,7 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
     ssh->pinger = pinger_new(&ssh->cfg, &ssh_backend, ssh);
 
     /* PSIPHON */
-    do_psiphon_setup(&ssh->cfg, &(ssh->portfwds));
+    do_psiphon_setup(&(ssh->portfwds));
 
     sfree(s->vstring);
 
@@ -6374,7 +6374,7 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
 		  ssh->sccomp->text_name);
 
         /* PSIPHON: Indicate connection is ready */
-        logeventf(ssh, "PSIPHON:CONNECTED");
+        logeventf(ssh, get_psiphon_connected_message());
     }
 
 

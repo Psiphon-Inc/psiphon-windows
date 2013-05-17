@@ -21,6 +21,11 @@
 #include "putty.h"
 #include "SSH.H"
 
+
+#define CONNECTED_OUTPUT_MESSAGE    "PSIPHON:CONNECTED"
+#define PORTFWD_STOP_INPUT_MESSAGE  "PSIPHON:PORTFWDSTOP"
+
+
 /* copied from ssh.c */
 struct ssh_portfwd {
     enum { DESTROY, KEEP, CREATE } status;
@@ -59,7 +64,7 @@ int psiphon_stdin_gotdata(struct handle *h, void *data, int len)
     strncpy_s(buf, len+1, (char*)data, len);
     buf[len] = '\0';
 
-    portfwd_stop = (strstr(buf, "PSIPHON:PORTFWDSTOP") != NULL);
+    portfwd_stop = (strstr(buf, PORTFWD_STOP_INPUT_MESSAGE) != NULL);
 
     sfree(buf);
 
@@ -87,7 +92,13 @@ int psiphon_stdin_gotdata(struct handle *h, void *data, int len)
 }
 
 
-void do_psiphon_setup(Config* cfg, tree234** pp_portfwds)
+void do_psiphon_setup(tree234** pp_portfwds)
 {
     g_pp_portfwds = pp_portfwds;
+}
+
+
+const char* get_psiphon_connected_message()
+{
+    return CONNECTED_OUTPUT_MESSAGE;
 }
