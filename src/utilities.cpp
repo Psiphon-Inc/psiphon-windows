@@ -24,6 +24,7 @@
 #include <Shlwapi.h>
 #include <WinSock2.h>
 #include <TlHelp32.h>
+#include <WinCrypt.h>
 #include "utilities.h"
 #include "stopsignal.h"
 #include "cryptlib.h"
@@ -529,6 +530,90 @@ bool TestBoolArray(const vector<const bool*>& boolArray)
 
     return false;
 }
+
+
+// Note that this does not work for hex encoding. Its output is stupid.
+string CryptBinaryToStringWrapper(const unsigned char* input, size_t length, DWORD flags)
+{
+    DWORD outsize = 0;
+
+    // Get the required size
+    if (!CryptBinaryToStringA(
+            input,
+            length,
+            flags | CRYPT_STRING_NOCR,
+            NULL,
+            &outsize))
+    {
+        return "";
+    }
+
+    string output;
+    output.resize(outsize+1);
+
+    if (!CryptBinaryToStringA(
+            input,
+            length,
+            flags | CRYPT_STRING_NOCR,
+            (LPSTR)output.c_str(),
+            &outsize))
+    {
+        return "";
+    }
+
+    ((LPSTR)output.c_str())[outsize] = '\0';
+
+    return output;
+}
+
+string CryptStringToBinaryWrapper(const string& input, DWORD flags)
+{
+    DWORD outsize = 0;
+
+    // Get the required size
+    if (!CryptStringToBinaryA(
+            input.c_str(),
+            input.length(),
+            flags,
+            NULL,
+            &outsize,
+            NULL,
+            NULL))
+    {
+        return "";
+    }
+
+    string output;
+    output.resize(outsize+1);
+
+    if (!CryptStringToBinaryA(
+            input.c_str(),
+            input.length(),
+            flags,
+            (BYTE*)output.c_str(),
+            &outsize,
+            NULL,
+            NULL))
+    {
+        return "";
+    }
+
+    ((LPSTR)output.c_str())[outsize] = '\0';
+
+    return output;
+}
+
+
+string Base64Encode(const unsigned char* input, size_t length)
+{
+    return CryptBinaryToStringWrapper(input, length, CRYPT_STRING_BASE64);
+}
+
+string Base64Decode(const string& input)
+{
+    return CryptStringToBinaryWrapper(input, CRYPT_STRING_BASE64);
+}
+
 
 // Adapted from here:
 // http://stackoverflow.com/questions/3381614/c-convert-string-to-hexadecimal-and-vice-versa

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,4 +21,9 @@
 
 #include <string>
 
-bool verifySignedServerList(const char* signedServerList, string& authenticServerList);
+bool verifySignedDataPackage(
+    const char* signaturePublicKey,
+    const char* signedDataPackage, 
+    const size_t signedDataPackageLen,
+    bool compressed, 
+    string& authenticDataPackage);

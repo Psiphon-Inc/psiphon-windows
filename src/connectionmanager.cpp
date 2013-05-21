@@ -34,7 +34,7 @@
 #include "transport.h"
 #include "transport_registry.h"
 #include "transport_connection.h"
-#include "server_entry_auth.h"
+#include "authenticated_data_package.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
 
@@ -231,7 +231,12 @@ void ConnectionManager::FetchRemoteServerList(void)
     m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
 
     string serverEntryList;
-    if (!verifySignedServerList(response.c_str(), serverEntryList))
+    if (!verifySignedDataPackage(
+            REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
+            response.c_str(), 
+            response.length(), 
+            false, 
+            serverEntryList))
     {
         my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
         return;
@@ -1008,13 +1013,15 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
         // Download new binary
         DWORD start = GetTickCount();
-        if (!ServerRequest::MakeRequest(
-                    ServerRequest::ONLY_IF_TRANSPORT,
-                    manager->m_transport,
-                    sessionInfo,
-                    downloadRequestPath.c_str(),
-                    downloadResponse,
-                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.MakeRequest(
+                NarrowToTString(UPGRADE_ADDRESS).c_str(),
+                443,
+                "",
+                NarrowToTString(UPGRADE_REQUEST_PATH).c_str(),
+                downloadResponse,
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL))
+            || downloadResponse.length() <= 0)
         {
             // If the download failed, we simply do nothing.
             // Rationale:
@@ -1051,8 +1058,26 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 #endif //SPEEDTEST
 
             // Perform upgrade.
-        
-            manager->PaveUpgrade(downloadResponse);
+
+            string upgradeData;
+
+            if (verifySignedDataPackage(
+                    UPGRADE_SIGNATURE_PUBLIC_KEY,
+                    downloadResponse.c_str(), 
+                    downloadResponse.length(),
+                    true, // compressed
+                    upgradeData)
+                && upgradeData.length() > 0)
+            {
+                // Data in the package is Base64 encoded
+                upgradeData = Base64Decode(upgradeData);
+
+                if (upgradeData.length() > 0)
+                {
+                    manager->PaveUpgrade(upgradeData);
+                }
+            }
+            // else: fail, exit
         }
     }
     catch (StopSignal::StopException&)

@@ -230,6 +230,7 @@
     <ClInclude Include="3rdParty\zlib\zconf.h" />
     <ClInclude Include="3rdParty\zlib\zlib.h" />
     <ClInclude Include="3rdParty\zlib\zutil.h" />
+    <ClInclude Include="authenticated_data_package.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="connectionmanager.h" />
     <ClInclude Include="diagnostic_info.h" />
@@ -242,7 +243,6 @@
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="serverlist.h" />
-    <ClInclude Include="server_entry_auth.h" />
     <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="server_request.h" />
     <ClInclude Include="sessioninfo.h" />
@@ -290,6 +290,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="authenticated_data_package.cpp.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="htmldlg.cpp" />
@@ -301,7 +302,6 @@
     </ClCompile>
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="serverlist.cpp" />
-    <ClCompile Include="server_entry_auth.cpp" />
     <ClCompile Include="server_list_reordering.cpp" />
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="sessioninfo.cpp" />

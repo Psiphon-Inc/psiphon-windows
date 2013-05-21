@@ -40,7 +40,7 @@
     </ClCompile>
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="transport_connection.cpp" />
-    <ClCompile Include="server_entry_auth.cpp" />
+    <ClCompile Include="authenticated_data_package.cpp" />
     <ClCompile Include="htmldlg.cpp">
       <Filter>WebCtrl</Filter>
     </ClCompile>
@@ -506,7 +506,7 @@
     <ClInclude Include="3rdParty\cryptopp\zlib.h">
       <Filter>cryptopp</Filter>
     </ClInclude>
-    <ClInclude Include="server_entry_auth.h" />
+    <ClInclude Include="authenticated_data_package.h" />
     <ClInclude Include="htmldlg.h">
       <Filter>WebCtrl</Filter>
     </ClInclude>

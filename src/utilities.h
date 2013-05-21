@@ -68,6 +68,9 @@ string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
 
+string Base64Encode(const unsigned char* input, size_t length);
+string Base64Decode(const string& input);
+
 tstring GetLocaleName();
 
 tstring GetISO8601DatetimeString();
