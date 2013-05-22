@@ -37,6 +37,7 @@ bool verifySignedDataPackage(
     string& authenticDataPackage)
 {
     char* jsonData = NULL;
+    size_t jsonSize = 0;
     bool jsonDataAllocated = false;
 
     // The package may be compressed.
@@ -46,7 +47,7 @@ bool verifySignedDataPackage(
         size_t n = unzipper.Put((const byte*)signedDataPackage, signedDataPackageLen);
         unzipper.MessageEnd();
 
-        size_t jsonSize = (size_t)unzipper.MaxRetrievable();
+        jsonSize = (size_t)unzipper.MaxRetrievable();
 
         // The null terminator is probably in the compressed data, but to be safe...
         jsonData = new char[jsonSize+1];
@@ -59,6 +60,7 @@ bool verifySignedDataPackage(
     else
     {
         jsonData = (char*)signedDataPackage;
+        jsonSize = signedDataPackageLen;
         jsonDataAllocated = false;
     }
 
@@ -67,7 +69,7 @@ bool verifySignedDataPackage(
 
     Json::Value json_entry;
     Json::Reader reader;
-    bool parsingSuccessful = reader.parse(jsonData, json_entry);
+    bool parsingSuccessful = reader.parse(jsonData, jsonData+jsonSize, json_entry);
     if (!parsingSuccessful)
     {
         if (jsonDataAllocated) delete[] jsonData;
@@ -93,6 +95,8 @@ bool verifySignedDataPackage(
         return false;
     }
 
+    if (jsonDataAllocated) delete[] jsonData;
+
     // Match the presented public key digest against the embedded public key
 
     string expectedPublicKeyDigest;
@@ -104,7 +108,6 @@ bool verifySignedDataPackage(
             new CryptoPP::Base64Encoder(new CryptoPP::StringSink(expectedPublicKeyDigest), false)));
     if (0 != expectedPublicKeyDigest.compare(signingPublicKeyDigest))
     {
-        if (jsonDataAllocated) delete[] jsonData;
         my_print(NOT_SENSITIVE, false, _T("%s: public key mismatch.  This build must be too old."), __TFUNCTION__);
         return false;
     }

@@ -1066,8 +1066,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                     downloadResponse.c_str(), 
                     downloadResponse.length(),
                     true, // compressed
-                    upgradeData)
-                && upgradeData.length() > 0)
+                    upgradeData))
             {
                 // Data in the package is Base64 encoded
                 upgradeData = Base64Decode(upgradeData);
@@ -1077,7 +1076,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                     manager->PaveUpgrade(upgradeData);
                 }
             }
-            // else: fail, exit
+            else
+            {
+                // Bad package. Log and continue.
+                my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
+            }
         }
     }
     catch (StopSignal::StopException&)
