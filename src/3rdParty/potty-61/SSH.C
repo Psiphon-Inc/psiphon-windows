@@ -2790,6 +2790,9 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
     ssh->state = SSH_STATE_BEFORE_SIZE;
     ssh->pinger = pinger_new(&ssh->cfg, &ssh_backend, ssh);
 
+    /* PSIPHON */
+    do_psiphon_setup(&(ssh->portfwds));
+
     sfree(s->vstring);
 
     crFinish(0);
@@ -5311,7 +5314,6 @@ static void do_ssh1_connection(Ssh ssh, unsigned char *in, int inlen,
 	    }
 	}
     }
-
     crFinishV;
 }
 
@@ -6367,8 +6369,14 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     logeventf(ssh, "Initialised %.200s server->client MAC algorithm",
 	      ssh->scmac->text_name);
     if (ssh->sccomp->text_name)
-	logeventf(ssh, "Initialised %s decompression",
+    {
+	    logeventf(ssh, "Initialised %s decompression",
 		  ssh->sccomp->text_name);
+
+        /* PSIPHON: Indicate connection is ready */
+        logeventf(ssh, get_psiphon_connected_message());
+    }
+
 
     /*
      * Free shared secret.

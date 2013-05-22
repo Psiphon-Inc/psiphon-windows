@@ -41,6 +41,13 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
 
 void StopProcess(DWORD processID, HANDLE process);
 
+bool CreateSubprocessPipes(
+        HANDLE& o_parentOutputPipe, // Parent reads the child's stdout/stdin from this
+        HANDLE& o_parentInputPipe,  // Parent writes to the child's stdin with this
+        HANDLE& o_childStdinPipe,   // Child's stdin pipe
+        HANDLE& o_childStdoutPipe,  // Child's stdout pipe
+        HANDLE& o_childStderrPipe);  // Child's stderr pipe (dup of stdout)
+
 enum RegistryFailureReason
 {
     REGISTRY_FAILURE_NO_REASON = 0,
