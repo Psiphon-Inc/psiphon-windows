@@ -429,9 +429,10 @@ bool SSHTransportBase::GetSSHParams(
          << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
          << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
          << _T(" -D ") << localSocksProxyPort;
-#ifdef _DEBUG
+
+    // Now using this flag for debug and release. We use the verbose Plonk 
+    // output to determine when it has successfully connected.
     args << _T(" -v");
-#endif
 
     tstring proxy_type, proxy_host, proxy_username, proxy_password;
     int proxy_port;
