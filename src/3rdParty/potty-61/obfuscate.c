@@ -383,6 +383,7 @@ extern int oblen;
 void * 
 obfuscate_send_seed(void)
 {
+    const char* prefix;
 	struct seed_msg *seed; 
 	int i;
 	
@@ -404,7 +405,7 @@ obfuscate_send_seed(void)
     */
     // Temporary test.
     // TODO: Add longer seed to accommodate both randomness and prefix; add well-formed prefix; randomize prefix
-    const char* prefix = "GET / HTTP/1.0\r\n";
+    prefix = "GET / HTTP/1.0\r\n";
     memcpy(seed, prefix, OBFUSCATE_SEED_LENGTH);
 
 	seed->magic = htonl(OBFUSCATE_MAGIC_VALUE);   // WTF?
