@@ -383,6 +383,7 @@ extern int oblen;
 void * 
 obfuscate_send_seed(void)
 {
+    const char* prefix;
 	struct seed_msg *seed; 
 	int i;
 	
@@ -394,12 +395,19 @@ obfuscate_send_seed(void)
 	message_length = padding_length + sizeof(struct seed_msg);
 	seed = malloc((size_t)message_length); // ssh.c frees mem
 
+    /*
 	for(i = 0; i < OBFUSCATE_SEED_LENGTH; i++) {
 		if(i % 4 == 0)
 			rnd = arc4random();
 		seed->seed_buffer[i] = rnd & 0xff;
 		rnd >>= 8;
 	}
+    */
+    // Temporary test.
+    // TODO: Add longer seed to accommodate both randomness and prefix; add well-formed prefix; randomize prefix
+    prefix = "GET / HTTP/1.0\r\n";
+    memcpy(seed, prefix, OBFUSCATE_SEED_LENGTH);
+
 	seed->magic = htonl(OBFUSCATE_MAGIC_VALUE);   // WTF?
 	seed->padding_length = htonl(padding_length); // ditto
 	for(i = 0; i < (int)padding_length; i++) {
