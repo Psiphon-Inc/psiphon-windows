@@ -757,6 +757,8 @@ bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput)
 {
     DWORD startTick = GetTickCount();
 
+    SetLastError(ERROR_SUCCESS);
+
     // Keep checking for the expected success output until we get it, or until
     // the timeout expires.
     while (GetTickCountDiff(startTick, GetTickCount()) < timeout)
