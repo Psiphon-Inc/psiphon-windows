@@ -234,7 +234,8 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     polipoCommandLine << m_polipoPath
                       << _T(" psiphonStats=true")
                       << _T(" proxyPort=") << localHttpProxyPort
-                      << _T(" diskCacheRoot=\"\"")
+                      // Polipo is now built with -DNO_DISK_CACHE
+                      // << _T(" diskCacheRoot=\"\"")
                       << _T(" disableLocalInterface=true")
                       << _T(" logLevel=1");
 

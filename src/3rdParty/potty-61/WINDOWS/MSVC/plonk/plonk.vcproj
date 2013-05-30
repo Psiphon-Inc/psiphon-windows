@@ -74,11 +74,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib imm32.lib winmm.lib bufferoverflowU.lib ws2_32.lib ssleay32.lib libeay32.lib"
+				AdditionalDependencies="comctl32.lib imm32.lib winmm.lib bufferoverflowU.lib ws2_32.lib ssleay32MT.lib libeay32MT.lib"
 				OutputFile=".\Release/plonk.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(OPENSSL_DIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(OPENSSL_DIR)\lib\VC\static&quot;"
 				ProgramDatabaseFile=".\Release/plink.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
@@ -169,11 +169,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib imm32.lib winmm.lib bufferoverflowU.lib ws2_32.lib ssleay32.lib libeay32.lib"
+				AdditionalDependencies="comctl32.lib imm32.lib winmm.lib bufferoverflowU.lib ws2_32.lib ssleay32MT.lib libeay32MT.lib"
 				OutputFile=".\Debug/plink.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;;&quot;$(OPENSSL_DIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;;&quot;$(OPENSSL_DIR)\lib\VC\static&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/plink.pdb"
 				SubSystem="1"
