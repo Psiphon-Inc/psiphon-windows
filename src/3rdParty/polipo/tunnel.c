@@ -242,7 +242,7 @@ tunnelSplitTunnelingDnsHandler(int status, GethostbynameRequestPtr request)
         if(request->count > 10)
             tunnelError(tunnel, 504, internAtom("CNAME loop"));
         do_gethostbyname_socks(request->addr->string + 1, request->count + 1,
-                         tunnelDnsHandler, tunnel);
+                         tunnelSplitTunnelingDnsHandler, tunnel);
         return 1;
     }
 
