@@ -871,6 +871,7 @@ struct ssh_tag {
 
     int ssh1_rdpkt_crstate;
     int ssh2_rdpkt_crstate;
+    int do_ssh_obfuscation_prefix_crstate;
     int do_ssh_init_crstate;
     int ssh_gotdata_crstate;
     int do_ssh1_login_crstate;
@@ -2653,6 +2654,28 @@ static void ssh_send_verstring(Ssh ssh, char *svers)
     sfree(verstring);
 }
 
+static int do_ssh_obfuscation_prefix(Ssh ssh, unsigned char c)
+{
+    crBegin(ssh->do_ssh_obfuscation_prefix_crstate);
+
+    // PSIPHON HTTP-PREFIX
+    // Skip all bytes up to and including the prefix terminator, <CR><LF><CR><LF>
+
+    for (;;) {
+    while (c != '\r')
+        crReturn(1);
+    crReturn(1);
+    if (c != '\n') continue;
+    crReturn(1);
+    if (c != '\r') continue;
+    crReturn(1);
+    if (c != '\n') continue;
+    break;
+    }
+
+    crFinish(0);
+}
+
 static int do_ssh_init(Ssh ssh, unsigned char c)
 {
     struct do_ssh_init_state {
@@ -2845,18 +2868,36 @@ static void ssh_set_frozen(Ssh ssh, int frozen)
 }
 
 static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
-{   
-    // brl+hinky
-	// the one and only call to de-obfuscate the handshake
-    if(ssh->obfuscate) obfuscate_input(data, datalen);
-    // end b+h 
-
+{
     /* Log raw data, if we're in that mode. */
+    // PSIPHON: HTTP-PREFIX Note -- no longer de-obfuscating before raw logging
     if (ssh->logctx)
 	log_packet(ssh->logctx, PKT_INCOMING, -1, NULL, data, datalen,
 		   0, NULL, NULL);
 
     crBegin(ssh->ssh_gotdata_crstate);
+
+    // PSIPHON: HTTP-PREFIX
+
+    while (1) {
+    int ret;               /* need not be kept across crReturn */
+    if (datalen == 0)
+        crReturnV;             /* more data please */
+    ret = do_ssh_obfuscation_prefix(ssh, *data);
+    data++;
+    datalen--;
+    if (ret == 0) {        
+        break;
+    }
+    }
+
+    // Note: obfuscation starts with first character after prefix terminator,
+    // which could be mid-buffer.
+
+    // brl+hinky
+    // the one and only call to de-obfuscate the handshake
+    if(ssh->obfuscate) obfuscate_input(data, datalen);
+    // end b+h 
 
     /*
      * To begin with, feed the characters one by one to the
@@ -9405,6 +9446,7 @@ static const char *ssh_init(void *frontend_handle, void **backend_handle,
     ssh->v2_outgoing_sequence = 0;
     ssh->ssh1_rdpkt_crstate = 0;
     ssh->ssh2_rdpkt_crstate = 0;
+    ssh->do_ssh_obfuscation_prefix_crstate = 0;
     ssh->do_ssh_init_crstate = 0;
     ssh->ssh_gotdata_crstate = 0;
     ssh->do_ssh1_connection_crstate = 0;
