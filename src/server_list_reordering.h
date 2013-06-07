@@ -30,7 +30,8 @@ public:
     virtual ~ServerListReorder();
 
     void Start(ServerList* serverList);
-    void Stop();
+    void Stop(DWORD stopReason);
+    bool IsRunning();
 
 private:
     static DWORD WINAPI ReorderServerListThread(void* data);

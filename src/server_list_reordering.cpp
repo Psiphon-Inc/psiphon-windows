@@ -43,7 +43,7 @@ ServerListReorder::~ServerListReorder()
 {
     // Ensure thread is not running.
 
-    Stop();
+    Stop(STOP_REASON_EXIT);
 }
 
 
@@ -51,7 +51,12 @@ void ServerListReorder::Start(ServerList* serverList)
 {
     m_serverList = serverList;
 
-    Stop();
+    if (m_stopSignal.CheckSignal(STOP_REASON_EXIT))
+    {
+        return;
+    }
+
+    Stop(STOP_REASON_CANCEL);
 
     if (!(m_thread = CreateThread(0, 0, ReorderServerListThread, this, 0, 0)))
     {
@@ -61,10 +66,10 @@ void ServerListReorder::Start(ServerList* serverList)
 }
 
 
-void ServerListReorder::Stop()
+void ServerListReorder::Stop(DWORD stopReason)
 {
     // This signal causes the thread to terminate
-    m_stopSignal.SignalStop(STOP_REASON_EXIT);
+    m_stopSignal.SignalStop(stopReason);
 
     if (m_thread != NULL)
     {
@@ -75,7 +80,13 @@ void ServerListReorder::Stop()
         m_thread = NULL;
     }
 
-    m_stopSignal.ClearStopSignal(STOP_REASON_EXIT);
+    m_stopSignal.ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
+}
+
+
+bool ServerListReorder::IsRunning()
+{
+    return (m_thread != NULL);
 }
 
 
@@ -89,6 +100,7 @@ DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
 
     ReorderServerList(*(object->m_serverList), StopInfo(&object->m_stopSignal, STOP_REASON_ALL));
 
+    object->m_thread = NULL;
     return 0;
 }
 
@@ -240,7 +252,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
             break;
         }
     }
-    stopInfo.stopSignal->SignalStop(stopInfo.stopReasons);
+    stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
 
     for (vector<HANDLE>::iterator handle = threadHandles.begin(); handle != threadHandles.end(); ++handle)
     {
