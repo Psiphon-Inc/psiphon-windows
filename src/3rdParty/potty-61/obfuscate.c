@@ -386,7 +386,7 @@ obfuscate_send_seed(void)
 	// PSIPHON: HTTP-PREFIX
 	const char* prefix = "POST / HTTP/1.1\r\n\r\n";
 	u_int32_t prefix_length = strlen(prefix);
-	void* buffer;
+	char* buffer;
 
 	struct seed_msg *seed; 
 	int i;
@@ -398,9 +398,9 @@ obfuscate_send_seed(void)
 	padding_length = arc4random() % OBFUSCATE_MAX_PADDING;
 	message_length = padding_length + sizeof(struct seed_msg);
 
-	buffer = malloc(prefix_length + (size_t)message_length); // ssh.c frees mem
+	buffer = (char*)malloc(prefix_length + (size_t)message_length); // ssh.c frees mem
 	memcpy(buffer, prefix, prefix_length);
-	seed = buffer + prefix_length;
+	seed = (struct seed_msg*)(buffer + prefix_length);
 
 	for(i = 0; i < OBFUSCATE_SEED_LENGTH; i++) {
 		if(i % 4 == 0)
