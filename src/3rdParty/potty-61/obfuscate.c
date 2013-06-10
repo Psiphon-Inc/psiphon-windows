@@ -425,7 +425,7 @@ obfuscate_send_seed(void)
 
 	oblen = prefix_length + message_length;
 
-	return (void *)seed;
+	return (void *)buffer;
  }
 
 void
