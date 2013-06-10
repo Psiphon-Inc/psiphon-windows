@@ -2919,6 +2919,9 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
      */
 
     while (1) {
+    // brl+hinky
+    if(ssh->obfuscate) obfuscate_input(data, datalen);
+    // end b+h 
 	while (bufchain_size(&ssh->queued_incoming_data) > 0 || datalen > 0) {
 	    if (ssh->frozen) {
 		ssh_queue_incoming_data(ssh, &data, &datalen);
