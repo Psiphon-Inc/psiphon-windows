@@ -36,6 +36,7 @@ public:
 private:
     static DWORD WINAPI ReorderServerListThread(void* data);
 
+    HANDLE m_mutex;
     HANDLE m_thread;
     ServerList* m_serverList;
 

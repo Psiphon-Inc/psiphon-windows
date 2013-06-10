@@ -36,6 +36,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo);
 ServerListReorder::ServerListReorder()
     : m_thread(NULL), m_serverList(0)
 {
+    m_mutex = CreateMutex(NULL, FALSE, 0);
 }
 
 
@@ -44,11 +45,14 @@ ServerListReorder::~ServerListReorder()
     // Ensure thread is not running.
 
     Stop(STOP_REASON_EXIT);
+    CloseHandle(m_mutex);
 }
 
 
 void ServerListReorder::Start(ServerList* serverList)
 {
+    AutoMUTEX lock(m_mutex);
+
     m_serverList = serverList;
 
     if (m_stopSignal.CheckSignal(STOP_REASON_EXIT))
@@ -68,6 +72,8 @@ void ServerListReorder::Start(ServerList* serverList)
 
 void ServerListReorder::Stop(DWORD stopReason)
 {
+    AutoMUTEX lock(m_mutex);
+
     // This signal causes the thread to terminate
     m_stopSignal.SignalStop(stopReason);
 
@@ -86,12 +92,17 @@ void ServerListReorder::Stop(DWORD stopReason)
 
 bool ServerListReorder::IsRunning()
 {
+    AutoMUTEX lock(m_mutex);
+
     return (m_thread != NULL);
 }
 
 
 DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
 {
+    // No mutex here.  This is the main thread of execution that can be cancelled
+    // by Stop().
+
     ServerListReorder* object = (ServerListReorder*)data;
 
     // Seed built-in non-crypto PRNG used for shuffling (load balancing)
