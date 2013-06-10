@@ -2891,14 +2891,6 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
     }
     }
 
-    // Note: obfuscation starts with first character after prefix terminator,
-    // which could be mid-buffer.
-
-    // brl+hinky
-    // the one and only call to de-obfuscate the handshake
-    if(ssh->obfuscate) obfuscate_input(data, datalen);
-    // end b+h 
-
     /*
      * To begin with, feed the characters one by one to the
      * protocol initialisation / selection function do_ssh_init().
@@ -2909,6 +2901,9 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
 	int ret;		       /* need not be kept across crReturn */
 	if (datalen == 0)
 	    crReturnV;		       /* more data please */
+    // brl+hinky
+    if(ssh->obfuscate) obfuscate_input(data, 1);
+    // end b+h 
 	ret = do_ssh_init(ssh, *data);
 	data++;
 	datalen--;
