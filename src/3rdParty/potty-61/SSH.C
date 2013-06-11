@@ -2879,16 +2879,18 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
 
     // PSIPHON: HTTP-PREFIX
 
-    while (1) {
-    int ret;               /* need not be kept across crReturn */
-    if (datalen == 0)
-        crReturnV;             /* more data please */
-    ret = do_ssh_obfuscation_prefix(ssh, *data);
-    data++;
-    datalen--;
-    if (ret == 0) {        
-        break;
-    }
+    if (ssh->obfuscate) {
+        while (1) {
+        int ret;               /* need not be kept across crReturn */
+        if (datalen == 0)
+            crReturnV;             /* more data please */
+        ret = do_ssh_obfuscation_prefix(ssh, *data);
+        data++;
+        datalen--;
+        if (ret == 0) {        
+            break;
+        }
+        }
     }
 
     /*
