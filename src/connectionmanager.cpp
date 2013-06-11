@@ -37,10 +37,12 @@
 #include "authenticated_data_package.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
+#include "server_list_reordering.h"
 
 
 // Upgrade process posts a Quit message
 extern HWND g_hWnd;
+extern ServerListReorder g_serverListReorder;
 
 
 ConnectionManager::ConnectionManager(void) :
@@ -545,6 +547,11 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->FetchRemoteServerList();
 
+            if (!g_serverListReorder.IsRunning())
+            {
+                g_serverListReorder.Start(&(manager->GetServerList()));
+            }
+
             // Wait between 1 and 2 seconds before retrying. This is a quick
             // fix to deal with the following problem: when a client can
             // make an HTTPS connection but not a VPN connection, it ends
@@ -558,7 +565,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // in for now as clients blocked on both protocols would otherwise
             // still spam handshakes. The delay is *after* SSH fail over so as
             // not to delay that attempt (on the same server).
-            Sleep(1000 + rand()%1000);    
+            Sleep(1000 + rand()%1000);
         }
     }
 

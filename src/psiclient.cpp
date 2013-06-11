@@ -1121,7 +1121,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Stop VPN if running
         // The order of these calls is important. The serverListReorder
         // requires connectionManager to stay up while it shuts down.
-        g_serverListReorder.Stop();
+        g_serverListReorder.Stop(STOP_REASON_EXIT);
         g_connectionManager.Stop(STOP_REASON_EXIT);
         PostQuitMessage(0);
         break;
