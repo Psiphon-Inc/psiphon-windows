@@ -72,7 +72,7 @@ private:
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };
 
-    void DoPostConnect(const SessionInfo& sessionInfo);
+    void DoPostConnect(const SessionInfo& sessionInfo, bool openHomePages);
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);

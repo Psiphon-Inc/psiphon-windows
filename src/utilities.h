@@ -41,6 +41,13 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
 
 void StopProcess(DWORD processID, HANDLE process);
 
+bool CreateSubprocessPipes(
+        HANDLE& o_parentOutputPipe, // Parent reads the child's stdout/stdin from this
+        HANDLE& o_parentInputPipe,  // Parent writes to the child's stdin with this
+        HANDLE& o_childStdinPipe,   // Child's stdin pipe
+        HANDLE& o_childStdoutPipe,  // Child's stdout pipe
+        HANDLE& o_childStderrPipe);  // Child's stderr pipe (dup of stdout)
+
 enum RegistryFailureReason
 {
     REGISTRY_FAILURE_NO_REASON = 0,
@@ -68,11 +75,16 @@ string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
 
+string Base64Encode(const unsigned char* input, size_t length);
+string Base64Decode(const string& input);
+
 tstring GetLocaleName();
 
 tstring GetISO8601DatetimeString();
 
 bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
+
+DWORD GetTickCountDiff(DWORD start, DWORD end);
 
 /*
 String Utilities

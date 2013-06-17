@@ -36,6 +36,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo);
 ServerListReorder::ServerListReorder()
     : m_thread(NULL), m_serverList(0)
 {
+    m_mutex = CreateMutex(NULL, FALSE, 0);
 }
 
 
@@ -43,15 +44,23 @@ ServerListReorder::~ServerListReorder()
 {
     // Ensure thread is not running.
 
-    Stop();
+    Stop(STOP_REASON_EXIT);
+    CloseHandle(m_mutex);
 }
 
 
 void ServerListReorder::Start(ServerList* serverList)
 {
+    AutoMUTEX lock(m_mutex);
+
     m_serverList = serverList;
 
-    Stop();
+    if (m_stopSignal.CheckSignal(STOP_REASON_EXIT))
+    {
+        return;
+    }
+
+    Stop(STOP_REASON_CANCEL);
 
     if (!(m_thread = CreateThread(0, 0, ReorderServerListThread, this, 0, 0)))
     {
@@ -61,10 +70,12 @@ void ServerListReorder::Start(ServerList* serverList)
 }
 
 
-void ServerListReorder::Stop()
+void ServerListReorder::Stop(DWORD stopReason)
 {
+    AutoMUTEX lock(m_mutex);
+
     // This signal causes the thread to terminate
-    m_stopSignal.SignalStop(STOP_REASON_EXIT);
+    m_stopSignal.SignalStop(stopReason);
 
     if (m_thread != NULL)
     {
@@ -75,12 +86,23 @@ void ServerListReorder::Stop()
         m_thread = NULL;
     }
 
-    m_stopSignal.ClearStopSignal(STOP_REASON_EXIT);
+    m_stopSignal.ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
+}
+
+
+bool ServerListReorder::IsRunning()
+{
+    AutoMUTEX lock(m_mutex);
+
+    return (m_thread != NULL);
 }
 
 
 DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
 {
+    // No mutex here.  This is the main thread of execution that can be cancelled
+    // by Stop().
+
     ServerListReorder* object = (ServerListReorder*)data;
 
     // Seed built-in non-crypto PRNG used for shuffling (load balancing)
@@ -89,6 +111,7 @@ DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
 
     ReorderServerList(*(object->m_serverList), StopInfo(&object->m_stopSignal, STOP_REASON_ALL));
 
+    object->m_thread = NULL;
     return 0;
 }
 
@@ -240,7 +263,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
             break;
         }
     }
-    stopInfo.stopSignal->SignalStop(stopInfo.stopReasons);
+    stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
 
     for (vector<HANDLE>::iterator handle = threadHandles.begin(); handle != threadHandles.end(); ++handle)
     {

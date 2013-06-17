@@ -60,6 +60,10 @@ public:
     string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
     int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
     string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
+    
+    // A value of zero means disabled.
+    DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
+    
     ServerEntry GetServerEntry() const;
 
     bool ParseHandshakeResponse(const string& response);
@@ -85,4 +89,5 @@ private:
     string m_speedTestServerAddress;
     int m_speedTestServerPort;
     string m_speedTestRequestPath;
+    DWORD m_preemptiveReconnectLifetimeMilliseconds;
 };

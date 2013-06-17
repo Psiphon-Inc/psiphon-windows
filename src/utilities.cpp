@@ -24,6 +24,7 @@
 #include <Shlwapi.h>
 #include <WinSock2.h>
 #include <TlHelp32.h>
+#include <WinCrypt.h>
 #include "utilities.h"
 #include "stopsignal.h"
 #include "cryptlib.h"
@@ -279,6 +280,172 @@ void StopProcess(DWORD processID, HANDLE process)
 }
 
 
+// Create the pipe that will be used to communicate between the child process
+// process and this process. 
+// Note that this function effectively causes the subprocess's stdout and stderr
+// to come to the same pipe.
+// Returns true on success.
+bool CreateSubprocessPipes(
+        HANDLE& o_parentOutputPipe, // Parent reads the child's stdout/stdin from this
+        HANDLE& o_parentInputPipe,  // Parent writes to the child's stdin with this
+        HANDLE& o_childStdinPipe,   // Child's stdin pipe
+        HANDLE& o_childStdoutPipe,  // Child's stdout pipe
+        HANDLE& o_childStderrPipe)  // Child's stderr pipe (dup of stdout)
+{
+    o_parentOutputPipe = INVALID_HANDLE_VALUE;
+    o_parentInputPipe = INVALID_HANDLE_VALUE;
+    o_childStdinPipe = INVALID_HANDLE_VALUE;
+    o_childStdoutPipe = INVALID_HANDLE_VALUE;
+    o_childStderrPipe = INVALID_HANDLE_VALUE;
+
+    // Most of this code is adapted from:
+    // http://support.microsoft.com/kb/190351
+
+    // Set up the security attributes struct.
+    SECURITY_ATTRIBUTES sa;
+    sa.nLength= sizeof(SECURITY_ATTRIBUTES);
+    sa.lpSecurityDescriptor = NULL;
+    sa.bInheritHandle = TRUE;
+
+    HANDLE 
+        hParentOutputReadTmp = INVALID_HANDLE_VALUE, 
+        hParentOutputRead = INVALID_HANDLE_VALUE, 
+        hChildStdoutWrite = INVALID_HANDLE_VALUE, 
+        hChildStderrWrite = INVALID_HANDLE_VALUE, 
+        hChildStdinRead = INVALID_HANDLE_VALUE, 
+        hParentInputWriteTmp = INVALID_HANDLE_VALUE, 
+        hParentInputWrite = INVALID_HANDLE_VALUE;
+
+    // Create the child output pipe.
+    if (!CreatePipe(&hParentOutputReadTmp, &hChildStdoutWrite, &sa, 0))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    // Create a duplicate of the output write handle for the std error
+    // write handle. This is necessary in case the child application
+    // closes one of its std output handles.
+    if (!DuplicateHandle(
+            GetCurrentProcess(), hChildStdoutWrite, 
+            GetCurrentProcess(), &hChildStderrWrite,
+            0, TRUE, DUPLICATE_SAME_ACCESS))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    // Create new output read handle and the input write handles. Set
+    // the Properties to FALSE. Otherwise, the child inherits the
+    // properties and, as a result, non-closeable handles to the pipes
+    // are created.
+    if (!DuplicateHandle(GetCurrentProcess(), hParentOutputReadTmp,
+                         GetCurrentProcess(),
+                         &hParentOutputRead, // Address of new handle.
+                         0, 
+                         FALSE, // Make it uninheritable.
+                         DUPLICATE_SAME_ACCESS))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    // Close inheritable copies of the handles you do not want to be
+    // inherited.
+    if (!CloseHandle(hParentOutputReadTmp))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+    hParentOutputReadTmp = INVALID_HANDLE_VALUE;
+
+    // Create the pipe the parent can use to write to the child's stdin
+    if (!CreatePipe(&hChildStdinRead, &hParentInputWriteTmp, &sa, 0))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    // Duplicate the parent's end of the pipe, so the child can't inherit it.
+    if (!DuplicateHandle(GetCurrentProcess(), hParentInputWriteTmp,
+                         GetCurrentProcess(),
+                         &hParentInputWrite, // Address of new handle.
+                         0, 
+                         FALSE, // Make it uninheritable.
+                         DUPLICATE_SAME_ACCESS))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    // Close inheritable copies of the handles you do not want to be
+    // inherited.
+    if (!CloseHandle(hParentInputWriteTmp))
+    {
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+    hParentInputWriteTmp = INVALID_HANDLE_VALUE;
+
+    o_parentOutputPipe = hParentOutputRead;
+    o_parentInputPipe = hParentInputWrite;
+    o_childStdoutPipe = hChildStdoutWrite;
+    o_childStderrPipe = hChildStderrWrite;
+    o_childStdinPipe = hChildStdinRead;
+
+    return true;
+}
+
+
 bool WriteRegistryDwordValue(const string& name, DWORD value)
 {
     HKEY key = 0;
@@ -529,6 +696,90 @@ bool TestBoolArray(const vector<const bool*>& boolArray)
 
     return false;
 }
+
+
+// Note that this does not work for hex encoding. Its output is stupid.
+string CryptBinaryToStringWrapper(const unsigned char* input, size_t length, DWORD flags)
+{
+    DWORD outsize = 0;
+
+    // Get the required size
+    if (!CryptBinaryToStringA(
+            input,
+            length,
+            flags | CRYPT_STRING_NOCR,
+            NULL,
+            &outsize))
+    {
+        return "";
+    }
+
+    string output;
+    output.resize(outsize+1);
+
+    if (!CryptBinaryToStringA(
+            input,
+            length,
+            flags | CRYPT_STRING_NOCR,
+            (LPSTR)output.c_str(),
+            &outsize))
+    {
+        return "";
+    }
+
+    ((LPSTR)output.c_str())[outsize] = '\0';
+
+    return output;
+}
+
+string CryptStringToBinaryWrapper(const string& input, DWORD flags)
+{
+    DWORD outsize = 0;
+
+    // Get the required size
+    if (!CryptStringToBinaryA(
+            input.c_str(),
+            input.length(),
+            flags,
+            NULL,
+            &outsize,
+            NULL,
+            NULL))
+    {
+        return "";
+    }
+
+    string output;
+    output.resize(outsize+1);
+
+    if (!CryptStringToBinaryA(
+            input.c_str(),
+            input.length(),
+            flags,
+            (BYTE*)output.c_str(),
+            &outsize,
+            NULL,
+            NULL))
+    {
+        return "";
+    }
+
+    ((LPSTR)output.c_str())[outsize] = '\0';
+
+    return output;
+}
+
+
+string Base64Encode(const unsigned char* input, size_t length)
+{
+    return CryptBinaryToStringWrapper(input, length, CRYPT_STRING_BASE64);
+}
+
+string Base64Decode(const string& input)
+{
+    return CryptStringToBinaryWrapper(input, CRYPT_STRING_BASE64);
+}
+
 
 // Adapted from here:
 // http://stackoverflow.com/questions/3381614/c-convert-string-to-hexadecimal-and-vice-versa
@@ -791,4 +1042,21 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
     o_encrypted = ss.str();
 
     return true;
+}
+
+
+DWORD GetTickCountDiff(DWORD start, DWORD end)
+{
+    if (start == 0)
+    {
+        return 0;
+    }
+
+    // Has tick count wrapped around?
+    if (end < start)
+    {
+        return (MAXDWORD - start) + end;
+    }
+
+    return end - start;
 }

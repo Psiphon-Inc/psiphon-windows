@@ -871,6 +871,7 @@ struct ssh_tag {
 
     int ssh1_rdpkt_crstate;
     int ssh2_rdpkt_crstate;
+    int do_ssh_obfuscation_prefix_crstate;
     int do_ssh_init_crstate;
     int ssh_gotdata_crstate;
     int do_ssh1_login_crstate;
@@ -2653,6 +2654,28 @@ static void ssh_send_verstring(Ssh ssh, char *svers)
     sfree(verstring);
 }
 
+static int do_ssh_obfuscation_prefix(Ssh ssh, unsigned char c)
+{
+    crBegin(ssh->do_ssh_obfuscation_prefix_crstate);
+
+    // PSIPHON HTTP-PREFIX
+    // Skip all bytes up to and including the prefix terminator, <CR><LF><CR><LF>
+
+    for (;;) {
+    while (c != '\r')
+        crReturn(1);
+    crReturn(1);
+    if (c != '\n') continue;
+    crReturn(1);
+    if (c != '\r') continue;
+    crReturn(1);
+    if (c != '\n') continue;
+    break;
+    }
+
+    crFinish(0);
+}
+
 static int do_ssh_init(Ssh ssh, unsigned char c)
 {
     struct do_ssh_init_state {
@@ -2790,6 +2813,9 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
     ssh->state = SSH_STATE_BEFORE_SIZE;
     ssh->pinger = pinger_new(&ssh->cfg, &ssh_backend, ssh);
 
+    /* PSIPHON */
+    do_psiphon_setup(&(ssh->portfwds));
+
     sfree(s->vstring);
 
     crFinish(0);
@@ -2842,18 +2868,30 @@ static void ssh_set_frozen(Ssh ssh, int frozen)
 }
 
 static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
-{   
-    // brl+hinky
-	// the one and only call to de-obfuscate the handshake
-    if(ssh->obfuscate) obfuscate_input(data, datalen);
-    // end b+h 
-
+{
     /* Log raw data, if we're in that mode. */
+    // PSIPHON: HTTP-PREFIX Note -- no longer de-obfuscating before raw logging
     if (ssh->logctx)
 	log_packet(ssh->logctx, PKT_INCOMING, -1, NULL, data, datalen,
 		   0, NULL, NULL);
 
     crBegin(ssh->ssh_gotdata_crstate);
+
+    // PSIPHON: HTTP-PREFIX
+
+    if (ssh->obfuscate) {
+        while (1) {
+        int ret;               /* need not be kept across crReturn */
+        if (datalen == 0)
+            crReturnV;             /* more data please */
+        ret = do_ssh_obfuscation_prefix(ssh, *data);
+        data++;
+        datalen--;
+        if (ret == 0) {        
+            break;
+        }
+        }
+    }
 
     /*
      * To begin with, feed the characters one by one to the
@@ -2865,6 +2903,9 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
 	int ret;		       /* need not be kept across crReturn */
 	if (datalen == 0)
 	    crReturnV;		       /* more data please */
+    // brl+hinky
+    if(ssh->obfuscate) obfuscate_input(data, 1);
+    // end b+h 
 	ret = do_ssh_init(ssh, *data);
 	data++;
 	datalen--;
@@ -2880,6 +2921,9 @@ static void ssh_gotdata(Ssh ssh, unsigned char *data, int datalen)
      */
 
     while (1) {
+    // brl+hinky
+    if(ssh->obfuscate) obfuscate_input(data, datalen);
+    // end b+h 
 	while (bufchain_size(&ssh->queued_incoming_data) > 0 || datalen > 0) {
 	    if (ssh->frozen) {
 		ssh_queue_incoming_data(ssh, &data, &datalen);
@@ -5311,7 +5355,6 @@ static void do_ssh1_connection(Ssh ssh, unsigned char *in, int inlen,
 	    }
 	}
     }
-
     crFinishV;
 }
 
@@ -6367,8 +6410,14 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     logeventf(ssh, "Initialised %.200s server->client MAC algorithm",
 	      ssh->scmac->text_name);
     if (ssh->sccomp->text_name)
-	logeventf(ssh, "Initialised %s decompression",
+    {
+	    logeventf(ssh, "Initialised %s decompression",
 		  ssh->sccomp->text_name);
+
+        /* PSIPHON: Indicate connection is ready */
+        logeventf(ssh, get_psiphon_connected_message());
+    }
+
 
     /*
      * Free shared secret.
@@ -9397,6 +9446,7 @@ static const char *ssh_init(void *frontend_handle, void **backend_handle,
     ssh->v2_outgoing_sequence = 0;
     ssh->ssh1_rdpkt_crstate = 0;
     ssh->ssh2_rdpkt_crstate = 0;
+    ssh->do_ssh_obfuscation_prefix_crstate = 0;
     ssh->do_ssh_init_crstate = 0;
     ssh->ssh_gotdata_crstate = 0;
     ssh->do_ssh1_connection_crstate = 0;
