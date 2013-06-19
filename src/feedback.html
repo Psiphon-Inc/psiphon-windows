@@ -142,7 +142,7 @@ var PLATFORM_WINDOWS = 'windows', PLATFORM_ANDROID = 'android';
 var diagnosticInfoID = '', platform = '', currentLangName;
 
 
-//sets page content and highlights coerresponding language button
+//sets page content and highlights corresponding language button
 function setLanguage(langName, args)
 {
   //get complete language code from the selector
@@ -300,6 +300,13 @@ $(function() {
   var args = null;
   if (window.dialogArguments) {
     args = JSON.parse(window.dialogArguments);
+  }
+  else if (location.search) {
+    // On Android, the args are passed as JSON in the "search" (i.e., ?blah)
+    // part of the URL.
+    // Note that Android's URL encoding replaces spaces with "+", whereas
+    // decodeURIComponent expects "%20".
+    args = JSON.parse(decodeURIComponent(location.search.slice(1).replace(/\+/g, '%20')));
   }
 
   //set language from hash parameter on page load
