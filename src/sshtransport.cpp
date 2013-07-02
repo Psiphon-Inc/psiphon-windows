@@ -66,7 +66,7 @@ public:
         LPCTSTR plonkPath, 
         LPCTSTR plonkCommandLine,
         int serverPort,
-        StopInfo stopInfo);
+        const StopInfo& stopInfo);
 
     void StopPortFoward();
 
@@ -74,7 +74,10 @@ protected:
     DWORD GetFreshLimit() const;
     DWORD GetRetiredLimit() const;
 
-    bool WaitForConnected(DWORD timeout, HANDLE plonkOutput);
+    bool WaitForConnected(
+        DWORD timeout, 
+        HANDLE plonkOutput, 
+        const StopInfo& stopInfo);
 
 private:
     PROCESS_INFORMATION m_processInfo;
@@ -619,7 +622,7 @@ bool PlonkConnection::Connect(
         LPCTSTR plonkPath, 
         LPCTSTR plonkCommandLine,
         int serverPort,
-        StopInfo stopInfo)
+        const StopInfo& stopInfo)
 {
     // Ensure we start from a disconnected/clean state
     Kill();
@@ -732,11 +735,17 @@ bool PlonkConnection::Connect(
     }
 
     // Wait for Plonk to connect.
-    if (!WaitForConnected(SSH_CONNECTION_TIMEOUT_SECONDS*1000, plonkOutput))
+    if (!WaitForConnected(SSH_CONNECTION_TIMEOUT_SECONDS*1000, plonkOutput, stopInfo))
     {
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
-        my_print(NOT_SENSITIVE, false, _T("Failed to connect (%d)"), GetLastError());
+
+        // Only log if there's no stop signal
+        if (!stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+        {
+            my_print(NOT_SENSITIVE, false, _T("Failed to connect (%d)"), GetLastError());
+        }
+
         return false;
     }
 
@@ -753,7 +762,7 @@ bool PlonkConnection::Connect(
     return true;
 }
 
-bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput)
+bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput, const StopInfo& stopInfo)
 {
     SetLastError(ERROR_SUCCESS);
 
@@ -763,6 +772,12 @@ bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput)
     // the timeout expires.
     while (GetTickCountDiff(startTick, GetTickCount()) < timeout)
     {
+        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - Stop signaled"), __TFUNCTION__, __LINE__);
+            return false;
+        }
+
         DWORD bytes_avail = 0;
 
         // ReadFile will block forever if there's no data to read, so we need
