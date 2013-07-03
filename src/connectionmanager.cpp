@@ -396,8 +396,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             // Get the next server to try
 
-            tstring handshakeRequestPath;
-
+            ServerEntries serverEntries = manager->m_serverList.GetList();
             manager->LoadNextServer(handshakeRequestPath);
 
             // Note that the SessionInfo will only be partly filled in at this point.
