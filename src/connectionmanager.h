@@ -49,6 +49,7 @@ public:
     void Start(const tstring& transport, bool startSplitTunnel);
     void StartSplitTunnel();
     void StopSplitTunnel();
+    void ResetSplitTunnel();
     time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();

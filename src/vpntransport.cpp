@@ -90,7 +90,7 @@ tstring VPNTransport::GetTransportDisplayName() const
     return TRANSPORT_DISPLAY_NAME;
 }
 
-tstring VPNTransport::GetSessionID(SessionInfo sessionInfo)
+tstring VPNTransport::GetSessionID(const SessionInfo& sessionInfo)
 {
     if (m_pppIPAddress.empty())
     {
@@ -126,9 +126,9 @@ bool VPNTransport::IsSplitTunnelSupported() const
     return false;
 }
 
-bool VPNTransport::IsMultiConnectSupported() const
+unsigned int VPNTransport::GetMultiConnectCount() const
 {
-    return false;
+    return 1;
 }
 
 bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
@@ -212,20 +212,21 @@ bool VPNTransport::Cleanup()
     return true;
 }
 
-void VPNTransport::TransportConnect(
-                    const SessionInfo& sessionInfo,
-                    SystemProxySettings*)
+void VPNTransport::TransportConnect()
 {
-    // The SystemProxySettings param is unused
+    // The SystemProxySettings member is unused
 
-    if (!ServerVPNCapable(sessionInfo))
+    m_sessionInfoIndex = 0;
+
+    if ((signed)m_sessionInfo.size() > m_sessionInfoIndex
+        || !IsServerVPNCapable())
     {
         throw TransportFailed();
     }
 
     try
     {
-        TransportConnectHelper(sessionInfo);
+        TransportConnectHelper();
     }
     catch(...)
     {
@@ -234,7 +235,7 @@ void VPNTransport::TransportConnect(
     }
 }
 
-void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
+void VPNTransport::TransportConnectHelper()
 {
     //
     // Minimum version check for VPN
@@ -265,8 +266,8 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     //
     
     if (!Establish(
-            NarrowToTString(sessionInfo.GetServerAddress()), 
-            NarrowToTString(sessionInfo.GetPSK())))
+            NarrowToTString(m_sessionInfo[m_sessionInfoIndex].GetServerAddress()), 
+            NarrowToTString(m_sessionInfo[m_sessionInfoIndex].GetPSK())))
     {
         throw TransportFailed();
     }
@@ -301,10 +302,12 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     TweakDNS();
 }
 
-bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
+bool VPNTransport::IsServerVPNCapable() const
 {
+    assert(m_sessionInfoIndex >= 0 && (signed)m_sessionInfo.size() > m_sessionInfoIndex);
+
     // The absence of a PSK indicates that the server is not VPN-capable
-    return sessionInfo.GetPSK().length() > 0;
+    return m_sessionInfo[m_sessionInfoIndex].GetPSK().length() > 0;
 }
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)

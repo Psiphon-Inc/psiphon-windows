@@ -55,7 +55,7 @@ public:
             const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
-            const SessionInfo& sessionInfo, 
+            const ServerEntryIterator& serverEntries, 
             const TCHAR* handshakeRequestPath,
             const tstring& splitTunnelingFilePath);
 

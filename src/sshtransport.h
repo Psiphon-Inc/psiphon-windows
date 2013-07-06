@@ -45,7 +45,7 @@ public:
     virtual bool IsMultiConnectSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
-    virtual tstring GetSessionID(SessionInfo sessionInfo);
+    virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
     virtual bool GetUserParentProxySettings(
@@ -59,15 +59,12 @@ public:
 
 protected:
     // ITransport implementation
-    virtual void TransportConnect(
-        const SessionInfo& sessionInfo, 
-        SystemProxySettings* systemProxySettings);
+    virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
 
     virtual bool GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
-        const string& sshPassword,
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
@@ -75,10 +72,10 @@ protected:
         SystemProxySettings* systemProxySettings);
     virtual int GetPort(const SessionInfo& sessionInfo) const = 0;
 
-    void TransportConnectHelper(
-        const SessionInfo& sessionInfo,
-        SystemProxySettings* systemProxySettings);
-    bool IsServerSSHCapable(const SessionInfo& sessionInfo) const;
+    void TransportConnectHelper();
+
+    // Has the side effect of trimming m_sessionInfo to only capable servers
+    bool AreAnyServersSSHCapable();
 
 protected:
     tstring m_plonkPath;

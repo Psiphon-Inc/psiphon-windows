@@ -29,7 +29,8 @@
 ******************************************************************************/
 
 ITransport::ITransport()
-    : m_systemProxySettings(NULL)
+    : m_systemProxySettings(NULL),
+      m_sessionInfoIndex(-1)
 {
 }
 
@@ -49,14 +50,20 @@ bool ITransport::ServerWithCapabilitiesExists(ServerList& serverList) const
 }
 
 void ITransport::Connect(
-                    SessionInfo sessionInfo, 
+                    const vector<SessionInfo>& sessionInfo, 
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
                     WorkerThreadSynch* workerThreadSynch)
 {
     m_sessionInfo = sessionInfo;
+    m_sessionInfoIndex = -1;
     m_systemProxySettings = systemProxySettings;
+ 
     assert(m_systemProxySettings);
+
+    // There's no reason for the number of supplied SessionInfo objects to be
+    // greater than the number that can be used in a single connection attempt.
+    assert(sessionInfo.size() <= GetMultiConnectCount());
 
     if (!IWorkerThread::Start(stopInfo, workerThreadSynch))
     {
@@ -66,14 +73,15 @@ void ITransport::Connect(
 
 void ITransport::UpdateSessionInfo(const SessionInfo& sessionInfo)
 {
-    m_sessionInfo = sessionInfo;
+    assert(m_sessionInfoIndex >= 0 && m_sessionInfoIndex < m_sessionInfo.size());
+    m_sessionInfo[m_sessionInfoIndex] = sessionInfo;
 }
 
 bool ITransport::DoStart()
 {
     try
     {
-        TransportConnect(m_sessionInfo, m_systemProxySettings);
+        TransportConnect();
     }
     catch(...)
     {

@@ -44,26 +44,24 @@ public:
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
-    virtual tstring GetSessionID(SessionInfo sessionInfo);
+    virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
-    virtual bool IsMultiConnectSupported() const;
+    virtual unsigned int GetMultiConnectCount() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual bool Cleanup();
 
 protected:
     // ITransport implementation
-    virtual void TransportConnect(
-                    const SessionInfo& sessionInfo,
-                    SystemProxySettings* systemProxySettings);
+    virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
     
-    void TransportConnectHelper(const SessionInfo& sessionInfo);
-    bool ServerVPNCapable(const SessionInfo& sessionInfo) const;
+    void TransportConnectHelper();
+    bool IsServerVPNCapable() const;
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
     HANDLE GetStateChangeEvent();

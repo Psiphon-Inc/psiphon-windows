@@ -343,6 +343,14 @@ void ConnectionManager::StopSplitTunnel()
     DeleteSplitTunnelRoutes();
 }
 
+void ConnectionManager::ResetSplitTunnel()
+{
+    AutoMUTEX lock(m_mutex);
+    
+    m_splitTunnelRoutes = "";
+    StopSplitTunnel();
+}
+
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
@@ -394,9 +402,33 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
+            // Ensure split tunnel routes are reset before new session
+            manager->ResetSplitTunnel();
+
+            //
             // Get the next server to try
+            //
 
             ServerEntries serverEntries = manager->m_serverList.GetList();
+            ServerEntries::const_iterator serverEntriesIter = serverEntries.begin();
+
+            // Skip to the first server that is capable of connecting with the current transport.
+            while (serverEntriesIter != serverEntries.end())
+            {
+                if (manager->m_transport->ServerHasCapabilities(*serverEntriesIter))
+                {
+                    break;
+                }
+                ++serverEntriesIter;
+            }
+
+            // Do we have any usable server?
+            if (serverEntriesIter == serverEntries.end())
+            {
+                my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
+                throw ConnectionManager::Abort();
+            }
+
             manager->LoadNextServer(handshakeRequestPath);
 
             // Note that the SessionInfo will only be partly filled in at this point.
@@ -407,19 +439,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             ostringstream ss;
             ss << "ipAddress: " << sessionInfo.GetServerAddress();
             AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
-
-            // We're looping around to run again. We're assuming that the calling
-            // function knows that there's at least one server to try. We're 
-            // not reporting anything, as the user doesn't need to know what's
-            // going on under the hood at this point.
-            if (!manager->m_transport->ServerHasCapabilities(sessionInfo.GetServerEntry()))
-            {
-                my_print(NOT_SENSITIVE, true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
-
-                manager->MarkCurrentServerFailed();
-
-                continue;
-            }
 
             //
             // Set up the transport connection

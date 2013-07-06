@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -122,7 +122,7 @@ bool SSHTransportBase::ServerHasCapabilities(const ServerEntry& entry) const
     return entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
 }
 
-tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo)
+tstring SSHTransportBase::GetSessionID(const SessionInfo& sessionInfo)
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());
 }
@@ -268,18 +268,16 @@ bool SSHTransportBase::Cleanup()
     return true;
 }
 
-void SSHTransportBase::TransportConnect(
-                        const SessionInfo& sessionInfo,
-                        SystemProxySettings* systemProxySettings)
+void SSHTransportBase::TransportConnect()
 {
-    if (!IsServerSSHCapable(sessionInfo))
+    if (!AreAnyServersSSHCapable())
     {
         throw TransportFailed();
     }
 
     try
     {
-        TransportConnectHelper(sessionInfo, systemProxySettings);
+        TransportConnectHelper();
     }
     catch(...)
     {
@@ -288,9 +286,7 @@ void SSHTransportBase::TransportConnect(
     }
 }
 
-void SSHTransportBase::TransportConnectHelper(
-                        const SessionInfo& sessionInfo,
-                        SystemProxySettings* systemProxySettings)
+void SSHTransportBase::TransportConnectHelper()
 {
     my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
 
@@ -304,26 +300,29 @@ void SSHTransportBase::TransportConnectHelper(
         }
     }
 
-    // Start plonk using Psiphon server SSH parameters
-
-    // Client transmits its session ID prepended to the SSH password; the server
-    // uses this to associate the tunnel with web requests -- for GeoIP region stats
-    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
-
-    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
+    /*
+    We will be trying to make multiple SSH connections to different servers at 
+    the same time. They will all be listening as SOCKS proxies on the same local
+    port -- this will work due to the SO_REUSEADDR flag.
+    */
 
     // Test if the localSocksProxyPort is already in use.  If it is, try to find
     // one that is available.
+    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
     if (!TestForOpenPort(m_localSocksProxyPort, 10, m_stopInfo))
     {
         my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
         throw TransportFailed();
     }
 
+    *** Loop through server entries, trying to start them.
+    *** For server stickiness, give the first one a head-start.
+
+    // Start plonk using Psiphon server SSH parameters
+
     if (!GetSSHParams(
         sessionInfo,
         m_localSocksProxyPort,
-        sshPassword,
         m_serverAddress, 
         m_serverPort, 
         m_serverHostKey, 
@@ -360,9 +359,18 @@ void SSHTransportBase::TransportConnectHelper(
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
 
-bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
+bool SSHTransportBase::AreAnyServersSSHCapable()
 {
-    return sessionInfo.GetSSHHostKey().length() > 0;
+    // Reverse through vector, so we can remove.
+    for (size_t i = m_sessionInfo.size()-1; i >= 0; i--)
+    {
+        if (m_sessionInfo[i].GetSSHHostKey().length() <= 0)
+        {
+            m_sessionInfo.erase(m_sessionInfo.begin()+i);
+        }
+    }
+
+    return m_sessionInfo.size() > 0;
 }
 
 bool SSHTransportBase::GetUserParentProxySettings(
@@ -412,7 +420,6 @@ bool SSHTransportBase::GetUserParentProxySettings(
 bool SSHTransportBase::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
-    const string& sshPassword,
     tstring& o_serverAddress, 
     int& o_serverPort, 
     tstring& o_serverHostKey, 
@@ -427,6 +434,10 @@ bool SSHTransportBase::GetSSHParams(
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
     o_serverPort = GetPort(sessionInfo);
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
+
+    // Client transmits its session ID prepended to the SSH password; the server
+    // uses this to associate the tunnel with web requests -- for GeoIP region stats
+    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
 
     // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
     // the expected value we just set in the registry
