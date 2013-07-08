@@ -20,72 +20,104 @@
 #include "stdafx.h"
 #include "usersettings.h"
 #include "config.h"
+#include "utilities.h"
 
 
 void InitializeUserSettings(void)
 {
     // Read - and consequently write out default values for - all settings
-    UserSkipVPN();
     UserSkipBrowser();
     UserSkipProxySettings();
+    UserLocalHTTPProxyPort();
+    UserSkipSSHParentProxySettings();
+    UserSSHParentProxyHostname();
+    UserSSHParentProxyPort();
+    UserSSHParentProxyUsername();
+    UserSSHParentProxyPassword();
+    UserSSHParentProxyType();
 }
 
 
-bool GetUserSetting(const string& settingName)
+int GetUserSettingDword(const string& settingName, int defaultValue /* = 0 */)
 {
-    bool settingValue = false;
+    DWORD value = 0;
 
-    HKEY key = 0;
-    DWORD value;
-    DWORD bufferLength = sizeof(value);
-    DWORD type;
-
-    if (ERROR_SUCCESS == RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_READ, &key) &&
-        ERROR_SUCCESS == RegQueryValueExA(key, settingName.c_str(), 0, &type, (LPBYTE)&value, &bufferLength) &&
-        type == REG_DWORD &&
-        value == 1)
+    if (!ReadRegistryDwordValue(settingName, value))
     {
-        settingValue = true;
+        // Write out the setting with a default value so that it's there
+        // for users to see and use, if they want to set it.
+        value = defaultValue;
+        WriteRegistryDwordValue(settingName, value);
     }
 
-    RegCloseKey(key);
+    return value;
+}
 
-    // Write out the setting with a "false" settingValue so that it's there
-    // for users to see and use, if they want to set it.
-    if (!settingValue)
+string GetUserSettingString(const string& settingName, string defaultValue /* = 0 */)
+{
+    string value;
+
+    if (!ReadRegistryStringValue(settingName.c_str(), value))
     {
-        SetUserSetting(settingName, false);
+        // Write out the setting with a default value so that it's there
+        // for users to see and use, if they want to set it.
+        value = defaultValue;
+        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+        WriteRegistryStringValue(settingName, value, reason);
     }
 
-    return settingValue;
-}
-
-
-void SetUserSetting(const string& settingName, bool settingValue)
-{
-    HKEY key = 0;
-    DWORD value = settingValue ? 1 : 0;
-    DWORD bufferLength = sizeof(value);
-
-    RegOpenKeyExA(HKEY_CURRENT_USER, TStringToNarrow(LOCAL_SETTINGS_REGISTRY_KEY).c_str(), 0, KEY_SET_VALUE, &key);
-    RegSetValueExA(key, settingName.c_str(), 0, REG_DWORD, (LPBYTE)&value, bufferLength);
-    RegCloseKey(key);
-}
-
-
-bool UserSkipVPN(void)
-{
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_VPN);
+    return value;
 }
 
 
 bool UserSkipBrowser(void)
 {
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
 }
 
 
 bool UserSkipProxySettings(void)
 {
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
 }
+
+int UserLocalHTTPProxyPort(void)
+{
+    return GetUserSettingDword(
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, 
+        DEFAULT_LOCAL_HTTP_PROXY_PORT);
+}
+
+bool UserSkipSSHParentProxySettings(void)
+{
+    //don't use parent proxy for SSH by default
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_SSH_PARENT_PROXY_SETTINGS, true);
+}
+
+string UserSSHParentProxyHostname(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_HOSTNAME);
+}
+
+int UserSSHParentProxyPort(void)
+{
+    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PORT);
+}
+
+string UserSSHParentProxyUsername(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_USERNAME);
+}
+
+string UserSSHParentProxyPassword(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PASSWORD);
+}
+
+string UserSSHParentProxyType(void)
+{
+    return GetUserSettingString(
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_TYPE, 
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_DEFAULT_TYPE);
+}
+

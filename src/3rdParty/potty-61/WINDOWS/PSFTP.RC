@@ -1,0 +1,8 @@
+#include "rcstuff.h"
+
+#define APPNAME "oSFTP"
+#define APPDESC "Command-line interactive obfuscated SFTP client"
+
+200 ICON "pscp.ico"
+
+#include "version.rc2"

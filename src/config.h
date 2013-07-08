@@ -21,20 +21,38 @@
 
 #include <tchar.h>
 
-static const TCHAR* PLONK_SOCKS_PROXY_PORT = _T("1080");
-static const TCHAR* POLIPO_HTTP_PROXY_PORT = _T("8080");
-static const TCHAR* VPN_CONNECTION_NAME = _T("Psiphon3");
+static const TCHAR* INFO_LINK_PROMPT = _T("About Psiphon 3");
 static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
-static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SKIP_VPN = "SkipVPN";
-static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_VPN = "UserSkipVPN";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT = "Transport";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SPLIT_TUNNEL = "SplitTunnel";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER = "UserSkipBrowser";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS = "UserSkipProxySettings";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT = "UserLocalHTTPProxyPort";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED = "LastConnected";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_SSH_PARENT_PROXY_SETTINGS = "UserSkipSSHParentProxySettings";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_HOSTNAME = "UserSSHParentProxyHostname";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PORT = "UserSSHParentProxyPort";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_USERNAME = "UserSSHParentProxyUsername";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PASSWORD = "UserSSHParentProxyPassword";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_TYPE = "UserSSHParentProxyType";
+static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_DEFAULT_TYPE = "https";
+static const TCHAR* SPLIT_TUNNELING_FILE_NAME = _T("psiphon.route");
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");
+static const TCHAR* HTTP_ROUTES_REQUEST_PATH = _T("/routes");
 static const TCHAR* HTTP_STATUS_REQUEST_PATH = _T("/status");
+static const TCHAR* HTTP_SPEED_REQUEST_PATH = _T("/speed");
 static const TCHAR* HTTP_FAILED_REQUEST_PATH = _T("/failed");
 static const TCHAR* HTTP_DOWNLOAD_REQUEST_PATH = _T("/download");
-
-static int VPN_CONNECTION_TIMEOUT_SECONDS = 20;
-static int SSH_CONNECTION_TIMEOUT_SECONDS = 20;
+static const TCHAR* HTTP_FEEDBACK_REQUEST_PATH = _T("/feedback");
+static const TCHAR* HTTP_CHECK_REQUEST_PATH = _T("/check");
+static const int CLIENT_SESSION_ID_BYTES = 16;
+static const int DEFAULT_LOCAL_HTTP_PROXY_PORT = 8080;
+static const int SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH = 60*60*6;
+static const int SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH = 60*5;
+static const int HTTPS_REQUEST_CONNECT_TIMEOUT_MS = 30000;
+static const int HTTPS_REQUEST_SEND_TIMEOUT_MS = 30000;
+static const int HTTPS_REQUEST_RECEIVE_TIMEOUT_MS = 30000;
+static const int TERMINATE_PROCESS_WAIT_MS = 5000;
+static const char* UNTUNNELED_WEB_REQUEST_CAPABILITY = "handshake";

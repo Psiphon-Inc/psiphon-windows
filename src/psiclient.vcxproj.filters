@@ -5,16 +5,10 @@
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
-    <ClCompile Include="sshconnection.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="systemproxysettings.cpp" />
     <ClCompile Include="usersettings.cpp" />
-    <ClCompile Include="vpnconnection.cpp" />
-    <ClCompile Include="vpnlist.cpp" />
     <ClCompile Include="webbrowser.cpp" />
-    <ClCompile Include="json\jsoncpp.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
     <ClCompile Include="3rdParty\zlib\adler32.c">
       <Filter>zlib</Filter>
     </ClCompile>
@@ -33,6 +27,27 @@
     <ClCompile Include="3rdParty\zlib\zutil.c">
       <Filter>zlib</Filter>
     </ClCompile>
+    <ClCompile Include="transport.cpp" />
+    <ClCompile Include="vpntransport.cpp" />
+    <ClCompile Include="sshtransport.cpp" />
+    <ClCompile Include="transport_registry.cpp" />
+    <ClCompile Include="serverlist.cpp" />
+    <ClCompile Include="local_proxy.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="worker_thread.cpp" />
+    <ClCompile Include="3rdParty\json\jsoncpp.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="server_request.cpp" />
+    <ClCompile Include="transport_connection.cpp" />
+    <ClCompile Include="authenticated_data_package.cpp" />
+    <ClCompile Include="htmldlg.cpp">
+      <Filter>WebCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="server_list_reordering.cpp" />
+    <ClCompile Include="stopsignal.cpp" />
+    <ClCompile Include="diagnostic_info.cpp" />
+    <ClCompile Include="wininet_network_check.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -42,21 +57,12 @@
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="sessioninfo.h" />
-    <ClInclude Include="sshconnection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tstring.h" />
     <ClInclude Include="usersettings.h" />
-    <ClInclude Include="vpnconnection.h" />
-    <ClInclude Include="vpnlist.h" />
     <ClInclude Include="webbrowser.h" />
-    <ClInclude Include="json\forwards.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="json\json.h">
-      <Filter>json</Filter>
-    </ClInclude>
     <ClInclude Include="3rdParty\zlib\crc32.h">
       <Filter>zlib</Filter>
     </ClInclude>
@@ -81,6 +87,433 @@
     <ClInclude Include="3rdParty\zlib\zutil.h">
       <Filter>zlib</Filter>
     </ClInclude>
+    <ClInclude Include="transport.h" />
+    <ClInclude Include="vpntransport.h" />
+    <ClInclude Include="sshtransport.h" />
+    <ClInclude Include="transport_registry.h" />
+    <ClInclude Include="serverlist.h" />
+    <ClInclude Include="local_proxy.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="worker_thread.h" />
+    <ClInclude Include="3rdParty\json\forwards.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="limitsingleinstance.h" />
+    <ClInclude Include="server_request.h" />
+    <ClInclude Include="transport_connection.h" />
+    <ClInclude Include="3rdParty\cryptopp\3way.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\adler32.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\aes.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\algebra.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\algparam.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\arc4.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\argnames.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\asn.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\authenc.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\base32.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\base64.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\basecode.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\bench.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\blowfish.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\blumshub.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\camellia.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\cast.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\cbcmac.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\ccm.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\channels.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\cmac.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\config.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\cpu.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\crc.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\cryptlib.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\default.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\des.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\dh.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\dh2.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\dll.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\dmac.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\dsa.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\eax.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\ec2n.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\eccrypto.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\ecp.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\elgamal.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\emsa2.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\eprecomp.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\esign.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\factory.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\files.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\filters.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\fips140.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\fltrimpl.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gcm.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gf2_32.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gf2n.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gf256.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gfpcrypt.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gost.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\gzip.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\hex.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\hmac.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\hrtimer.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\ida.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\idea.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\integer.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\iterhash.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\lubyrack.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\luc.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\mars.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\md2.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\md4.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\md5.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\mdc.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\misc.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\modarith.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\modes.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\modexppc.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\mqueue.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\mqv.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\nbtheory.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\network.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\nr.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\oaep.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\oids.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\osrng.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\panama.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\pch.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\pkcspad.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\polynomi.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\pssr.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\pubkey.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\pwdbased.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\queue.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rabin.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\randpool.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rc2.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rc5.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rc6.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\resource.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rijndael.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\ripemd.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rng.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rsa.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\rw.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\safer.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\salsa.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\seal.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\secblock.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\seckey.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\seed.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\serpent.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\serpentp.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\sha.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\shacal2.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\shark.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\simple.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\skipjack.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\smartptr.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\socketft.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\sosemanuk.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\square.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\stdcpp.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\strciphr.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\tea.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\tiger.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\trdlocal.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\trunhash.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\ttmac.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\twofish.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\validate.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\vmac.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\wait.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\wake.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\whrlpool.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\winpipes.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\words.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\xtr.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\xtrcrypt.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\zdeflate.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\zinflate.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\cryptopp\zlib.h">
+      <Filter>cryptopp</Filter>
+    </ClInclude>
+    <ClInclude Include="authenticated_data_package.h" />
+    <ClInclude Include="htmldlg.h">
+      <Filter>WebCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="server_list_reordering.h" />
+    <ClInclude Include="stopsignal.h" />
+    <ClInclude Include="diagnostic_info.h" />
+    <ClInclude Include="wininet_network_check.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
@@ -95,6 +528,12 @@
     </Filter>
     <Filter Include="zlib">
       <UniqueIdentifier>{41e9db18-683d-474f-89e2-b80064cd2d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cryptopp">
+      <UniqueIdentifier>{1983563a-6c6d-4741-9327-207e0bce70e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WebCtrl">
+      <UniqueIdentifier>{9cab73d3-bc74-49ac-b02d-501929a49dd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

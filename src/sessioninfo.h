@@ -20,10 +20,8 @@
 #pragma once
 
 #include <vector>
-#include "vpnlist.h"
+#include "serverlist.h"
 #include "tstring.h"
-
-class ConnectionManager;
 
 struct RegexReplace
 {
@@ -34,25 +32,39 @@ struct RegexReplace
 class SessionInfo
 {
 public:
-    void Set(const ServerEntry& serverEntry);
+    SessionInfo() : m_sshPort(0), m_sshObfuscatedPort(0), m_speedTestServerPort(0) {}
 
-    string GetServerAddress(void) {return m_serverEntry.serverAddress;}
-    int GetWebPort(void) {return m_serverEntry.webServerPort;}
-    string GetWebServerSecret(void) {return m_serverEntry.webServerSecret;}
-    string GetWebServerCertificate(void) { return m_serverEntry.webServerCertificate;}
-    string GetUpgradeVersion(void) {return m_upgradeVersion;}
-    string GetPSK(void) {return m_psk;}
-    string GetSSHPort(void) {return m_sshPort;}
-    string GetSSHUsername(void) {return m_sshUsername;}
-    string GetSSHPassword(void) {return m_sshPassword;}
-    string GetSSHHostKey(void) {return m_sshHostKey;}
-    string GetSSHSessionID(void) {return m_sshSessionID;}
-    string GetSSHObfuscatedPort(void) {return m_sshObfuscatedPort;}
-    string GetSSHObfuscatedKey(void) {return m_sshObfuscatedKey;}
-    vector<tstring> GetHomepages(void) {return m_homepages;}
-    vector<string> GetDiscoveredServerEntries(void) {return m_servers;}
-    vector<RegexReplace> GetPageViewRegexes() {return m_pageViewRegexes;}
-    vector<RegexReplace> GetHttpsRequestRegexes() {return m_httpsRequestRegexes;}
+    void Set(const ServerEntry& serverEntry);
+    void GenerateClientSessionID();
+
+    string GetClientSessionID() const {return m_clientSessionID;}
+
+    string GetServerAddress() const;
+    int GetWebPort() const;
+    string GetWebServerSecret() const;
+    string GetWebServerCertificate() const;
+    int GetSSHPort() const;
+    string GetSSHUsername() const;
+    string GetSSHPassword() const;
+    string GetSSHHostKey() const;
+    int GetSSHObfuscatedPort() const;
+    string GetSSHObfuscatedKey() const;
+
+    string GetSSHSessionID() const {return m_sshSessionID;}
+    string GetUpgradeVersion() const {return m_upgradeVersion;}
+    string GetPSK() const {return m_psk;}
+    vector<tstring> GetHomepages() const {return m_homepages;}
+    vector<string> GetDiscoveredServerEntries() const;
+    vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
+    vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
+    string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
+    int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
+    string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
+    
+    // A value of zero means disabled.
+    DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
+    
+    ServerEntry GetServerEntry() const;
 
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);
@@ -60,17 +72,22 @@ public:
 private:
     ServerEntry m_serverEntry;
 
+    string m_clientSessionID;
     string m_upgradeVersion;
     string m_psk;
-    string m_sshPort;
+    int m_sshPort;
     string m_sshUsername;
     string m_sshPassword;
     string m_sshHostKey;
     string m_sshSessionID;
-    string m_sshObfuscatedPort;
+    int m_sshObfuscatedPort;
     string m_sshObfuscatedKey;
     vector<tstring> m_homepages;
     vector<string> m_servers;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
+    string m_speedTestServerAddress;
+    int m_speedTestServerPort;
+    string m_speedTestRequestPath;
+    DWORD m_preemptiveReconnectLifetimeMilliseconds;
 };

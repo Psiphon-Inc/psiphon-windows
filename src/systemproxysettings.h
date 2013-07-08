@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,38 +20,55 @@
 #pragma once
 
 #include "tstring.h"
-
 #include <vector>
 
 using namespace std;
 
+struct connection_proxy;
+
+
 class SystemProxySettings
 {
 public:
-    SystemProxySettings(void);
-    virtual ~SystemProxySettings(void);
-    bool Configure(void);
-    bool Revert(void);
+    SystemProxySettings();
+    virtual ~SystemProxySettings();
+
+    //
+    // The Set*ProxyPort functions do *not* apply the setting -- they only set
+    // a member variable that will be used when Apply is called to actually
+    // make the settings take effect.
+    void SetHttpProxyPort(int port);
+    void SetHttpsProxyPort(int port);
+    void SetSocksProxyPort(int port);
+    bool Apply();
+
+    bool Revert();
+
+    bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
 
 private:
-    static const int INTERNET_OPTIONS_NUMBER = 2;
-
-    struct connection_proxy
-    {
-        tstring name;
-        DWORD flags;
-        tstring proxy;
-    };
-
     typedef vector<connection_proxy>::iterator connection_proxy_iter;
-    typedef vector<tstring>::const_iterator tstring_iter;
 
     void PreviousCrashCheckHack(connection_proxy& proxySettings);
-    bool Save(const vector<tstring>& connections);
+    bool Save(const vector<connection_proxy>& proxyInfo);
     bool SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress);
-    bool SetConnectionProxy(const connection_proxy& setting);
-    bool GetConnectionProxy(connection_proxy& setting);
-    vector<tstring> GetRasConnectionNames(void);
+    tstring MakeProxySettingString();
 
+    bool m_settingsApplied;
     vector<connection_proxy> m_originalSettings;
+
+    int m_httpProxyPort;
+    int m_httpsProxyPort;
+    int m_socksProxyPort;
 };
+
+
+struct ConnectionProxyInfo
+{
+    tstring connectionName;
+    tstring flags;
+    tstring proxy;
+    tstring bypass;
+};
+
+void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo);

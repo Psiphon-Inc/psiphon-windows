@@ -21,33 +21,48 @@
 
 #include <string>
 #include <WinCrypt.h>
+#include <Winhttp.h>
+#include "stopsignal.h"
+
 
 using namespace std;
 
 class HTTPSRequest
 {
 public:
-    HTTPSRequest(void);
-    virtual ~HTTPSRequest(void);
+    HTTPSRequest(bool silentMode=false);
+    virtual ~HTTPSRequest();
+
     bool MakeRequest(
-        const bool& cancel,
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
         string& response,
+        const StopInfo& stopInfo,
+        bool useLocalProxy=true,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
-        DWORD additionalDataLength=0);
+        DWORD additionalDataLength=0,
+        LPCWSTR httpVerb=NULL);
 
-    // NOTE: these member functions could be private if the WinHttpStatusCallback
-    // function is a static member or friend
-    void SetClosedEvent(void) {SetEvent(m_closedEvent);}
-    void SetRequestSuccess(void) {m_requestSuccess = true;}
+private:
+    tstring GetSystemDefaultHTTPSProxy();
+
+    void SetClosedEvent() {SetEvent(m_closedEvent);}
+    void SetRequestSuccess() {m_requestSuccess = true;}
   	bool ValidateServerCert(PCCERT_CONTEXT pCert);
     void AppendResponse(const string& responseData);
 
+    friend void CALLBACK WinHttpStatusCallback(
+                            HINTERNET hRequest,
+                            DWORD_PTR dwContext,
+                            DWORD dwInternetStatus,
+                            LPVOID lpvStatusInformation,
+                            DWORD dwStatusInformationLength);
+
 private:
+    bool m_silentMode;
     HANDLE m_mutex;
     HANDLE m_closedEvent;
     bool m_requestSuccess;

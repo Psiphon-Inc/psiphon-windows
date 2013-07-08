@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2012, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,13 +32,22 @@
 #include <CommCtrl.h>
 
 // C RunTime Header Files
+#define _CRT_RAND_S
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <assert.h>
 
+#define _WIN32_DCOM
+#include <wbemidl.h>
+
+#include <codecvt>
 #include "tstring.h"
 #include <map>
 #include <regex>
 #include <sstream>
 #include <json.h>
+#include <mshtmhst.h>
+#include <urlmon.h>
+#include <shellapi.h>
