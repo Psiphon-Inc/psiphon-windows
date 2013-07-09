@@ -30,7 +30,7 @@
 
 ITransport::ITransport()
     : m_systemProxySettings(NULL),
-      m_sessionInfoIndex(-1)
+      m_chosenSessionInfoIndex(-1)
 {
 }
 
@@ -56,10 +56,11 @@ void ITransport::Connect(
                     WorkerThreadSynch* workerThreadSynch)
 {
     m_sessionInfo = sessionInfo;
-    m_sessionInfoIndex = -1;
+    m_chosenSessionInfoIndex = -1;
     m_systemProxySettings = systemProxySettings;
  
     assert(m_systemProxySettings);
+    assert(sessionInfo.size() > 0);
 
     // There's no reason for the number of supplied SessionInfo objects to be
     // greater than the number that can be used in a single connection attempt.
@@ -73,8 +74,8 @@ void ITransport::Connect(
 
 void ITransport::UpdateSessionInfo(const SessionInfo& sessionInfo)
 {
-    assert(m_sessionInfoIndex >= 0 && m_sessionInfoIndex < m_sessionInfo.size());
-    m_sessionInfo[m_sessionInfoIndex] = sessionInfo;
+    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < m_sessionInfo.size());
+    m_sessionInfo[m_chosenSessionInfoIndex] = sessionInfo;
 }
 
 bool ITransport::DoStart()

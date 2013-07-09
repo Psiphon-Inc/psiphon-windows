@@ -121,6 +121,6 @@ protected:
 
 protected:
     vector<SessionInfo> m_sessionInfo;
-    int m_sessionInfoIndex;
+    int m_chosenSessionInfoIndex;
     SystemProxySettings* m_systemProxySettings;
 };

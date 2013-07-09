@@ -216,9 +216,9 @@ void VPNTransport::TransportConnect()
 {
     // The SystemProxySettings member is unused
 
-    m_sessionInfoIndex = 0;
+    m_chosenSessionInfoIndex = 0;
 
-    if ((signed)m_sessionInfo.size() > m_sessionInfoIndex
+    if ((signed)m_sessionInfo.size() > m_chosenSessionInfoIndex
         || !IsServerVPNCapable())
     {
         throw TransportFailed();
@@ -266,8 +266,8 @@ void VPNTransport::TransportConnectHelper()
     //
     
     if (!Establish(
-            NarrowToTString(m_sessionInfo[m_sessionInfoIndex].GetServerAddress()), 
-            NarrowToTString(m_sessionInfo[m_sessionInfoIndex].GetPSK())))
+            NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress()), 
+            NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetPSK())))
     {
         throw TransportFailed();
     }
@@ -304,10 +304,10 @@ void VPNTransport::TransportConnectHelper()
 
 bool VPNTransport::IsServerVPNCapable() const
 {
-    assert(m_sessionInfoIndex >= 0 && (signed)m_sessionInfo.size() > m_sessionInfoIndex);
+    assert(m_chosenSessionInfoIndex >= 0 && (signed)m_sessionInfo.size() > m_chosenSessionInfoIndex);
 
     // The absence of a PSK indicates that the server is not VPN-capable
-    return m_sessionInfo[m_sessionInfoIndex].GetPSK().length() > 0;
+    return m_sessionInfo[m_chosenSessionInfoIndex].GetPSK().length() > 0;
 }
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
