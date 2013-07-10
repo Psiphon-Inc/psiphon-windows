@@ -42,7 +42,7 @@ public:
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
-    virtual bool IsMultiConnectSupported() const;
+    virtual unsigned int GetMultiConnectCount() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
@@ -65,14 +65,17 @@ protected:
     virtual bool GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
+        SystemProxySettings* systemProxySettings,
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
-        tstring& o_plonkCommandLine,
-        SystemProxySettings* systemProxySettings);
+        tstring& o_plonkCommandLine);
     virtual int GetPort(const SessionInfo& sessionInfo) const = 0;
 
     void TransportConnectHelper();
+    bool InitiateConnection(
+        const SessionInfo& sessionInfo,
+        auto_ptr<PlonkConnection>& o_plonkConnection);
 
     // Has the side effect of trimming m_sessionInfo to only capable servers
     bool AreAnyServersSSHCapable();
