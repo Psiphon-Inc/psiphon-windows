@@ -76,6 +76,14 @@ public:
 
     void StopPortFoward();
 
+    void GetConnectParams(
+        int& o_localSocksProxyPort,
+        tstring& o_serverAddress, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkPath, 
+        tstring& o_plonkCommandLine,
+        int& o_serverPort) const;
+
 protected:
     DWORD GetFreshLimit() const;
     DWORD GetRetiredLimit() const;
@@ -88,6 +96,13 @@ private:
     HANDLE m_plonkInputHandle;
     HANDLE m_plonkOutputHandle;
     bool m_connected;
+
+    int m_localSocksProxyPort;
+    tstring m_serverAddress; 
+    tstring m_serverHostKey; 
+    tstring m_plonkPath; 
+    tstring m_plonkCommandLine;
+    int m_serverPort;
 };
 
 
@@ -98,7 +113,6 @@ private:
 SSHTransportBase::SSHTransportBase()
 {
     m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
-    m_serverPort = 0;
 }
 
 SSHTransportBase::~SSHTransportBase()
@@ -199,18 +213,39 @@ bool SSHTransportBase::DoPeriodicCheck()
 
         auto_ptr<PlonkConnection> nextPlonk(new PlonkConnection(m_sessionInfo[m_chosenSessionInfoIndex]));
 
-        // TODO: Check for out-of-memory allocation failure
+        if (nextPlonk.get() == NULL)
+        {
+            throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+        }
 
         // We assume that TransportConnectHelper has already been called, so 
         // the Plonk executable and server information are initialized.
 
+        int localSocksProxyPort;
+        tstring serverAddress; 
+        tstring serverHostKey; 
+        tstring plonkPath; 
+        tstring plonkCommandLine;
+        int serverPort;
+
+        m_currentPlonk->GetConnectParams(
+            localSocksProxyPort,
+            serverAddress, 
+            serverHostKey, 
+            plonkPath, 
+            plonkCommandLine,
+            serverPort);
+
+        assert(localSocksProxyPort == m_localSocksProxyPort);
+        assert(plonkPath == m_plonkPath);
+
         bool connectSuccess = nextPlonk->Connect(
-                                        m_localSocksProxyPort,
-                                        m_serverAddress.c_str(),
-                                        m_serverHostKey.c_str(),
-                                        m_plonkPath.c_str(),
-                                        m_plonkCommandLine.c_str(),
-                                        m_serverPort,
+                                        localSocksProxyPort,
+                                        serverAddress.c_str(),
+                                        serverHostKey.c_str(),
+                                        plonkPath.c_str(),
+                                        plonkCommandLine.c_str(),
+                                        serverPort,
                                         m_stopInfo);
 
         if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
@@ -430,10 +465,6 @@ void SSHTransportBase::TransportConnectHelper()
 
     assert(m_currentPlonk.get() != NULL && m_chosenSessionInfoIndex >= 0);
 
-    ***
-    *** Also need to set m_plonkPath, m_serverAddress, etc.
-    ***
-
     // We got our connected Plonk connection. We'll let allPlonkConnections 
     // going out of scope clean up the rest.
 
@@ -633,7 +664,9 @@ PlonkConnection::PlonkConnection(const SessionInfo& sessionInfo)
       m_stopInfo(NULL),
       m_plonkInputHandle(INVALID_HANDLE_VALUE),
       m_plonkOutputHandle(INVALID_HANDLE_VALUE),
-      m_connected(false)
+      m_connected(false),
+      m_localSocksProxyPort(-1),
+      m_serverPort(-1)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -757,6 +790,12 @@ void PlonkConnection::Kill()
     m_startTick = 0;
     m_stopInfo = NULL;
     m_connected = false;
+    m_localSocksProxyPort = -1;
+    m_serverAddress.clear(); 
+    m_serverHostKey.clear(); 
+    m_plonkPath.clear();
+    m_plonkCommandLine.clear();
+    m_serverPort = -1;
 
     if (m_plonkInputHandle != INVALID_HANDLE_VALUE) CloseHandle(m_plonkInputHandle);
     m_plonkInputHandle = INVALID_HANDLE_VALUE;
@@ -791,7 +830,14 @@ bool PlonkConnection::Connect(
     // Ensure we start from a disconnected/clean state
     Kill();
 
+    m_localSocksProxyPort = localSocksProxyPort;
+    m_serverAddress = serverAddress; 
+    m_serverHostKey = serverHostKey; 
+    m_plonkPath = plonkPath;
+    m_plonkCommandLine = plonkCommandLine;
+    m_serverPort = serverPort;
     m_stopInfo = &stopInfo;
+
     m_startTick = GetTickCount();
 
     // Add host to Plonk's known host registry set
@@ -1002,6 +1048,22 @@ void PlonkConnection::StopPortFoward()
 }
 
 
+void PlonkConnection::GetConnectParams(
+        int& o_localSocksProxyPort,
+        tstring& o_serverAddress, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkPath, 
+        tstring& o_plonkCommandLine,
+        int& o_serverPort) const
+{
+    o_localSocksProxyPort = m_localSocksProxyPort;
+    o_serverAddress = m_serverAddress;
+    o_serverHostKey = m_serverHostKey;
+    o_plonkPath = m_plonkPath;
+    o_plonkCommandLine = m_plonkCommandLine;
+    o_serverPort = m_serverPort;
+}
+
 /******************************************************************************
  SSHTransport
 ******************************************************************************/
@@ -1059,30 +1121,25 @@ bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 bool SSHTransport::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
-    const string& sshPassword,
+    SystemProxySettings* systemProxySettings,
     tstring& o_serverAddress, 
     int& o_serverPort, 
     tstring& o_serverHostKey, 
-    tstring& o_plonkCommandLine,
-    SystemProxySettings* systemProxySettings)
+    tstring& o_plonkCommandLine)
 {
-    tstring o_plonk_options;
-
     if(!SSHTransportBase::GetSSHParams(
         sessionInfo,
         localSocksProxyPort,
-        sshPassword,
+        systemProxySettings,
         o_serverAddress, 
         o_serverPort, 
         o_serverHostKey, 
-        o_plonk_options,
-        systemProxySettings))
+        o_plonkCommandLine))
     {
         return false;
     }
-    tstringstream args;
-    args << o_plonk_options << _T(" ") << o_serverAddress;
-    o_plonkCommandLine = args.str();
+
+    o_plonkCommandLine += _T(" ") + o_serverAddress;
 
     return true;
 }
@@ -1150,12 +1207,11 @@ bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 bool OSSHTransport::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
-    const string& sshPassword,
+    SystemProxySettings* systemProxySettings,
     tstring& o_serverAddress, 
     int& o_serverPort, 
     tstring& o_serverHostKey, 
-    tstring& o_plonkCommandLine,
-    SystemProxySettings* systemProxySettings)
+    tstring& o_plonkCommandLine)
 {
 
     if (sessionInfo.GetSSHObfuscatedPort() <= 0 
@@ -1170,22 +1226,17 @@ bool OSSHTransport::GetSSHParams(
     if(!SSHTransportBase::GetSSHParams(
         sessionInfo,
         localSocksProxyPort,
-        sshPassword,
+        systemProxySettings,
         o_serverAddress, 
         o_serverPort, 
         o_serverHostKey, 
-        o_plonk_options,
-        systemProxySettings))
+        o_plonkCommandLine))
     {
         return false;
     }
 
-    tstringstream args;
-
-    args << o_plonk_options; 
-    args << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str();
-    args << _T(" ") << o_serverAddress.c_str();
-    o_plonkCommandLine = args.str();
+    o_plonkCommandLine += _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
+    o_plonkCommandLine += o_serverAddress;
 
     return true;
 }

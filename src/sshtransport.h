@@ -83,10 +83,6 @@ protected:
 protected:
     tstring m_plonkPath;
     int m_localSocksProxyPort;
-    tstring m_serverAddress;
-    tstring m_serverHostKey;
-    tstring m_plonkCommandLine;
-    int m_serverPort;
 
     auto_ptr<PlonkConnection> m_currentPlonk;
     auto_ptr<PlonkConnection> m_previousPlonk;
@@ -113,12 +109,11 @@ protected:
     virtual bool GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
-        const string& sshPassword,
+        SystemProxySettings* systemProxySettings,
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
-        tstring& o_plonkCommandLine,
-        SystemProxySettings* systemProxySettings);
+        tstring& o_plonkCommandLine);
     virtual int GetPort(const SessionInfo& sessionInfo) const;
 };
 
@@ -143,11 +138,10 @@ protected:
     virtual bool GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
-        const string& sshPassword,
+        SystemProxySettings* systemProxySettings,
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
-        tstring& o_plonkCommandLine,
-        SystemProxySettings* systemProxySettings);
+        tstring& o_plonkCommandLine);
     virtual int GetPort(const SessionInfo& sessionInfo) const;
 };
