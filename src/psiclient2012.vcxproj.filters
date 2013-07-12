@@ -14,7 +14,6 @@
     <ClCompile Include="local_proxy.cpp" />
     <ClCompile Include="psiclient.cpp" />
     <ClCompile Include="serverlist.cpp" />
-    <ClCompile Include="server_entry_auth.cpp" />
     <ClCompile Include="server_list_reordering.cpp" />
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
@@ -32,6 +31,7 @@
     <ClCompile Include="worker_thread.cpp" />
     <ClCompile Include="wininet_network_check.cpp" />
     <ClCompile Include="diagnostic_info.cpp" />
+    <ClCompile Include="authenticated_data_package.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\cryptopp\3way.h" />
@@ -188,7 +188,6 @@
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="serverlist.h" />
-    <ClInclude Include="server_entry_auth.h" />
     <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="server_request.h" />
     <ClInclude Include="sessioninfo.h" />
@@ -208,6 +207,7 @@
     <ClInclude Include="worker_thread.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="diagnostic_info.h" />
+    <ClInclude Include="authenticated_data_package.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

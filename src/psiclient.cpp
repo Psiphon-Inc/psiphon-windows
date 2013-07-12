@@ -1048,12 +1048,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
 
+            tstringstream feedbackArgs;
+            feedbackArgs << "{ \"newVersionURL\": \"" << GET_NEW_VERSION_URL << "\", ";
+            feedbackArgs << "\"newVersionEmail\": \"" << GET_NEW_VERSION_EMAIL << "\", ";
+            feedbackArgs << "\"faqURL\": \"" << FAQ_URL << "\", ";
+            feedbackArgs << "\"dataCollectionInfoURL\": \"" << DATA_COLLECTION_INFO_URL << "\" }";
+
             tstring feedbackResult;
             if (ShowHTMLDlg(
                     hWnd, 
                     _T("FEEDBACK_HTML_RESOURCE"), 
                     GetLocaleName().c_str(),
-                    NULL,
+                    feedbackArgs.str().c_str(),
                     feedbackResult) == 1)
             {
                 my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
@@ -1121,7 +1127,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Stop VPN if running
         // The order of these calls is important. The serverListReorder
         // requires connectionManager to stay up while it shuts down.
-        g_serverListReorder.Stop();
+        g_serverListReorder.Stop(STOP_REASON_EXIT);
         g_connectionManager.Stop(STOP_REASON_EXIT);
         PostQuitMessage(0);
         break;

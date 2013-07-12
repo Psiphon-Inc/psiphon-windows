@@ -24,6 +24,7 @@
 #include "usersettings.h"
 
 class SessionInfo;
+class PlonkConnection;
 
 
 //
@@ -77,12 +78,17 @@ protected:
         const SessionInfo& sessionInfo,
         SystemProxySettings* systemProxySettings);
     bool IsServerSSHCapable(const SessionInfo& sessionInfo) const;
-    bool LaunchPlonk(const TCHAR* plonkCommandLine);
 
 protected:
     tstring m_plonkPath;
-    PROCESS_INFORMATION m_plonkProcessInfo;
     int m_localSocksProxyPort;
+    tstring m_serverAddress;
+    tstring m_serverHostKey;
+    tstring m_plonkCommandLine;
+    int m_serverPort;
+
+    auto_ptr<PlonkConnection> m_currentPlonk;
+    auto_ptr<PlonkConnection> m_previousPlonk;
 };
 
 

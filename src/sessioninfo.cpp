@@ -25,6 +25,12 @@
 #include <sstream>
 
 
+// This value determines whether or not we will perform preemptive reconnect
+// behaviour if the handshake fails. If it's zero (or MAXDWORD, really), then 
+// we won't, if it's something like 60000, then we will.
+#define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT 60000
+
+
 void SessionInfo::Set(const ServerEntry& serverEntry)
 {
     m_serverEntry = serverEntry;
@@ -46,6 +52,7 @@ void SessionInfo::Set(const ServerEntry& serverEntry)
     m_speedTestServerAddress.clear();
     m_speedTestServerPort = 0;
     m_speedTestRequestPath.clear();
+    m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 }
 
 void SessionInfo::GenerateClientSessionID()
@@ -104,6 +111,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     m_speedTestServerAddress.clear();
     m_speedTestServerPort = 0;
     m_speedTestRequestPath.clear();
+    m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 
     Json::Value config;
     Json::Reader reader;
@@ -181,6 +189,10 @@ bool SessionInfo::ProcessConfig(const string& config_json)
             m_speedTestServerPort = atoi(speedTestServerPort.c_str());
             m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
         }
+
+        // Preemptive Reconnect Lifetime Milliseconds
+        m_preemptiveReconnectLifetimeMilliseconds = (DWORD)config.get("preemptive_reconnect_lifetime_milliseconds", 0).asUInt();
+        // A zero value indicates that it should be disabled.
     }
     catch (exception& e)
     {
