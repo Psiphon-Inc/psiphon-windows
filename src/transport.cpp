@@ -53,8 +53,10 @@ void ITransport::Connect(
                     const vector<SessionInfo>& sessionInfo, 
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
-                    WorkerThreadSynch* workerThreadSynch)
+                    WorkerThreadSynch* workerThreadSynch,
+                    int& o_chosenSessionInfoIndex)
 {
+    o_chosenSessionInfoIndex = -1;
     m_sessionInfo = sessionInfo;
     m_chosenSessionInfoIndex = -1;
     m_systemProxySettings = systemProxySettings;
@@ -70,6 +72,9 @@ void ITransport::Connect(
     {
         throw TransportFailed();
     }
+
+    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < sessionInfo.size());
+    o_chosenSessionInfoIndex = m_chosenSessionInfoIndex;
 }
 
 void ITransport::UpdateSessionInfo(const SessionInfo& sessionInfo)

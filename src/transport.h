@@ -86,7 +86,8 @@ public:
             const vector<SessionInfo>& sessionInfo, 
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
-            WorkerThreadSynch* workerThreadSynch);
+            WorkerThreadSynch* workerThreadSynch,
+            int& o_chosenSessionInfoIndex);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.

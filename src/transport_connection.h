@@ -46,18 +46,20 @@ public:
     but *not* ITransport::TransportFailed. Also throws TryNextServer, in 
     the case of a normal failure.
     If statsCollector is null, then stats will not be collected.
-    If handshakeRequestPath is null, then no handshake will be done. (This 
+    If disallowHandshake is true, then no handshake will be done. (This 
     means that transports that require a pre-handshake will fail, and others
     will have no following handshake. This should only be the case for 
     tempoary connections.)
+    io_serverEntries will be modified to reflect the servers for which there
+    were actual connection attempts.
     */
     void Connect(
             const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
-            const ServerEntryIterator& serverEntries, 
-            const TCHAR* handshakeRequestPath,
-            const tstring& splitTunnelingFilePath);
+            ServerEntries& io_serverEntries, 
+            const tstring& splitTunnelingFilePath,
+            bool disallowHandshake);
 
     // Blocks until the transport disconnects.
     void WaitForDisconnect();
@@ -73,7 +75,11 @@ private:
     bool DoHandshake(
             bool preTransport, 
             const StopInfo& stopInfo, 
-            const TCHAR* handshakeRequestPath);
+            SessionInfo& sessionInfo, 
+            const ServerEntries& serverEntries);
+    tstring GetHandshakeRequestPath(
+                const SessionInfo& sessionInfo, 
+                const ServerEntries& serverEntries);
     void Cleanup();
 
 private:
