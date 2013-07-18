@@ -91,7 +91,7 @@ private:
         DWORD size);
     void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
-    void MarkCurrentServerFailed();
+    void MarkServersFailed(const ServerEntries& serverEntries);
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);

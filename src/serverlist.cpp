@@ -148,18 +148,27 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MarkServerFailed(const string& serverAddress)
+void ServerList::MarkServersFailed(const ServerEntries& serverEntries)
 {
     AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() > 1)
+    if (serverEntryList.size() == 0)
+    {
+        return;
+    }
+
+    bool changeMade = false;
+
+    for (ServerEntries::const_iterator failed = serverEntries.begin();
+            failed != serverEntries.end();
+            ++failed)
     {
         for (ServerEntries::iterator entry = serverEntryList.begin();
              entry != serverEntryList.end();
              ++entry)
         {
-            if (serverAddress == entry->serverAddress)
+            if (failed->serverAddress == entry->serverAddress)
             {
                 ServerEntry failedServer;
                 failedServer.Copy(*entry);
@@ -167,11 +176,19 @@ void ServerList::MarkServerFailed(const string& serverAddress)
                 // Move the failed server to the end of the list
                 serverEntryList.erase(entry);
                 serverEntryList.push_back(failedServer);
-                WriteListToSystem(serverEntryList);
-                return;
+
+                changeMade = true;
+                break;
             }
         }
+    }
 
+    if (changeMade)
+    {
+        WriteListToSystem(serverEntryList);
+    }
+    else
+    {
         my_print(NOT_SENSITIVE, true, _T("%s: Couldn't find server"), __TFUNCTION__);
     }
 }

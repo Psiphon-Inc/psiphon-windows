@@ -36,6 +36,8 @@ void _AddDiagnosticInfoHelper(const char* entry)
 {
     AutoMUTEX mutex(g_diagnosticHistoryMutex);
     g_diagnosticHistory.push_back(entry);
+
+    OutputDebugStringA(entry);
 }
 
 void AddDiagnosticInfoYaml(const char* message, const char* yaml)

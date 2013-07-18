@@ -443,7 +443,7 @@ void SSHTransportBase::TransportConnectHelper()
         }
 
         // Iterate in reverse, so we can remove dead connections
-        for (size_t i = allPlonkConnections.size()-1; i >= 0; --i)
+        for (int i = (signed)allPlonkConnections.size()-1; i >= 0; --i)
         {
             bool connected = false;
             if (!allPlonkConnections[i].first->CheckForConnected(connected))
@@ -485,7 +485,7 @@ void SSHTransportBase::TransportConnectHelper()
 bool SSHTransportBase::AreAnyServersSSHCapable()
 {
     // Reverse through vector, so we can remove.
-    for (size_t i = m_sessionInfo.size()-1; i >= 0; i--)
+    for (int i = (signed)m_sessionInfo.size()-1; i >= 0; i--)
     {
         if (m_sessionInfo[i].GetSSHHostKey().length() <= 0)
         {
@@ -1250,7 +1250,7 @@ bool OSSHTransport::GetSSHParams(
     }
 
     o_plonkCommandLine += _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
-    o_plonkCommandLine += o_serverAddress;
+    o_plonkCommandLine += _T(" ") + o_serverAddress;
 
     return true;
 }

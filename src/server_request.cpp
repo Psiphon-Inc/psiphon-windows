@@ -212,9 +212,9 @@ bool ServerRequest::MakeRequest(
                 stopInfo,
                 (*transport_iter).get(),
                 NULL, // not collecting stats
-                sessionInfo, 
-                NULL, // no handshake allowed
-                tstring()); // splitTunnelingFilePath -- not providing it
+                ServerEntries(1, sessionInfo.GetServerEntry()), 
+                tstring(),  // splitTunnelingFilePath -- not providing it
+                true);      // no handshake allowed
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(

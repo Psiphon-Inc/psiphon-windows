@@ -66,7 +66,7 @@ public:
     ServerList();
     virtual ~ServerList();
 
-    void MarkServerFailed(const string& serverAddress);
+    void MarkServersFailed(const ServerEntries& serverEntries);
     ServerEntry GetNextServer();
     ServerEntries GetList();
 

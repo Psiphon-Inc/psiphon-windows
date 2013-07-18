@@ -85,7 +85,7 @@ void TransportConnection::Connect(
     else // no pre-handshake for the first server entry
     {
         // Remove all server entries that do require a pre-handshake.
-        for (int i = io_serverEntries.size(); i >= 0; i--)
+        for (int i = io_serverEntries.size()-1; i >= 0; i--)
         {
             if (transport->IsHandshakeRequired(io_serverEntries[i]))
             {
@@ -107,7 +107,7 @@ void TransportConnection::Connect(
     // Create a vector of SessionInfo structs that use the ServerEntries.
     vector<SessionInfo> sessionInfoCandidates;
     sessionInfoCandidates.resize(io_serverEntries.size());
-    for (int i = 0; i < io_serverEntries.size(); i++)
+    for (size_t i = 0; i < io_serverEntries.size(); i++)
     {
         sessionInfoCandidates[i].Set(io_serverEntries[i]);
     }
@@ -158,7 +158,7 @@ void TransportConnection::Connect(
                     &m_workerThreadSynch,
                     chosenSessionInfoIndex);
 
-        assert(chosenSessionInfoIndex >= 0 && chosenSessionInfoIndex < sessionInfoCandidates.size());
+        assert(chosenSessionInfoIndex >= 0 && chosenSessionInfoIndex < (signed)sessionInfoCandidates.size());
         m_sessionInfo = sessionInfoCandidates[chosenSessionInfoIndex];
 
         // Set up and start the local proxy.

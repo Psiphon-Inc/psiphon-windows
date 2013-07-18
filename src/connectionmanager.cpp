@@ -435,17 +435,28 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             my_print(NOT_SENSITIVE, true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
+            // This vector will be modified to be only the servers for which there was a connection attempt
+            ServerEntries serverEntriesTried(serverEntriesIter, serverEntries.end());
+
             // Note that the TransportConnection will do any necessary cleanup.
             TransportConnection transportConnection;
 
             // May throw TryNextServer
-            transportConnection.Connect(
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                manager->m_transport,
-                manager,
-                ServerEntries(serverEntriesIter, serverEntries.end()), // need a vector
-                manager->GetSplitTunnelingFilePath(),
-                false); // don't disallow handshake
+            try
+            {
+                transportConnection.Connect(
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                    manager->m_transport,
+                    manager,
+                    serverEntriesTried,
+                    manager->GetSplitTunnelingFilePath(),
+                    false); // don't disallow handshake
+            }
+            catch (TransportConnection::TryNextServer&)
+            {
+                manager->MarkServersFailed(serverEntriesTried);
+                throw;
+            }
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
@@ -540,8 +551,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
-
-            manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
             // all we displayed was "WinHttpCallbackFailed (200000)" and kept
@@ -944,11 +953,11 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
-void ConnectionManager::MarkCurrentServerFailed(void)
+void ConnectionManager::MarkServersFailed(const ServerEntries& serverEntries)
 {
     AutoMUTEX lock(m_mutex);
     
-    m_serverList.MarkServerFailed(m_currentSessionInfo.GetServerAddress());
+    m_serverList.MarkServersFailed(serverEntries);
 }
 
 // ==== General Session Functions =============================================
