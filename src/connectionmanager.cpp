@@ -410,7 +410,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             //
 
             ServerEntries serverEntries = manager->m_serverList.GetList();
-            ServerEntries::const_iterator serverEntriesIter = serverEntries.begin();
+            ServerEntries::iterator serverEntriesIter = serverEntries.begin();
 
             // Skip to the first server that is capable of connecting with the current transport.
             while (serverEntriesIter != serverEntries.end())
@@ -429,17 +429,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 throw ConnectionManager::Abort();
             }
 
-            manager->LoadNextServer(handshakeRequestPath);
-
-            // Note that the SessionInfo will only be partly filled in at this point.
-            SessionInfo sessionInfo;
-            manager->CopyCurrentSessionInfo(sessionInfo);
-
-            // Record which server we're attempting to connect to
-            ostringstream ss;
-            ss << "ipAddress: " << sessionInfo.GetServerAddress();
-            AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
-
             //
             // Set up the transport connection
             //
@@ -454,16 +443,16 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                 manager->m_transport,
                 manager,
-                sessionInfo,
-                handshakeRequestPath.c_str(),
-                manager->GetSplitTunnelingFilePath());
+                ServerEntries(serverEntriesIter, serverEntries.end()), // need a vector
+                manager->GetSplitTunnelingFilePath(),
+                false); // don't disallow handshake
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
             // fuller than ours. Update ours and then update the server entries.
             //
 
-            sessionInfo = transportConnection.GetUpdatedSessionInfo();
+            SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
 
             //
@@ -963,56 +952,6 @@ void ConnectionManager::MarkCurrentServerFailed(void)
 }
 
 // ==== General Session Functions =============================================
-
-// Note that the SessionInfo structure will only be partly filled in by this function.
-void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
-{
-    // Select next server to try to connect to
-
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntry serverEntry;
-    
-    try
-    {
-        // Try the next server in our list.
-        serverEntry = m_serverList.GetNextServer();
-    }
-    catch (std::exception &ex)
-    {
-        my_print(NOT_SENSITIVE, false, string("LoadNextServer caught exception: ") + ex.what());
-        throw Abort();
-    }
-
-    // Ensure split tunnel routes are reset before new session
-    m_splitTunnelRoutes = "";
-    StopSplitTunnel();
-
-    // Current session holds server entry info and will also be loaded
-    // with homepage and other info.
-    m_currentSessionInfo.Set(serverEntry);
-
-    // Generate a new client session ID to be included with all subsequent web requests
-    m_currentSessionInfo.GenerateClientSessionID();
-
-    // Output values used in next TryNextServer step
-
-    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + m_transport->GetTransportProtocolName();
-
-    // Include a list of known server IP addresses in the request query string as required by /handshake
-    ServerEntries serverEntries =  m_serverList.GetList();
-    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
-    {
-        handshakeRequestPath += _T("&known_server=");
-        handshakeRequestPath += NarrowToTString(ii->serverAddress);
-    }
-}
 
 bool ConnectionManager::RequireUpgrade(void)
 {

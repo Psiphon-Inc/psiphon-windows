@@ -27,6 +27,7 @@
 #include "utilities.h"
 #include "systemproxysettings.h"
 #include "config.h"
+#include "diagnostic_info.h"
 
 
 #define DEFAULT_PLONK_SOCKS_PROXY_PORT  1080
@@ -370,7 +371,10 @@ void SSHTransportBase::TransportConnectHelper()
     
     assert(m_currentPlonk.get() == NULL);
 
+    //
     // For the sake of server affinity, try the first server and give it a head-start.
+    //
+
     if (InitiateConnection(m_sessionInfo[sessionInfoIndex], plonkConnection))
     {
         // allPlonkConnections takes ownership at this point
@@ -469,6 +473,11 @@ void SSHTransportBase::TransportConnectHelper()
     // going out of scope clean up the rest.
 
     m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
+
+    // Record which server we're using
+    ostringstream ss;
+    ss << "ipAddress: " << m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectedServer", ss.str().c_str());
 
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
@@ -602,6 +611,11 @@ bool SSHTransportBase::InitiateConnection(
     auto_ptr<PlonkConnection>& o_plonkConnection)
 {
     o_plonkConnection.reset();
+
+    // Record the connection attempt
+    ostringstream ss;
+    ss << "ipAddress: " << sessionInfo.GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
 
     // Start plonk using Psiphon server SSH parameters
 

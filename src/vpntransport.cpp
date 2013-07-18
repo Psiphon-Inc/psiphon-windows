@@ -26,6 +26,7 @@
 #include "raserror.h"
 #include "utilities.h"
 #include "server_request.h"
+#include "diagnostic_info.h"
 
 
 #define VPN_CONNECTION_TIMEOUT_SECONDS  20
@@ -261,10 +262,15 @@ void VPNTransport::TransportConnectHelper()
     // always need all tweaks to connect.
     TweakVPN();
 
+    // Record which server we're attempting to connect to
+    ostringstream ss;
+    ss << "ipAddress: " << m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
     //
     // Start VPN connection
     //
-    
+
     if (!Establish(
             NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress()), 
             NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetPSK())))
