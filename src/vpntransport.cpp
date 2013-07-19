@@ -26,6 +26,7 @@
 #include "raserror.h"
 #include "utilities.h"
 #include "server_request.h"
+#include "diagnostic_info.h"
 
 
 #define VPN_CONNECTION_TIMEOUT_SECONDS  20
@@ -90,7 +91,7 @@ tstring VPNTransport::GetTransportDisplayName() const
     return TRANSPORT_DISPLAY_NAME;
 }
 
-tstring VPNTransport::GetSessionID(SessionInfo sessionInfo)
+tstring VPNTransport::GetSessionID(const SessionInfo& sessionInfo)
 {
     if (m_pppIPAddress.empty())
     {
@@ -124,6 +125,11 @@ bool VPNTransport::IsServerRequestTunnelled() const
 bool VPNTransport::IsSplitTunnelSupported() const
 {
     return false;
+}
+
+unsigned int VPNTransport::GetMultiConnectCount() const
+{
+    return 1;
 }
 
 bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
@@ -207,20 +213,23 @@ bool VPNTransport::Cleanup()
     return true;
 }
 
-void VPNTransport::TransportConnect(
-                    const SessionInfo& sessionInfo,
-                    SystemProxySettings*)
+void VPNTransport::TransportConnect()
 {
-    // The SystemProxySettings param is unused
+    // The SystemProxySettings member is unused
 
-    if (!ServerVPNCapable(sessionInfo))
+    m_chosenSessionInfoIndex = 0;
+
+    if (m_chosenSessionInfoIndex >= (signed)m_sessionInfo.size()
+        || !IsServerVPNCapable())
     {
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
     try
     {
-        TransportConnectHelper(sessionInfo);
+        TransportConnectHelper();
     }
     catch(...)
     {
@@ -229,7 +238,7 @@ void VPNTransport::TransportConnect(
     }
 }
 
-void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
+void VPNTransport::TransportConnectHelper()
 {
     //
     // Minimum version check for VPN
@@ -244,6 +253,9 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
         my_print(NOT_SENSITIVE, false, _T("VPN requires Windows XP or greater"));
+
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
@@ -255,14 +267,21 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     // always need all tweaks to connect.
     TweakVPN();
 
+    // Record which server we're attempting to connect to
+    ostringstream ss;
+    ss << "ipAddress: " << m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
     //
     // Start VPN connection
     //
-    
+
     if (!Establish(
-            NarrowToTString(sessionInfo.GetServerAddress()), 
-            NarrowToTString(sessionInfo.GetPSK())))
+            NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress()), 
+            NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetPSK())))
     {
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
@@ -276,6 +295,8 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
             CONNECTION_STATE_STARTING, 
             VPN_CONNECTION_TIMEOUT_SECONDS*1000))
     {
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
     
@@ -283,6 +304,9 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     {
         // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
+
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
@@ -296,10 +320,12 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     TweakDNS();
 }
 
-bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
+bool VPNTransport::IsServerVPNCapable() const
 {
+    assert(m_chosenSessionInfoIndex >= 0 && (signed)m_sessionInfo.size() > m_chosenSessionInfoIndex);
+
     // The absence of a PSK indicates that the server is not VPN-capable
-    return sessionInfo.GetPSK().length() > 0;
+    return m_sessionInfo[m_chosenSessionInfoIndex].GetPSK().length() > 0;
 }
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)

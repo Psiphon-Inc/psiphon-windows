@@ -343,6 +343,14 @@ void ConnectionManager::StopSplitTunnel()
     DeleteSplitTunnelRoutes();
 }
 
+void ConnectionManager::ResetSplitTunnel()
+{
+    AutoMUTEX lock(m_mutex);
+    
+    m_splitTunnelRoutes = "";
+    StopSplitTunnel();
+}
+
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
@@ -394,32 +402,31 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
+            // Ensure split tunnel routes are reset before new session
+            manager->ResetSplitTunnel();
+
+            //
             // Get the next server to try
+            //
 
-            tstring handshakeRequestPath;
+            ServerEntries allServerEntries = manager->m_serverList.GetList();
+            ServerEntries::iterator allServerEntriesIter = allServerEntries.begin();
 
-            manager->LoadNextServer(handshakeRequestPath);
-
-            // Note that the SessionInfo will only be partly filled in at this point.
-            SessionInfo sessionInfo;
-            manager->CopyCurrentSessionInfo(sessionInfo);
-
-            // Record which server we're attempting to connect to
-            ostringstream ss;
-            ss << "ipAddress: " << sessionInfo.GetServerAddress();
-            AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
-
-            // We're looping around to run again. We're assuming that the calling
-            // function knows that there's at least one server to try. We're 
-            // not reporting anything, as the user doesn't need to know what's
-            // going on under the hood at this point.
-            if (!manager->m_transport->ServerHasCapabilities(sessionInfo.GetServerEntry()))
+            // Skip to the first server that is capable of connecting with the current transport.
+            while (allServerEntriesIter != allServerEntries.end())
             {
-                my_print(NOT_SENSITIVE, true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
+                if (manager->m_transport->ServerHasCapabilities(*allServerEntriesIter))
+                {
+                    break;
+                }
+                ++allServerEntriesIter;
+            }
 
-                manager->MarkCurrentServerFailed();
-
-                continue;
+            // Do we have any usable servers?
+            if (allServerEntriesIter == allServerEntries.end())
+            {
+                my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
+                throw ConnectionManager::Abort();
             }
 
             //
@@ -428,24 +435,40 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             my_print(NOT_SENSITIVE, true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
+            // This vector will be modified to be only the servers for which there was a connection attempt
+            ServerEntries serverEntries(allServerEntriesIter, allServerEntries.end());
+            ServerEntries failedServerEntries;
+
             // Note that the TransportConnection will do any necessary cleanup.
             TransportConnection transportConnection;
 
             // May throw TryNextServer
-            transportConnection.Connect(
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                manager->m_transport,
-                manager,
-                sessionInfo,
-                handshakeRequestPath.c_str(),
-                manager->GetSplitTunnelingFilePath());
+            try
+            {
+                transportConnection.Connect(
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                    manager->m_transport,
+                    manager,
+                    serverEntries,
+                    manager->GetSplitTunnelingFilePath(),
+                    false,  // don't disallow handshake
+                    failedServerEntries); 
+            }
+            catch (TransportConnection::TryNextServer&)
+            {
+                manager->MarkServersFailed(failedServerEntries);
+                throw;
+            }
+
+            // Even if the connection was successful, some failures may have resulted
+            manager->MarkServersFailed(failedServerEntries);
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
             // fuller than ours. Update ours and then update the server entries.
             //
 
-            sessionInfo = transportConnection.GetUpdatedSessionInfo();
+            SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
 
             //
@@ -533,8 +556,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
-
-            manager->MarkCurrentServerFailed();
 
             // Give users some feedback. Before, when the handshake failed
             // all we displayed was "WinHttpCallbackFailed (200000)" and kept
@@ -937,64 +958,14 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
-void ConnectionManager::MarkCurrentServerFailed(void)
+void ConnectionManager::MarkServersFailed(const ServerEntries& failedServerEntries)
 {
     AutoMUTEX lock(m_mutex);
     
-    m_serverList.MarkServerFailed(m_currentSessionInfo.GetServerAddress());
+    m_serverList.MarkServersFailed(failedServerEntries);
 }
 
 // ==== General Session Functions =============================================
-
-// Note that the SessionInfo structure will only be partly filled in by this function.
-void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
-{
-    // Select next server to try to connect to
-
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntry serverEntry;
-    
-    try
-    {
-        // Try the next server in our list.
-        serverEntry = m_serverList.GetNextServer();
-    }
-    catch (std::exception &ex)
-    {
-        my_print(NOT_SENSITIVE, false, string("LoadNextServer caught exception: ") + ex.what());
-        throw Abort();
-    }
-
-    // Ensure split tunnel routes are reset before new session
-    m_splitTunnelRoutes = "";
-    StopSplitTunnel();
-
-    // Current session holds server entry info and will also be loaded
-    // with homepage and other info.
-    m_currentSessionInfo.Set(serverEntry);
-
-    // Generate a new client session ID to be included with all subsequent web requests
-    m_currentSessionInfo.GenerateClientSessionID();
-
-    // Output values used in next TryNextServer step
-
-    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + m_transport->GetTransportProtocolName();
-
-    // Include a list of known server IP addresses in the request query string as required by /handshake
-    ServerEntries serverEntries =  m_serverList.GetList();
-    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
-    {
-        handshakeRequestPath += _T("&known_server=");
-        handshakeRequestPath += NarrowToTString(ii->serverAddress);
-    }
-}
 
 bool ConnectionManager::RequireUpgrade(void)
 {

@@ -49,6 +49,7 @@ public:
     void Start(const tstring& transport, bool startSplitTunnel);
     void StartSplitTunnel();
     void StopSplitTunnel();
+    void ResetSplitTunnel();
     time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
@@ -90,8 +91,7 @@ private:
         DWORD size);
     void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
-    void MarkCurrentServerFailed();
-    void LoadNextServer(tstring& handshakeRequestPath);
+    void MarkServersFailed(const ServerEntries& failedServerEntries);
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);

@@ -46,7 +46,7 @@ public:
     //static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
 
     // Only valid when connected
-    virtual tstring GetSessionID(SessionInfo sessionInfo) = 0;
+    virtual tstring GetSessionID(const SessionInfo& sessionInfo) = 0;
 
     // Find out what port, if any, the local proxy should connect to in order 
     // to use this transport.
@@ -67,6 +67,11 @@ public:
     // Returns true if split tunnelling is supported for the transport.
     virtual bool IsSplitTunnelSupported() const = 0;
 
+    // Returns the number of servers that this transport is capable of attempting
+    // to "multi-connect" to (that is, try to connect to many servers at once, 
+    // remaining connected to just one).
+    virtual unsigned int GetMultiConnectCount() const = 0;
+
     // Returns true if at least one server supports this transport.
     virtual bool ServerWithCapabilitiesExists(ServerList& serverList) const;
 
@@ -78,10 +83,12 @@ public:
     // May throw TransportFailed or Abort
     // Subclasses must not override.
     void Connect(
-            SessionInfo sessionInfo, 
+            const vector<SessionInfo>& sessionInfo, 
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
-            WorkerThreadSynch* workerThreadSynch);
+            WorkerThreadSynch* workerThreadSynch,
+            int& o_chosenSessionInfoIndex,
+            ServerEntries& o_failedServerEntries);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
@@ -105,9 +112,7 @@ public:
 
 protected:
     // May throw TransportFailed or IWorkerThread::Abort
-    virtual void TransportConnect(
-                    const SessionInfo& sessionInfo, 
-                    SystemProxySettings* systemProxySettings) = 0;
+    virtual void TransportConnect() = 0;
 
     // IWorkerThread implementation
     virtual bool DoStart();
@@ -116,7 +121,14 @@ protected:
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
 
+    void AddFailedServer(const SessionInfo& sessionInfo);
+    void AddFailedServers(const vector<SessionInfo>& sessionInfo);
+
 protected:
-    SessionInfo m_sessionInfo;
+    vector<SessionInfo> m_sessionInfo;
+    int m_chosenSessionInfoIndex;
     SystemProxySettings* m_systemProxySettings;
+
+private:
+    ServerEntries* m_failedServerEntries;
 };
