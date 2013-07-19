@@ -409,21 +409,21 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Get the next server to try
             //
 
-            ServerEntries serverEntries = manager->m_serverList.GetList();
-            ServerEntries::iterator serverEntriesIter = serverEntries.begin();
+            ServerEntries allServerEntries = manager->m_serverList.GetList();
+            ServerEntries::iterator allServerEntriesIter = allServerEntries.begin();
 
             // Skip to the first server that is capable of connecting with the current transport.
-            while (serverEntriesIter != serverEntries.end())
+            while (allServerEntriesIter != allServerEntries.end())
             {
-                if (manager->m_transport->ServerHasCapabilities(*serverEntriesIter))
+                if (manager->m_transport->ServerHasCapabilities(*allServerEntriesIter))
                 {
                     break;
                 }
-                ++serverEntriesIter;
+                ++allServerEntriesIter;
             }
 
-            // Do we have any usable server?
-            if (serverEntriesIter == serverEntries.end())
+            // Do we have any usable servers?
+            if (allServerEntriesIter == allServerEntries.end())
             {
                 my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
                 throw ConnectionManager::Abort();
@@ -436,7 +436,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
             // This vector will be modified to be only the servers for which there was a connection attempt
-            ServerEntries serverEntriesTried(serverEntriesIter, serverEntries.end());
+            ServerEntries serverEntries(allServerEntriesIter, allServerEntries.end());
+            ServerEntries failedServerEntries;
 
             // Note that the TransportConnection will do any necessary cleanup.
             TransportConnection transportConnection;
@@ -448,15 +449,19 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
                     manager,
-                    serverEntriesTried,
+                    serverEntries,
                     manager->GetSplitTunnelingFilePath(),
-                    false); // don't disallow handshake
+                    false,  // don't disallow handshake
+                    failedServerEntries); 
             }
             catch (TransportConnection::TryNextServer&)
             {
-                manager->MarkServersFailed(serverEntriesTried);
+                manager->MarkServersFailed(failedServerEntries);
                 throw;
             }
+
+            // Even if the connection was successful, some failures may have resulted
+            manager->MarkServersFailed(failedServerEntries);
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
@@ -953,11 +958,11 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
-void ConnectionManager::MarkServersFailed(const ServerEntries& serverEntries)
+void ConnectionManager::MarkServersFailed(const ServerEntries& failedServerEntries)
 {
     AutoMUTEX lock(m_mutex);
     
-    m_serverList.MarkServersFailed(serverEntries);
+    m_serverList.MarkServersFailed(failedServerEntries);
 }
 
 // ==== General Session Functions =============================================

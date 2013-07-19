@@ -50,16 +50,17 @@ public:
     means that transports that require a pre-handshake will fail, and others
     will have no following handshake. This should only be the case for 
     tempoary connections.)
-    io_serverEntries will be modified to reflect the servers for which there
-    were actual connection attempts.
+    serverEntries is all known servers.
+    o_failedServerEntries will be filled with servers that are known to have failed.
     */
     void Connect(
             const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
-            ServerEntries& io_serverEntries, 
+            const ServerEntries& serverEntries,
             const tstring& splitTunnelingFilePath,
-            bool disallowHandshake);
+            bool disallowHandshake,
+            ServerEntries& o_failedServerEntries);
 
     // Blocks until the transport disconnects.
     void WaitForDisconnect();

@@ -87,7 +87,8 @@ public:
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             WorkerThreadSynch* workerThreadSynch,
-            int& o_chosenSessionInfoIndex);
+            int& o_chosenSessionInfoIndex,
+            ServerEntries& o_failedServerEntries);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
@@ -120,8 +121,14 @@ protected:
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
 
+    void AddFailedServer(const SessionInfo& sessionInfo);
+    void AddFailedServers(const vector<SessionInfo>& sessionInfo);
+
 protected:
     vector<SessionInfo> m_sessionInfo;
     int m_chosenSessionInfoIndex;
     SystemProxySettings* m_systemProxySettings;
+
+private:
+    ServerEntries* m_failedServerEntries;
 };

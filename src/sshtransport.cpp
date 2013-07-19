@@ -312,6 +312,8 @@ void SSHTransportBase::TransportConnect()
 {
     if (!AreAnyServersSSHCapable())
     {
+        AddFailedServers(m_sessionInfo);
+        
         throw TransportFailed();
     }
 
@@ -338,6 +340,7 @@ void SSHTransportBase::TransportConnectHelper()
     {
         if (!ExtractExecutable(IDR_PLONK_EXE, PLONK_EXE_NAME, m_plonkPath))
         {
+            AddFailedServers(m_sessionInfo);
             throw TransportFailed();
         }
     }
@@ -359,6 +362,8 @@ void SSHTransportBase::TransportConnectHelper()
         }
 
         my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
+
+        AddFailedServers(m_sessionInfo);
         throw TransportFailed();
     }
 
@@ -448,6 +453,8 @@ void SSHTransportBase::TransportConnectHelper()
             bool connected = false;
             if (!allPlonkConnections[i].first->CheckForConnected(connected))
             {
+                // The connection failed
+                AddFailedServer(m_sessionInfo[allPlonkConnections[i].second]);
                 allPlonkConnections.erase(allPlonkConnections.begin()+i);
             }
             else if (connected)
@@ -464,6 +471,7 @@ void SSHTransportBase::TransportConnectHelper()
 
     if (m_currentPlonk.get() == NULL)
     {
+        AddFailedServers(m_sessionInfo);
         throw TransportFailed();
     }
 
@@ -633,6 +641,7 @@ bool SSHTransportBase::InitiateConnection(
         serverHostKey, 
         plonkCommandLine))
     {
+        AddFailedServer(sessionInfo);
         throw TransportFailed();
     }
 

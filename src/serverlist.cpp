@@ -148,20 +148,22 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MarkServersFailed(const ServerEntries& serverEntries)
+void ServerList::MarkServersFailed(const ServerEntries& failedServerEntries)
 {
     AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() == 0)
+    if (serverEntryList.size() == 0 || failedServerEntries.size() == 0)
     {
         return;
     }
 
+    my_print(NOT_SENSITIVE, true, _T("%s: Marking %d servers failed"), __TFUNCTION__, failedServerEntries.size());
+
     bool changeMade = false;
 
-    for (ServerEntries::const_iterator failed = serverEntries.begin();
-            failed != serverEntries.end();
+    for (ServerEntries::const_iterator failed = failedServerEntries.begin();
+            failed != failedServerEntries.end();
             ++failed)
     {
         for (ServerEntries::iterator entry = serverEntryList.begin();

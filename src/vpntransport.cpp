@@ -222,6 +222,8 @@ void VPNTransport::TransportConnect()
     if (m_chosenSessionInfoIndex >= (signed)m_sessionInfo.size()
         || !IsServerVPNCapable())
     {
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
@@ -251,6 +253,9 @@ void VPNTransport::TransportConnectHelper()
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
         my_print(NOT_SENSITIVE, false, _T("VPN requires Windows XP or greater"));
+
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
@@ -275,6 +280,8 @@ void VPNTransport::TransportConnectHelper()
             NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress()), 
             NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetPSK())))
     {
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 
@@ -288,6 +295,8 @@ void VPNTransport::TransportConnectHelper()
             CONNECTION_STATE_STARTING, 
             VPN_CONNECTION_TIMEOUT_SECONDS*1000))
     {
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
     
@@ -295,6 +304,9 @@ void VPNTransport::TransportConnectHelper()
     {
         // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
+
+        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+
         throw TransportFailed();
     }
 

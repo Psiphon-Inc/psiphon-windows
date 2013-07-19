@@ -214,7 +214,8 @@ bool ServerRequest::MakeRequest(
                 NULL, // not collecting stats
                 ServerEntries(1, sessionInfo.GetServerEntry()), 
                 tstring(),  // splitTunnelingFilePath -- not providing it
-                true);      // no handshake allowed
+                true,       // no handshake allowed
+                ServerEntries());  // not going to keep track of failures
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(

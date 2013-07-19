@@ -30,6 +30,7 @@
 
 ITransport::ITransport()
     : m_systemProxySettings(NULL),
+      m_failedServerEntries(NULL),
       m_chosenSessionInfoIndex(-1)
 {
 }
@@ -54,12 +55,16 @@ void ITransport::Connect(
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
                     WorkerThreadSynch* workerThreadSynch,
-                    int& o_chosenSessionInfoIndex)
+                    int& o_chosenSessionInfoIndex,
+                    ServerEntries& o_failedServerEntries)
 {
     o_chosenSessionInfoIndex = -1;
     m_sessionInfo = sessionInfo;
     m_chosenSessionInfoIndex = -1;
     m_systemProxySettings = systemProxySettings;
+
+    // Do *not* clear o_failedServerEntries -- it might already contain important entries.
+    m_failedServerEntries = &o_failedServerEntries;
  
     assert(m_systemProxySettings);
     assert(sessionInfo.size() > 0);
@@ -73,13 +78,13 @@ void ITransport::Connect(
         throw TransportFailed();
     }
 
-    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < sessionInfo.size());
+    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < (signed)sessionInfo.size());
     o_chosenSessionInfoIndex = m_chosenSessionInfoIndex;
 }
 
 void ITransport::UpdateSessionInfo(const SessionInfo& sessionInfo)
 {
-    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < m_sessionInfo.size());
+    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < (signed)m_sessionInfo.size());
     m_sessionInfo[m_chosenSessionInfoIndex] = sessionInfo;
 }
 
@@ -106,7 +111,8 @@ void ITransport::StopImminent()
 void ITransport::DoStop(bool cleanly)
 {
     Cleanup();
-    m_systemProxySettings = 0;
+    m_systemProxySettings = NULL;
+    m_failedServerEntries = NULL;
 
     my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
 }
@@ -114,4 +120,37 @@ void ITransport::DoStop(bool cleanly)
 bool ITransport::IsConnected() const
 {
     return IsRunning();
+}
+
+
+void ITransport::AddFailedServer(const SessionInfo& sessionInfo)
+{
+    assert(m_failedServerEntries);
+    if (!m_failedServerEntries)
+    {
+        return;
+    }
+
+    // Make sure the entry isn't already marked as failed
+    for (ServerEntries::const_iterator it = m_failedServerEntries->begin();
+            it != m_failedServerEntries->end();
+            ++it)
+    {
+        if (it->serverAddress == sessionInfo.GetServerEntry().serverAddress)
+        {
+            return;
+        }
+    }
+
+    m_failedServerEntries->push_back(sessionInfo.GetServerEntry());
+}
+
+void ITransport::AddFailedServers(const vector<SessionInfo>& sessionInfo)
+{
+    for (vector<SessionInfo>::const_iterator it = sessionInfo.begin();
+         it != sessionInfo.end();
+         ++it)
+    {
+        AddFailedServer(*it);
+    }
 }

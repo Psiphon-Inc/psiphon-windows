@@ -48,15 +48,21 @@ void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
-                            ServerEntries& io_serverEntries, // may be modified
+                            const ServerEntries& serverEntries,
                             const tstring& splitTunnelingFilePath,
-                            bool disallowHandshake)
+                            bool disallowHandshake,
+                            ServerEntries& o_failedServerEntries)
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
 
     assert(transport);
-    assert(io_serverEntries.size() > 0);
+    assert(serverEntries.size() > 0);
+
+    o_failedServerEntries.clear();
+
+    // Make a copy, since we'll need to resize it.
+    ServerEntries serverEntriesToUse(serverEntries);
 
     // To prevent unnecessary complexity, we're going to assume certain things
     // about the transport type and multi-connect (i.e., parallel connection
@@ -66,36 +72,37 @@ void TransportConnection::Connect(
     // they preceded the connection.
     // If pre-handshake is required, we're going to enforce that only one
     // connection attempt will be made (at a time).
-    if (transport->IsHandshakeRequired(io_serverEntries.front()))
+    if (transport->IsHandshakeRequired(serverEntriesToUse.front()))
     {
         assert(transport->GetMultiConnectCount() == 1);
 
         // Can't do multi-connect with handshake -- trim server entries to 1.
-        io_serverEntries.resize(1);
+        serverEntriesToUse.resize(1);
 
         // If the caller demands that we not do a handshake, then we can go 
         // no further.
         if (disallowHandshake)
         {
+            o_failedServerEntries.push_back(serverEntriesToUse.front());
             throw TryNextServer();
         }
     }
     else // no pre-handshake for the first server entry
     {
         // Remove all server entries that do require a pre-handshake.
-        for (int i = io_serverEntries.size()-1; i >= 0; i--)
+        for (int i = serverEntriesToUse.size()-1; i >= 0; i--)
         {
-            if (transport->IsHandshakeRequired(io_serverEntries[i]))
+            if (transport->IsHandshakeRequired(serverEntriesToUse[i]))
             {
-                io_serverEntries.erase(io_serverEntries.begin()+i);
+                serverEntriesToUse.erase(serverEntriesToUse.begin()+i);
             }
         }
 
         // Trim the server entries vector to be at most as many as the 
         // transport can handle at once.
-        if (io_serverEntries.size() > transport->GetMultiConnectCount())
+        if (serverEntriesToUse.size() > transport->GetMultiConnectCount())
         {
-            io_serverEntries.resize(transport->GetMultiConnectCount());
+            serverEntriesToUse.resize(transport->GetMultiConnectCount());
         }
     }
     // Now the server entries vector only contains items that are valid to the
@@ -104,10 +111,10 @@ void TransportConnection::Connect(
 
     // Create a vector of SessionInfo structs that use the ServerEntries.
     vector<SessionInfo> sessionInfoCandidates;
-    sessionInfoCandidates.resize(io_serverEntries.size());
-    for (size_t i = 0; i < io_serverEntries.size(); i++)
+    sessionInfoCandidates.resize(serverEntriesToUse.size());
+    for (size_t i = 0; i < serverEntriesToUse.size(); i++)
     {
-        sessionInfoCandidates[i].Set(io_serverEntries[i]);
+        sessionInfoCandidates[i].Set(serverEntriesToUse[i]);
     }
 
     m_transport = transport;
@@ -123,7 +130,7 @@ void TransportConnection::Connect(
 
         // Some transports require a handshake before connecting; with others we
         // can connect before doing the handshake.    
-        if (m_transport->IsHandshakeRequired(io_serverEntries.front()))
+        if (m_transport->IsHandshakeRequired(serverEntriesToUse.front()))
         {
             my_print(NOT_SENSITIVE, true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
 
@@ -131,9 +138,10 @@ void TransportConnection::Connect(
                     true, // pre-handshake
                     stopInfo, 
                     sessionInfoCandidates.front(), 
-                    io_serverEntries))
+                    serverEntries))
             {
                 // Need a handshake but can't do a handshake or handshake failing.
+                o_failedServerEntries.push_back(serverEntriesToUse.front());
                 throw TryNextServer();
             }
 
@@ -154,7 +162,8 @@ void TransportConnection::Connect(
                     &m_systemProxySettings,
                     stopInfo,
                     &m_workerThreadSynch,
-                    chosenSessionInfoIndex);
+                    chosenSessionInfoIndex,
+                    o_failedServerEntries);
 
         assert(chosenSessionInfoIndex >= 0 && chosenSessionInfoIndex < (signed)sessionInfoCandidates.size());
         m_sessionInfo = sessionInfoCandidates[chosenSessionInfoIndex];
@@ -185,7 +194,7 @@ void TransportConnection::Connect(
                     false, // not pre-handshake
                     stopInfo, 
                     m_sessionInfo,
-                    io_serverEntries))
+                    serverEntriesToUse))
             {
                 my_print(NOT_SENSITIVE, true, _T("%s: Post-handshake failed"), __TFUNCTION__);
             }
