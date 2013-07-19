@@ -219,7 +219,7 @@ void VPNTransport::TransportConnect()
 
     m_chosenSessionInfoIndex = 0;
 
-    if ((signed)m_sessionInfo.size() > m_chosenSessionInfoIndex
+    if (m_chosenSessionInfoIndex >= (signed)m_sessionInfo.size()
         || !IsServerVPNCapable())
     {
         throw TransportFailed();

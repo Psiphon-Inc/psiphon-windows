@@ -38,6 +38,7 @@ void _AddDiagnosticInfoHelper(const char* entry)
     g_diagnosticHistory.push_back(entry);
 
     OutputDebugStringA(entry);
+    OutputDebugStringA("\n");
 }
 
 void AddDiagnosticInfoYaml(const char* message, const char* yaml)

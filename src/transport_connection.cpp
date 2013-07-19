@@ -68,11 +68,9 @@ void TransportConnection::Connect(
     // connection attempt will be made (at a time).
     if (transport->IsHandshakeRequired(io_serverEntries.front()))
     {
-        assert(io_serverEntries.size() == 1);
         assert(transport->GetMultiConnectCount() == 1);
 
-        // Even though we've done those debug checks, we're going to enforce
-        // the rules.
+        // Can't do multi-connect with handshake -- trim server entries to 1.
         io_serverEntries.resize(1);
 
         // If the caller demands that we not do a handshake, then we can go 
