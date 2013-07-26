@@ -275,7 +275,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
     // time (+100%) of the best server. Using the best server as a base
     // is intended to factor out local network conditions, local cpu
     // conditions (e.g., SSL overhead) etc. We randomly shuffle the
-    // rsulting list for some client-side load balancing. Any server
+    // resulting list for some client-side load balancing. Any server
     // that meets the threshold is considered equally qualified for
     // any position towards the top of the list.
 

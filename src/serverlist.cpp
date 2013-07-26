@@ -27,9 +27,12 @@
 #include <sstream>
 
 
-ServerList::ServerList()
+ServerList::ServerList(LPCSTR listName)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
+
+    assert(listName && strlen(listName));
+    m_name = listName;
 }
 
 ServerList::~ServerList()
@@ -195,6 +198,13 @@ void ServerList::MarkServersFailed(const ServerEntries& failedServerEntries)
     }
 }
 
+void ServerList::MarkServerFailed(const ServerEntry& failedServerEntry)
+{
+    ServerEntries failedServerEntries;
+    failedServerEntries.push_back(failedServerEntry);
+    MarkServersFailed(failedServerEntries);
+}
+
 ServerEntry ServerList::GetNextServer()
 {
     AutoMUTEX lock(m_mutex);
@@ -312,9 +322,17 @@ ServerEntries ServerList::GetListFromSystem()
 {
     string serverEntryListString;
 
-    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, serverEntryListString))
+    if (!ReadRegistryStringValue(
+            (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name).c_str(), 
+            serverEntryListString))
     {
-         return ServerEntries();
+        // If we're migrating from an old version, there's no m_name qualifier.
+        if (!ReadRegistryStringValue(
+                LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 
+                serverEntryListString))
+        {
+            return ServerEntries();
+        }
     }
 
     return ParseServerEntries(serverEntryListString.c_str());
@@ -357,7 +375,10 @@ void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
 
     RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
 
-    if (!WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList, reason))
+    if (!WriteRegistryStringValue(
+            (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name).c_str(), 
+            encodedServerEntryList, 
+            reason))
     {
         if (REGISTRY_FAILURE_WRITE_TOO_LONG == reason)
         {

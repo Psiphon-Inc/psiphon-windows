@@ -20,7 +20,6 @@
 #pragma once
 
 #include <time.h>
-#include "serverlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "local_proxy.h"
@@ -43,7 +42,6 @@ public:
     ConnectionManager();
     virtual ~ConnectionManager();
 
-    ServerList& GetServerList();
     void Toggle(const tstring& transport, bool startSplitTunnel);
     void Stop(DWORD reason);
     void Start(const tstring& transport, bool startSplitTunnel);
@@ -91,7 +89,6 @@ private:
         DWORD size);
     void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
-    void MarkServersFailed(const ServerEntries& failedServerEntries);
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
@@ -108,7 +105,6 @@ private:
 private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
-    ServerList m_serverList;
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
     HANDLE m_upgradeThread;

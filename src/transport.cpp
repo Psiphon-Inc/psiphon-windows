@@ -22,6 +22,9 @@
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "stopsignal.h"
+#include "server_request.h"
+#include "embeddedvalues.h"
+#include "config.h"
 
 
 /******************************************************************************
@@ -30,13 +33,14 @@
 
 ITransport::ITransport()
     : m_systemProxySettings(NULL),
-      m_failedServerEntries(NULL),
-      m_chosenSessionInfoIndex(-1)
+      m_serverList(GetTransportProtocolName().c_str())
 {
 }
 
-bool ITransport::ServerWithCapabilitiesExists(ServerList& serverList) const
+bool ITransport::ServerWithCapabilitiesExists() const
 {
+    *** check member list (load if not loaded)
+
     ServerEntries entries = serverList.GetList();
 
     for (size_t i = 0; i < entries.size(); i++)
@@ -51,41 +55,23 @@ bool ITransport::ServerWithCapabilitiesExists(ServerList& serverList) const
 }
 
 void ITransport::Connect(
-                    const vector<SessionInfo>& sessionInfo, 
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
-                    WorkerThreadSynch* workerThreadSynch,
-                    int& o_chosenSessionInfoIndex,
-                    ServerEntries& o_failedServerEntries)
+                    WorkerThreadSynch* workerThreadSynch)
 {
-    o_chosenSessionInfoIndex = -1;
-    m_sessionInfo = sessionInfo;
-    m_chosenSessionInfoIndex = -1;
     m_systemProxySettings = systemProxySettings;
 
-    // Do *not* clear o_failedServerEntries -- it might already contain important entries.
-    m_failedServerEntries = &o_failedServerEntries;
- 
     assert(m_systemProxySettings);
-    assert(sessionInfo.size() > 0);
-
-    // There's no reason for the number of supplied SessionInfo objects to be
-    // greater than the number that can be used in a single connection attempt.
-    assert(sessionInfo.size() <= GetMultiConnectCount());
 
     if (!IWorkerThread::Start(stopInfo, workerThreadSynch))
     {
         throw TransportFailed();
     }
-
-    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < (signed)sessionInfo.size());
-    o_chosenSessionInfoIndex = m_chosenSessionInfoIndex;
 }
 
-void ITransport::UpdateSessionInfo(const SessionInfo& sessionInfo)
+SessionInfo ITransport::GetSessionInfo() const
 {
-    assert(m_chosenSessionInfoIndex >= 0 && m_chosenSessionInfoIndex < (signed)m_sessionInfo.size());
-    m_sessionInfo[m_chosenSessionInfoIndex] = sessionInfo;
+    return m_sessionInfo;
 }
 
 bool ITransport::DoStart()
@@ -112,7 +98,6 @@ void ITransport::DoStop(bool cleanly)
 {
     Cleanup();
     m_systemProxySettings = NULL;
-    m_failedServerEntries = NULL;
 
     my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
 }
@@ -123,34 +108,72 @@ bool ITransport::IsConnected() const
 }
 
 
-void ITransport::AddFailedServer(const SessionInfo& sessionInfo)
+void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
 {
-    assert(m_failedServerEntries);
-    if (!m_failedServerEntries)
-    {
-        return;
-    }
-
-    // Make sure the entry isn't already marked as failed
-    for (ServerEntries::const_iterator it = m_failedServerEntries->begin();
-            it != m_failedServerEntries->end();
-            ++it)
-    {
-        if (it->serverAddress == sessionInfo.GetServerEntry().serverAddress)
-        {
-            return;
-        }
-    }
-
-    m_failedServerEntries->push_back(sessionInfo.GetServerEntry());
+    m_serverList.MarkServerFailed(serverEntry);
 }
 
-void ITransport::AddFailedServers(const vector<SessionInfo>& sessionInfo)
+
+void ITransport::MarkServerSucceeded(const ServerEntry& serverEntry)
 {
-    for (vector<SessionInfo>::const_iterator it = sessionInfo.begin();
-         it != sessionInfo.end();
-         ++it)
+    m_serverList.MoveEntryToFront(serverEntry);
+}
+
+
+tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
+{
+    tstring handshakeRequestPath;
+    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
+                           _T("?client_session_id=") + NarrowToTString(sessionInfo.GetClientSessionID()) +
+                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+                           _T("&server_secret=") + NarrowToTString(sessionInfo.GetWebServerSecret()) +
+                           _T("&relay_protocol=") + GetTransportProtocolName();
+
+    // Include a list of known server IP addresses in the request query string as required by /handshake
+    ServerEntries serverEntries = GetServerEntries();
+    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
-        AddFailedServer(*it);
+        handshakeRequestPath += _T("&known_server=");
+        handshakeRequestPath += NarrowToTString(ii->serverAddress);
     }
+
+    return handshakeRequestPath;
+}
+
+
+bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
+{
+    string handshakeResponse;
+
+    tstring handshakeRequestPath = GetHandshakeRequestPath(sessionInfo);
+
+    // Send list of known server IP addresses (used for stats logging on the server)
+
+    // Allow an adhoc tunnel if this is a pre-transport handshake (i.e, for VPN)
+    ServerRequest::ReqLevel reqLevel = preTransport ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
+
+    if (!ServerRequest::MakeRequest(
+                        reqLevel,
+                        this,
+                        sessionInfo,
+                        handshakeRequestPath.c_str(),
+                        handshakeResponse,
+                        m_stopInfo)
+        || handshakeResponse.length() <= 0)
+    {
+        my_print(NOT_SENSITIVE, false, _T("Handshake failed"));
+        return false;
+    }
+
+    if (!sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
+    {
+        // If the handshake parsing has failed, something is very wrong.
+        my_print(NOT_SENSITIVE, false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
+        MarkServerFailed(sessionInfo.GetServerEntry());
+        throw TransportFailed();
+    }
+
+    return true;
 }

@@ -77,9 +77,6 @@ protected:
         const SessionInfo& sessionInfo,
         auto_ptr<PlonkConnection>& o_plonkConnection);
 
-    // Has the side effect of trimming m_sessionInfo to only capable servers
-    bool AreAnyServersSSHCapable();
-
 protected:
     tstring m_plonkPath;
     int m_localSocksProxyPort;

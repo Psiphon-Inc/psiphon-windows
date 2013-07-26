@@ -253,9 +253,31 @@ void VPNTransport::TransportConnectHelper()
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
         my_print(NOT_SENSITIVE, false, _T("VPN requires Windows XP or greater"));
+        throw TransportFailed();
+    }
 
-        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
+    ServerEntry serverEntry;
+    if (!GetConnectionServerEntry(serverEntry))
+    {
+        my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
+        throw TransportFailed();
+    }
 
+    SessionInfo sessionInfo;
+    sessionInfo.Set(serverEntry);
+
+    // Record which server we're attempting to connect to
+    ostringstream ss;
+    ss << "ipAddress: " << sessionInfo.GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
+    // Do pre-handshake
+
+    if (!DoHandshake(
+            true,  // pre-handshake
+            sessionInfo))
+    {
+        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
 
@@ -267,21 +289,15 @@ void VPNTransport::TransportConnectHelper()
     // always need all tweaks to connect.
     TweakVPN();
 
-    // Record which server we're attempting to connect to
-    ostringstream ss;
-    ss << "ipAddress: " << m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress();
-    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
-
     //
     // Start VPN connection
     //
 
     if (!Establish(
-            NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress()), 
-            NarrowToTString(m_sessionInfo[m_chosenSessionInfoIndex].GetPSK())))
+            NarrowToTString(sessionInfo.GetServerAddress()), 
+            NarrowToTString(sessionInfo.GetPSK())))
     {
-        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
-
+        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
 
@@ -295,8 +311,7 @@ void VPNTransport::TransportConnectHelper()
             CONNECTION_STATE_STARTING, 
             VPN_CONNECTION_TIMEOUT_SECONDS*1000))
     {
-        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
-
+        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
     
@@ -305,10 +320,12 @@ void VPNTransport::TransportConnectHelper()
         // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
 
-        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
-
+        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
+
+    // The connection is good.
+    m_sessionInfo = sessionInfo;
 
     //
     // Patch DNS bug on Windowx XP; and flush DNS
@@ -318,14 +335,6 @@ void VPNTransport::TransportConnectHelper()
     // Note: we proceed even if the call fails. This means some domains
     // may not resolve properly.
     TweakDNS();
-}
-
-bool VPNTransport::IsServerVPNCapable() const
-{
-    assert(m_chosenSessionInfoIndex >= 0 && (signed)m_sessionInfo.size() > m_chosenSessionInfoIndex);
-
-    // The absence of a PSK indicates that the server is not VPN-capable
-    return m_sessionInfo[m_chosenSessionInfoIndex].GetPSK().length() > 0;
 }
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)

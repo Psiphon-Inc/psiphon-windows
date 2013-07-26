@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,12 +20,13 @@
 #include "stdafx.h"
 #include "transport_connection.h"
 #include "systemproxysettings.h"
-#include "server_request.h"
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
-#include "config.h"
-#include "embeddedvalues.h"
+#include "server_list_reordering.h"
+
+
+extern ServerListReorder g_serverListReorder;
 
 
 TransportConnection::TransportConnection()
@@ -48,77 +49,20 @@ void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
-                            const ServerEntries& serverEntries,
                             const tstring& splitTunnelingFilePath,
-                            bool disallowHandshake,
-                            ServerEntries& o_failedServerEntries)
+                            bool disallowHandshake)
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
 
     assert(transport);
-    assert(serverEntries.size() > 0);
 
-    o_failedServerEntries.clear();
-
-    // Make a copy, since we'll need to resize it.
-    ServerEntries serverEntriesToUse(serverEntries);
-
-    // To prevent unnecessary complexity, we're going to assume certain things
-    // about the transport type and multi-connect (i.e., parallel connection
-    // attempts) capabilities. Specifically, if the transport wants to 
-    // multi-connect, then it should not require pre-handshakes. Handshakes 
-    // are done serially, so it would undermine the point of multi-connect if 
-    // they preceded the connection.
-    // If pre-handshake is required, we're going to enforce that only one
-    // connection attempt will be made (at a time).
-    if (transport->IsHandshakeRequired(serverEntriesToUse.front()))
+    if (disallowHandshake && transport->IsHandshakeRequired())
     {
-        assert(transport->GetMultiConnectCount() == 1);
-
-        // Can't do multi-connect with handshake -- trim server entries to 1.
-        serverEntriesToUse.resize(1);
-
-        // If the caller demands that we not do a handshake, then we can go 
-        // no further.
-        if (disallowHandshake)
-        {
-            o_failedServerEntries.push_back(serverEntriesToUse.front());
-            throw TryNextServer();
-        }
-    }
-    else // no pre-handshake for the first server entry
-    {
-        // Remove all server entries that do require a pre-handshake.
-        for (int i = serverEntriesToUse.size()-1; i >= 0; i--)
-        {
-            if (transport->IsHandshakeRequired(serverEntriesToUse[i]))
-            {
-                serverEntriesToUse.erase(serverEntriesToUse.begin()+i);
-            }
-        }
-
-        // Trim the server entries vector to be at most as many as the 
-        // transport can handle at once.
-        if (serverEntriesToUse.size() > transport->GetMultiConnectCount())
-        {
-            serverEntriesToUse.resize(transport->GetMultiConnectCount());
-        }
-    }
-    // Now the server entries vector only contains items that are valid to the
-    // multi-connect type of the transport, and either all need pre-handshake
-    // or all do not.
-
-    // Create a vector of SessionInfo structs that use the ServerEntries.
-    vector<SessionInfo> sessionInfoCandidates;
-    sessionInfoCandidates.resize(serverEntriesToUse.size());
-    for (size_t i = 0; i < serverEntriesToUse.size(); i++)
-    {
-        sessionInfoCandidates[i].Set(serverEntriesToUse[i]);
+        throw TryNextServer();
     }
 
     m_transport = transport;
-    bool handshakeDone = false;
 
     try
     {
@@ -128,45 +72,15 @@ void TransportConnection::Connect(
             throw std::exception("TransportConnection::Connect - DeleteFile failed");
         }
 
-        // Some transports require a handshake before connecting; with others we
-        // can connect before doing the handshake.    
-        if (m_transport->IsHandshakeRequired(serverEntriesToUse.front()))
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
-
-            if (!DoHandshake(
-                    true, // pre-handshake
-                    stopInfo, 
-                    sessionInfoCandidates.front(), 
-                    serverEntries))
-            {
-                // Need a handshake but can't do a handshake or handshake failing.
-                o_failedServerEntries.push_back(serverEntriesToUse.front());
-                throw TryNextServer();
-            }
-
-            handshakeDone = true;
-        }
-        else
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s: Not doing pre-handshake; enough server info for immediate connection"), __TFUNCTION__);
-        }
-
         m_workerThreadSynch.Reset();
 
-        int chosenSessionInfoIndex = -1;
         // Connect with the transport. Will throw on error.
-        // Note that this may attempt parallel connections internally.
         m_transport->Connect(
-                    sessionInfoCandidates, 
                     &m_systemProxySettings,
                     stopInfo,
-                    &m_workerThreadSynch,
-                    chosenSessionInfoIndex,
-                    o_failedServerEntries);
+                    &m_workerThreadSynch);
 
-        assert(chosenSessionInfoIndex >= 0 && chosenSessionInfoIndex < (signed)sessionInfoCandidates.size());
-        m_sessionInfo = sessionInfoCandidates[chosenSessionInfoIndex];
+        m_sessionInfo = m_transport->GetSessionInfo();
 
         // Set up and start the local proxy.
         m_localProxy = new LocalProxy(
@@ -252,66 +166,6 @@ void TransportConnection::WaitForDisconnect()
     }
 }
 
-bool TransportConnection::DoHandshake(
-                            bool preTransport,
-                            const StopInfo& stopInfo, 
-                            SessionInfo& sessionInfo, 
-                            const ServerEntries& serverEntries)
-{
-    string handshakeResponse;
-
-    tstring handshakeRequestPath = GetHandshakeRequestPath(sessionInfo, serverEntries);
-
-    // Send list of known server IP addresses (used for stats logging on the server)
-
-    // Allow an adhoc tunnel if this is a pre-transport handshake (i.e, for VPN)
-    ServerRequest::ReqLevel reqLevel = preTransport ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
-
-    if (!ServerRequest::MakeRequest(
-                        reqLevel,
-                        m_transport,
-                        sessionInfo,
-                        handshakeRequestPath.c_str(),
-                        handshakeResponse,
-                        stopInfo)
-        || handshakeResponse.length() <= 0)
-    {
-        my_print(NOT_SENSITIVE, false, _T("Handshake failed"));
-        return false;
-    }
-
-    if (!sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
-    {
-        // If the handshake parsing has failed, something is very wrong.
-        my_print(NOT_SENSITIVE, false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
-        throw TryNextServer();
-    }
-
-    return true;
-}
-
-tstring TransportConnection::GetHandshakeRequestPath(
-                                const SessionInfo& sessionInfo, 
-                                const ServerEntries& serverEntries)
-{
-    tstring handshakeRequestPath;
-    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_session_id=") + NarrowToTString(sessionInfo.GetClientSessionID()) +
-                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(sessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + m_transport->GetTransportProtocolName();
-
-    // Include a list of known server IP addresses in the request query string as required by /handshake
-    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
-    {
-        handshakeRequestPath += _T("&known_server=");
-        handshakeRequestPath += NarrowToTString(ii->serverAddress);
-    }
-
-    return handshakeRequestPath;
-}
 
 void TransportConnection::Cleanup()
 {

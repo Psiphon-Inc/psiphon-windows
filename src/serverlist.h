@@ -63,10 +63,9 @@ typedef ServerEntries::const_iterator ServerEntryIterator;
 class ServerList
 {
 public:
-    ServerList();
+    ServerList(LPCSTR listName);
     virtual ~ServerList();
 
-    void MarkServersFailed(const ServerEntries& failedServerEntries);
     ServerEntry GetNextServer();
     ServerEntries GetList();
 
@@ -76,8 +75,11 @@ public:
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry);
 
-    void MoveEntriesToFront(
-        const ServerEntries& entries);
+    void MarkServersFailed(const ServerEntries& failedServerEntries);
+    void MarkServerFailed(const ServerEntry& failedServerEntry);
+
+    void MoveEntriesToFront(const ServerEntries& entries);
+    void MoveEntryToFront(const ServerEntry& serverEntry);
 
 private:
     ServerEntries GetListFromEmbeddedValues();
@@ -88,4 +90,5 @@ private:
     string EncodeServerEntries(const ServerEntries& serverEntryList);
 
     HANDLE m_mutex;
+    string m_name;
 };

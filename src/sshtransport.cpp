@@ -212,7 +212,7 @@ bool SSHTransportBase::DoPeriodicCheck()
 
         // Time to bring up the next connection and retire the current.
 
-        auto_ptr<PlonkConnection> nextPlonk(new PlonkConnection(m_sessionInfo[m_chosenSessionInfoIndex]));
+        auto_ptr<PlonkConnection> nextPlonk(new PlonkConnection(m_sessionInfo));
 
         if (nextPlonk.get() == NULL)
         {
@@ -310,13 +310,6 @@ bool SSHTransportBase::Cleanup()
 
 void SSHTransportBase::TransportConnect()
 {
-    if (!AreAnyServersSSHCapable())
-    {
-        AddFailedServers(m_sessionInfo);
-        
-        throw TransportFailed();
-    }
-
     try
     {
         TransportConnectHelper();
@@ -334,13 +327,23 @@ void SSHTransportBase::TransportConnectHelper()
 
     assert(m_systemProxySettings != NULL);
 
+    // Get the ServerEntries we'll try to connect to
+
+    ServerEntries serverEntries;
+    if (!GetConnectionServerEntries(serverEntries)
+        || serverEntries.size() == 0)
+    {
+        my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
+        throw TransportFailed();
+    }
+
     // Extract executables and put to disk if not already
 
     if (m_plonkPath.size() == 0)
     {
         if (!ExtractExecutable(IDR_PLONK_EXE, PLONK_EXE_NAME, m_plonkPath))
         {
-            AddFailedServers(m_sessionInfo);
+            my_print(NOT_SENSITIVE, false, _T("Unable to extract SSH transport executable."));
             throw TransportFailed();
         }
     }
@@ -362,81 +365,37 @@ void SSHTransportBase::TransportConnectHelper()
         }
 
         my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
-
-        AddFailedServers(m_sessionInfo);
         throw TransportFailed();
     }
 
-    size_t sessionInfoIndex = 0;
-    assert(sessionInfoIndex < m_sessionInfo.size());
-
-    // The right-hand (second) part of the pair is the sessionInfo index, which we'll need later.
-    vector<pair<auto_ptr<PlonkConnection>, size_t>> allPlonkConnections;
-    auto_ptr<PlonkConnection> plonkConnection;
+    vector<pair<auto_ptr<PlonkConnection>, SessionInfo>> allPlonkConnections;
     
     assert(m_currentPlonk.get() == NULL);
 
-    //
-    // For the sake of server affinity, try the first server and give it a head-start.
-    //
-
-    if (InitiateConnection(m_sessionInfo[sessionInfoIndex], plonkConnection))
+    for (size_t i = 0; i < serverEntries.size(); i++)
     {
-        // allPlonkConnections takes ownership at this point
-        allPlonkConnections.push_back(pair<auto_ptr<PlonkConnection>, size_t>(plonkConnection, sessionInfoIndex));
-        sessionInfoIndex++;
-
-        DWORD start = GetTickCount();
-        do 
+        if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
         {
-            if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
-            {
-                throw Abort();
-            }
-
-            bool connected = false;
-            if (!allPlonkConnections.front().first->CheckForConnected(connected))
-            {
-                // The connection failed.
-                connected = false;
-                allPlonkConnections.pop_back();
-                break;
-            }
-            else if (connected)
-            {
-                // m_currentPlonk takes ownership
-                m_currentPlonk = allPlonkConnections.front().first;
-                m_chosenSessionInfoIndex = (int)allPlonkConnections.front().second;
-                break;
-            }
-
-            Sleep(100);
+            throw Abort();
         }
-        while (GetTickCountDiff(start, GetTickCount()) < SERVER_AFFINITY_HEAD_START_MS);
-    }
 
-    // If the first server hasn't connected, we need to spin up the rest.
-    if (m_currentPlonk.get() == NULL)
-    {
-        while(sessionInfoIndex < m_sessionInfo.size()
-              && allPlonkConnections.size() < GetMultiConnectCount())  // this condidtion shouldn't be false, but check anyway
+        auto_ptr<PlonkConnection> plonkConnection;
+        SessionInfo sessionInfo;
+        sessionInfo.Set(serverEntries[i]);
+
+        if (InitiateConnection(sessionInfo, plonkConnection))
         {
-            if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
-            {
-                throw Abort();
-            }
-
-            if (InitiateConnection(m_sessionInfo[sessionInfoIndex], plonkConnection))
-            {
-                // allPlonkConnections takes ownership at this point
-                allPlonkConnections.push_back(pair<auto_ptr<PlonkConnection>, size_t>(plonkConnection, sessionInfoIndex));
-                sessionInfoIndex++;
-            }
+            // allPlonkConnections takes ownership at this point
+            allPlonkConnections.push_back(pair<auto_ptr<PlonkConnection>, SessionInfo>(plonkConnection, sessionInfo));
         }
     }
+
+    pair<auto_ptr<PlonkConnection>, SessionInfo> tentativeConnection;
 
     // We now have a vector of Plonk connections connecting.
-    // Check them until one succeeds, or they all fail, or the timeout expires.
+    // To encourage server affinity, we'll try to connect for a minimum amount
+    // of time, and if the first server connects in that time we'll use it.
+    bool abortServerAffinity = false;
     DWORD start = GetTickCount();
     while (m_currentPlonk.get() == NULL 
            && allPlonkConnections.size() > 0
@@ -454,55 +413,96 @@ void SSHTransportBase::TransportConnectHelper()
             if (!allPlonkConnections[i].first->CheckForConnected(connected))
             {
                 // The connection failed
-                AddFailedServer(m_sessionInfo[allPlonkConnections[i].second]);
+                MarkServerFailed(allPlonkConnections[i].second.GetServerEntry());
                 allPlonkConnections.erase(allPlonkConnections.begin()+i);
+
+                // If this is the first server failing, then we should
+                // stop trying to promote server affinity.
+                if (i == 0)
+                {
+                    abortServerAffinity = true;
+                }
             }
             else if (connected)
             {
-                // m_currentPlonk takes ownership
-                m_currentPlonk = allPlonkConnections[i].first;
-                m_chosenSessionInfoIndex = (int)allPlonkConnections[i].second;
-                break;
+                // Because we're trying to promote server affinity, what we do 
+                // here depends on whether this is the first server, and, if 
+                // not, whether the first server's "head start" has expired.
+
+                // Takes control of the PlonkConnection, copies the SessionInfo
+                tentativeConnection = allPlonkConnections[i];
+
+                // Mark the server as succeeded.
+                MarkServerSucceeded(tentativeConnection.second.GetServerEntry());
+                allPlonkConnections.erase(allPlonkConnections.begin()+i);
+
+                if (i == 0
+                    || abortServerAffinity
+                    || GetTickCountDiff(start, GetTickCount()) > SERVER_AFFINITY_HEAD_START_MS)
+                {
+                    break;
+                }
+
+                // Otherwise keep checking for successful connections.
             }
         }
 
         Sleep(100);
     }
 
-    if (m_currentPlonk.get() == NULL)
+    if (tentativeConnection.first.get() != NULL)
     {
-        AddFailedServers(m_sessionInfo);
+        // m_currentPlonk takes control
+        m_currentPlonk = tentativeConnection.first;
+        m_sessionInfo = tentativeConnection.second;
+    }
+    else
+    {
         throw TransportFailed();
     }
 
-    assert(m_currentPlonk.get() != NULL && m_chosenSessionInfoIndex >= 0);
+    assert(m_currentPlonk.get() != NULL);
 
-    // We got our connected Plonk connection. We'll let allPlonkConnections 
-    // going out of scope clean up the rest.
+    // Do the handshake, but don't abort if it fails
+    (void)DoHandshake(
+            false,  // not pre-handshake
+            m_sessionInfo);
+
+    // We got our connected Plonk connection. We'll let all other PlonkConnections 
+    // go out of scope, thereby getting cleaned up.
 
     m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
 
     // Record which server we're using
     ostringstream ss;
-    ss << "ipAddress: " << m_sessionInfo[m_chosenSessionInfoIndex].GetServerAddress();
+    ss << "ipAddress: " << m_sessionInfo.GetServerAddress();
     AddDiagnosticInfoYaml("ConnectedServer", ss.str().c_str());
 
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
 
-bool SSHTransportBase::AreAnyServersSSHCapable()
-{
-    // Reverse through vector, so we can remove.
-    for (int i = (signed)m_sessionInfo.size()-1; i >= 0; i--)
-    {
-        if (m_sessionInfo[i].GetSSHHostKey().length() <= 0)
-        {
-            m_sessionInfo.erase(m_sessionInfo.begin()+i);
-        }
-    }
 
-    return m_sessionInfo.size() > 0;
+bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries)
+{
+    o_serverEntries.clear();
+
+    // NOTE: Some of our very old SSH servers required a pre-handshake. We're
+    // not going to use them. 
+
+    *** pick server according to first-half-start, second-half-random
+    *** what to do about servers that don't support the protocol? remove? move to back?
+    *** ensure no pre-handshake
+    *** use GetMultiConnectCount()
+
+    ServerEntries allServerEntries = GetServerEntries();
+    for (ServerEntryIterator it = allServerEntries.begin(); 
+         it != allServerEntries.end();
+         ++it)
+    {
+        
+    }
 }
+
 
 bool SSHTransportBase::GetUserParentProxySettings(
     SystemProxySettings* systemProxySettings,

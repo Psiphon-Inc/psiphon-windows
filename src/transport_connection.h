@@ -73,14 +73,6 @@ public:
     class TryNextServer { };
 
 private:
-    bool DoHandshake(
-            bool preTransport, 
-            const StopInfo& stopInfo, 
-            SessionInfo& sessionInfo, 
-            const ServerEntries& serverEntries);
-    tstring GetHandshakeRequestPath(
-                const SessionInfo& sessionInfo, 
-                const ServerEntries& serverEntries);
     void Cleanup();
 
 private:

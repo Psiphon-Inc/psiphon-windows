@@ -55,10 +55,8 @@ public:
 
     virtual tstring GetLastTransportError() const = 0;
 
-    // Examines the available information in SessionInfo and determines if a
-    // request to the server for further info is needed before this transport
-    // can connect.
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
+    // Returns true if pre-handshake is required to connect, false otherwise.
+    virtual bool IsHandshakeRequired() const = 0;
 
     // Returns true if requests to the server should be tunnelled/proxied
     // through the transport. If not, then the local proxy should not be used.
@@ -73,8 +71,9 @@ public:
     virtual unsigned int GetMultiConnectCount() const = 0;
 
     // Returns true if at least one server supports this transport.
-    virtual bool ServerWithCapabilitiesExists(ServerList& serverList) const;
+    virtual bool ServerWithCapabilitiesExists() const;
 
+    ** Make private/protected?
     // Returns true if the specified server supports this transport.
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const = 0;
 
@@ -83,12 +82,9 @@ public:
     // May throw TransportFailed or Abort
     // Subclasses must not override.
     void Connect(
-            const vector<SessionInfo>& sessionInfo, 
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
-            WorkerThreadSynch* workerThreadSynch,
-            int& o_chosenSessionInfoIndex,
-            ServerEntries& o_failedServerEntries);
+            WorkerThreadSynch* workerThreadSynch);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
@@ -98,7 +94,7 @@ public:
 
     // Must be called after connecting, if there has been a handshake that 
     // added more data to sessionInfo.
-    void UpdateSessionInfo(const SessionInfo& sessionInfo);
+    SessionInfo GetSessionInfo() const;
 
     //
     // Exception classes
@@ -121,14 +117,17 @@ protected:
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
 
-    void AddFailedServer(const SessionInfo& sessionInfo);
-    void AddFailedServers(const vector<SessionInfo>& sessionInfo);
+    // Returns the transport's server list. Loads it if necessary.
+    const ServerEntries& GetServerEntries();
+
+    void MarkServerFailed(const ServerEntry& serverEntry);
+    void MarkServerSucceeded(const ServerEntry& serverEntry);
+
+    tstring GetHandshakeRequestPath(const SessionInfo& sessionInfo);
+    bool DoHandshake(bool preTransport, SessionInfo& sessionInfo);
 
 protected:
-    vector<SessionInfo> m_sessionInfo;
-    int m_chosenSessionInfoIndex;
+    SessionInfo m_sessionInfo;
     SystemProxySettings* m_systemProxySettings;
-
-private:
-    ServerEntries* m_failedServerEntries;
+    ServerList m_serverList;
 };

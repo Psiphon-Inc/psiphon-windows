@@ -61,7 +61,6 @@ protected:
     virtual bool DoPeriodicCheck();
     
     void TransportConnectHelper();
-    bool IsServerVPNCapable() const;
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
     HANDLE GetStateChangeEvent();

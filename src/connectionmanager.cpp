@@ -37,12 +37,10 @@
 #include "authenticated_data_package.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
-#include "server_list_reordering.h"
 
 
 // Upgrade process posts a Quit message
 extern HWND g_hWnd;
-extern ServerListReorder g_serverListReorder;
 
 
 ConnectionManager::ConnectionManager(void) :
@@ -65,11 +63,6 @@ ConnectionManager::~ConnectionManager(void)
 {
     Stop(STOP_REASON_NONE);
     CloseHandle(m_mutex);
-}
-
-ServerList& ConnectionManager::GetServerList()
-{
-    return m_serverList;
 }
 
 void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
@@ -186,6 +179,8 @@ void ConnectionManager::Stop(DWORD reason)
 
 void ConnectionManager::FetchRemoteServerList(void)
 {
+    *** get the remote server list, then update each of the transports' server lists
+
     AutoMUTEX lock(m_mutex);
 
     if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
@@ -277,7 +272,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     m_transport = TransportRegistry::New(transport);
 
-    if (!m_transport->ServerWithCapabilitiesExists(GetServerList()))
+    if (!m_transport->ServerWithCapabilitiesExists())
     {
         my_print(NOT_SENSITIVE, false, _T("No servers support this protocol."));
         return;
@@ -366,11 +361,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     bool homePageOpened = false;
 
     //
-    // Loop through server list, attempting to connect.
-    //
-    // When handshake and all connection types fail, the
-    // server is marked as failed in the local server list and
-    // the next server from the list is selected and retried.
+    // Repeatedly attempt to connect.
     //
     // All operations may be interrupted by user cancel.
     //
@@ -470,6 +461,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
+
+            // DEBUG TEMP
+            my_print(NOT_SENSITIVE, true, _T("CONNECTED TO SERVER: %S"), sessionInfo.GetServerAddress().c_str());
 
             //
             // If handshake notified of new version, start the upgrade in a (background) thread
