@@ -151,6 +151,13 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
     WriteListToSystem(persistentServerEntryList);
 }
 
+void ServerList::MoveEntryToFront(const ServerEntry& serverEntry)
+{
+    ServerEntries serverEntries;
+    serverEntries.push_back(serverEntry);
+    MoveEntriesToFront(serverEntries);
+}
+
 void ServerList::MarkServersFailed(const ServerEntries& failedServerEntries)
 {
     AutoMUTEX lock(m_mutex);
