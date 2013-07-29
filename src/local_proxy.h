@@ -44,7 +44,7 @@ public:
     // be the case for temporary connections.)
     LocalProxy(
         ILocalProxyStatsCollector* statsCollector, 
-        const SessionInfo& sessionInfo, 
+        LPCSTR serverAddress, 
         SystemProxySettings* systemProxySettings,
         int parentPort, 
         const tstring& splitTunnelingFilePath);
@@ -86,7 +86,7 @@ private:
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
     bool m_finalStatsSent;
-    tstring m_serverAddress;
+    string m_serverAddress;
     map<string, bool> m_reportedUnproxiedDomains;
 };
 

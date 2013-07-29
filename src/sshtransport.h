@@ -55,6 +55,9 @@ public:
         int& o_UserParentProxyPort,
         tstring& o_UserParentProxyUsername,
         tstring& o_UserParentProxyPassword);
+
+    virtual void ProxySetupComplete();
+
     virtual bool Cleanup();
 
 protected:
@@ -62,7 +65,7 @@ protected:
     virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
 
-    virtual bool GetSSHParams(
+    virtual void GetSSHParamsa(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,
@@ -73,6 +76,7 @@ protected:
     virtual int GetPort(const SessionInfo& sessionInfo) const = 0;
 
     void TransportConnectHelper();
+    bool GetConnectionServerEntries(ServerEntries& o_serverEntries);
     bool InitiateConnection(
         const SessionInfo& sessionInfo,
         auto_ptr<PlonkConnection>& o_plonkConnection);
@@ -103,7 +107,7 @@ public:
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 
 protected:
-    virtual bool GetSSHParams(
+    virtual void GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,
@@ -132,7 +136,7 @@ public:
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 
 protected:
-    virtual bool GetSSHParams(
+    virtual void GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,

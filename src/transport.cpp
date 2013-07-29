@@ -25,6 +25,7 @@
 #include "server_request.h"
 #include "embeddedvalues.h"
 #include "config.h"
+#include "transport_registry.h"
 
 
 /******************************************************************************
@@ -33,7 +34,7 @@
 
 ITransport::ITransport()
     : m_systemProxySettings(NULL),
-      m_serverList(GetTransportProtocolName().c_str())
+      m_serverList(TStringToNarrow(GetTransportProtocolName()).c_str())
 {
 }
 
@@ -176,4 +177,46 @@ bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
     }
 
     return true;
+}
+
+
+// static
+void ITransport::AddServerEntries(
+        const vector<string>& newServerEntryList, 
+        const ServerEntry* serverEntry)
+{
+    // Add server entries to all transports. This requires us to create
+    // temporary instances of the transports.
+    vector<ITransport*> allTransports;
+    TransportRegistry::NewAll(allTransports);
+
+    try
+    {
+        for (vector<ITransport*>::iterator iterTransport = allTransports.begin();
+             iterTransport != allTransports.end();
+             ++iterTransport)
+        {
+            (*iterTransport)->m_serverList.AddEntriesToList(
+                                            newServerEntryList, 
+                                            serverEntry);
+        }
+    }
+    catch(...)
+    {
+        for (vector<ITransport*>::iterator iterTransport = allTransports.begin();
+             iterTransport != allTransports.end();
+             ++iterTransport)
+        {
+            delete *iterTransport;
+        }
+
+        throw;
+    }
+
+    for (vector<ITransport*>::iterator iterTransport = allTransports.begin();
+            iterTransport != allTransports.end();
+            ++iterTransport)
+    {
+        delete *iterTransport;
+    }
 }

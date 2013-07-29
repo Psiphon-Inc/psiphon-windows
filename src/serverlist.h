@@ -66,7 +66,6 @@ public:
     ServerList(LPCSTR listName);
     virtual ~ServerList();
 
-    ServerEntry GetNextServer();
     ServerEntries GetList();
 
     // serverEntry is optional. It is an extra server entry that should be
@@ -82,6 +81,7 @@ public:
     void MoveEntryToFront(const ServerEntry& serverEntry);
 
 private:
+    string GetListName() const;
     ServerEntries GetListFromEmbeddedValues();
     ServerEntries GetListFromSystem();
     ServerEntries ParseServerEntries(const char* serverEntryListString);

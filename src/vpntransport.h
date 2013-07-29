@@ -53,6 +53,8 @@ public:
     virtual unsigned int GetMultiConnectCount() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
+    virtual void ProxySetupComplete();
+
     virtual bool Cleanup();
 
 protected:
@@ -61,6 +63,7 @@ protected:
     virtual bool DoPeriodicCheck();
     
     void TransportConnectHelper();
+    bool GetConnectionServerEntry(ServerEntry& o_serverEntry);
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
     HANDLE GetStateChangeEvent();

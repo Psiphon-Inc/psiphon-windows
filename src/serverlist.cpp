@@ -29,10 +29,12 @@
 
 ServerList::ServerList(LPCSTR listName)
 {
-    m_mutex = CreateMutex(NULL, FALSE, 0);
-
     assert(listName && strlen(listName));
     m_name = listName;
+
+    // Used a named mutex, because we'll need to use the mutex across instances.
+    tstring mutexName = _T("Local\\ServerListMutex-") + NarrowToTString(listName);
+    m_mutex = CreateMutex(NULL, FALSE, mutexName.c_str());
 }
 
 ServerList::~ServerList()
@@ -212,22 +214,6 @@ void ServerList::MarkServerFailed(const ServerEntry& failedServerEntry)
     MarkServersFailed(failedServerEntries);
 }
 
-ServerEntry ServerList::GetNextServer()
-{
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() < 1)
-    {
-        throw std::exception("No servers found.  This application is possibly corrupt.");
-    }
-
-    // The client always tries the first entry in the list.
-    // The list will be rearranged elsewhere, such as when a server has failed,
-    // or when new servers are discovered.
-    return serverEntryList[0];
-}
-
 // This function should not throw
 ServerEntries ServerList::GetList()
 {
@@ -320,6 +306,11 @@ ServerEntries ServerList::GetList()
     }
 }
 
+string ServerList::GetListName() const
+{
+    return string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name;
+}
+
 ServerEntries ServerList::GetListFromEmbeddedValues()
 {
     return ParseServerEntries(EMBEDDED_SERVER_LIST);
@@ -330,7 +321,7 @@ ServerEntries ServerList::GetListFromSystem()
     string serverEntryListString;
 
     if (!ReadRegistryStringValue(
-            (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name).c_str(), 
+            GetListName().c_str(), 
             serverEntryListString))
     {
         // If we're migrating from an old version, there's no m_name qualifier.
@@ -383,7 +374,7 @@ void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
     RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
 
     if (!WriteRegistryStringValue(
-            (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name).c_str(), 
+            GetListName().c_str(), 
             encodedServerEntryList, 
             reason))
     {

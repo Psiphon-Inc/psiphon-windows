@@ -156,6 +156,14 @@ tstring SSHTransportBase::GetLastTransportError() const
     return _T("0");
 }
 
+void SSHTransportBase::ProxySetupComplete()
+{
+    // Do the handshake, but don't abort if it fails
+    (void)DoHandshake(
+            false,  // not pre-handshake
+            m_sessionInfo);
+}
+
 bool SSHTransportBase::DoPeriodicCheck()
 {
     // Make sure the current connection is okay.
@@ -463,11 +471,6 @@ void SSHTransportBase::TransportConnectHelper()
 
     assert(m_currentPlonk.get() != NULL);
 
-    // Do the handshake, but don't abort if it fails
-    (void)DoHandshake(
-            false,  // not pre-handshake
-            m_sessionInfo);
-
     // We got our connected Plonk connection. We'll let all other PlonkConnections 
     // go out of scope, thereby getting cleaned up.
 
@@ -488,6 +491,12 @@ bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries
 
     // NOTE: Some of our very old SSH servers required a pre-handshake. We're
     // not going to use them. 
+
+    // We select the first MAX/2 server from the top of the list (they may be 
+    // better/fresher) and then MAX/2 random servers from the rest of the list
+    // (they may be underused).
+    // Always including the first server helps maintain server affinity (i.e.,
+    // trying to always use the server that was successfully used last time.)
 
     *** pick server according to first-half-start, second-half-random
     *** what to do about servers that don't support the protocol? remove? move to back?
@@ -548,7 +557,7 @@ bool SSHTransportBase::GetUserParentProxySettings(
         o_UserSSHParentProxyPort));
 }
 
-bool SSHTransportBase::GetSSHParams(
+void SSHTransportBase::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
     SystemProxySettings* systemProxySettings,
@@ -610,7 +619,6 @@ bool SSHTransportBase::GetSSHParams(
     }
     
     o_plonkCommandLine = m_plonkPath + args.str();
-    return true;
 }
 
 
@@ -632,18 +640,14 @@ bool SSHTransportBase::InitiateConnection(
     tstring plonkCommandLine;
     int serverPort;
 
-    if (!GetSSHParams(
+    GetSSHParams(
         sessionInfo,
         m_localSocksProxyPort, 
         m_systemProxySettings,
         serverAddress, 
         serverPort, 
         serverHostKey, 
-        plonkCommandLine))
-    {
-        AddFailedServer(sessionInfo);
-        throw TransportFailed();
-    }
+        plonkCommandLine);
 
     auto_ptr<PlonkConnection> plonkConnection(new PlonkConnection(sessionInfo));
 
@@ -1141,7 +1145,7 @@ bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
     return !sufficientInfo;
 }
 
-bool SSHTransport::GetSSHParams(
+void SSHTransport::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
     SystemProxySettings* systemProxySettings,
@@ -1150,21 +1154,16 @@ bool SSHTransport::GetSSHParams(
     tstring& o_serverHostKey, 
     tstring& o_plonkCommandLine)
 {
-    if(!SSHTransportBase::GetSSHParams(
+    SSHTransportBase::GetSSHParams(
         sessionInfo,
         localSocksProxyPort,
         systemProxySettings,
         o_serverAddress, 
         o_serverPort, 
         o_serverHostKey, 
-        o_plonkCommandLine))
-    {
-        return false;
-    }
+        o_plonkCommandLine);
 
     o_plonkCommandLine += _T(" ") + o_serverAddress;
-
-    return true;
 }
 
 int SSHTransport::GetPort(const SessionInfo& sessionInfo) const
@@ -1227,7 +1226,7 @@ bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
     return !sufficientInfo;
 }
 
-bool OSSHTransport::GetSSHParams(
+void OSSHTransport::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
     SystemProxySettings* systemProxySettings,
@@ -1241,27 +1240,25 @@ bool OSSHTransport::GetSSHParams(
         || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
     {
         my_print(NOT_SENSITIVE, false, _T("%s - missing parameters"), __TFUNCTION__);
-        return false;
+
+        // TODO: Is this actual a fatal error? Throw std::exception?
+        MarkServerFailed(sessionInfo.GetServerEntry());
+        throw TransportFailed();
     }
 
     tstring o_plonk_options;
 
-    if(!SSHTransportBase::GetSSHParams(
+    SSHTransportBase::GetSSHParams(
         sessionInfo,
         localSocksProxyPort,
         systemProxySettings,
         o_serverAddress, 
         o_serverPort, 
         o_serverHostKey, 
-        o_plonkCommandLine))
-    {
-        return false;
-    }
+        o_plonkCommandLine);
 
     o_plonkCommandLine += _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
     o_plonkCommandLine += _T(" ") + o_serverAddress;
-
-    return true;
 }
 
 int OSSHTransport::GetPort(const SessionInfo& sessionInfo) const

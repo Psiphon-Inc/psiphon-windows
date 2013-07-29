@@ -34,7 +34,7 @@
 
 LocalProxy::LocalProxy(
                 ILocalProxyStatsCollector* statsCollector, 
-                const SessionInfo& sessionInfo, 
+                LPCSTR serverAddress, 
                 SystemProxySettings* systemProxySettings,
                 int parentPort, 
                 const tstring& splitTunnelingFilePath)
@@ -45,13 +45,10 @@ LocalProxy::LocalProxy(
       m_bytesTransferred(0),
       m_lastStatusSendTimeMS(0),
       m_splitTunnelingFilePath(splitTunnelingFilePath),
-      m_finalStatsSent(false)
+      m_finalStatsSent(false),
+      m_serverAddress(serverAddress)
 {
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
-
-    m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
-    m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
-    m_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
 
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -254,7 +251,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
         }
         if(m_serverAddress.length() > 0)
         {
-            polipoCommandLine << _T(" psiphonServer=") << m_serverAddress ;
+            polipoCommandLine << _T(" psiphonServer=") << NarrowToTString(m_serverAddress);
         }
     }
 

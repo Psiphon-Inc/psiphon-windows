@@ -252,7 +252,7 @@ void ConnectionManager::FetchRemoteServerList(void)
 
     try
     {
-        m_serverList.AddEntriesToList(newServerEntryVector, 0);
+        m_transport->AddServerEntries(newServerEntryVector, 0);
     }
     catch (std::exception &ex)
     {
@@ -1296,7 +1296,7 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
-        m_serverList.AddEntriesToList(
+        m_transport->AddServerEntries(
             m_currentSessionInfo.GetDiscoveredServerEntries(), 
             &m_currentSessionInfo.GetServerEntry());
     }

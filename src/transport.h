@@ -96,6 +96,15 @@ public:
     // added more data to sessionInfo.
     SessionInfo GetSessionInfo() const;
 
+    // Must be called after the local proxy is running and the system proxy
+    // settings are in place. 
+    // Subclasses may use this opportunity to make a handshake.
+    virtual void ProxySetupComplete() = 0;
+
+    static void ITransport::AddServerEntries(
+            const vector<string>& newServerEntryList, 
+            const ServerEntry* serverEntry);
+
     //
     // Exception classes
     //

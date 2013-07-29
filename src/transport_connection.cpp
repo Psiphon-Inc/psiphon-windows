@@ -80,12 +80,14 @@ void TransportConnection::Connect(
                     stopInfo,
                     &m_workerThreadSynch);
 
+        // Get initial SessionInfo. Note that this might be pre-handshake
+        // and therefore not be totally filled in.
         m_sessionInfo = m_transport->GetSessionInfo();
 
         // Set up and start the local proxy.
         m_localProxy = new LocalProxy(
                             statsCollector, 
-                            m_sessionInfo, 
+                            m_sessionInfo.GetServerAddress().c_str(), 
                             &m_systemProxySettings,
                             m_transport->GetLocalProxyParentPort(), 
                             splitTunnelingFilePath);
@@ -101,29 +103,15 @@ void TransportConnection::Connect(
         // and the local proxy.
         m_systemProxySettings.Apply();
 
-        // If we didn't do the handshake before, do it now.
-        if (!handshakeDone && !disallowHandshake)
-        {
-            if (!DoHandshake(
-                    false, // not pre-handshake
-                    stopInfo, 
-                    m_sessionInfo,
-                    serverEntriesToUse))
-            {
-                my_print(NOT_SENSITIVE, true, _T("%s: Post-handshake failed"), __TFUNCTION__);
-            }
-            // We do not fail regardless of whether the handshake succeeds.
+        // Let the transport do a handshake
+        m_transport->ProxySetupComplete();
 
-            handshakeDone = true;
-        }
+        // If the transport did a handshake, there may be updated session info.
+        m_sessionInfo = m_transport->GetSessionInfo();
 
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
         m_localProxy->UpdateSessionInfo(m_sessionInfo);
-
-        // We also need to update the transport session, in case anything has 
-        // changed or been filled in.
-        m_transport->UpdateSessionInfo(m_sessionInfo);
     }
     catch (ITransport::TransportFailed&)
     {

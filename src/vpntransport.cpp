@@ -141,6 +141,12 @@ bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
     return canHandshake && entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
 }
 
+void VPNTransport::ProxySetupComplete()
+{
+    // VPN doesn't do post-handshake
+    return;
+}
+
 bool VPNTransport::Cleanup()
 {
     DWORD returnCode = ERROR_SUCCESS;
@@ -216,16 +222,6 @@ bool VPNTransport::Cleanup()
 void VPNTransport::TransportConnect()
 {
     // The SystemProxySettings member is unused
-
-    m_chosenSessionInfoIndex = 0;
-
-    if (m_chosenSessionInfoIndex >= (signed)m_sessionInfo.size()
-        || !IsServerVPNCapable())
-    {
-        AddFailedServer(m_sessionInfo[m_chosenSessionInfoIndex]);
-
-        throw TransportFailed();
-    }
 
     try
     {
@@ -325,6 +321,7 @@ void VPNTransport::TransportConnectHelper()
     }
 
     // The connection is good.
+    MarkServerSucceeded(sessionInfo.GetServerEntry());
     m_sessionInfo = sessionInfo;
 
     //
@@ -336,6 +333,29 @@ void VPNTransport::TransportConnectHelper()
     // may not resolve properly.
     TweakDNS();
 }
+
+
+bool VPNTransport::GetConnectionServerEntry(ServerEntry& o_serverEntry)
+{
+    // Return the first ServerEntry that can be used. This will encourage
+    // server affinity (i.e., using the last successful server).
+
+    ServerEntries serverEntries = m_serverList.GetList();
+
+    for (ServerEntryIterator it = serverEntries.begin();
+         it != serverEntries.end();
+         ++it)
+    {
+        if (ServerHasCapabilities(*it))
+        {
+            o_serverEntry = *it;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
 {
