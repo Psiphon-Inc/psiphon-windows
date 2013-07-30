@@ -23,10 +23,6 @@
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
-#include "server_list_reordering.h"
-
-
-extern ServerListReorder g_serverListReorder;
 
 
 TransportConnection::TransportConnection()
@@ -50,14 +46,14 @@ void TransportConnection::Connect(
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
                             const tstring& splitTunnelingFilePath,
-                            bool disallowHandshake)
+                            ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
 
     assert(transport);
 
-    if (disallowHandshake && transport->IsHandshakeRequired())
+    if (tempConnectServerEntry && transport->IsHandshakeRequired())
     {
         throw TryNextServer();
     }
@@ -78,7 +74,8 @@ void TransportConnection::Connect(
         m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
-                    &m_workerThreadSynch);
+                    &m_workerThreadSynch,
+                    tempConnectServerEntry);
 
         // Get initial SessionInfo. Note that this might be pre-handshake
         // and therefore not be totally filled in.

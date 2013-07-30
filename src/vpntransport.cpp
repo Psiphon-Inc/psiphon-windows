@@ -58,7 +58,8 @@ void VPNTransport::GetFactory(
 
 
 VPNTransport::VPNTransport()
-    : m_state(CONNECTION_STATE_STOPPED),
+    : ITransport(GetTransportProtocolName().c_str()),
+      m_state(CONNECTION_STATE_STOPPED),
       m_stateChangeEvent(INVALID_HANDLE_VALUE),
       m_rasConnection(0),
       m_lastErrorCode(0)
@@ -112,7 +113,7 @@ tstring VPNTransport::GetLastTransportError() const
     return NarrowToTString(s.str());
 }
 
-bool VPNTransport::IsHandshakeRequired(const ServerEntry& entry) const
+bool VPNTransport::IsHandshakeRequired() const
 {
     return true;
 }
@@ -222,6 +223,14 @@ bool VPNTransport::Cleanup()
 void VPNTransport::TransportConnect()
 {
     // The SystemProxySettings member is unused
+
+    // VPN should never be used for a temporary connection
+    assert(!m_tempConnectServerEntry);
+
+    if (!m_serverListReorder.IsRunning())
+    {
+        m_serverListReorder.Start(&m_serverList);
+    }
 
     try
     {

@@ -32,17 +32,17 @@
  ITransport
 ******************************************************************************/
 
-ITransport::ITransport()
+ITransport::ITransport(LPCTSTR transportProtocolName)
     : m_systemProxySettings(NULL),
-      m_serverList(TStringToNarrow(GetTransportProtocolName()).c_str())
+      m_tempConnectServerEntry(NULL),
+      m_serverList(TStringToNarrow(transportProtocolName).c_str())
 {
 }
 
-bool ITransport::ServerWithCapabilitiesExists() const
-{
-    *** check member list (load if not loaded)
 
-    ServerEntries entries = serverList.GetList();
+bool ITransport::ServerWithCapabilitiesExists()
+{
+    ServerEntries entries = m_serverList.GetList();
 
     for (size_t i = 0; i < entries.size(); i++)
     {
@@ -55,12 +55,15 @@ bool ITransport::ServerWithCapabilitiesExists() const
     return false;
 }
 
+
 void ITransport::Connect(
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
-                    WorkerThreadSynch* workerThreadSynch)
+                    WorkerThreadSynch* workerThreadSynch,
+                    ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     m_systemProxySettings = systemProxySettings;
+    m_tempConnectServerEntry = tempConnectServerEntry;
 
     assert(m_systemProxySettings);
 
@@ -70,10 +73,12 @@ void ITransport::Connect(
     }
 }
 
+
 SessionInfo ITransport::GetSessionInfo() const
 {
     return m_sessionInfo;
 }
+
 
 bool ITransport::DoStart()
 {
@@ -91,17 +96,21 @@ bool ITransport::DoStart()
     return true;
 }
 
+
 void ITransport::StopImminent()
 {
 }
+
 
 void ITransport::DoStop(bool cleanly)
 {
     Cleanup();
     m_systemProxySettings = NULL;
+    m_tempConnectServerEntry = NULL;
 
     my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
 }
+
 
 bool ITransport::IsConnected() const
 {
@@ -111,12 +120,24 @@ bool ITransport::IsConnected() const
 
 void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
 {
+    // Don't mark anything if we're making a temporary connection
+    if (m_tempConnectServerEntry)
+    {
+        return;
+    }
+
     m_serverList.MarkServerFailed(serverEntry);
 }
 
 
 void ITransport::MarkServerSucceeded(const ServerEntry& serverEntry)
 {
+    // Don't mark anything if we're making a temporary connection
+    if (m_tempConnectServerEntry)
+    {
+        return;
+    }
+
     m_serverList.MoveEntryToFront(serverEntry);
 }
 
@@ -133,7 +154,7 @@ tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
                            _T("&relay_protocol=") + GetTransportProtocolName();
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
-    ServerEntries serverEntries = GetServerEntries();
+    ServerEntries serverEntries = m_serverList.GetList();
     for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
         handshakeRequestPath += _T("&known_server=");

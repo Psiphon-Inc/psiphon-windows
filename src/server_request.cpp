@@ -212,10 +212,8 @@ bool ServerRequest::MakeRequest(
                 stopInfo,
                 (*transport_iter).get(),
                 NULL, // not collecting stats
-                ServerEntries(1, sessionInfo.GetServerEntry()), 
                 tstring(),  // splitTunnelingFilePath -- not providing it
-                true,       // no handshake allowed
-                ServerEntries());  // not going to keep track of failures
+                &sessionInfo.GetServerEntry());  // force use of this server
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
@@ -277,7 +275,7 @@ void ServerRequest::GetTempTransports(
         // Only try transports that aren't the same as the current 
         // transport (because there's a reason it's not connected) 
         // and doesn't require a handshake.
-        if (!(*it)->IsHandshakeRequired(serverEntry)
+        if (!(*it)->IsHandshakeRequired()
             && (*it)->ServerHasCapabilities(serverEntry))
         {
             o_tempTransports.push_back(auto_ptr<ITransport>(*it));

@@ -111,7 +111,8 @@ private:
  SSHTransportBase
 ******************************************************************************/
 
-SSHTransportBase::SSHTransportBase()
+SSHTransportBase::SSHTransportBase(LPCTSTR transportProtocolName)
+    : ITransport(transportProtocolName)
 {
     m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
 }
@@ -119,6 +120,11 @@ SSHTransportBase::SSHTransportBase()
 SSHTransportBase::~SSHTransportBase()
 {
     (void)Cleanup();
+}
+
+bool SSHTransportBase::IsHandshakeRequired() const
+{
+    return false;
 }
 
 bool SSHTransportBase::IsServerRequestTunnelled() const
@@ -158,6 +164,12 @@ tstring SSHTransportBase::GetLastTransportError() const
 
 void SSHTransportBase::ProxySetupComplete()
 {
+    // Don't do a handshake if this is a temporary connection
+    if (m_tempConnectServerEntry)
+    {
+        return;
+    }
+
     // Do the handshake, but don't abort if it fails
     (void)DoHandshake(
             false,  // not pre-handshake
@@ -338,8 +350,12 @@ void SSHTransportBase::TransportConnectHelper()
     // Get the ServerEntries we'll try to connect to
 
     ServerEntries serverEntries;
-    if (!GetConnectionServerEntries(serverEntries)
-        || serverEntries.size() == 0)
+    if (m_tempConnectServerEntry)
+    {
+        serverEntries.push_back(*m_tempConnectServerEntry);
+    }
+    else if (!GetConnectionServerEntries(serverEntries)
+             || serverEntries.size() == 0)
     {
         my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
         throw TransportFailed();
@@ -438,7 +454,8 @@ void SSHTransportBase::TransportConnectHelper()
                 // not, whether the first server's "head start" has expired.
 
                 // Takes control of the PlonkConnection, copies the SessionInfo
-                tentativeConnection = allPlonkConnections[i];
+                tentativeConnection.first = allPlonkConnections[i].first;
+                tentativeConnection.second = allPlonkConnections[i].second;
 
                 // Mark the server as succeeded.
                 MarkServerSucceeded(tentativeConnection.second.GetServerEntry());
@@ -491,6 +508,7 @@ bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries
 
     // NOTE: Some of our very old SSH servers required a pre-handshake. We're
     // not going to use them. 
+    IsHandshakeRequired
 
     // We select the first MAX/2 server from the top of the list (they may be 
     // better/fresher) and then MAX/2 random servers from the rest of the list
@@ -498,18 +516,26 @@ bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries
     // Always including the first server helps maintain server affinity (i.e.,
     // trying to always use the server that was successfully used last time.)
 
+    /*
+
     *** pick server according to first-half-start, second-half-random
     *** what to do about servers that don't support the protocol? remove? move to back?
     *** ensure no pre-handshake
     *** use GetMultiConnectCount()
 
-    ServerEntries allServerEntries = GetServerEntries();
+    */
+
+    ServerEntries allServerEntries = m_serverList.GetList();
     for (ServerEntryIterator it = allServerEntries.begin(); 
          it != allServerEntries.end();
          ++it)
     {
-        
+        o_serverEntries.push_back(*it);
+        if (o_serverEntries.size() >= MULTI_CONNECT_COUNT)
+            break;
     }
+
+    return o_serverEntries.size() > 0;
 }
 
 
@@ -1115,6 +1141,7 @@ void SSHTransport::GetFactory(
 
 
 SSHTransport::SSHTransport()
+    : SSHTransportBase(GetTransportProtocolName().c_str())
 {
 }
 
@@ -1132,17 +1159,6 @@ tstring SSHTransport::GetTransportProtocolName() const
 tstring SSHTransport::GetTransportDisplayName() const 
 { 
     return SSH_TRANSPORT_DISPLAY_NAME; 
-}
-
-bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
-{
-    bool sufficientInfo = 
-        entry.serverAddress.length() > 0
-        && entry.sshPort > 0
-        && entry.sshHostKey.length() > 0
-        && entry.sshUsername.length() > 0
-        && entry.sshPassword.length() > 0;
-    return !sufficientInfo;
 }
 
 void SSHTransport::GetSSHParams(
@@ -1171,6 +1187,17 @@ int SSHTransport::GetPort(const SessionInfo& sessionInfo) const
     return sessionInfo.GetSSHPort();
 }
 
+bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
+{
+    bool sufficientInfo =
+        entry.serverAddress.length() > 0
+        && entry.sshPort > 0
+        && entry.sshHostKey.length() > 0
+        && entry.sshUsername.length() > 0
+        && entry.sshPassword.length() > 0;
+    return !sufficientInfo;
+}
+
 
 /******************************************************************************
  OSSHTransport
@@ -1196,6 +1223,7 @@ void OSSHTransport::GetFactory(
 
 
 OSSHTransport::OSSHTransport()
+    : SSHTransportBase(GetTransportProtocolName().c_str())
 {
 }
 
@@ -1212,18 +1240,6 @@ tstring OSSHTransport::GetTransportProtocolName() const
 tstring OSSHTransport::GetTransportDisplayName() const 
 {
     return OSSH_TRANSPORT_DISPLAY_NAME;
-}
-
-bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
-{
-    bool sufficientInfo = 
-        entry.serverAddress.length() > 0
-        && entry.sshObfuscatedPort > 0
-        && entry.sshHostKey.length() > 0
-        && entry.sshUsername.length() > 0
-        && entry.sshPassword.length() > 0
-        && entry.sshObfuscatedKey.length() > 0;
-    return !sufficientInfo;
 }
 
 void OSSHTransport::GetSSHParams(
@@ -1264,6 +1280,18 @@ void OSSHTransport::GetSSHParams(
 int OSSHTransport::GetPort(const SessionInfo& sessionInfo) const
 {
     return sessionInfo.GetSSHObfuscatedPort();
+}
+
+bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
+{
+    bool sufficientInfo =
+        entry.serverAddress.length() > 0
+        && entry.sshObfuscatedPort > 0
+        && entry.sshHostKey.length() > 0
+        && entry.sshUsername.length() > 0
+        && entry.sshPassword.length() > 0
+        && entry.sshObfuscatedKey.length() > 0;
+    return !sufficientInfo;
 }
 
 

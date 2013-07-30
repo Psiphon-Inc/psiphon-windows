@@ -33,13 +33,13 @@ class PlonkConnection;
 class SSHTransportBase: public ITransport
 {
 public:
-    SSHTransportBase(); 
+    SSHTransportBase(LPCTSTR transportProtocolName); 
     virtual ~SSHTransportBase();
 
     // Subclasses must implement these members
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
+    virtual bool IsHandshakeRequired() const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual unsigned int GetMultiConnectCount() const;
@@ -65,7 +65,7 @@ protected:
     virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
 
-    virtual void GetSSHParamsa(
+    virtual void GetSSHParams(
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,
@@ -74,6 +74,8 @@ protected:
         tstring& o_serverHostKey, 
         tstring& o_plonkCommandLine);
     virtual int GetPort(const SessionInfo& sessionInfo) const = 0;
+
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
 
     void TransportConnectHelper();
     bool GetConnectionServerEntries(ServerEntries& o_serverEntries);
@@ -104,8 +106,6 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
-
 protected:
     virtual void GetSSHParams(
         const SessionInfo& sessionInfo,
@@ -116,6 +116,7 @@ protected:
         tstring& o_serverHostKey, 
         tstring& o_plonkCommandLine);
     virtual int GetPort(const SessionInfo& sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 };
 
 
@@ -133,8 +134,6 @@ public:
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
 
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
-
 protected:
     virtual void GetSSHParams(
         const SessionInfo& sessionInfo,
@@ -145,4 +144,5 @@ protected:
         tstring& o_serverHostKey, 
         tstring& o_plonkCommandLine);
     virtual int GetPort(const SessionInfo& sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 };

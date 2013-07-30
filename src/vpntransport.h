@@ -22,6 +22,7 @@
 #include "ras.h"
 #include "transport.h"
 #include "transport_registry.h"
+#include "server_list_reordering.h"
 
 class SessionInfo;
 
@@ -47,7 +48,7 @@ public:
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
+    virtual bool IsHandshakeRequired() const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual unsigned int GetMultiConnectCount() const;
@@ -88,4 +89,5 @@ private:
     HRASCONN m_rasConnection;
     unsigned int m_lastErrorCode;
     tstring m_pppIPAddress;
+    ServerListReorder m_serverListReorder;
 };

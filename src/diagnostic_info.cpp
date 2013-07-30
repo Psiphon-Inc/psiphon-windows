@@ -21,7 +21,6 @@
 #include "psiclient.h"
 #include "embeddedvalues.h"
 #include "httpsrequest.h"
-#include "server_list_reordering.h"
 #include "wininet_network_check.h"
 #include "systemproxysettings.h"
 #include "utilities.h"

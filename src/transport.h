@@ -36,7 +36,7 @@ class SystemProxySettings;
 class ITransport : public IWorkerThread
 {
 public:
-    ITransport();
+    ITransport(LPCTSTR transportProtocolName);
 
     virtual tstring GetTransportProtocolName() const = 0;
 
@@ -71,9 +71,8 @@ public:
     virtual unsigned int GetMultiConnectCount() const = 0;
 
     // Returns true if at least one server supports this transport.
-    virtual bool ServerWithCapabilitiesExists() const;
+    virtual bool ServerWithCapabilitiesExists();
 
-    ** Make private/protected?
     // Returns true if the specified server supports this transport.
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const = 0;
 
@@ -84,7 +83,8 @@ public:
     void Connect(
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
-            WorkerThreadSynch* workerThreadSynch);
+            WorkerThreadSynch* workerThreadSynch,
+            ServerEntry* tempConnectServerEntry=NULL);
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
@@ -126,9 +126,6 @@ protected:
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
 
-    // Returns the transport's server list. Loads it if necessary.
-    const ServerEntries& GetServerEntries();
-
     void MarkServerFailed(const ServerEntry& serverEntry);
     void MarkServerSucceeded(const ServerEntry& serverEntry);
 
@@ -138,5 +135,6 @@ protected:
 protected:
     SessionInfo m_sessionInfo;
     SystemProxySettings* m_systemProxySettings;
+    ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
 };

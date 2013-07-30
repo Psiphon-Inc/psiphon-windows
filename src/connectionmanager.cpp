@@ -179,8 +179,6 @@ void ConnectionManager::Stop(DWORD reason)
 
 void ConnectionManager::FetchRemoteServerList(void)
 {
-    *** get the remote server list, then update each of the transports' server lists
-
     AutoMUTEX lock(m_mutex);
 
     if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
@@ -252,6 +250,7 @@ void ConnectionManager::FetchRemoteServerList(void)
 
     try
     {
+        // This adds the new server entries to all transports' server lists.
         m_transport->AddServerEntries(newServerEntryVector, 0);
     }
     catch (std::exception &ex)
@@ -396,25 +395,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Ensure split tunnel routes are reset before new session
             manager->ResetSplitTunnel();
 
-            //
-            // Get the next server to try
-            //
-
-            ServerEntries allServerEntries = manager->m_serverList.GetList();
-            ServerEntries::iterator allServerEntriesIter = allServerEntries.begin();
-
-            // Skip to the first server that is capable of connecting with the current transport.
-            while (allServerEntriesIter != allServerEntries.end())
-            {
-                if (manager->m_transport->ServerHasCapabilities(*allServerEntriesIter))
-                {
-                    break;
-                }
-                ++allServerEntriesIter;
-            }
-
             // Do we have any usable servers?
-            if (allServerEntriesIter == allServerEntries.end())
+            if (!manager->m_transport->ServerWithCapabilitiesExists())
             {
                 my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
                 throw ConnectionManager::Abort();
@@ -426,10 +408,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             my_print(NOT_SENSITIVE, true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
-            // This vector will be modified to be only the servers for which there was a connection attempt
-            ServerEntries serverEntries(allServerEntriesIter, allServerEntries.end());
-            ServerEntries failedServerEntries;
-
             // Note that the TransportConnection will do any necessary cleanup.
             TransportConnection transportConnection;
 
@@ -440,19 +418,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
                     manager,
-                    serverEntries,
                     manager->GetSplitTunnelingFilePath(),
-                    false,  // don't disallow handshake
-                    failedServerEntries); 
+                    false);  // don't disallow handshake
             }
             catch (TransportConnection::TryNextServer&)
             {
-                manager->MarkServersFailed(failedServerEntries);
                 throw;
             }
-
-            // Even if the connection was successful, some failures may have resulted
-            manager->MarkServersFailed(failedServerEntries);
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
@@ -461,9 +433,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
-
-            // DEBUG TEMP
-            my_print(NOT_SENSITIVE, true, _T("CONNECTED TO SERVER: %S"), sessionInfo.GetServerAddress().c_str());
 
             //
             // If handshake notified of new version, start the upgrade in a (background) thread
@@ -561,11 +530,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Continue while loop to try next server
 
             manager->FetchRemoteServerList();
-
-            if (!g_serverListReorder.IsRunning())
-            {
-                g_serverListReorder.Start(&(manager->GetServerList()));
-            }
 
             // Wait between 1 and 2 seconds before retrying. This is a quick
             // fix to deal with the following problem: when a client can
@@ -952,12 +916,6 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
-void ConnectionManager::MarkServersFailed(const ServerEntries& failedServerEntries)
-{
-    AutoMUTEX lock(m_mutex);
-    
-    m_serverList.MarkServersFailed(failedServerEntries);
-}
 
 // ==== General Session Functions =============================================
 
