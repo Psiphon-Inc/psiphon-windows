@@ -845,7 +845,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     g_hInst = hInstance;
 
-    RECT rect;
+    RECT rect = {0};
     SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
 
     g_hWnd = CreateWindowEx(

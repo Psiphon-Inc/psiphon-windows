@@ -101,7 +101,7 @@ public:
     // Subclasses may use this opportunity to make a handshake.
     virtual void ProxySetupComplete() = 0;
 
-    static void ITransport::AddServerEntries(
+    static void AddServerEntries(
             const vector<string>& newServerEntryList, 
             const ServerEntry* serverEntry);
 

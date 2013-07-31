@@ -817,12 +817,17 @@ void FixVPNServices()
     for (int i = 0; i < sizeof(serviceConfigs)/sizeof(serviceConfig); i++)
     {
         std::stringstream error;
-        SC_HANDLE manager = 0;
-        SC_HANDLE service = 0;
+        SC_HANDLE manager = NULL;
+        SC_HANDLE service = NULL;
 
         try
         {
-            CloseServiceHandle(manager);
+            if (manager != NULL)
+            {
+                CloseServiceHandle(manager);
+                manager = NULL;
+            }
+
             manager = OpenSCManager(NULL, NULL, GENERIC_READ);
             if (NULL == manager)
             {
@@ -830,7 +835,12 @@ void FixVPNServices()
                 throw std::exception(error.str().c_str());
             }
 
-            CloseServiceHandle(service);
+            if (service != NULL)
+            {
+                CloseServiceHandle(service);
+                service = NULL;
+            }
+
             service = OpenService(manager,
                                   serviceConfigs[i].name,
                                   SERVICE_QUERY_CONFIG|SERVICE_QUERY_STATUS);
@@ -1046,8 +1056,8 @@ static void PatchDNS()
         versionInfo.dwMinorVersion == 1)
     {
         std::stringstream error;
-        HKEY key = 0;
-        char *buffer = 0;
+        HKEY key = NULL;
+        char *buffer = NULL;
 
         try
         {
@@ -1156,7 +1166,11 @@ static void PatchDNS()
         }
 
         // cleanup
-        delete [] buffer;
+        if (buffer != NULL)
+        {
+            delete [] buffer;
+        }
+
         RegCloseKey(key);
     }
 }

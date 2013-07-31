@@ -477,6 +477,9 @@ void SSHTransportBase::TransportConnectHelper()
 
     if (tentativeConnection.first.get() != NULL)
     {
+        // Make sure that the server we're using is at the front of the list
+        MarkServerSucceeded(tentativeConnection.second.GetServerEntry());
+
         // m_currentPlonk takes control
         m_currentPlonk = tentativeConnection.first;
         m_sessionInfo = tentativeConnection.second;
@@ -508,7 +511,7 @@ bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries
 
     // NOTE: Some of our very old SSH servers required a pre-handshake. We're
     // not going to use them. 
-    IsHandshakeRequired
+    //IsHandshakeRequired
 
     // We select the first MAX/2 server from the top of the list (they may be 
     // better/fresher) and then MAX/2 random servers from the rest of the list
@@ -523,8 +526,6 @@ bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries
     *** ensure no pre-handshake
     *** use GetMultiConnectCount()
 
-    */
-
     ServerEntries allServerEntries = m_serverList.GetList();
     for (ServerEntryIterator it = allServerEntries.begin(); 
          it != allServerEntries.end();
@@ -536,6 +537,8 @@ bool SSHTransportBase::GetConnectionServerEntries(ServerEntries& o_serverEntries
     }
 
     return o_serverEntries.size() > 0;
+    */
+return true;
 }
 
 
