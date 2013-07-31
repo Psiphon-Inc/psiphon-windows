@@ -120,6 +120,10 @@ bool ITransport::IsConnected() const
 
 void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
 {
+    // This is no-op. We don't move servers in the list when they fail.
+    return;
+
+    /* But if we were going to move them...
     // Don't mark anything if we're making a temporary connection
     if (m_tempConnectServerEntry)
     {
@@ -127,6 +131,7 @@ void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
     }
 
     m_serverList.MarkServerFailed(serverEntry);
+    */
 }
 
 

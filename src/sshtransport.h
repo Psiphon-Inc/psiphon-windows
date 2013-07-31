@@ -42,7 +42,6 @@ public:
     virtual bool IsHandshakeRequired() const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
-    virtual unsigned int GetMultiConnectCount() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
@@ -78,17 +77,16 @@ protected:
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
 
     void TransportConnectHelper();
-    bool GetConnectionServerEntries(ServerEntries& o_serverEntries);
     bool InitiateConnection(
         const SessionInfo& sessionInfo,
-        auto_ptr<PlonkConnection>& o_plonkConnection);
+        boost::shared_ptr<PlonkConnection>& o_plonkConnection);
 
 protected:
     tstring m_plonkPath;
     int m_localSocksProxyPort;
 
-    auto_ptr<PlonkConnection> m_currentPlonk;
-    auto_ptr<PlonkConnection> m_previousPlonk;
+    boost::shared_ptr<PlonkConnection> m_currentPlonk;
+    boost::shared_ptr<PlonkConnection> m_previousPlonk;
 };
 
 

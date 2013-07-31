@@ -128,11 +128,6 @@ bool VPNTransport::IsSplitTunnelSupported() const
     return false;
 }
 
-unsigned int VPNTransport::GetMultiConnectCount() const
-{
-    return 1;
-}
-
 bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
 {
     // VPN requires a pre-tunnel handshake

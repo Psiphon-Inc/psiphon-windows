@@ -65,11 +65,6 @@ public:
     // Returns true if split tunnelling is supported for the transport.
     virtual bool IsSplitTunnelSupported() const = 0;
 
-    // Returns the number of servers that this transport is capable of attempting
-    // to "multi-connect" to (that is, try to connect to many servers at once, 
-    // remaining connected to just one).
-    virtual unsigned int GetMultiConnectCount() const = 0;
-
     // Returns true if at least one server supports this transport.
     virtual bool ServerWithCapabilitiesExists();
 

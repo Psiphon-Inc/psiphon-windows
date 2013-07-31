@@ -51,7 +51,6 @@ public:
     virtual bool IsHandshakeRequired() const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
-    virtual unsigned int GetMultiConnectCount() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual void ProxySetupComplete();
