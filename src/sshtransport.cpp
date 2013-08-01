@@ -1152,10 +1152,12 @@ static ITransport* NewSSH()
 // static
 void SSHTransport::GetFactory(
                     tstring& o_transportName,
-                    TransportFactory& o_transportFactory)
+                    TransportFactoryFn& o_transportFactoryFn,
+                    AddServerEntriesFn& o_addServerEntriesFn)
 {
-    o_transportFactory = NewSSH;
+    o_transportFactoryFn = NewSSH;
     o_transportName = SSH_TRANSPORT_DISPLAY_NAME;
+    o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
 
@@ -1234,10 +1236,12 @@ static ITransport* NewOSSH()
 // static
 void OSSHTransport::GetFactory(
                     tstring& o_transportName,
-                    TransportFactory& o_transportFactory)
+                    TransportFactoryFn& o_transportFactory,
+                    AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = NewOSSH;
     o_transportName = OSSH_TRANSPORT_DISPLAY_NAME;
+    o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
 

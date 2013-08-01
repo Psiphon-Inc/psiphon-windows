@@ -193,41 +193,10 @@ bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
 
 // static
 void ITransport::AddServerEntries(
+        LPCTSTR transportProtocolName,
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry)
 {
-    // Add server entries to all transports. This requires us to create
-    // temporary instances of the transports.
-    vector<ITransport*> allTransports;
-    TransportRegistry::NewAll(allTransports);
-
-    try
-    {
-        for (vector<ITransport*>::iterator iterTransport = allTransports.begin();
-             iterTransport != allTransports.end();
-             ++iterTransport)
-        {
-            (*iterTransport)->m_serverList.AddEntriesToList(
-                                            newServerEntryList, 
-                                            serverEntry);
-        }
-    }
-    catch(...)
-    {
-        for (vector<ITransport*>::iterator iterTransport = allTransports.begin();
-             iterTransport != allTransports.end();
-             ++iterTransport)
-        {
-            delete *iterTransport;
-        }
-
-        throw;
-    }
-
-    for (vector<ITransport*>::iterator iterTransport = allTransports.begin();
-            iterTransport != allTransports.end();
-            ++iterTransport)
-    {
-        delete *iterTransport;
-    }
+    ServerList serverList(TStringToNarrow(transportProtocolName).c_str());
+    serverList.AddEntriesToList(newServerEntryList, serverEntry);
 }

@@ -251,7 +251,7 @@ void ConnectionManager::FetchRemoteServerList(void)
     try
     {
         // This adds the new server entries to all transports' server lists.
-        m_transport->AddServerEntries(newServerEntryVector, 0);
+        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
     }
     catch (std::exception &ex)
     {
@@ -1255,7 +1255,7 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
-        m_transport->AddServerEntries(
+        TransportRegistry::AddServerEntries(
             m_currentSessionInfo.GetDiscoveredServerEntries(), 
             &m_currentSessionInfo.GetServerEntry());
     }

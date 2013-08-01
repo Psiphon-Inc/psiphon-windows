@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,7 +41,10 @@ public:
     VPNTransport(); 
     virtual ~VPNTransport();
 
-    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+    static void GetFactory(
+                    tstring& o_transportName, 
+                    TransportFactoryFn& o_transportFactory, 
+                    AddServerEntriesFn& o_addServerEntriesFn);
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;

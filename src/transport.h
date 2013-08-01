@@ -28,6 +28,7 @@ NOTES
 #include "worker_thread.h"
 #include "sessioninfo.h"
 
+
 class ITransport;
 class SystemProxySettings;
 
@@ -55,8 +56,12 @@ public:
 
     virtual tstring GetTransportDisplayName() const = 0;
 
+    // TransportRegistry functions. 
     // Every implementing class must have a static function with this signature:
-    //static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+    //static void GetFactory(
+    //              tstring& o_transportName, 
+    //              TransportFactoryFn& o_transportFactoryFn, 
+    //              AddServerEntriesFn& o_addServerEntriesFn);
 
     // Only valid when connected
     virtual tstring GetSessionID(const SessionInfo& sessionInfo) = 0;
@@ -113,6 +118,7 @@ public:
     virtual void ProxySetupComplete() = 0;
 
     static void AddServerEntries(
+            LPCTSTR transportProtocolName,
             const vector<string>& newServerEntryList, 
             const ServerEntry* serverEntry);
 

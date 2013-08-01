@@ -50,10 +50,12 @@ static ITransport* New()
 // static
 void VPNTransport::GetFactory(
                     tstring& o_transportName,
-                    TransportFactory& o_transportFactory)
+                    TransportFactoryFn& o_transportFactory,
+                    AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = New;
     o_transportName = TRANSPORT_DISPLAY_NAME;
+    o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
 
