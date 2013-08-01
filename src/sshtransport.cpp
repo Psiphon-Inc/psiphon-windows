@@ -797,7 +797,7 @@ DWORD PlonkConnection::GetFreshLimit() const
     if (s_loggedLimit != freshLimit)
     {
         s_loggedLimit = freshLimit;
-        my_print(NOT_SENSITIVE, true, _T("%s: Fresh limit: %u"), __TFUNCTION__, freshLimit);
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: Fresh limit: %u"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), freshLimit);
     }
 
     return freshLimit;
@@ -827,7 +827,7 @@ DWORD PlonkConnection::GetRetiredLimit() const
     if (s_loggedLimit != retiredLimit)
     {
         s_loggedLimit = retiredLimit;
-        my_print(NOT_SENSITIVE, true, _T("%s: Retired limit: %u"), __TFUNCTION__, retiredLimit);
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: Retired limit: %u"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), retiredLimit);
     }
 
     return retiredLimit;
@@ -940,7 +940,7 @@ bool PlonkConnection::Connect(
             plonkStartupInfo.hStdOutput, 
             plonkStartupInfo.hStdError))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - CreatePolipoPipe failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CreatePolipoPipe failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
 
@@ -982,7 +982,7 @@ bool PlonkConnection::Connect(
         CloseHandle(plonkInput);
         CloseHandle(plonkStartupInfo.hStdInput);
         CloseHandle(plonkStartupInfo.hStdError);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
     if (!CloseHandle(plonkStartupInfo.hStdError))
@@ -990,14 +990,14 @@ bool PlonkConnection::Connect(
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
         CloseHandle(plonkStartupInfo.hStdInput);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
     if (!CloseHandle(plonkStartupInfo.hStdInput))
     {
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
 
@@ -1052,7 +1052,7 @@ bool PlonkConnection::CheckForConnected(bool& o_connected)
     // to check if there's data available to read first.
     if (!PeekNamedPipe(m_plonkOutputHandle, NULL, 0, NULL, &bytes_avail, NULL))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
 
@@ -1063,13 +1063,13 @@ bool PlonkConnection::CheckForConnected(bool& o_connected)
         DWORD num_read = 0;
         if (!ReadFile(m_plonkOutputHandle, buffer, bytes_avail, &num_read, NULL))
         {
-            my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: ReadFile failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
             false;
         }
         buffer[bytes_avail] = '\0';
 
         // Note that we are only capturing Plonk output during the connect sequence.
-        my_print(NOT_SENSITIVE, true, _T("%s:%d Plonk output: >>>%S<<<"), __TFUNCTION__, __LINE__, buffer);
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: Plonk output: >>>%S<<<"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), buffer);
 
         bool connected = (strstr(buffer, "PSIPHON:CONNECTED") != NULL);
 
@@ -1080,7 +1080,7 @@ bool PlonkConnection::CheckForConnected(bool& o_connected)
             // We're done reading Plonk output
             if (!CloseHandle(m_plonkOutputHandle))
             {
-                my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+                my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
                 return false;
             }
             m_plonkOutputHandle = INVALID_HANDLE_VALUE;
