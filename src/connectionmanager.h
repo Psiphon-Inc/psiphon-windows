@@ -23,6 +23,7 @@
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "local_proxy.h"
+#include "transport.h"
 
 
 class ITransport;
@@ -36,7 +37,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector
+class ConnectionManager : public ILocalProxyStatsCollector, IRemoteServerListFetcher
 {
 public:
     ConnectionManager();
@@ -52,11 +53,16 @@ public:
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);
+
+    // ILocalProxyStatsCollector implementation
     bool SendStatusMessage(
             bool connected,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
+
+    // IRemoteServerListFetcher implementation
+    void FetchRemoteServerList();
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
@@ -65,8 +71,6 @@ public:
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
     static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);
-
-    void FetchRemoteServerList();
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };

@@ -32,6 +32,19 @@ class ITransport;
 class SystemProxySettings;
 
 
+// This should be implemented by something like ConnectionManager to provide a 
+// way for Transports to (optionally) trigger remote server list fetches 
+// during connection sequences.
+// In concrete terms, SSHTransport can take a long time to try connecting to
+// all available servers, so we want to be able to trigger a remote server list
+// fetch after a certain amount of time.
+class IRemoteServerListFetcher
+{
+public:
+    virtual void FetchRemoteServerList() = 0;
+};
+
+
 // All transport implementations must implement this interface
 class ITransport : public IWorkerThread
 {
@@ -73,12 +86,15 @@ public:
 
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.
-    // May throw TransportFailed or Abort
+    // May throw TransportFailed or Abort.
     // Subclasses must not override.
+    // remoteServerListFetcher is optional. If NULL, no remote server list 
+    //   fetch will be triggered.
     void Connect(
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             WorkerThreadSynch* workerThreadSynch,
+            IRemoteServerListFetcher* remoteServerListFetcher,
             ServerEntry* tempConnectServerEntry=NULL);
 
     // Do any necessary final cleanup. 
@@ -132,4 +148,5 @@ protected:
     SystemProxySettings* m_systemProxySettings;
     ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
+    IRemoteServerListFetcher* m_remoteServerListFetcher;
 };

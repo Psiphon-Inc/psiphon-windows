@@ -484,7 +484,13 @@ void SSHTransportBase::TransportConnectHelper()
 
                 connectionAttempts.erase(connectionAttempts.begin()+i);
 
-                *** trigger fetch remote server list
+                // If our connection sequence is taking so long that we're 
+                // exceeding the SSH connection timeout, we should trigger a
+                // remote server list fetch.
+                if (m_remoteServerListFetcher)
+                {
+                    m_remoteServerListFetcher->FetchRemoteServerList();
+                }
             }
         }
 

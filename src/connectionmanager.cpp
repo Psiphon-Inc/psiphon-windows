@@ -417,7 +417,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 transportConnection.Connect(
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
-                    manager,
+                    manager,    // ILocalProxyStatsCollector
+                    manager,    // IRemoteServerListFetcher
                     manager->GetSplitTunnelingFilePath(),
                     false);  // don't disallow handshake
             }

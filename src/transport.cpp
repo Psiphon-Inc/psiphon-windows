@@ -35,7 +35,8 @@
 ITransport::ITransport(LPCTSTR transportProtocolName)
     : m_systemProxySettings(NULL),
       m_tempConnectServerEntry(NULL),
-      m_serverList(TStringToNarrow(transportProtocolName).c_str())
+      m_serverList(TStringToNarrow(transportProtocolName).c_str()),
+      m_remoteServerListFetcher(NULL)
 {
 }
 
@@ -60,10 +61,12 @@ void ITransport::Connect(
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
                     WorkerThreadSynch* workerThreadSynch,
+                    IRemoteServerListFetcher* remoteServerListFetcher,
                     ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
+    m_remoteServerListFetcher = remoteServerListFetcher;
 
     assert(m_systemProxySettings);
 

@@ -45,6 +45,7 @@ void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
+                            IRemoteServerListFetcher* remoteServerListFetcher,
                             const tstring& splitTunnelingFilePath,
                             ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
@@ -75,6 +76,7 @@ void TransportConnection::Connect(
                     &m_systemProxySettings,
                     stopInfo,
                     &m_workerThreadSynch,
+                    remoteServerListFetcher,
                     tempConnectServerEntry);
 
         // Get initial SessionInfo. Note that this might be pre-handshake

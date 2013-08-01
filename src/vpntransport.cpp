@@ -1069,6 +1069,11 @@ static void PatchDNS()
 
             // RegQueryValueExA on Windows XP wants at least 1 byte
             buffer = new char [1];
+            if (buffer == NULL)
+            {
+                throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+            }
+
             DWORD bufferLength = 1;
             DWORD type;
             
@@ -1077,7 +1082,13 @@ static void PatchDNS()
             if (ERROR_MORE_DATA == returnCode)
             {
                 delete [] buffer;
+
                 buffer = new char [bufferLength];
+                if (buffer == NULL)
+                {
+                    throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                }
+
                 returnCode = RegQueryValueExA(key, valueName, 0, 0, (LPBYTE)buffer, &bufferLength);
             }
 
@@ -1101,6 +1112,11 @@ static void PatchDNS()
             if (extraNulls)
             {
                 char *newBuffer = new char [bufferLength + extraNulls];
+                if (newBuffer == NULL)
+                {
+                    throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                }
+
                 memset(newBuffer, bufferLength + extraNulls, 0);
                 memcpy(newBuffer, buffer, bufferLength);
                 bufferLength += extraNulls;
@@ -1119,6 +1135,11 @@ static void PatchDNS()
             {
                 // make new buffer = target || start of buffer to target || buffer after target
                 char *newBuffer = new char [bufferLength];
+                if (newBuffer == NULL)
+                {
+                    throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                }
+
                 memcpy(newBuffer, found, target_length);
                 memcpy(newBuffer + target_length, buffer, found - buffer);
                 memcpy(newBuffer + target_length + (found - buffer),

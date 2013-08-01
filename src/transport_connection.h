@@ -24,9 +24,11 @@
 #include "utilities.h"
 #include "worker_thread.h"
 
+
 class LocalProxy;
 class ILocalProxyStatsCollector;
 class ITransport;
+class IRemoteServerListFetcher;
 
 
 /*
@@ -56,6 +58,7 @@ public:
             const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
+            IRemoteServerListFetcher* remoteServerListFetcher,
             const tstring& splitTunnelingFilePath,
             ServerEntry* tempConnectServerEntry=NULL);
 
