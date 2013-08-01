@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -137,7 +137,6 @@ protected:
     // The implementing class must implement this
     virtual bool DoPeriodicCheck() = 0;
 
-    void MarkServerFailed(const ServerEntry& serverEntry);
     void MarkServerSucceeded(const ServerEntry& serverEntry);
 
     tstring GetHandshakeRequestPath(const SessionInfo& sessionInfo);

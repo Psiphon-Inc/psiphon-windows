@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -277,7 +277,6 @@ void VPNTransport::TransportConnectHelper()
             true,  // pre-handshake
             sessionInfo))
     {
-        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
 
@@ -297,7 +296,6 @@ void VPNTransport::TransportConnectHelper()
             NarrowToTString(sessionInfo.GetServerAddress()), 
             NarrowToTString(sessionInfo.GetPSK())))
     {
-        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
 
@@ -311,7 +309,6 @@ void VPNTransport::TransportConnectHelper()
             CONNECTION_STATE_STARTING, 
             VPN_CONNECTION_TIMEOUT_SECONDS*1000))
     {
-        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
     
@@ -319,8 +316,6 @@ void VPNTransport::TransportConnectHelper()
     {
         // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
-
-        MarkServerFailed(serverEntry);
         throw TransportFailed();
     }
 

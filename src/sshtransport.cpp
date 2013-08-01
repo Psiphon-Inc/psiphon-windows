@@ -443,8 +443,6 @@ void SSHTransportBase::TransportConnectHelper()
             {
                 // The connection failed
 
-                MarkServerFailed(connectionAttempts[i].sessionInfo.GetServerEntry());
-
                 // If this is the first server failing, then we should
                 // stop trying to promote server affinity.
                 if (connectionAttempts[i].firstServer)
@@ -472,8 +470,6 @@ void SSHTransportBase::TransportConnectHelper()
             else if (GetTickCountDiff(connectionAttempts[i].startTime, GetTickCount()) > SSH_CONNECTION_TIMEOUT_SECONDS*1000)
             {
                 // Connection attempt time expired
-
-                MarkServerFailed(connectionAttempts[i].sessionInfo.GetServerEntry());
 
                 // If this is the first server failing, then we should
                 // stop trying to promote server affinity.
@@ -1280,8 +1276,7 @@ void OSSHTransport::GetSSHParams(
     {
         my_print(NOT_SENSITIVE, false, _T("%s - missing parameters"), __TFUNCTION__);
 
-        // TODO: Is this actual a fatal error? Throw std::exception?
-        MarkServerFailed(sessionInfo.GetServerEntry());
+        // TODO: Is this actually a fatal error? Throw std::exception?
         throw TransportFailed();
     }
 

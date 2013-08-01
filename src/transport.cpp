@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -121,23 +121,6 @@ bool ITransport::IsConnected() const
 }
 
 
-void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
-{
-    // This is no-op. We don't move servers in the list when they fail.
-    return;
-
-    /* But if we were going to move them...
-    // Don't mark anything if we're making a temporary connection
-    if (m_tempConnectServerEntry)
-    {
-        return;
-    }
-
-    m_serverList.MarkServerFailed(serverEntry);
-    */
-}
-
-
 void ITransport::MarkServerSucceeded(const ServerEntry& serverEntry)
 {
     // Don't mark anything if we're making a temporary connection
@@ -201,7 +184,6 @@ bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
     {
         // If the handshake parsing has failed, something is very wrong.
         my_print(NOT_SENSITIVE, false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
-        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 
