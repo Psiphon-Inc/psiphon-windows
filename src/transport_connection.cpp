@@ -116,6 +116,9 @@ void TransportConnection::Connect(
     {
         Cleanup();
 
+        // Check for stop signal and throw if it's set
+        stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
+
         // We don't fail over transports, so...
         throw TransportConnection::TryNextServer();
     }
