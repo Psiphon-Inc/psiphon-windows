@@ -43,15 +43,17 @@ ServerList::~ServerList()
 }
 
 // This function may throw
-void ServerList::AddEntriesToList(
+size_t ServerList::AddEntriesToList(
                     const vector<string>& newServerEntryList,
                     const ServerEntry* serverEntry)
 {
     AutoMUTEX lock(m_mutex);
 
+    size_t entriesAdded = 0;
+
     if (newServerEntryList.size() < 1 && !serverEntry)
     {
-        return;
+        return entriesAdded;
     }
 
     // We're going to loop through the server entries twice -- once to decode
@@ -100,10 +102,14 @@ void ServerList::AddEntriesToList(
             // Insert the new entry as the second entry, so that the first entry can continue
             // to be used if it is reachable
             oldServerEntryList.insert(oldServerEntryList.begin() + 1, *decodedEntryIter);
+
+            entriesAdded++;
         }
     }
 
     WriteListToSystem(oldServerEntryList);
+
+    return entriesAdded;
 }
 
 void ServerList::MoveEntriesToFront(const ServerEntries& entries)

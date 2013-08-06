@@ -192,11 +192,11 @@ bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
 
 
 // static
-void ITransport::AddServerEntries(
+size_t ITransport::AddServerEntries(
         LPCTSTR transportProtocolName,
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry)
 {
     ServerList serverList(TStringToNarrow(transportProtocolName).c_str());
-    serverList.AddEntriesToList(newServerEntryList, serverEntry);
+    return serverList.AddEntriesToList(newServerEntryList, serverEntry);
 }

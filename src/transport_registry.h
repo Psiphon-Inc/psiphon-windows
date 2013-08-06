@@ -30,11 +30,12 @@ struct ServerEntry;
 //
 
 typedef ITransport* (*TransportFactoryFn)();
-typedef void (*AddServerEntriesFn)(LPCTSTR transportProtocolName, const vector<string>& newServerEntryList, const ServerEntry* serverEntry);
+typedef size_t (*AddServerEntriesFn)(LPCTSTR transportProtocolName, const vector<string>& newServerEntryList, const ServerEntry* serverEntry);
 
 struct RegisteredTransport
 {
-    tstring transportName;
+    tstring transportDisplayName;
+    tstring transportProtocolName;
     TransportFactoryFn transportFactoryFn;
     AddServerEntriesFn addServerEntriesFn;
 };
@@ -47,7 +48,7 @@ public:
     static int Register();
 
     // Create new instance of a particular transport
-    static ITransport* New(tstring transportName);
+    static ITransport* New(tstring transportDisplayName);
     
     // Create new instances of all available transports.
     static void NewAll(vector<ITransport*>& all_transports);

@@ -49,12 +49,14 @@ static ITransport* New()
 
 // static
 void VPNTransport::GetFactory(
-                    tstring& o_transportName,
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
                     TransportFactoryFn& o_transportFactory,
                     AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = New;
-    o_transportName = TRANSPORT_DISPLAY_NAME;
+    o_transportDisplayName = TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = TRANSPORT_PROTOCOL_NAME;
     o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 

@@ -42,7 +42,8 @@ public:
     virtual ~VPNTransport();
 
     static void GetFactory(
-                    tstring& o_transportName, 
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
                     TransportFactoryFn& o_transportFactory, 
                     AddServerEntriesFn& o_addServerEntriesFn);
 

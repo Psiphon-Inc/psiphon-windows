@@ -23,8 +23,7 @@
 #include "vpntransport.h"
 #include "sshtransport.h"
 #include "serverlist.h"
-
-
+#include "psiclient.h"
 
 
 /******************************************************************************
@@ -40,7 +39,8 @@ int TransportRegistry::Register()
 {
     RegisteredTransport registeredTransport;
     TRANSPORT_TYPE::GetFactory(
-                        registeredTransport.transportName, 
+                        registeredTransport.transportDisplayName, 
+                        registeredTransport.transportProtocolName, 
                         registeredTransport.transportFactoryFn,
                         registeredTransport.addServerEntriesFn);
 
@@ -54,13 +54,13 @@ int TransportRegistry::Register()
 
 
 // static 
-ITransport* TransportRegistry::New(tstring transportName)
+ITransport* TransportRegistry::New(tstring transportDisplayName)
 {
     for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
          it != m_registeredTransports.end();
          ++it)
     {
-        if (it->transportName == transportName)
+        if (it->transportDisplayName == transportDisplayName)
         {
             return it->transportFactoryFn();
         }
@@ -90,11 +90,33 @@ void TransportRegistry::AddServerEntries(
                             const vector<string>& newServerEntryList, 
                             const ServerEntry* serverEntry)
 {
+    tstringstream results;
+    results << _T("Discovered new server entries: ");
+
+    bool discovered = false;
+
     for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
          it != m_registeredTransports.end();
          ++it)
     {
-        it->addServerEntriesFn(it->transportName.c_str(), newServerEntryList, serverEntry);
+        size_t newEntries = it->addServerEntriesFn(it->transportProtocolName.c_str(), newServerEntryList, serverEntry);
+
+        if (newEntries > 0)
+        {
+            if (discovered && it != m_registeredTransports.begin())
+            {
+                results << _T("; ");
+            }
+
+            results << newEntries << _T(" for ") << it->transportDisplayName;
+
+            discovered = true;
+        }
+    }
+
+    if (discovered)
+    {
+        my_print(NOT_SENSITIVE, false, results.str().c_str());
     }
 }
 

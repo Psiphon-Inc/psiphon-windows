@@ -70,7 +70,8 @@ public:
 
     // serverEntry is optional. It is an extra server entry that should be
     // stored. Typically this is the current server with additional info.
-    void AddEntriesToList(
+    // Returns the number of new entries added.
+    size_t AddEntriesToList(
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry);
 

@@ -400,6 +400,9 @@ void SSHTransportBase::TransportConnectHelper()
         throw TransportFailed();
     }
 
+    size_t totalInitialServers = serverEntries.size();
+    my_print(NOT_SENSITIVE, true, _T("%s:%d: Attempting to connect to %d servers, %d at a time."), __TFUNCTION__, __LINE__, totalInitialServers, MULTI_CONNECT_POOL_SIZE);
+
     /*
     We will be trying to make multiple SSH connections to different servers at 
     the same time. They will all be listening as SOCKS proxies on the same local
@@ -426,10 +429,20 @@ void SSHTransportBase::TransportConnectHelper()
     bool abortServerAffinity = false;
     DWORD start = GetTickCount();
 
+    DWORD lastProgressTime = GetTickCount();
+    const DWORD PROGRESS_INTERVAL_MS = 10000;
+
     while (m_currentPlonk.get() == NULL 
            && (connectionAttempts.size() > 0               // either ongoing connection attempts
                || nextServerEntry != serverEntries.end()))  // or more servers left to try
     {
+        if (!tentativeConnection.plonkConnection.get()
+            && GetTickCountDiff(lastProgressTime, GetTickCount()) > PROGRESS_INTERVAL_MS)
+        {
+            my_print(NOT_SENSITIVE, false, _T("Have attempted to connect to %d of %d known servers. Still trying..."), totalInitialServers - (serverEntries.end() - nextServerEntry) - connectionAttempts.size(), totalInitialServers), 
+            lastProgressTime = GetTickCount();
+        }
+
         // Iterate in reverse, so we can remove dead connections
         for (int i = (signed)connectionAttempts.size()-1; i >= 0; --i)
         {
@@ -450,6 +463,8 @@ void SSHTransportBase::TransportConnectHelper()
                     abortServerAffinity = true;
                 }
 
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect FAILED, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+
                 connectionAttempts.erase(connectionAttempts.begin()+i);
             }
             else if (connected)
@@ -462,6 +477,8 @@ void SSHTransportBase::TransportConnectHelper()
 
                 // Mark the server as succeeded.
                 MarkServerSucceeded(tentativeConnection.sessionInfo.GetServerEntry());
+
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect SUCCEEDED, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
                 
                 connectionAttempts.erase(connectionAttempts.begin()+i);
 
@@ -477,6 +494,8 @@ void SSHTransportBase::TransportConnectHelper()
                 {
                     abortServerAffinity = true;
                 }
+
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect TIMED OUT, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
 
                 connectionAttempts.erase(connectionAttempts.begin()+i);
 
@@ -522,6 +541,8 @@ void SSHTransportBase::TransportConnectHelper()
 
             if (InitiateConnection(newConnection.sessionInfo, newConnection.plonkConnection))
             {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect STARTED, adding: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, newConnection.sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+
                 connectionAttempts.push_back(newConnection);
             }
         }
@@ -1151,12 +1172,14 @@ static ITransport* NewSSH()
 
 // static
 void SSHTransport::GetFactory(
-                    tstring& o_transportName,
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
                     TransportFactoryFn& o_transportFactoryFn,
                     AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactoryFn = NewSSH;
-    o_transportName = SSH_TRANSPORT_DISPLAY_NAME;
+    o_transportDisplayName = SSH_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = SSH_TRANSPORT_PROTOCOL_NAME;
     o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
@@ -1235,12 +1258,14 @@ static ITransport* NewOSSH()
 
 // static
 void OSSHTransport::GetFactory(
-                    tstring& o_transportName,
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
                     TransportFactoryFn& o_transportFactory,
                     AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = NewOSSH;
-    o_transportName = OSSH_TRANSPORT_DISPLAY_NAME;
+    o_transportDisplayName = OSSH_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = OSSH_TRANSPORT_PROTOCOL_NAME;
     o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 

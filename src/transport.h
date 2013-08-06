@@ -59,7 +59,8 @@ public:
     // TransportRegistry functions. 
     // Every implementing class must have a static function with this signature:
     //static void GetFactory(
-    //              tstring& o_transportName, 
+    //              tstring& o_transportDisplayName,
+    //              tstring& o_transportProtocolName,
     //              TransportFactoryFn& o_transportFactoryFn, 
     //              AddServerEntriesFn& o_addServerEntriesFn);
 
@@ -117,7 +118,7 @@ public:
     // Subclasses may use this opportunity to make a handshake.
     virtual void ProxySetupComplete() = 0;
 
-    static void AddServerEntries(
+    static size_t AddServerEntries(
             LPCTSTR transportProtocolName,
             const vector<string>& newServerEntryList, 
             const ServerEntry* serverEntry);
