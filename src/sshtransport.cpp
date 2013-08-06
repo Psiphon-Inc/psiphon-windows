@@ -1052,7 +1052,7 @@ bool PlonkConnection::CheckForConnected(bool& o_connected)
     // to check if there's data available to read first.
     if (!PeekNamedPipe(m_plonkOutputHandle, NULL, 0, NULL, &bytes_avail, NULL))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
 
