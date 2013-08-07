@@ -36,7 +36,8 @@ ITransport::ITransport(LPCTSTR transportProtocolName)
     : m_systemProxySettings(NULL),
       m_tempConnectServerEntry(NULL),
       m_serverList(TStringToNarrow(transportProtocolName).c_str()),
-      m_remoteServerListFetcher(NULL)
+      m_remoteServerListFetcher(NULL),
+      m_firstConnectionAttempt(true)
 {
 }
 
@@ -91,11 +92,11 @@ bool ITransport::DoStart()
     }
     catch(...)
     {
+        m_firstConnectionAttempt = false;
         return false;
     }
 
-    my_print(NOT_SENSITIVE, false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
-
+    m_firstConnectionAttempt = false;
     return true;
 }
 
@@ -108,10 +109,17 @@ void ITransport::StopImminent()
 void ITransport::DoStop(bool cleanly)
 {
     Cleanup();
+
+    // We'll use the non-null-ness of one of these members as a sign that we
+    // were connected.
+    if (m_systemProxySettings || m_tempConnectServerEntry)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
+    }
+
     m_systemProxySettings = NULL;
     m_tempConnectServerEntry = NULL;
 
-    my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
 }
 
 

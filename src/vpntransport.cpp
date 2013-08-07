@@ -231,6 +231,15 @@ void VPNTransport::TransportConnect()
         m_serverListReorder.Start(&m_serverList);
     }
 
+    if (m_firstConnectionAttempt)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s connecting to server..."), GetTransportDisplayName().c_str());
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s connecting to next server of %d known servers..."), GetTransportDisplayName().c_str(), GetConnectionServerEntryCount());
+    }
+
     try
     {
         TransportConnectHelper();
@@ -238,8 +247,16 @@ void VPNTransport::TransportConnect()
     catch(...)
     {
         (void)Cleanup();
+
+        if (!m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons, false))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s server connection failed."), GetTransportDisplayName().c_str());
+        }
+
         throw;
     }
+
+    my_print(NOT_SENSITIVE, false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 }
 
 void VPNTransport::TransportConnectHelper()
@@ -357,6 +374,28 @@ bool VPNTransport::GetConnectionServerEntry(ServerEntry& o_serverEntry)
     }
 
     return false;
+}
+
+
+size_t VPNTransport::GetConnectionServerEntryCount()
+{
+    // Return the first ServerEntry that can be used. This will encourage
+    // server affinity (i.e., using the last successful server).
+
+    ServerEntries serverEntries = m_serverList.GetList();
+    size_t count = 0;
+
+    for (ServerEntryIterator it = serverEntries.begin();
+         it != serverEntries.end();
+         ++it)
+    {
+        if (ServerHasCapabilities(*it))
+        {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 
@@ -679,10 +718,6 @@ void CALLBACK VPNTransport::RasDialCallback(
     }
     else
     {
-        if (rasConnState == 0)
-        {
-            my_print(NOT_SENSITIVE, false, _T("VPN connecting..."));
-        }
         my_print(NOT_SENSITIVE, true, _T("VPN establishing connection... (%x)"), rasConnState);
         vpnTransport->SetConnectionState(CONNECTION_STATE_STARTING);
     }

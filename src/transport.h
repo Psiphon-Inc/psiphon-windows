@@ -155,4 +155,5 @@ protected:
     ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
     IRemoteServerListFetcher* m_remoteServerListFetcher;
+    bool m_firstConnectionAttempt;
 };

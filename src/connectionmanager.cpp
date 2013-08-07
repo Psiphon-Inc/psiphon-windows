@@ -526,7 +526,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // the arrow animation spinning. A user-authored FAQ mentioned
             // this error in particular and recommended waiting. So here's
             // a lightly more encouraging message.
-            my_print(NOT_SENSITIVE, false, _T("Trying again..."));
+            my_print(NOT_SENSITIVE, false, _T("Still trying..."));
 
             // Continue while loop to try next server
 

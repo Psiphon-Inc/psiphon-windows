@@ -68,6 +68,7 @@ protected:
     
     void TransportConnectHelper();
     bool GetConnectionServerEntry(ServerEntry& o_serverEntry);
+    size_t GetConnectionServerEntryCount();
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
     HANDLE GetStateChangeEvent();

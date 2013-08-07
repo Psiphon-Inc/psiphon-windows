@@ -325,6 +325,8 @@ bool SSHTransportBase::Cleanup()
 
 void SSHTransportBase::TransportConnect()
 {
+    my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
+
     try
     {
         TransportConnectHelper();
@@ -332,14 +334,20 @@ void SSHTransportBase::TransportConnect()
     catch(...)
     {
         (void)Cleanup();
+
+        if (!m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons, false))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s connection failed."), GetTransportDisplayName().c_str());
+        }
+
         throw;
     }
+
+    my_print(NOT_SENSITIVE, false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 }
 
 void SSHTransportBase::TransportConnectHelper()
 {
-    my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
-
     assert(m_systemProxySettings != NULL);
 
     // Get the ServerEntries we'll try to connect to
