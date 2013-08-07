@@ -298,6 +298,7 @@ void VPNTransport::TransportConnectHelper()
             true,  // pre-handshake
             sessionInfo))
     {
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 
@@ -317,6 +318,7 @@ void VPNTransport::TransportConnectHelper()
             NarrowToTString(sessionInfo.GetServerAddress()), 
             NarrowToTString(sessionInfo.GetPSK())))
     {
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 
@@ -330,6 +332,7 @@ void VPNTransport::TransportConnectHelper()
             CONNECTION_STATE_STARTING, 
             VPN_CONNECTION_TIMEOUT_SECONDS*1000))
     {
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
     
@@ -337,6 +340,7 @@ void VPNTransport::TransportConnectHelper()
     {
         // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 

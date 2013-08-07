@@ -505,6 +505,8 @@ void SSHTransportBase::TransportConnectHelper()
 
                 my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect TIMED OUT, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
 
+                MarkServerFailed(connectionAttempts[i].sessionInfo.GetServerEntry());
+
                 connectionAttempts.erase(connectionAttempts.begin()+i);
 
                 // If our connection sequence is taking so long that we're 

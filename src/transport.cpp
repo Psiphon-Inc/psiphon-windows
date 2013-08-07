@@ -141,6 +141,18 @@ void ITransport::MarkServerSucceeded(const ServerEntry& serverEntry)
 }
 
 
+void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
+{
+    // Don't mark anything if we're making a temporary connection
+    if (m_tempConnectServerEntry)
+    {
+        return;
+    }
+
+    m_serverList.MarkServerFailed(serverEntry);
+}
+
+
 tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
 {
     tstring handshakeRequestPath;
@@ -192,6 +204,7 @@ bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
     {
         // If the handshake parsing has failed, something is very wrong.
         my_print(NOT_SENSITIVE, false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 

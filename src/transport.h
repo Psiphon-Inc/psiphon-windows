@@ -145,6 +145,7 @@ protected:
     virtual bool DoPeriodicCheck() = 0;
 
     void MarkServerSucceeded(const ServerEntry& serverEntry);
+    void MarkServerFailed(const ServerEntry& serverEntry);
 
     tstring GetHandshakeRequestPath(const SessionInfo& sessionInfo);
     bool DoHandshake(bool preTransport, SessionInfo& sessionInfo);
