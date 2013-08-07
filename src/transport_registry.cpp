@@ -91,7 +91,7 @@ void TransportRegistry::AddServerEntries(
                             const ServerEntry* serverEntry)
 {
     tstringstream results;
-    results << _T("Discovered new server entries: ");
+    results << _T("Discovered new Psiphon servers: ");
 
     bool discovered = false;
 
