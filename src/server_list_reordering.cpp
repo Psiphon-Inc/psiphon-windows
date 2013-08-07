@@ -327,7 +327,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
     {
         serverList.MoveEntriesToFront(respondingServers);
 
-        my_print(NOT_SENSITIVE, false, _T("Preferred servers: %d"), respondingServers.size());
+        my_print(NOT_SENSITIVE, true, _T("Preferred servers: %d"), respondingServers.size());
     }
 
     // Cleanup
