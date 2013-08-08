@@ -264,7 +264,6 @@ void VPNTransport::TransportConnectHelper()
     //
     // Minimum version check for VPN
     // - L2TP/IPSec/PSK not supported on Windows 2000
-    // - Throws to try next server -- an assumption here is we'll always try SSH next
     //
     
     OSVERSIONINFO versionInfo;
@@ -274,14 +273,22 @@ void VPNTransport::TransportConnectHelper()
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
         my_print(NOT_SENSITIVE, false, _T("VPN requires Windows XP or greater"));
-        throw TransportFailed();
+
+        // Cause this transport's connect sequence (and immediate failover) to 
+        // stop. Otherwise we'll quickly fail over and over.
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
     }
 
     ServerEntry serverEntry;
     if (!GetConnectionServerEntry(serverEntry))
     {
         my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
-        throw TransportFailed();
+
+        // Cause this transport's connect sequence (and immediate failover) to 
+        // stop. Otherwise we'll quickly fail over and over.
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
     }
 
     SessionInfo sessionInfo;

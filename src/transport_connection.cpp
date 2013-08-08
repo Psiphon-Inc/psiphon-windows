@@ -53,11 +53,7 @@ void TransportConnection::Connect(
     assert(m_localProxy == 0); 
 
     assert(transport);
-
-    if (tempConnectServerEntry && transport->IsHandshakeRequired())
-    {
-        throw TryNextServer();
-    }
+    assert(!tempConnectServerEntry || !transport->IsHandshakeRequired());
 
     m_transport = transport;
 

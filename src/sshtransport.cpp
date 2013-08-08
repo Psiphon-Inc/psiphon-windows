@@ -380,17 +380,25 @@ void SSHTransportBase::TransportConnectHelper()
     if (serverEntries.size() == 0)
     {
         my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
-        throw TransportFailed();
+
+        // Cause this transport's connect sequence (and immediate failover) to 
+        // stop. Otherwise we'll quickly fail over and over.
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
     }
 
-    // Extract executables and put to disk if not already
+    // Extract executable and put to disk if not already
 
     if (m_plonkPath.size() == 0)
     {
         if (!ExtractExecutable(IDR_PLONK_EXE, PLONK_EXE_NAME, m_plonkPath))
         {
             my_print(NOT_SENSITIVE, false, _T("Unable to extract SSH transport executable."));
-            throw TransportFailed();
+
+            // Cause this transport's connect sequence (and immediate failover) to 
+            // stop. Otherwise we'll quickly fail over and over.
+            m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+            throw Abort();
         }
     }
 
@@ -441,7 +449,7 @@ void SSHTransportBase::TransportConnectHelper()
     const DWORD PROGRESS_INTERVAL_MS = 10000;
 
     while (m_currentPlonk.get() == NULL 
-           && (connectionAttempts.size() > 0               // either ongoing connection attempts
+           && (connectionAttempts.size() > 0                // either ongoing connection attempts
                || nextServerEntry != serverEntries.end()))  // or more servers left to try
     {
         if (!tentativeConnection.plonkConnection.get()
@@ -474,6 +482,11 @@ void SSHTransportBase::TransportConnectHelper()
                 my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect FAILED, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
 
                 connectionAttempts.erase(connectionAttempts.begin()+i);
+
+                // Don't mark the fast-failed server as failed (i.e., don't 
+                // move it to the back of the server list). Fast failures don't
+                // necessarily indicate a bad server -- e.g., it can happen if the
+                // server is temporarily overloaded.
             }
             else if (connected)
             {
@@ -481,7 +494,11 @@ void SSHTransportBase::TransportConnectHelper()
                 // here depends on whether this is the first server, and, if 
                 // not, whether the first server's "head start" has expired.
 
-                tentativeConnection = connectionAttempts[i];
+                // Don't overwrite the tentative connection if it's set to the first server.
+                if (!tentativeConnection.plonkConnection.get() || !tentativeConnection.firstServer)
+                {
+                    tentativeConnection = connectionAttempts[i];
+                }
 
                 // Mark the server as succeeded.
                 MarkServerSucceeded(tentativeConnection.sessionInfo.GetServerEntry());

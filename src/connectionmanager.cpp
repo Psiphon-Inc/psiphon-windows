@@ -279,7 +279,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     m_startSplitTunnel = startSplitTunnel;
 
-    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_USER_DISCONNECT | STOP_REASON_UNEXPECTED_DISCONNECT);
+    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
@@ -367,7 +367,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     // NOTE: this function doesn't hold the ConnectionManager
     // object lock to allow for cancel etc.
 
-    while (true) // Try servers loop
+    while (true)
     {
         if (manager->m_upgradePending)
         {
