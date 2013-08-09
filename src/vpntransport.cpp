@@ -1116,7 +1116,8 @@ static void PatchDNS()
             buffer = new char [1];
             if (buffer == NULL)
             {
-                throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                throw std::exception(error.str().c_str());
             }
 
             DWORD bufferLength = 1;
@@ -1131,7 +1132,8 @@ static void PatchDNS()
                 buffer = new char [bufferLength];
                 if (buffer == NULL)
                 {
-                    throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                    error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                    throw std::exception(error.str().c_str());
                 }
 
                 returnCode = RegQueryValueExA(key, valueName, 0, 0, (LPBYTE)buffer, &bufferLength);
@@ -1159,7 +1161,8 @@ static void PatchDNS()
                 char *newBuffer = new char [bufferLength + extraNulls];
                 if (newBuffer == NULL)
                 {
-                    throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                    error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                    throw std::exception(error.str().c_str());
                 }
 
                 memset(newBuffer, bufferLength + extraNulls, 0);
@@ -1182,7 +1185,8 @@ static void PatchDNS()
                 char *newBuffer = new char [bufferLength];
                 if (newBuffer == NULL)
                 {
-                    throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+                    error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                    throw std::exception(error.str().c_str());
                 }
 
                 memcpy(newBuffer, found, target_length);

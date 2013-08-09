@@ -360,7 +360,9 @@ bool HTTPSRequest::MakeRequest(
 
     if (m_closedEvent == NULL)
     {
-        throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": CreateEvent failed. Out of memory.");
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": CreateEvent failed. Out of memory";
+        throw std::exception(error.str().c_str());
     }
 
     m_expectedServerCertificate = webServerCertificate;

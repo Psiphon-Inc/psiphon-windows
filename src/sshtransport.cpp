@@ -231,7 +231,9 @@ bool SSHTransportBase::DoPeriodicCheck()
 
         if (nextPlonk.get() == NULL)
         {
-            throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+            stringstream error;
+            error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+            throw std::exception(error.str().c_str());
         }
 
         // We assume that TransportConnectHelper has already been called, so 
@@ -746,7 +748,9 @@ bool SSHTransportBase::InitiateConnection(
 
     if (plonkConnection.get() == NULL)
     {
-        throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) ": Out of memory");
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+        throw std::exception(error.str().c_str());
     }
 
     bool success = plonkConnection->Connect(
