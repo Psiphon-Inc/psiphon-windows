@@ -461,7 +461,9 @@ void SSHTransportBase::TransportConnectHelper()
             lastProgressTime = GetTickCount();
         }
 
-        // Iterate in reverse, so we can remove dead connections
+        // Iterate in reverse, so we can remove dead connections.
+        // On the first iteration of the outer loop, connectionAttempts is
+        // empty, so we skip this loop.
         for (int i = (signed)connectionAttempts.size()-1; i >= 0; --i)
         {
             if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
