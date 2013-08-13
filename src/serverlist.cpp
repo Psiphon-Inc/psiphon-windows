@@ -112,7 +112,7 @@ size_t ServerList::AddEntriesToList(
     return entriesAdded;
 }
 
-void ServerList::MoveEntriesToFront(const ServerEntries& entries)
+void ServerList::MoveEntriesToFront(const ServerEntries& entries, bool veryFront/*=false*/)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -130,6 +130,9 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
 
         bool existingEntryChanged = false;
 
+        // If we replace the head item, we want to make sure we insert at the head.
+        bool forceHead = false;
+
         for (ServerEntries::iterator persistentEntry = persistentServerEntryList.begin();
              persistentEntry != persistentServerEntryList.end();
              ++persistentEntry)
@@ -142,6 +145,7 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
                 }
                 else
                 {
+                    forceHead = (persistentEntry == persistentServerEntryList.begin());
                     persistentServerEntryList.erase(persistentEntry);
                 }
                 break;
@@ -152,18 +156,28 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
 
         if (!existingEntryChanged)
         {
-            persistentServerEntryList.insert(persistentServerEntryList.begin(), *entry);
+            ServerEntries::const_iterator insertionPoint;
+            if (veryFront || forceHead || persistentServerEntryList.size() == 0)
+            {
+                insertionPoint = persistentServerEntryList.begin();
+            }
+            else
+            {
+                insertionPoint = persistentServerEntryList.begin() + 1;
+            }
+
+            persistentServerEntryList.insert(insertionPoint, *entry);
         }
     }
 
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MoveEntryToFront(const ServerEntry& serverEntry)
+void ServerList::MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront/*=false*/)
 {
     ServerEntries serverEntries;
     serverEntries.push_back(serverEntry);
-    MoveEntriesToFront(serverEntries);
+    MoveEntriesToFront(serverEntries, veryFront);
 }
 
 void ServerList::MarkServersFailed(const ServerEntries& failedServerEntries)

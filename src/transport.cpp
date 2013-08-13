@@ -137,7 +137,8 @@ void ITransport::MarkServerSucceeded(const ServerEntry& serverEntry)
         return;
     }
 
-    m_serverList.MoveEntryToFront(serverEntry);
+    // Force the serverEntry to be at the very front of the server list.
+    m_serverList.MoveEntryToFront(serverEntry, true);
 }
 
 

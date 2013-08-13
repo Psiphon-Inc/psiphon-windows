@@ -78,8 +78,10 @@ public:
     void MarkServersFailed(const ServerEntries& failedServerEntries);
     void MarkServerFailed(const ServerEntry& failedServerEntry);
 
-    void MoveEntriesToFront(const ServerEntries& entries);
-    void MoveEntryToFront(const ServerEntry& serverEntry);
+    // Setting `veryFront` to true will force entries to go to the actual head
+    // of the list, instead of just near it. Use carefully -- it can break server affinity.
+    void MoveEntriesToFront(const ServerEntries& entries, bool veryFront=false);
+    void MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront=false);
 
 private:
     string GetListName() const;
