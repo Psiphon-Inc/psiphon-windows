@@ -699,9 +699,17 @@ void CALLBACK VPNTransport::RasDialCallback(
     VPNTransport* vpnTransport = (VPNTransport*)userData;
 
     my_print(NOT_SENSITIVE, true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
+    
     if (0 != dwError)
     {
-        my_print(NOT_SENSITIVE, false, _T("VPN connection failed (%d)"), dwError);
+        const DWORD errorStringSize = 1024;
+        TCHAR errorString[errorStringSize];
+        if (RasGetErrorString(dwError, errorString, errorStringSize) != ERROR_SUCCESS)
+        {
+            errorString[0] = _T('\0');
+        }
+
+        my_print(NOT_SENSITIVE, false, _T("VPN connection failed: %s (%d)"), errorString, dwError);
         vpnTransport->SetConnectionState(CONNECTION_STATE_FAILED);
         vpnTransport->SetLastErrorCode(dwError);
     }
