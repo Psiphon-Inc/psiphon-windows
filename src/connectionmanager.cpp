@@ -305,22 +305,29 @@ void ConnectionManager::StartSplitTunnel()
 
     if (m_splitTunnelRoutes.length() == 0)
     {
-        tstring routesRequestPath = GetRoutesRequestPath(m_transport);
-
-        SessionInfo sessionInfo;
-        CopyCurrentSessionInfo(sessionInfo);
-                
-        string response;
-        if (ServerRequest::MakeRequest(
-                    ServerRequest::ONLY_IF_TRANSPORT,
-                    m_transport,
-                    sessionInfo,
-                    routesRequestPath.c_str(),
-                    response,
-                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+        try
         {
-            // Process split tunnel response
-            ProcessSplitTunnelResponse(response);
+            tstring routesRequestPath = GetRoutesRequestPath(m_transport);
+
+            SessionInfo sessionInfo;
+            CopyCurrentSessionInfo(sessionInfo);
+                
+            string response;
+            if (ServerRequest::MakeRequest(
+                        ServerRequest::ONLY_IF_TRANSPORT,
+                        m_transport,
+                        sessionInfo,
+                        routesRequestPath.c_str(),
+                        response,
+                        StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+            {
+                // Process split tunnel response
+                ProcessSplitTunnelResponse(response);
+            }
+        }
+        catch (StopSignal::StopException&)
+        {
+            return;
         }
     }
 
@@ -1299,13 +1306,20 @@ DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
 
     FeedbackThreadData* data = (FeedbackThreadData*)object;
 
-    if (data->connectionManager->DoSendFeedback(data->feedbackJSON.c_str()))
+    try
     {
-        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+        if (data->connectionManager->DoSendFeedback(data->feedbackJSON.c_str()))
+        {
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+        }
+        else
+        {
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+        }
     }
-    else
+    catch (StopSignal::StopException&)
     {
-        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+        // just fall through
     }
 
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);

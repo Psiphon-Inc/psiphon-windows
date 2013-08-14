@@ -363,6 +363,7 @@ bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 // time or size limits have been exceeded; if connected is false, the stats will
 // be sent regardlesss of limits.
 // Returns true on success, false otherwise.
+// May throw StopSignal::StopException if not `final`.
 bool LocalProxy::ProcessStatsAndStatus(bool final)
 {
     if (!m_statsCollector)

@@ -46,7 +46,7 @@ public:
     /*
     May throw the same exceptions as ITransport::Connect and WorkerThread::Start,
     but *not* ITransport::TransportFailed. Also throws TryNextServer, in 
-    the case of a normal failure.
+    the case of a normal failure. May also throw StopSignal::StopException.
     If statsCollector is null, then stats will not be collected.
     If tempConnectServerEntry is non-NULL, then that server and only that 
     server will be used. In addition, no handshake will be done. (This 

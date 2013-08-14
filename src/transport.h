@@ -116,6 +116,7 @@ public:
     // Must be called after the local proxy is running and the system proxy
     // settings are in place. 
     // Subclasses may use this opportunity to make a handshake.
+    // May throw StopSignal::StopException
     virtual void ProxySetupComplete() = 0;
 
     static size_t AddServerEntries(
@@ -148,6 +149,7 @@ protected:
     void MarkServerFailed(const ServerEntry& serverEntry);
 
     tstring GetHandshakeRequestPath(const SessionInfo& sessionInfo);
+    // May throw StopSignal::StopException
     bool DoHandshake(bool preTransport, SessionInfo& sessionInfo);
 
 protected:

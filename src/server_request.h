@@ -47,6 +47,7 @@ public:
         ONLY_IF_TRANSPORT
     };
 
+    // Throws stop signal.
     static bool MakeRequest(
         ReqLevel reqLevel,
         const ITransport* currentTransport,

@@ -55,8 +55,9 @@ public:
     void OpenHomePages(const TCHAR* defaultHomePage=0);
 
     // ILocalProxyStatsCollector implementation
+    // May throw StopSignal::StopException subclass if not `final`
     bool SendStatusMessage(
-            bool connected,
+            bool final,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
@@ -103,6 +104,7 @@ private:
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
+    // May throw StopSignal::StopException
     bool DoSendFeedback(LPCWSTR feedbackJSON);
     static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
 
