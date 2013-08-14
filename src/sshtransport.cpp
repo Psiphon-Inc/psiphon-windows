@@ -409,13 +409,16 @@ void SSHTransportBase::TransportConnectHelper()
     m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
     if (!TestForOpenPort(m_localSocksProxyPort, 10, m_stopInfo))
     {
-        if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+        if (!m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
         {
-            throw Abort();
+            my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
+
+            // Cause this transport's connect sequence (and immediate failover) to 
+            // stop. Otherwise we'll quickly fail over and over.
+            m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
         }
 
-        my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
-        throw TransportFailed();
+        throw Abort();
     }
 
     size_t totalInitialServers = serverEntries.size();
