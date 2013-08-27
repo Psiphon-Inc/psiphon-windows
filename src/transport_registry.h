@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 #pragma once
 
 class ITransport;
+struct ServerEntry;
 
 
 //
@@ -28,7 +29,16 @@ class ITransport;
 // Transports must use unique names.
 //
 
-typedef ITransport* (*TransportFactory)();
+typedef ITransport* (*TransportFactoryFn)();
+typedef size_t (*AddServerEntriesFn)(LPCTSTR transportProtocolName, const vector<string>& newServerEntryList, const ServerEntry* serverEntry);
+
+struct RegisteredTransport
+{
+    tstring transportDisplayName;
+    tstring transportProtocolName;
+    TransportFactoryFn transportFactoryFn;
+    AddServerEntriesFn addServerEntriesFn;
+};
 
 class TransportRegistry
 {
@@ -38,10 +48,15 @@ public:
     static int Register();
 
     // Create new instance of a particular transport
-    static ITransport* New(tstring transportName);
+    static ITransport* New(tstring transportDisplayName);
     
     // Create new instances of all available transports.
     static void NewAll(vector<ITransport*>& all_transports);
+
+    // Add new server entries to all transports.
+    static void AddServerEntries(
+                    const vector<string>& newServerEntryList, 
+                    const ServerEntry* serverEntry);
 
 private:
     struct RegistryEntryComparison 
@@ -49,8 +64,5 @@ private:
         bool operator() (const tstring& lhs, const tstring& rhs) const;
     };
 
-    static map<tstring, TransportFactory, RegistryEntryComparison> m_registeredTransports;
-
-    // Used to keep track of the order of transport registration
-    static vector<tstring> m_registeredTransportsPriority;
+    static vector<RegisteredTransport> m_registeredTransports;
 };

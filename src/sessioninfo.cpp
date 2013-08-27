@@ -31,7 +31,7 @@
 #define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT 60000
 
 
-void SessionInfo::Set(const ServerEntry& serverEntry)
+void SessionInfo::Set(const ServerEntry& serverEntry, bool generateClientSessionID/*=true*/)
 {
     m_serverEntry = serverEntry;
 
@@ -53,6 +53,11 @@ void SessionInfo::Set(const ServerEntry& serverEntry)
     m_speedTestServerPort = 0;
     m_speedTestRequestPath.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
+
+    if (generateClientSessionID)
+    {
+        GenerateClientSessionID();
+    }
 }
 
 void SessionInfo::GenerateClientSessionID()

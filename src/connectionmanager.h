@@ -20,10 +20,10 @@
 #pragma once
 
 #include <time.h>
-#include "serverlist.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "local_proxy.h"
+#include "transport.h"
 
 
 class ITransport;
@@ -37,27 +37,33 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector
+class ConnectionManager : public ILocalProxyStatsCollector, IRemoteServerListFetcher
 {
 public:
     ConnectionManager();
     virtual ~ConnectionManager();
 
-    ServerList& GetServerList();
     void Toggle(const tstring& transport, bool startSplitTunnel);
     void Stop(DWORD reason);
     void Start(const tstring& transport, bool startSplitTunnel);
     void StartSplitTunnel();
     void StopSplitTunnel();
+    void ResetSplitTunnel();
     time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);
+
+    // ILocalProxyStatsCollector implementation
+    // May throw StopSignal::StopException subclass if not `final`
     bool SendStatusMessage(
-            bool connected,
+            bool final,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
+
+    // IRemoteServerListFetcher implementation
+    void FetchRemoteServerList();
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
@@ -66,8 +72,6 @@ public:
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
     static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);
-
-    void FetchRemoteServerList();
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };
@@ -90,8 +94,6 @@ private:
         DWORD size);
     void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
 
-    void MarkCurrentServerFailed();
-    void LoadNextServer(tstring& handshakeRequestPath);
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);
     void ProcessSplitTunnelResponse(const string& compressedRoutes);
@@ -102,13 +104,13 @@ private:
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
+    // May throw StopSignal::StopException
     bool DoSendFeedback(LPCWSTR feedbackJSON);
     static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
 
 private:
     HANDLE m_mutex;
     ConnectionManagerState m_state;
-    ServerList m_serverList;
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
     HANDLE m_upgradeThread;

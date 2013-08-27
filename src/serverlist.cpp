@@ -27,9 +27,14 @@
 #include <sstream>
 
 
-ServerList::ServerList()
+ServerList::ServerList(LPCSTR listName)
 {
-    m_mutex = CreateMutex(NULL, FALSE, 0);
+    assert(listName && strlen(listName));
+    m_name = listName;
+
+    // Used a named mutex, because we'll need to use the mutex across instances.
+    tstring mutexName = _T("Local\\ServerListMutex-") + NarrowToTString(listName);
+    m_mutex = CreateMutex(NULL, FALSE, mutexName.c_str());
 }
 
 ServerList::~ServerList()
@@ -38,15 +43,17 @@ ServerList::~ServerList()
 }
 
 // This function may throw
-void ServerList::AddEntriesToList(
+size_t ServerList::AddEntriesToList(
                     const vector<string>& newServerEntryList,
                     const ServerEntry* serverEntry)
 {
     AutoMUTEX lock(m_mutex);
 
+    size_t entriesAdded = 0;
+
     if (newServerEntryList.size() < 1 && !serverEntry)
     {
-        return;
+        return entriesAdded;
     }
 
     // We're going to loop through the server entries twice -- once to decode
@@ -95,13 +102,17 @@ void ServerList::AddEntriesToList(
             // Insert the new entry as the second entry, so that the first entry can continue
             // to be used if it is reachable
             oldServerEntryList.insert(oldServerEntryList.begin() + 1, *decodedEntryIter);
+
+            entriesAdded++;
         }
     }
 
     WriteListToSystem(oldServerEntryList);
+
+    return entriesAdded;
 }
 
-void ServerList::MoveEntriesToFront(const ServerEntries& entries)
+void ServerList::MoveEntriesToFront(const ServerEntries& entries, bool veryFront/*=false*/)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -119,6 +130,9 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
 
         bool existingEntryChanged = false;
 
+        // If we replace the head item, we want to make sure we insert at the head.
+        bool forceHead = false;
+
         for (ServerEntries::iterator persistentEntry = persistentServerEntryList.begin();
              persistentEntry != persistentServerEntryList.end();
              ++persistentEntry)
@@ -131,6 +145,7 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
                 }
                 else
                 {
+                    forceHead = (persistentEntry == persistentServerEntryList.begin());
                     persistentServerEntryList.erase(persistentEntry);
                 }
                 break;
@@ -141,25 +156,53 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
 
         if (!existingEntryChanged)
         {
-            persistentServerEntryList.insert(persistentServerEntryList.begin(), *entry);
+            ServerEntries::const_iterator insertionPoint;
+            if (veryFront || forceHead || persistentServerEntryList.size() == 0)
+            {
+                insertionPoint = persistentServerEntryList.begin();
+            }
+            else
+            {
+                insertionPoint = persistentServerEntryList.begin() + 1;
+            }
+
+            persistentServerEntryList.insert(insertionPoint, *entry);
         }
     }
 
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MarkServerFailed(const string& serverAddress)
+void ServerList::MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront/*=false*/)
+{
+    ServerEntries serverEntries;
+    serverEntries.push_back(serverEntry);
+    MoveEntriesToFront(serverEntries, veryFront);
+}
+
+void ServerList::MarkServersFailed(const ServerEntries& failedServerEntries)
 {
     AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() > 1)
+    if (serverEntryList.size() == 0 || failedServerEntries.size() == 0)
+    {
+        return;
+    }
+
+    my_print(NOT_SENSITIVE, true, _T("%s: Marking %d servers failed"), __TFUNCTION__, failedServerEntries.size());
+
+    bool changeMade = false;
+
+    for (ServerEntries::const_iterator failed = failedServerEntries.begin();
+            failed != failedServerEntries.end();
+            ++failed)
     {
         for (ServerEntries::iterator entry = serverEntryList.begin();
              entry != serverEntryList.end();
              ++entry)
         {
-            if (serverAddress == entry->serverAddress)
+            if (failed->serverAddress == entry->serverAddress)
             {
                 ServerEntry failedServer;
                 failedServer.Copy(*entry);
@@ -167,29 +210,28 @@ void ServerList::MarkServerFailed(const string& serverAddress)
                 // Move the failed server to the end of the list
                 serverEntryList.erase(entry);
                 serverEntryList.push_back(failedServer);
-                WriteListToSystem(serverEntryList);
-                return;
+
+                changeMade = true;
+                break;
             }
         }
+    }
 
+    if (changeMade)
+    {
+        WriteListToSystem(serverEntryList);
+    }
+    else
+    {
         my_print(NOT_SENSITIVE, true, _T("%s: Couldn't find server"), __TFUNCTION__);
     }
 }
 
-ServerEntry ServerList::GetNextServer()
+void ServerList::MarkServerFailed(const ServerEntry& failedServerEntry)
 {
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() < 1)
-    {
-        throw std::exception("No servers found.  This application is possibly corrupt.");
-    }
-
-    // The client always tries the first entry in the list.
-    // The list will be rearranged elsewhere, such as when a server has failed,
-    // or when new servers are discovered.
-    return serverEntryList[0];
+    ServerEntries failedServerEntries;
+    failedServerEntries.push_back(failedServerEntry);
+    MarkServersFailed(failedServerEntries);
 }
 
 // This function should not throw
@@ -284,6 +326,11 @@ ServerEntries ServerList::GetList()
     }
 }
 
+string ServerList::GetListName() const
+{
+    return string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name;
+}
+
 ServerEntries ServerList::GetListFromEmbeddedValues()
 {
     return ParseServerEntries(EMBEDDED_SERVER_LIST);
@@ -293,9 +340,17 @@ ServerEntries ServerList::GetListFromSystem()
 {
     string serverEntryListString;
 
-    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, serverEntryListString))
+    if (!ReadRegistryStringValue(
+            GetListName().c_str(), 
+            serverEntryListString))
     {
-         return ServerEntries();
+        // If we're migrating from an old version, there's no m_name qualifier.
+        if (!ReadRegistryStringValue(
+                LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 
+                serverEntryListString))
+        {
+            return ServerEntries();
+        }
     }
 
     return ParseServerEntries(serverEntryListString.c_str());
@@ -338,7 +393,10 @@ void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
 
     RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
 
-    if (!WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList, reason))
+    if (!WriteRegistryStringValue(
+            GetListName().c_str(), 
+            encodedServerEntryList, 
+            reason))
     {
         if (REGISTRY_FAILURE_WRITE_TOO_LONG == reason)
         {
