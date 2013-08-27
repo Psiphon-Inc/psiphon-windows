@@ -107,3 +107,9 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
     vector<basic_string<charT>> elems;
     return split(s, delim, elems);
 }
+
+#ifndef STRINGIZE
+// From MSVC++ 2012's _STRINGIZE macro
+#define __STRINGIZEX(x) #x
+#define STRINGIZE(x) __STRINGIZEX(x)
+#endif

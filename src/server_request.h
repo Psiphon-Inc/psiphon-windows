@@ -47,6 +47,7 @@ public:
         ONLY_IF_TRANSPORT
     };
 
+    // Throws stop signal.
     static bool MakeRequest(
         ReqLevel reqLevel,
         const ITransport* currentTransport,
@@ -63,5 +64,5 @@ public:
 private:
     static void GetTempTransports(
                 const ServerEntry& serverEntry,
-                vector<auto_ptr<ITransport>>& o_tempTransports);
+                vector<boost::shared_ptr<ITransport>>& o_tempTransports);
 };

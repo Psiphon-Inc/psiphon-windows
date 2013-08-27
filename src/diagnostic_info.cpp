@@ -21,7 +21,6 @@
 #include "psiclient.h"
 #include "embeddedvalues.h"
 #include "httpsrequest.h"
-#include "server_list_reordering.h"
 #include "wininet_network_check.h"
 #include "systemproxysettings.h"
 #include "utilities.h"
@@ -36,6 +35,9 @@ void _AddDiagnosticInfoHelper(const char* entry)
 {
     AutoMUTEX mutex(g_diagnosticHistoryMutex);
     g_diagnosticHistory.push_back(entry);
+
+    OutputDebugStringA(entry);
+    OutputDebugStringA("\n");
 }
 
 void AddDiagnosticInfoYaml(const char* message, const char* yaml)

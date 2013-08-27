@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 #include "raserror.h"
 #include "utilities.h"
 #include "server_request.h"
+#include "diagnostic_info.h"
 
 
 #define VPN_CONNECTION_TIMEOUT_SECONDS  20
@@ -48,16 +49,21 @@ static ITransport* New()
 
 // static
 void VPNTransport::GetFactory(
-                    tstring& o_transportName,
-                    TransportFactory& o_transportFactory)
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory,
+                    AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = New;
-    o_transportName = TRANSPORT_DISPLAY_NAME;
+    o_transportDisplayName = TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = TRANSPORT_PROTOCOL_NAME;
+    o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
 
 VPNTransport::VPNTransport()
-    : m_state(CONNECTION_STATE_STOPPED),
+    : ITransport(GetTransportProtocolName().c_str()),
+      m_state(CONNECTION_STATE_STOPPED),
       m_stateChangeEvent(INVALID_HANDLE_VALUE),
       m_rasConnection(0),
       m_lastErrorCode(0)
@@ -90,7 +96,7 @@ tstring VPNTransport::GetTransportDisplayName() const
     return TRANSPORT_DISPLAY_NAME;
 }
 
-tstring VPNTransport::GetSessionID(SessionInfo sessionInfo)
+tstring VPNTransport::GetSessionID(const SessionInfo& sessionInfo)
 {
     if (m_pppIPAddress.empty())
     {
@@ -111,7 +117,7 @@ tstring VPNTransport::GetLastTransportError() const
     return NarrowToTString(s.str());
 }
 
-bool VPNTransport::IsHandshakeRequired(const ServerEntry& entry) const
+bool VPNTransport::IsHandshakeRequired() const
 {
     return true;
 }
@@ -133,6 +139,12 @@ bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
     bool canHandshake = ServerRequest::ServerHasRequestCapabilities(entry);
 
     return canHandshake && entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
+}
+
+void VPNTransport::ProxySetupComplete()
+{
+    // VPN doesn't do post-handshake
+    return;
 }
 
 bool VPNTransport::Cleanup()
@@ -207,34 +219,51 @@ bool VPNTransport::Cleanup()
     return true;
 }
 
-void VPNTransport::TransportConnect(
-                    const SessionInfo& sessionInfo,
-                    SystemProxySettings*)
+void VPNTransport::TransportConnect()
 {
-    // The SystemProxySettings param is unused
+    // The SystemProxySettings member is unused
 
-    if (!ServerVPNCapable(sessionInfo))
+    // VPN should never be used for a temporary connection
+    assert(!m_tempConnectServerEntry);
+
+    if (!m_serverListReorder.IsRunning())
     {
-        throw TransportFailed();
+        m_serverListReorder.Start(&m_serverList);
+    }
+
+    if (m_firstConnectionAttempt)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s connecting to server..."), GetTransportDisplayName().c_str());
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s connecting to next server of %d known servers..."), GetTransportDisplayName().c_str(), GetConnectionServerEntryCount());
     }
 
     try
     {
-        TransportConnectHelper(sessionInfo);
+        TransportConnectHelper();
     }
     catch(...)
     {
         (void)Cleanup();
+
+        if (!m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons, false))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s server connection failed."), GetTransportDisplayName().c_str());
+        }
+
         throw;
     }
+
+    my_print(NOT_SENSITIVE, false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 }
 
-void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
+void VPNTransport::TransportConnectHelper()
 {
     //
     // Minimum version check for VPN
     // - L2TP/IPSec/PSK not supported on Windows 2000
-    // - Throws to try next server -- an assumption here is we'll always try SSH next
     //
     
     OSVERSIONINFO versionInfo;
@@ -244,6 +273,39 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
             (versionInfo.dwMajorVersion == 5 && versionInfo.dwMinorVersion == 0))
     {
         my_print(NOT_SENSITIVE, false, _T("VPN requires Windows XP or greater"));
+
+        // Cause this transport's connect sequence (and immediate failover) to 
+        // stop. Otherwise we'll quickly fail over and over.
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
+    }
+
+    ServerEntry serverEntry;
+    if (!GetConnectionServerEntry(serverEntry))
+    {
+        my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
+
+        // Cause this transport's connect sequence (and immediate failover) to 
+        // stop. Otherwise we'll quickly fail over and over.
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
+    }
+
+    SessionInfo sessionInfo;
+    sessionInfo.Set(serverEntry);
+
+    // Record which server we're attempting to connect to
+    ostringstream ss;
+    ss << "ipAddress: " << sessionInfo.GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
+    // Do pre-handshake
+
+    if (!DoHandshake(
+            true,  // pre-handshake
+            sessionInfo))
+    {
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 
@@ -258,11 +320,12 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     //
     // Start VPN connection
     //
-    
+
     if (!Establish(
             NarrowToTString(sessionInfo.GetServerAddress()), 
             NarrowToTString(sessionInfo.GetPSK())))
     {
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
 
@@ -276,6 +339,7 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
             CONNECTION_STATE_STARTING, 
             VPN_CONNECTION_TIMEOUT_SECONDS*1000))
     {
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
     
@@ -283,8 +347,13 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     {
         // Note: WaitForConnectionStateToChangeFrom throws Abort if user
         // cancelled, so if we're here it's a FAILED case.
+        MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
     }
+
+    // The connection is good.
+    MarkServerSucceeded(sessionInfo.GetServerEntry());
+    m_sessionInfo = sessionInfo;
 
     //
     // Patch DNS bug on Windowx XP; and flush DNS
@@ -296,11 +365,50 @@ void VPNTransport::TransportConnectHelper(const SessionInfo& sessionInfo)
     TweakDNS();
 }
 
-bool VPNTransport::ServerVPNCapable(const SessionInfo& sessionInfo) const
+
+bool VPNTransport::GetConnectionServerEntry(ServerEntry& o_serverEntry)
 {
-    // The absence of a PSK indicates that the server is not VPN-capable
-    return sessionInfo.GetPSK().length() > 0;
+    // Return the first ServerEntry that can be used. This will encourage
+    // server affinity (i.e., using the last successful server).
+
+    ServerEntries serverEntries = m_serverList.GetList();
+
+    for (ServerEntryIterator it = serverEntries.begin();
+         it != serverEntries.end();
+         ++it)
+    {
+        if (ServerHasCapabilities(*it))
+        {
+            o_serverEntry = *it;
+            return true;
+        }
+    }
+
+    return false;
 }
+
+
+size_t VPNTransport::GetConnectionServerEntryCount()
+{
+    // Return the first ServerEntry that can be used. This will encourage
+    // server affinity (i.e., using the last successful server).
+
+    ServerEntries serverEntries = m_serverList.GetList();
+    size_t count = 0;
+
+    for (ServerEntryIterator it = serverEntries.begin();
+         it != serverEntries.end();
+         ++it)
+    {
+        if (ServerHasCapabilities(*it))
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
 
 bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
 {
@@ -591,9 +699,17 @@ void CALLBACK VPNTransport::RasDialCallback(
     VPNTransport* vpnTransport = (VPNTransport*)userData;
 
     my_print(NOT_SENSITIVE, true, _T("RasDialCallback (%x %d)"), rasConnState, dwError);
+    
     if (0 != dwError)
     {
-        my_print(NOT_SENSITIVE, false, _T("VPN connection failed (%d)"), dwError);
+        const DWORD errorStringSize = 1024;
+        TCHAR errorString[errorStringSize];
+        if (RasGetErrorString(dwError, errorString, errorStringSize) != ERROR_SUCCESS)
+        {
+            errorString[0] = _T('\0');
+        }
+
+        my_print(NOT_SENSITIVE, false, _T("VPN connection failed: %s (%d)"), errorString, dwError);
         vpnTransport->SetConnectionState(CONNECTION_STATE_FAILED);
         vpnTransport->SetLastErrorCode(dwError);
     }
@@ -621,10 +737,6 @@ void CALLBACK VPNTransport::RasDialCallback(
     }
     else
     {
-        if (rasConnState == 0)
-        {
-            my_print(NOT_SENSITIVE, false, _T("VPN connecting..."));
-        }
         my_print(NOT_SENSITIVE, true, _T("VPN establishing connection... (%x)"), rasConnState);
         vpnTransport->SetConnectionState(CONNECTION_STATE_STARTING);
     }
@@ -753,12 +865,17 @@ void FixVPNServices()
     for (int i = 0; i < sizeof(serviceConfigs)/sizeof(serviceConfig); i++)
     {
         std::stringstream error;
-        SC_HANDLE manager = 0;
-        SC_HANDLE service = 0;
+        SC_HANDLE manager = NULL;
+        SC_HANDLE service = NULL;
 
         try
         {
-            CloseServiceHandle(manager);
+            if (manager != NULL)
+            {
+                CloseServiceHandle(manager);
+                manager = NULL;
+            }
+
             manager = OpenSCManager(NULL, NULL, GENERIC_READ);
             if (NULL == manager)
             {
@@ -766,7 +883,12 @@ void FixVPNServices()
                 throw std::exception(error.str().c_str());
             }
 
-            CloseServiceHandle(service);
+            if (service != NULL)
+            {
+                CloseServiceHandle(service);
+                service = NULL;
+            }
+
             service = OpenService(manager,
                                   serviceConfigs[i].name,
                                   SERVICE_QUERY_CONFIG|SERVICE_QUERY_STATUS);
@@ -982,8 +1104,8 @@ static void PatchDNS()
         versionInfo.dwMinorVersion == 1)
     {
         std::stringstream error;
-        HKEY key = 0;
-        char *buffer = 0;
+        HKEY key = NULL;
+        char *buffer = NULL;
 
         try
         {
@@ -1000,6 +1122,12 @@ static void PatchDNS()
 
             // RegQueryValueExA on Windows XP wants at least 1 byte
             buffer = new char [1];
+            if (buffer == NULL)
+            {
+                error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                throw std::exception(error.str().c_str());
+            }
+
             DWORD bufferLength = 1;
             DWORD type;
             
@@ -1008,7 +1136,14 @@ static void PatchDNS()
             if (ERROR_MORE_DATA == returnCode)
             {
                 delete [] buffer;
+
                 buffer = new char [bufferLength];
+                if (buffer == NULL)
+                {
+                    error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                    throw std::exception(error.str().c_str());
+                }
+
                 returnCode = RegQueryValueExA(key, valueName, 0, 0, (LPBYTE)buffer, &bufferLength);
             }
 
@@ -1032,6 +1167,12 @@ static void PatchDNS()
             if (extraNulls)
             {
                 char *newBuffer = new char [bufferLength + extraNulls];
+                if (newBuffer == NULL)
+                {
+                    error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                    throw std::exception(error.str().c_str());
+                }
+
                 memset(newBuffer, bufferLength + extraNulls, 0);
                 memcpy(newBuffer, buffer, bufferLength);
                 bufferLength += extraNulls;
@@ -1050,6 +1191,12 @@ static void PatchDNS()
             {
                 // make new buffer = target || start of buffer to target || buffer after target
                 char *newBuffer = new char [bufferLength];
+                if (newBuffer == NULL)
+                {
+                    error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+                    throw std::exception(error.str().c_str());
+                }
+
                 memcpy(newBuffer, found, target_length);
                 memcpy(newBuffer + target_length, buffer, found - buffer);
                 memcpy(newBuffer + target_length + (found - buffer),
@@ -1092,7 +1239,11 @@ static void PatchDNS()
         }
 
         // cleanup
-        delete [] buffer;
+        if (buffer != NULL)
+        {
+            delete [] buffer;
+        }
+
         RegCloseKey(key);
     }
 }

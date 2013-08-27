@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,11 +27,16 @@
 #include "utilities.h"
 #include "systemproxysettings.h"
 #include "config.h"
+#include "diagnostic_info.h"
 
 
 #define DEFAULT_PLONK_SOCKS_PROXY_PORT  1080
 #define SSH_CONNECTION_TIMEOUT_SECONDS  20
 #define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
+
+// TODO: Should this value be based on the performance/resources of the system?
+#define MULTI_CONNECT_POOL_SIZE         10
+#define SERVER_AFFINITY_HEAD_START_MS   500
 
 
 static bool SetPlonkSSHHostKey(
@@ -68,22 +73,37 @@ public:
         int serverPort,
         const StopInfo& stopInfo);
 
+    bool CheckForConnected(bool& o_connected);
+
     void StopPortFoward();
+
+    void GetConnectParams(
+        int& o_localSocksProxyPort,
+        tstring& o_serverAddress, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkPath, 
+        tstring& o_plonkCommandLine,
+        int& o_serverPort) const;
 
 protected:
     DWORD GetFreshLimit() const;
     DWORD GetRetiredLimit() const;
 
-    bool WaitForConnected(
-        DWORD timeout, 
-        HANDLE plonkOutput, 
-        const StopInfo& stopInfo);
-
 private:
     PROCESS_INFORMATION m_processInfo;
     DWORD m_startTick;
     const SessionInfo& m_sessionInfo;
+    const StopInfo* m_stopInfo;
     HANDLE m_plonkInputHandle;
+    HANDLE m_plonkOutputHandle;
+    bool m_connected;
+
+    int m_localSocksProxyPort;
+    tstring m_serverAddress; 
+    tstring m_serverHostKey; 
+    tstring m_plonkPath; 
+    tstring m_plonkCommandLine;
+    int m_serverPort;
 };
 
 
@@ -91,15 +111,20 @@ private:
  SSHTransportBase
 ******************************************************************************/
 
-SSHTransportBase::SSHTransportBase()
+SSHTransportBase::SSHTransportBase(LPCTSTR transportProtocolName)
+    : ITransport(transportProtocolName)
 {
     m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
-    m_serverPort = 0;
 }
 
 SSHTransportBase::~SSHTransportBase()
 {
     (void)Cleanup();
+}
+
+bool SSHTransportBase::IsHandshakeRequired() const
+{
+    return false;
 }
 
 bool SSHTransportBase::IsServerRequestTunnelled() const
@@ -117,7 +142,7 @@ bool SSHTransportBase::ServerHasCapabilities(const ServerEntry& entry) const
     return entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
 }
 
-tstring SSHTransportBase::GetSessionID(SessionInfo sessionInfo)
+tstring SSHTransportBase::GetSessionID(const SessionInfo& sessionInfo)
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());
 }
@@ -130,6 +155,20 @@ int SSHTransportBase::GetLocalProxyParentPort() const
 tstring SSHTransportBase::GetLastTransportError() const
 {
     return _T("0");
+}
+
+void SSHTransportBase::ProxySetupComplete()
+{
+    // Don't do a handshake if this is a temporary connection
+    if (m_tempConnectServerEntry)
+    {
+        return;
+    }
+
+    // Do the handshake, but don't abort if it fails
+    (void)DoHandshake(
+            false,  // not pre-handshake
+            m_sessionInfo);
 }
 
 bool SSHTransportBase::DoPeriodicCheck()
@@ -188,20 +227,43 @@ bool SSHTransportBase::DoPeriodicCheck()
 
         // Time to bring up the next connection and retire the current.
 
-        auto_ptr<PlonkConnection> nextPlonk(new PlonkConnection(m_sessionInfo));
+        boost::shared_ptr<PlonkConnection> nextPlonk(new PlonkConnection(m_sessionInfo));
 
-        // TODO: Check for out-of-memory allocation failure
+        if (nextPlonk.get() == NULL)
+        {
+            stringstream error;
+            error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+            throw std::exception(error.str().c_str());
+        }
 
         // We assume that TransportConnectHelper has already been called, so 
         // the Plonk executable and server information are initialized.
 
+        int localSocksProxyPort;
+        tstring serverAddress; 
+        tstring serverHostKey; 
+        tstring plonkPath; 
+        tstring plonkCommandLine;
+        int serverPort;
+
+        m_currentPlonk->GetConnectParams(
+            localSocksProxyPort,
+            serverAddress, 
+            serverHostKey, 
+            plonkPath, 
+            plonkCommandLine,
+            serverPort);
+
+        assert(localSocksProxyPort == m_localSocksProxyPort);
+        assert(plonkPath == m_plonkPath);
+
         bool connectSuccess = nextPlonk->Connect(
-                                        m_localSocksProxyPort,
-                                        m_serverAddress.c_str(),
-                                        m_serverHostKey.c_str(),
-                                        m_plonkPath.c_str(),
-                                        m_plonkCommandLine.c_str(),
-                                        m_serverPort,
+                                        localSocksProxyPort,
+                                        serverAddress.c_str(),
+                                        serverHostKey.c_str(),
+                                        plonkPath.c_str(),
+                                        plonkCommandLine.c_str(),
+                                        serverPort,
                                         m_stopInfo);
 
         if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
@@ -263,102 +325,293 @@ bool SSHTransportBase::Cleanup()
     return true;
 }
 
-void SSHTransportBase::TransportConnect(
-                        const SessionInfo& sessionInfo,
-                        SystemProxySettings* systemProxySettings)
+void SSHTransportBase::TransportConnect()
 {
-    if (!IsServerSSHCapable(sessionInfo))
-    {
-        throw TransportFailed();
-    }
+    my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
 
     try
     {
-        TransportConnectHelper(sessionInfo, systemProxySettings);
+        TransportConnectHelper();
     }
     catch(...)
     {
         (void)Cleanup();
+
+        if (!m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons, false))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s connection failed."), GetTransportDisplayName().c_str());
+        }
+
         throw;
     }
+
+    my_print(NOT_SENSITIVE, false, _T("%s successfully connected."), GetTransportDisplayName().c_str());
 }
 
-void SSHTransportBase::TransportConnectHelper(
-                        const SessionInfo& sessionInfo,
-                        SystemProxySettings* systemProxySettings)
+void SSHTransportBase::TransportConnectHelper()
 {
-    my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
+    assert(m_systemProxySettings != NULL);
 
-    // Extract executables and put to disk if not already
+    // Get the ServerEntries we'll try to connect to
+
+    ServerEntries serverEntries;
+    if (m_tempConnectServerEntry)
+    {
+        serverEntries.push_back(*m_tempConnectServerEntry);
+    }
+    else
+    {
+        serverEntries = m_serverList.GetList();
+        
+        // Remove all servers that don't support this transport
+        for (int i = (signed)serverEntries.size()-1; i >= 0; --i)
+        {
+            if (!ServerHasCapabilities(serverEntries[i]))
+            {
+                serverEntries.erase(serverEntries.begin()+i);
+            }
+        }
+
+        // Leave the first MULTI_CONNECT_POOL_SIZE servers in place and shuffle the rest
+        if (serverEntries.size() > MULTI_CONNECT_POOL_SIZE)
+        {
+            random_shuffle(serverEntries.begin() + MULTI_CONNECT_POOL_SIZE, serverEntries.end());
+        }
+    }
+        
+    if (serverEntries.size() == 0)
+    {
+        my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
+
+        // Cause this transport's connect sequence (and immediate failover) to 
+        // stop. Otherwise we'll quickly fail over and over.
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
+    }
+
+    // Extract executable and put to disk if not already
 
     if (m_plonkPath.size() == 0)
     {
         if (!ExtractExecutable(IDR_PLONK_EXE, PLONK_EXE_NAME, m_plonkPath))
         {
-            throw TransportFailed();
+            my_print(NOT_SENSITIVE, false, _T("Unable to extract SSH transport executable."));
+
+            // Cause this transport's connect sequence (and immediate failover) to 
+            // stop. Otherwise we'll quickly fail over and over.
+            m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+            throw Abort();
         }
     }
 
-    // Start plonk using Psiphon server SSH parameters
-
-    // Client transmits its session ID prepended to the SSH password; the server
-    // uses this to associate the tunnel with web requests -- for GeoIP region stats
-    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
-
-    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
-
     // Test if the localSocksProxyPort is already in use.  If it is, try to find
     // one that is available.
+    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
     if (!TestForOpenPort(m_localSocksProxyPort, 10, m_stopInfo))
     {
-        my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
-        throw TransportFailed();
-    }
+        if (!m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+        {
+            my_print(NOT_SENSITIVE, false, _T("Local SOCKS proxy could not find an available port."));
 
-    if (!GetSSHParams(
-        sessionInfo,
-        m_localSocksProxyPort,
-        sshPassword,
-        m_serverAddress, 
-        m_serverPort, 
-        m_serverHostKey, 
-        m_plonkCommandLine, 
-        systemProxySettings))
-    {
-        throw TransportFailed();
-    }
+            // Cause this transport's connect sequence (and immediate failover) to 
+            // stop. Otherwise we'll quickly fail over and over.
+            m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        }
 
-    m_currentPlonk.reset(new PlonkConnection(m_sessionInfo));
-
-    // TODO: Check for out-of-memory allocation failure
-
-    bool connectSuccess = m_currentPlonk->Connect(
-                                    m_localSocksProxyPort,
-                                    m_serverAddress.c_str(),
-                                    m_serverHostKey.c_str(),
-                                    m_plonkPath.c_str(),
-                                    m_plonkCommandLine.c_str(),
-                                    m_serverPort,
-                                    m_stopInfo);
-
-    if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
-    {
         throw Abort();
     }
-    else if (!connectSuccess)
+
+    size_t totalInitialServers = serverEntries.size();
+    my_print(NOT_SENSITIVE, true, _T("%s:%d: Attempting to connect to %d servers, %d at a time."), __TFUNCTION__, __LINE__, totalInitialServers, MULTI_CONNECT_POOL_SIZE);
+
+    /*
+    We will be trying to make multiple SSH connections to different servers at 
+    the same time. They will all be listening as SOCKS proxies on the same local
+    port -- this will work due to the SO_REUSEADDR flag.
+    We will emulate a connection pool -- new connections will be created as old
+    connections fails, thereby maintaining a constant connection count.
+    We will go through all available servers before failing completely.
+    */
+
+    struct ConnectionInfo {
+        boost::shared_ptr<PlonkConnection> plonkConnection;
+        SessionInfo sessionInfo;
+        DWORD startTime;
+        bool firstServer;  // track this to help with server affinity stuff
+    };
+
+    vector<ConnectionInfo> connectionAttempts;
+    ConnectionInfo tentativeConnection;
+    
+    assert(m_currentPlonk.get() == NULL);
+
+    ServerEntryIterator nextServerEntry = serverEntries.begin();
+
+    bool abortServerAffinity = false;
+    DWORD start = GetTickCount();
+
+    DWORD lastProgressTime = GetTickCount();
+    const DWORD PROGRESS_INTERVAL_MS = 10000;
+
+    while (m_currentPlonk.get() == NULL 
+           && (connectionAttempts.size() > 0                // either ongoing connection attempts
+               || nextServerEntry != serverEntries.end()))  // or more servers left to try
+    {
+        if (!tentativeConnection.plonkConnection.get()
+            && GetTickCountDiff(lastProgressTime, GetTickCount()) > PROGRESS_INTERVAL_MS)
+        {
+            my_print(NOT_SENSITIVE, false, _T("Have attempted to connect to %d of %d known servers. Still trying..."), totalInitialServers - (serverEntries.end() - nextServerEntry) - connectionAttempts.size(), totalInitialServers), 
+            lastProgressTime = GetTickCount();
+        }
+
+        // Iterate in reverse, so we can remove dead connections.
+        // On the first iteration of the outer loop, connectionAttempts is
+        // empty, so we skip this loop.
+        for (int i = (signed)connectionAttempts.size()-1; i >= 0; --i)
+        {
+            if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+            {
+                throw Abort();
+            }
+
+            bool connected = false;
+            if (!connectionAttempts[i].plonkConnection->CheckForConnected(connected))
+            {
+                // The connection failed
+
+                // If this is the first server failing, then we should
+                // stop trying to promote server affinity.
+                if (connectionAttempts[i].firstServer)
+                {
+                    abortServerAffinity = true;
+                }
+
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect FAILED, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+
+                connectionAttempts.erase(connectionAttempts.begin()+i);
+
+                // Don't mark the fast-failed server as failed (i.e., don't 
+                // move it to the back of the server list). Fast failures don't
+                // necessarily indicate a bad server -- e.g., it can happen if the
+                // server is temporarily overloaded.
+            }
+            else if (connected)
+            {
+                // Because we're trying to promote server affinity, what we do 
+                // here depends on whether this is the first server, and, if 
+                // not, whether the first server's "head start" has expired.
+
+                // Don't overwrite the tentative connection if it's set to the first server.
+                if (!tentativeConnection.plonkConnection.get() || !tentativeConnection.firstServer)
+                {
+                    tentativeConnection = connectionAttempts[i];
+                }
+
+                // Mark the server as succeeded.
+                MarkServerSucceeded(tentativeConnection.sessionInfo.GetServerEntry());
+
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect SUCCEEDED, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+                
+                connectionAttempts.erase(connectionAttempts.begin()+i);
+
+                // Otherwise keep checking for successful connections.
+            }
+            else if (GetTickCountDiff(connectionAttempts[i].startTime, GetTickCount()) > SSH_CONNECTION_TIMEOUT_SECONDS*1000)
+            {
+                // Connection attempt time expired
+
+                // If this is the first server failing, then we should
+                // stop trying to promote server affinity.
+                if (connectionAttempts[i].firstServer)
+                {
+                    abortServerAffinity = true;
+                }
+
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect TIMED OUT, removing: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, connectionAttempts[i].sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+
+                MarkServerFailed(connectionAttempts[i].sessionInfo.GetServerEntry());
+
+                connectionAttempts.erase(connectionAttempts.begin()+i);
+
+                // If our connection sequence is taking so long that we're 
+                // exceeding the SSH connection timeout, we should trigger a
+                // remote server list fetch.
+                if (m_remoteServerListFetcher)
+                {
+                    m_remoteServerListFetcher->FetchRemoteServerList();
+                }
+            }
+        }
+
+        // If we have a connected server, determine if we're ready to go or
+        // still giving the first server a chance to connect.
+        if (tentativeConnection.plonkConnection.get())
+        {
+            if (tentativeConnection.firstServer
+                || abortServerAffinity
+                || GetTickCountDiff(start, GetTickCount()) > SERVER_AFFINITY_HEAD_START_MS)
+            {
+                break;
+            }
+            else // give the first server more of a chance
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Got connection, but waiting for first server head start."), __TFUNCTION__, __LINE__);
+            }
+        }
+
+        // If the connection pool isn't maxed out, fill it up.
+        while (connectionAttempts.size() < MULTI_CONNECT_POOL_SIZE
+               && nextServerEntry != serverEntries.end())
+        {
+            if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+            {
+                throw Abort();
+            }
+
+            ConnectionInfo newConnection;
+            newConnection.firstServer = (nextServerEntry == serverEntries.begin());
+            newConnection.startTime = GetTickCount();
+            newConnection.sessionInfo.Set(*nextServerEntry++);
+
+            if (InitiateConnection(newConnection.sessionInfo, newConnection.plonkConnection))
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect STARTED, adding: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, newConnection.sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+
+                connectionAttempts.push_back(newConnection);
+            }
+        }
+
+        Sleep(100);
+    }
+
+    if (tentativeConnection.plonkConnection.get() != NULL)
+    {
+        // Make sure that the server we're using is at the front of the list
+        MarkServerSucceeded(tentativeConnection.sessionInfo.GetServerEntry());
+
+        m_currentPlonk = tentativeConnection.plonkConnection;
+        m_sessionInfo = tentativeConnection.sessionInfo;
+    }
+    else
     {
         throw TransportFailed();
     }
 
-    systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
+    assert(m_currentPlonk.get() != NULL);
+
+    // We got our connected Plonk connection. We'll let all other PlonkConnections 
+    // go out of scope, thereby getting cleaned up.
+
+    m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
+
+    // Record which server we're using
+    ostringstream ss;
+    ss << "ipAddress: " << m_sessionInfo.GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectedServer", ss.str().c_str());
 
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 }
 
-bool SSHTransportBase::IsServerSSHCapable(const SessionInfo& sessionInfo) const
-{
-    return sessionInfo.GetSSHHostKey().length() > 0;
-}
 
 bool SSHTransportBase::GetUserParentProxySettings(
     SystemProxySettings* systemProxySettings,
@@ -404,15 +657,14 @@ bool SSHTransportBase::GetUserParentProxySettings(
         o_UserSSHParentProxyPort));
 }
 
-bool SSHTransportBase::GetSSHParams(
+void SSHTransportBase::GetSSHParams(
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
-    const string& sshPassword,
+    SystemProxySettings* systemProxySettings,
     tstring& o_serverAddress, 
     int& o_serverPort, 
     tstring& o_serverHostKey, 
-    tstring& o_plonkCommandLine,
-    SystemProxySettings* systemProxySettings)
+    tstring& o_plonkCommandLine)
 {
     o_serverAddress.clear();
     o_serverPort = 0;
@@ -422,6 +674,10 @@ bool SSHTransportBase::GetSSHParams(
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
     o_serverPort = GetPort(sessionInfo);
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
+
+    // Client transmits its session ID prepended to the SSH password; the server
+    // uses this to associate the tunnel with web requests -- for GeoIP region stats
+    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
 
     // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
     // the expected value we just set in the registry
@@ -463,6 +719,66 @@ bool SSHTransportBase::GetSSHParams(
     }
     
     o_plonkCommandLine = m_plonkPath + args.str();
+}
+
+
+bool SSHTransportBase::InitiateConnection(
+    const SessionInfo& sessionInfo,
+    boost::shared_ptr<PlonkConnection>& o_plonkConnection)
+{
+    o_plonkConnection.reset();
+
+    // Record the connection attempt
+    ostringstream ss;
+    ss << "ipAddress: " << sessionInfo.GetServerAddress();
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
+    // Start plonk using Psiphon server SSH parameters
+
+    tstring serverAddress;
+    tstring serverHostKey;
+    tstring plonkCommandLine;
+    int serverPort;
+
+    GetSSHParams(
+        sessionInfo,
+        m_localSocksProxyPort, 
+        m_systemProxySettings,
+        serverAddress, 
+        serverPort, 
+        serverHostKey, 
+        plonkCommandLine);
+
+    boost::shared_ptr<PlonkConnection> plonkConnection(new PlonkConnection(sessionInfo));
+
+    if (plonkConnection.get() == NULL)
+    {
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+        throw std::exception(error.str().c_str());
+    }
+
+    bool success = plonkConnection->Connect(
+                                    m_localSocksProxyPort,
+                                    serverAddress.c_str(),
+                                    serverHostKey.c_str(),
+                                    m_plonkPath.c_str(),
+                                    plonkCommandLine.c_str(),
+                                    serverPort,
+                                    m_stopInfo);
+
+    if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+    {
+        throw Abort();
+    }
+
+    if (!success)
+    {
+        return false;
+    }
+
+    o_plonkConnection = plonkConnection;
+
     return true;
 }
 
@@ -474,7 +790,12 @@ bool SSHTransportBase::GetSSHParams(
 PlonkConnection::PlonkConnection(const SessionInfo& sessionInfo)
     : m_startTick(0),
       m_sessionInfo(sessionInfo),
-      m_plonkInputHandle(INVALID_HANDLE_VALUE)
+      m_stopInfo(NULL),
+      m_plonkInputHandle(INVALID_HANDLE_VALUE),
+      m_plonkOutputHandle(INVALID_HANDLE_VALUE),
+      m_connected(false),
+      m_localSocksProxyPort(-1),
+      m_serverPort(-1)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -533,7 +854,7 @@ DWORD PlonkConnection::GetFreshLimit() const
     if (s_loggedLimit != freshLimit)
     {
         s_loggedLimit = freshLimit;
-        my_print(NOT_SENSITIVE, true, _T("%s: Fresh limit: %u"), __TFUNCTION__, freshLimit);
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: Fresh limit: %u"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), freshLimit);
     }
 
     return freshLimit;
@@ -563,7 +884,7 @@ DWORD PlonkConnection::GetRetiredLimit() const
     if (s_loggedLimit != retiredLimit)
     {
         s_loggedLimit = retiredLimit;
-        my_print(NOT_SENSITIVE, true, _T("%s: Retired limit: %u"), __TFUNCTION__, retiredLimit);
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: Retired limit: %u"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), retiredLimit);
     }
 
     return retiredLimit;
@@ -596,9 +917,20 @@ bool PlonkConnection::InKillEra() const
 void PlonkConnection::Kill()
 {
     m_startTick = 0;
+    m_stopInfo = NULL;
+    m_connected = false;
+    m_localSocksProxyPort = -1;
+    m_serverAddress.clear(); 
+    m_serverHostKey.clear(); 
+    m_plonkPath.clear();
+    m_plonkCommandLine.clear();
+    m_serverPort = -1;
 
     if (m_plonkInputHandle != INVALID_HANDLE_VALUE) CloseHandle(m_plonkInputHandle);
     m_plonkInputHandle = INVALID_HANDLE_VALUE;
+
+    if (m_plonkOutputHandle != INVALID_HANDLE_VALUE) CloseHandle(m_plonkOutputHandle);
+    m_plonkOutputHandle = INVALID_HANDLE_VALUE;
 
     // Give the process an opportunity for graceful shutdown, then terminate
     if (m_processInfo.hProcess != 0
@@ -626,6 +958,14 @@ bool PlonkConnection::Connect(
 {
     // Ensure we start from a disconnected/clean state
     Kill();
+
+    m_localSocksProxyPort = localSocksProxyPort;
+    m_serverAddress = serverAddress; 
+    m_serverHostKey = serverHostKey; 
+    m_plonkPath = plonkPath;
+    m_plonkCommandLine = plonkCommandLine;
+    m_serverPort = serverPort;
+    m_stopInfo = &stopInfo;
 
     m_startTick = GetTickCount();
 
@@ -657,7 +997,7 @@ bool PlonkConnection::Connect(
             plonkStartupInfo.hStdOutput, 
             plonkStartupInfo.hStdError))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - CreatePolipoPipe failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CreatePolipoPipe failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
 
@@ -699,7 +1039,7 @@ bool PlonkConnection::Connect(
         CloseHandle(plonkInput);
         CloseHandle(plonkStartupInfo.hStdInput);
         CloseHandle(plonkStartupInfo.hStdError);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
     if (!CloseHandle(plonkStartupInfo.hStdError))
@@ -707,18 +1047,18 @@ bool PlonkConnection::Connect(
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
         CloseHandle(plonkStartupInfo.hStdInput);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
     if (!CloseHandle(plonkStartupInfo.hStdInput))
     {
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
         return false;
     }
 
-    if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+    if (m_stopInfo->stopSignal->CheckSignal(m_stopInfo->stopReasons))
     {
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
@@ -727,98 +1067,88 @@ bool PlonkConnection::Connect(
 
     WaitForInputIdle(m_processInfo.hProcess, 5000);
 
-    if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+    if (m_stopInfo->stopSignal->CheckSignal(m_stopInfo->stopReasons))
     {
         CloseHandle(plonkOutput);
         CloseHandle(plonkInput);
-        return false;
-    }
-
-    // Wait for Plonk to connect.
-    if (!WaitForConnected(SSH_CONNECTION_TIMEOUT_SECONDS*1000, plonkOutput, stopInfo))
-    {
-        CloseHandle(plonkOutput);
-        CloseHandle(plonkInput);
-
-        // Only log if there's no stop signal
-        if (!stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
-        {
-            my_print(NOT_SENSITIVE, false, _T("Failed to connect (%d)"), GetLastError());
-        }
-
-        return false;
-    }
-
-    // We're done reading Plonk output
-    if (!CloseHandle(plonkOutput))
-    {
-        CloseHandle(plonkInput);
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
     m_plonkInputHandle = plonkInput;
+    m_plonkOutputHandle = plonkOutput;
+
+    // The caller is responsible for waiting for CheckForConnected to be true
 
     return true;
 }
 
-bool PlonkConnection::WaitForConnected(DWORD timeout, HANDLE plonkOutput, const StopInfo& stopInfo)
+
+// Has the side-effect of closing the Plonk output handle when connected.
+// Returns true if no error occurred. Returns false if Plonk has died/failed.
+// Connected status is indicated by `o_connected`.
+bool PlonkConnection::CheckForConnected(bool& o_connected)
 {
-    SetLastError(ERROR_SUCCESS);
+    o_connected = false;
 
-    DWORD startTick = GetTickCount();
-
-    // Keep checking for the expected success output until we get it, or until
-    // the timeout expires.
-    while (GetTickCountDiff(startTick, GetTickCount()) < timeout)
+    // Once we're connected, we can't keep checking the pipe, so we'll use a
+    // cached success value.
+    if (m_connected)
     {
-        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - Stop signaled"), __TFUNCTION__, __LINE__);
-            return false;
-        }
-
-        DWORD bytes_avail = 0;
-
-        // ReadFile will block forever if there's no data to read, so we need
-        // to check if there's data available to read first.
-        if (!PeekNamedPipe(plonkOutput, NULL, 0, NULL, &bytes_avail, NULL))
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-            return false;
-        }
-
-        // If there's data available from the Plonk pipe, process it.
-        if (bytes_avail > 0)
-        {
-            char* buffer = new char[bytes_avail+1];
-            DWORD num_read = 0;
-            if (!ReadFile(plonkOutput, buffer, bytes_avail, &num_read, NULL))
-            {
-                my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-                false;
-            }
-            buffer[bytes_avail] = '\0';
-
-            // Note that we are only capturing Plonk output during the connect sequence.
-            my_print(NOT_SENSITIVE, true, _T("%s:%d Plonk output: >>>%S<<<"), __TFUNCTION__, __LINE__, buffer);
-
-            bool connected = (strstr(buffer, "PSIPHON:CONNECTED") != NULL);
-
-            delete[] buffer;
-
-            if (connected)
-            {
-                //my_print(LogSensitivity::NOT_SENSITIVE, true, "SSH connect SUCCESS");
-                return true;
-            }
-        }
-
-        Sleep(100);
+        o_connected = true;
+        return true;
     }
 
-    //my_print(LogSensitivity::NOT_SENSITIVE, true, "SSH connect FAIL");
-    return false;
+    assert(m_stopInfo != NULL);
+    assert(m_plonkOutputHandle != INVALID_HANDLE_VALUE);
+
+    SetLastError(ERROR_SUCCESS);
+
+    DWORD bytes_avail = 0;
+
+    // ReadFile will block forever if there's no data to read, so we need
+    // to check if there's data available to read first.
+    if (!PeekNamedPipe(m_plonkOutputHandle, NULL, 0, NULL, &bytes_avail, NULL))
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
+        return false;
+    }
+
+    // If there's data available from the Plonk pipe, process it.
+    if (bytes_avail > 0)
+    {
+        char* buffer = new char[bytes_avail+1];
+        DWORD num_read = 0;
+        if (!ReadFile(m_plonkOutputHandle, buffer, bytes_avail, &num_read, NULL))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: ReadFile failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
+            false;
+        }
+        buffer[bytes_avail] = '\0';
+
+        // Note that we are only capturing Plonk output during the connect sequence.
+        my_print(NOT_SENSITIVE, true, _T("%s:%d:%s: Plonk output: >>>%S<<<"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), buffer);
+
+        bool connected = (strstr(buffer, "PSIPHON:CONNECTED") != NULL);
+
+        delete[] buffer;
+
+        if (connected)
+        {
+            // We're done reading Plonk output
+            if (!CloseHandle(m_plonkOutputHandle))
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s:%d:%s: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, m_serverAddress.c_str(), GetLastError());
+                return false;
+            }
+            m_plonkOutputHandle = INVALID_HANDLE_VALUE;
+
+            // We got the expected output from Plonk and we're ready to go.
+            o_connected = true;
+        }
+    }
+
+    m_connected = o_connected;
+    return true;
 }
 
 
@@ -847,6 +1177,22 @@ void PlonkConnection::StopPortFoward()
 }
 
 
+void PlonkConnection::GetConnectParams(
+        int& o_localSocksProxyPort,
+        tstring& o_serverAddress, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkPath, 
+        tstring& o_plonkCommandLine,
+        int& o_serverPort) const
+{
+    o_localSocksProxyPort = m_localSocksProxyPort;
+    o_serverAddress = m_serverAddress;
+    o_serverHostKey = m_serverHostKey;
+    o_plonkPath = m_plonkPath;
+    o_plonkCommandLine = m_plonkCommandLine;
+    o_serverPort = m_serverPort;
+}
+
 /******************************************************************************
  SSHTransport
 ******************************************************************************/
@@ -862,15 +1208,20 @@ static ITransport* NewSSH()
 
 // static
 void SSHTransport::GetFactory(
-                    tstring& o_transportName,
-                    TransportFactory& o_transportFactory)
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactoryFn,
+                    AddServerEntriesFn& o_addServerEntriesFn)
 {
-    o_transportFactory = NewSSH;
-    o_transportName = SSH_TRANSPORT_DISPLAY_NAME;
+    o_transportFactoryFn = NewSSH;
+    o_transportDisplayName = SSH_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = SSH_TRANSPORT_PROTOCOL_NAME;
+    o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
 
 SSHTransport::SSHTransport()
+    : SSHTransportBase(GetTransportProtocolName().c_str())
 {
 }
 
@@ -890,51 +1241,41 @@ tstring SSHTransport::GetTransportDisplayName() const
     return SSH_TRANSPORT_DISPLAY_NAME; 
 }
 
+void SSHTransport::GetSSHParams(
+    const SessionInfo& sessionInfo,
+    const int localSocksProxyPort,
+    SystemProxySettings* systemProxySettings,
+    tstring& o_serverAddress, 
+    int& o_serverPort, 
+    tstring& o_serverHostKey, 
+    tstring& o_plonkCommandLine)
+{
+    SSHTransportBase::GetSSHParams(
+        sessionInfo,
+        localSocksProxyPort,
+        systemProxySettings,
+        o_serverAddress, 
+        o_serverPort, 
+        o_serverHostKey, 
+        o_plonkCommandLine);
+
+    o_plonkCommandLine += _T(" ") + o_serverAddress;
+}
+
+int SSHTransport::GetPort(const SessionInfo& sessionInfo) const
+{
+    return sessionInfo.GetSSHPort();
+}
+
 bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 {
-    bool sufficientInfo = 
+    bool sufficientInfo =
         entry.serverAddress.length() > 0
         && entry.sshPort > 0
         && entry.sshHostKey.length() > 0
         && entry.sshUsername.length() > 0
         && entry.sshPassword.length() > 0;
     return !sufficientInfo;
-}
-
-bool SSHTransport::GetSSHParams(
-    const SessionInfo& sessionInfo,
-    const int localSocksProxyPort,
-    const string& sshPassword,
-    tstring& o_serverAddress, 
-    int& o_serverPort, 
-    tstring& o_serverHostKey, 
-    tstring& o_plonkCommandLine,
-    SystemProxySettings* systemProxySettings)
-{
-    tstring o_plonk_options;
-
-    if(!SSHTransportBase::GetSSHParams(
-        sessionInfo,
-        localSocksProxyPort,
-        sshPassword,
-        o_serverAddress, 
-        o_serverPort, 
-        o_serverHostKey, 
-        o_plonk_options,
-        systemProxySettings))
-    {
-        return false;
-    }
-    tstringstream args;
-    args << o_plonk_options << _T(" ") << o_serverAddress;
-    o_plonkCommandLine = args.str();
-
-    return true;
-}
-
-int SSHTransport::GetPort(const SessionInfo& sessionInfo) const
-{
-    return sessionInfo.GetSSHPort();
 }
 
 
@@ -953,15 +1294,20 @@ static ITransport* NewOSSH()
 
 // static
 void OSSHTransport::GetFactory(
-                    tstring& o_transportName,
-                    TransportFactory& o_transportFactory)
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory,
+                    AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = NewOSSH;
-    o_transportName = OSSH_TRANSPORT_DISPLAY_NAME;
+    o_transportDisplayName = OSSH_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = OSSH_TRANSPORT_PROTOCOL_NAME;
+    o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
 
 OSSHTransport::OSSHTransport()
+    : SSHTransportBase(GetTransportProtocolName().c_str())
 {
 }
 
@@ -980,9 +1326,48 @@ tstring OSSHTransport::GetTransportDisplayName() const
     return OSSH_TRANSPORT_DISPLAY_NAME;
 }
 
+void OSSHTransport::GetSSHParams(
+    const SessionInfo& sessionInfo,
+    const int localSocksProxyPort,
+    SystemProxySettings* systemProxySettings,
+    tstring& o_serverAddress, 
+    int& o_serverPort, 
+    tstring& o_serverHostKey, 
+    tstring& o_plonkCommandLine)
+{
+
+    if (sessionInfo.GetSSHObfuscatedPort() <= 0 
+        || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - missing parameters"), __TFUNCTION__);
+
+        // TODO: Is this actually a fatal error? Throw std::exception?
+        throw TransportFailed();
+    }
+
+    tstring o_plonk_options;
+
+    SSHTransportBase::GetSSHParams(
+        sessionInfo,
+        localSocksProxyPort,
+        systemProxySettings,
+        o_serverAddress, 
+        o_serverPort, 
+        o_serverHostKey, 
+        o_plonkCommandLine);
+
+    o_plonkCommandLine += _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
+    o_plonkCommandLine += _T(" ") + o_serverAddress;
+}
+
+int OSSHTransport::GetPort(const SessionInfo& sessionInfo) const
+{
+    return sessionInfo.GetSSHObfuscatedPort();
+}
+
 bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 {
-    bool sufficientInfo = 
+    bool sufficientInfo =
         entry.serverAddress.length() > 0
         && entry.sshObfuscatedPort > 0
         && entry.sshHostKey.length() > 0
@@ -990,54 +1375,6 @@ bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
         && entry.sshPassword.length() > 0
         && entry.sshObfuscatedKey.length() > 0;
     return !sufficientInfo;
-}
-
-bool OSSHTransport::GetSSHParams(
-    const SessionInfo& sessionInfo,
-    const int localSocksProxyPort,
-    const string& sshPassword,
-    tstring& o_serverAddress, 
-    int& o_serverPort, 
-    tstring& o_serverHostKey, 
-    tstring& o_plonkCommandLine,
-    SystemProxySettings* systemProxySettings)
-{
-
-    if (sessionInfo.GetSSHObfuscatedPort() <= 0 
-        || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - missing parameters"), __TFUNCTION__);
-        return false;
-    }
-
-    tstring o_plonk_options;
-
-    if(!SSHTransportBase::GetSSHParams(
-        sessionInfo,
-        localSocksProxyPort,
-        sshPassword,
-        o_serverAddress, 
-        o_serverPort, 
-        o_serverHostKey, 
-        o_plonk_options,
-        systemProxySettings))
-    {
-        return false;
-    }
-
-    tstringstream args;
-
-    args << o_plonk_options; 
-    args << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey()).c_str();
-    args << _T(" ") << o_serverAddress.c_str();
-    o_plonkCommandLine = args.str();
-
-    return true;
-}
-
-int OSSHTransport::GetPort(const SessionInfo& sessionInfo) const
-{
-    return sessionInfo.GetSSHObfuscatedPort();
 }
 
 

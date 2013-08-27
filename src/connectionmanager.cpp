@@ -37,12 +37,10 @@
 #include "authenticated_data_package.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
-#include "server_list_reordering.h"
 
 
 // Upgrade process posts a Quit message
 extern HWND g_hWnd;
-extern ServerListReorder g_serverListReorder;
 
 
 ConnectionManager::ConnectionManager(void) :
@@ -65,11 +63,6 @@ ConnectionManager::~ConnectionManager(void)
 {
     Stop(STOP_REASON_NONE);
     CloseHandle(m_mutex);
-}
-
-ServerList& ConnectionManager::GetServerList()
-{
-    return m_serverList;
 }
 
 void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
@@ -257,7 +250,8 @@ void ConnectionManager::FetchRemoteServerList(void)
 
     try
     {
-        m_serverList.AddEntriesToList(newServerEntryVector, 0);
+        // This adds the new server entries to all transports' server lists.
+        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
     }
     catch (std::exception &ex)
     {
@@ -277,7 +271,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     m_transport = TransportRegistry::New(transport);
 
-    if (!m_transport->ServerWithCapabilitiesExists(GetServerList()))
+    if (!m_transport->ServerWithCapabilitiesExists())
     {
         my_print(NOT_SENSITIVE, false, _T("No servers support this protocol."));
         return;
@@ -285,7 +279,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     m_startSplitTunnel = startSplitTunnel;
 
-    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_USER_DISCONNECT | STOP_REASON_UNEXPECTED_DISCONNECT);
+    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
@@ -311,22 +305,29 @@ void ConnectionManager::StartSplitTunnel()
 
     if (m_splitTunnelRoutes.length() == 0)
     {
-        tstring routesRequestPath = GetRoutesRequestPath(m_transport);
-
-        SessionInfo sessionInfo;
-        CopyCurrentSessionInfo(sessionInfo);
-                
-        string response;
-        if (ServerRequest::MakeRequest(
-                    ServerRequest::ONLY_IF_TRANSPORT,
-                    m_transport,
-                    sessionInfo,
-                    routesRequestPath.c_str(),
-                    response,
-                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+        try
         {
-            // Process split tunnel response
-            ProcessSplitTunnelResponse(response);
+            tstring routesRequestPath = GetRoutesRequestPath(m_transport);
+
+            SessionInfo sessionInfo;
+            CopyCurrentSessionInfo(sessionInfo);
+                
+            string response;
+            if (ServerRequest::MakeRequest(
+                        ServerRequest::ONLY_IF_TRANSPORT,
+                        m_transport,
+                        sessionInfo,
+                        routesRequestPath.c_str(),
+                        response,
+                        StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+            {
+                // Process split tunnel response
+                ProcessSplitTunnelResponse(response);
+            }
+        }
+        catch (StopSignal::StopException&)
+        {
+            return;
         }
     }
 
@@ -341,6 +342,14 @@ void ConnectionManager::StopSplitTunnel()
     
     // See comment in StartSplitTunnel.
     DeleteSplitTunnelRoutes();
+}
+
+void ConnectionManager::ResetSplitTunnel()
+{
+    AutoMUTEX lock(m_mutex);
+    
+    m_splitTunnelRoutes = "";
+    StopSplitTunnel();
 }
 
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
@@ -358,18 +367,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     bool homePageOpened = false;
 
     //
-    // Loop through server list, attempting to connect.
-    //
-    // When handshake and all connection types fail, the
-    // server is marked as failed in the local server list and
-    // the next server from the list is selected and retried.
+    // Repeatedly attempt to connect.
     //
     // All operations may be interrupted by user cancel.
     //
     // NOTE: this function doesn't hold the ConnectionManager
     // object lock to allow for cancel etc.
 
-    while (true) // Try servers loop
+    while (true)
     {
         if (manager->m_upgradePending)
         {
@@ -394,32 +399,14 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-            // Get the next server to try
+            // Ensure split tunnel routes are reset before new session
+            manager->ResetSplitTunnel();
 
-            tstring handshakeRequestPath;
-
-            manager->LoadNextServer(handshakeRequestPath);
-
-            // Note that the SessionInfo will only be partly filled in at this point.
-            SessionInfo sessionInfo;
-            manager->CopyCurrentSessionInfo(sessionInfo);
-
-            // Record which server we're attempting to connect to
-            ostringstream ss;
-            ss << "ipAddress: " << sessionInfo.GetServerAddress();
-            AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
-
-            // We're looping around to run again. We're assuming that the calling
-            // function knows that there's at least one server to try. We're 
-            // not reporting anything, as the user doesn't need to know what's
-            // going on under the hood at this point.
-            if (!manager->m_transport->ServerHasCapabilities(sessionInfo.GetServerEntry()))
+            // Do we have any usable servers?
+            if (!manager->m_transport->ServerWithCapabilitiesExists())
             {
-                my_print(NOT_SENSITIVE, true, _T("%s: serverHasCapabilities failed"), __TFUNCTION__);
-
-                manager->MarkCurrentServerFailed();
-
-                continue;
+                my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
+                throw ConnectionManager::Abort();
             }
 
             //
@@ -432,20 +419,27 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             TransportConnection transportConnection;
 
             // May throw TryNextServer
-            transportConnection.Connect(
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                manager->m_transport,
-                manager,
-                sessionInfo,
-                handshakeRequestPath.c_str(),
-                manager->GetSplitTunnelingFilePath());
+            try
+            {
+                transportConnection.Connect(
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                    manager->m_transport,
+                    manager,    // ILocalProxyStatsCollector
+                    manager,    // IRemoteServerListFetcher
+                    manager->GetSplitTunnelingFilePath(),
+                    false);  // don't disallow handshake
+            }
+            catch (TransportConnection::TryNextServer&)
+            {
+                throw;
+            }
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
             // fuller than ours. Update ours and then update the server entries.
             //
 
-            sessionInfo = transportConnection.GetUpdatedSessionInfo();
+            SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
 
             //
@@ -534,23 +528,16 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-            manager->MarkCurrentServerFailed();
-
             // Give users some feedback. Before, when the handshake failed
             // all we displayed was "WinHttpCallbackFailed (200000)" and kept
             // the arrow animation spinning. A user-authored FAQ mentioned
             // this error in particular and recommended waiting. So here's
             // a lightly more encouraging message.
-            my_print(NOT_SENSITIVE, false, _T("Trying next server..."));
+            my_print(NOT_SENSITIVE, false, _T("Still trying..."));
 
             // Continue while loop to try next server
 
             manager->FetchRemoteServerList();
-
-            if (!g_serverListReorder.IsRunning())
-            {
-                g_serverListReorder.Start(&(manager->GetServerList()));
-            }
 
             // Wait between 1 and 2 seconds before retrying. This is a quick
             // fix to deal with the following problem: when a client can
@@ -937,64 +924,8 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
 
-void ConnectionManager::MarkCurrentServerFailed(void)
-{
-    AutoMUTEX lock(m_mutex);
-    
-    m_serverList.MarkServerFailed(m_currentSessionInfo.GetServerAddress());
-}
 
 // ==== General Session Functions =============================================
-
-// Note that the SessionInfo structure will only be partly filled in by this function.
-void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
-{
-    // Select next server to try to connect to
-
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntry serverEntry;
-    
-    try
-    {
-        // Try the next server in our list.
-        serverEntry = m_serverList.GetNextServer();
-    }
-    catch (std::exception &ex)
-    {
-        my_print(NOT_SENSITIVE, false, string("LoadNextServer caught exception: ") + ex.what());
-        throw Abort();
-    }
-
-    // Ensure split tunnel routes are reset before new session
-    m_splitTunnelRoutes = "";
-    StopSplitTunnel();
-
-    // Current session holds server entry info and will also be loaded
-    // with homepage and other info.
-    m_currentSessionInfo.Set(serverEntry);
-
-    // Generate a new client session ID to be included with all subsequent web requests
-    m_currentSessionInfo.GenerateClientSessionID();
-
-    // Output values used in next TryNextServer step
-
-    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + m_transport->GetTransportProtocolName();
-
-    // Include a list of known server IP addresses in the request query string as required by /handshake
-    ServerEntries serverEntries =  m_serverList.GetList();
-    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
-    {
-        handshakeRequestPath += _T("&known_server=");
-        handshakeRequestPath += NarrowToTString(ii->serverAddress);
-    }
-}
 
 bool ConnectionManager::RequireUpgrade(void)
 {
@@ -1331,7 +1262,7 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
-        m_serverList.AddEntriesToList(
+        TransportRegistry::AddServerEntries(
             m_currentSessionInfo.GetDiscoveredServerEntries(), 
             &m_currentSessionInfo.GetServerEntry());
     }
@@ -1375,13 +1306,20 @@ DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
 
     FeedbackThreadData* data = (FeedbackThreadData*)object;
 
-    if (data->connectionManager->DoSendFeedback(data->feedbackJSON.c_str()))
+    try
     {
-        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+        if (data->connectionManager->DoSendFeedback(data->feedbackJSON.c_str()))
+        {
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+        }
+        else
+        {
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+        }
     }
-    else
+    catch (StopSignal::StopException&)
     {
-        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+        // just fall through
     }
 
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
