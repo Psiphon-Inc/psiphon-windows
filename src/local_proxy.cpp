@@ -53,7 +53,7 @@ LocalProxy::LocalProxy(
     m_mutex = CreateMutex(NULL, FALSE, 0);
     if (m_mutex == NULL)
     {
-        throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) " CreateMutex failed");
+        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) " CreateMutex failed");
     }
 
     assert(systemProxySettings);

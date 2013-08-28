@@ -86,7 +86,7 @@ IWorkerThread::IWorkerThread()
 
     if (m_startedEvent == NULL || m_stoppedEvent == NULL)
     {
-        throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) " CreateEvent failed");
+        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) " CreateEvent failed");
     }
 }
 
