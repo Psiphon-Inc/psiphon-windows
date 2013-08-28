@@ -750,7 +750,7 @@ string CryptStringToBinaryWrapper(const string& input, DWORD flags)
     }
 
     string output;
-    output.resize(outsize+1);
+    output.resize(outsize);
 
     if (!CryptStringToBinaryA(
             input.c_str(),
@@ -763,8 +763,6 @@ string CryptStringToBinaryWrapper(const string& input, DWORD flags)
     {
         return "";
     }
-
-    ((LPSTR)output.c_str())[outsize] = '\0';
 
     return output;
 }
