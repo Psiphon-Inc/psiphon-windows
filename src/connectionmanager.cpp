@@ -477,21 +477,22 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
             transportConnection.WaitForDisconnect();
 
-            // If the stop signal hasn't been set, then this is an unexpected 
-            // disconnect. In which case, fail over and retry.
-            if (!GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, false))
-            {
-                throw TransportConnection::TryNextServer();
-            }
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
 
-            //
-            // Disconnected
-            //
+            // The stop signal has not been set, so this was an unexpected disconnect. Retry.
 
-            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
-
-            my_print(NOT_SENSITIVE, true, _T("%s: breaking"), __TFUNCTION__);
-            break;
+            throw TransportConnection::TryNextServer();
+        }
+        catch (TransportConnection::TryNextServer&)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
+            // Fall through
+        }
+        catch (StopSignal::UnexpectedDisconnectStopException& ex)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: caught StopSignal::UnexpectedDisconnectStopException"), __TFUNCTION__);
+            GlobalStopSignal::Instance().ClearStopSignal(ex.GetType());
+            // Fall through
         }
         catch (IWorkerThread::Error& error)
         {
@@ -521,39 +522,36 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
-        catch (TransportConnection::TryNextServer&)
-        {
-            // Failed to connect to the server. Try the next one.
-            my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
 
-            manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
+        // Failed to connect to the server. Try the next one.
 
-            // Give users some feedback. Before, when the handshake failed
-            // all we displayed was "WinHttpCallbackFailed (200000)" and kept
-            // the arrow animation spinning. A user-authored FAQ mentioned
-            // this error in particular and recommended waiting. So here's
-            // a lightly more encouraging message.
-            my_print(NOT_SENSITIVE, false, _T("Still trying..."));
+        manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-            // Continue while loop to try next server
+        // Give users some feedback. Before, when the handshake failed
+        // all we displayed was "WinHttpCallbackFailed (200000)" and kept
+        // the arrow animation spinning. A user-authored FAQ mentioned
+        // this error in particular and recommended waiting. So here's
+        // a lightly more encouraging message.
+        my_print(NOT_SENSITIVE, false, _T("Still trying..."));
 
-            manager->FetchRemoteServerList();
+        // Continue while loop to try next server
 
-            // Wait between 1 and 2 seconds before retrying. This is a quick
-            // fix to deal with the following problem: when a client can
-            // make an HTTPS connection but not a VPN connection, it ends
-            // up spamming "handshake" requests, resulting in PSK race conditions
-            // with other clients that are trying to connect. This is starving
-            // clients that are able to establish the VPN connection.
-            // TODO: a more optimal solution would only wait when re-trying
-            // a server where this condition (HTTPS ok, VPN failed) previously
-            // occurred.
-            // UPDATE: even with SSH as a fail over, we're leaving this delay
-            // in for now as clients blocked on both protocols would otherwise
-            // still spam handshakes. The delay is *after* SSH fail over so as
-            // not to delay that attempt (on the same server).
-            Sleep(1000 + rand()%1000);
-        }
+        manager->FetchRemoteServerList();
+
+        // Wait between 1 and 2 seconds before retrying. This is a quick
+        // fix to deal with the following problem: when a client can
+        // make an HTTPS connection but not a VPN connection, it ends
+        // up spamming "handshake" requests, resulting in PSK race conditions
+        // with other clients that are trying to connect. This is starving
+        // clients that are able to establish the VPN connection.
+        // TODO: a more optimal solution would only wait when re-trying
+        // a server where this condition (HTTPS ok, VPN failed) previously
+        // occurred.
+        // UPDATE: even with SSH as a fail over, we're leaving this delay
+        // in for now as clients blocked on both protocols would otherwise
+        // still spam handshakes. The delay is *after* SSH fail over so as
+        // not to delay that attempt (on the same server).
+        Sleep(1000 + rand()%1000);
     }
 
     my_print(NOT_SENSITIVE, true, _T("%s: exiting thread"), __TFUNCTION__);
