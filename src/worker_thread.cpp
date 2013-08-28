@@ -83,6 +83,11 @@ IWorkerThread::IWorkerThread()
                         TRUE,  // manual reset
                         TRUE,  // initial state should be SET
                         0);
+
+    if (m_startedEvent == NULL || m_stoppedEvent == NULL)
+    {
+        throw std::exception(__FUNCTION__ ":" _STRINGIZE(__LINE__) " CreateEvent failed");
+    }
 }
 
 IWorkerThread::~IWorkerThread()
