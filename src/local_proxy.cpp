@@ -51,17 +51,31 @@ LocalProxy::LocalProxy(
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
 
     m_mutex = CreateMutex(NULL, FALSE, 0);
+    if (m_mutex == NULL)
+    {
+        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) " CreateMutex failed");
+    }
 
     assert(systemProxySettings);
 }
 
 LocalProxy::~LocalProxy()
 {
-    IWorkerThread::Stop();
+    try
+    {
+        IWorkerThread::Stop();
 
-    Cleanup();
+        Cleanup();
+    }
+    catch (...)
+    {
+        // Cleanup might throw, but we're in the destructor, so just swallow it.
+    }
 
-    CloseHandle(m_mutex);
+    if (m_mutex != NULL)
+    {
+        CloseHandle(m_mutex);
+    }
 }
 
 void LocalProxy::UpdateSessionInfo(const SessionInfo& sessionInfo)

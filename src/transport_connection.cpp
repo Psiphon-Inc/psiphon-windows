@@ -33,7 +33,13 @@ TransportConnection::TransportConnection()
 
 TransportConnection::~TransportConnection()
 {
-    Cleanup();
+    try
+    {
+        Cleanup();
+    }
+    catch (...)
+    {
+    }
 }
 
 SessionInfo TransportConnection::GetUpdatedSessionInfo() const
