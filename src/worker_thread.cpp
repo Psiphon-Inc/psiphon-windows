@@ -266,7 +266,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         // But if we're not, then just get out of here.
         if (stoppingCleanly)
         {
-            my_print(NOT_SENSITIVE, false, _T("%S::%s: Waiting for all threads to indicate clean stop"), typeid(*_this).name(), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%S::%s: Waiting for all threads to indicate clean stop"), typeid(*_this).name(), __TFUNCTION__);
             if (_this->m_workerThreadSynch->BlockUntil_AllThreadsStoppingCleanly())
             {
                 my_print(NOT_SENSITIVE, true, _T("%S::%s: All threads indicated clean stop"), typeid(*_this).name(), __TFUNCTION__);
