@@ -34,7 +34,9 @@ class SessionInfo
 public:
     SessionInfo() : m_sshPort(0), m_sshObfuscatedPort(0), m_speedTestServerPort(0) {}
 
-    void Set(const ServerEntry& serverEntry);
+    void Set(const ServerEntry& serverEntry, bool generateClientSessionID=true);
+
+    // Generate a new client session ID to be included with subsequent web requests
     void GenerateClientSessionID();
 
     string GetClientSessionID() const {return m_clientSessionID;}

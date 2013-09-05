@@ -358,6 +358,13 @@ bool HTTPSRequest::MakeRequest(
     assert(m_closedEvent == NULL);
     m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
 
+    if (m_closedEvent == NULL)
+    {
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": CreateEvent failed. Out of memory";
+        throw std::exception(error.str().c_str());
+    }
+
     m_expectedServerCertificate = webServerCertificate;
     m_requestSuccess = false;
     m_response = "";
@@ -444,7 +451,7 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     }
 
     BYTE* pbBinary = NULL; //base64 decoded pem
-    DWORD cbBinary; //base64 decoded pem size
+    DWORD cbBinary = 0; //base64 decoded pem size
     bool bResult = false;
 
     //Base64 decode pem string to BYTE*

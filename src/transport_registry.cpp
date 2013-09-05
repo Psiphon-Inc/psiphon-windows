@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,57 +22,29 @@
 #include "transport.h"
 #include "vpntransport.h"
 #include "sshtransport.h"
-
-
+#include "serverlist.h"
+#include "psiclient.h"
 
 
 /******************************************************************************
  TransportFactory
 ******************************************************************************/
 
-map<tstring, TransportFactory, TransportRegistry::RegistryEntryComparison> 
-    TransportRegistry::m_registeredTransports;
-
-vector<tstring> TransportRegistry::m_registeredTransportsPriority;
-
-bool TransportRegistry::RegistryEntryComparison::operator() (const tstring& lhs, const tstring& rhs) const
-{
-    vector<tstring>::const_iterator it;
-    for (it = m_registeredTransportsPriority.begin();
-            it != m_registeredTransportsPriority.end();
-            it++)
-    {
-        // The order of these checks is important. "Strict weak ordering" is 
-        // required, so... need to return false if the values are the same?.
-        if (*it == rhs)
-        {
-            return false;
-        }
-        else if (*it == lhs)
-        {
-            return true;
-        }
-    }
-    assert(0); // shouldn't get here
-    return false;
-}
+vector<RegisteredTransport> TransportRegistry::m_registeredTransports;
 
 
 // static
 template<class TRANSPORT_TYPE>
 int TransportRegistry::Register()
 {
-    tstring transportName;
-    TransportFactory transportFactory;
+    RegisteredTransport registeredTransport;
+    TRANSPORT_TYPE::GetFactory(
+                        registeredTransport.transportDisplayName, 
+                        registeredTransport.transportProtocolName, 
+                        registeredTransport.transportFactoryFn,
+                        registeredTransport.addServerEntriesFn);
 
-    TRANSPORT_TYPE::GetFactory(transportName, transportFactory);
-
-    // Map entry ordering comes into play when when we add a new item to the
-    // map in the next line. So make sure we add the name to the priority 
-    // vector first.
-    m_registeredTransportsPriority.push_back(transportName);
-
-    m_registeredTransports[transportName] = transportFactory;
+    m_registeredTransports.push_back(registeredTransport);
 
     // The return value is essentially meaningless, but some return value 
     // is needed, so that an assignment can be done -- because only assignments
@@ -80,23 +52,74 @@ int TransportRegistry::Register()
     return TransportRegistry::m_registeredTransports.size();
 }
 
+
 // static 
-ITransport* TransportRegistry::New(tstring transportName)
+ITransport* TransportRegistry::New(tstring transportDisplayName)
 {
-    return m_registeredTransports[transportName]();
+    for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
+         it != m_registeredTransports.end();
+         ++it)
+    {
+        if (it->transportDisplayName == transportDisplayName)
+        {
+            return it->transportFactoryFn();
+        }
+    }
+
+    assert(FALSE);
+    return NULL;
 }
+
 
 // static 
 void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
 {
     all_transports.clear();
 
-    map<tstring, TransportFactory, RegistryEntryComparison>::const_iterator it;
-    for (it = m_registeredTransports.begin(); it != m_registeredTransports.end(); it++)
+    for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
+         it != m_registeredTransports.end();
+         ++it)
     {
-        all_transports.push_back(it->second());
+        all_transports.push_back(it->transportFactoryFn());
     }
 }
+
+
+// static
+void TransportRegistry::AddServerEntries(
+                            const vector<string>& newServerEntryList, 
+                            const ServerEntry* serverEntry)
+{
+    tstringstream results;
+    results << _T("Discovered new Psiphon servers: ");
+
+    bool discovered = false;
+
+    for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
+         it != m_registeredTransports.end();
+         ++it)
+    {
+        size_t newEntries = it->addServerEntriesFn(it->transportProtocolName.c_str(), newServerEntryList, serverEntry);
+
+        if (newEntries > 0)
+        {
+            if (discovered && it != m_registeredTransports.begin())
+            {
+                results << _T("; ");
+            }
+
+            results << newEntries << _T(" for ") << it->transportDisplayName;
+
+            discovered = true;
+        }
+    }
+
+    if (discovered)
+    {
+        my_print(NOT_SENSITIVE, false, results.str().c_str());
+    }
+}
+
 
 // This is the actual registration of the available transports.
 // NOTE: The order of these lines indicates the priority of the transports.
@@ -104,6 +127,3 @@ void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
 static int _ossh = TransportRegistry::Register<OSSHTransport>();
 static int _ssh = TransportRegistry::Register<SSHTransport>();
 static int _vpn = TransportRegistry::Register<VPNTransport>();
-
-
-

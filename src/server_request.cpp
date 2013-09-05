@@ -189,12 +189,12 @@ bool ServerRequest::MakeRequest(
     // Connecting directly via HTTPS failed. 
     // Now we'll try don't-need-handshake transports.
 
-    vector<auto_ptr<ITransport>> tempTransports;
+    vector<boost::shared_ptr<ITransport>> tempTransports;
     GetTempTransports(sessionInfo.GetServerEntry(), tempTransports);
 
     bool success = false;
 
-    vector<auto_ptr<ITransport>>::iterator transport_iter;
+    vector<boost::shared_ptr<ITransport>>::iterator transport_iter;
     for (transport_iter = tempTransports.begin(); 
          transport_iter != tempTransports.end(); 
          transport_iter++)
@@ -212,9 +212,9 @@ bool ServerRequest::MakeRequest(
                 stopInfo,
                 (*transport_iter).get(),
                 NULL, // not collecting stats
-                sessionInfo, 
-                NULL, // no handshake allowed
-                tstring()); // splitTunnelingFilePath -- not providing it
+                NULL, // don't want to trigger a remote server list pull
+                tstring(),  // splitTunnelingFilePath -- not providing it
+                &sessionInfo.GetServerEntry());  // force use of this server
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
@@ -262,7 +262,7 @@ our logic more explicit. And not dependent on the internals of another function.
 */
 void ServerRequest::GetTempTransports(
                             const ServerEntry& serverEntry,
-                            vector<auto_ptr<ITransport>>& o_tempTransports)
+                            vector<boost::shared_ptr<ITransport>>& o_tempTransports)
 {
     o_tempTransports.clear();
 
@@ -276,10 +276,10 @@ void ServerRequest::GetTempTransports(
         // Only try transports that aren't the same as the current 
         // transport (because there's a reason it's not connected) 
         // and doesn't require a handshake.
-        if (!(*it)->IsHandshakeRequired(serverEntry)
+        if (!(*it)->IsHandshakeRequired()
             && (*it)->ServerHasCapabilities(serverEntry))
         {
-            o_tempTransports.push_back(auto_ptr<ITransport>(*it));
+            o_tempTransports.push_back(boost::shared_ptr<ITransport>(*it));
             // no early break, so that we delete all the unused transports
         }
         else
@@ -299,7 +299,7 @@ bool ServerRequest::ServerHasRequestCapabilities(const ServerEntry& serverEntry)
         return true;
     }
 
-    vector<auto_ptr<ITransport>> tempTransports;
+    vector<boost::shared_ptr<ITransport>> tempTransports;
     GetTempTransports(serverEntry, tempTransports);
 
     return tempTransports.size() > 0;

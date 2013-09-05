@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 #include "ras.h"
 #include "transport.h"
 #include "transport_registry.h"
+#include "server_list_reordering.h"
 
 class SessionInfo;
 
@@ -40,29 +41,34 @@ public:
     VPNTransport(); 
     virtual ~VPNTransport();
 
-    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+    static void GetFactory(
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory, 
+                    AddServerEntriesFn& o_addServerEntriesFn);
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
-    virtual tstring GetSessionID(SessionInfo sessionInfo);
+    virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
+    virtual bool IsHandshakeRequired() const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
+
+    virtual void ProxySetupComplete();
 
     virtual bool Cleanup();
 
 protected:
     // ITransport implementation
-    virtual void TransportConnect(
-                    const SessionInfo& sessionInfo,
-                    SystemProxySettings* systemProxySettings);
+    virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
     
-    void TransportConnectHelper(const SessionInfo& sessionInfo);
-    bool ServerVPNCapable(const SessionInfo& sessionInfo) const;
+    void TransportConnectHelper();
+    bool GetConnectionServerEntry(ServerEntry& o_serverEntry);
+    size_t GetConnectionServerEntryCount();
     ConnectionState GetConnectionState() const;
     void SetConnectionState(ConnectionState newState);
     HANDLE GetStateChangeEvent();
@@ -87,4 +93,5 @@ private:
     HRASCONN m_rasConnection;
     unsigned int m_lastErrorCode;
     tstring m_pppIPAddress;
+    ServerListReorder m_serverListReorder;
 };
