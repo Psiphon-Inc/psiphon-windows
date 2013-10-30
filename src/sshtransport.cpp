@@ -85,6 +85,10 @@ public:
         tstring& o_plonkCommandLine,
         int& o_serverPort) const;
 
+    // PlonkConnection keeps its own copy of SessionInfo, so it needs to be
+    // updated after more info is added from the handshake.
+    void UpdateSessionInfo(const SessionInfo& sessionInfo);
+
 protected:
     DWORD GetFreshLimit() const;
     DWORD GetRetiredLimit() const;
@@ -92,7 +96,7 @@ protected:
 private:
     PROCESS_INFORMATION m_processInfo;
     DWORD m_startTick;
-    const SessionInfo& m_sessionInfo;
+    SessionInfo m_sessionInfo;
     const StopInfo* m_stopInfo;
     HANDLE m_plonkInputHandle;
     HANDLE m_plonkOutputHandle;
@@ -169,6 +173,8 @@ void SSHTransportBase::ProxySetupComplete()
     (void)DoHandshake(
             false,  // not pre-handshake
             m_sessionInfo);
+    
+    m_currentPlonk->UpdateSessionInfo(m_sessionInfo);
 }
 
 bool SSHTransportBase::DoPeriodicCheck()
@@ -1192,6 +1198,13 @@ void PlonkConnection::GetConnectParams(
     o_plonkCommandLine = m_plonkCommandLine;
     o_serverPort = m_serverPort;
 }
+
+
+void PlonkConnection::UpdateSessionInfo(const SessionInfo& sessionInfo)
+{
+    m_sessionInfo = sessionInfo;
+}
+
 
 /******************************************************************************
  SSHTransport
