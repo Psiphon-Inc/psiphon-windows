@@ -282,8 +282,12 @@ bool SSHTransportBase::DoPeriodicCheck()
         if (connectSuccess)
         {
             connectionComplete = false;
+            
+            DWORD startTime = GetTickCount();
+
             while (nextPlonk->CheckForConnected(connectionComplete)
-                   && !connectionComplete)
+                   && !connectionComplete
+                   && GetTickCountDiff(startTime, GetTickCount()) < SSH_CONNECTION_TIMEOUT_SECONDS*1000)
             {
                 if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
                 {
