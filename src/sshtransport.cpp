@@ -263,7 +263,9 @@ bool SSHTransportBase::DoPeriodicCheck()
         assert(localSocksProxyPort == m_localSocksProxyPort);
         assert(plonkPath == m_plonkPath);
 
-        bool connectSuccess = nextPlonk->Connect(
+        bool connectSuccess = false, connectionComplete = false;
+
+        connectSuccess = nextPlonk->Connect(
                                         localSocksProxyPort,
                                         serverAddress.c_str(),
                                         serverHostKey.c_str(),
@@ -279,15 +281,35 @@ bool SSHTransportBase::DoPeriodicCheck()
 
         if (connectSuccess)
         {
-            m_previousPlonk = m_currentPlonk;
-            m_currentPlonk = nextPlonk;
+            connectionComplete = false;
             
-            // Cause the previous Plonk to stop listening locally, so the new
-            // Plonk can handle new connection. But we leave the old one running
-            // so that it can fulfill outstanding requests.
-            m_previousPlonk->StopPortFoward();
+            DWORD startTime = GetTickCount();
+
+            while (nextPlonk->CheckForConnected(connectionComplete)
+                   && !connectionComplete
+                   && GetTickCountDiff(startTime, GetTickCount()) < SSH_CONNECTION_TIMEOUT_SECONDS*1000)
+            {
+                if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+                {
+                    throw Abort();
+                }
+
+                Sleep(100);
+            }
+
+            if (connectionComplete)
+            {
+                m_previousPlonk = m_currentPlonk;
+                m_currentPlonk = nextPlonk;
+            
+                // Cause the previous Plonk to stop listening locally, so the new
+                // Plonk can handle new connection. But we leave the old one running
+                // so that it can fulfill outstanding requests.
+                m_previousPlonk->StopPortFoward();
+            }
         }
-        else
+
+        if (!connectSuccess || !connectionComplete)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: next plonk connect failed"), __TFUNCTION__);
         }
