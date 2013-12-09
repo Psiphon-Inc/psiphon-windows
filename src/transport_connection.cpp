@@ -102,7 +102,10 @@ void TransportConnection::Connect(
 
         // Apply the system proxy settings that have been collected by the transport
         // and the local proxy.
-        m_systemProxySettings.Apply();
+        if (!m_systemProxySettings.Apply())
+        {
+            throw IWorkerThread::Error("SystemProxySettings::Apply failed");
+        }
 
         // Let the transport do a handshake
         m_transport->ProxySetupComplete();
