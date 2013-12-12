@@ -31,6 +31,7 @@
 void AddOriginalProxyInfo(const connection_proxy& proxyInfo);
 bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo);
 bool SetConnectionProxy(const connection_proxy& setting);
+bool GetConnectionProxy(connection_proxy& setting);
 
 
 static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
@@ -51,6 +52,11 @@ struct connection_proxy
             this->flags == rhs.flags &&
             this->proxy == rhs.proxy &&
             this->bypass == rhs.bypass;
+    }
+
+    bool operator!=(const connection_proxy& rhs)
+    {
+        return !(*this == rhs);
     }
 };
 
@@ -243,6 +249,18 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
             success = false;
             break;
         }
+
+        // Read back the settings to verify that they have been applied
+        connection_proxy entry;
+        entry.name = proxySettings.name;
+        if (!GetConnectionProxy(entry) ||
+            entry != proxySettings)
+        {
+            my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
+            my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
+            success = false;
+            break;
+        }
     }
 
     return success;
@@ -350,14 +368,11 @@ bool SetConnectionProxy(const connection_proxy& setting)
     list.pOptions[2].dwOption = INTERNET_PER_CONN_PROXY_BYPASS;
     list.pOptions[2].Value.pszValue = const_cast<TCHAR*>(setting.bypass.c_str());
 
-    bool success = (0 != InternetSetOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, list.dwSize));
-
-    if (success)
-    {
-        InternetSetOption(NULL, INTERNET_OPTION_SETTINGS_CHANGED, NULL, 0);
-        InternetSetOption(NULL, INTERNET_OPTION_REFRESH , NULL, 0);
-    }
-    else
+    bool success = (0 != InternetSetOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, list.dwSize)) &&
+                   (0 != InternetSetOption(NULL, INTERNET_OPTION_SETTINGS_CHANGED, NULL, 0)) &&
+                   (0 != InternetSetOption(NULL, INTERNET_OPTION_REFRESH , NULL, 0));
+    
+    if (!success)
     {
         my_print(NOT_SENSITIVE, false, _T("InternetSetOption error: %d"), GetLastError());
         // NOTE: We are calling the Unicode version of InternetSetOption.
