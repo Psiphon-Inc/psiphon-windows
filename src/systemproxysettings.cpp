@@ -232,6 +232,7 @@ bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
 bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress)
 {
     bool success = true;
+    bool failedToVerify = false;
 
     for (vector<tstring>::const_iterator ii = connections.begin();
          ii != connections.end();
@@ -256,11 +257,27 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
         if (!GetConnectionProxy(entry) ||
             entry != proxySettings)
         {
-            my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
-            my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
-            success = false;
-            break;
+            if (entry.name.empty())
+            {
+                // This is the default or LAN connection.
+                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
+            }
+            else
+            {
+                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
+            }
+            
+            failedToVerify = true;
+        
+            // Don't force the connection to fail.
         }
+    }
+
+    if (failedToVerify)
+    {
+        my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
+        my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
+                                        _T("to use the local Psiphon proxies."));
     }
 
     return success;
@@ -320,7 +337,7 @@ vector<tstring> GetRasConnectionNames()
 
         if (ERROR_SUCCESS != returnCode)
         {
-            NOT_SENSITIVE, (false, _T("failed to enumerate RAS connections (%d)"), returnCode);
+            my_print(NOT_SENSITIVE, false, _T("failed to enumerate RAS connections (%d)"), returnCode);
             throw 0;
         }
 
