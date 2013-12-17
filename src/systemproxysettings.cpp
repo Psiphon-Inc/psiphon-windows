@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -257,19 +257,20 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
         if (!GetConnectionProxy(entry) ||
             entry != proxySettings)
         {
+            failedToVerify = true;
+
             if (entry.name.empty())
             {
                 // This is the default or LAN connection.
                 my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
+                success = false;
+                break;
             }
             else
             {
-                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
+                // Don't force the connection to fail, this might not be an active connection.
+                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
             }
-            
-            failedToVerify = true;
-        
-            // Don't force the connection to fail.
         }
     }
 
@@ -277,7 +278,7 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
     {
         my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
         my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
-                                        _T("to use the local Psiphon proxies."));
+                                       _T("to use the local Psiphon proxies."));
     }
 
     return success;
