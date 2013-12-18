@@ -92,7 +92,7 @@ bool SystemProxySettings::Apply()
 {
     if (UserSkipProxySettings())
     {
-        return false;
+        return true;
     }
 
     // Configure Windows Internet Settings to use our HTTP Proxy
@@ -214,7 +214,6 @@ bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
         return false;
     }
 
-    bool success = true;
     connection_proxy proxySettings;
 
     for (vector<connection_proxy>::const_iterator ii = proxyInfo.begin();
