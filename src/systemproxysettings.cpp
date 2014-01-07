@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -92,7 +92,7 @@ bool SystemProxySettings::Apply()
 {
     if (UserSkipProxySettings())
     {
-        return false;
+        return true;
     }
 
     // Configure Windows Internet Settings to use our HTTP Proxy
@@ -214,7 +214,6 @@ bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
         return false;
     }
 
-    bool success = true;
     connection_proxy proxySettings;
 
     for (vector<connection_proxy>::const_iterator ii = proxyInfo.begin();
@@ -232,6 +231,7 @@ bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
 bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress)
 {
     bool success = true;
+    bool failedToVerify = false;
 
     for (vector<tstring>::const_iterator ii = connections.begin();
          ii != connections.end();
@@ -256,11 +256,28 @@ bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connectio
         if (!GetConnectionProxy(entry) ||
             entry != proxySettings)
         {
-            my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
-            my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
-            success = false;
-            break;
+            failedToVerify = true;
+
+            if (entry.name.empty())
+            {
+                // This is the default or LAN connection.
+                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
+                success = false;
+                break;
+            }
+            else
+            {
+                // Don't force the connection to fail, this might not be an active connection.
+                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
+            }
         }
+    }
+
+    if (failedToVerify)
+    {
+        my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
+        my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
+                                       _T("to use the local Psiphon proxies."));
     }
 
     return success;
@@ -320,7 +337,7 @@ vector<tstring> GetRasConnectionNames()
 
         if (ERROR_SUCCESS != returnCode)
         {
-            NOT_SENSITIVE, (false, _T("failed to enumerate RAS connections (%d)"), returnCode);
+            my_print(NOT_SENSITIVE, false, _T("failed to enumerate RAS connections (%d)"), returnCode);
             throw 0;
         }
 
