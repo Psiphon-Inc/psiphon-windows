@@ -35,7 +35,9 @@
 #define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
 
 // TODO: Should this value be based on the performance/resources of the system?
-#define MULTI_CONNECT_POOL_SIZE         10
+// TODO: For some reason having too many plonk connections tunnelled via meek results in no response
+// This needs further investigation
+#define MULTI_CONNECT_POOL_SIZE         2
 #define SERVER_AFFINITY_HEAD_START_MS   500
 
 
@@ -721,6 +723,8 @@ void SSHTransportBase::GetSSHParams(
     // output to determine when it has successfully connected.
     args << _T(" -v");
 
+	//Meek is the parent proxy now
+	/*
     tstring proxy_type, proxy_host, proxy_username, proxy_password;
     int proxy_port;
 
@@ -745,6 +749,10 @@ void SSHTransportBase::GetSSHParams(
         }
 
     }
+	*/
+	args << _T(" -proxy_type socks4a");
+	args << _T(" -proxy_host 127.0.0.1");
+	args << _T(" -proxy_port ") << this->m_meekListenPort;
     
     o_plonkCommandLine = m_plonkPath + args.str();
 }

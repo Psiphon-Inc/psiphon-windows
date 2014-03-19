@@ -635,7 +635,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            int bytes = atoi(string(entry_start, entry_end-entry_start).c_str());
+            long bytes = strtol(string(entry_start, entry_end-entry_start).c_str(), NULL, 10);
             if (bytes > 0)
             {
                 m_bytesTransferred += bytes;

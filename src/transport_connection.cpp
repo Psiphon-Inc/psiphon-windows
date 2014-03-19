@@ -23,11 +23,14 @@
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
+#include "meek.h"
 
 
 TransportConnection::TransportConnection()
     : m_transport(0),
-      m_localProxy(0)
+      m_localProxy(0),
+	  m_meekClient(0)
+
 {
 }
 
@@ -57,6 +60,8 @@ void TransportConnection::Connect(
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
+	assert(m_meekClient == 0);
+
 
     assert(transport);
     assert(!tempConnectServerEntry || !transport->IsHandshakeRequired());
@@ -73,8 +78,23 @@ void TransportConnection::Connect(
 
         m_workerThreadSynch.Reset();
 
+		//Start meek client and get its listening port
+
+		m_meekClient = new Meek(_T("http://meek.psiphon.ca"), _T("www.cloudflare.com"));
+
+		if (!m_meekClient->Start(stopInfo, &m_workerThreadSynch))
+        {
+            throw IWorkerThread::Error("Meek::Start failed");
+        }
+
+		if(!m_meekClient->WaitForCmethodLine())
+		{
+			throw IWorkerThread::Error("Meek::CMETHOD not available");
+		}
+
         // Connect with the transport. Will throw on error.
-        m_transport->Connect(
+		m_transport->Connect(
+					m_meekClient->GetListenPort(),
                     &m_systemProxySettings,
                     stopInfo,
                     &m_workerThreadSynch,
@@ -178,4 +198,7 @@ void TransportConnection::Cleanup()
 
     if (m_localProxy) delete m_localProxy;
     m_localProxy = 0;
+
+	if(m_meekClient) delete m_meekClient;
+	m_meekClient = 0;
 }
