@@ -201,9 +201,9 @@ bool Meek::StartMeek()
         return false;
     }
 	
-
     WaitForInputIdle(m_meekProcessInfo.hProcess, 5000);
 
+	my_print(NOT_SENSITIVE, false, _T("Meek client is starting for %s"), m_frontHostname.c_str());
     return true;
 }
 
@@ -319,6 +319,7 @@ bool Meek::ParseCmethodForPort(const char* str)
 		return false;
 	}
 	m_meekLocalPort = port;
+	my_print(NOT_SENSITIVE, false, _T("Meek client is running on localhost port %d."), port);
 	return true;
 }
 

@@ -35,9 +35,7 @@
 #define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
 
 // TODO: Should this value be based on the performance/resources of the system?
-// TODO: For some reason having too many plonk connections tunnelled via meek results in no response
-// This needs further investigation
-#define MULTI_CONNECT_POOL_SIZE         2
+#define MULTI_CONNECT_POOL_SIZE         10
 #define SERVER_AFFINITY_HEAD_START_MS   500
 
 
