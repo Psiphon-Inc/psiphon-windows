@@ -80,7 +80,7 @@ void TransportConnection::Connect(
 
 		//Start meek client and get its listening port
 
-		m_meekClient = new Meek(_T("http://meek.psiphon.ca"), _T("www.cloudflare.com"));
+		m_meekClient = new Meek(_T("http://meek.psiphon.ca"), _T("cdnjs.cloudflare.com"));
 
 		if (!m_meekClient->Start(stopInfo, &m_workerThreadSynch))
         {

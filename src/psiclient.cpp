@@ -86,7 +86,7 @@ const int TOGGLE_BUTTON_HEIGHT = 56;
 
 // First transport in this list is the default
 
-const TCHAR* transportOptions[] = {_T("SSH+"), _T("VPN"), _T("SSH")};
+const TCHAR* transportOptions[] = {_T("SSH+"), /*_T("VPN"),*/ _T("SSH")}; //no VPN for Meek build
 const int transportOptionCount = sizeof(transportOptions)/sizeof(const TCHAR*);
 
 const int TRANSPORT_FIRST_ITEM_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
@@ -621,6 +621,10 @@ void RestoreSelectedTransport(void)
 
 void EnableSplitTunnelForSelectedTransport()
 {
+	//Disable split tunneling for meek build 
+	 ShowWindow(g_hSplitTunnelCheckBox, FALSE);
+	 return;
+
     // Split tunnel isn't implemented for VPN
 
     if (_T("VPN") == GetSelectedTransport())
