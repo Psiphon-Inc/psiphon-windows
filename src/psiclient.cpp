@@ -584,6 +584,10 @@ void EnableSplitTunnelForSelectedTransport();
 
 void RestoreSelectedTransport(void)
 {
+		//Disable split tunneling for meek build 
+	 ShowWindow(g_hSplitTunnelCheckBox, FALSE);
+	 SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
+
     string selectedTransport;
     if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport))
     {
@@ -623,6 +627,8 @@ void EnableSplitTunnelForSelectedTransport()
 {
 	//Disable split tunneling for meek build 
 	 ShowWindow(g_hSplitTunnelCheckBox, FALSE);
+	 SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
+
 	 return;
 
     // Split tunnel isn't implemented for VPN
