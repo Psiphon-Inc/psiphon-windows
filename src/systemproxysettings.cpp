@@ -180,6 +180,7 @@ bool SystemProxySettings::Revert()
     if (success)
     {
         m_originalSettings.clear();
+        m_settingsApplied = false;
     }
 
     return success;

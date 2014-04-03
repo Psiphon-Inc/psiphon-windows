@@ -108,6 +108,11 @@ void ITransport::StopImminent()
 
 void ITransport::DoStop(bool cleanly)
 {
+    if (!cleanly) 
+    {
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
+    }
+
     Cleanup();
 
     // We'll use the non-null-ness of one of these members as a sign that we

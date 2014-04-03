@@ -65,7 +65,7 @@ LocalProxy::~LocalProxy()
     {
         IWorkerThread::Stop();
 
-        Cleanup();
+        Cleanup(true);
     }
     catch (...)
     {
@@ -97,7 +97,7 @@ bool LocalProxy::DoStart()
     }
 
     // Ensure we start from a disconnected/clean state
-    Cleanup();
+    Cleanup(false);
     
     int localHttpProxyPort = UserLocalHTTPProxyPort();
 
@@ -111,7 +111,7 @@ bool LocalProxy::DoStart()
 
     if (!StartPolipo(localHttpProxyPort))
     {
-        Cleanup();
+        Cleanup(false);
         return false;
     }
 
@@ -179,10 +179,10 @@ void LocalProxy::DoStop(bool cleanly)
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
     }
 
-    Cleanup();
+    Cleanup(cleanly);
 }
 
-void LocalProxy::Cleanup()
+void LocalProxy::Cleanup(bool doStats)
 {
     // Give the process an opportunity for graceful shutdown, then terminate
     if (m_polipoProcessInfo.hProcess != 0
@@ -212,7 +212,7 @@ void LocalProxy::Cleanup()
 
     // If we have stats, and we didn't get a chance to send our final stats, 
     // we'll try one last time.
-    if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
+    if (doStats && !m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
         if (m_statsCollector->SendStatusMessage(

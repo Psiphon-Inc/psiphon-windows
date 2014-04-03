@@ -252,6 +252,8 @@ void ConnectionManager::FetchRemoteServerList(void)
     {
         // This adds the new server entries to all transports' server lists.
         TransportRegistry::AddServerEntries(newServerEntryVector, 0);
+
+        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
     }
     catch (std::exception &ex)
     {
