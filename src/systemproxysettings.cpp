@@ -186,6 +186,11 @@ bool SystemProxySettings::Revert()
     return success;
 }
 
+bool SystemProxySettings::IsApplied() const
+{
+    return m_settingsApplied;
+}
+
 // TODO: do this properly.
 // ie. Save original proxy settings to a file, and remove the file on restoring settings.
 // If the file exists when saving original settings, use the file's contents and don't save

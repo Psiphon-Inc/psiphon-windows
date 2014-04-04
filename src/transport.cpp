@@ -26,6 +26,7 @@
 #include "embeddedvalues.h"
 #include "config.h"
 #include "transport_registry.h"
+#include "systemproxysettings.h"
 
 
 /******************************************************************************
@@ -128,9 +129,10 @@ void ITransport::DoStop(bool cleanly)
 }
 
 
-bool ITransport::IsConnected() const
+bool ITransport::IsConnected(bool alsoCheckProxy/*=false*/) const
 {
-    return IsRunning();
+    return IsRunning() && 
+           (!alsoCheckProxy || (m_systemProxySettings && m_systemProxySettings->IsApplied()));
 }
 
 
