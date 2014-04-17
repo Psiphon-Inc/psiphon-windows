@@ -201,7 +201,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         {
             m_speedTestServerAddress = speedTestURL.get("server_address", "").asString();
             string speedTestServerPort = speedTestURL.get("server_port", "").asString();
-            m_speedTestServerPort = atoi(speedTestServerPort.c_str());
+            m_speedTestServerPort = (int)strtol(speedTestServerPort.c_str(), NULL, 10);
             m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
         }
 
