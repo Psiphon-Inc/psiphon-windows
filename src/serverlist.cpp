@@ -520,7 +520,7 @@ void ServerEntry::FromString(const string& str)
     {
         throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
     }
-    webServerPort = atoi(lineItem.c_str());
+    webServerPort = (int) strtol(lineItem.c_str(), NULL, 10);
 
     if (!getline(lineStream, lineItem, ' '))
     {
