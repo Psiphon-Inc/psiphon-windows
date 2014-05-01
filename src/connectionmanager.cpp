@@ -723,6 +723,19 @@ bool ConnectionManager::SendStatusMessage(
     // Format stats data for consumption by the server. 
 
     Json::Value stats;
+
+    // Stats traffic analysis mitigation: [non-cryptographic] pseudorandom padding to ensure the size of status requests is not constant.
+    // Padding size is JSON field overhead + 0-255 bytes + 33% base64 encoding overhead
+    const int MAX_PADDING_LENGTH = 256;
+    unsigned char pseudorandom_bytes[MAX_PADDING_LENGTH];
+    assert(MAX_PADDING_LENGTH % sizeof(unsigned int) == 0);
+    for (int i = 0; i < MAX_PADDING_LENGTH/sizeof(unsigned int); i++)
+    {
+        rand_s(((unsigned int*)pseudorandom_bytes) + i);
+    }
+    string padding = Base64Encode(pseudorandom_bytes, rand() % 256);
+    stats["padding"] = padding;
+
     stats["bytes_transferred"] = bytesTransferred;
     my_print(SENSITIVE_LOG, true, _T("BYTES: %llu"), bytesTransferred);
 
