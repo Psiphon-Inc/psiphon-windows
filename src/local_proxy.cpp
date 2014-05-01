@@ -452,6 +452,11 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
             s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
             s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
+            // Stats traffic analysis mitigation: add some [non-cryptographic] pseudorandom jitter to the time interval
+            unsigned int pseudorandom_bytes;
+            rand_s(&pseudorandom_bytes);
+            s_send_interval_ms += pseudorandom_bytes % DEFAULT_SEND_INTERVAL_MS;
+
             // Reset stats
             m_pageViewEntries.clear();
             m_httpsRequestEntries.clear();
