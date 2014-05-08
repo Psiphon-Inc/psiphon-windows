@@ -6,7 +6,7 @@ LOCAL_ROOT = /usr/share/polipo/www
 DISK_CACHE_ROOT = /var/cache/polipo
 
 # PSIPHON
-CYGWIN_CFLAGS = -Os -Wall
+CYGWIN_CFLAGS = -Os -Wall -DCYGWIN
 CYGWIN_LDFLAGS = -lwsock32
 # /PSIPHON
 
@@ -69,7 +69,9 @@ DEFINES = $(FILE_DEFINES) $(PLATFORM_DEFINES)
 CFLAGS = $(MD5INCLUDES) $(CDEBUGFLAGS) $(DEFINES) $(EXTRA_DEFINES)
 
 # PSIPHON
+CFLAGS += -DNO_DISK_CACHE
 ifeq ($(OS),Windows_NT)
+	  # TODO: Will this conflict with mingw?
 		CFLAGS += $(CYGWIN_CFLAGS)
 endif
 # /PSIPHON

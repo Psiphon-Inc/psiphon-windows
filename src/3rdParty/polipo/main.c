@@ -175,3 +175,88 @@ main(int argc, char **argv)
     if(pidFile) unlink(pidFile->string);
     return 0;
 }
+
+
+/* PSIPHON: custom main() for JNI */
+#ifdef ANDROID
+int psiphonMain(
+        int bindAll,
+        int proxyPortParam,
+        int localParentProxyPortParam)
+{
+    FdEventHandlerPtr listener;
+
+    initAtoms();
+    CONFIG_VARIABLE(daemonise, CONFIG_BOOLEAN, "Run as a daemon");
+    CONFIG_VARIABLE(pidFile, CONFIG_ATOM, "File with pid of running daemon.");
+
+    preinitChunks();
+    preinitLog();
+    preinitObject();
+    preinitIo();
+    preinitDns();
+    preinitServer();
+    preinitHttp();
+    preinitDiskcache();
+    preinitLocal();
+    preinitForbidden();
+    preinitSocks();
+
+    const int MAX_SIZE = 80;
+    char proxyAddressParamLine[MAX_SIZE];
+    char proxyPortParamLine[MAX_SIZE];
+    char localParentProxyPortParamLine[MAX_SIZE];
+    snprintf(
+        proxyAddressParamLine,
+        MAX_SIZE,
+        (0 == bindAll) ? "proxyAddress=127.0.0.1" : "proxyAddress=0.0.0.0");
+    snprintf(
+        proxyPortParamLine,
+        MAX_SIZE,
+        "proxyPort=%d",
+        proxyPortParam);
+    snprintf(
+        localParentProxyPortParamLine,
+        MAX_SIZE,
+        "socksParentProxy=127.0.0.1:%d",
+        localParentProxyPortParam);
+
+    if (0 > parseConfigLine(proxyAddressParamLine, "psiphon", 0, 0)
+        || 0 > parseConfigLine(proxyPortParamLine, "psiphon", 0, 0)
+        || 0 > parseConfigLine(localParentProxyPortParamLine, "psiphon", 0, 0)
+        || 0 > parseConfigLine("disableLocalInterface=true", "psiphon", 0, 0)
+        || 0 > parseConfigLine("logLevel=1", "psiphon", 0, 0)
+        /* Allow HTTPS on all ports */
+        || 0 > parseConfigLine("tunnelAllowedPorts=1-65535", "psiphon", 0, 0))
+    {
+        return -1;
+    }
+
+    initChunks();
+    initLog();
+    initObject();
+    initEvents();
+    initIo();
+    initDns();
+    initHttp();
+    initServer();
+    initDiskcache();
+    initForbidden();
+    initSocks();
+
+    listener = create_listener(
+                    proxyAddress->string,
+                    proxyPort,
+                    httpAccept,
+                    NULL);
+    if (!listener)
+    {
+        return -1;
+    }
+
+    eventLoop();
+
+    return 0;
+}
+#endif
+/* /PSIPHON */

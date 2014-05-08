@@ -197,6 +197,12 @@ THE SOFTWARE.
 #endif
 #endif
 
+/* PSIPHON: As an Android JNI lib, we don't want signals so we don't want to define HAVE_FORK. */
+#ifdef ANDROID
+#undef HAVE_FORK
+#endif
+/* /PSIPHON */
+
 #ifdef HAVE_READV_WRITEV
 #define WRITEV(x, y, z) writev(x, y, z)
 #define READV(x, y, z)  readv(x, y, z)

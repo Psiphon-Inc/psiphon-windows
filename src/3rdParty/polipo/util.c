@@ -808,6 +808,11 @@ intListCons(int from, int to, IntListPtr list)
 int
 physicalMemory()
 {
+    /* PSIPHON */
+#ifdef ANDROID
+    /* In Android, we don't have sysinfo readily available */
+    return -1;
+#else
     int rc;
     struct sysinfo info;
 
@@ -819,6 +824,8 @@ physicalMemory()
         return (int)(info.totalram * info.mem_unit);
 
     return -1;
+#endif
+    /* /PSIPHON */
 }
 
 #elif defined(__FreeBSD__)

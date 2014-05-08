@@ -567,8 +567,10 @@ parseAtom(char *buf, int offset, AtomPtr *value_return, int insensitive)
               buf[i] == '.' || buf[i] == ':' || buf[i] == '/'
               /* PSIPHON: support Windows paths (...which isn't supposed to be
                  a problem... maybe because we're compiling in Cygwin?) */
+#ifdef CYGWIN
               || buf[i] == '\\'
               /* /PSIPHON */
+#endif
               )
             i++;
         j = i;
