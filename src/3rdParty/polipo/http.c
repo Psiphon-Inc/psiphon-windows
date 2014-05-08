@@ -32,6 +32,8 @@ int serverIdleTimeout = 45;
 
 int bigBufferSize = (32 * 1024);
 
+AtomPtr displayName = NULL;
+
 AtomPtr authRealm = NULL;
 AtomPtr authCredentials = NULL;
 
@@ -87,6 +89,8 @@ preinitHttp()
                              timeoutSetter, "Server-side idle timeout.");
     CONFIG_VARIABLE(authRealm, CONFIG_ATOM,
                     "Authentication realm.");
+    CONFIG_VARIABLE(displayName, CONFIG_ATOM,
+                    "Server name displayed on error pages.");
     CONFIG_VARIABLE(authCredentials, CONFIG_PASSWORD,
                     "username:password.");
     CONFIG_VARIABLE(parentAuthCredentials, CONFIG_PASSWORD,
@@ -134,6 +138,9 @@ initHttp()
         do_log(L_WARN, "Value of clientTimeout too small -- setting to %d.\n",
                clientTimeout);
     }
+
+    if(displayName == NULL)
+        displayName = internAtom("Polipo");
 
     if(authCredentials != NULL && authRealm == NULL)
         authRealm = internAtom("Polipo");
@@ -286,6 +293,13 @@ httpWriteObjectHeaders(char *buf, int offset, int len,
                        ObjectPtr object, int from, int to)
 {
     int n = offset;
+    CacheControlRec cache_control;
+
+    cache_control.flags = object->cache_control;
+    cache_control.max_age = object->max_age;
+    cache_control.s_maxage = object->s_maxage;
+    cache_control.max_stale = -1;
+    cache_control.min_fresh = -1;
 
     if(from <= 0 && to < 0) {
         if(object->length >= 0) {
@@ -351,7 +365,7 @@ httpWriteObjectHeaders(char *buf, int offset, int len,
     }
 
     n = httpPrintCacheControl(buf, n, len,
-                              object->cache_control, NULL);
+                              object->cache_control, &cache_control);
     if(n < 0)
         goto fail;
 
@@ -894,10 +908,10 @@ httpWriteErrorHeaders(char *buf, int size, int offset, int do_body,
         m = snnprintf(body, m, CHUNK_SIZE,
                       ":<br><br>"
                       "\n<strong>%3d %s</strong></p>"
-                      "\n<hr>Generated %s by Polipo on <em>%s:%d</em>."
+                      "\n<hr>Generated %s by %s on <em>%s:%d</em>."
                       "\n</body></html>\r\n",
                       code, htmlMessage,
-                      timeStr, proxyName->string, proxyPort);
+                      timeStr, displayName->string, proxyName->string, proxyPort);
         if(m <= 0 || m >= CHUNK_SIZE) {
             do_log(L_ERROR, "Couldn't write error body.\n");
             dispose_chunk(body);
@@ -978,7 +992,7 @@ urlDecode(char *buf, int n)
                 goto fail;
             mybuf[j++] = (char)((a << 4) | b);
             i += 3;
-            if(j > 500) goto fail;
+            if(j >= 500) goto fail;
         } else if(buf[i] == '&') {
             atom = internAtomN(mybuf, j);
             if(atom == NULL)
@@ -988,7 +1002,7 @@ urlDecode(char *buf, int n)
             i++;
         } else {
             mybuf[j++] = buf[i++];
-            if(j > 500) goto fail;
+            if(j >= 500) goto fail;
         }
     }
 
@@ -1009,8 +1023,10 @@ httpTweakCachability(ObjectPtr object)
     int code = object->code;
 
     if((object->cache_control & CACHE_AUTHORIZATION) &&
-       !(object->cache_control & CACHE_PUBLIC))
-        object->cache_control |= (CACHE_NO_HIDDEN | OBJECT_LINEAR);
+       !(object->cache_control & CACHE_PUBLIC)) {
+        object->cache_control |= CACHE_NO_HIDDEN;
+        object->flags |= OBJECT_LINEAR;
+    }
 
     /* This is not required by RFC 2616 -- but see RFC 3143 2.1.1.  We
        manically avoid caching replies that we don't know how to
@@ -1021,8 +1037,8 @@ httpTweakCachability(ObjectPtr object)
        code != 300 && code != 301 && code != 302 && code != 303 &&
        code != 304 && code != 307 &&
        code != 403 && code != 404 && code != 405 && code != 416) {
-        object->cache_control |=
-            (CACHE_NO_HIDDEN | CACHE_MISMATCH | OBJECT_LINEAR);
+        object->cache_control |= (CACHE_NO_HIDDEN | CACHE_MISMATCH);
+        object->flags |= OBJECT_LINEAR;
     } else if(code != 200 && code != 206 &&
               code != 300 && code != 301 && code != 304 &&
               code != 410) {

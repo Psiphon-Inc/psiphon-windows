@@ -5,6 +5,12 @@ INFODIR = $(PREFIX)/info
 LOCAL_ROOT = /usr/share/polipo/www
 DISK_CACHE_ROOT = /var/cache/polipo
 
+# PSIPHON
+CYGWIN_CFLAGS = -Os -Wall
+CYGWIN_LDFLAGS = -lwsock32
+# /PSIPHON
+
+
 # To compile with Unix CC:
 
 # CDEBUGFLAGS=-O
@@ -12,10 +18,7 @@ DISK_CACHE_ROOT = /var/cache/polipo
 # To compile with GCC:
 
 # CC = gcc
-# CDEBUGFLAGS = -Os -ggdb -Wall -std=gnu99
-# CDEBUGFLAGS = -O0 -ggdb -Wall
- CDEBUGFLAGS = -Os -Wall
-# CDEBUGFLAGS = -g -Wall
+CDEBUGFLAGS = -Os -g -Wall -fno-strict-aliasing
 
 # To compile on a pure POSIX system:
 
@@ -39,7 +42,7 @@ DISK_CACHE_ROOT = /var/cache/polipo
 # On mingw, you need
 
 # EXE=.exe
-# LDLIBS = -lwsock32
+# LDLIBS = -lws2_32
 
 FILE_DEFINES = -DLOCAL_ROOT=\"$(LOCAL_ROOT)/\" \
                -DDISK_CACHE_ROOT=\"$(DISK_CACHE_ROOT)/\"
@@ -65,15 +68,26 @@ DEFINES = $(FILE_DEFINES) $(PLATFORM_DEFINES)
 
 CFLAGS = $(MD5INCLUDES) $(CDEBUGFLAGS) $(DEFINES) $(EXTRA_DEFINES)
 
+# PSIPHON
+ifeq ($(OS),Windows_NT)
+		CFLAGS += $(CYGWIN_CFLAGS)
+endif
+# /PSIPHON
+
 SRCS = util.c event.c io.c chunk.c atom.c object.c log.c diskcache.c main.c \
        config.c local.c http.c client.c server.c auth.c tunnel.c \
        http_parse.c parse_time.c dns.c forbidden.c \
-       md5import.c md5.c ftsimport.c fts_compat.c socks.c mingw.c split.c
+       md5import.c md5.c ftsimport.c fts_compat.c socks.c mingw.c
 
 OBJS = util.o event.o io.o chunk.o atom.o object.o log.o diskcache.o main.o \
        config.o local.o http.o client.o server.o auth.o tunnel.o \
        http_parse.o parse_time.o dns.o forbidden.o \
-       md5import.o ftsimport.o socks.o mingw.o split.o
+       md5import.o ftsimport.o socks.o mingw.o
+
+# PSIPHON
+SRCS += split.c
+OBJS += split.o
+# /PSIPHON
 
 polipo$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o polipo$(EXE) $(OBJS) $(MD5LIBS) $(LDLIBS)
@@ -128,7 +142,7 @@ polipo.dvi: polipo.texi
 	texi2dvi polipo.texi
 
 polipo.man.html: polipo.man
-	groff -man -Thtml polipo.man > polipo.man.html
+	rman -f html polipo.man > polipo.man.html
 
 TAGS: $(SRCS)
 	etags $(SRCS)

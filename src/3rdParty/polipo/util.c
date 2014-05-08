@@ -50,9 +50,14 @@ int
 snnvprintf(char *restrict buf, int n, int len, const char *format, va_list args)
 {
     int rc = -1;
+    va_list args_copy;
+
     if(n < 0) return -2;
-    if(n < len)
-        rc = vsnprintf(buf + n, len - n, format, args);
+    if(n < len) {
+        va_copy(args_copy, args);
+        rc = vsnprintf(buf + n, len - n, format, args_copy);
+        va_end(args_copy);
+    }
     if(rc >= 0 && n + rc <= len)
         return n + rc;
     else
@@ -197,9 +202,9 @@ memrchr(const void *s, int c, size_t n)
     const unsigned char *ss = s;
     unsigned char cc = c;
     size_t i;
-    for(i = n - 1; i >= 0; i--)
-        if(ss[i] == cc)
-            return (void*)(ss + i);
+    for(i = 1; i <= n; i++)
+        if(ss[n - i] == cc)
+            return (void*)(ss + n - i);
     return NULL;
 }
 #endif
@@ -268,21 +273,30 @@ vsprintf_a(const char *f, va_list args)
 {
     char *r;
     int rc;
-    rc = vasprintf(&r, f, args);
+    va_list args_copy;
+
+    va_copy(args_copy, args);
+    rc = vasprintf(&r, f, args_copy);
+    va_end(args_copy);
     if(rc < 0)
         return NULL;
     return r;
     
 }
+
 #else
+
 char*
 vsprintf_a(const char *f, va_list args)
 {
     int n, size;
     char buf[64];
     char *string;
+    va_list args_copy;
 
-    n = vsnprintf(buf, 64, f, args);
+    va_copy(args_copy, args);
+    n = vsnprintf(buf, 64, f, args_copy);
+    va_end(args_copy);
     if(n >= 0 && n < 64) {
         return strdup_n(buf, n);
     }
@@ -295,10 +309,12 @@ vsprintf_a(const char *f, va_list args)
         string = malloc(size);
         if(!string)
             return NULL;
-        n = vsnprintf(string, size, f, args);
-        if(n >= 0 && n < size)
+        va_copy(args_copy, args);
+        n = vsnprintf(string, size, f, args_copy);
+        va_end(args_copy);
+        if(n >= 0 && n < size) {
             return string;
-        else if(n >= size)
+        } else if(n >= size)
             size = n + 1;
         else
             size = size * 3 / 2;
@@ -362,6 +378,7 @@ pstrerror(int e)
     case ESOCKS_REJECT_FAIL: s = "SOCKS request rejected or failed"; break;
     case ESOCKS_REJECT_IDENTD: s = "SOCKS request rejected: "
                                    "server couldn't connect to identd";
+        break;
     case ESOCKS_REJECT_UID_MISMATCH: s = "SOCKS request rejected: "
                                          "uid mismatch";
         break;
@@ -380,7 +397,7 @@ pstrerror(int e)
     default: s = NULL; break;
     }
     if(!s) s = strerror(e);
-#ifdef MINGW
+#ifdef WIN32 /*MINGW*/
     if(!s) {
         if(e >= WSABASEERR && e <= WSABASEERR + 2000) {
             /* This should be okay, as long as the caller discards the
@@ -403,6 +420,12 @@ time_t
 mktime_gmt(struct tm *tm)
 {
     return timegm(tm);
+}
+#elif defined(HAVE_MKGMTIME)
+time_t
+mktime_gmt(struct tm *tm)
+{
+    return _mkgmtime(tm);
 }
 #elif defined(HAVE_TM_GMTOFF)
 time_t
@@ -429,7 +452,7 @@ mktime_gmt(struct tm *tm)
     char *tz;
 
     tz = getenv("TZ");
-    setenv("TZ", "", 1);
+    setenv("TZ", "GMT", 1);
     tzset();
     t = mktime(tm);
     if(tz)
@@ -448,7 +471,7 @@ mktime_gmt(struct tm *tm)
     static char *old_tz = NULL;
 
     tz = getenv("TZ");
-    putenv("TZ=");
+    putenv("TZ=GMT");
     tzset();
     t = mktime(tm);
     if(old_tz)
@@ -522,9 +545,27 @@ do_daemonise(int noclose)
         exit(0);
 
     if(!noclose) {
+        int fd;
         close(0);
         close(1);
         close(2);
+        /* Leaving the default file descriptors free is not a good
+           idea, as it will cause library functions such as abort to
+           thrash the on-disk cache. */
+        fd = open("/dev/null", O_RDONLY);
+        if(fd > 0) {
+            dup2(fd, 0);
+            close(fd);
+        }
+        fd = open("/dev/null", O_WRONLY);
+        if(fd >= 0) {
+            if(fd != 1)
+                dup2(fd, 1);
+            if(fd != 2)
+                dup2(fd, 2);
+            if(fd != 1 && fd != 2)
+                close(fd);
+        }
     }
     rc = setsid();
     if(rc < 0) {
@@ -786,16 +827,16 @@ physicalMemory()
 int
 physicalMemory()
 {
-    int membytes;
+    unsigned long membytes;
     size_t len;
     int res;
 
     len = sizeof(membytes);
     res = sysctlbyname("hw.physmem", &membytes, &len, NULL, 0);
-    if (res)
+    if (res || membytes > INT_MAX)
         return -1;
 
-    return membytes;
+    return (int)membytes;
 }
 
 #else
