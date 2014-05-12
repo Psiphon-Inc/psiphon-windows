@@ -30,6 +30,9 @@ static int logLevel = LOGGING_DEFAULT;
 static int logSyslog = 0;
 static AtomPtr logFile = NULL;
 static FILE *logF;
+static int logFilePermissions = 0640;
+int scrubLogs = 0;
+
 #ifdef HAVE_SYSLOG
 static AtomPtr logFacility = NULL;
 static int facility;
@@ -56,7 +59,11 @@ preinitLog()
 {
     CONFIG_VARIABLE_SETTABLE(logLevel, CONFIG_HEX, configIntSetter,
                              "Logging level (max = " STR(LOGGING_MAX) ").");
-    CONFIG_VARIABLE(logFile, CONFIG_ATOM, "Log file (stderr if empty and logSyslog is unset).");
+    CONFIG_VARIABLE(logFile, CONFIG_ATOM, "Log file (stderr if empty and logSyslog is unset, /var/log/polipo if empty and daemonise is true).");
+    CONFIG_VARIABLE(logFilePermissions, CONFIG_OCTAL,
+                    "Access rights of the logFile.");
+    CONFIG_VARIABLE_SETTABLE(scrubLogs, CONFIG_BOOLEAN, configIntSetter,
+                             "If true, don't include URLs in logs.");
 
 #ifdef HAVE_SYSLOG
     CONFIG_VARIABLE(logSyslog, CONFIG_BOOLEAN, "Log to syslog.");
@@ -72,6 +79,29 @@ loggingToStderr(void) {
     return(logF == stderr);
 }
 
+static FILE *
+openLogFile(void)
+{
+    int fd;
+    FILE *f;
+
+    fd = open(logFile->string, O_WRONLY | O_CREAT | O_APPEND,
+              logFilePermissions);
+    if(fd < 0)
+        return NULL;
+
+    f = fdopen(fd, "a");
+    if(f == NULL) {
+        int saved_errno = errno;
+        close(fd);
+        errno = saved_errno;
+        return NULL;
+    }
+
+    setvbuf(f, NULL, _IOLBF, 0);
+    return f;
+}
+
 void
 initLog(void)
 {
@@ -80,13 +110,13 @@ initLog(void)
 
     if(logFile != NULL && logFile->length > 0) {
         FILE *f;
-        f = fopen(logFile->string, "a");
+        logFile = expandTilde(logFile);
+        f = openLogFile();
         if(f == NULL) {
             do_log_error(L_ERROR, errno, "Couldn't open log file %s",
                          logFile->string);
             exit(1);
         }
-        setvbuf(f, NULL, _IOLBF, 0);
         logF = f;
     }
 
@@ -224,6 +254,7 @@ translatePriority(int type)
                                   { L_UNCACHEABLE, LOG_DEBUG },
                                   { L_SUPERSEDED, LOG_DEBUG },
                                   { L_VARY, LOG_DEBUG },
+                                  { L_TUNNEL, LOG_NOTICE },
                                   { 0, 0 }};
     PrioritiesRec *current;
 
@@ -279,11 +310,14 @@ static void
 accumulateSyslogV(int type, const char *f, va_list args)
 {
     int rc;
+    va_list args_copy;
 
  again:
+    va_copy(args_copy, args);
     rc = vsnprintf(syslogBuf + syslogBufLength,
                    syslogBufSize - syslogBufLength,
-                   f, args);
+                   f, args_copy);
+    va_end(args_copy);
 
     if(rc < 0 || rc >= syslogBufSize - syslogBufLength) {
         rc = expandSyslog(rc);
@@ -338,22 +372,20 @@ void flushLog()
 void
 reopenLog()
 {
-    if(logFile) {
+    if(logFile && logFile->length > 0) {
         FILE *f;
-        f = fopen(logFile->string, "a");
+        f = openLogFile();
         if(f == NULL) {
             do_log_error(L_ERROR, errno, "Couldn't reopen log file %s",
                          logFile->string);
             exit(1);
         }
-        setvbuf(f, NULL, _IOLBF, 0);
         fclose(logF);
         logF = f;
     }
 
-    if(logSyslog) {
+    if(logSyslog)
         initSyslog();
-    }
 }
 
 void
@@ -370,12 +402,21 @@ really_do_log(int type, const char *f, ...)
 void
 really_do_log_v(int type, const char *f, va_list args)
 {
+    va_list args_copy;
+
     if(type & LOGGING_MAX & logLevel) {
         if(logF)
-            vfprintf(logF, f, args);
+        {
+            va_copy(args_copy, args);
+            vfprintf(logF, f, args_copy);
+            va_end(args_copy);
+        }
 #ifdef HAVE_SYSLOG
-        if(logSyslog)
-            accumulateSyslogV(type, f, args);
+        if(logSyslog) {
+            va_copy(args_copy, args);
+            accumulateSyslogV(type, f, args_copy);
+            va_end(args_copy);
+        }
 #endif
     }
 }
@@ -393,21 +434,27 @@ really_do_log_error(int type, int e, const char *f, ...)
 void
 really_do_log_error_v(int type, int e, const char *f, va_list args)
 {
+    va_list args_copy;
+
     if((type & LOGGING_MAX & logLevel) != 0) {
         char *es = pstrerror(e);
         if(es == NULL)
             es = "Unknown error";
 
         if(logF) {
-            vfprintf(logF, f, args);
+            va_copy(args_copy, args);
+            vfprintf(logF, f, args_copy);
             fprintf(logF, ": %s\n", es);
+            va_end(args_copy);
         }
 #ifdef HAVE_SYSLOG
         if(logSyslog) {
             char msg[256];
-            size_t n = 0;
+            int n = 0;
 
-            n = snnvprintf(msg, n, 256, f, args);
+            va_copy(args_copy, args);
+            n = snnvprintf(msg, n, 256, f, args_copy);
+            va_end(args_copy);
             n = snnprintf(msg, n, 256, ": ");
             n = snnprint_n(msg, n, 256, es, strlen (es));
             n = snnprintf(msg, n, 256, "\n");
@@ -437,4 +484,13 @@ really_do_log_n(int type, const char *s, int n)
             accumulateSyslogN(type, s, n);
 #endif
     }
+}
+
+const char *
+scrub(const char *message)
+{
+    if(scrubLogs)
+        return "(scrubbed)";
+    else
+        return message;
 }

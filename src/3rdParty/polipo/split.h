@@ -1,3 +1,5 @@
+/* PSIPHON: This entire file. */
+
 extern int splitTunneling;
 extern AtomPtr splitTunnelingDnsServer;
 
@@ -28,3 +30,5 @@ void removeDups(NetworkList** list);
 int addressInNetwork( const void * va, const void * vb);
 int isLocalAddress(struct in_addr  addr);
 void testNetworkList();
+
+/* /PSIPHON: entire file */

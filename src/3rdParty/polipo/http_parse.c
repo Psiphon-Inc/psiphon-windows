@@ -260,7 +260,7 @@ getNextETag(const char * restrict buf, int i,
 
     x = i;
     while(buf[i] != '"') {
-        if(buf[i] == '\r' && buf[i] == '\n')
+        if(buf[i] == '\r' || buf[i] == '\n')
             return -1;
         i++;
     }
@@ -605,9 +605,11 @@ parseContentRange(const char *restrict buf, int i,
 
     i = skipWhitespace(buf, i);
     if(i < 0) return -1;
-    if(!token_compare(buf, i, i + 5, "bytes"))
-        return -1;
-    i += 5;
+    if(!token_compare(buf, i, i + 5, "bytes")) {
+        do_log(L_WARN, "Incorrect Content-Range header -- chugging along.\n");
+    } else {
+        i += 5;
+    }
     i = skipWhitespace(buf, i);
     if(buf[i] == '*') {
         from = 0;
@@ -676,6 +678,21 @@ parseRange(const char *restrict buf, int i,
     *from_return = from;
     *to_return = to;
     return i;
+}
+
+static void
+parseCacheControl(const char *restrict buf, 
+                  int token_start, int token_end,
+                  int v_start, int v_end, int *age_return)
+{
+    if(v_start <= 0 || !digit(buf[v_start])) {
+        do_log(L_WARN, "Couldn't parse Cache-Control: ");
+        do_log_n(L_WARN, buf + token_start,
+                 (v_end >= 0 ? v_end : token_end) -
+                 token_start);
+        do_log(L_WARN, "\n");
+    } else
+        *age_return = atoi(buf + v_start);
 }
 
 static int
@@ -896,8 +913,9 @@ httpParseHeaders(int client, AtomPtr url,
                 do_log(L_WARN, ".\n");
                 len = -1;
             } else {
+                errno = 0;
                 len = strtol(buf + value_start, &endptr, 10);
-                if(endptr <= buf + value_start) {
+                if(errno == ERANGE || endptr <= buf + value_start) {
                     do_log(L_WARN, "Couldn't parse Content-Length: \n");
                     do_log_n(L_WARN, buf + value_start, 
                              value_end - value_start);
@@ -973,8 +991,9 @@ httpParseHeaders(int client, AtomPtr url,
             if(j < 0) {
                 age = -1;
             } else {
+                errno = 0;
                 age = strtol(buf + value_start, &endptr, 10);
-                if(endptr <= buf + value_start)
+                if(errno == ERANGE || endptr <= buf + value_start)
                     age = -1;
             }
             if(age < 0) {
@@ -988,8 +1007,9 @@ httpParseHeaders(int client, AtomPtr url,
                 do_log(L_ERROR, "Couldn't parse body offset.\n");
                 goto fail;
             } else {
+                errno = 0;
                 polipo_body_offset = strtol(buf + value_start, &endptr, 10);
-                if(endptr <= buf + value_start) {
+                if(errno == ERANGE || endptr <= buf + value_start) {
                     do_log(L_ERROR, "Couldn't parse body offset.\n");
                     goto fail;
                 }
@@ -1080,57 +1100,19 @@ httpParseHeaders(int client, AtomPtr url,
                 } else if(token_compare(buf, token_start, token_end,
                                         "max-age") ||
                           token_compare(buf, token_start, token_end,
-                                        "maxage")) { /* losers */
-                    int a;
-                    if(v_start <= 0 || !digit(buf[v_start])) {
-                        do_log(L_WARN, "Couldn't parse Cache-Control: ");
-                        do_log_n(L_WARN, buf + token_start, 
-                                 (v_end >= 0 ? v_end : token_end) -
-                                 token_start);
-                        do_log(L_WARN, "\n");
-                    } else {
-                        a = atoi(buf + v_start);
-                        cache_control.max_age = a;
-                    }
-                } else if(token_compare(buf, token_start, token_end,
-                                        "s-maxage")) {
-                    int a;
-                    if(v_start <= 0 || !digit(buf[v_start])) {
-                        do_log(L_WARN, "Couldn't parse Cache-Control: ");
-                        do_log_n(L_WARN, buf + token_start, 
-                                 (v_end >= 0 ? v_end : token_end) -
-                                 token_start);
-                        do_log(L_WARN, "\n");
-                    } else {
-                        a = atoi(buf + v_start);
-                        cache_control.max_age = a;
-                    }
-                } else if(token_compare(buf, token_start, token_end,
+                                        "maxage") || /* losers */
+                          token_compare(buf, token_start, token_end,
+                                        "s-maxage") ||
+                          token_compare(buf, token_start, token_end,
                                         "min-fresh")) {
-                    int a;
-                    if(v_start <= 0 || !digit(buf[v_start])) {
-                        do_log(L_WARN, "Couldn't parse Cache-Control: ");
-                        do_log_n(L_WARN, buf + token_start, 
-                                 (v_end >= 0 ? v_end : token_end) -
-                                 token_start);
-                        do_log(L_WARN, "\n");
-                    } else {
-                        a = atoi(buf + v_start);
-                        cache_control.max_age = a;
-                    }
+                    parseCacheControl(buf, token_start, token_end,
+                                      v_start, v_end,
+                                      &cache_control.max_age);
                 } else if(token_compare(buf, token_start, token_end,
                                         "max-stale")) {
-                    int a;
-                    if(v_start <= 0 || !digit(buf[v_start])) {
-                        do_log(L_WARN, "Couldn't parse Cache-Control: ");
-                        do_log_n(L_WARN, buf + token_start, 
-                                 (v_end >= 0 ? v_end : token_end) -
-                                 token_start);
-                        do_log(L_WARN, "\n");
-                    } else {
-                        a = atoi(buf + v_start);
-                        cache_control.max_stale = a;
-                    }
+                    parseCacheControl(buf, token_start, token_end,
+                                      v_start, v_end,
+                                      &cache_control.max_stale);
                 } else {
                     do_log(L_WARN, "Unsupported Cache-Control directive ");
                     do_log_n(L_WARN, buf + token_start, 
