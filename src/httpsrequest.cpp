@@ -277,6 +277,14 @@ bool HTTPSRequest::MakeRequest(
         proxy = GetSystemDefaultHTTPSProxy();
     }
 
+    tstring reqType(requestPath);
+    size_t reqEnd = reqType.find(_T('?'));
+    if (reqEnd != string::npos)
+    {
+        reqType.resize(reqEnd);
+    }
+    my_print(NOT_SENSITIVE, true, _T("%s: %s; proxy: {use: %d, set: %d}"), __TFUNCTION__, reqType.c_str(), useLocalProxy, !!proxy.length());
+
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),

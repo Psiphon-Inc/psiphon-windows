@@ -203,6 +203,9 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
 {
     IWorkerThread* _this = (IWorkerThread*)object;
 
+    unsigned int tid = GetCurrentThreadId();
+    srand((unsigned)time(0) + tid);
+
     // See the comments in the WorkerThreadSynch code below for info about the
     // thread synchronization.
 

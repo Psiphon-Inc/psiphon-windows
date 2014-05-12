@@ -28,6 +28,8 @@
 #include "systemproxysettings.h"
 #include "config.h"
 #include "diagnostic_info.h"
+#include <stdlib.h>
+#include <time.h>
 
 
 #define DEFAULT_PLONK_SOCKS_PROXY_PORT  1080
@@ -601,7 +603,7 @@ void SSHTransportBase::TransportConnectHelper()
             newConnection.startTime = GetTickCount();
             newConnection.sessionInfo.Set(*nextServerEntry++);
 
-            if (InitiateConnection(newConnection.sessionInfo, newConnection.plonkConnection))
+            if (InitiateConnection(newConnection.firstServer, newConnection.sessionInfo, newConnection.plonkConnection))
             {
                 my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect STARTED, adding: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, newConnection.sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
 
@@ -642,6 +644,8 @@ void SSHTransportBase::TransportConnectHelper()
 
 
 bool SSHTransportBase::GetUserParentProxySettings(
+    bool firstServer,
+    const SessionInfo& sessionInfo,
     SystemProxySettings* systemProxySettings,
     tstring& o_UserSSHParentProxyType,
     tstring& o_UserSSHParentProxyHostname,
@@ -655,10 +659,31 @@ bool SSHTransportBase::GetUserParentProxySettings(
     o_UserSSHParentProxyPassword.clear();
     o_UserSSHParentProxyPort = 0;
 
-    
     //Check if user wants to use parent proxy
     if(UserSkipSSHParentProxySettings())
     {
+        vector<tstring> proxyIpAddresses;
+        
+        bool useProxy = !proxyIpAddresses.empty() && (rand() % 2 == 0);
+
+        if (useProxy && !firstServer)
+        {
+            o_UserSSHParentProxyType = _T("https");
+            o_UserSSHParentProxyUsername = _T("user");
+            o_UserSSHParentProxyPassword = _T("password");
+            o_UserSSHParentProxyPort = 3128;
+
+            random_shuffle(proxyIpAddresses.begin(), proxyIpAddresses.end());
+            o_UserSSHParentProxyHostname = proxyIpAddresses.at(0);
+
+            ostringstream ss;
+            string hostnameWithDashes = TStringToNarrow(o_UserSSHParentProxyHostname);
+            std::replace(hostnameWithDashes.begin(), hostnameWithDashes.end(), '.', '-');
+            ss << "{ipAddress: " << sessionInfo.GetServerAddress() << ", throughProxy: " << hostnameWithDashes << "}";
+            AddDiagnosticInfoYaml("ProxiedConnection", ss.str().c_str());
+            return true;
+        }
+
         return false;
     }
     //Registry values take precedence over system settings
@@ -686,6 +711,7 @@ bool SSHTransportBase::GetUserParentProxySettings(
 }
 
 void SSHTransportBase::GetSSHParams(
+    bool firstServer,
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
     SystemProxySettings* systemProxySettings,
@@ -725,6 +751,8 @@ void SSHTransportBase::GetSSHParams(
     int proxy_port;
 
     if(GetUserParentProxySettings(
+        firstServer,
+        sessionInfo,
         systemProxySettings, 
         proxy_type, 
         proxy_host, 
@@ -751,6 +779,7 @@ void SSHTransportBase::GetSSHParams(
 
 
 bool SSHTransportBase::InitiateConnection(
+    bool firstServer,
     const SessionInfo& sessionInfo,
     boost::shared_ptr<PlonkConnection>& o_plonkConnection)
 {
@@ -769,6 +798,7 @@ bool SSHTransportBase::InitiateConnection(
     int serverPort;
 
     GetSSHParams(
+        firstServer,
         sessionInfo,
         m_localSocksProxyPort, 
         m_systemProxySettings,
@@ -1277,6 +1307,7 @@ tstring SSHTransport::GetTransportDisplayName() const
 }
 
 void SSHTransport::GetSSHParams(
+    bool firstServer,
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
     SystemProxySettings* systemProxySettings,
@@ -1286,6 +1317,7 @@ void SSHTransport::GetSSHParams(
     tstring& o_plonkCommandLine)
 {
     SSHTransportBase::GetSSHParams(
+        firstServer,
         sessionInfo,
         localSocksProxyPort,
         systemProxySettings,
@@ -1362,6 +1394,7 @@ tstring OSSHTransport::GetTransportDisplayName() const
 }
 
 void OSSHTransport::GetSSHParams(
+    bool firstServer,
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
     SystemProxySettings* systemProxySettings,
@@ -1383,6 +1416,7 @@ void OSSHTransport::GetSSHParams(
     tstring o_plonk_options;
 
     SSHTransportBase::GetSSHParams(
+        firstServer,
         sessionInfo,
         localSocksProxyPort,
         systemProxySettings,

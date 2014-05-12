@@ -48,6 +48,8 @@ public:
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
     virtual bool GetUserParentProxySettings(
+        bool firstServer,
+        const SessionInfo& sessionInfo,
         SystemProxySettings* systemProxySettings,
         tstring& o_UserParentProxyType,
         tstring& o_UserParentProxyHostname,
@@ -65,6 +67,7 @@ protected:
     virtual bool DoPeriodicCheck();
 
     virtual void GetSSHParams(
+        bool firstServer,
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,
@@ -78,6 +81,7 @@ protected:
 
     void TransportConnectHelper();
     bool InitiateConnection(
+        bool firstServer,
         const SessionInfo& sessionInfo,
         boost::shared_ptr<PlonkConnection>& o_plonkConnection);
 
@@ -110,6 +114,7 @@ public:
 
 protected:
     virtual void GetSSHParams(
+        bool firstServer,
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,
@@ -142,6 +147,7 @@ public:
 
 protected:
     virtual void GetSSHParams(
+        bool firstServer,
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
         SystemProxySettings* systemProxySettings,

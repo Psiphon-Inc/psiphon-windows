@@ -63,7 +63,7 @@ protected:
     void StopImminent();
     void DoStop(bool cleanly);
 
-    void Cleanup();
+    void Cleanup(bool doStats);
 
     bool StartPolipo(int localHttpProxyPort);
     bool CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
