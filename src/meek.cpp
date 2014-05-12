@@ -9,10 +9,7 @@
 #define MEEK_EXE_NAME                     _T("psiphon3-meek.exe")
 
 
-Meek::Meek(const tstring& meekServerURL,
-		const tstring& frontHostname) :
-	 m_frontHostname(frontHostname),
-	 m_meekServerURL(meekServerURL),
+Meek::Meek() :
 	 m_meekPipe(NULL),
 	 m_meekLocalPort(0)
 {

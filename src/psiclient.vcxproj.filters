@@ -48,6 +48,7 @@
     <ClCompile Include="stopsignal.cpp" />
     <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="wininet_network_check.cpp" />
+    <ClCompile Include="meek.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -514,6 +515,7 @@
     <ClInclude Include="stopsignal.h" />
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="wininet_network_check.h" />
+    <ClInclude Include="meek.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

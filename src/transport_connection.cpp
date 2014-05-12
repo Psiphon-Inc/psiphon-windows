@@ -80,7 +80,7 @@ void TransportConnection::Connect(
 
 		//Start meek client and get its listening port
 
-		m_meekClient = new Meek(_T("https://meek.psiphon.ca"), _T("cdnjs.cloudflare.com"));
+		m_meekClient = new Meek();
 
 		if (!m_meekClient->Start(stopInfo, &m_workerThreadSynch))
         {
@@ -159,7 +159,8 @@ void TransportConnection::Connect(
 void TransportConnection::WaitForDisconnect()
 {
     HANDLE waitHandles[] = { m_transport->GetStoppedEvent(), 
-                             m_localProxy->GetStoppedEvent() };
+                             m_localProxy->GetStoppedEvent(),
+                             m_meekClient->GetStoppedEvent()};
     size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
 
     DWORD result = WaitForMultipleObjects(
@@ -172,6 +173,7 @@ void TransportConnection::WaitForDisconnect()
     // Make sure they both are.
     m_localProxy->Stop();
     m_transport->Stop();
+    m_meekClient->Stop();
 
     Cleanup();
 

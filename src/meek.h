@@ -24,8 +24,7 @@
 class Meek : public IWorkerThread
 {
 public:
-	Meek(const tstring& meekServerURL,
-		const tstring& frontHostname);
+	Meek();
 	virtual ~Meek(void);
 	bool WaitForCmethodLine();
 	int GetListenPort();
