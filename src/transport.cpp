@@ -26,6 +26,7 @@
 #include "embeddedvalues.h"
 #include "config.h"
 #include "transport_registry.h"
+#include "systemproxysettings.h"
 
 
 /******************************************************************************
@@ -108,6 +109,11 @@ void ITransport::StopImminent()
 
 void ITransport::DoStop(bool cleanly)
 {
+    if (!cleanly) 
+    {
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
+    }
+
     Cleanup();
 
     // We'll use the non-null-ness of one of these members as a sign that we
@@ -123,9 +129,10 @@ void ITransport::DoStop(bool cleanly)
 }
 
 
-bool ITransport::IsConnected() const
+bool ITransport::IsConnected(bool alsoCheckProxy/*=false*/) const
 {
-    return IsRunning();
+    return IsRunning() && 
+           (!alsoCheckProxy || (m_systemProxySettings && m_systemProxySettings->IsApplied()));
 }
 
 
