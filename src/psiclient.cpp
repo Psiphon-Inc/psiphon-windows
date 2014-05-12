@@ -623,7 +623,7 @@ void EnableSplitTunnelForSelectedTransport()
 {
     // Split tunnel isn't implemented for VPN
 
-    if (_T("VPN") == GetSelectedTransport())
+    if (true)//(_T("VPN") == GetSelectedTransport())
     {
         ShowWindow(g_hSplitTunnelCheckBox, FALSE);
         SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
