@@ -32,22 +32,62 @@ THE SOFTWARE.
  * symbol. For Unix or Unix-like systems, leave it undefined.
  */
 
-#ifdef MINGW
+#ifdef WIN32 /*MINGW*/
 
 /* Unfortunately, there's no hiding it. */
 #define HAVE_WINSOCK 1
+
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
+
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
+
+#ifndef _WIN32_WINDOWS
+#define _WIN32_WINDOWS 0x0410
+#endif
+
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0700
+#endif
 
 /* At time of writing, a fair bit of stuff doesn't work under Mingw.
  * Hopefully they will be fixed later (especially the disk-cache).
  */
 #define NO_IPv6 1
 
-#include <io.h>
-
 #define S_IROTH S_IREAD
 
-/* Pull in winsock.h for (almost) berkeley sockets. */
-#include <winsock.h>
+/* Pull in winsock2.h for (almost) berkeley sockets. */
+#include <winsock2.h>
+
+// here we smash the errno defines so we can smash the socket functions later to smash errno. yay!
+#ifdef ENOTCONN
+  #undef ENOTCONN
+#endif
+#ifdef EWOULDBLOCK
+  #undef EWOULDBLOCK
+#endif
+#ifdef ENOBUFS
+  #undef ENOBUFS
+#endif
+#ifdef ECONNRESET
+  #undef ECONNRESET
+#endif
+#ifdef EAFNOSUPPORT
+  #undef EAFNOSUPPORT
+#endif
+#ifdef EPROTONOSUPPORT
+  #undef EPROTONOSUPPORT
+#endif
+#ifdef EINPROGRESS
+  #undef EINPROGRESS
+#endif
+#ifdef EISCONN
+  #undef EISCONN
+#endif
 #define ENOTCONN        WSAENOTCONN
 #define EWOULDBLOCK     WSAEWOULDBLOCK
 #define ENOBUFS         WSAENOBUFS
@@ -57,6 +97,11 @@ THE SOFTWARE.
 #define EPROTONOSUPPORT WSAEPROTONOSUPPORT
 #define EINPROGRESS     WSAEINPROGRESS
 #define EISCONN         WSAEISCONN
+
+
+#include <direct.h>
+#include <io.h>
+#include <process.h>
 
 /* winsock doesn't feature poll(), so there is a version implemented
  * in terms of select() in mingw.c. The following definitions
@@ -74,7 +119,7 @@ struct pollfd {
     short events;     /* requested events */
     short revents;    /* returned events */
 };
-#define poll(x, y, z)        mingw_poll(x, y, z)
+#define poll(x, y, z)        win32_poll(x, y, z)
 
 /* These wrappers do nothing special except set the global errno variable if
  * an error occurs (winsock doesn't do this by default). They set errno
@@ -82,45 +127,57 @@ struct pollfd {
  * outside of this file "shouldn't" have to worry about winsock specific error
  * handling.
  */
-#define socket(x, y, z)      mingw_socket(x, y, z)
-#define connect(x, y, z)     mingw_connect(x, y, z)
-#define accept(x, y, z)      mingw_accept(x, y, z)
-#define shutdown(x, y)       mingw_shutdown(x, y)
-#define getpeername(x, y, z) mingw_getpeername(x, y, z)
+#define socket(x, y, z)      win32_socket(x, y, z)
+#define connect(x, y, z)     win32_connect(x, y, z)
+#define accept(x, y, z)      win32_accept(x, y, z)
+#define shutdown(x, y)       win32_shutdown(x, y)
+#define getpeername(x, y, z) win32_getpeername(x, y, z)
 
 /* Wrapper macros to call misc. functions mingw is missing */
-#define sleep(x)             mingw_sleep(x)
-#define inet_aton(x, y)      mingw_inet_aton(x, y)
-#define gettimeofday(x, y)   mingw_gettimeofday(x, y)
-#define stat(x, y)           mingw_stat(x, y)
+#define sleep(x)             win32_sleep(x)
+#define inet_aton(x, y)      win32_inet_aton(x, y)
+#define gettimeofday(x, y)   win32_gettimeofday(x, y)
+#define stat(x, y)           win32_stat(x, y)
+#define snprintf             win32_snprintf
 
 #define mkdir(x, y) mkdir(x)
+#define getcwd _getcwd
+#define getpid _getpid
+#ifndef S_ISDIR
+#define S_ISDIR(mode)  (((mode) & S_IFMT) == S_IFDIR)
+#endif
+#ifndef S_ISREG
+#define S_ISREG(mode)  (((mode) & S_IFMT) == S_IFREG)
+#endif
 
 /* Winsock uses int instead of the usual socklen_t */
 typedef int socklen_t;
 
+typedef int pid_t;
+
 /* Function prototypes for functions in mingw.c */
-unsigned int mingw_sleep(unsigned int);
-int     mingw_inet_aton(const char *, struct in_addr *);
-int     mingw_gettimeofday(struct timeval *, char *);
-int     mingw_poll(struct pollfd *, unsigned int, int);
-SOCKET  mingw_socket(int, int, int);
-int     mingw_connect(SOCKET, struct sockaddr*, socklen_t);
-SOCKET  mingw_accept(SOCKET, struct sockaddr*, socklen_t *);
-int     mingw_shutdown(SOCKET, int);
-int     mingw_getpeername(SOCKET, struct sockaddr*, socklen_t *);
+unsigned int win32_sleep(unsigned int);
+int     win32_inet_aton(const char *, struct in_addr *);
+int     win32_gettimeofday(struct timeval *, char *);
+int     win32_poll(struct pollfd *, unsigned int, int);
+SOCKET  win32_socket(int, int, int);
+int     win32_connect(SOCKET, struct sockaddr*, socklen_t);
+SOCKET  win32_accept(SOCKET, struct sockaddr*, socklen_t *);
+int     win32_shutdown(SOCKET, int);
+int     win32_getpeername(SOCKET, struct sockaddr*, socklen_t *);
+int     win32_snprintf(char* dest, size_t count, const char* format, ...);
 
 /* Three socket specific macros */
-#define READ(x, y, z)  mingw_read_socket(x, y, z)
-#define WRITE(x, y, z) mingw_write_socket(x, y, z)
-#define CLOSE(x)       mingw_close_socket(x)
+#define READ(x, y, z)  win32_read_socket(x, y, z)
+#define WRITE(x, y, z) win32_write_socket(x, y, z)
+#define CLOSE(x)       win32_close_socket(x)
 
-int mingw_read_socket(SOCKET, void *, int);
-int mingw_write_socket(SOCKET, void *, int);
-int mingw_close_socket(SOCKET);
+int win32_read_socket(SOCKET, void *, int);
+int win32_write_socket(SOCKET, void *, int);
+int win32_close_socket(SOCKET);
 
-int mingw_setnonblocking(SOCKET, int);
-int mingw_stat(const char*, struct stat*);
+int win32_setnonblocking(SOCKET, int);
+int win32_stat(const char*, struct stat*);
 #endif
 
 #ifndef HAVE_READV_WRITEV

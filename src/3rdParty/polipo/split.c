@@ -1,3 +1,5 @@
+/* PSIPHON: This entire file. */
+
 #include "polipo.h"
 
 AtomPtr splitTunnelingDnsServer = NULL;
@@ -12,19 +14,19 @@ static void destroyNetworkList(void);
 static int splitFileObserver(TimeEventHandlerPtr event);
 int fileExists(AtomPtr filename);
 
-void 
+void
 preinitSplitTunneling(void)
 {
     CONFIG_VARIABLE(splitTunnelingDnsServer, CONFIG_ATOM_LOWER,
             "The name server to use with split tunneling over SOCKS.");
-    CONFIG_VARIABLE(splitTunnelingFile, CONFIG_ATOM, 
+    CONFIG_VARIABLE(splitTunnelingFile, CONFIG_ATOM,
             "Local networks file for split tunneling");
-    CONFIG_VARIABLE(psiphonServer, CONFIG_ATOM_LOWER, 
+    CONFIG_VARIABLE(psiphonServer, CONFIG_ATOM_LOWER,
             "Local networks file for split tunneling");
     return;
 }
 
-void 
+void
 initSplitTunneling(void)
 {
     int rc;
@@ -81,7 +83,7 @@ splitFileObserver(TimeEventHandlerPtr event)
         int rc = parseSplitFile(splitTunnelingFile);
         if(rc < 0)
         {
-            exit(1); 
+            exit(1);
         }
         splitTunneling = 1;
     }
@@ -121,7 +123,7 @@ parseSplitFile(AtomPtr filename)
         cn = cm = NULL;
 
         cn = strtok(buf, " \t");
-        cm = strtok(NULL, " \t"); 
+        cm = strtok(NULL, " \t");
 
         if(!cn || !cm)
             continue;
@@ -168,7 +170,7 @@ parseSplitFile(AtomPtr filename)
     //Sort the array
     qsort(localNetworks->networks, localNetworks->used, sizeof(NetworkPtr), cmpNetworks);
 
-    //remove duplicate networks from 
+    //remove duplicate networks from
     //the array
     removeDups(&localNetworks);
     //set flag for DNS over TCP
@@ -178,22 +180,22 @@ parseSplitFile(AtomPtr filename)
 
 int cmpNetworks(const void *a, const void *b)
 {
-    unsigned long numa, numb; 
+    unsigned long numa, numb;
 
     NetworkPtr ia = *(NetworkPtr *) a;
     NetworkPtr ib = *(NetworkPtr *) b;
 
     numa = ntohl(ia->network.s_addr);
     numb = ntohl(ib->network.s_addr);
-    
-    if(numa == numb) 
+
+    if(numa == numb)
         return 0;
-    if(numa > numb) 
+    if(numa > numb)
         return 1;
     return -1;
 }
 
-NetworkList* 
+NetworkList*
 makeNetworkList(int size)
 {
     NetworkList *list;
@@ -215,7 +217,7 @@ makeNetworkList(int size)
     return list;
 }
 
-void 
+void
 networkListCons(NetworkPtr network, NetworkList *list)
 {
     if(list->networks == NULL) {
@@ -241,7 +243,7 @@ networkListCons(NetworkPtr network, NetworkList *list)
     list->used++;
 }
 
-void 
+void
 removeDups(NetworkList** listPtr)
 {
     NetworkList* list = *listPtr;
@@ -254,11 +256,11 @@ removeDups(NetworkList** listPtr)
         return;
     int k = 0;
     int i;
-    for (i = 1; i < list->used; i++) 
+    for (i = 1; i < list->used; i++)
     {
-        if (memcmp(&(list->networks[k]->network), &(list->networks[i]->network), 
+        if (memcmp(&(list->networks[k]->network), &(list->networks[i]->network),
                     sizeof(struct in_addr)))
-        {              
+        {
             k++;
             if(k != i)
             {
@@ -288,8 +290,8 @@ isLocalAddress(struct in_addr addr)
     {
         return 0;
     }
-    NetworkPtr *pNetwork = bsearch(&addr, localNetworks->networks, localNetworks->used, 
-            sizeof(NetworkPtr), addressInNetwork); 
+    NetworkPtr *pNetwork = bsearch(&addr, localNetworks->networks, localNetworks->used,
+            sizeof(NetworkPtr), addressInNetwork);
     return pNetwork != NULL;
 }
 
@@ -302,9 +304,9 @@ addressInNetwork( const void * va, const void * vb)
     struct in_addr network = b->network;
     struct in_addr netmask = b->netmask;
 
-    if(ntohl(addr.s_addr) <  ntohl(network.s_addr)) 
+    if(ntohl(addr.s_addr) <  ntohl(network.s_addr))
         return -1;
-    if((network.s_addr & netmask.s_addr) == (addr.s_addr & netmask.s_addr)) 
+    if((network.s_addr & netmask.s_addr) == (addr.s_addr & netmask.s_addr))
         return 0;
     return 1;
 }
@@ -321,7 +323,7 @@ fileExists(AtomPtr filename)
     return 0;
 }
 
-static void 
+static void
 destroyNetworkList(void)
 {
     int i;
@@ -335,3 +337,5 @@ destroyNetworkList(void)
         localNetworks = NULL;
     }
 }
+
+/* /PSIPHON: entire file */

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003-2006 by Juliusz Chroboczek
+Copyright (c) 2003-2010 by Juliusz Chroboczek
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ THE SOFTWARE.
 #ifndef NO_FORBIDDEN
 
 #include <regex.h>
+#include <assert.h>
 
 typedef struct _Domain {
     int length;
@@ -44,6 +45,11 @@ regex_t *forbiddenRegex = NULL;
 AtomPtr uncachableFile = NULL;
 DomainPtr *uncachableDomains = NULL;
 regex_t *uncachableRegex = NULL;
+
+AtomPtr forbiddenTunnelsFile = NULL;
+DomainPtr *forbiddenTunnelsDomains = NULL;
+regex_t *forbiddenTunnelsRegex = NULL;
+
 
 /* these three are only used internally by {parse,read}DomainFile */
 /* to avoid having to pass it all as parameters */
@@ -82,6 +88,9 @@ preinitForbidden(void)
 #endif
     CONFIG_VARIABLE_SETTABLE(uncachableFile, CONFIG_ATOM, atomSetterForbidden,
                              "File specifying uncachable URLs.");
+
+    CONFIG_VARIABLE_SETTABLE(forbiddenTunnelsFile, CONFIG_ATOM, atomSetterForbidden,
+                             "File specifying forbidden tunnels.");
 }
 
 static int
@@ -270,7 +279,9 @@ parseDomainFile(AtomPtr file,
         regex = malloc(sizeof(regex_t));
         rc = regcomp(regex, regexbuf, REG_EXTENDED | REG_NOSUB);
         if(rc != 0) {
-            do_log(L_ERROR, "Couldn't compile regex: %d.\n", rc);
+            char errbuf[100];
+            regerror(rc, regex, errbuf, 100);
+            do_log(L_ERROR, "Couldn't compile regex: %s.\n", errbuf);
             free(regex);
             regex = NULL;
         }
@@ -331,16 +342,63 @@ initForbidden(void)
 
     parseDomainFile(uncachableFile, &uncachableDomains, &uncachableRegex);
 
+    if(forbiddenTunnelsFile)
+        forbiddenTunnelsFile = expandTilde(forbiddenTunnelsFile);
+    
+    if(forbiddenTunnelsFile == NULL) {
+        forbiddenTunnelsFile = expandTilde(internAtom("~/.polipo-forbiddenTunnels"));
+        if(forbiddenTunnelsFile) {
+            if(access(forbiddenTunnelsFile->string, F_OK) < 0) {
+                releaseAtom(forbiddenTunnelsFile);
+                forbiddenTunnelsFile = NULL;
+            }
+        }
+    }
+    
+    if(forbiddenTunnelsFile == NULL) {
+        if(access("/etc/polipo/forbiddenTunnels", F_OK) >= 0)
+            forbiddenTunnelsFile = internAtom("/etc/polipo/forbiddenTunnels");
+    }
+    
+    parseDomainFile(forbiddenTunnelsFile, &forbiddenTunnelsDomains, &forbiddenTunnelsRegex);
+    //
+    
     return;
+}
+
+int
+tunnelIsMatched(char *url, int lurl, char *hostname, int lhost)
+{
+    DomainPtr *domain, *domains;
+    
+    domains=forbiddenTunnelsDomains;
+    if (domains) {
+	domain = domains;
+	while(*domain) {
+	    if (lhost == (*domain)->length && 
+		memcmp(hostname, (*domain)->domain, lhost)==0)
+		return 1;
+	    domain++;
+	}
+    }
+
+    if(forbiddenTunnelsRegex) {
+	if(!regexec(forbiddenTunnelsRegex, url, 0, NULL, 0))
+	    return 1;
+    }
+    return 0;
 }
 
 int
 urlIsMatched(char *url, int length, DomainPtr *domains, regex_t *regex)
 {
+    /* This requires url to be NUL-terminated. */
+    assert(url[length] == '\0');
+
     if(length < 8)
         return 0;
 
-    if(memcmp(url, "http://", 7) != 0)
+    if(lwrcmp(url, "http://", 7) != 0)
         return 0;
 
     if(domains) {
@@ -363,29 +421,9 @@ urlIsMatched(char *url, int length, DomainPtr *domains, regex_t *regex)
         }
     }
 
-    if(regex) {
-        /* url is not necessarily 0-terminated */
-        char smallcopy[50];
-        char *urlcopy;
-        int rc;
+    if(regex)
+        return !regexec(regex, url, 0, NULL, 0);
 
-        if(length < 50) {
-            urlcopy = smallcopy;
-        } else {
-            urlcopy = malloc(length + 1);
-            if(urlcopy == NULL)
-                return 0;
-        }
-        memcpy(urlcopy, url, length);
-        urlcopy[length] = '\0';
-
-        rc = regexec(regex, urlcopy, 0, NULL, 0);
-
-        if(urlcopy != smallcopy)
-            free(urlcopy);
-
-        return !rc;
-    }
     return 0;
 }
 
@@ -771,6 +809,12 @@ void
 initForbidden()
 {
     return;
+}
+
+int
+tunnelIsMatched(char *url, int lurl, char *hostname, int lhost)
+{
+    return 0;
 }
 
 int

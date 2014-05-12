@@ -32,12 +32,11 @@ THE SOFTWARE.
 #define CHUNK_SIZE (4 * 1024)
 #endif
 #else
-#warn "ULONG_MAX not defined -- using 4kB chunks"
 #define CHUNK_SIZE (4 * 1024)
 #endif
 #endif
 
-#define CHUNKS(bytes) ((bytes) / CHUNK_SIZE)
+#define CHUNKS(bytes) ((unsigned long)(bytes) / CHUNK_SIZE)
 
 extern int chunkLowMark, chunkHighMark, chunkCriticalMark;
 extern int used_chunks;

@@ -41,7 +41,7 @@ preinitChunks()
 static void
 initChunksCommon()
 {
-#define ROUND_CHUNKS(a) a = (((a) + CHUNK_SIZE - 1) / CHUNK_SIZE) * CHUNK_SIZE;
+#define ROUND_CHUNKS(a) a = (((unsigned long)(a) + CHUNK_SIZE - 1) / CHUNK_SIZE) * CHUNK_SIZE;
     int q;
 
     if(CHUNK_SIZE != 1 << log2_ceil(CHUNK_SIZE)) {
@@ -184,7 +184,7 @@ totalChunkArenaSize()
 }
 #else
 
-#ifdef MINGW
+#ifdef WIN32 /*MINGW*/
 #define MAP_FAILED NULL
 #define getpagesize() (64 * 1024)
 static void *
@@ -224,46 +224,63 @@ free_arena(void *addr, size_t size)
    which gives very fast dispose/get sequences. */
 
 #define DEFINE_FFS(type, ffs_name) \
-int \
-ffs_name(type i) \
-{ \
-    int n; \
-    if(i == 0) return 0; \
-    n = 1; \
-    while((i & 1) == 0) { \
-        i >>= 1; \
-        n++; \
-    } \
-    return n; \
+int                           \
+ffs_name(type i)              \
+{                             \
+    int n;                    \
+    if(i == 0) return 0;      \
+    n = 1;                    \
+    while((i & 1) == 0) {     \
+        i >>= 1;              \
+        n++;                  \
+    }                         \
+    return n;                 \
 }
 
-#ifndef LONG_LONG_ARENA_BITMAPS
-#ifndef LONG_ARENA_BITMAPS
+#if defined(DEFAULT_ARENA_BITMAPS) + defined(LONG_ARENA_BITMAPS) + defined(LONG_LONG_ARENA_BITMAPS) > 1
+#error "Multiple sizes of arenas defined"
+#endif
+
+#if defined(DEFAULT_ARENA_BITMAPS) + defined(LONG_ARENA_BITMAPS) + defined(LONG_LONG_ARENA_BITMAPS) == 0
+#ifdef HAVE_FFSL
+/* This gives us 32-bit arena bitmaps on LP32, and 64-bit ones on LP64 */
+#define LONG_ARENA_BITMAPS
+#else
+#define DEFAULT_ARENA_BITMAPS
+#endif
+#endif
+
+#if defined(DEFAULT_ARENA_BITMAPS)
+
 #ifndef HAVE_FFS
 DEFINE_FFS(int, ffs)
 #endif
 typedef unsigned int ChunkBitmap;
 #define BITMAP_FFS(bitmap) (ffs(bitmap))
 
-#else
+#elif defined(LONG_ARENA_BITMAPS)
 
 #ifndef HAVE_FFSL
 DEFINE_FFS(long, ffsl)
 #endif
 typedef unsigned long ChunkBitmap;
 #define BITMAP_FFS(bitmap) (ffsl(bitmap))
-#endif
 
-#else
+#elif defined(LONG_LONG_ARENA_BITMAPS)
 
 #ifndef HAVE_FFSLL
 DEFINE_FFS(long long, ffsll)
 #endif
 typedef unsigned long long ChunkBitmap;
 #define BITMAP_FFS(bitmap) (ffsll(bitmap))
+
+#else
+
+#error "You lose"
+
 #endif
 
-#define ARENA_CHUNKS ((int)sizeof(ChunkBitmap) * 8)
+#define ARENA_CHUNKS ((unsigned)sizeof(ChunkBitmap) * 8)
 #define EMPTY_BITMAP (~(ChunkBitmap)0)
 #define BITMAP_BIT(i) (((ChunkBitmap)1) << (i))
 
@@ -275,13 +292,14 @@ typedef struct _ChunkArena {
 
 static ChunkArenaPtr chunkArenas, currentArena;
 static int numArenas;
-#define CHUNK_IN_ARENA(chunk, arena) \
-  ((arena)->chunks && \
-   (char*)(chunk) >= (arena)->chunks && \
-   (char*)(chunk) < (arena)->chunks + (ARENA_CHUNKS * CHUNK_SIZE))
+#define CHUNK_IN_ARENA(chunk, arena)                                    \
+    ((arena)->chunks &&                                                 \
+     (char*)(chunk) >= (arena)->chunks &&                               \
+     (char*)(chunk) < (arena)->chunks + (ARENA_CHUNKS * CHUNK_SIZE))
 
-#define CHUNK_ARENA_INDEX(chunk, arena) \
-  (((char*)(chunk) - (arena)->chunks) / CHUNK_SIZE)
+#define CHUNK_ARENA_INDEX(chunk, arena)                                 \
+    ((unsigned)((unsigned long)(((char*)(chunk) - (arena)->chunks)) /   \
+                CHUNK_SIZE))
 
 void
 initChunks(void)
@@ -302,7 +320,7 @@ initChunks(void)
     chunkArenas = malloc(numArenas * sizeof(ChunkArenaRec));
     if(chunkArenas == NULL) {
         do_log(L_ERROR, "Couldn't allocate chunk arenas.\n");
-        polipoExit();
+        exit (1);
     }
     for(i = 0; i < numArenas; i++) {
         chunkArenas[i].bitmap = EMPTY_BITMAP;
@@ -343,7 +361,7 @@ findArena()
 void *
 get_chunk()
 {
-    int i;
+    unsigned i;
     ChunkArenaPtr arena = NULL;
 
     if(currentArena && currentArena->bitmap != 0) {
@@ -369,7 +387,7 @@ get_chunk()
 void *
 maybe_get_chunk()
 {
-    int i;
+    unsigned i;
     ChunkArenaPtr arena = NULL;
 
     if(currentArena && currentArena->bitmap != 0) {
@@ -383,7 +401,7 @@ maybe_get_chunk()
             return NULL;
         currentArena = arena;
     }
-    i = ffs(arena->bitmap) - 1;
+    i = BITMAP_FFS(arena->bitmap) - 1;
     arena->bitmap &= ~BITMAP_BIT(i);
     used_chunks++;
     return arena->chunks + CHUNK_SIZE * i;
@@ -393,7 +411,7 @@ void
 dispose_chunk(void *chunk)
 {
     ChunkArenaPtr arena = NULL;
-    int i;
+    unsigned i;
 
     assert(chunk != NULL);
 
