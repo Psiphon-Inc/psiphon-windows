@@ -149,9 +149,6 @@ void TransportConnection::WaitForDisconnect()
                     INFINITE);
 
     // One of the transport or the local proxy has stopped. 
-    // Make sure they both are.
-    m_localProxy->Stop();
-    m_transport->Stop();
 
     Cleanup();
 
@@ -170,12 +167,16 @@ void TransportConnection::Cleanup()
     // our own -- like final /status requests).
     m_systemProxySettings.Revert();
 
+    if (m_localProxy) 
+    {
+        m_localProxy->Stop();
+        delete m_localProxy;
+    }
+    m_localProxy = 0;
+
     if (m_transport)
     {
         m_transport->Stop();
         m_transport->Cleanup();
     }
-
-    if (m_localProxy) delete m_localProxy;
-    m_localProxy = 0;
 }

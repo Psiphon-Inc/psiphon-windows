@@ -209,7 +209,7 @@ httpClientFinish(HTTPConnectionPtr connection, int s)
         assert(connection->fd > 0);
         connection->serviced++;
         httpSetTimeout(connection, clientTimeout);
-        if(!connection->flags & CONN_READER) {
+        if(!(connection->flags & CONN_READER)) {
             if(connection->reqlen == 0)
                 httpConnectionDestroyReqbuf(connection);
             else if((connection->flags & CONN_BIGREQBUF) &&
@@ -361,7 +361,7 @@ httpClientHandler(int status,
     HTTPConnectionPtr connection = request->data;
     int i, body;
     int bufsize = 
-        (connection->flags & CONN_BIGREQBUF) ? connection->reqlen : CHUNK_SIZE;
+        (connection->flags & CONN_BIGREQBUF) ? bigBufferSize : CHUNK_SIZE;
 
     assert(connection->flags & CONN_READER);
 
@@ -390,21 +390,6 @@ httpClientHandler(int status,
     if(i >= 0) {
         connection->reqbegin = i;
         httpClientHandlerHeaders(event, request, connection);
-        return 1;
-    }
-
-    if(status) {
-        if(connection->reqlen > 0) {
-            if(connection->serviced <= 0)
-                do_log(L_ERROR, "Client dropped connection.\n");
-            else
-                do_log(D_CLIENT_CONN, "Client dropped idle connection.\n");
-        }
-        connection->flags &= ~CONN_READER;
-        if(!connection->request)
-            httpClientFinish(connection, 2);
-        else
-            pokeFdEvent(connection->fd, -EDOGRACEFUL, POLLOUT);
         return 1;
     }
 
@@ -998,8 +983,7 @@ httpClientDiscardBody(HTTPConnectionPtr connection)
         return 1;
     }
 
-    if(connection->reqlen > connection->reqbegin &&
-       (connection->reqlen - connection->reqbegin) > 0) {
+    if(connection->reqlen > connection->reqbegin) {
         memmove(connection->reqbuf, connection->reqbuf + connection->reqbegin,
                 connection->reqlen - connection->reqbegin);
         connection->reqlen -= connection->reqbegin;
@@ -1073,7 +1057,7 @@ httpClientDiscardHandler(int status,
 
     assert(connection->flags & CONN_READER);
     if(status) {
-        if(status < 0 && status != -EPIPE)
+        if(status < 0 && status != -EPIPE && status != -ECONNRESET)
             do_log_error(L_ERROR, -status, "Couldn't read from client");
         connection->bodylen = -1;
         return httpClientDiscardBody(connection);
@@ -1149,6 +1133,13 @@ httpClientNoticeRequest(HTTPRequestPtr request, int novalidate)
     objectFillFromDisk(object, request->from,
                        request->method == METHOD_HEAD ? 0 : 1);
 
+    /* The spec doesn't strictly forbid 206 for non-200 instances, but doing
+       that breaks some client software. */
+    if(object->code && object->code != 200) {
+        request->from = 0;
+        request->to = -1;
+    }
+
     if(request->condition && request->condition->ifrange) {
         if(!object->etag || 
            strcmp(object->etag, request->condition->ifrange) != 0) {
@@ -1162,9 +1153,7 @@ httpClientNoticeRequest(HTTPRequestPtr request, int novalidate)
         request->to = -1;
     }
 
-    if(request->method == METHOD_HEAD ||
-       request->object->code == 204 ||
-       request->object->code < 200)
+    if(request->method == METHOD_HEAD)
         haveData = !(request->object->flags & OBJECT_INITIAL);
     else
         haveData = 
@@ -1257,7 +1246,8 @@ httpClientNoticeRequest(HTTPRequestPtr request, int novalidate)
     conditional =
         conditional && !(request->object->cache_control & CACHE_MISMATCH);
 
-    request->object->flags |= OBJECT_VALIDATING;
+    if(!(request->object->flags & OBJECT_INPROGRESS))
+        request->object->flags |= OBJECT_VALIDATING;
     rc = request->object->request(request->object,
                                   conditional ? METHOD_CONDITIONAL_GET : 
                                   request->method,
@@ -1365,21 +1355,26 @@ httpClientGetHandler(int status, ConditionHandlerPtr chandler)
     }
 
     if(request->flags & REQUEST_WAIT_CONTINUE) {
-        request->flags &= ~REQUEST_WAIT_CONTINUE;
-        if(object->code == 100 && request->request &&
-           !(request->request->flags & REQUEST_WAIT_CONTINUE))
+        if(request->request && 
+           !(request->request->flags & REQUEST_WAIT_CONTINUE)) {
+            request->flags &= ~REQUEST_WAIT_CONTINUE;
             delayedHttpClientContinue(connection);
+        }
         return 0;
     }
 
     /* See httpServerHandlerHeaders */
     if((object->flags & OBJECT_SUPERSEDED) &&
+       /* Avoid superseding loops. */
+       !(request->flags & REQUEST_SUPERSEDED) &&
        request->request && request->request->can_mutate) {
         ObjectPtr new_object = retainObject(request->request->can_mutate);
         if(object->requestor == request) {
             if(new_object->requestor == NULL)
                 new_object->requestor = request;
             object->requestor = NULL;
+            /* Avoid superseding the same request more than once. */
+            request->flags |= REQUEST_SUPERSEDED;
         }
         request->chandler = NULL;
         releaseObject(object);
@@ -1684,7 +1679,7 @@ httpServeObject(HTTPConnectionPtr connection)
     }
 
     if(object->length >= 0 && request->to >= object->length)
-        request->to = -1;
+        request->to = object->length;
 
     if(request->from > 0 || request->to >= 0) {
         if(request->method == METHOD_HEAD) {
@@ -1705,7 +1700,8 @@ httpServeObject(HTTPConnectionPtr connection)
                       "HTTP/1.1 %d %s",
                       object->code, atomString(object->message));
     } else {
-        if(request->from > request->to) {
+        if((object->length >= 0 && request->from >= object->length) ||
+           (request->to >= 0 && request->from >= request->to)) {
             unlockChunk(object, i);
             return httpClientRawError(connection, 416,
                                       internAtom("Requested range "
@@ -1882,8 +1878,11 @@ httpServeChunk(HTTPConnectionPtr connection)
     int to, len, len2, end;
     int rc;
 
+    /* This must be called with chunk i locked. */
+    assert(object->chunks[i].locked > 0);
+
     if(object->flags & OBJECT_ABORTED)
-        goto fail_no_unlock;
+        goto fail;
 
     if(object->length >= 0 && request->to >= 0)
         to = MIN(request->to, object->length);
@@ -1894,7 +1893,6 @@ httpServeChunk(HTTPConnectionPtr connection)
     else
         to = -1;
 
-    lockChunk(object, i);
     len = 0;
     if(i < object->numchunks)
         len = object->chunks[i].size - j;
@@ -2019,7 +2017,6 @@ httpServeChunk(HTTPConnectionPtr connection)
 
  fail:
     unlockChunk(object, i);
- fail_no_unlock:
     if(request->chandler)
         unregisterConditionHandler(request->chandler);
     request->chandler = NULL;
@@ -2051,8 +2048,6 @@ httpServeObjectHandler(int status, ConditionHandlerPtr chandler)
     HTTPConnectionPtr connection = *(HTTPConnectionPtr*)chandler->data;
     HTTPRequestPtr request = connection->request;
     int rc;
-
-    unlockChunk(request->object, connection->offset / CHUNK_SIZE);
 
     if((request->object->flags & OBJECT_ABORTED) || status < 0) {
         shutdown(connection->fd, 1);
@@ -2123,9 +2118,7 @@ httpServeObjectStreamHandlerCommon(int kind, int status,
         return 1;
     }
 
-    if(request->method == METHOD_HEAD ||
-       request->object->code == 204 ||
-       request->object->code < 200 ||
+    if(connection->request->method == METHOD_HEAD ||
        condition_result == CONDITION_NOT_MODIFIED) {
         httpClientFinish(connection, 0);
         return 1;
@@ -2135,6 +2128,8 @@ httpServeObjectStreamHandlerCommon(int kind, int status,
         httpClientFinish(connection, 0);
     else {
         httpConnectionDestroyBuf(connection);
+        lockChunk(connection->request->object,
+                  connection->offset / CHUNK_SIZE);
         httpServeChunk(connection);
     }
     return 1;

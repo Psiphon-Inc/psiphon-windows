@@ -107,7 +107,7 @@ bool ServerRequest::MakeRequest(
 
     response.clear();
 
-    bool transportConnected = currentTransport && currentTransport->IsConnected();
+    bool transportConnected = currentTransport && currentTransport->IsConnected(true);
 
     if (transportConnected)
     {

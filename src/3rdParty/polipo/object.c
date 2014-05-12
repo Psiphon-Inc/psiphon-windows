@@ -197,12 +197,15 @@ makeObject(int type, const void *key, int key_size, int public, int fromdisk,
     object->type = type;
     object->request = request;
     object->request_closure = request_closure;
-    object->key = malloc(key_size);
+    object->key = malloc(key_size + 1);
     if(object->key == NULL) {
         free(object);
         return NULL;
     }
     memcpy(object->key, key, key_size);
+    /* In order to make it more convenient to use keys as strings,
+       they are NUL-terminated. */
+    object->key[key_size] = '\0';
     object->key_size = key_size;
     object->flags = (public?OBJECT_PUBLIC:0) | OBJECT_INITIAL;
     if(public) {
@@ -582,13 +585,13 @@ objectHoleSize(ObjectPtr object, int offset)
 }
 
 
-/* Returns 2 if the data is wholly in memory, 1 if it's available on disk */
+/* Returns 2 if the data is wholly in memory, 1 if it's available on disk.
+   If the client request was a Range request, from & to specify the requested
+   range; otherwise 'from' is 0 and 'to' is -1. */
 int
 objectHasData(ObjectPtr object, int from, int to)
 {
-    int first = from / CHUNK_SIZE;
-    int last = to / CHUNK_SIZE;
-    int i, upto;
+    int first, last, i, upto;
 
     if(to < 0) {
         if(object->length >= 0)
@@ -596,6 +599,9 @@ objectHasData(ObjectPtr object, int from, int to)
         else
             return 0;
     }
+
+    first = from / CHUNK_SIZE;
+    last = to / CHUNK_SIZE;
 
     if(from >= to)
         return 2;
@@ -835,7 +841,6 @@ discardObjects(int all, int force)
                     dispose_chunk(object->chunks[j].data);
                     object->chunks[j].data = NULL;
                     object->chunks[j].size = 0;
-                    i++;
                 }
             }
             object = object->previous;

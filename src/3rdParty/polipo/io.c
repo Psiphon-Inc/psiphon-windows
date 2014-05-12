@@ -21,7 +21,10 @@ THE SOFTWARE.
 */
 
 #include "polipo.h"
+
+/* PSIPHON */
 extern int psiphonStats;
+/* /PSIPHON */
 
 #ifdef HAVE_IPv6
 #ifdef IPV6_PREFER_TEMPADDR
@@ -224,10 +227,13 @@ schedule_stream(int operation, int fd, int offset,
 
 static const char *endChunkTrailer = "\r\n0\r\n\r\n";
 
+
 /* PSIPHON */
 #include <time.h>
 int bytes_read = 0;
 time_t last_send_time = 0;
+/* /PSIPHON */
+
 
 int
 do_scheduled_stream(int status, FdEventHandlerPtr event)
@@ -235,7 +241,7 @@ do_scheduled_stream(int status, FdEventHandlerPtr event)
     StreamRequestPtr request = (StreamRequestPtr)&event->data;
     int rc, done, i;
     struct iovec iov[6];
-    int chunk_header_len, chunk_trailer_len;
+    int chunk_header_len;
     char chunk_header[10];
     int len12 = request->len + request->len2;
     int len123 = 
@@ -254,10 +260,8 @@ do_scheduled_stream(int status, FdEventHandlerPtr event)
                IO_WRITE);
         if(request->operation & IO_CHUNKED) {
             chunk_header_len = chunkHeaderLen(len123);
-            chunk_trailer_len = 2;
         } else {
             chunk_header_len = 0;
-            chunk_trailer_len = 0;
         }
 
         if(request->offset < -chunk_header_len) {
@@ -357,12 +361,12 @@ do_scheduled_stream(int status, FdEventHandlerPtr event)
     assert(i > 0);
 
     if((request->operation & IO_MASK) == IO_WRITE) {
-        if(i > 1) 
+        if(i > 1)
             rc = WRITEV(request->fd, iov, i);
         else
             rc = WRITE(request->fd, iov[0].iov_base, iov[0].iov_len);
     } else {
-        if(i > 1) 
+        if(i > 1)
             rc = READV(request->fd, iov, i);
         else
             rc = READ(request->fd, iov[0].iov_base, iov[0].iov_len);
@@ -370,7 +374,7 @@ do_scheduled_stream(int status, FdEventHandlerPtr event)
         /* PSIPHON
            All proxied traffic gets read and written by the above calls, so
            counting one of them will give us a "total bytes proxied" value.
-           Every so often we'll tell the Psiphon client this number so that 
+           Every so often we'll tell the Psiphon client this number so that
            it can update the stats. */
         if(psiphonStats && rc > 0)
         {
@@ -388,6 +392,7 @@ do_scheduled_stream(int status, FdEventHandlerPtr event)
                 last_send_time = time(NULL);
             }
         }
+        /* /PSIPHON */
     }
 
     if(rc > 0) {
@@ -677,7 +682,7 @@ schedule_accept(int fd,
     request.fd = fd;
     request.handler = handler;
     request.data = data;
-    event = registerFdEvent(fd, POLLOUT|POLLIN, 
+    event = registerFdEvent(fd, POLLIN, 
                             do_scheduled_accept, sizeof(request), &request);
     if(!event) {
         done = (*handler)(-ENOMEM, NULL, NULL);
@@ -807,7 +812,7 @@ create_listener(char *address, int port,
         return NULL;
     }
         
-    rc = listen(fd, 32);
+    rc = listen(fd, 1024);
     if(rc < 0) {
         do_log_error(L_ERROR, errno, "Couldn't listen");
         CLOSE(fd);
@@ -829,8 +834,8 @@ create_listener(char *address, int port,
 int
 setNonblocking(int fd, int nonblocking)
 {
-#ifdef MINGW
-    return mingw_setnonblocking(fd, nonblocking);
+#ifdef WIN32 /*MINGW*/
+    return win32_setnonblocking(fd, nonblocking);
 #else
     int rc;
     rc = fcntl(fd, F_GETFL, 0);

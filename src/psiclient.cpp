@@ -623,7 +623,7 @@ void EnableSplitTunnelForSelectedTransport()
 {
     // Split tunnel isn't implemented for VPN
 
-    if (_T("VPN") == GetSelectedTransport())
+    if (true)//(_T("VPN") == GetSelectedTransport())
     {
         ShowWindow(g_hSplitTunnelCheckBox, FALSE);
         SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
@@ -1117,6 +1117,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         return result;
 
+    case WM_ENDSESSION:
+        // Stop the tunnel -- particularly to ensure system proxy settings are reverted -- on OS shutdown
+        // Note: due to the following bug, the system proxy settings revert may silently fail:
+        // https://connect.microsoft.com/IE/feedback/details/838086/internet-explorer-10-11-wininet-api-drops-proxy-change-events-during-system-shutdown
     case WM_DESTROY:
         // Stop transport if running
         g_connectionManager.Stop(STOP_REASON_EXIT);

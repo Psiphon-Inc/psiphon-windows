@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define L_UNCACHEABLE 0x10
 #define L_SUPERSEDED 0x20
 #define L_VARY 0x40
+#define L_TUNNEL 0x80
 
 #define D_SERVER_CONN 0x100
 #define D_SERVER_REQ 0x200
@@ -46,6 +47,8 @@ THE SOFTWARE.
 #define LOGGING_DEFAULT (L_ERROR | L_WARN | L_INFO)
 #define LOGGING_MAX 0xFF
 
+extern int scrubLogs;
+
 void preinitLog(void);
 void initLog(void);
 void reopenLog(void);
@@ -61,6 +64,7 @@ void really_do_log_error(int type, int e, const char *f, ...)
     ATTRIBUTE ((format (printf, 3, 4)));
 void really_do_log_error_v(int type, int e, const char *f, va_list args)
     ATTRIBUTE ((format (printf, 3, 0)));
+const char *scrub(const char *message);
 
 #ifdef __GNUC__
 #define DO_BACKTRACE()                  \
