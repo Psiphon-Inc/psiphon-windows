@@ -660,8 +660,12 @@ bool SSHTransportBase::GetUserParentProxySettings(
     o_UserSSHParentProxyPort = 0;
 
     //Check if user wants to use parent proxy
-    if(UserSkipSSHParentProxySettings())
+    if (UserSkipSSHParentProxySettings())
     {
+        /*
+        // Embedded http in-proxies
+        // NOTE: this feature breaks split tunnelling since the server will resolve
+        // the geolocation of the client as the in-proxy's location
         vector<tstring> proxyIpAddresses;
         
         bool useProxy = !proxyIpAddresses.empty() && (rand() % 2 == 0);
@@ -683,7 +687,7 @@ bool SSHTransportBase::GetUserParentProxySettings(
             AddDiagnosticInfoYaml("ProxiedConnection", ss.str().c_str());
             return true;
         }
-
+        */
         return false;
     }
     //Registry values take precedence over system settings
