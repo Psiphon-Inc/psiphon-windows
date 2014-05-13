@@ -137,15 +137,6 @@ bool Meek::StartMeek()
 
 	meekCommandLine << m_meekPath;
 
-	if(m_meekServerURL.length() > 0)
-    {
-        meekCommandLine << _T(" -url=") << m_meekServerURL;
-    }
-	if(m_frontHostname.length() > 0)
-    {
-        meekCommandLine << _T(" -front=") << m_frontHostname;
-    }
-
     STARTUPINFO meekStartupInfo;
     ZeroMemory(&meekStartupInfo, sizeof(meekStartupInfo));
     meekStartupInfo.cb = sizeof(meekStartupInfo);
@@ -200,7 +191,6 @@ bool Meek::StartMeek()
 	
     WaitForInputIdle(m_meekProcessInfo.hProcess, 5000);
 
-	my_print(NOT_SENSITIVE, false, _T("Meek client is starting for %s"), m_frontHostname.c_str());
     return true;
 }
 

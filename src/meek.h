@@ -42,8 +42,6 @@ private:
 	bool ParseCmethodForPort(const char* buffer);
 
 	tstring m_meekPath;
-	tstring m_frontHostname;
-	tstring m_meekServerURL; 
 	int m_meekLocalPort;
 	PROCESS_INFORMATION m_meekProcessInfo;
 	HANDLE m_meekPipe;
