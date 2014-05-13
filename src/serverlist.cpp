@@ -588,6 +588,18 @@ void ServerEntry::FromString(const string& str)
                 this->capabilities.push_back(item);
             }
         }
+        
+        if(HasCapability("FRONTED-MEEK") ||  HasCapability("UNFRONTED-MEEK"))
+        {
+            meekServerPort = json_entry.get("meekServerPort", 0).asInt();
+            meekObfuscatedKey = json_entry.get("meekObfuscatedKey", "").asString();
+        }
+
+        if(HasCapability("FRONTED-MEEK"))
+        {
+            meekFrontingDomain = json_entry.get("meekFrontingDomain", "").asString();
+            meekFrontingHost  = json_entry.get("meekFrontingHost", "").asString();
+        }
     }
     catch (exception& e)
     {

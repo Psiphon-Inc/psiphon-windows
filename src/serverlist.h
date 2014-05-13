@@ -55,6 +55,10 @@ struct ServerEntry
     int sshObfuscatedPort;
     string sshObfuscatedKey;
     vector<string> capabilities;
+    int meekServerPort;
+    string meekObfuscatedKey;
+    string meekFrontingDomain;
+    string meekFrontingHost;
 };
 
 typedef vector<ServerEntry> ServerEntries;
