@@ -1088,8 +1088,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             g_hFeedbackButton,
             BM_SETIMAGE,
             IMAGE_ICON,
-            (LPARAM)g_hFeedbackButtonIcons[1]);
-        EnableWindow(g_hFeedbackButton, FALSE);
+            (LPARAM)g_hFeedbackButtonIcons[0]);
+        EnableWindow(g_hFeedbackButton, TRUE);
         my_print(NOT_SENSITIVE, false, _T("Feedback sent. Thank you!"));
         break;
 
