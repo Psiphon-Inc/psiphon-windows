@@ -86,7 +86,7 @@ const int TOGGLE_BUTTON_HEIGHT = 56;
 
 // First transport in this list is the default
 
-const TCHAR* transportOptions[] = {_T("SSH+"), /*_T("VPN"),*/ _T("SSH")}; //no VPN for Meek build
+const TCHAR* transportOptions[] = {_T("SSH+"), _T("VPN"), _T("SSH")};
 const int transportOptionCount = sizeof(transportOptions)/sizeof(const TCHAR*);
 
 const int TRANSPORT_FIRST_ITEM_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
@@ -584,10 +584,6 @@ void EnableSplitTunnelForSelectedTransport();
 
 void RestoreSelectedTransport(void)
 {
-		//Disable split tunneling for meek build 
-	 ShowWindow(g_hSplitTunnelCheckBox, FALSE);
-	 SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
-
     string selectedTransport;
     if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport))
     {
@@ -625,15 +621,8 @@ void RestoreSelectedTransport(void)
 
 void EnableSplitTunnelForSelectedTransport()
 {
-	//Disable split tunneling for meek build 
-	 ShowWindow(g_hSplitTunnelCheckBox, FALSE);
-	 SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
-
-	 return;
-
     // Split tunnel isn't implemented for VPN
-
-    if (true)//(_T("VPN") == GetSelectedTransport())
+    if (_T("VPN") == GetSelectedTransport())
     {
         ShowWindow(g_hSplitTunnelCheckBox, FALSE);
         SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);

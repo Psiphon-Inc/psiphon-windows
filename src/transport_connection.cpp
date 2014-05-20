@@ -91,9 +91,6 @@ void TransportConnection::Connect(
 		{
 			throw IWorkerThread::Error("Meek::CMETHOD not available");
 		}
-        
-        my_print(NOT_SENSITIVE, false, _T("Meek client is running on port %d"), m_meekClient->GetListenPort());
-
 
         // Connect with the transport. Will throw on error.
 		m_transport->Connect(

@@ -255,8 +255,6 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     if (m_parentPort > 0)
     {
         polipoCommandLine << _T(" socksParentProxy=127.0.0.1:") << m_parentPort;
-		//No split tunneling in this build
-		/*
         if(m_splitTunnelingFilePath.length() > 0)
         {
             polipoCommandLine << _T(" splitTunnelingFile=\"") << m_splitTunnelingFilePath << _T("\"");
@@ -265,7 +263,6 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
             //create another tunnel for DNS in the future?
             polipoCommandLine << _T(" splitTunnelingDnsServer=8.8.8.8");
         }
-		*/
         if(m_serverAddress.length() > 0)
         {
             polipoCommandLine << _T(" psiphonServer=") << NarrowToTString(m_serverAddress);
