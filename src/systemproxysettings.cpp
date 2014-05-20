@@ -180,9 +180,15 @@ bool SystemProxySettings::Revert()
     if (success)
     {
         m_originalSettings.clear();
+        m_settingsApplied = false;
     }
 
     return success;
+}
+
+bool SystemProxySettings::IsApplied() const
+{
+    return m_settingsApplied;
 }
 
 // TODO: do this properly.

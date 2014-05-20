@@ -660,9 +660,15 @@ bool SSHTransportBase::GetUserParentProxySettings(
     o_UserSSHParentProxyPort = 0;
 
     //Check if user wants to use parent proxy
-    if(UserSkipSSHParentProxySettings())
+    if (UserSkipSSHParentProxySettings())
     {
-        bool useProxy = (rand() % 2 == 0);
+        /*
+        // Embedded http in-proxies
+        // NOTE: this feature breaks split tunnelling since the server will resolve
+        // the geolocation of the client as the in-proxy's location
+        vector<tstring> proxyIpAddresses;
+        
+        bool useProxy = !proxyIpAddresses.empty() && (rand() % 2 == 0);
 
         if (useProxy && !firstServer)
         {
@@ -670,11 +676,6 @@ bool SSHTransportBase::GetUserParentProxySettings(
             o_UserSSHParentProxyUsername = _T("user");
             o_UserSSHParentProxyPassword = _T("password");
             o_UserSSHParentProxyPort = 3128;
-
-            vector<tstring> proxyIpAddresses;
-            proxyIpAddresses.push_back(_T("x.x.x.x"));
-            proxyIpAddresses.push_back(_T("y.y.y.y"));
-            proxyIpAddresses.push_back(_T("z.z.z.z"));
 
             random_shuffle(proxyIpAddresses.begin(), proxyIpAddresses.end());
             o_UserSSHParentProxyHostname = proxyIpAddresses.at(0);
@@ -686,7 +687,7 @@ bool SSHTransportBase::GetUserParentProxySettings(
             AddDiagnosticInfoYaml("ProxiedConnection", ss.str().c_str());
             return true;
         }
-
+        */
         return false;
     }
     //Registry values take precedence over system settings

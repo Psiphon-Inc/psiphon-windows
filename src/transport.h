@@ -108,7 +108,10 @@ public:
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
 
-    bool IsConnected() const;
+    // If `alsoCheckProxy` is true, the current state of the system proxy 
+    // settings will be checked; if the system proxy is not set, the state
+    // will be considered not connected.
+    bool IsConnected(bool alsoCheckProxy=false) const;
 
     // Must be called after connecting, if there has been a handshake that 
     // added more data to sessionInfo.
