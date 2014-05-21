@@ -60,14 +60,12 @@ bool ITransport::ServerWithCapabilitiesExists()
 
 
 void ITransport::Connect(
-					int meekListenPort,
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
                     WorkerThreadSynch* workerThreadSynch,
                     IRemoteServerListFetcher* remoteServerListFetcher,
                     ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
-    m_meekListenPort = meekListenPort;
 	m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
     m_remoteServerListFetcher = remoteServerListFetcher;

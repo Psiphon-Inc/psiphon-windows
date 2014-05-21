@@ -158,3 +158,35 @@ protected:
     virtual int GetPort(const SessionInfo& sessionInfo) const;
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 };
+
+//
+// Obfuscated SSH via meek
+//
+class MeekOSSHTransport: public OSSHTransport
+{
+public:
+    MeekOSSHTransport(); 
+    virtual ~MeekOSSHTransport();
+
+    static void GetFactory(
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory, 
+                    AddServerEntriesFn& o_addServerEntriesFn);
+
+    virtual tstring GetTransportProtocolName() const;
+    virtual tstring GetTransportDisplayName() const;
+
+protected:
+    virtual void GetSSHParams(
+        bool firstServer,
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        SystemProxySettings* systemProxySettings,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_plonkCommandLine);
+    virtual int GetPort(const SessionInfo& sessionInfo) const;
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
+};

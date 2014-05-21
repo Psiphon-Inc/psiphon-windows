@@ -97,7 +97,6 @@ public:
     // remoteServerListFetcher is optional. If NULL, no remote server list 
     //   fetch will be triggered.
     void Connect(
-			int meekListenPort,
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             WorkerThreadSynch* workerThreadSynch,

@@ -48,6 +48,11 @@ void SessionInfo::Clear()
     m_sshSessionID.clear();
     m_sshObfuscatedPort = 0;
     m_sshObfuscatedKey.clear();
+    m_meekObfuscatedKey.clear();
+    m_meekServerPort = 0;
+    m_meekCookieEncryptionPublicKey.clear();
+    m_meekFrontingDomain.clear();
+    m_meekFrontingHost.clear();
     m_homepages.clear();
     m_servers.clear();
     m_pageViewRegexes.clear();
@@ -280,6 +285,31 @@ string SessionInfo::GetSSHObfuscatedKey() const
     return Coalesce(m_sshObfuscatedKey, m_serverEntry.sshObfuscatedKey);
 }
 
+string SessionInfo::GetMeekObfuscatedKey() const
+{
+    return Coalesce(m_meekObfuscatedKey, m_serverEntry.meekObfuscatedKey);
+}
+
+int SessionInfo::GetMeekServerPort() const
+{
+    return Coalesce(m_meekServerPort, m_serverEntry.meekServerPort);
+}
+
+string SessionInfo::GetMeekFrontingDomain() const
+{
+    return Coalesce(m_meekFrontingDomain, m_serverEntry.meekFrontingDomain);
+}
+
+string SessionInfo::GetMeekFrontingHost() const
+{
+    return Coalesce(m_meekFrontingHost, m_serverEntry.meekFrontingHost);
+}
+
+string SessionInfo::GetMeekCookieEncryptionPublicKey() const
+{
+    return Coalesce(m_meekCookieEncryptionPublicKey, m_serverEntry.meekCookieEncryptionPublicKey);
+}
+
 vector<string> SessionInfo::GetDiscoveredServerEntries() const 
 {
     return m_servers;
@@ -297,6 +327,9 @@ ServerEntry SessionInfo::GetServerEntry() const
         GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
         GetSSHHostKey(), GetSSHObfuscatedPort(), 
         GetSSHObfuscatedKey(),
+        GetMeekObfuscatedKey(), GetMeekServerPort(),
+        GetMeekCookieEncryptionPublicKey(),
+        GetMeekFrontingDomain(), GetMeekFrontingHost(),
         m_serverEntry.capabilities);
     return newServerEntry;
 }

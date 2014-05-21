@@ -33,6 +33,9 @@ struct ServerEntry
         int sshPort, const string& sshUsername, const string& sshPassword, 
         const string& sshHostKey, int sshObfuscatedPort, 
         const string& sshObfuscatedKey,
+        const string& meekObfuscatedKey, const int meekServerPort,
+        const string& meekCookieEncryptionPublicKey,
+        const string& meekFrontingDomain, const string& meekFrontingHost,
         const vector<string>& capabilities);
     void Copy(const ServerEntry& src);
 
@@ -55,8 +58,9 @@ struct ServerEntry
     int sshObfuscatedPort;
     string sshObfuscatedKey;
     vector<string> capabilities;
-    int meekServerPort;
     string meekObfuscatedKey;
+    int meekServerPort;
+    string meekCookieEncryptionPublicKey;
     string meekFrontingDomain;
     string meekFrontingHost;
 };

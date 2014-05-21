@@ -94,7 +94,6 @@ void TransportConnection::Connect(
 
         // Connect with the transport. Will throw on error.
 		m_transport->Connect(
-					m_meekClient->GetListenPort(),
                     &m_systemProxySettings,
                     stopInfo,
                     &m_workerThreadSynch,

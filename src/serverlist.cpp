@@ -442,6 +442,9 @@ ServerEntry::ServerEntry(
     int sshPort, const string& sshUsername, const string& sshPassword, 
     const string& sshHostKey, int sshObfuscatedPort, 
     const string& sshObfuscatedKey,
+    const string& meekObfuscatedKey, const int meekServerPort,
+    const string& meekCookieEncryptionPublicKey,
+    const string& meekFrontingDomain, const string& meekFrontingHost,
     const vector<string>& capabilities)
 {
     this->serverAddress = serverAddress;
@@ -454,6 +457,12 @@ ServerEntry::ServerEntry(
     this->sshHostKey = sshHostKey;
     this->sshObfuscatedPort = sshObfuscatedPort;
     this->sshObfuscatedKey = sshObfuscatedKey;
+    this->meekObfuscatedKey = meekObfuscatedKey;
+    this->meekServerPort =  meekServerPort;
+    this->meekCookieEncryptionPublicKey = meekCookieEncryptionPublicKey;
+    this->meekFrontingDomain = meekFrontingDomain;
+    this->meekFrontingHost = meekFrontingHost;
+
     this->capabilities = capabilities;
 }
 
@@ -487,6 +496,12 @@ string ServerEntry::ToString() const
     entry["sshHostKey"] = sshHostKey;
     entry["sshObfuscatedPort"] = sshObfuscatedPort;
     entry["sshObfuscatedKey"] = sshObfuscatedKey;
+    entry["meekServerPort"] = meekServerPort;
+    entry["meekObfuscatedKey"] = meekObfuscatedKey;
+    entry["meekServerPort"] = meekServerPort;
+    entry["meekFrontingDomain"] = meekFrontingDomain;
+    entry["meekFrontingHost"] = meekFrontingHost;
+    entry["meekCookieEncryptionPublicKey"] = meekCookieEncryptionPublicKey;
 
     Json::Value capabilities(Json::arrayValue);
     for (vector<string>::const_iterator i = this->capabilities.begin(); i != this->capabilities.end(); i++)
@@ -592,13 +607,14 @@ void ServerEntry::FromString(const string& str)
         if(HasCapability("FRONTED-MEEK") ||  HasCapability("UNFRONTED-MEEK"))
         {
             meekServerPort = json_entry.get("meekServerPort", 0).asInt();
-            //TODO: Change back to meekObfuscatedKey!
-            meekObfuscatedKey = json_entry.get("meekObfuscationKey", "").asString();
+            meekObfuscatedKey = json_entry.get("meekObfuscatedKey", "").asString();
+            meekCookieEncryptionPublicKey = json_entry.get("meekCookieEncryptionPublicKey", "").asString();
         }
         else
         {
             meekServerPort = -1;
             meekObfuscatedKey = "";
+            meekCookieEncryptionPublicKey = "";
         }
 
         if(HasCapability("FRONTED-MEEK"))
