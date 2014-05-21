@@ -829,7 +829,7 @@ string Dehexlify(const string& input)
     return output;
 }
 
-string EscapeSOCKSArg(const char* input)
+wstring EscapeSOCKSArg(const char* input)
 {
     DWORD length = strlen(input);
     string output;
@@ -850,7 +850,7 @@ string EscapeSOCKSArg(const char* input)
         }
         output.push_back(c);
     }
-    return output;
+    return NarrowToTString(output).c_str();
 }
 
 tstring GetLocaleName()

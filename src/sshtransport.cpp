@@ -777,6 +777,34 @@ void SSHTransportBase::GetSSHParams(
         }
 
     }
+
+    /*
+    SOCKS arguments for meek client
+
+    string sArg;
+
+    args << _T(" -proxy_username ");
+
+    sArg = sessionInfo.GetServerAddress();
+    args << "pserver=" << EscapeSOCKSArg(sArg.c_str()) << ":" <<  sessionInfo.GetSSHObfuscatedPort() << ";";
+
+    sArg = sessionInfo.GetClientSessionID();
+    args << "sshid=" << EscapeSOCKSArg(sArg.c_str()) << ";";
+
+    sArg = sessionInfo.GetMeekObfuscatedKey();
+    args << "obfskey=" << EscapeSOCKSArg(sArg.c_str()) << ";";
+
+    sArg = sessionInfo.GetMeekCookieEncryptionPublicKey();
+    args << "cpubkey=" << EscapeSOCKSArg(sArg.c_str()) << ";";
+
+    sArg = sessionInfo.GetMeekFrontingHost();
+    args << "fhostname=" << EscapeSOCKSArg(sArg.c_str());
+
+    args << _T(" -proxy_type socks4a");
+	args << _T(" -proxy_host 127.0.0.1");
+	args << _T(" -proxy_port ");
+    */
+
     o_plonkCommandLine = m_plonkPath + args.str();
 }
 

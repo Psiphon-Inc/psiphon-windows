@@ -86,7 +86,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 
 DWORD GetTickCountDiff(DWORD start, DWORD end);
 
-string EscapeSOCKSArg(const char* input);
+wstring EscapeSOCKSArg(const char* input);
 
 /*
 String Utilities

@@ -156,7 +156,6 @@ protected:
     bool DoHandshake(bool preTransport, SessionInfo& sessionInfo);
 
 protected:
-	int m_meekListenPort;
     SessionInfo m_sessionInfo;
     SystemProxySettings* m_systemProxySettings;
     ServerEntry* m_tempConnectServerEntry;
