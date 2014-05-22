@@ -532,6 +532,8 @@ void LocalProxy::UpsertHttpsRequest(string entry)
 
     AutoMUTEX lock(m_mutex);
 
+    my_print(SENSITIVE_LOG, true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
+
     string store_entry = "(OTHER)";
 
     for (unsigned int i = 0; i < m_httpsRequestRegexes.size(); i++)
