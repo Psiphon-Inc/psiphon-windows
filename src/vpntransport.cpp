@@ -96,6 +96,11 @@ tstring VPNTransport::GetTransportDisplayName() const
     return TRANSPORT_DISPLAY_NAME;
 }
 
+tstring VPNTransport::GetTransportRequestName() const
+{
+    return GetTransportProtocolName();
+}
+
 tstring VPNTransport::GetSessionID(const SessionInfo& sessionInfo)
 {
     if (m_pppIPAddress.empty())

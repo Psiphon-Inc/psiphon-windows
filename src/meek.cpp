@@ -78,6 +78,33 @@ void Meek::StopImminent()
 	//really nothing to do here
 }
 
+void Meek::LogOutput()
+{
+    DWORD bytes_avail = 0;
+
+    // ReadFile will block forever if there's no data to read, so we need
+    // to check if there's data available to read first.
+    if (!PeekNamedPipe(m_meekPipe, NULL, 0, NULL, &bytes_avail, NULL))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+    }
+
+    // If there's data available from the Polipo pipe, process it.
+    if (bytes_avail > 0)
+    {
+        char* buffer = new char[bytes_avail+1];
+        DWORD num_read = 0;
+        if (!ReadFile(m_meekPipe, buffer, bytes_avail, &num_read, NULL))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        }
+        buffer[bytes_avail] = '\0';
+
+        my_print(NOT_SENSITIVE, true, _T("Meek output: %S"), buffer);
+
+        delete buffer;
+    }
+}
 bool Meek::DoPeriodicCheck()
 {
 	// Check if we've lost the  process
@@ -90,6 +117,11 @@ bool Meek::DoPeriodicCheck()
 
         if (result == WAIT_TIMEOUT)
         {
+            // All normal, make sure meek has started and log its otput
+            if(m_meekLocalPort > 0) {
+                LogOutput();
+            }
+
             return true;
         }
         else if (result == WAIT_OBJECT_0)
@@ -251,7 +283,7 @@ bool Meek::WaitForCmethodLine()
 			buffer[bytes_avail] = '\0';
 
 			// Note that we are only capturing Plonk output during the connect sequence.
-			my_print(NOT_SENSITIVE, true, _T("%s:%d: meek output: >>>%S<<<"), __TFUNCTION__, __LINE__, buffer);
+			my_print(NOT_SENSITIVE, true, _T("%s:%d: Meek output: >>>%S<<<"), __TFUNCTION__, __LINE__, buffer);
 
 			bool bGotListenPort = false;
 
@@ -271,13 +303,6 @@ bool Meek::WaitForCmethodLine()
 			//been seen even if meek CMETHOD is absent
 			if (isCmethod || isCmethodsDone)
 			{
-				// We're done reading Meek output
-				if (!CloseHandle(m_meekPipe))
-				{
-					my_print(NOT_SENSITIVE, false, _T("%s:%d: CloseHandle failed (%d)"), __TFUNCTION__, __LINE__,  GetLastError());
-					return false;
-				}
-				m_meekPipe = INVALID_HANDLE_VALUE;
 				return bGotListenPort;
 			} 
 		}

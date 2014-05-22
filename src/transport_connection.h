@@ -79,7 +79,6 @@ private:
 private:
     ITransport* m_transport;
     LocalProxy* m_localProxy;
-	Meek* m_meekClient;
     SessionInfo m_sessionInfo;
     SystemProxySettings m_systemProxySettings;
     WorkerThreadSynch m_workerThreadSynch;

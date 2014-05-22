@@ -22,6 +22,7 @@
 #include "transport.h"
 #include "transport_registry.h"
 #include "usersettings.h"
+#include "meek.h"
 
 class SessionInfo;
 class PlonkConnection;
@@ -42,7 +43,7 @@ public:
     virtual bool IsHandshakeRequired() const;
     virtual bool IsServerRequestTunnelled() const;
     virtual bool IsSplitTunnelSupported() const;
-    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const = 0;
 
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
@@ -67,6 +68,7 @@ protected:
     virtual bool DoPeriodicCheck();
 
     virtual void GetSSHParams(
+        int meekListenPort,
         bool firstServer,
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
@@ -74,13 +76,14 @@ protected:
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
-        tstring& o_plonkCommandLine);
-    virtual int GetPort(const SessionInfo& sessionInfo) const = 0;
+        tstring& o_transportRequestName,
+        tstring& o_plonkCommandLine) = 0;
 
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
 
     void TransportConnectHelper();
     bool InitiateConnection(
+        int meekListenPort,
         bool firstServer,
         const SessionInfo& sessionInfo,
         boost::shared_ptr<PlonkConnection>& o_plonkConnection);
@@ -91,6 +94,8 @@ protected:
 
     boost::shared_ptr<PlonkConnection> m_currentPlonk;
     boost::shared_ptr<PlonkConnection> m_previousPlonk;
+
+    Meek* m_meekClient;
 };
 
 
@@ -111,9 +116,12 @@ public:
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
+    virtual tstring GetTransportRequestName() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
 protected:
     virtual void GetSSHParams(
+        int meekListenPort,
         bool firstServer,
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
@@ -121,8 +129,8 @@ protected:
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
+        tstring& o_transportRequestName,
         tstring& o_plonkCommandLine);
-    virtual int GetPort(const SessionInfo& sessionInfo) const;
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 };
 
@@ -144,9 +152,12 @@ public:
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
+    virtual tstring GetTransportRequestName() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
 protected:
     virtual void GetSSHParams(
+        int meekListenPort,
         bool firstServer,
         const SessionInfo& sessionInfo,
         const int localSocksProxyPort,
@@ -154,39 +165,12 @@ protected:
         tstring& o_serverAddress, 
         int& o_serverPort, 
         tstring& o_serverHostKey, 
+        tstring& o_transportRequestName,
         tstring& o_plonkCommandLine);
-    virtual int GetPort(const SessionInfo& sessionInfo) const;
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
+
+private:
+    LPCTSTR m_transportRequestName;
 };
 
-//
-// Obfuscated SSH via meek
-//
-class MeekOSSHTransport: public OSSHTransport
-{
-public:
-    MeekOSSHTransport(); 
-    virtual ~MeekOSSHTransport();
 
-    static void GetFactory(
-                    tstring& o_transportDisplayName,
-                    tstring& o_transportProtocolName,
-                    TransportFactoryFn& o_transportFactory, 
-                    AddServerEntriesFn& o_addServerEntriesFn);
-
-    virtual tstring GetTransportProtocolName() const;
-    virtual tstring GetTransportDisplayName() const;
-
-protected:
-    virtual void GetSSHParams(
-        bool firstServer,
-        const SessionInfo& sessionInfo,
-        const int localSocksProxyPort,
-        SystemProxySettings* systemProxySettings,
-        tstring& o_serverAddress, 
-        int& o_serverPort, 
-        tstring& o_serverHostKey, 
-        tstring& o_plonkCommandLine);
-    virtual int GetPort(const SessionInfo& sessionInfo) const;
-    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
-};

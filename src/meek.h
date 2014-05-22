@@ -40,6 +40,7 @@ private:
     bool StartMeek();
     bool CreateMeekPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
 	bool ParseCmethodForPort(const char* buffer);
+    void LogOutput();
 
 	tstring m_meekPath;
 	int m_meekLocalPort;

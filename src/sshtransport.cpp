@@ -35,11 +35,23 @@
 #define DEFAULT_PLONK_SOCKS_PROXY_PORT  1080
 #define SSH_CONNECTION_TIMEOUT_SECONDS  20
 #define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
+#define CAPABILITY_UNFRONTED_MEEK       "UNFRONTED-MEEK"
+#define CAPABILITY_FRONTED_MEEK         "FRONTED-MEEK"
 
 // TODO: Should this value be based on the performance/resources of the system?
 #define MULTI_CONNECT_POOL_SIZE         10
 #define SERVER_AFFINITY_HEAD_START_MS   500
 
+static const TCHAR* SSH_TRANSPORT_PROTOCOL_NAME = _T("SSH");
+static const TCHAR* SSH_TRANSPORT_DISPLAY_NAME = _T("SSH");
+
+static const TCHAR* OSSH_TRANSPORT_PROTOCOL_NAME = _T("OSSH");
+static const TCHAR* OSSH_TRANSPORT_DISPLAY_NAME = _T("SSH+");
+
+static const TCHAR* SSH_REQUEST_PROTOCOL_NAME = SSH_TRANSPORT_PROTOCOL_NAME;
+static const TCHAR* OSSH_REQUEST_PROTOCOL_NAME = OSSH_TRANSPORT_PROTOCOL_NAME;
+static const TCHAR* UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME = _T("UNFRONTED-MEEK-OSSH");
+static const TCHAR* FRONTED_MEEK_REQUEST_PROTOCOL_NAME = _T("FRONTED-MEEK-OSSH");
 
 static bool SetPlonkSSHHostKey(
         const tstring& sshServerAddress,
@@ -73,6 +85,7 @@ public:
         LPCTSTR plonkPath, 
         LPCTSTR plonkCommandLine,
         int serverPort,
+        LPCTSTR transportRequestName,
         const StopInfo& stopInfo);
 
     bool CheckForConnected(bool& o_connected);
@@ -85,7 +98,10 @@ public:
         tstring& o_serverHostKey, 
         tstring& o_plonkPath, 
         tstring& o_plonkCommandLine,
-        int& o_serverPort) const;
+        int& o_serverPort,
+        tstring& o_transportRequestName) const;
+
+    tstring GetTransportRequestName() const;
 
     // PlonkConnection keeps its own copy of SessionInfo, so it needs to be
     // updated after more info is added from the handshake.
@@ -109,6 +125,7 @@ private:
     tstring m_serverHostKey; 
     tstring m_plonkPath; 
     tstring m_plonkCommandLine;
+    tstring m_transportRequestName;
     int m_serverPort;
 };
 
@@ -121,6 +138,7 @@ SSHTransportBase::SSHTransportBase(LPCTSTR transportProtocolName)
     : ITransport(transportProtocolName)
 {
     m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
+    m_meekClient = NULL;
 }
 
 SSHTransportBase::~SSHTransportBase()
@@ -143,10 +161,6 @@ bool SSHTransportBase::IsSplitTunnelSupported() const
     return true;
 }
 
-bool SSHTransportBase::ServerHasCapabilities(const ServerEntry& entry) const
-{
-    return entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
-}
 
 tstring SSHTransportBase::GetSessionID(const SessionInfo& sessionInfo)
 {
@@ -247,12 +261,8 @@ bool SSHTransportBase::DoPeriodicCheck()
         // We assume that TransportConnectHelper has already been called, so 
         // the Plonk executable and server information are initialized.
 
-        int localSocksProxyPort;
-        tstring serverAddress; 
-        tstring serverHostKey; 
-        tstring plonkPath; 
-        tstring plonkCommandLine;
-        int serverPort;
+        int localSocksProxyPort, serverPort;
+        tstring serverAddress, serverHostKey, plonkPath, plonkCommandLine, transportRequestName;
 
         m_currentPlonk->GetConnectParams(
             localSocksProxyPort,
@@ -260,7 +270,8 @@ bool SSHTransportBase::DoPeriodicCheck()
             serverHostKey, 
             plonkPath, 
             plonkCommandLine,
-            serverPort);
+            serverPort,
+            transportRequestName);
 
         assert(localSocksProxyPort == m_localSocksProxyPort);
         assert(plonkPath == m_plonkPath);
@@ -274,6 +285,7 @@ bool SSHTransportBase::DoPeriodicCheck()
                                         plonkPath.c_str(),
                                         plonkCommandLine.c_str(),
                                         serverPort,
+                                        transportRequestName.c_str(),
                                         m_stopInfo);
 
         if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
@@ -352,6 +364,12 @@ bool SSHTransportBase::Cleanup()
         m_currentPlonk.reset();
     }
 
+    if(m_meekClient != NULL) 
+    {
+        delete m_meekClient;
+        m_meekClient = NULL;
+    }
+
     return true;
 }
 
@@ -419,7 +437,30 @@ void SSHTransportBase::TransportConnectHelper()
         throw Abort();
     }
 
-    // Extract executable and put to disk if not already
+    //start meek
+    m_meekClient = new Meek();
+    if (m_meekClient == NULL)
+    {
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+        throw std::exception(error.str().c_str());
+    }
+
+    if (!m_meekClient->Start(m_stopInfo, NULL))
+    {
+        my_print(NOT_SENSITIVE, false, _T("Unable to start meek client executable."));
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
+    }
+
+    if(!m_meekClient->WaitForCmethodLine())
+	{
+        my_print(NOT_SENSITIVE, false, _T("Unable to get meek listening port."));
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
+        throw Abort();
+	}
+    
+    // Extract plonk executable and put to disk if not already
 
     if (m_plonkPath.size() == 0)
     {
@@ -603,7 +644,10 @@ void SSHTransportBase::TransportConnectHelper()
             newConnection.startTime = GetTickCount();
             newConnection.sessionInfo.Set(*nextServerEntry++);
 
-            if (InitiateConnection(newConnection.firstServer, newConnection.sessionInfo, newConnection.plonkConnection))
+            if (InitiateConnection(m_meekClient->GetListenPort(), 
+                    newConnection.firstServer, 
+                    newConnection.sessionInfo, 
+                    newConnection.plonkConnection))
             {
                 my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect STARTED, adding: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, newConnection.sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
 
@@ -636,7 +680,8 @@ void SSHTransportBase::TransportConnectHelper()
 
     // Record which server we're using
     ostringstream ss;
-    ss << "ipAddress: " << m_sessionInfo.GetServerAddress();
+    ss << "ipAddress: " << m_sessionInfo.GetServerAddress() << "\n";
+    ss << "connType: " << TStringToNarrow(m_currentPlonk->GetTransportRequestName());
     AddDiagnosticInfoYaml("ConnectedServer", ss.str().c_str());
 
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
@@ -714,121 +759,22 @@ bool SSHTransportBase::GetUserParentProxySettings(
         o_UserSSHParentProxyPort));
 }
 
-void SSHTransportBase::GetSSHParams(
-    bool firstServer,
-    const SessionInfo& sessionInfo,
-    const int localSocksProxyPort,
-    SystemProxySettings* systemProxySettings,
-    tstring& o_serverAddress, 
-    int& o_serverPort, 
-    tstring& o_serverHostKey, 
-    tstring& o_plonkCommandLine)
-{
-    o_serverAddress.clear();
-    o_serverPort = 0;
-    o_serverHostKey.clear();
-    o_plonkCommandLine.clear();
-
-    o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
-    o_serverPort = GetPort(sessionInfo);
-    o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
-
-    // Client transmits its session ID prepended to the SSH password; the server
-    // uses this to associate the tunnel with web requests -- for GeoIP region stats
-    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
-
-    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
-    // the expected value we just set in the registry
-
-    tstringstream args;
-    args << _T(" -ssh -C -N -batch")
-         << _T(" -P ") << o_serverPort
-         << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
-         << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
-         << _T(" -D ") << localSocksProxyPort;
-
-    // Now using this flag for debug and release. We use the verbose Plonk 
-    // output to determine when it has successfully connected.
-    args << _T(" -v");
-
-    tstring proxy_type, proxy_host, proxy_username, proxy_password;
-    int proxy_port;
-
-    if(GetUserParentProxySettings(
-        firstServer,
-        sessionInfo,
-        systemProxySettings, 
-        proxy_type, 
-        proxy_host, 
-        proxy_port, 
-        proxy_username, 
-        proxy_password))
-    {
-        args << _T(" -proxy_type ") << proxy_type.c_str();
-        args << _T(" -proxy_host ") << proxy_host.c_str();
-        args << _T(" -proxy_port ") << proxy_port;
-        if(!proxy_username.empty())
-        {
-            args << _T(" -proxy_username ") << proxy_username.c_str();
-        }
-        if(!proxy_password.empty())
-        {
-            args << _T(" -proxy_password ") << proxy_password.c_str();
-        }
-
-    }
-
-    /*
-    SOCKS arguments for meek client
-
-    string sArg;
-
-    args << _T(" -proxy_username ");
-
-    sArg = sessionInfo.GetServerAddress();
-    args << "pserver=" << EscapeSOCKSArg(sArg.c_str()) << ":" <<  sessionInfo.GetSSHObfuscatedPort() << ";";
-
-    sArg = sessionInfo.GetClientSessionID();
-    args << "sshid=" << EscapeSOCKSArg(sArg.c_str()) << ";";
-
-    sArg = sessionInfo.GetMeekObfuscatedKey();
-    args << "obfskey=" << EscapeSOCKSArg(sArg.c_str()) << ";";
-
-    sArg = sessionInfo.GetMeekCookieEncryptionPublicKey();
-    args << "cpubkey=" << EscapeSOCKSArg(sArg.c_str()) << ";";
-
-    sArg = sessionInfo.GetMeekFrontingHost();
-    args << "fhostname=" << EscapeSOCKSArg(sArg.c_str());
-
-    args << _T(" -proxy_type socks4a");
-	args << _T(" -proxy_host 127.0.0.1");
-	args << _T(" -proxy_port ");
-    */
-
-    o_plonkCommandLine = m_plonkPath + args.str();
-}
-
 
 bool SSHTransportBase::InitiateConnection(
+    int meekListenPort,
     bool firstServer,
     const SessionInfo& sessionInfo,
     boost::shared_ptr<PlonkConnection>& o_plonkConnection)
 {
     o_plonkConnection.reset();
 
-    // Record the connection attempt
-    ostringstream ss;
-    ss << "ipAddress: " << sessionInfo.GetServerAddress();
-    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
-
     // Start plonk using Psiphon server SSH parameters
 
-    tstring serverAddress;
-    tstring serverHostKey;
-    tstring plonkCommandLine;
+    tstring serverAddress, serverHostKey, transportRequestName, plonkCommandLine;
     int serverPort;
 
     GetSSHParams(
+        meekListenPort,
         firstServer,
         sessionInfo,
         m_localSocksProxyPort, 
@@ -836,6 +782,7 @@ bool SSHTransportBase::InitiateConnection(
         serverAddress, 
         serverPort, 
         serverHostKey, 
+        transportRequestName,
         plonkCommandLine);
 
     boost::shared_ptr<PlonkConnection> plonkConnection(new PlonkConnection(sessionInfo));
@@ -847,6 +794,12 @@ bool SSHTransportBase::InitiateConnection(
         throw std::exception(error.str().c_str());
     }
 
+    // Record the connection attempt
+    ostringstream ss;
+    ss << "ipAddress: " << sessionInfo.GetServerAddress() << "\n";
+    ss << "connType: " << TStringToNarrow(transportRequestName);
+    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+
     bool success = plonkConnection->Connect(
                                     m_localSocksProxyPort,
                                     serverAddress.c_str(),
@@ -854,6 +807,7 @@ bool SSHTransportBase::InitiateConnection(
                                     m_plonkPath.c_str(),
                                     plonkCommandLine.c_str(),
                                     serverPort,
+                                    transportRequestName.c_str(),
                                     m_stopInfo);
 
     if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
@@ -1043,6 +997,7 @@ bool PlonkConnection::Connect(
         LPCTSTR plonkPath, 
         LPCTSTR plonkCommandLine,
         int serverPort,
+        LPCTSTR transportRequestName,
         const StopInfo& stopInfo)
 {
     // Ensure we start from a disconnected/clean state
@@ -1054,6 +1009,7 @@ bool PlonkConnection::Connect(
     m_plonkPath = plonkPath;
     m_plonkCommandLine = plonkCommandLine;
     m_serverPort = serverPort;
+    m_transportRequestName = transportRequestName;
     m_stopInfo = &stopInfo;
 
     m_startTick = GetTickCount();
@@ -1272,7 +1228,8 @@ void PlonkConnection::GetConnectParams(
         tstring& o_serverHostKey, 
         tstring& o_plonkPath, 
         tstring& o_plonkCommandLine,
-        int& o_serverPort) const
+        int& o_serverPort,
+        tstring& o_transportRequestName) const
 {
     o_localSocksProxyPort = m_localSocksProxyPort;
     o_serverAddress = m_serverAddress;
@@ -1280,8 +1237,13 @@ void PlonkConnection::GetConnectParams(
     o_plonkPath = m_plonkPath;
     o_plonkCommandLine = m_plonkCommandLine;
     o_serverPort = m_serverPort;
+    o_transportRequestName = m_transportRequestName;
 }
 
+tstring PlonkConnection::GetTransportRequestName() const
+{
+    return m_transportRequestName;
+}
 
 void PlonkConnection::UpdateSessionInfo(const SessionInfo& sessionInfo)
 {
@@ -1292,9 +1254,6 @@ void PlonkConnection::UpdateSessionInfo(const SessionInfo& sessionInfo)
 /******************************************************************************
  SSHTransport
 ******************************************************************************/
-
-static const TCHAR* SSH_TRANSPORT_PROTOCOL_NAME = _T("SSH");
-static const TCHAR* SSH_TRANSPORT_DISPLAY_NAME = _T("SSH");
 
 // Support the registration of this transport type
 static ITransport* NewSSH()
@@ -1337,7 +1296,18 @@ tstring SSHTransport::GetTransportDisplayName() const
     return SSH_TRANSPORT_DISPLAY_NAME; 
 }
 
+tstring SSHTransport::GetTransportRequestName() const
+{
+    return GetTransportProtocolName();
+}
+
+bool SSHTransport::ServerHasCapabilities(const ServerEntry& entry) const
+{
+    return entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
+}
+
 void SSHTransport::GetSSHParams(
+    int meekListenPort,
     bool firstServer,
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
@@ -1345,24 +1315,67 @@ void SSHTransport::GetSSHParams(
     tstring& o_serverAddress, 
     int& o_serverPort, 
     tstring& o_serverHostKey, 
+    tstring& o_transportRequestName,
     tstring& o_plonkCommandLine)
 {
-    SSHTransportBase::GetSSHParams(
+    o_serverAddress.clear();
+    o_serverPort = 0;
+    o_serverHostKey.clear();
+    o_transportRequestName.clear();
+    o_plonkCommandLine.clear();
+
+    o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
+    o_serverPort = sessionInfo.GetSSHPort();
+    o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
+    o_transportRequestName = SSH_REQUEST_PROTOCOL_NAME;
+
+    // Client transmits its session ID prepended to the SSH password; the server
+    // uses this to associate the tunnel with web requests -- for GeoIP region stats
+    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
+
+    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
+    // the expected value we just set in the registry
+
+    tstringstream args;
+    args << _T(" -ssh -C -N -batch")
+         << _T(" -P ") << o_serverPort
+         << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
+         << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
+         << _T(" -D ") << localSocksProxyPort;
+
+    // Now using this flag for debug and release. We use the verbose Plonk 
+    // output to determine when it has successfully connected.
+    args << _T(" -v");
+
+    tstring proxy_type, proxy_host, proxy_username, proxy_password;
+    int proxy_port;
+
+    if(GetUserParentProxySettings(
         firstServer,
         sessionInfo,
-        localSocksProxyPort,
-        systemProxySettings,
-        o_serverAddress, 
-        o_serverPort, 
-        o_serverHostKey, 
-        o_plonkCommandLine);
+        systemProxySettings, 
+        proxy_type, 
+        proxy_host, 
+        proxy_port, 
+        proxy_username, 
+        proxy_password))
+    {
+        args << _T(" -proxy_type ") << proxy_type.c_str();
+        args << _T(" -proxy_host ") << proxy_host.c_str();
+        args << _T(" -proxy_port ") << proxy_port;
+        if(!proxy_username.empty())
+        {
+            args << _T(" -proxy_username ") << proxy_username.c_str();
+        }
+        if(!proxy_password.empty())
+        {
+            args << _T(" -proxy_password ") << proxy_password.c_str();
+        }
 
+    }
+
+    o_plonkCommandLine = m_plonkPath + args.str();
     o_plonkCommandLine += _T(" ") + o_serverAddress;
-}
-
-int SSHTransport::GetPort(const SessionInfo& sessionInfo) const
-{
-    return sessionInfo.GetSSHPort();
 }
 
 bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
@@ -1380,9 +1393,6 @@ bool SSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
 /******************************************************************************
  OSSHTransport
 ******************************************************************************/
-
-static const TCHAR* OSSH_TRANSPORT_PROTOCOL_NAME = _T("OSSH");
-static const TCHAR* OSSH_TRANSPORT_DISPLAY_NAME = _T("SSH+");
 
 // Support the registration of this transport type
 static ITransport* NewOSSH()
@@ -1405,7 +1415,7 @@ void OSSHTransport::GetFactory(
 
 
 OSSHTransport::OSSHTransport()
-    : SSHTransportBase(GetTransportProtocolName().c_str())
+    : SSHTransportBase(OSSH_TRANSPORT_PROTOCOL_NAME), m_transportRequestName(OSSH_TRANSPORT_PROTOCOL_NAME)
 {
 }
 
@@ -1424,7 +1434,22 @@ tstring OSSHTransport::GetTransportDisplayName() const
     return OSSH_TRANSPORT_DISPLAY_NAME;
 }
 
+tstring OSSHTransport::GetTransportRequestName() const
+{
+    //this will be changed when a transport connection is established, 
+    //depending if it's fronted meek, unfronted meek, or bare OSSH
+    return m_transportRequestName;
+}
+
+bool OSSHTransport::ServerHasCapabilities(const ServerEntry& entry) const
+{
+    return ( entry.HasCapability(TStringToNarrow(GetTransportProtocolName())) ||
+        entry.HasCapability(string(CAPABILITY_UNFRONTED_MEEK)) ||
+         entry.HasCapability(string(CAPABILITY_FRONTED_MEEK)));
+}
+
 void OSSHTransport::GetSSHParams(
+    int meekListenPort,
     bool firstServer,
     const SessionInfo& sessionInfo,
     const int localSocksProxyPort,
@@ -1432,11 +1457,103 @@ void OSSHTransport::GetSSHParams(
     tstring& o_serverAddress, 
     int& o_serverPort, 
     tstring& o_serverHostKey, 
+    tstring& o_transportRequestName,
     tstring& o_plonkCommandLine)
 {
+    tstring proxy_type, proxy_host, proxy_username, proxy_password;
+    int proxy_port;
 
-    if (sessionInfo.GetSSHObfuscatedPort() <= 0 
-        || sessionInfo.GetSSHObfuscatedKey().size() <= 0)
+    o_serverAddress.clear();
+    o_serverPort = 0;
+    o_serverHostKey.clear();
+    o_transportRequestName.clear();
+    o_plonkCommandLine.clear();
+
+    o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
+    o_serverPort = sessionInfo.GetSSHObfuscatedPort();
+    o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
+    o_transportRequestName = OSSH_REQUEST_PROTOCOL_NAME;
+
+    // Client transmits its session ID prepended to the SSH password; the server
+    // uses this to associate the tunnel with web requests -- for GeoIP region stats
+    string sshPassword = sessionInfo.GetClientSessionID() + sessionInfo.GetSSHPassword();
+
+    // Note: -batch ensures plonk doesn't hang on a prompt when the server's host key isn't
+    // the expected value we just set in the registry
+
+    tstringstream args;
+    args << _T(" -ssh -C -N -batch");
+
+    if(GetUserParentProxySettings(
+        firstServer,
+        sessionInfo,
+        systemProxySettings, 
+        proxy_type, 
+        proxy_host, 
+        proxy_port, 
+        proxy_username, 
+        proxy_password))
+    {
+        args << _T(" -proxy_type ") << proxy_type.c_str();
+        args << _T(" -proxy_host ") << proxy_host.c_str();
+        args << _T(" -proxy_port ") << proxy_port;
+        if(!proxy_username.empty())
+        {
+            args << _T(" -proxy_username ") << proxy_username.c_str();
+        }
+        if(!proxy_password.empty())
+        {
+            args << _T(" -proxy_password ") << proxy_password.c_str();
+        }
+    }
+    else if (sessionInfo.GetServerEntry().HasCapability(CAPABILITY_FRONTED_MEEK) || 
+        sessionInfo.GetServerEntry().HasCapability(CAPABILITY_UNFRONTED_MEEK))
+    {
+        if(sessionInfo.GetServerEntry().HasCapability(CAPABILITY_FRONTED_MEEK))
+        {
+            o_serverAddress = NarrowToTString(sessionInfo.GetMeekFrontingDomain());
+            o_serverPort = 443; 
+            o_transportRequestName = FRONTED_MEEK_REQUEST_PROTOCOL_NAME;
+        }
+        else if(sessionInfo.GetServerEntry().HasCapability(CAPABILITY_UNFRONTED_MEEK)) 
+        {
+            o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
+            o_serverPort = sessionInfo.GetMeekServerPort();
+            o_transportRequestName = UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME;
+        }
+
+        //Parameters passed to the meek client via SOCKS interface(via -proxy_username)
+        
+        string sArg;
+
+        args << _T(" -proxy_username ");
+
+        sArg = sessionInfo.GetServerAddress();
+        args << _T("pserver=") << EscapeSOCKSArg(sArg.c_str()) << _T(":") <<  sessionInfo.GetSSHObfuscatedPort() << _T(";");
+
+        sArg = sessionInfo.GetClientSessionID();
+        args << _T("sshid=") << EscapeSOCKSArg(sArg.c_str()) << _T(";");
+
+        sArg = sessionInfo.GetMeekObfuscatedKey();
+        args << _T("obfskey=") << EscapeSOCKSArg(sArg.c_str()) << _T(";");
+
+
+        sArg = sessionInfo.GetMeekFrontingHost();
+        if(!sArg.empty())
+        {
+            args << _T("fhostname=") << EscapeSOCKSArg(sArg.c_str()) << _T(";");
+        }
+        sArg = sessionInfo.GetMeekCookieEncryptionPublicKey();
+        args << _T("cpubkey=") << EscapeSOCKSArg(sArg.c_str());
+
+        args << _T(" -proxy_type socks4a");
+        args << _T(" -proxy_host 127.0.0.1");
+        args << _T(" -proxy_port ") << meekListenPort;
+    }
+
+    if (o_serverPort <= 0 
+        || o_serverAddress.empty()
+        || sessionInfo.GetSSHObfuscatedKey().empty())
     {
         my_print(NOT_SENSITIVE, false, _T("%s - missing parameters"), __TFUNCTION__);
 
@@ -1444,25 +1561,18 @@ void OSSHTransport::GetSSHParams(
         throw TransportFailed();
     }
 
-    tstring o_plonk_options;
+    args << _T(" -P ") << o_serverPort
+        << _T(" -l ") << NarrowToTString(sessionInfo.GetSSHUsername()).c_str()
+        << _T(" -pw ") << NarrowToTString(sshPassword).c_str()
+        << _T(" -D ") << localSocksProxyPort;
 
-    SSHTransportBase::GetSSHParams(
-        firstServer,
-        sessionInfo,
-        localSocksProxyPort,
-        systemProxySettings,
-        o_serverAddress, 
-        o_serverPort, 
-        o_serverHostKey, 
-        o_plonkCommandLine);
-
-    o_plonkCommandLine += _T(" -z -Z ") + NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
+    // Now using this flag for debug and release. We use the verbose Plonk 
+    // output to determine when it has successfully connected.
+    args << _T(" -v");
+    args << _T(" -z -Z ") << NarrowToTString(sessionInfo.GetSSHObfuscatedKey());
+    
+    o_plonkCommandLine = m_plonkPath + args.str();
     o_plonkCommandLine += _T(" ") + o_serverAddress;
-}
-
-int OSSHTransport::GetPort(const SessionInfo& sessionInfo) const
-{
-    return sessionInfo.GetSSHObfuscatedPort();
 }
 
 bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const

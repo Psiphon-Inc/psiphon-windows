@@ -170,7 +170,7 @@ tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(sessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + GetTransportProtocolName();
+                           _T("&relay_protocol=") + GetTransportRequestName();
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
     ServerEntries serverEntries = m_serverList.GetList();

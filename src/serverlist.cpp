@@ -496,7 +496,6 @@ string ServerEntry::ToString() const
     entry["sshHostKey"] = sshHostKey;
     entry["sshObfuscatedPort"] = sshObfuscatedPort;
     entry["sshObfuscatedKey"] = sshObfuscatedKey;
-    entry["meekServerPort"] = meekServerPort;
     entry["meekObfuscatedKey"] = meekObfuscatedKey;
     entry["meekServerPort"] = meekServerPort;
     entry["meekFrontingDomain"] = meekFrontingDomain;
