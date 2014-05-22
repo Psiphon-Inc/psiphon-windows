@@ -649,7 +649,14 @@ void SSHTransportBase::TransportConnectHelper()
                     newConnection.sessionInfo, 
                     newConnection.plonkConnection))
             {
-                my_print(NOT_SENSITIVE, true, _T("%s:%d: Server connect STARTED, adding: %S. Servers connecting: %d. Servers remaining: %d."), __TFUNCTION__, __LINE__, newConnection.sessionInfo.GetServerAddress().c_str(), connectionAttempts.size(), serverEntries.end() - nextServerEntry);
+                my_print(
+                    NOT_SENSITIVE, true, 
+                    _T("%s:%d: Server connect STARTED, adding: %S, using %s. Servers connecting: %d. Servers remaining: %d."), 
+                    __TFUNCTION__, __LINE__, 
+                    newConnection.sessionInfo.GetServerAddress().c_str(), 
+                    newConnection.plonkConnection->GetTransportRequestName().c_str(), 
+                    connectionAttempts.size(), 
+                    serverEntries.end() - nextServerEntry);
 
                 connectionAttempts.push_back(newConnection);
             }
