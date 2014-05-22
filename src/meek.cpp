@@ -356,7 +356,12 @@ bool Meek::ParseCmethodForPort(const char* str)
         return false;
     }
     m_meekLocalPort = port;
-    my_print(NOT_SENSITIVE, false, _T("Meek client is running on localhost port %d."), port);
+
+    // Unlike the equivalent logs for polipo and plonk (i.e., the HTTP and 
+    // SOCKS proxies), there's no use in showing this log to the user. So it's
+    // debug-only.
+    my_print(NOT_SENSITIVE, true, _T("Meek client is running on localhost port %d."), port);
+
     return true;
 }
 
