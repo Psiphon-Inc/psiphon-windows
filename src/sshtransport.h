@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Psiphon Inc.
+ * Copyright (c) 2014, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -96,6 +96,8 @@ protected:
     boost::shared_ptr<PlonkConnection> m_previousPlonk;
 
     Meek* m_meekClient;
+    StopInfo* m_meekClientStopInfo;
+    StopSignal* m_meekClientStopSignal;
 };
 
 

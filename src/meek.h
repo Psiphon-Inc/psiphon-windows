@@ -24,28 +24,26 @@
 class Meek : public IWorkerThread
 {
 public:
-	Meek();
-	virtual ~Meek(void);
-	bool WaitForCmethodLine();
-	int GetListenPort();
+    Meek();
+    virtual ~Meek(void);
+    bool WaitForCmethodLine();
+    int GetListenPort();
 
 protected:
-	bool DoStart();
-	void DoStop(bool cleanly);
-	void StopImminent();
-	bool DoPeriodicCheck();
-	void Cleanup();
+    bool DoStart();
+    void DoStop(bool cleanly);
+    void StopImminent();
+    bool DoPeriodicCheck();
+    void Cleanup();
 
 private:
     bool StartMeek();
     bool CreateMeekPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
-	bool ParseCmethodForPort(const char* buffer);
+    bool ParseCmethodForPort(const char* buffer);
     void LogOutput();
 
-	tstring m_meekPath;
-	int m_meekLocalPort;
-	PROCESS_INFORMATION m_meekProcessInfo;
-	HANDLE m_meekPipe;
-
+    tstring m_meekPath;
+    int m_meekLocalPort;
+    PROCESS_INFORMATION m_meekProcessInfo;
+    HANDLE m_meekPipe;
 };
-

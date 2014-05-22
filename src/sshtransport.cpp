@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Psiphon Inc.
+ * Copyright (c) 2014, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -135,10 +135,12 @@ private:
 ******************************************************************************/
 
 SSHTransportBase::SSHTransportBase(LPCTSTR transportProtocolName)
-    : ITransport(transportProtocolName)
+    : ITransport(transportProtocolName),
+      m_localSocksProxyPort(DEFAULT_PLONK_SOCKS_PROXY_PORT),
+      m_meekClient(NULL),
+      m_meekClientStopSignal(NULL),
+      m_meekClientStopInfo(NULL)
 {
-    m_localSocksProxyPort = DEFAULT_PLONK_SOCKS_PROXY_PORT;
-    m_meekClient = NULL;
 }
 
 SSHTransportBase::~SSHTransportBase()
@@ -364,10 +366,27 @@ bool SSHTransportBase::Cleanup()
         m_currentPlonk.reset();
     }
 
-    if(m_meekClient != NULL) 
+    if (m_meekClientStopSignal)
+    {
+        m_meekClientStopSignal->SignalStop(STOP_REASON_CANCEL);
+    }
+
+    if (m_meekClient != NULL) 
     {
         delete m_meekClient;
         m_meekClient = NULL;
+    }
+
+    if (m_meekClientStopInfo != NULL)
+    {
+        delete m_meekClientStopInfo;
+        m_meekClientStopInfo = NULL;
+    }
+
+    if (m_meekClientStopSignal != NULL)
+    {
+        delete m_meekClientStopSignal;
+        m_meekClientStopSignal = NULL;
     }
 
     return true;
@@ -437,7 +456,28 @@ void SSHTransportBase::TransportConnectHelper()
         throw Abort();
     }
 
-    //start meek
+    //
+    // Start meek
+    //
+
+    // Meek will have its own StopInfo. This is because it gets torn down by 
+    // SSHTransportBase and should not respond directly to the GlobalStopSignal.
+    m_meekClientStopSignal = new StopSignal();
+    if (m_meekClientStopSignal == NULL)
+    {
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+        throw std::exception(error.str().c_str());
+    }
+
+    m_meekClientStopInfo = new StopInfo(m_meekClientStopSignal, STOP_REASON_ALL);
+    if (m_meekClientStopInfo == NULL)
+    {
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": Out of memory";
+        throw std::exception(error.str().c_str());
+    }
+
     m_meekClient = new Meek();
     if (m_meekClient == NULL)
     {
@@ -446,7 +486,7 @@ void SSHTransportBase::TransportConnectHelper()
         throw std::exception(error.str().c_str());
     }
 
-    if (!m_meekClient->Start(m_stopInfo, NULL))
+    if (!m_meekClient->Start(*m_meekClientStopInfo, NULL))
     {
         my_print(NOT_SENSITIVE, false, _T("Unable to start meek client executable."));
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
