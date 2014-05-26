@@ -101,7 +101,8 @@ public:
         int& o_serverPort,
         tstring& o_transportRequestName) const;
 
-    tstring GetTransportRequestName() const;
+    // A convenience subset of GetConnectParams
+    void GetTransportInfo(tstring& transportRequestName, tstring& serverAddress) const;
 
     // PlonkConnection keeps its own copy of SessionInfo, so it needs to be
     // updated after more info is added from the handshake.
@@ -689,12 +690,20 @@ void SSHTransportBase::TransportConnectHelper()
                     newConnection.sessionInfo, 
                     newConnection.plonkConnection))
             {
+                tstring transportRequestName, serverAddress;
+                newConnection.plonkConnection->GetTransportInfo(transportRequestName, serverAddress);
+                tstring serverEntryAddress = NarrowToTString(newConnection.sessionInfo.GetServerAddress());
+                if (serverAddress != serverEntryAddress)
+                {
+                    serverAddress = serverEntryAddress + _T(" via ") + serverAddress;
+                }
+
                 my_print(
                     NOT_SENSITIVE, true, 
-                    _T("%s:%d: Server connect STARTED, adding: %S, using %s. Servers connecting: %d. Servers remaining: %d."), 
+                    _T("%s:%d: Server connect STARTED, adding: %s, using %s. Servers connecting: %d. Servers remaining: %d."), 
                     __TFUNCTION__, __LINE__, 
-                    newConnection.sessionInfo.GetServerAddress().c_str(), 
-                    newConnection.plonkConnection->GetTransportRequestName().c_str(), 
+                    serverAddress.c_str(), 
+                    transportRequestName.c_str(), 
                     connectionAttempts.size(), 
                     serverEntries.end() - nextServerEntry);
 
@@ -726,9 +735,16 @@ void SSHTransportBase::TransportConnectHelper()
     m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
 
     // Record which server we're using
+    tstring transportRequestName, serverAddress;
+    m_currentPlonk->GetTransportInfo(transportRequestName, serverAddress);
+
     ostringstream ss;
     ss << "ipAddress: " << m_sessionInfo.GetServerAddress() << "\n";
-    ss << "connType: " << TStringToNarrow(m_currentPlonk->GetTransportRequestName());
+    ss << "connType: " << TStringToNarrow(transportRequestName) << "\n";
+    if (serverAddress != NarrowToTString(m_sessionInfo.GetServerAddress())) 
+    {
+        ss << "front: " << TStringToNarrow(serverAddress) << "\n";
+    }
     AddDiagnosticInfoYaml("ConnectedServer", ss.str().c_str());
 
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
@@ -844,7 +860,12 @@ bool SSHTransportBase::InitiateConnection(
     // Record the connection attempt
     ostringstream ss;
     ss << "ipAddress: " << sessionInfo.GetServerAddress() << "\n";
-    ss << "connType: " << TStringToNarrow(transportRequestName);
+    ss << "connType: " << TStringToNarrow(transportRequestName) << "\n";
+    if (serverAddress != NarrowToTString(sessionInfo.GetServerAddress())) 
+    {
+        ss << "front: " << TStringToNarrow(serverAddress) << "\n";
+    }
+
     AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
 
     bool success = plonkConnection->Connect(
@@ -1287,9 +1308,10 @@ void PlonkConnection::GetConnectParams(
     o_transportRequestName = m_transportRequestName;
 }
 
-tstring PlonkConnection::GetTransportRequestName() const
+void PlonkConnection::GetTransportInfo(tstring& o_transportRequestName, tstring& o_serverAddress) const
 {
-    return m_transportRequestName;
+    o_transportRequestName = m_transportRequestName;
+    o_serverAddress = m_serverAddress;
 }
 
 void PlonkConnection::UpdateSessionInfo(const SessionInfo& sessionInfo)
