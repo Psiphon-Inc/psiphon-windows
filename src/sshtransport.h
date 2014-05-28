@@ -170,9 +170,6 @@ protected:
         tstring& o_transportRequestName,
         tstring& o_plonkCommandLine);
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
-
-private:
-    LPCTSTR m_transportRequestName;
 };
 
 

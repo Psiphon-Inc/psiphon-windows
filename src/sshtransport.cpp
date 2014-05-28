@@ -1484,7 +1484,7 @@ void OSSHTransport::GetFactory(
 
 
 OSSHTransport::OSSHTransport()
-    : SSHTransportBase(OSSH_TRANSPORT_PROTOCOL_NAME), m_transportRequestName(OSSH_TRANSPORT_PROTOCOL_NAME)
+    : SSHTransportBase(OSSH_TRANSPORT_PROTOCOL_NAME)
 {
 }
 
@@ -1507,7 +1507,9 @@ tstring OSSHTransport::GetTransportRequestName() const
 {
     //this will be changed when a transport connection is established, 
     //depending if it's fronted meek, unfronted meek, or bare OSSH
-    return m_transportRequestName;
+    tstring transportRequestName, serverAddress;
+    m_currentPlonk->GetTransportInfo(transportRequestName, serverAddress);
+    return transportRequestName;
 }
 
 bool OSSHTransport::ServerHasCapabilities(const ServerEntry& entry) const
