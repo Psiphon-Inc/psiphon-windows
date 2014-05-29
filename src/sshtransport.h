@@ -98,6 +98,7 @@ protected:
     Meek* m_meekClient;
     StopInfo* m_meekClientStopInfo;
     StopSignal* m_meekClientStopSignal;
+    tstring m_transportRequestName;
 };
 
 
