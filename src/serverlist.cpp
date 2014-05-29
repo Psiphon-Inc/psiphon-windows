@@ -442,6 +442,9 @@ ServerEntry::ServerEntry(
     int sshPort, const string& sshUsername, const string& sshPassword, 
     const string& sshHostKey, int sshObfuscatedPort, 
     const string& sshObfuscatedKey,
+    const string& meekObfuscatedKey, const int meekServerPort,
+    const string& meekCookieEncryptionPublicKey,
+    const string& meekFrontingDomain, const string& meekFrontingHost,
     const vector<string>& capabilities)
 {
     this->serverAddress = serverAddress;
@@ -454,6 +457,12 @@ ServerEntry::ServerEntry(
     this->sshHostKey = sshHostKey;
     this->sshObfuscatedPort = sshObfuscatedPort;
     this->sshObfuscatedKey = sshObfuscatedKey;
+    this->meekObfuscatedKey = meekObfuscatedKey;
+    this->meekServerPort =  meekServerPort;
+    this->meekCookieEncryptionPublicKey = meekCookieEncryptionPublicKey;
+    this->meekFrontingDomain = meekFrontingDomain;
+    this->meekFrontingHost = meekFrontingHost;
+
     this->capabilities = capabilities;
 }
 
@@ -487,6 +496,11 @@ string ServerEntry::ToString() const
     entry["sshHostKey"] = sshHostKey;
     entry["sshObfuscatedPort"] = sshObfuscatedPort;
     entry["sshObfuscatedKey"] = sshObfuscatedKey;
+    entry["meekObfuscatedKey"] = meekObfuscatedKey;
+    entry["meekServerPort"] = meekServerPort;
+    entry["meekFrontingDomain"] = meekFrontingDomain;
+    entry["meekFrontingHost"] = meekFrontingHost;
+    entry["meekCookieEncryptionPublicKey"] = meekCookieEncryptionPublicKey;
 
     Json::Value capabilities(Json::arrayValue);
     for (vector<string>::const_iterator i = this->capabilities.begin(); i != this->capabilities.end(); i++)
@@ -520,7 +534,7 @@ void ServerEntry::FromString(const string& str)
     {
         throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
     }
-    webServerPort = atoi(lineItem.c_str());
+    webServerPort = (int) strtol(lineItem.c_str(), NULL, 10);
 
     if (!getline(lineStream, lineItem, ' '))
     {
@@ -587,6 +601,30 @@ void ServerEntry::FromString(const string& str)
             {
                 this->capabilities.push_back(item);
             }
+        }
+        
+        if(HasCapability("FRONTED-MEEK") ||  HasCapability("UNFRONTED-MEEK"))
+        {
+            meekServerPort = json_entry.get("meekServerPort", 0).asInt();
+            meekObfuscatedKey = json_entry.get("meekObfuscatedKey", "").asString();
+            meekCookieEncryptionPublicKey = json_entry.get("meekCookieEncryptionPublicKey", "").asString();
+        }
+        else
+        {
+            meekServerPort = -1;
+            meekObfuscatedKey = "";
+            meekCookieEncryptionPublicKey = "";
+        }
+
+        if(HasCapability("FRONTED-MEEK"))
+        {
+            meekFrontingDomain = json_entry.get("meekFrontingDomain", "").asString();
+            meekFrontingHost  = json_entry.get("meekFrontingHost", "").asString();
+        }
+        else
+        {
+            meekFrontingDomain = "";
+            meekFrontingHost  = "";
         }
     }
     catch (exception& e)

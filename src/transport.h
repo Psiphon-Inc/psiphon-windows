@@ -52,9 +52,15 @@ class ITransport : public IWorkerThread
 public:
     ITransport(LPCTSTR transportProtocolName);
 
+    //returns immutable transport protocol name 
     virtual tstring GetTransportProtocolName() const = 0;
 
+    //returns immutable transport display name 
     virtual tstring GetTransportDisplayName() const = 0;
+
+    //transport request name can be changed by the class methods, 
+    //this is the one used in psiphon web requests
+    virtual tstring GetTransportRequestName() const = 0;
 
     // TransportRegistry functions. 
     // Every implementing class must have a static function with this signature:

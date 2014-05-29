@@ -452,6 +452,11 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
             s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
             s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
+            // Stats traffic analysis mitigation: add some [non-cryptographic] pseudorandom jitter to the time interval
+            unsigned int pseudorandom_bytes;
+            rand_s(&pseudorandom_bytes);
+            s_send_interval_ms += pseudorandom_bytes % DEFAULT_SEND_INTERVAL_MS;
+
             // Reset stats
             m_pageViewEntries.clear();
             m_httpsRequestEntries.clear();
@@ -526,6 +531,8 @@ void LocalProxy::UpsertHttpsRequest(string entry)
     if (entry.length() <= 0) return;
 
     AutoMUTEX lock(m_mutex);
+
+    my_print(SENSITIVE_LOG, true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
 
     string store_entry = "(OTHER)";
 
@@ -635,7 +642,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            int bytes = atoi(string(entry_start, entry_end-entry_start).c_str());
+            long bytes = strtol(string(entry_start, entry_end-entry_start).c_str(), NULL, 10);
             if (bytes > 0)
             {
                 m_bytesTransferred += bytes;

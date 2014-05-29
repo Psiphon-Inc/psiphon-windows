@@ -29,6 +29,7 @@ class LocalProxy;
 class ILocalProxyStatsCollector;
 class ITransport;
 class IRemoteServerListFetcher;
+class Meek;
 
 
 /*

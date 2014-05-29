@@ -622,7 +622,6 @@ void RestoreSelectedTransport(void)
 void EnableSplitTunnelForSelectedTransport()
 {
     // Split tunnel isn't implemented for VPN
-
     if (_T("VPN") == GetSelectedTransport())
     {
         ShowWindow(g_hSplitTunnelCheckBox, FALSE);

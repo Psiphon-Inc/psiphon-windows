@@ -49,6 +49,7 @@ public:
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
+    virtual tstring GetTransportRequestName() const;
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
