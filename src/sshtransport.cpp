@@ -737,6 +737,7 @@ void SSHTransportBase::TransportConnectHelper()
     // Record which server we're using
     tstring transportRequestName, serverAddress;
     m_currentPlonk->GetTransportInfo(transportRequestName, serverAddress);
+    m_transportRequestName = transportRequestName;
 
     ostringstream ss;
     ss << "ipAddress: " << m_sessionInfo.GetServerAddress() << "\n";
@@ -1507,9 +1508,7 @@ tstring OSSHTransport::GetTransportRequestName() const
 {
     //this will be changed when a transport connection is established, 
     //depending if it's fronted meek, unfronted meek, or bare OSSH
-    tstring transportRequestName, serverAddress;
-    m_currentPlonk->GetTransportInfo(transportRequestName, serverAddress);
-    return transportRequestName;
+    return m_transportRequestName;
 }
 
 bool OSSHTransport::ServerHasCapabilities(const ServerEntry& entry) const
