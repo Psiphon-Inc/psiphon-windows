@@ -100,8 +100,12 @@ size_t ServerList::AddEntriesToList(
         if (!alreadyKnown)
         {
             // Insert the new entry as the second entry, so that the first entry can continue
-            // to be used if it is reachable
-            oldServerEntryList.insert(oldServerEntryList.begin() + 1, *decodedEntryIter);
+            // to be used if it is reachable (unless there are no pre-existing entries).
+            oldServerEntryList.insert(
+                oldServerEntryList.size() == 0 ? 
+                    oldServerEntryList.begin() :
+                    oldServerEntryList.begin() + 1, 
+                *decodedEntryIter);
 
             entriesAdded++;
         }
