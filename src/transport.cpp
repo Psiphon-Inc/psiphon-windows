@@ -26,6 +26,7 @@
 #include "embeddedvalues.h"
 #include "config.h"
 #include "transport_registry.h"
+#include "systemproxysettings.h"
 
 
 /******************************************************************************
@@ -65,7 +66,7 @@ void ITransport::Connect(
                     IRemoteServerListFetcher* remoteServerListFetcher,
                     ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
-    m_systemProxySettings = systemProxySettings;
+	m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
     m_remoteServerListFetcher = remoteServerListFetcher;
 
@@ -108,6 +109,11 @@ void ITransport::StopImminent()
 
 void ITransport::DoStop(bool cleanly)
 {
+    if (!cleanly) 
+    {
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
+    }
+
     Cleanup();
 
     // We'll use the non-null-ness of one of these members as a sign that we
@@ -123,9 +129,10 @@ void ITransport::DoStop(bool cleanly)
 }
 
 
-bool ITransport::IsConnected() const
+bool ITransport::IsConnected(bool alsoCheckProxy/*=false*/) const
 {
-    return IsRunning();
+    return IsRunning() && 
+           (!alsoCheckProxy || (m_systemProxySettings && m_systemProxySettings->IsApplied()));
 }
 
 
@@ -163,7 +170,7 @@ tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
                            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
                            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
                            _T("&server_secret=") + NarrowToTString(sessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + GetTransportProtocolName();
+                           _T("&relay_protocol=") + GetTransportRequestName();
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
     ServerEntries serverEntries = m_serverList.GetList();

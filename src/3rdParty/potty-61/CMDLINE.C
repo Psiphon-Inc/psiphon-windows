@@ -482,6 +482,11 @@ int cmdline_process_param(char *p, char *value, int need_save, Config *cfg)
         {
             cfg->proxy_type = PROXY_SOCKS5;
         }
+		else if(!strcmp(value, "socks4a"))
+        {
+            cfg->proxy_type = PROXY_SOCKS4;
+			cfg->proxy_dns = FORCE_ON;
+        }
     }
 
     if (!strcmp(p, "-proxy_host")) {

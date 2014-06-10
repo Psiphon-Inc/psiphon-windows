@@ -52,6 +52,12 @@ public:
     int GetSSHObfuscatedPort() const;
     string GetSSHObfuscatedKey() const;
 
+    string GetMeekObfuscatedKey() const;
+    int GetMeekServerPort() const;
+    string GetMeekFrontingDomain() const;
+    string GetMeekFrontingHost() const;
+    string GetMeekCookieEncryptionPublicKey() const;
+
     string GetSSHSessionID() const {return m_sshSessionID;}
     string GetUpgradeVersion() const {return m_upgradeVersion;}
     string GetPSK() const {return m_psk;}
@@ -87,6 +93,11 @@ private:
     string m_sshSessionID;
     int m_sshObfuscatedPort;
     string m_sshObfuscatedKey;
+    string m_meekObfuscatedKey;
+    int m_meekServerPort;
+    string m_meekCookieEncryptionPublicKey;
+    string m_meekFrontingDomain;
+    string m_meekFrontingHost;
     vector<tstring> m_homepages;
     vector<string> m_servers;
     vector<RegexReplace> m_pageViewRegexes;

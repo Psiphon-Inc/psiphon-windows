@@ -383,11 +383,6 @@ extern int oblen;
 void * 
 obfuscate_send_seed(void)
 {
-	// PSIPHON: HTTP-PREFIX
-	const char* prefix = "POST / HTTP/1.1\r\n\r\n";
-	u_int32_t prefix_length = strlen(prefix);
-	char* buffer;
-
 	struct seed_msg *seed; 
 	int i;
 	
@@ -397,10 +392,7 @@ obfuscate_send_seed(void)
 	
 	padding_length = arc4random() % OBFUSCATE_MAX_PADDING;
 	message_length = padding_length + sizeof(struct seed_msg);
-
-	buffer = (char*)malloc(prefix_length + (size_t)message_length); // ssh.c frees mem
-	memcpy(buffer, prefix, prefix_length);
-	seed = (struct seed_msg*)(buffer + prefix_length);
+	seed = malloc((size_t)message_length); // ssh.c frees mem
 
 	for(i = 0; i < OBFUSCATE_SEED_LENGTH; i++) {
 		if(i % 4 == 0)
@@ -408,7 +400,6 @@ obfuscate_send_seed(void)
 		seed->seed_buffer[i] = rnd & 0xff;
 		rnd >>= 8;
 	}
-
 	seed->magic = htonl(OBFUSCATE_MAGIC_VALUE);   // WTF?
 	seed->padding_length = htonl(padding_length); // ditto
 	for(i = 0; i < (int)padding_length; i++) {
@@ -422,10 +413,9 @@ obfuscate_send_seed(void)
 	}
 	obfuscate_output(((u_char *)seed) + OBFUSCATE_SEED_LENGTH,
 		message_length - OBFUSCATE_SEED_LENGTH);
+	oblen=message_length;
 
-	oblen = prefix_length + message_length;
-
-	return (void *)buffer;
+	return (void *)seed;
  }
 
 void

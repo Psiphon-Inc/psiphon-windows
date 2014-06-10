@@ -52,9 +52,15 @@ class ITransport : public IWorkerThread
 public:
     ITransport(LPCTSTR transportProtocolName);
 
+    //returns immutable transport protocol name 
     virtual tstring GetTransportProtocolName() const = 0;
 
+    //returns immutable transport display name 
     virtual tstring GetTransportDisplayName() const = 0;
+
+    //transport request name can be changed by the class methods, 
+    //this is the one used in psiphon web requests
+    virtual tstring GetTransportRequestName() const = 0;
 
     // TransportRegistry functions. 
     // Every implementing class must have a static function with this signature:
@@ -107,7 +113,10 @@ public:
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
 
-    bool IsConnected() const;
+    // If `alsoCheckProxy` is true, the current state of the system proxy 
+    // settings will be checked; if the system proxy is not set, the state
+    // will be considered not connected.
+    bool IsConnected(bool alsoCheckProxy=false) const;
 
     // Must be called after connecting, if there has been a handshake that 
     // added more data to sessionInfo.

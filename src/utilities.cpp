@@ -829,6 +829,29 @@ string Dehexlify(const string& input)
     return output;
 }
 
+wstring EscapeSOCKSArg(const char* input)
+{
+    DWORD length = strlen(input);
+    string output;
+    output.reserve(2 * length);
+    for (size_t i = 0; i < length; ++i)
+    {
+        const char c = input[i];
+        /* From goptlib.git/args.go:
+
+        "If any [k=v] items are provided, they are configuration parameters for the
+        proxy: Tor should separate them with semicolons ... If a key or value value
+        must contain [an equals sign or] a semicolon or a backslash, it is escaped
+        with a backslash."
+        */
+        if(c == '=' || c == ';' || c == '\\')
+        {
+            output.push_back('\\');
+        }
+        output.push_back(c);
+    }
+    return NarrowToTString(output).c_str();
+}
 
 tstring GetLocaleName()
 {

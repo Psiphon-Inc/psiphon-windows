@@ -252,6 +252,8 @@ void ConnectionManager::FetchRemoteServerList(void)
     {
         // This adds the new server entries to all transports' server lists.
         TransportRegistry::AddServerEntries(newServerEntryVector, 0);
+
+        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
     }
     catch (std::exception &ex)
     {
@@ -625,7 +627,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
-                                m_transport->GetTransportProtocolName(),
+                                m_transport->GetTransportRequestName(),
                                 _T("connected"),
                                 _T(""),
                                 now-start,
@@ -693,7 +695,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
-                                m_transport->GetTransportProtocolName(),
+                                m_transport->GetTransportRequestName(),
                                 success ? _T("speed_test") : _T("speed_test_failure"),
                                 speedTestURL.str().c_str(),
                                 now-start,
@@ -723,6 +725,19 @@ bool ConnectionManager::SendStatusMessage(
     // Format stats data for consumption by the server. 
 
     Json::Value stats;
+
+    // Stats traffic analysis mitigation: [non-cryptographic] pseudorandom padding to ensure the size of status requests is not constant.
+    // Padding size is JSON field overhead + 0-255 bytes + 33% base64 encoding overhead
+    const int MAX_PADDING_LENGTH = 256;
+    unsigned char pseudorandom_bytes[MAX_PADDING_LENGTH];
+    assert(MAX_PADDING_LENGTH % sizeof(unsigned int) == 0);
+    for (int i = 0; i < MAX_PADDING_LENGTH/sizeof(unsigned int); i++)
+    {
+        rand_s(((unsigned int*)pseudorandom_bytes) + i);
+    }
+    string padding = Base64Encode(pseudorandom_bytes, rand() % 256);
+    stats["padding"] = padding;
+
     stats["bytes_transferred"] = bytesTransferred;
     my_print(SENSITIVE_LOG, true, _T("BYTES: %llu"), bytesTransferred);
 
@@ -829,7 +844,7 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
+           _T("&relay_protocol=") +  transport->GetTransportRequestName() + 
            _T("&error_code=") + transport->GetLastTransportError();
 }
 
@@ -849,7 +864,7 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
+           _T("&relay_protocol=") + transport->GetTransportRequestName() + 
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
            _T("&last_connected=") + NarrowToTString(lastConnected);
 }
@@ -864,7 +879,7 @@ tstring ConnectionManager::GetRoutesRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("")) + 
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportRequestName() : _T("")) + 
            _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T(""));
 }
 
@@ -889,7 +904,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
+           _T("&relay_protocol=") +  transport->GetTransportRequestName() + 
            _T("&session_id=") + sessionID + 
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
@@ -917,7 +932,7 @@ tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("")) + 
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportRequestName() : _T("")) + 
            _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T("")) + 
            _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
 }
@@ -988,7 +1003,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    manager->m_transport->GetTransportProtocolName(),
+                                    manager->m_transport->GetTransportRequestName(),
                                     _T("download"),
                                     _T(""),
                                     now-start,

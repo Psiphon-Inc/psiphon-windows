@@ -65,7 +65,7 @@ LocalProxy::~LocalProxy()
     {
         IWorkerThread::Stop();
 
-        Cleanup();
+        Cleanup(true);
     }
     catch (...)
     {
@@ -97,7 +97,7 @@ bool LocalProxy::DoStart()
     }
 
     // Ensure we start from a disconnected/clean state
-    Cleanup();
+    Cleanup(false);
     
     int localHttpProxyPort = UserLocalHTTPProxyPort();
 
@@ -111,7 +111,7 @@ bool LocalProxy::DoStart()
 
     if (!StartPolipo(localHttpProxyPort))
     {
-        Cleanup();
+        Cleanup(false);
         return false;
     }
 
@@ -179,10 +179,10 @@ void LocalProxy::DoStop(bool cleanly)
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
     }
 
-    Cleanup();
+    Cleanup(cleanly);
 }
 
-void LocalProxy::Cleanup()
+void LocalProxy::Cleanup(bool doStats)
 {
     // Give the process an opportunity for graceful shutdown, then terminate
     if (m_polipoProcessInfo.hProcess != 0
@@ -212,7 +212,7 @@ void LocalProxy::Cleanup()
 
     // If we have stats, and we didn't get a chance to send our final stats, 
     // we'll try one last time.
-    if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
+    if (doStats && !m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
         if (m_statsCollector->SendStatusMessage(
@@ -255,7 +255,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     if (m_parentPort > 0)
     {
         polipoCommandLine << _T(" socksParentProxy=127.0.0.1:") << m_parentPort;
-        if(m_splitTunnelingFilePath.length() > 0)
+        if (m_splitTunnelingFilePath.length() > 0)
         {
             polipoCommandLine << _T(" splitTunnelingFile=\"") << m_splitTunnelingFilePath << _T("\"");
 
@@ -452,6 +452,11 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
             s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
             s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
 
+            // Stats traffic analysis mitigation: add some [non-cryptographic] pseudorandom jitter to the time interval
+            unsigned int pseudorandom_bytes;
+            rand_s(&pseudorandom_bytes);
+            s_send_interval_ms += pseudorandom_bytes % DEFAULT_SEND_INTERVAL_MS;
+
             // Reset stats
             m_pageViewEntries.clear();
             m_httpsRequestEntries.clear();
@@ -526,6 +531,8 @@ void LocalProxy::UpsertHttpsRequest(string entry)
     if (entry.length() <= 0) return;
 
     AutoMUTEX lock(m_mutex);
+
+    my_print(SENSITIVE_LOG, true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
 
     string store_entry = "(OTHER)";
 
@@ -635,7 +642,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            int bytes = atoi(string(entry_start, entry_end-entry_start).c_str());
+            long bytes = strtol(string(entry_start, entry_end-entry_start).c_str(), NULL, 10);
             if (bytes > 0)
             {
                 m_bytesTransferred += bytes;

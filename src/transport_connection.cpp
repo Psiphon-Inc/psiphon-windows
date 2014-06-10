@@ -23,6 +23,7 @@
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
+#include "meek.h"
 
 
 TransportConnection::TransportConnection()
@@ -58,6 +59,7 @@ void TransportConnection::Connect(
     assert(m_transport == 0);
     assert(m_localProxy == 0); 
 
+
     assert(transport);
     assert(!tempConnectServerEntry || !transport->IsHandshakeRequired());
 
@@ -74,7 +76,7 @@ void TransportConnection::Connect(
         m_workerThreadSynch.Reset();
 
         // Connect with the transport. Will throw on error.
-        m_transport->Connect(
+		m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
                     &m_workerThreadSynch,
@@ -139,7 +141,7 @@ void TransportConnection::Connect(
 void TransportConnection::WaitForDisconnect()
 {
     HANDLE waitHandles[] = { m_transport->GetStoppedEvent(), 
-                             m_localProxy->GetStoppedEvent() };
+                             m_localProxy->GetStoppedEvent()};
     size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
 
     DWORD result = WaitForMultipleObjects(
@@ -147,11 +149,6 @@ void TransportConnection::WaitForDisconnect()
                     waitHandles, 
                     FALSE, // wait for any event
                     INFINITE);
-
-    // One of the transport or the local proxy has stopped. 
-    // Make sure they both are.
-    m_localProxy->Stop();
-    m_transport->Stop();
 
     Cleanup();
 
@@ -170,12 +167,16 @@ void TransportConnection::Cleanup()
     // our own -- like final /status requests).
     m_systemProxySettings.Revert();
 
+    if (m_localProxy) 
+    {
+        m_localProxy->Stop();
+        delete m_localProxy;
+    }
+    m_localProxy = 0;
+
     if (m_transport)
     {
         m_transport->Stop();
         m_transport->Cleanup();
     }
-
-    if (m_localProxy) delete m_localProxy;
-    m_localProxy = 0;
 }

@@ -40,9 +40,10 @@ public:
     void SetHttpProxyPort(int port);
     void SetHttpsProxyPort(int port);
     void SetSocksProxyPort(int port);
-    bool Apply();
 
+    bool Apply();
     bool Revert();
+    bool IsApplied() const;
 
     bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
 
