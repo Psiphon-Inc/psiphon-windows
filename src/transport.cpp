@@ -109,11 +109,6 @@ void ITransport::StopImminent()
 
 void ITransport::DoStop(bool cleanly)
 {
-    if (!cleanly) 
-    {
-        m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
-    }
-
     Cleanup();
 
     // We'll use the non-null-ness of one of these members as a sign that we
@@ -123,9 +118,17 @@ void ITransport::DoStop(bool cleanly)
         my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
     }
 
+    // Set the "unexpected disconnect" signal, so logic higher up can 
+    // respond accordingly (e.g., attempt to reconnect).
+    // But don't set it if this is a temporary transport, because that will
+    // mess up the higher logic. (Bit of a hack.)
+    if (!cleanly && !m_tempConnectServerEntry && IsConnected(true)) 
+    {
+        m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
+    }
+
     m_systemProxySettings = NULL;
     m_tempConnectServerEntry = NULL;
-
 }
 
 

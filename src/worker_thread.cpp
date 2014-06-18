@@ -23,6 +23,10 @@
 #include "psiclient.h"
 #include "stopsignal.h"
 
+/*****************
+ * WorkerThreadStopSignal
+ *****************/
+
 /*
 IWorkerThread needs to mix in its own stop signals to the one that's passed in.
 This custom stop signal class will encapsulate that.
@@ -35,6 +39,7 @@ public:
 
     virtual DWORD CheckSignal(DWORD reasons, bool throwIfTrue=false) const;
     virtual void SignalStop(DWORD reason);
+    virtual void ClearStopSignal(DWORD reason);
 
 private:
     StopSignal* m_parentStopSignal;
@@ -66,6 +71,16 @@ void WorkerThreadStopSignal::SignalStop(DWORD reason)
     m_parentStopSignal->SignalStop(reason);
 }
 
+void WorkerThreadStopSignal::ClearStopSignal(DWORD reason)
+{
+    StopSignal::ClearStopSignal(reason);
+    m_parentStopSignal->ClearStopSignal(reason);
+}
+
+
+/*****************
+ * IWorkerThread
+ *****************/
 
 IWorkerThread::IWorkerThread()
     : m_thread(0),
