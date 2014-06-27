@@ -139,7 +139,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(NOT_SENSITIVE, false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, fail.c_str());
         return false;
     }
 
