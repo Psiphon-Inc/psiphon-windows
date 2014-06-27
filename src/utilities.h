@@ -58,7 +58,7 @@ bool WriteRegistryDwordValue(const string& name, DWORD value);
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
 bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason);
 bool ReadRegistryStringValue(LPCSTR name, string& value);
-bool ReadRegistryStringValue(LPCWSTR name, wstring& value);
+bool ReadRegistryStringValue(LPCSTR name, wstring& value);
 
 // Text metrics are relative to default font
 

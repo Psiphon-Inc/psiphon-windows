@@ -934,7 +934,6 @@ void GetOSSecurityInfo(
 
 
 struct StartupDiagnosticInfo {
-    vector<ConnectionProxyInfo> originalProxyInfo;
     bool wininet_success;
     WininetNetworkInfo wininet_info;
 } g_startupDiagnosticInfo;
@@ -944,8 +943,6 @@ void DoStartupDiagnosticCollection()
 {
     // Reset
     g_startupDiagnosticInfo = StartupDiagnosticInfo();
-
-    GetOriginalProxyInfo(g_startupDiagnosticInfo.originalProxyInfo);
 
     WininetNetworkInfo netInfo;
     g_startupDiagnosticInfo.wininet_success = false;
@@ -1044,13 +1041,16 @@ void GetDiagnosticInfo(YAML::Emitter& out)
     out << YAML::Key << "Proxy";
     out << YAML::Value;
     out << YAML::BeginSeq;
-    for (vector<ConnectionProxyInfo>::const_iterator it = g_startupDiagnosticInfo.originalProxyInfo.begin();
-         it != g_startupDiagnosticInfo.originalProxyInfo.end();
+
+    vector<ConnectionProxy> originalProxyInfo;
+    GetSanitizedOriginalProxyInfo(originalProxyInfo);
+    for (vector<ConnectionProxy>::const_iterator it = originalProxyInfo.begin();
+         it != originalProxyInfo.end();
          it++)
     {
         out << YAML::BeginMap; // NetworkInfo:Original:Proxy
-        out << YAML::Key << "connectionName" << YAML::Value << TStringToNarrow(it->connectionName).c_str();
-        out << YAML::Key << "flags" << YAML::Value << TStringToNarrow(it->flags).c_str();
+        out << YAML::Key << "connectionName" << YAML::Value << TStringToNarrow(it->name).c_str();
+        out << YAML::Key << "flags" << YAML::Value << TStringToNarrow(it->flagsString).c_str();
         out << YAML::Key << "proxy" << YAML::Value << TStringToNarrow(it->proxy).c_str();
         out << YAML::Key << "bypass" << YAML::Value << TStringToNarrow(it->bypass).c_str();
         out << YAML::EndMap; // NetworkInfo:Original:Proxy

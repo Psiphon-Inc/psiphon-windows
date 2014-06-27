@@ -133,7 +133,7 @@ bool ServerRequest::MakeRequest(
                 requestPath,
                 response,
                 stopInfo,
-                currentTransport->IsServerRequestTunnelled(), // use local proxy?
+                true, // use tunnel?
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
@@ -168,7 +168,7 @@ bool ServerRequest::MakeRequest(
                     requestPath,
                     response,
                     stopInfo,
-                    false, // don't use local proxy -- there's no transport, and there may be bad/remnant system proxy settings
+                    false, // don't try to tunnel -- there's no transport
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
@@ -224,7 +224,7 @@ bool ServerRequest::MakeRequest(
                     requestPath,
                     response,
                     stopInfo,
-                    (*transport_iter).get()->IsServerRequestTunnelled(), // use local proxy?
+                    true, // tunnel request
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
