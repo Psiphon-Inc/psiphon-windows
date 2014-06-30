@@ -83,9 +83,10 @@ public:
     // Returns true if pre-handshake is required to connect, false otherwise.
     virtual bool IsHandshakeRequired() const = 0;
 
-    // Returns true if requests to the server should be tunnelled/proxied
-    // through the transport. If not, then the local proxy should not be used.
-    virtual bool IsServerRequestTunnelled() const = 0;
+    // Returns true if all system traffic is tunneled, rather than only traffic
+    // routed through the local Psiphon proxy. 
+    // In other words, this is true for VPN, false for SSH.
+    virtual bool IsWholeSystemTunneled() const = 0;
 
     // Returns true if split tunnelling is supported for the transport.
     virtual bool IsSplitTunnelSupported() const = 0;
@@ -113,10 +114,9 @@ public:
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
 
-    // If `alsoCheckProxy` is true, the current state of the system proxy 
-    // settings will be checked; if the system proxy is not set, the state
-    // will be considered not connected.
-    bool IsConnected(bool alsoCheckProxy=false) const;
+    // If `andNotTemporary` is true, the transport will only be considered
+    // connected if it's not just a temporary connection.
+    bool IsConnected(bool andNotTemporary) const;
 
     // Must be called after connecting, if there has been a handshake that 
     // added more data to sessionInfo.

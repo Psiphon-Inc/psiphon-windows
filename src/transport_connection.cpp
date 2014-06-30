@@ -101,9 +101,15 @@ void TransportConnection::Connect(
             throw IWorkerThread::Error("LocalProxy::Start failed");
         }
 
+        // If the whole system is tunneled (i.e., VPN), then we can't leave the
+        // original system proxy settings intact -- because that proxy would 
+        // (probably) not be reachable in VPN mode and the user would 
+        // effectively have no connectivity.
+        bool allowedToSkipProxySettings = !m_transport->IsWholeSystemTunneled();
+
         // Apply the system proxy settings that have been collected by the transport
         // and the local proxy.
-        if (!m_systemProxySettings.Apply())
+        if (!m_systemProxySettings.Apply(allowedToSkipProxySettings))
         {
             throw IWorkerThread::Error("SystemProxySettings::Apply failed");
         }

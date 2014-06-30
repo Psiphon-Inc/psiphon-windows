@@ -132,10 +132,10 @@ void ITransport::DoStop(bool cleanly)
 }
 
 
-bool ITransport::IsConnected(bool alsoCheckProxy/*=false*/) const
+bool ITransport::IsConnected(bool andNotTemporary) const
 {
     return IsRunning() && 
-           (!alsoCheckProxy || (m_systemProxySettings && m_systemProxySettings->IsApplied()));
+           (!andNotTemporary || m_tempConnectServerEntry);
 }
 
 

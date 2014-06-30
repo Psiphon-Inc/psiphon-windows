@@ -41,7 +41,7 @@ public:
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
     virtual bool IsHandshakeRequired() const;
-    virtual bool IsServerRequestTunnelled() const;
+    virtual bool IsWholeSystemTunneled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const = 0;
 
