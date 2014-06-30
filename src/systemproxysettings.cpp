@@ -68,7 +68,7 @@ void SystemProxySettings::SetSocksProxyPort(int port)
     m_socksProxyPort = port;
 }
 
-bool SystemProxySettings::Apply()
+bool SystemProxySettings::Apply(bool allowedToSkipProxySettings)
 {
     // Configure Windows Internet Settings to use our HTTP Proxy
     // This affects IE, Chrome, Safari and recent Firefox builds
@@ -90,7 +90,7 @@ bool SystemProxySettings::Apply()
     SetPsiphonProxyForConnections(proxyInfo, psiphonProxyAddress);
     WriteRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO, proxyInfo);
 
-    if (UserSkipProxySettings())
+    if (allowedToSkipProxySettings && UserSkipProxySettings())
     {
         return true;
     }

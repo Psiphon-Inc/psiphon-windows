@@ -54,7 +54,7 @@ public:
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
     virtual bool IsHandshakeRequired() const;
-    virtual bool IsServerRequestTunnelled() const;
+    virtual bool IsWholeSystemTunneled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 

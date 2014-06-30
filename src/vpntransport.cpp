@@ -127,9 +127,9 @@ bool VPNTransport::IsHandshakeRequired() const
     return true;
 }
 
-bool VPNTransport::IsServerRequestTunnelled() const
+bool VPNTransport::IsWholeSystemTunneled() const
 {
-    return false;
+    return true;
 }
 
 bool VPNTransport::IsSplitTunnelSupported() const

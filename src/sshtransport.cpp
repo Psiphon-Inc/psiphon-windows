@@ -154,9 +154,9 @@ bool SSHTransportBase::IsHandshakeRequired() const
     return false;
 }
 
-bool SSHTransportBase::IsServerRequestTunnelled() const
+bool SSHTransportBase::IsWholeSystemTunneled() const
 {
-    return true;
+    return false;
 }
 
 bool SSHTransportBase::IsSplitTunnelSupported() const
