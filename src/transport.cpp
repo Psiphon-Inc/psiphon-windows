@@ -135,7 +135,7 @@ void ITransport::DoStop(bool cleanly)
 bool ITransport::IsConnected(bool andNotTemporary) const
 {
     return IsRunning() && 
-           (!andNotTemporary || m_tempConnectServerEntry);
+           !(andNotTemporary && m_tempConnectServerEntry);
 }
 
 
