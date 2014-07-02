@@ -28,7 +28,7 @@
 // This value determines whether or not we will perform preemptive reconnect
 // behaviour if the handshake fails. If it's zero (or MAXDWORD, really), then 
 // we won't, if it's something like 60000, then we will.
-#define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT 60000
+#define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT MAXDWORD
 
 
 SessionInfo::SessionInfo()
