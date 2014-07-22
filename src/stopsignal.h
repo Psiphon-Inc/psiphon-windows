@@ -49,7 +49,7 @@ class StopSignal
 {
 public:
     // Base class for exceptions
-    class StopException 
+    class StopException : public std::exception
     {
     public:
         virtual DWORD GetType() const = 0;

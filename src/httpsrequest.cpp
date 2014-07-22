@@ -20,11 +20,11 @@
 #include "stdafx.h"
 #include "httpsrequest.h"
 #include "psiclient.h"
-#include <Winhttp.h>
 #include <WinCrypt.h>
 #include "config.h"
 #include "embeddedvalues.h"
 #include "stopsignal.h"
+#include "systemproxysettings.h"
 
 
 // NOTE: this code depends on built-in Windows crypto services
@@ -245,6 +245,38 @@ void CALLBACK WinHttpStatusCallback(
     }
 }
 
+
+/*
+                                  VPN                             SSH
+                            conn         disconn             conn     disconn         generic/ignorant
+                            ----------------------------------------------------------------------------
+FetchRemoteServerList      !matter        native          native*     native            use_native
+DiagnosticData             !matter        native          native*     native            use_native
+
+Upgrade                    !matter        native          tunnel      native            use_tunnel
+
+SpeedTest (non)            n/a            native          native      native            use_native
+
+untunneled server request  n/a            native          n/a         native            use_native
+  - pre-handshake, post-status
+
+tunneled request           !matter        n/a             tunnel      n/a               use_tunnel
+  - post-handshake, /connected, /status
+
+
+!matter: doesn't matter, do whatever, polipo or don't polipo (because it'll be in the VPN tunnel)
+      - but don't use previous system proxy settings if tunnel is up, of course
+native: native internet connection, including any proxy settings
+      - while connected, this means using *previous* system proxy settings
+~native: use native, even though we could in theory use the tunnel
+n/a: can't do it
+tunnel: use polipo
+      - regardless of what system proxy settings are
+
+NOTE: There is a registry setting (UserSkipProxySettings) that prevents setting the system proxy when connected.
+
+Assumption: Remnant system proxy settings from a Psiphon crash will be cleaned up.
+*/
 bool HTTPSRequest::MakeRequest(
         const TCHAR* serverAddress,
         int serverWebPort,
@@ -252,7 +284,7 @@ bool HTTPSRequest::MakeRequest(
         const TCHAR* requestPath,
         string& response,
         const StopInfo& stopInfo,
-        bool useLocalProxy/*=true*/,
+        bool usePsiphonLocalProxy,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/,
@@ -271,10 +303,14 @@ bool HTTPSRequest::MakeRequest(
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;
     }
 
-    tstring proxy;
-    if (useLocalProxy)
+    tstring proxyHost;
+    if (usePsiphonLocalProxy)
     {
-        proxy = GetSystemDefaultHTTPSProxy();
+        proxyHost = GetTunneledDefaultHttpsProxyHost();
+    }
+    else
+    {
+        proxyHost = GetNativeDefaultHttpsProxyHost();
     }
 
     tstring reqType(requestPath);
@@ -283,13 +319,13 @@ bool HTTPSRequest::MakeRequest(
     {
         reqType.resize(reqEnd);
     }
-    my_print(NOT_SENSITIVE, true, _T("%s: %s; proxy: {use: %d, set: %d}"), __TFUNCTION__, reqType.c_str(), useLocalProxy, !!proxy.length());
+    my_print(NOT_SENSITIVE, true, _T("%s: %s; proxy: {use: %d, set: %d}"), __TFUNCTION__, reqType.c_str(), usePsiphonLocalProxy, !!proxyHost.length());
 
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-                    proxy.length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                    proxy.length() ? proxy.c_str() : WINHTTP_NO_PROXY_NAME,
+                    proxyHost.length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    proxyHost.length() ? proxyHost.c_str() : WINHTTP_NO_PROXY_NAME,
                     WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 
@@ -507,44 +543,4 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     delete pbBinary;
 
     return bResult;
-}
-
-tstring HTTPSRequest::GetSystemDefaultHTTPSProxy()
-{
-    WINHTTP_CURRENT_USER_IE_PROXY_CONFIG proxyConfig;
-    if (!WinHttpGetIEProxyConfigForCurrentUser(&proxyConfig))
-    {
-        return _T("");
-    }
-
-    // Proxy settings look something like this:
-    // http=127.0.0.1:8081;https=127.0.0.1:8082;ftp=127.0.0.1:8083;socks=127.0.0.1:8084
-
-    tstringstream stream(proxyConfig.lpszProxy ? proxyConfig.lpszProxy : _T(""));
-
-    if (proxyConfig.lpszProxy) GlobalFree(proxyConfig.lpszProxy);
-    if (proxyConfig.lpszProxyBypass) GlobalFree(proxyConfig.lpszProxyBypass);
-    if (proxyConfig.lpszAutoConfigUrl) GlobalFree(proxyConfig.lpszAutoConfigUrl);
-
-    tstring proxy_setting;
-    while (std::getline(stream, proxy_setting, _T(';')))
-    {
-        size_t proxy_type_end = proxy_setting.find(_T('='));
-        if (proxy_type_end != tstring::npos && proxy_type_end < proxy_setting.length())
-        {
-            // Convert to lowercase.
-            std::transform(
-                proxy_setting.begin(), 
-                proxy_setting.begin() + proxy_type_end, 
-                proxy_setting.begin(), 
-                ::tolower);
-
-            if (proxy_setting.compare(0, proxy_type_end, _T("https")) == 0)
-            {
-                return proxy_setting.substr(proxy_type_end+1);
-            }
-        }
-    }
-
-    return _T("");
 }

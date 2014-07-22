@@ -976,7 +976,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                 "",
                 NarrowToTString(UPGRADE_REQUEST_PATH).c_str(),
                 downloadResponse,
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL))
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                true) // tunnel request
             || downloadResponse.length() <= 0)
         {
             // If the download failed, we simply do nothing.

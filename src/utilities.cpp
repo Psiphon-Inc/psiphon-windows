@@ -556,6 +556,8 @@ bool WriteRegistryStringValue(const string& name, const string& value, RegistryF
 
 bool ReadRegistryStringValue(LPCSTR name, string& value)
 {
+    value.clear();
+
     bool success = false;
     HKEY key = 0;
     DWORD bufferLength = 0;
@@ -599,13 +601,16 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
     return success;
 }
 
-bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
+bool ReadRegistryStringValue(LPCSTR name, wstring& value)
 {
+    value.clear();
+
     bool success = false;
     HKEY key = 0;
     DWORD bufferLength = 0;
     wchar_t* buffer = 0;
     DWORD type;
+    wstring wName = NarrowToTString(name);
 
     if (ERROR_SUCCESS == RegOpenKeyEx(
                             HKEY_CURRENT_USER,
@@ -616,7 +621,7 @@ bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
 
         ERROR_SUCCESS == RegQueryValueExW(
                             key,
-                            name,
+                            wName.c_str(),
                             0,
                             0,
                             NULL,
@@ -626,7 +631,7 @@ bool ReadRegistryStringValue(LPCWSTR name, wstring& value)
 
         ERROR_SUCCESS == RegQueryValueExW(
                             key,
-                            name,
+                            wName.c_str(),
                             0,
                             &type,
                             (LPBYTE)buffer,

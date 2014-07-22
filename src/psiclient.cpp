@@ -40,6 +40,7 @@
 #include "htmldlg.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
+#include "systemproxysettings.h"
 
 
 //==== Globals ================================================================
@@ -786,6 +787,8 @@ int APIENTRY _tWinMain(
     HACCEL hAccelTable;
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
 
+    // If this set of calls gets any longer, we may want to do something generic.
+    DoStartupSystemProxyWork();
     DoStartupDiagnosticCollection();
 
     // Main message loop

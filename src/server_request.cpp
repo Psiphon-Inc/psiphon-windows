@@ -111,16 +111,14 @@ bool ServerRequest::MakeRequest(
 
     if (transportConnected)
     {
-        if (!currentTransport->IsServerRequestTunnelled())
+        // We need untunnelled web request capabilites, or don't make the request.
+        // TODO: Keep a tunnel up permanently when using VPN on such a server and use it for requests?
+        if (currentTransport->IsWholeSystemTunneled() &&
+            !sessionInfo.GetServerEntry().HasCapability(UNTUNNELED_WEB_REQUEST_CAPABILITY))
         {
-            // We need untunnelled web request capabilites, or don't make the request.
             // TODO: suppress errors up the stack
-
-            if (!sessionInfo.GetServerEntry().HasCapability(UNTUNNELED_WEB_REQUEST_CAPABILITY))
-            {
-                my_print(NOT_SENSITIVE, true, _T("%s: insufficient capabilities for untunnelled web request"), __TFUNCTION__);
-                return false;
-            }
+            my_print(NOT_SENSITIVE, true, _T("%s: insufficient capabilities for untunnelled web request"), __TFUNCTION__);
+            return false;
         }
 
         // This is the simple case: we just connect through the transport
@@ -133,7 +131,7 @@ bool ServerRequest::MakeRequest(
                 requestPath,
                 response,
                 stopInfo,
-                currentTransport->IsServerRequestTunnelled(), // use local proxy?
+                true, // use tunnel?
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
@@ -168,7 +166,7 @@ bool ServerRequest::MakeRequest(
                     requestPath,
                     response,
                     stopInfo,
-                    false, // don't use local proxy -- there's no transport, and there may be bad/remnant system proxy settings
+                    false, // don't try to tunnel -- there's no transport
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
@@ -224,7 +222,7 @@ bool ServerRequest::MakeRequest(
                     requestPath,
                     response,
                     stopInfo,
-                    (*transport_iter).get()->IsServerRequestTunnelled(), // use local proxy?
+                    true, // tunnel request
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))

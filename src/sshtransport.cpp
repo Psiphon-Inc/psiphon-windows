@@ -154,9 +154,9 @@ bool SSHTransportBase::IsHandshakeRequired() const
     return false;
 }
 
-bool SSHTransportBase::IsServerRequestTunnelled() const
+bool SSHTransportBase::IsWholeSystemTunneled() const
 {
-    return true;
+    return false;
 }
 
 bool SSHTransportBase::IsSplitTunnelSupported() const
@@ -817,10 +817,26 @@ bool SSHTransportBase::GetUserParentProxySettings(
     }
 
     //if no registry values try system settings
-    return(systemProxySettings->GetUserLanProxy(
-        o_UserSSHParentProxyType, 
-        o_UserSSHParentProxyHostname, 
-        o_UserSSHParentProxyPort));
+
+    DecomposedProxyConfig proxyConfig;
+    GetNativeDefaultProxyInfo(proxyConfig);
+
+    if (!proxyConfig.httpsProxy.empty())
+    {
+        o_UserSSHParentProxyType = _T("https");
+        o_UserSSHParentProxyHostname = proxyConfig.httpsProxy;
+        o_UserSSHParentProxyPort = proxyConfig.httpsProxyPort;
+        return true;
+    }
+    else if (!proxyConfig.socksProxy.empty())
+    {
+        o_UserSSHParentProxyType = _T("socks");
+        o_UserSSHParentProxyHostname = proxyConfig.socksProxy;
+        o_UserSSHParentProxyPort = proxyConfig.socksProxyPort;
+        return true;
+    }
+
+    return false;
 }
 
 

@@ -71,7 +71,7 @@ public:
     SessionInfo GetUpdatedSessionInfo() const;
 
     // Exception class
-    class TryNextServer { };
+    class TryNextServer : public std::exception { };
 
 private:
     void Cleanup();

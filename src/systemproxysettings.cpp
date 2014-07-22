@@ -28,43 +28,23 @@
 #include "utilities.h"
 
 
-void AddOriginalProxyInfo(const connection_proxy& proxyInfo);
-bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo);
-bool SetConnectionProxy(const connection_proxy& setting);
-bool GetConnectionProxy(connection_proxy& setting);
-
-
+static const TCHAR* DEFAULT_CONNECTION_NAME = _T("");
 static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
 static const int INTERNET_OPTIONS_NUMBER = 3;
 
-
-struct connection_proxy
-{
-    tstring name;
-    DWORD flags;
-    tstring proxy;
-    tstring bypass;
-
-    bool operator==(const connection_proxy& rhs)
-    {
-        return 
-            this->name == rhs.name &&
-            this->flags == rhs.flags &&
-            this->proxy == rhs.proxy &&
-            this->bypass == rhs.bypass;
-    }
-
-    bool operator!=(const connection_proxy& rhs)
-    {
-        return !(*this == rhs);
-    }
-};
+bool GetCurrentSystemConnectionsProxyInfo(vector<ConnectionProxy>& o_proxyInfo);
+bool GetCurrentSystemConnectionProxy(tstring connectionName, ConnectionProxy& o_proxyInfo);
+bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connectionsProxies);
+void SetPsiphonProxyForConnections(vector<ConnectionProxy>& io_connectionsProxies, 
+                                   const tstring& psiphonProxyAddress);
+void ClearRegistryProxyInfo(const char* regKey);
+void ReadRegistryProxyInfo(const char* regKey, vector<ConnectionProxy>& o_proxyInfo);
+void WriteRegistryProxyInfo(const char* regKey, const vector<ConnectionProxy>& proxyInfo);
 
 
 SystemProxySettings::SystemProxySettings()
     : m_settingsApplied(false)
 {
-    m_originalSettings.clear();
     SetHttpProxyPort(0);
     SetHttpsProxyPort(0);
     SetSocksProxyPort(0);
@@ -88,45 +68,44 @@ void SystemProxySettings::SetSocksProxyPort(int port)
     m_socksProxyPort = port;
 }
 
-bool SystemProxySettings::Apply()
+bool SystemProxySettings::Apply(bool allowedToSkipProxySettings)
 {
-    if (UserSkipProxySettings())
+    // Configure Windows Internet Settings to use our HTTP Proxy
+    // This affects IE, Chrome, Safari and recent Firefox builds
+
+    assert(!m_settingsApplied);
+
+    tstring psiphonProxyAddress = MakeProxySettingString();
+    if(psiphonProxyAddress.length() == 0)
+    {
+        return false;
+    }
+
+    vector<ConnectionProxy> proxyInfo;
+    if (!GetCurrentSystemConnectionsProxyInfo(proxyInfo))
+    {
+        return false;
+    }
+
+    SetPsiphonProxyForConnections(proxyInfo, psiphonProxyAddress);
+    WriteRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO, proxyInfo);
+
+    if (allowedToSkipProxySettings && UserSkipProxySettings())
     {
         return true;
     }
 
-    // Configure Windows Internet Settings to use our HTTP Proxy
-    // This affects IE, Chrome, Safari and recent Firefox builds
-
-    tstring proxyAddress = MakeProxySettingString();
-    if(proxyAddress.length() == 0)
+    if (!SetCurrentSystemConnectionsProxy(proxyInfo))
     {
         return false;
     }
-
+    
     m_settingsApplied = true;
 
-    vector<tstring> connections;
-    vector<connection_proxy> proxyInfo;
-    if (!GetConnectionsAndProxyInfo(connections, proxyInfo))
-    {
-        return false;
-    }
-    
-    if (!Save(proxyInfo))
-    {
-        return false;
-    }
-
-    if (!SetConnectionsProxies(connections, proxyAddress))
-    {
-        return false;
-    }
-    
     return true;
 }
 
-tstring SystemProxySettings::MakeProxySettingString()
+tstring SystemProxySettings::MakeProxySettingString() const
 {
     // This string is passed to InternetSetOption to set the proxy address for each protocol.
     // NOTE that we do not include a proxy setting for FTP, since Polipo does not support
@@ -157,6 +136,8 @@ tstring SystemProxySettings::MakeProxySettingString()
 
 bool SystemProxySettings::Revert()
 {
+    ClearRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO);
+
     // Revert Windows Internet Settings back to user's original configuration
 
     if (!m_settingsApplied)
@@ -164,22 +145,13 @@ bool SystemProxySettings::Revert()
         return true;
     }
 
-    bool success = true;
-
-    for (connection_proxy_iter ii = m_originalSettings.begin();
-         ii != m_originalSettings.end();
-         ++ii)
-    {
-        if (!SetConnectionProxy(*ii))
-        {
-            success = false;
-            break;
-        }
-    }
+    vector<ConnectionProxy> originalProxySettings;
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, originalProxySettings);
+    
+    bool success = SetCurrentSystemConnectionsProxy(originalProxySettings);
 
     if (success)
     {
-        m_originalSettings.clear();
         m_settingsApplied = false;
     }
 
@@ -191,109 +163,16 @@ bool SystemProxySettings::IsApplied() const
     return m_settingsApplied;
 }
 
-// TODO: do this properly.
-// ie. Save original proxy settings to a file, and remove the file on restoring settings.
-// If the file exists when saving original settings, use the file's contents and don't save
-// the existing settings.
-void SystemProxySettings::PreviousCrashCheckHack(connection_proxy& proxySettings)
-{
-    tstring proxyAddress = MakeProxySettingString();
-
-    // Don't save settings that are the same as we will be setting.
-    // Instead, save default (no proxy) settings.
-    if (   (proxySettings.flags == PROXY_TYPE_PROXY)
-        && (proxySettings.proxy == proxyAddress)
-        && (proxySettings.bypass == SYSTEM_PROXY_SETTINGS_PROXY_BYPASS))
-    {
-        proxySettings.flags = PROXY_TYPE_DIRECT;
-        proxySettings.proxy = L"";
-        proxySettings.bypass = L"";
-    }
-}
-
-bool SystemProxySettings::Save(const vector<connection_proxy>& proxyInfo)
-{
-    if (!m_originalSettings.empty())
-    {
-        my_print(NOT_SENSITIVE, false, _T("Error: can't save Proxy Settings because they are already saved."));
-        my_print(NOT_SENSITIVE, false, _T("Original proxy settings may not be restored correctly."));
-        return false;
-    }
-
-    connection_proxy proxySettings;
-
-    for (vector<connection_proxy>::const_iterator ii = proxyInfo.begin();
-         ii != proxyInfo.end();
-         ++ii)
-    {
-        connection_proxy proxySettings = *ii;
-        PreviousCrashCheckHack(proxySettings);
-        m_originalSettings.push_back(proxySettings);
-    }
-
-    return true;
-}
-
-bool SystemProxySettings::SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress)
-{
-    bool success = true;
-    bool failedToVerify = false;
-
-    for (vector<tstring>::const_iterator ii = connections.begin();
-         ii != connections.end();
-         ++ii)
-    {
-        connection_proxy proxySettings;
-        // These are the new proxy settings we want to use
-        proxySettings.name = *ii;
-        proxySettings.flags = PROXY_TYPE_PROXY;
-        proxySettings.proxy = proxyAddress;
-        proxySettings.bypass = SYSTEM_PROXY_SETTINGS_PROXY_BYPASS;
-
-        if (!SetConnectionProxy(proxySettings))
-        {
-            success = false;
-            break;
-        }
-
-        // Read back the settings to verify that they have been applied
-        connection_proxy entry;
-        entry.name = proxySettings.name;
-        if (!GetConnectionProxy(entry) ||
-            entry != proxySettings)
-        {
-            failedToVerify = true;
-
-            if (entry.name.empty())
-            {
-                // This is the default or LAN connection.
-                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
-                success = false;
-                break;
-            }
-            else
-            {
-                // Don't force the connection to fail, this might not be an active connection.
-                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
-            }
-        }
-    }
-
-    if (failedToVerify)
-    {
-        my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
-        my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
-                                       _T("to use the local Psiphon proxies."));
-    }
-
-    return success;
-}
-
 
 /**********************************************************
 *
 * Proxy settings helpers
 *
+
+Terminology:
+    native: the system proxy settings before Psiphon runs
+    default: the default connection (there might be a lot of system connections with different proxies)
+
 **********************************************************/
 
 static DWORD GetRasEntries(LPRASENTRYNAME& rasEntryNames, DWORD& bufferSize, DWORD& entries)
@@ -371,7 +250,7 @@ vector<tstring> GetRasConnectionNames()
 }
 
 
-bool SetConnectionProxy(const connection_proxy& setting)
+bool SetCurrentSystemConnectionProxy(const ConnectionProxy& setting)
 {
     INTERNET_PER_CONN_OPTION_LIST list;
     INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
@@ -406,15 +285,66 @@ bool SetConnectionProxy(const connection_proxy& setting)
     return success;
 }
 
-bool GetConnectionProxy(connection_proxy& setting)
+
+bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connectionsProxies)
 {
+    bool success = true;
+    bool failedToVerify = false;
+
+    for (vector<ConnectionProxy>::const_iterator ii = connectionsProxies.begin();
+         ii != connectionsProxies.end();
+         ++ii)
+    {
+        if (!SetCurrentSystemConnectionProxy(*ii))
+        {
+            success = false;
+            break;
+        }
+
+        // Read back the settings to verify that they have been applied
+        ConnectionProxy entry;
+        if (!GetCurrentSystemConnectionProxy(ii->name, entry) ||
+            entry != *ii)
+        {
+            failedToVerify = true;
+
+            if (entry.name.empty())
+            {
+                // This is the default or LAN connection.
+                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
+                success = false;
+                break;
+            }
+            else
+            {
+                // Don't force the connection to fail, this might not be an active connection.
+                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
+            }
+        }
+    }
+
+    if (failedToVerify)
+    {
+        my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
+        my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
+                                       _T("to use the local Psiphon proxies."));
+    }
+
+    return success;
+}
+
+
+bool GetCurrentSystemConnectionProxy(tstring connectionName, ConnectionProxy& o_proxyInfo)
+{
+    o_proxyInfo.clear();
+
     INTERNET_PER_CONN_OPTION_LIST list;
     INTERNET_PER_CONN_OPTION options[INTERNET_OPTIONS_NUMBER];
     unsigned long length = sizeof(list);
     list.dwSize = length;
     // Pointer to a string that contains the name of the RAS connection
     // or NULL, which indicates the default or LAN connection, to set or query options on.
-    list.pszConnection = setting.name.length() ? const_cast<TCHAR*>(setting.name.c_str()) : 0;
+    list.pszConnection = connectionName.length() ? const_cast<TCHAR*>(connectionName.c_str()) : 0;
     list.dwOptionCount = sizeof(options)/sizeof(INTERNET_PER_CONN_OPTION);
     list.pOptions = options;
 
@@ -431,9 +361,10 @@ bool GetConnectionProxy(connection_proxy& setting)
         return false;
     }
 
-    setting.flags = options[0].Value.dwValue;
-    setting.proxy = options[1].Value.pszValue ? options[1].Value.pszValue : _T("");
-    setting.bypass = options[2].Value.pszValue ? options[2].Value.pszValue : _T("");
+    o_proxyInfo.name = connectionName;
+    o_proxyInfo.flags = options[0].Value.dwValue;
+    o_proxyInfo.proxy = options[1].Value.pszValue ? options[1].Value.pszValue : _T("");
+    o_proxyInfo.bypass = options[2].Value.pszValue ? options[2].Value.pszValue : _T("");
 
     // Cleanup
     if (options[1].Value.pszValue)
@@ -448,35 +379,31 @@ bool GetConnectionProxy(connection_proxy& setting)
     return true;
 }
 
-
-bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_proxy>& proxyInfo)
+bool GetCurrentSystemConnectionsProxyInfo(vector<ConnectionProxy>& o_proxyInfo)
 {
-    connections.clear();
-    proxyInfo.clear();
+    o_proxyInfo.clear();
+
+    vector<tstring> connections;
 
     // Get a list of connections, starting with the dial-up connections
     connections = GetRasConnectionNames();
     
     // NULL indicates the default or LAN connection
-    connections.push_back(_T(""));
+    connections.push_back(DEFAULT_CONNECTION_NAME);
 
     for (vector<tstring>::const_iterator ii = connections.begin();
          ii != connections.end();
          ++ii)
     {
-        connection_proxy entry;
+        ConnectionProxy entry;
 
-        entry.name = *ii;
-        if (GetConnectionProxy(entry))
+        if (GetCurrentSystemConnectionProxy(*ii, entry))
         {
-            proxyInfo.push_back(entry);
-            AddOriginalProxyInfo(entry);
+            o_proxyInfo.push_back(entry);
         }
         else
         {
-            connections.clear();
-            proxyInfo.clear();
-
+            o_proxyInfo.clear();
             return false;
         }
     }
@@ -485,39 +412,121 @@ bool GetConnectionsAndProxyInfo(vector<tstring>& connections, vector<connection_
 }
 
 
-/**********************************************************
-*
-* Original proxy info for use with diagnostic feedback info
-*
-**********************************************************/
+void SetPsiphonProxyForConnections(vector<ConnectionProxy>& io_connectionsProxies, 
+                                   const tstring& psiphonProxyAddress)
+{
+    for (vector<ConnectionProxy>::iterator ii = io_connectionsProxies.begin();
+         ii != io_connectionsProxies.end();
+         ++ii)
+    {
+        // These are the new proxy settings we want to use
+        ii->flags = PROXY_TYPE_PROXY;
+        ii->proxy = psiphonProxyAddress;
+        ii->bypass = SYSTEM_PROXY_SETTINGS_PROXY_BYPASS;
+    }
+}
 
-HANDLE g_originalProxyInfoMutex = CreateMutex(NULL, FALSE, 0);
-vector<connection_proxy> g_originalProxyInfo;
+
+void GetDefaultProxyInfo(const vector<ConnectionProxy>& proxyInfos, ConnectionProxy& o_defaultProxyInfo)
+{
+    o_defaultProxyInfo.clear();
+
+    for (vector<ConnectionProxy>::const_iterator ii = proxyInfos.begin();
+         ii != proxyInfos.end();
+         ++ii)
+    {
+        if (ii->name == DEFAULT_CONNECTION_NAME)
+        {
+            o_defaultProxyInfo = *ii;
+            return;
+        }
+    }
+}
+
+void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxyConfig& o_proxyConfig);
+
+/**
+Get the proxy info for the original default connection.
+*/
+void GetNativeDefaultProxyInfo(ConnectionProxy& o_proxyInfo)
+{
+    o_proxyInfo.clear();
+
+    vector<ConnectionProxy> proxyInfo;
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, proxyInfo);
+
+    GetDefaultProxyInfo(proxyInfo, o_proxyInfo);
+}
+
+void GetNativeDefaultProxyInfo(DecomposedProxyConfig& o_proxyInfo)
+{
+    o_proxyInfo.clear();
+
+    vector<ConnectionProxy> proxyInfo;
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, proxyInfo);
+
+    ConnectionProxy undecomposedProxyInfo;
+    GetDefaultProxyInfo(proxyInfo, undecomposedProxyInfo);
+
+    DecomposeDefaultProxyInfo(undecomposedProxyInfo, o_proxyInfo);
+}
+
+tstring GetNativeDefaultHttpsProxyHost()
+{
+    ConnectionProxy proxyInfo;
+    GetNativeDefaultProxyInfo(proxyInfo);
+    
+    DecomposedProxyConfig decomposedProxyConfig;
+    DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
+
+    tstringstream host;
+    host << decomposedProxyConfig.httpsProxy;
+    if (!host.str().empty() && decomposedProxyConfig.httpsProxyPort != 0)
+    {
+        host << _T(":") << decomposedProxyConfig.httpsProxyPort;
+    }
+
+    return host.str();
+}
+
+
+void GetTunneledDefaultProxyInfo(ConnectionProxy& o_proxyInfo)
+{
+    o_proxyInfo.clear();
+
+    vector<ConnectionProxy> proxyInfo;
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO, proxyInfo);
+
+    GetDefaultProxyInfo(proxyInfo, o_proxyInfo);
+}
+
+
+tstring GetTunneledDefaultHttpsProxyHost()
+{
+    ConnectionProxy proxyInfo;
+    GetTunneledDefaultProxyInfo(proxyInfo);
+    
+    DecomposedProxyConfig decomposedProxyConfig;
+    DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
+
+    tstringstream host;
+    host << decomposedProxyConfig.httpsProxy;
+    if (!host.str().empty() && decomposedProxyConfig.httpsProxyPort != 0)
+    {
+        host << _T(":") << decomposedProxyConfig.httpsProxyPort;
+    }
+
+    return host.str();
+}
+
 
 /**
 Returns a santized/de-personalized copy of the original proxy info.
 */
-void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
+void GetSanitizedOriginalProxyInfo(vector<ConnectionProxy>& o_originalProxyInfo)
 {
-    originalProxyInfo.clear();
-
-    vector<connection_proxy> rawOriginalProxyInfo;
-    // Only grab the mutex temporarily.
-    {
-        AutoMUTEX mutex(g_originalProxyInfoMutex);
-        rawOriginalProxyInfo = g_originalProxyInfo;
-    }
-
-    // This might be called before SystemProxySettings has filled in the 
-    // desired values (which only happens after a successful connection).
-    // In that case, we'll get them here.
-    if (rawOriginalProxyInfo.empty())
-    {
-        if (!GetConnectionsAndProxyInfo(vector<tstring>(), rawOriginalProxyInfo))
-        {
-            return;
-        }
-    }
+    vector<ConnectionProxy> rawOriginalProxyInfo;
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, rawOriginalProxyInfo);
 
     /*
     De-personalize system proxy server info
@@ -546,20 +555,20 @@ void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
                     _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-\\.]+)(:[0-9]+)$"), 
                     regex::ECMAScript | regex::icase);
 
-    for (vector<connection_proxy>::iterator it = rawOriginalProxyInfo.begin();
+    for (vector<ConnectionProxy>::iterator it = rawOriginalProxyInfo.begin();
          it != rawOriginalProxyInfo.end();
          it++)
     {
-        ConnectionProxyInfo info;
+        ConnectionProxy info;
 
         // We can't usefully redact this value. Maybe it shouldn't be included?
         if (it->name.empty())
         {
-            info.connectionName = _T("");
+            info.name = _T("");
         }
         else
         {
-            info.connectionName = _T("[REDACTED]");
+            info.name = _T("[REDACTED]");
         }
 
         vector<tstring> proxyElems = split<TCHAR>(it->proxy, _T(';'));
@@ -649,136 +658,255 @@ void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo)
             ss << _T("PROXY_TYPE_AUTO_DETECT|");
         }        
 
-        info.flags = ss.str();
-        if (info.flags.length() > 0)
+        info.flagsString = ss.str();
+        if (info.flagsString.length() > 0)
         {
             // Strip the trailing "|"
-            info.flags.resize(info.flags.size()-1);
+            info.flagsString.resize(info.flagsString.size()-1);
         }
 
-        originalProxyInfo.push_back(info);
+        o_originalProxyInfo.push_back(info);
     }
 }
 
-void AddOriginalProxyInfo(const connection_proxy& proxyInfo)
-{
-    AutoMUTEX mutex(g_originalProxyInfoMutex);
 
-    vector<connection_proxy>::iterator match = find(g_originalProxyInfo.begin(), g_originalProxyInfo.end(), proxyInfo);
-    if (match == g_originalProxyInfo.end())
+/**
+We write the default system proxy info to the registry at every app start.
+When Psiphon connects, we also write that proxy info to the registry. When
+Psiphon disconnects/exists, we remove the Psiphon info.
+If Psiphon crashes while running, its proxy info will still be in the registry,
+and if this is detected we'll restore the default system proxy info.
+*/
+void DoStartupSystemProxyWork()
+{
+    vector<ConnectionProxy> nativeProxyInfo, psiphonProxyInfo;
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, nativeProxyInfo);
+    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO, psiphonProxyInfo);
+
+    if (psiphonProxyInfo.size())
     {
-        // Entry doesn't already exist in vector
-        g_originalProxyInfo.push_back(proxyInfo);
+        if (!SetCurrentSystemConnectionsProxy(nativeProxyInfo))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s:%d: SetConnectionProxy: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        }
+
+        ClearRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO);
+    }
+
+    GetCurrentSystemConnectionsProxyInfo(nativeProxyInfo);
+    WriteRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, nativeProxyInfo);
+}
+
+
+void ClearRegistryProxyInfo(const char* regKey)
+{
+    WriteRegistryProxyInfo(regKey, vector<ConnectionProxy>());
+}
+
+void ReadRegistryProxyInfo(const char* regKey, vector<ConnectionProxy>& o_proxyInfo)
+{
+    o_proxyInfo.clear();
+
+    string proxyJsonString;
+    if (!ReadRegistryStringValue(regKey, proxyJsonString)
+        || proxyJsonString.empty())
+    {
+        // No remnant proxy info, so it was cleaned up last time
+        return;
+    }
+
+    Json::Value proxyJson;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(proxyJsonString, proxyJson);
+    if (!parsingSuccessful)
+    {
+        string fail = reader.getFormattedErrorMessages();
+
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - JSON parse error: %S"), __TFUNCTION__, __LINE__, fail.c_str());
+        ClearRegistryProxyInfo(regKey);
+        return;
+    }
+
+    try
+    {
+        Json::Value proxiesJson = proxyJson["proxies"];
+        for (Json::Value::ArrayIndex i = 0; i < proxiesJson.size(); i++)
+        {
+            ConnectionProxy proxy;
+            proxy.name = NarrowToTString(proxiesJson[i].get("name", "").asString());
+            proxy.flags = proxiesJson[i].get("flags", 0).asUInt();
+            proxy.proxy = NarrowToTString(proxiesJson[i].get("proxy", "").asString());
+            proxy.bypass = NarrowToTString(proxiesJson[i].get("bypass", "").asString());
+            o_proxyInfo.push_back(proxy);
+        }
+    }
+    catch (exception& e)
+    {
+        o_proxyInfo.clear();
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        ClearRegistryProxyInfo(regKey);
+        return;
     }
 }
 
-bool SystemProxySettings::GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort)
+void WriteRegistryProxyInfo(const char* regKey, const vector<ConnectionProxy>& proxyInfo)
 {
-    connection_proxy setting;
-    setting.name = _T("");
-    assert(m_settingsApplied == false);
-    if(!GetConnectionProxy(setting))
+    Json::Value json;
+    Json::Value proxies(Json::arrayValue);
+    
+    for (vector<ConnectionProxy>::const_iterator ii = proxyInfo.begin();
+         ii != proxyInfo.end();
+         ++ii)
     {
-        return false;
+        Json::Value entry;
+        entry["name"] = TStringToNarrow(ii->name);
+        entry["flags"] = Json::UInt(ii->flags);
+        entry["proxy"] = TStringToNarrow(ii->proxy);
+        entry["bypass"] = TStringToNarrow(ii->bypass);
+        proxies.append(entry);
     }
 
-    if( setting.flags & PROXY_TYPE_PROXY)
+    json["proxies"] = proxies;
+
+    ostringstream jsonStringStream; 
+    Json::FastWriter jsonWriter;
+    jsonStringStream << jsonWriter.write(json); 
+    string jsonString = jsonStringStream.str();
+
+    RegistryFailureReason registryFailureReason;
+    if (!WriteRegistryStringValue(regKey, 
+                                  jsonString, 
+                                  registryFailureReason))
     {
-        tstring proxy_str = setting.proxy;
-        std::size_t colon_pos;
-        std::size_t equal_pos;
-        map<tstring, tstring> Proxies;
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: WriteRegistryStringValue error: %d, %d"), __TFUNCTION__, __LINE__, registryFailureReason, GetLastError());
+    }
+}
 
-        colon_pos = proxy_str.find(':');
-        /*
-        case 1: no ':' in the proxy_str
-        ""
-        proxy host and port are not set
-        */
-        if(tstring::npos == colon_pos)
-            return false;
 
-        /*
-        case 2: '=' protocol identifier not found in the proxy_str
-        "host:port"
-        same proxy used for all protocols
-        */
-        equal_pos = proxy_str.find('=');
-        if(tstring::npos == equal_pos)
+void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxyConfig& o_proxyConfig)
+{
+    o_proxyConfig.clear();
+
+    if (!(proxyInfo.flags & PROXY_TYPE_PROXY))
+    {
+        return;
+    }
+
+    tstring proxy_str = proxyInfo.proxy;
+
+    std::size_t colon_pos;
+    std::size_t equal_pos;
+
+    colon_pos = proxy_str.find(':');
+
+    /*
+    case 1: no ':' in the proxy_str
+    ""
+    proxy host and port are not set
+    */
+    if (tstring::npos == colon_pos)
+    {
+        return;
+    }
+
+    /*
+    case 2: '=' protocol identifier not found in the proxy_str
+    "host:port"
+    same proxy used for all protocols
+    */
+    equal_pos = proxy_str.find('=');
+    if(tstring::npos == equal_pos)
+    {
+        //store it
+        o_proxyConfig.httpProxy = proxy_str;
+        o_proxyConfig.httpsProxy = proxy_str;
+        o_proxyConfig.socksProxy = proxy_str;
+    }
+
+    /*
+    case 3: '=' protocol identifier found in the proxy_str,
+    "http=host:port;https=host:port;ftp=host:port;socks=host:port"
+    loop through proxy types, pick  https or socks in that order
+    */
+
+    //split by protocol
+    std::size_t prev = 0, pos;
+    tstring protocol, proxy;
+    while ((pos = proxy_str.find('=', prev)) != tstring::npos)
+    {
+        if (pos > prev)
         {
-            //store it
-            Proxies.insert(pair<tstring, tstring>(_T("https"), proxy_str));
+            protocol = (proxy_str.substr(prev, pos-prev));
         }
+        prev = pos+1;
 
-        /*
-        case 3: '=' protocol identifier found in the proxy_str,
-        "http=host:port;https=host:port;ftp=host:port;socks=host:port"
-        loop through proxy types, pick  https or socks in that order
-        */
+        pos = proxy_str.find(';', prev);
 
-        //split by protocol
-        std::size_t prev = 0, pos;
-        tstring protocol, proxy;
-        while ((pos = proxy_str.find('=', prev)) != tstring::npos)
+        if(pos == tstring::npos)
         {
-            if (pos > prev)
-            {
-                protocol = (proxy_str.substr(prev, pos-prev));
-            }
+            proxy = (proxy_str.substr(prev, tstring::npos));
+        }
+        else if(pos >= prev)
+        {
+            proxy =  (proxy_str.substr(prev, pos-prev));
             prev = pos+1;
-
-            pos = proxy_str.find(';', prev);
-
-            if(pos == tstring::npos)
-            {
-                proxy = (proxy_str.substr(prev, tstring::npos));
-            }
-            else if(pos >= prev)
-            {
-                proxy =  (proxy_str.substr(prev, pos-prev));
-                prev = pos+1;
-            }
-
-            Proxies.insert(pair<tstring, tstring>(protocol, proxy));
         }
 
-        map<tstring, tstring>::iterator it = Proxies.find(_T("https"));
-        if(it != Proxies.end())
+        if (protocol == _T("http"))
         {
-            proxyType = _T("https");
+            o_proxyConfig.httpProxy = proxy;
         }
-        else
+        else if (protocol == _T("https"))
         {
-            it = Proxies.find(_T("socks"));
-
-            if(it == Proxies.end())
-            {
-                //no usable proxies
-                return false;
-            }
-
-            proxyType = _T("socks");
+            o_proxyConfig.httpsProxy = proxy;
         }
-
-        proxy_str = it->second;
-
-        colon_pos = proxy_str.find(':');
-
-        if(colon_pos == tstring::npos)
+        else if (protocol == _T("socks"))
         {
-            return false;
+            o_proxyConfig.socksProxy = proxy;
         }
-
-        tstring port_str = proxy_str.substr(colon_pos+1);
-        proxyPort = _wtoi(port_str.c_str());
-
-        if(proxyPort <= 0 || proxyPort > 65536) //check if port is valid
-        {
-            return false;
-        }
-
-        proxyHost = proxy_str.substr(0,colon_pos);
-        return true;
     }
-    return false;
+
+    /*
+     * At this point the proxy fields are actually host:port. Decompose.
+     */
+
+    proxy_str = o_proxyConfig.httpProxy;
+    colon_pos = proxy_str.find(':');
+    if(colon_pos != tstring::npos)
+    {
+        tstring port_str = proxy_str.substr(colon_pos+1);
+        o_proxyConfig.httpProxyPort = _wtoi(port_str.c_str());
+        o_proxyConfig.httpProxy = proxy_str.substr(0,colon_pos);
+    }
+    else
+    {
+        o_proxyConfig.httpProxy.clear();
+    }
+    
+    proxy_str = o_proxyConfig.httpsProxy;
+    colon_pos = proxy_str.find(':');
+    if(colon_pos != tstring::npos)
+    {
+        tstring port_str = proxy_str.substr(colon_pos+1);
+        o_proxyConfig.httpsProxyPort = _wtoi(port_str.c_str());
+        o_proxyConfig.httpsProxy = proxy_str.substr(0,colon_pos);
+    }
+    else
+    {
+        o_proxyConfig.httpsProxy.clear();
+    }
+    
+    proxy_str = o_proxyConfig.socksProxy;
+    colon_pos = proxy_str.find(':');
+    if(colon_pos != tstring::npos)
+    {
+        tstring port_str = proxy_str.substr(colon_pos+1);
+        o_proxyConfig.socksProxyPort = _wtoi(port_str.c_str());
+        o_proxyConfig.socksProxy = proxy_str.substr(0,colon_pos);
+    }
+    else
+    {
+        o_proxyConfig.socksProxy.clear();
+    }
 }
+

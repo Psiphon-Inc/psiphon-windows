@@ -24,7 +24,7 @@
 
 using namespace std;
 
-struct connection_proxy;
+struct ConnectionProxy;
 
 
 class SystemProxySettings
@@ -41,22 +41,16 @@ public:
     void SetHttpsProxyPort(int port);
     void SetSocksProxyPort(int port);
 
-    bool Apply();
+    bool Apply(bool allowedToSkipProxySettings);
     bool Revert();
     bool IsApplied() const;
 
-    bool GetUserLanProxy(tstring& proxyType, tstring& proxyHost, int& proxyPort);
-
 private:
-    typedef vector<connection_proxy>::iterator connection_proxy_iter;
-
-    void PreviousCrashCheckHack(connection_proxy& proxySettings);
-    bool Save(const vector<connection_proxy>& proxyInfo);
-    bool SetConnectionsProxies(const vector<tstring>& connections, const tstring& proxyAddress);
-    tstring MakeProxySettingString();
+    bool SetConnectionsProxy(const vector<ConnectionProxy>& connectionsProxies, 
+                               const tstring& proxyAddress);
+    tstring MakeProxySettingString() const;
 
     bool m_settingsApplied;
-    vector<connection_proxy> m_originalSettings;
 
     int m_httpProxyPort;
     int m_httpsProxyPort;
@@ -64,12 +58,62 @@ private:
 };
 
 
-struct ConnectionProxyInfo
+struct ConnectionProxy
 {
-    tstring connectionName;
-    tstring flags;
+    tstring name;
+    DWORD flags; // combo of: PROXY_TYPE_DIRECT, PROXY_TYPE_PROXY, PROXY_TYPE_AUTO_PROXY_URL, PROXY_TYPE_AUTO_DETECT
+    tstring flagsString;
     tstring proxy;
     tstring bypass;
+
+    bool operator==(const ConnectionProxy& rhs)
+    {
+        return 
+            this->name == rhs.name &&
+            this->flags == rhs.flags &&
+            this->proxy == rhs.proxy &&
+            this->bypass == rhs.bypass;
+    }
+
+    bool operator!=(const ConnectionProxy& rhs)
+    {
+        return !(*this == rhs);
+    }
+
+    void clear()
+    {
+        this->name.clear();
+        flags = 0;
+        this->flagsString.clear();
+        this->proxy.clear();
+        this->bypass.clear();
+    }
 };
 
-void GetOriginalProxyInfo(vector<ConnectionProxyInfo>& originalProxyInfo);
+
+struct DecomposedProxyConfig
+{
+    tstring httpProxy;
+    DWORD httpProxyPort;
+    tstring httpsProxy;
+    DWORD httpsProxyPort;
+    tstring socksProxy;
+    DWORD socksProxyPort;
+
+    void clear()
+    {
+        httpProxy.clear();
+        httpProxyPort = 0;
+        httpsProxy.clear();
+        httpsProxyPort = 0;
+        socksProxy.clear();
+        socksProxyPort = 0;
+    }
+};
+
+
+void DoStartupSystemProxyWork();
+tstring GetNativeDefaultHttpsProxyHost();
+tstring GetTunneledDefaultHttpsProxyHost();
+void GetNativeDefaultProxyInfo(DecomposedProxyConfig& o_proxyInfo);
+void GetSanitizedOriginalProxyInfo(vector<ConnectionProxy>& o_originalProxyInfo);

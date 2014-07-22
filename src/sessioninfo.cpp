@@ -28,7 +28,7 @@
 // This value determines whether or not we will perform preemptive reconnect
 // behaviour if the handshake fails. If it's zero (or MAXDWORD, really), then 
 // we won't, if it's something like 60000, then we will.
-#define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT 60000
+#define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT MAXDWORD
 
 
 SessionInfo::SessionInfo()
@@ -139,7 +139,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(NOT_SENSITIVE, false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, fail.c_str());
         return false;
     }
 
