@@ -1952,6 +1952,14 @@ static int ssh2_pkt_construct(Ssh ssh, struct Packet *pkt)
 	}
     }
 
+    // PSIPHON
+    // Use SSH variable length random padding (http://tools.ietf.org/html/rfc4253#section-6)
+    // in the early stages of the protocol (algorithm negotiation, key exchange) to avoid
+    // a fixed-size packet length sequence.
+    if (ssh->obfuscate && pkt->forcepad == 0) {
+        pkt->forcepad = pkt->length + random_byte() % 256;
+    }
+
     /*
      * Add padding. At least four bytes, and must also bring total
      * length (minus MAC) up to a multiple of the block size.
