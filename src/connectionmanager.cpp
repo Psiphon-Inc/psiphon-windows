@@ -922,21 +922,6 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
                     _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 }
 
-tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return tstring(HTTP_FEEDBACK_REQUEST_PATH) + 
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (transport ? transport->GetTransportRequestName() : _T("")) + 
-           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T("")) + 
-           _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
-}
-
 
 // ==== General Session Functions =============================================
 
@@ -1376,43 +1361,16 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
 
     bool success = true;
 
-    // Two different actions might be required at this point:
-    // 1) The user wishes to send freeform feedback text (optionally uploading 
-    //    diagnostic info).
-    // 2) The user completed the questionnaire and wishes to submit it 
-    //    (optionally uploading diagnostic info).
-
     // Upload diagnostic info
-    if (!feedback.empty() || sendDiagnosticInfo) 
+    if (!feedback.empty() || !surveyJSON.empty() || sendDiagnosticInfo) 
     {
         // We don't care if this succeeds.
-        (void)SendFeedbackAndDiagnosticInfo(
-                feedback,
-                email,
-                surveyJSON,
-                sendDiagnosticInfo,
-                StopInfo(&GlobalStopSignal::Instance(), stopReason));
-    }
-
-    if (surveyResponses != Json::nullValue)
-    {
-        // Send the feedback questionnaire responses.
-        // Note that we send the entire JSON string, even though the server
-        // (at this time) only wants the 'responses' sub-structure.
-
-        tstring requestPath = GetFeedbackRequestPath(m_transport);
-        string response;
-
-        success = ServerRequest::MakeRequest(
-                            ServerRequest::NO_TEMP_TUNNEL,
-                            m_transport,
-                            sessionInfo,
-                            requestPath.c_str(),
-                            response,
-                            StopInfo(&GlobalStopSignal::Instance(), stopReason),
-                            L"Content-Type: application/json",
-                            (LPVOID)narrowFeedbackJSON.c_str(),
-                            narrowFeedbackJSON.length());
+        success = SendFeedbackAndDiagnosticInfo(
+                    feedback,
+                    email,
+                    surveyJSON,
+                    sendDiagnosticInfo,
+                    StopInfo(&GlobalStopSignal::Instance(), stopReason));
     }
 
     return success;

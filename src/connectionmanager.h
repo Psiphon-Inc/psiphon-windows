@@ -84,7 +84,6 @@ private:
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
-    tstring GetFeedbackRequestPath(ITransport* transport);
 
     tstring GetSpeedRequestPath(
         const tstring& relayProtocol,
