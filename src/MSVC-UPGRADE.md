@@ -1,0 +1,34 @@
+# Upgrading to a new VS
+
+Note: This is rough.
+
+### Project Files
+
+Copy `Client/psiclient/psiclient.201x.{sln,vcxproj,vcxproj.filters}` to `...201y...`.
+
+Copy `Client/psiclient201x.sln` to `Client/psiclient201y.sln`. Modify the new file so that it refers to the new `psiclient201y.vcxproj` file.
+
+### Upgrade library builds
+
+For all: make sure that the project "Platform Toolset" is **"Visual Studio 201y - Windows XP (v1xx_xp)"**. Otherwise the client won't run on Windows XP.
+
+#### cryptopp
+
+Maybe nothing new has to be done? Allow MSVC to upgrade project. Then build normally (it's a dependency of psiclient).
+
+#### yaml-cpp
+
+It doesn't seem possible to just add this as a dependency project, so we'll have to build it fresh each time.
+
+1. Get [the code](https://code.google.com/p/yaml-cpp/). Maybe 0.5.x? Or whatever's newest.
+
+2. You'll probably need to download [Boost](http://www.boost.org/), extract it, and set your `BOOST_ROOT` environment variable ([doc](http://www.boost.org/doc/libs/1_56_0/more/getting_started/windows.html)).
+
+3. You'll need [CMake](http://www.cmake.org/). Run it, point to the yaml-cpp source, configure the desired MSVC version. Change options so that it's not shared or single-threaded (so, static and multi-threaded). Generate. Open the resulting solution in MSVC.
+
+4. The project we need is `yaml-cpp static mt`. Check its properties (and fix the XP setting, above) -- maybe optimize for size. Build it for Debug and Release.
+
+5. Copy the resulting `.lib` (and `.pdb`) files to new directories (see existing ones).
+   * The `.pdb` is probably located in `build/yaml-cpp.dir/Debug`.
+
+6. Alter the psiclient project settings to use the new `.lib` files.
