@@ -1221,7 +1221,7 @@ bool SendFeedbackAndDiagnosticInfo(
     out << YAML::Value;
     out << YAML::BeginMap; // Metadata
     out << YAML::Key << "platform" << YAML::Value << "windows";
-    out << YAML::Key << "version" << YAML::Value << 1;
+    out << YAML::Key << "version" << YAML::Value << 2;
     out << YAML::Key << "id" << YAML::Value << feedbackID;
     out << YAML::EndMap; // Metadata
 
