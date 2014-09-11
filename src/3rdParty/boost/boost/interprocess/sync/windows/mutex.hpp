@@ -11,7 +11,7 @@
 #ifndef BOOST_INTERPROCESS_DETAIL_WINDOWS_MUTEX_HPP
 #define BOOST_INTERPROCESS_DETAIL_WINDOWS_MUTEX_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -57,8 +57,8 @@ inline windows_mutex::windows_mutex()
    bool open_or_created;
    (void)handles.obtain_mutex(this->id_, &open_or_created);
    //The mutex must be created, never opened
-   assert(open_or_created);
-   assert(open_or_created && winapi::get_last_error() != winapi::error_already_exists);
+   BOOST_ASSERT(open_or_created);
+   BOOST_ASSERT(open_or_created && winapi::get_last_error() != winapi::error_already_exists);
    (void)open_or_created;
 }
 
