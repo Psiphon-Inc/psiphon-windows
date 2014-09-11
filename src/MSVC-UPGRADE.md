@@ -14,7 +14,9 @@ For all: make sure that the project "Platform Toolset" is **"Visual Studio 201y 
 
 #### cryptopp
 
-Maybe nothing new has to be done? Allow MSVC to upgrade project. Then build normally (it's a dependency of psiclient).
+In theory this should be a dependent project in our solution. But it's not.
+
+Build the static library from source: http://www.cryptopp.com/
 
 #### yaml-cpp
 
