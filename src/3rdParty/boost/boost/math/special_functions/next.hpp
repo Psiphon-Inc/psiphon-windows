@@ -10,13 +10,19 @@
 #pragma once
 #endif
 
+#include <boost/math/special_functions/math_fwd.hpp>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/sign.hpp>
 #include <boost/math/special_functions/trunc.hpp>
 
-#ifdef BOOST_MSVC
 #include <float.h>
+
+#if !defined(_CRAYC) && !defined(__CUDACC__) && (!defined(__GNUC__) || (__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ > 3)))
+#if (defined(_M_IX86_FP) && (_M_IX86_FP >= 2)) || defined(__SSE2__)
+#include "xmmintrin.h"
+#define BOOST_MATH_CHECK_SSE2
+#endif
 #endif
 
 namespace boost{ namespace math{
@@ -32,7 +38,11 @@ inline T get_smallest_value(mpl::true_ const&)
    // when using the SSE2 registers in DAZ or FTZ mode.
    //
    static const T m = std::numeric_limits<T>::denorm_min();
-   return (0 == m) ? tools::min_value<T>() : m;
+#ifdef BOOST_MATH_CHECK_SSE2
+   return (_mm_getcsr() & (_MM_FLUSH_ZERO_ON | 0x40)) ? tools::min_value<T>() : m;;
+#else
+   return ((tools::min_value<T>() / 2) == 0) ? tools::min_value<T>() : m;
+#endif
 }
 
 template <class T>
@@ -52,7 +62,7 @@ inline T get_smallest_value()
 }
 
 //
-// Returns the smallest value that won't generate denorms when 
+// Returns the smallest value that won't generate denorms when
 // we calculate the value of the least-significant-bit:
 //
 template <class T>
@@ -94,10 +104,8 @@ inline T get_min_shift_value()
    return val;
 }
 
-}
-
 template <class T, class Policy>
-T float_next(const T& val, const Policy& pol)
+T float_next_imp(const T& val, const Policy& pol)
 {
    BOOST_MATH_STD_USING
    int expon;
@@ -105,7 +113,7 @@ T float_next(const T& val, const Policy& pol)
 
    int fpclass = (boost::math::fpclassify)(val);
 
-   if((fpclass == FP_NAN) || (fpclass == FP_INFINITE))
+   if((fpclass == (int)FP_NAN) || (fpclass == (int)FP_INFINITE))
    {
       if(val < 0)
          return -tools::max_value<T>();
@@ -120,10 +128,10 @@ T float_next(const T& val, const Policy& pol)
    if(val == 0)
       return detail::get_smallest_value<T>();
 
-   if((fpclass != FP_SUBNORMAL) && (fpclass != FP_ZERO) && (fabs(val) < detail::get_min_shift_value<T>()) && (val != -tools::min_value<T>()))
+   if((fpclass != (int)FP_SUBNORMAL) && (fpclass != (int)FP_ZERO) && (fabs(val) < detail::get_min_shift_value<T>()) && (val != -tools::min_value<T>()))
    {
       //
-      // Special case: if the value of the least significant bit is a denorm, and the result 
+      // Special case: if the value of the least significant bit is a denorm, and the result
       // would not be a denorm, then shift the input, increment, and shift back.
       // This avoids issues with the Intel SSE2 registers when the FTZ or DAZ flags are set.
       //
@@ -136,6 +144,15 @@ T float_next(const T& val, const Policy& pol)
    if(diff == 0)
       diff = detail::get_smallest_value<T>();
    return val + diff;
+}
+
+}
+
+template <class T, class Policy>
+inline typename tools::promote_args<T>::type float_next(const T& val, const Policy& pol)
+{
+   typedef typename tools::promote_args<T>::type result_type;
+   return detail::float_next_imp(static_cast<result_type>(val), pol);
 }
 
 #if 0 //def BOOST_MSVC
@@ -162,13 +179,15 @@ inline double float_next(const double& val, const Policy& pol)
 #endif
 
 template <class T>
-inline T float_next(const T& val)
+inline typename tools::promote_args<T>::type float_next(const T& val)
 {
    return float_next(val, policies::policy<>());
 }
 
+namespace detail{
+
 template <class T, class Policy>
-T float_prior(const T& val, const Policy& pol)
+T float_prior_imp(const T& val, const Policy& pol)
 {
    BOOST_MATH_STD_USING
    int expon;
@@ -176,7 +195,7 @@ T float_prior(const T& val, const Policy& pol)
 
    int fpclass = (boost::math::fpclassify)(val);
 
-   if((fpclass == FP_NAN) || (fpclass == FP_INFINITE))
+   if((fpclass == (int)FP_NAN) || (fpclass == (int)FP_INFINITE))
    {
       if(val > 0)
          return tools::max_value<T>();
@@ -191,10 +210,10 @@ T float_prior(const T& val, const Policy& pol)
    if(val == 0)
       return -detail::get_smallest_value<T>();
 
-   if((fpclass != FP_SUBNORMAL) && (fpclass != FP_ZERO) && (fabs(val) < detail::get_min_shift_value<T>()) && (val != tools::min_value<T>()))
+   if((fpclass != (int)FP_SUBNORMAL) && (fpclass != (int)FP_ZERO) && (fabs(val) < detail::get_min_shift_value<T>()) && (val != tools::min_value<T>()))
    {
       //
-      // Special case: if the value of the least significant bit is a denorm, and the result 
+      // Special case: if the value of the least significant bit is a denorm, and the result
       // would not be a denorm, then shift the input, increment, and shift back.
       // This avoids issues with the Intel SSE2 registers when the FTZ or DAZ flags are set.
       //
@@ -208,6 +227,15 @@ T float_prior(const T& val, const Policy& pol)
    if(diff == 0)
       diff = detail::get_smallest_value<T>();
    return val - diff;
+}
+
+}
+
+template <class T, class Policy>
+inline typename tools::promote_args<T>::type float_prior(const T& val, const Policy& pol)
+{
+   typedef typename tools::promote_args<T>::type result_type;
+   return detail::float_prior_imp(static_cast<result_type>(val), pol);
 }
 
 #if 0 //def BOOST_MSVC
@@ -234,25 +262,28 @@ inline double float_prior(const double& val, const Policy& pol)
 #endif
 
 template <class T>
-inline T float_prior(const T& val)
+inline typename tools::promote_args<T>::type float_prior(const T& val)
 {
    return float_prior(val, policies::policy<>());
 }
 
-template <class T, class Policy>
-inline T nextafter(const T& val, const T& direction, const Policy& pol)
+template <class T, class U, class Policy>
+inline typename tools::promote_args<T, U>::type nextafter(const T& val, const U& direction, const Policy& pol)
 {
-   return val < direction ? boost::math::float_next(val, pol) : val == direction ? val : boost::math::float_prior(val, pol);
+   typedef typename tools::promote_args<T, U>::type result_type;
+   return val < direction ? boost::math::float_next<result_type>(val, pol) : val == direction ? val : boost::math::float_prior<result_type>(val, pol);
 }
 
-template <class T>
-inline T nextafter(const T& val, const T& direction)
+template <class T, class U>
+inline typename tools::promote_args<T, U>::type nextafter(const T& val, const U& direction)
 {
    return nextafter(val, direction, policies::policy<>());
 }
 
+namespace detail{
+
 template <class T, class Policy>
-T float_distance(const T& a, const T& b, const Policy& pol)
+T float_distance_imp(const T& a, const T& b, const Policy& pol)
 {
    BOOST_MATH_STD_USING
    //
@@ -275,12 +306,12 @@ T float_distance(const T& a, const T& b, const Policy& pol)
    if(a == b)
       return 0;
    if(a == 0)
-      return 1 + fabs(float_distance(static_cast<T>((b < 0) ? -detail::get_smallest_value<T>() : detail::get_smallest_value<T>()), b, pol));
+      return 1 + fabs(float_distance(static_cast<T>((b < 0) ? T(-detail::get_smallest_value<T>()) : detail::get_smallest_value<T>()), b, pol));
    if(b == 0)
-      return 1 + fabs(float_distance(static_cast<T>((a < 0) ? -detail::get_smallest_value<T>() : detail::get_smallest_value<T>()), a, pol));
+      return 1 + fabs(float_distance(static_cast<T>((a < 0) ? T(-detail::get_smallest_value<T>()) : detail::get_smallest_value<T>()), a, pol));
    if(boost::math::sign(a) != boost::math::sign(b))
-      return 2 + fabs(float_distance(static_cast<T>((b < 0) ? -detail::get_smallest_value<T>() : detail::get_smallest_value<T>()), b, pol))
-         + fabs(float_distance(static_cast<T>((a < 0) ? -detail::get_smallest_value<T>() : detail::get_smallest_value<T>()), a, pol));
+      return 2 + fabs(float_distance(static_cast<T>((b < 0) ? T(-detail::get_smallest_value<T>()) : detail::get_smallest_value<T>()), b, pol))
+         + fabs(float_distance(static_cast<T>((a < 0) ? T(-detail::get_smallest_value<T>()) : detail::get_smallest_value<T>()), a, pol));
    //
    // By the time we get here, both a and b must have the same sign, we want
    // b > a and both postive for the following logic:
@@ -297,7 +328,7 @@ T float_distance(const T& a, const T& b, const Policy& pol)
    // because we actually have fewer than tools::digits<T>()
    // significant bits in the representation:
    //
-   frexp(((boost::math::fpclassify)(a) == FP_SUBNORMAL) ? tools::min_value<T>() : a, &expon);
+   frexp(((boost::math::fpclassify)(a) == (int)FP_SUBNORMAL) ? tools::min_value<T>() : a, &expon);
    T upper = ldexp(T(1), expon);
    T result = 0;
    expon = tools::digits<T>() - expon;
@@ -310,11 +341,11 @@ T float_distance(const T& a, const T& b, const Policy& pol)
       result = float_distance(upper, b);
    }
    //
-   // Use compensated double-double addition to avoid rounding 
+   // Use compensated double-double addition to avoid rounding
    // errors in the subtraction:
    //
    T mb, x, y, z;
-   if(((boost::math::fpclassify)(a) == FP_SUBNORMAL) || (b - a < tools::min_value<T>()))
+   if(((boost::math::fpclassify)(a) == (int)FP_SUBNORMAL) || (b - a < tools::min_value<T>()))
    {
       //
       // Special case - either one end of the range is a denormal, or else the difference is.
@@ -350,14 +381,25 @@ T float_distance(const T& a, const T& b, const Policy& pol)
    return result;
 }
 
-template <class T>
-T float_distance(const T& a, const T& b)
+}
+
+template <class T, class U, class Policy>
+inline typename tools::promote_args<T, U>::type float_distance(const T& a, const U& b, const Policy& pol)
+{
+   typedef typename tools::promote_args<T, U>::type result_type;
+   return detail::float_distance_imp(static_cast<result_type>(a), static_cast<result_type>(b), pol);
+}
+
+template <class T, class U>
+typename tools::promote_args<T, U>::type float_distance(const T& a, const U& b)
 {
    return boost::math::float_distance(a, b, policies::policy<>());
 }
 
+namespace detail{
+
 template <class T, class Policy>
-T float_advance(T val, int distance, const Policy& pol)
+T float_advance_imp(T val, int distance, const Policy& pol)
 {
    BOOST_MATH_STD_USING
    //
@@ -367,7 +409,7 @@ T float_advance(T val, int distance, const Policy& pol)
 
    int fpclass = (boost::math::fpclassify)(val);
 
-   if((fpclass == FP_NAN) || (fpclass == FP_INFINITE))
+   if((fpclass == (int)FP_NAN) || (fpclass == (int)FP_INFINITE))
       return policies::raise_domain_error<T>(
          function,
          "Argument val must be finite, but got %1%", val, pol);
@@ -384,7 +426,7 @@ T float_advance(T val, int distance, const Policy& pol)
    if(fabs(val) < detail::get_min_shift_value<T>())
    {
       //
-      // Special case: if the value of the least significant bit is a denorm, 
+      // Special case: if the value of the least significant bit is a denorm,
       // implement in terms of float_next/float_prior.
       // This avoids issues with the Intel SSE2 registers when the FTZ or DAZ flags are set.
       //
@@ -411,7 +453,7 @@ T float_advance(T val, int distance, const Policy& pol)
    {
       distance -= itrunc(limit_distance);
       val = limit;
-      if(distance < 0) 
+      if(distance < 0)
       {
          limit /= 2;
          expon--;
@@ -424,7 +466,7 @@ T float_advance(T val, int distance, const Policy& pol)
       limit_distance = float_distance(val, limit);
       if(distance && (limit_distance == 0))
       {
-         policies::raise_evaluation_error<T>(function, "Internal logic failed while trying to increment floating point value %1%: most likely your FPU is in non-IEEE conforming mode.", val, pol);
+         return policies::raise_evaluation_error<T>(function, "Internal logic failed while trying to increment floating point value %1%: most likely your FPU is in non-IEEE conforming mode.", val, pol);
       }
    }
    if((0.5f == frexp(val, &expon)) && (distance < 0))
@@ -437,8 +479,17 @@ T float_advance(T val, int distance, const Policy& pol)
    return val += diff;
 }
 
+}
+
+template <class T, class Policy>
+inline typename tools::promote_args<T>::type float_advance(T val, int distance, const Policy& pol)
+{
+   typedef typename tools::promote_args<T>::type result_type;
+   return detail::float_advance_imp(static_cast<result_type>(val), distance, pol);
+}
+
 template <class T>
-inline T float_advance(const T& val, int distance)
+inline typename tools::promote_args<T>::type float_advance(const T& val, int distance)
 {
    return boost::math::float_advance(val, distance, policies::policy<>());
 }

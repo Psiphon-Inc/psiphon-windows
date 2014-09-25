@@ -36,14 +36,14 @@
 #include <boost/proto/proto_fwd.hpp>
 #include <boost/proto/detail/any.hpp>
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma warning(push)
 # pragma warning(disable : 4714) // function 'xxx' marked as __forceinline not inlined
 #endif
 
 // We're STILL using Boost.Typeof on MSVC even for msvc-11.0 because of this bug:
 // https://connect.microsoft.com/VisualStudio/feedback/details/765392/decltype-of-a-pointer-to-member-operator-gets-ref-qualification-wrong
-#if !defined(BOOST_NO_DECLTYPE) && !BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1700))
+#if !defined(BOOST_NO_CXX11_DECLTYPE) && !BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1700))
 # define BOOST_PROTO_DECLTYPE_(EXPR, TYPE) typedef decltype((EXPR)) TYPE;
 #else
 # define BOOST_PROTO_DECLTYPE_NESTED_TYPEDEF_TPL_(NESTED, EXPR)                                     \
@@ -446,7 +446,7 @@ namespace boost { namespace proto
     } // namespace detail
 }}
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma warning(pop)
 #endif
 

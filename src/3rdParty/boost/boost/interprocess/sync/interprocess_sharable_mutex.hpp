@@ -15,7 +15,7 @@
 #ifndef BOOST_INTERPROCESS_SHARABLE_MUTEX_HPP
 #define BOOST_INTERPROCESS_SHARABLE_MUTEX_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -174,12 +174,12 @@ inline interprocess_sharable_mutex::~interprocess_sharable_mutex()
 
 inline void interprocess_sharable_mutex::lock()
 {
-   scoped_lock_t lock(m_mut);
+   scoped_lock_t lck(m_mut);
 
    //The exclusive lock must block in the first gate
    //if an exclusive lock has been acquired
    while (this->m_ctrl.exclusive_in){
-      this->m_first_gate.wait(lock);
+      this->m_first_gate.wait(lck);
    }
 
    //Mark that exclusive lock has been acquired
@@ -190,18 +190,18 @@ inline void interprocess_sharable_mutex::lock()
 
    //Now wait until all readers are gone
    while (this->m_ctrl.num_shared){
-      this->m_second_gate.wait(lock);
+      this->m_second_gate.wait(lck);
    }
    rollback.release();
 }
 
 inline bool interprocess_sharable_mutex::try_lock()
 {
-   scoped_lock_t lock(m_mut, try_to_lock);
+   scoped_lock_t lck(m_mut, try_to_lock);
 
    //If we can't lock or any has there is any exclusive
    //or sharable mark return false;
-   if(!lock.owns()
+   if(!lck.owns()
       || this->m_ctrl.exclusive_in
       || this->m_ctrl.num_shared){
       return false;
@@ -213,17 +213,15 @@ inline bool interprocess_sharable_mutex::try_lock()
 inline bool interprocess_sharable_mutex::timed_lock
    (const boost::posix_time::ptime &abs_time)
 {
-   if(abs_time == boost::posix_time::pos_infin){
-      this->lock();
-      return true;
-   }
-   scoped_lock_t lock(m_mut, abs_time);
-   if(!lock.owns())   return false;
+   scoped_lock_t lck(m_mut, abs_time);
+   if(!lck.owns())   return false;
 
    //The exclusive lock must block in the first gate
    //if an exclusive lock has been acquired
    while (this->m_ctrl.exclusive_in){
-      if(!this->m_first_gate.timed_wait(lock, abs_time)){
+      //Mutexes and condvars handle just fine infinite abs_times
+      //so avoid checking it here
+      if(!this->m_first_gate.timed_wait(lck, abs_time)){
          if(this->m_ctrl.exclusive_in){
             return false;
          }
@@ -239,7 +237,9 @@ inline bool interprocess_sharable_mutex::timed_lock
 
    //Now wait until all readers are gone
    while (this->m_ctrl.num_shared){
-      if(!this->m_second_gate.timed_wait(lock, abs_time)){
+      //Mutexes and condvars handle just fine infinite abs_times
+      //so avoid checking it here
+      if(!this->m_second_gate.timed_wait(lck, abs_time)){
          if(this->m_ctrl.num_shared){
             return false;
          }
@@ -252,7 +252,7 @@ inline bool interprocess_sharable_mutex::timed_lock
 
 inline void interprocess_sharable_mutex::unlock()
 {
-   scoped_lock_t lock(m_mut);
+   scoped_lock_t lck(m_mut);
    this->m_ctrl.exclusive_in = 0;
    this->m_first_gate.notify_all();
 }
@@ -261,14 +261,14 @@ inline void interprocess_sharable_mutex::unlock()
 
 inline void interprocess_sharable_mutex::lock_sharable()
 {
-   scoped_lock_t lock(m_mut);
+   scoped_lock_t lck(m_mut);
 
    //The sharable lock must block in the first gate
    //if an exclusive lock has been acquired
    //or there are too many sharable locks
    while(this->m_ctrl.exclusive_in
         || this->m_ctrl.num_shared == constants::max_readers){
-      this->m_first_gate.wait(lock);
+      this->m_first_gate.wait(lck);
    }
 
    //Increment sharable count
@@ -277,12 +277,12 @@ inline void interprocess_sharable_mutex::lock_sharable()
 
 inline bool interprocess_sharable_mutex::try_lock_sharable()
 {
-   scoped_lock_t lock(m_mut, try_to_lock);
+   scoped_lock_t lck(m_mut, try_to_lock);
 
    //The sharable lock must fail
    //if an exclusive lock has been acquired
    //or there are too many sharable locks
-   if(!lock.owns()
+   if(!lck.owns()
       || this->m_ctrl.exclusive_in
       || this->m_ctrl.num_shared == constants::max_readers){
       return false;
@@ -296,19 +296,17 @@ inline bool interprocess_sharable_mutex::try_lock_sharable()
 inline bool interprocess_sharable_mutex::timed_lock_sharable
    (const boost::posix_time::ptime &abs_time)
 {
-   if(abs_time == boost::posix_time::pos_infin){
-      this->lock_sharable();
-      return true;
-   }
-   scoped_lock_t lock(m_mut, abs_time);
-   if(!lock.owns())   return false;
+   scoped_lock_t lck(m_mut, abs_time);
+   if(!lck.owns())   return false;
 
    //The sharable lock must block in the first gate
    //if an exclusive lock has been acquired
    //or there are too many sharable locks
    while (this->m_ctrl.exclusive_in
          || this->m_ctrl.num_shared == constants::max_readers){
-      if(!this->m_first_gate.timed_wait(lock, abs_time)){
+      //Mutexes and condvars handle just fine infinite abs_times
+      //so avoid checking it here
+      if(!this->m_first_gate.timed_wait(lck, abs_time)){
          if(this->m_ctrl.exclusive_in
                || this->m_ctrl.num_shared == constants::max_readers){
             return false;
@@ -324,7 +322,7 @@ inline bool interprocess_sharable_mutex::timed_lock_sharable
 
 inline void interprocess_sharable_mutex::unlock_sharable()
 {
-   scoped_lock_t lock(m_mut);
+   scoped_lock_t lck(m_mut);
    //Decrement sharable count
    --this->m_ctrl.num_shared;
    if (this->m_ctrl.num_shared == 0){
