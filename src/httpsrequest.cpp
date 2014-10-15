@@ -342,6 +342,22 @@ bool HTTPSRequest::MakeRequest(
         return false;
     }
 
+    // WinHTTP defaults to SSLv3 and TLSv1. Exclude SSLv3 due to POODLE flaw:
+    // http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566
+    // TODO: should also enable WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1 and WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+    // however doing so will require OS version checking as WinHTTP in XP doesn't support these, etc.
+    DWORD dwProtocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1;
+
+    if (FALSE == WinHttpSetOption(
+                    hSession,
+                    WINHTTP_OPTION_SECURE_PROTOCOLS,
+                    &dwProtocols,
+                    sizeof(DWORD)))
+    {
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption WINHTTP_OPTION_SECURE_PROTOCOLS failed (%d)"), GetLastError());
+        return false;
+    }
+
     AutoHINTERNET hConnect =
             WinHttpConnect(
                 hSession,
@@ -382,7 +398,7 @@ bool HTTPSRequest::MakeRequest(
                     &dwFlags,
                     sizeof(DWORD)))
     {
-        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption WINHTTP_OPTION_SECURITY_FLAGS failed (%d)"), GetLastError());
         return false;
     }
 
