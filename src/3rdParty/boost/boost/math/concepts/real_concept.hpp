@@ -84,6 +84,9 @@ public:
    real_concept(float c) : m_value(c){}
    real_concept(double c) : m_value(c){}
    real_concept(long double c) : m_value(c){}
+#ifdef BOOST_MATH_USE_FLOAT128
+   real_concept(BOOST_MATH_FLOAT128_TYPE c) : m_value(c){}
+#endif
 
    // Assignment:
    real_concept& operator=(char c) { m_value = c; return *this; }
@@ -304,7 +307,7 @@ inline std::basic_istream<charT, traits>& operator>>(std::basic_istream<charT, t
    is >> v;
    a = v;
    return is;
-#elif defined(__SGI_STL_PORT) || defined(_RWSTD_VER) || defined(__LIBCOMO__)
+#elif defined(__SGI_STL_PORT) || defined(_RWSTD_VER) || defined(__LIBCOMO__) || defined(_LIBCPP_VERSION)
    std::string s;
    real_concept_base_type d;
    is >> s;
@@ -325,7 +328,7 @@ namespace tools
 {
 
 template <>
-inline concepts::real_concept make_big_value<concepts::real_concept>(long double val, const char* , mpl::false_ const&, mpl::false_ const&)
+inline concepts::real_concept make_big_value<concepts::real_concept>(boost::floatmax_t val, const char* , mpl::false_ const&, mpl::false_ const&)
 {
    return val;  // Can't use lexical_cast here, sometimes it fails....
 }
@@ -366,7 +369,7 @@ inline concepts::real_concept epsilon<concepts::real_concept>(BOOST_MATH_EXPLICI
 
 template <>
 inline int digits<concepts::real_concept>(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE_SPEC(concepts::real_concept))
-{ 
+{
    // Assume number of significand bits is same as real_concept_base_type,
    // unless std::numeric_limits<T>::is_specialized to provide digits.
    return tools::digits<concepts::real_concept_base_type>();
@@ -432,7 +435,7 @@ inline long double real_cast<long double, concepts::real_concept>(concepts::real
 
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1310)
 //
-// For some strange reason ADL sometimes fails to find the 
+// For some strange reason ADL sometimes fails to find the
 // correct overloads, unless we bring these declarations into scope:
 //
 using concepts::itrunc;

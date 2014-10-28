@@ -9,8 +9,9 @@
 #ifndef BOOST_UNORDERED_UNORDERED_SET_HPP_INCLUDED
 #define BOOST_UNORDERED_UNORDERED_SET_HPP_INCLUDED
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-# pragma once
+#include <boost/config.hpp>
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#pragma once
 #endif
 
 #include <boost/unordered/unordered_set_fwd.hpp>
@@ -115,17 +116,19 @@ namespace unordered
 
 #if defined(BOOST_UNORDERED_USE_MOVE)
         unordered_set(BOOST_RV_REF(unordered_set) other)
+                BOOST_NOEXCEPT_IF(table::nothrow_move_constructible)
             : table_(other.table_, boost::unordered::detail::move_tag())
         {
         }
-#elif !defined(BOOST_NO_RVALUE_REFERENCES)
+#elif !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         unordered_set(unordered_set&& other)
+                BOOST_NOEXCEPT_IF(table::nothrow_move_constructible)
             : table_(other.table_, boost::unordered::detail::move_tag())
         {
         }
 #endif
 
-#if !defined(BOOST_NO_RVALUE_REFERENCES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         unordered_set(unordered_set&&, allocator_type const&);
 #endif
 
@@ -140,7 +143,7 @@ namespace unordered
 
         // Destructor
 
-        ~unordered_set();
+        ~unordered_set() BOOST_NOEXCEPT;
 
         // Assign
 
@@ -163,7 +166,7 @@ namespace unordered
             return *this;
         }
 
-#if !defined(BOOST_NO_RVALUE_REFERENCES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         unordered_set& operator=(unordered_set&& x)
         {
             table_.move_assign(x.table_);
@@ -176,60 +179,60 @@ namespace unordered
         unordered_set& operator=(std::initializer_list<value_type>);
 #endif
 
-        allocator_type get_allocator() const
+        allocator_type get_allocator() const BOOST_NOEXCEPT
         {
             return table_.node_alloc();
         }
 
         // size and capacity
 
-        bool empty() const
+        bool empty() const BOOST_NOEXCEPT
         {
             return table_.size_ == 0;
         }
 
-        size_type size() const
+        size_type size() const BOOST_NOEXCEPT
         {
             return table_.size_;
         }
 
-        size_type max_size() const;
+        size_type max_size() const BOOST_NOEXCEPT;
 
         // iterators
 
-        iterator begin()
+        iterator begin() BOOST_NOEXCEPT
         {
             return table_.begin();
         }
 
-        const_iterator begin() const
+        const_iterator begin() const BOOST_NOEXCEPT
         {
             return table_.begin();
         }
 
-        iterator end()
+        iterator end() BOOST_NOEXCEPT
         {
             return iterator();
         }
 
-        const_iterator end() const
+        const_iterator end() const BOOST_NOEXCEPT
         {
             return const_iterator();
         }
 
-        const_iterator cbegin() const
+        const_iterator cbegin() const BOOST_NOEXCEPT
         {
             return table_.begin();
         }
 
-        const_iterator cend() const
+        const_iterator cend() const BOOST_NOEXCEPT
         {
             return const_iterator();
         }
 
         // emplace
 
-#if !defined(BOOST_NO_VARIADIC_TEMPLATES)
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
         template <class... Args>
         std::pair<iterator, bool> emplace(BOOST_FWD_REF(Args)... args)
         {
@@ -434,12 +437,12 @@ namespace unordered
 
         // bucket interface
 
-        size_type bucket_count() const
+        size_type bucket_count() const BOOST_NOEXCEPT
         {
             return table_.bucket_count_;
         }
 
-        size_type max_bucket_count() const
+        size_type max_bucket_count() const BOOST_NOEXCEPT
         {
             return table_.max_bucket_count();
         }
@@ -448,8 +451,7 @@ namespace unordered
 
         size_type bucket(const key_type& k) const
         {
-            return table::to_bucket(table_.bucket_count_,
-                table_.hash(k));
+            return table_.hash_to_bucket(table_.hash(k));
         }
 
         local_iterator begin(size_type n)
@@ -487,13 +489,13 @@ namespace unordered
 
         // hash policy
 
-        float max_load_factor() const
+        float max_load_factor() const BOOST_NOEXCEPT
         {
             return table_.mlf_;
         }
 
-        float load_factor() const;
-        void max_load_factor(float);
+        float load_factor() const BOOST_NOEXCEPT;
+        void max_load_factor(float) BOOST_NOEXCEPT;
         void rehash(size_type);
         void reserve(size_type);
 
@@ -583,17 +585,19 @@ namespace unordered
 
 #if defined(BOOST_UNORDERED_USE_MOVE)
         unordered_multiset(BOOST_RV_REF(unordered_multiset) other)
+                BOOST_NOEXCEPT_IF(table::nothrow_move_constructible)
             : table_(other.table_, boost::unordered::detail::move_tag())
         {
         }
-#elif !defined(BOOST_NO_RVALUE_REFERENCES)
+#elif !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         unordered_multiset(unordered_multiset&& other)
+                BOOST_NOEXCEPT_IF(table::nothrow_move_constructible)
             : table_(other.table_, boost::unordered::detail::move_tag())
         {
         }
 #endif
 
-#if !defined(BOOST_NO_RVALUE_REFERENCES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         unordered_multiset(unordered_multiset&&, allocator_type const&);
 #endif
 
@@ -608,7 +612,7 @@ namespace unordered
 
         // Destructor
 
-        ~unordered_multiset();
+        ~unordered_multiset() BOOST_NOEXCEPT;
 
         // Assign
 
@@ -632,7 +636,7 @@ namespace unordered
             return *this;
         }
 
-#if !defined(BOOST_NO_RVALUE_REFERENCES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         unordered_multiset& operator=(unordered_multiset&& x)
         {
             table_.move_assign(x.table_);
@@ -645,60 +649,60 @@ namespace unordered
         unordered_multiset& operator=(std::initializer_list<value_type>);
 #endif
 
-        allocator_type get_allocator() const
+        allocator_type get_allocator() const BOOST_NOEXCEPT
         {
             return table_.node_alloc();
         }
 
         // size and capacity
 
-        bool empty() const
+        bool empty() const BOOST_NOEXCEPT
         {
             return table_.size_ == 0;
         }
 
-        size_type size() const
+        size_type size() const BOOST_NOEXCEPT
         {
             return table_.size_;
         }
 
-        size_type max_size() const;
+        size_type max_size() const BOOST_NOEXCEPT;
 
         // iterators
 
-        iterator begin()
+        iterator begin() BOOST_NOEXCEPT
         {
             return iterator(table_.begin());
         }
 
-        const_iterator begin() const
+        const_iterator begin() const BOOST_NOEXCEPT
         {
             return const_iterator(table_.begin());
         }
 
-        iterator end()
+        iterator end() BOOST_NOEXCEPT
         {
             return iterator();
         }
 
-        const_iterator end() const
+        const_iterator end() const BOOST_NOEXCEPT
         {
             return const_iterator();
         }
 
-        const_iterator cbegin() const
+        const_iterator cbegin() const BOOST_NOEXCEPT
         {
             return const_iterator(table_.begin());
         }
 
-        const_iterator cend() const
+        const_iterator cend() const BOOST_NOEXCEPT
         {
             return const_iterator();
         }
 
         // emplace
 
-#if !defined(BOOST_NO_VARIADIC_TEMPLATES)
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
         template <class... Args>
         iterator emplace(BOOST_FWD_REF(Args)... args)
         {
@@ -903,12 +907,12 @@ namespace unordered
 
         // bucket interface
 
-        size_type bucket_count() const
+        size_type bucket_count() const BOOST_NOEXCEPT
         {
             return table_.bucket_count_;
         }
 
-        size_type max_bucket_count() const
+        size_type max_bucket_count() const BOOST_NOEXCEPT
         {
             return table_.max_bucket_count();
         }
@@ -917,8 +921,7 @@ namespace unordered
 
         size_type bucket(const key_type& k) const
         {
-            return table::to_bucket(table_.bucket_count_,
-                table_.hash(k));
+            return table_.hash_to_bucket(table_.hash(k));
         }
 
         local_iterator begin(size_type n)
@@ -956,13 +959,13 @@ namespace unordered
 
         // hash policy
 
-        float max_load_factor() const
+        float max_load_factor() const BOOST_NOEXCEPT
         {
             return table_.mlf_;
         }
 
-        float load_factor() const;
-        void max_load_factor(float);
+        float load_factor() const BOOST_NOEXCEPT;
+        void max_load_factor(float) BOOST_NOEXCEPT;
         void rehash(size_type);
         void reserve(size_type);
 
@@ -1034,7 +1037,7 @@ namespace unordered
     }
     
     template <class T, class H, class P, class A>
-    unordered_set<T,H,P,A>::~unordered_set() {}
+    unordered_set<T,H,P,A>::~unordered_set() BOOST_NOEXCEPT {}
 
     template <class T, class H, class P, class A>
     unordered_set<T,H,P,A>::unordered_set(
@@ -1043,7 +1046,7 @@ namespace unordered
     {
     }
 
-#if !defined(BOOST_NO_RVALUE_REFERENCES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 
     template <class T, class H, class P, class A>
     unordered_set<T,H,P,A>::unordered_set(
@@ -1082,7 +1085,7 @@ namespace unordered
     // size and capacity
 
     template <class T, class H, class P, class A>
-    std::size_t unordered_set<T,H,P,A>::max_size() const
+    std::size_t unordered_set<T,H,P,A>::max_size() const BOOST_NOEXCEPT
     {
         return table_.max_size();
     }
@@ -1202,13 +1205,13 @@ namespace unordered
     // hash policy
 
     template <class T, class H, class P, class A>
-    float unordered_set<T,H,P,A>::load_factor() const
+    float unordered_set<T,H,P,A>::load_factor() const BOOST_NOEXCEPT
     {
         return table_.load_factor();
     }
 
     template <class T, class H, class P, class A>
-    void unordered_set<T,H,P,A>::max_load_factor(float m)
+    void unordered_set<T,H,P,A>::max_load_factor(float m) BOOST_NOEXCEPT
     {
         table_.max_load_factor(m);
     }
@@ -1318,7 +1321,7 @@ namespace unordered
     }
     
     template <class T, class H, class P, class A>
-    unordered_multiset<T,H,P,A>::~unordered_multiset() {}
+    unordered_multiset<T,H,P,A>::~unordered_multiset() BOOST_NOEXCEPT {}
 
     template <class T, class H, class P, class A>
     unordered_multiset<T,H,P,A>::unordered_multiset(
@@ -1327,7 +1330,7 @@ namespace unordered
     {
     }
 
-#if !defined(BOOST_NO_RVALUE_REFERENCES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 
     template <class T, class H, class P, class A>
     unordered_multiset<T,H,P,A>::unordered_multiset(
@@ -1366,7 +1369,7 @@ namespace unordered
     // size and capacity
 
     template <class T, class H, class P, class A>
-    std::size_t unordered_multiset<T,H,P,A>::max_size() const
+    std::size_t unordered_multiset<T,H,P,A>::max_size() const BOOST_NOEXCEPT
     {
         return table_.max_size();
     }
@@ -1486,13 +1489,13 @@ namespace unordered
     // hash policy
 
     template <class T, class H, class P, class A>
-    float unordered_multiset<T,H,P,A>::load_factor() const
+    float unordered_multiset<T,H,P,A>::load_factor() const BOOST_NOEXCEPT
     {
         return table_.load_factor();
     }
 
     template <class T, class H, class P, class A>
-    void unordered_multiset<T,H,P,A>::max_load_factor(float m)
+    void unordered_multiset<T,H,P,A>::max_load_factor(float m) BOOST_NOEXCEPT
     {
         table_.max_load_factor(m);
     }
