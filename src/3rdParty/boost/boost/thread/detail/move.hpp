@@ -9,24 +9,34 @@
 
 #include <boost/thread/detail/config.hpp>
 #ifndef BOOST_NO_SFINAE
-#include <boost/utility/enable_if.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/decay.hpp>
+#include <boost/type_traits/conditional.hpp>
+#include <boost/type_traits/remove_extent.hpp>
+#include <boost/type_traits/is_array.hpp>
+#include <boost/type_traits/is_function.hpp>
+#include <boost/type_traits/remove_cv.hpp>
+#include <boost/type_traits/add_pointer.hpp>
+#include <boost/type_traits/decay.hpp>
 #endif
 
 #include <boost/thread/detail/delete.hpp>
-#include <boost/move/move.hpp>
+#include <boost/move/utility.hpp>
+#include <boost/move/traits.hpp>
 #include <boost/config/abi_prefix.hpp>
-
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+#include <type_traits>
+#endif
 namespace boost
 {
 
     namespace detail
     {
       template <typename T>
-      struct has_move_emulation_enabled_aux_dummy_specialization;
+      struct enable_move_utility_emulation_dummy_specialization;
         template<typename T>
         struct thread_move_t
         {
@@ -49,6 +59,7 @@ namespace boost
         };
     }
 
+#if !defined BOOST_THREAD_USES_MOVE
 
 #ifndef BOOST_NO_SFINAE
     template<typename T>
@@ -63,11 +74,14 @@ namespace boost
     {
         return t;
     }
+
+#endif   //#if !defined BOOST_THREAD_USES_MOVE
 }
 
 #if ! defined  BOOST_NO_CXX11_RVALUE_REFERENCES
 
 #define BOOST_THREAD_RV_REF(TYPE) BOOST_RV_REF(TYPE)
+#define BOOST_THREAD_RV_REF_2_TEMPL_ARGS(TYPE) BOOST_RV_REF_2_TEMPL_ARGS(TYPE)
 #define BOOST_THREAD_RV_REF_BEG BOOST_RV_REF_BEG
 #define BOOST_THREAD_RV_REF_END BOOST_RV_REF_END
 #define BOOST_THREAD_RV(V) V
@@ -77,16 +91,17 @@ namespace boost
 #define BOOST_THREAD_DCL_MOVABLE_BEG(T) \
   namespace detail { \
     template <typename T> \
-    struct has_move_emulation_enabled_aux_dummy_specialization<
+    struct enable_move_utility_emulation_dummy_specialization<
 
 #define BOOST_THREAD_DCL_MOVABLE_END > \
-      : integral_constant<bool, true> \
+      : integral_constant<bool, false> \
       {}; \
     }
 
 #elif ! defined  BOOST_NO_CXX11_RVALUE_REFERENCES && defined  BOOST_MSVC
 
 #define BOOST_THREAD_RV_REF(TYPE) BOOST_RV_REF(TYPE)
+#define BOOST_THREAD_RV_REF_2_TEMPL_ARGS(TYPE) BOOST_RV_REF_2_TEMPL_ARGS(TYPE)
 #define BOOST_THREAD_RV_REF_BEG BOOST_RV_REF_BEG
 #define BOOST_THREAD_RV_REF_END BOOST_RV_REF_END
 #define BOOST_THREAD_RV(V) V
@@ -96,10 +111,10 @@ namespace boost
 #define BOOST_THREAD_DCL_MOVABLE_BEG(T) \
   namespace detail { \
     template <typename T> \
-    struct has_move_emulation_enabled_aux_dummy_specialization<
+    struct enable_move_utility_emulation_dummy_specialization<
 
 #define BOOST_THREAD_DCL_MOVABLE_END > \
-      : integral_constant<bool, true> \
+      : integral_constant<bool, false> \
       {}; \
     }
 
@@ -107,6 +122,7 @@ namespace boost
 
 #if defined BOOST_THREAD_USES_MOVE
 #define BOOST_THREAD_RV_REF(TYPE) BOOST_RV_REF(TYPE)
+#define BOOST_THREAD_RV_REF_2_TEMPL_ARGS(TYPE) BOOST_RV_REF_2_TEMPL_ARGS(TYPE)
 #define BOOST_THREAD_RV_REF_BEG BOOST_RV_REF_BEG
 #define BOOST_THREAD_RV_REF_END BOOST_RV_REF_END
 #define BOOST_THREAD_RV(V) V
@@ -115,10 +131,10 @@ namespace boost
 #define BOOST_THREAD_DCL_MOVABLE_BEG(T) \
   namespace detail { \
     template <typename T> \
-    struct has_move_emulation_enabled_aux_dummy_specialization<
+    struct enable_move_utility_emulation_dummy_specialization<
 
 #define BOOST_THREAD_DCL_MOVABLE_END > \
-      : integral_constant<bool, true> \
+      : integral_constant<bool, false> \
       {}; \
     }
 
@@ -132,17 +148,19 @@ namespace boost
 
 #define BOOST_THREAD_DCL_MOVABLE(TYPE) \
 template <> \
-struct has_move_emulation_enabled_aux< TYPE > \
-  : BOOST_MOVE_BOOST_NS::integral_constant<bool, true> \
-{};
+struct enable_move_utility_emulation< TYPE > \
+{ \
+   static const bool value = false; \
+};
 
 #define BOOST_THREAD_DCL_MOVABLE_BEG(T) \
 template <typename T> \
-struct has_move_emulation_enabled_aux<
+struct enable_move_utility_emulation<
 
 #define BOOST_THREAD_DCL_MOVABLE_END > \
-  : BOOST_MOVE_BOOST_NS::integral_constant<bool, true> \
-{};
+{ \
+   static const bool value = false; \
+};
 
 #endif
 
@@ -227,19 +245,69 @@ namespace detail
 
 
 
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
 namespace boost
-{  namespace thread_detail
+{
+  namespace thread_detail
   {
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+    template <class Tp>
+    struct remove_reference : boost::remove_reference<Tp> {};
+    template <class Tp>
+    struct  decay : boost::decay<Tp> {};
+#else
+  template <class Tp>
+  struct remove_reference
+  {
+    typedef Tp type;
+  };
+  template <class Tp>
+  struct remove_reference<Tp&>
+  {
+    typedef Tp type;
+  };
+  template <class Tp>
+  struct remove_reference< rv<Tp> > {
+    typedef Tp type;
+  };
+
+  template <class Tp>
+  struct  decay
+  {
+  private:
+    typedef typename boost::move_detail::remove_rvalue_reference<Tp>::type Up0;
+    typedef typename boost::remove_reference<Up0>::type Up;
+  public:
+      typedef typename conditional
+                       <
+                           is_array<Up>::value,
+                           typename remove_extent<Up>::type*,
+                           typename conditional
+                           <
+                                is_function<Up>::value,
+                                typename add_pointer<Up>::type,
+                                typename remove_cv<Up>::type
+                           >::type
+                       >::type type;
+  };
+#endif
+
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
       template <class T>
       typename decay<T>::type
       decay_copy(T&& t)
       {
           return boost::forward<T>(t);
       }
+#else
+  template <class T>
+  typename decay<T>::type
+  decay_copy(BOOST_THREAD_FWD_REF(T) t)
+  {
+      return boost::forward<T>(t);
+  }
+#endif
   }
 }
-#endif
 
 #include <boost/config/abi_suffix.hpp>
 

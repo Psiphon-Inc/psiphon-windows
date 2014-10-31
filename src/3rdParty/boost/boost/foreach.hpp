@@ -20,7 +20,7 @@
 #ifndef BOOST_FOREACH
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -31,8 +31,8 @@
 #include <boost/detail/workaround.hpp>
 
 // Some compilers let us detect even const-qualified rvalues at compile-time
-#if !defined(BOOST_NO_RVALUE_REFERENCES)                                                         \
- || BOOST_WORKAROUND(BOOST_MSVC, >= 1310) && !defined(_PREFAST_)                                 \
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)                                                   \
+ || defined(BOOST_MSVC) && !defined(_PREFAST_)                                 \
  || (BOOST_WORKAROUND(__GNUC__, == 4) && (__GNUC_MINOR__ <= 5) && !defined(BOOST_INTEL) &&       \
                                                                   !defined(BOOST_CLANG))         \
  || (BOOST_WORKAROUND(__GNUC__, == 3) && (__GNUC_MINOR__ >= 4) && !defined(BOOST_INTEL) &&       \
@@ -42,8 +42,7 @@
 // Some compilers allow temporaries to be bound to non-const references.
 // These compilers make it impossible to for BOOST_FOREACH to detect
 // temporaries and avoid reevaluation of the collection expression.
-# if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)                                                      \
-  || BOOST_WORKAROUND(__BORLANDC__, < 0x593)                                                    \
+# if BOOST_WORKAROUND(__BORLANDC__, < 0x593)                                                    \
   || (BOOST_WORKAROUND(BOOST_INTEL_CXX_VERSION, <= 700) && defined(_MSC_VER))                   \
   || BOOST_WORKAROUND(__SUNPRO_CC, < 0x5100)                                                    \
   || BOOST_WORKAROUND(__DECCXX_VER, <= 60590042)
@@ -55,8 +54,6 @@
   || defined(BOOST_NO_SFINAE)                                                                   \
   || BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400))                                        \
   || BOOST_WORKAROUND(BOOST_INTEL_WIN, BOOST_TESTED_AT(1400))                                   \
-  || BOOST_WORKAROUND(__GNUC__, < 3)                                                            \
-  || (BOOST_WORKAROUND(__GNUC__, == 3) && (__GNUC_MINOR__ <= 2))                                \
   || (BOOST_WORKAROUND(__GNUC__, == 3) && (__GNUC_MINOR__ <= 3) && defined(__APPLE_CC__))       \
   || BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600))                                         \
   || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))                                      \
@@ -228,7 +225,7 @@ template<typename T>
 inline boost::mpl::true_ *is_const_(T const &) { return 0; }
 #endif
 
-#ifdef BOOST_NO_RVALUE_REFERENCES
+#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
 template<typename T>
 inline boost::mpl::false_ *is_rvalue_(T &, int) { return 0; }
 
@@ -349,9 +346,7 @@ struct foreach_iterator
     //
     // To treat the container as an array, use boost::as_array() in <boost/range/as_array.hpp>,
     // as in BOOST_FOREACH( char ch, boost::as_array("hello") ) ...
-    #if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
     BOOST_MPL_ASSERT_MSG( (!is_char_array<T>::value), IS_THIS_AN_ARRAY_OR_A_NULL_TERMINATED_STRING, (T&) );
-    #endif
 
     // If the type is a pointer to a null terminated string (as opposed 
     // to an array type), there is no ambiguity.
@@ -380,9 +375,7 @@ struct foreach_reverse_iterator
     //
     // To treat the container as an array, use boost::as_array() in <boost/range/as_array.hpp>,
     // as in BOOST_FOREACH( char ch, boost::as_array("hello") ) ...
-    #if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
     BOOST_MPL_ASSERT_MSG( (!is_char_array<T>::value), IS_THIS_AN_ARRAY_OR_A_NULL_TERMINATED_STRING, (T&) );
-    #endif
 
     // If the type is a pointer to a null terminated string (as opposed 
     // to an array type), there is no ambiguity.
@@ -459,7 +452,7 @@ inline T &derefof(T *t)
 #endif
 
 #if defined(BOOST_FOREACH_COMPILE_TIME_CONST_RVALUE_DETECTION)                                  \
- && !defined(BOOST_NO_RVALUE_REFERENCES)
+ && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 ///////////////////////////////////////////////////////////////////////////////
 // Rvalue references makes it drop-dead simple to detect at compile time
 // whether an expression is an rvalue.
@@ -469,7 +462,7 @@ inline T &derefof(T *t)
     boost::foreach_detail_::is_rvalue_((COL), 0)
 
 #elif defined(BOOST_FOREACH_COMPILE_TIME_CONST_RVALUE_DETECTION)                                \
- && defined(BOOST_NO_RVALUE_REFERENCES)
+ && defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 ///////////////////////////////////////////////////////////////////////////////
 // Detect at compile-time whether an expression yields an rvalue or
 // an lvalue. This is rather non-standard, but some popular compilers
@@ -959,7 +952,7 @@ rderef(auto_any_t cur, type2type<T, C> *)
     (true ? boost::foreach_detail_::make_probe((COL), BOOST_FOREACH_ID(_foreach_is_rvalue)) : (COL))
 
 // The rvalue/lvalue-ness of the collection expression is determined dynamically, unless
-// type type is an array or is noncopyable or is non-const, in which case we know it's an lvalue.
+// the type is an array or is noncopyable or is non-const, in which case we know it's an lvalue.
 // If the type happens to be a lightweight proxy, always make a copy.
 # define BOOST_FOREACH_SHOULD_COPY(COL)                                                         \
     (boost::foreach_detail_::should_copy_impl(                                                  \

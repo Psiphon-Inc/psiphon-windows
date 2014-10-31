@@ -11,7 +11,7 @@
 #ifndef BOOST_INTERPROCESS_SHM_NAMED_MUTEX_HPP
 #define BOOST_INTERPROCESS_SHM_NAMED_MUTEX_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -107,8 +107,8 @@ class shm_named_mutex
    private:
    friend class ipcdetail::interprocess_tester;
    void dont_close_on_destruction();
-
-   ipcdetail::managed_open_or_create_impl<shared_memory_object> m_shmem;
+   typedef ipcdetail::managed_open_or_create_impl<shared_memory_object, 0, true, false> open_create_impl_t;
+   open_create_impl_t m_shmem;
    typedef ipcdetail::named_creation_functor<interprocess_mutex> construct_func_t;
    /// @endcond
 };
@@ -125,8 +125,7 @@ inline shm_named_mutex::shm_named_mutex(create_only_t, const char *name, const p
    :  m_shmem  (create_only
                ,name
                ,sizeof(interprocess_mutex) +
-                  ipcdetail::managed_open_or_create_impl<shared_memory_object>::
-                     ManagedOpenOrCreateUserOffset
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
                ,read_write
                ,0
                ,construct_func_t(ipcdetail::DoCreate)
@@ -137,8 +136,7 @@ inline shm_named_mutex::shm_named_mutex(open_or_create_t, const char *name, cons
    :  m_shmem  (open_or_create
                ,name
                ,sizeof(interprocess_mutex) +
-                  ipcdetail::managed_open_or_create_impl<shared_memory_object>::
-                     ManagedOpenOrCreateUserOffset
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
                ,read_write
                ,0
                ,construct_func_t(ipcdetail::DoOpenOrCreate)
@@ -163,13 +161,7 @@ inline bool shm_named_mutex::try_lock()
 {  return this->internal_mutex().try_lock();  }
 
 inline bool shm_named_mutex::timed_lock(const boost::posix_time::ptime &abs_time)
-{
-   if(abs_time == boost::posix_time::pos_infin){
-      this->lock();
-      return true;
-   }
-   return this->internal_mutex().timed_lock(abs_time);
-}
+{  return this->internal_mutex().timed_lock(abs_time);   }
 
 inline bool shm_named_mutex::remove(const char *name)
 {  return shared_memory_object::remove(name); }
