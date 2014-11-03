@@ -15,43 +15,7 @@
 #define BOOST_GEOMETRY_MULTI_ALGORITHMS_LENGTH_HPP
 
 
-#include <boost/range/metafunctions.hpp>
-
 #include <boost/geometry/algorithms/length.hpp>
-#include <boost/geometry/multi/core/tags.hpp>
-#include <boost/geometry/multi/algorithms/detail/multi_sum.hpp>
-#include <boost/geometry/multi/algorithms/num_points.hpp>
-
-
-namespace boost { namespace geometry
-{
-
-#ifndef DOXYGEN_NO_DISPATCH
-namespace dispatch
-{
-
-template <typename MultiLinestring, typename Strategy>
-struct length<multi_linestring_tag, MultiLinestring, Strategy>
-    : detail::multi_sum
-        <
-            typename default_length_result<MultiLinestring>::type,
-            MultiLinestring,
-            Strategy,
-            detail::length::range_length
-                <
-                    typename boost::range_value<MultiLinestring>::type,
-                    Strategy,
-                    closed // no need to close it explicitly
-                >
-        >
-{};
-
-
-} // namespace dispatch
-#endif
-
-
-}} // namespace boost::geometry
 
 
 #endif // BOOST_GEOMETRY_MULTI_ALGORITHMS_LENGTH_HPP

@@ -11,7 +11,7 @@
 #ifndef BOOST_INTERPROCESS_OFFSET_PTR_HPP
 #define BOOST_INTERPROCESS_OFFSET_PTR_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -26,6 +26,7 @@
 #include <ostream>
 #include <istream>
 #include <iterator>
+#include <iostream>
 #include <boost/aligned_storage.hpp>
 #include <boost/type_traits/alignment_of.hpp>
 
@@ -74,8 +75,11 @@ namespace ipcdetail {
    //
    ////////////////////////////////////////////////////////////////////////
    #define BOOST_INTERPROCESS_OFFSET_PTR_INLINE_TO_PTR
-   #define BOOST_INTERPROCESS_OFFSET_PTR_BRANCHLESS_TO_PTR
-
+   #if defined(_MSC_VER) && (_MSC_VER >= 1800) && (defined(_M_AMD64) || defined(_M_X64))
+      //Visual 2013 x64 optimizes more than we desire, so disable branchless option
+   #else
+      #define BOOST_INTERPROCESS_OFFSET_PTR_BRANCHLESS_TO_PTR
+   #endif
    template<int Dummy>
    #ifndef BOOST_INTERPROCESS_OFFSET_PTR_INLINE_TO_PTR
       BOOST_INTERPROCESS_NEVER_INLINE
@@ -90,12 +94,15 @@ namespace ipcdetail {
             return 0;
          }
          else{
-            caster_t caster((void*)this_ptr);
+            const caster_t caster((void*)this_ptr);
             return caster_t(caster.size() + offset).pointer();
          }
       #else
-         caster_t caster((void*)this_ptr);
-         return caster_t((caster.size() + offset) & -std::size_t(offset != 1)).pointer();
+         const caster_t caster((void*)this_ptr);
+         std::size_t target_offset = caster.size() + offset;
+         std::size_t mask = -std::size_t(offset != 1);
+         target_offset &= mask;
+         return caster_t(target_offset).pointer();
       #endif
    }
 
@@ -113,7 +120,7 @@ namespace ipcdetail {
    ////////////////////////////////////////////////////////////////////////
    #define BOOST_INTERPROCESS_OFFSET_PTR_INLINE_TO_OFF
    //Branchless seems slower in x86
-   //#define BOOST_INTERPROCESS_OFFSET_PTR_BRANCHLESS_TO_OFF
+   #define BOOST_INTERPROCESS_OFFSET_PTR_BRANCHLESS_TO_OFF
 
    template<int Dummy>
    #ifndef BOOST_INTERPROCESS_OFFSET_PTR_INLINE_TO_OFF
@@ -130,18 +137,21 @@ namespace ipcdetail {
             return 1;
          }
          else{
-            caster_t this_caster((void*)this_ptr);
-            caster_t ptr_caster((void*)ptr);
+            const caster_t this_caster((void*)this_ptr);
+            const caster_t ptr_caster((void*)ptr);
             std::size_t offset = ptr_caster.size() - this_caster.size();
             BOOST_ASSERT(offset != 1);
             return offset;
          }
       #else
-         caster_t this_caster((void*)this_ptr);
-         caster_t ptr_caster((void*)ptr);
+         const caster_t this_caster((void*)this_ptr);
+         const caster_t ptr_caster((void*)ptr);
+         //std::size_t other = -std::size_t(ptr != 0);
+         //std::size_t offset = (ptr_caster.size() - this_caster.size()) & other;
+         //return offset + !other;
+         //
          std::size_t offset = (ptr_caster.size() - this_caster.size() - 1) & -std::size_t(ptr != 0);
-         ++offset;
-         return offset;
+         return ++offset;
       #endif
    }
 
@@ -159,7 +169,7 @@ namespace ipcdetail {
    ////////////////////////////////////////////////////////////////////////
    #define BOOST_INTERPROCESS_OFFSET_PTR_INLINE_TO_OFF_FROM_OTHER
    //Branchless seems slower in x86
-   //#define BOOST_INTERPROCESS_OFFSET_PTR_BRANCHLESS_TO_OFF_FROM_OTHER
+   #define BOOST_INTERPROCESS_OFFSET_PTR_BRANCHLESS_TO_OFF_FROM_OTHER
 
    template<int Dummy>
    #ifndef BOOST_INTERPROCESS_OFFSET_PTR_INLINE_TO_OFF_FROM_OTHER
@@ -176,18 +186,16 @@ namespace ipcdetail {
          return 1;
       }
       else{
-         caster_t this_caster((void*)this_ptr);
-         caster_t other_caster((void*)other_ptr);
+         const caster_t this_caster((void*)this_ptr);
+         const caster_t other_caster((void*)other_ptr);
          std::size_t offset = other_caster.size() - this_caster.size() + other_offset;
          BOOST_ASSERT(offset != 1);
          return offset;
       }
       #else
-      caster_t this_caster((void*)this_ptr);
-      caster_t other_caster((void*)other_ptr);
-      std::size_t offset = (other_caster.size() - this_caster.size()) & -std::size_t(other_offset != 1);
-      offset += other_offset;
-      return offset;
+      const caster_t this_caster((void*)this_ptr);
+      const caster_t other_caster((void*)other_ptr);
+      return ((other_caster.size() - this_caster.size()) & -std::size_t(other_offset != 1)) + other_offset;
       #endif
    }
 
@@ -276,7 +284,7 @@ class offset_ptr
    template<class T2>
    offset_ptr( const offset_ptr<T2, DifferenceType, OffsetType, OffsetAlignment> &ptr
              #ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
-             , typename ipcdetail::enable_if_c< ipcdetail::is_convertible<T2*, PointedType*>::value 
+             , typename ipcdetail::enable_if_c< ipcdetail::is_convertible<T2*, PointedType*>::value
                && ipcdetail::offset_ptr_maintains_address<T2, PointedType>::value
              >::type * = 0
              #endif
@@ -396,7 +404,7 @@ class offset_ptr
 
    #ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
    template<class T2>
-   typename ipcdetail::enable_if_c<ipcdetail::is_convertible<T2*, PointedType*>::value 
+   typename ipcdetail::enable_if_c<ipcdetail::is_convertible<T2*, PointedType*>::value
                                    && !ipcdetail::offset_ptr_maintains_address<T2, PointedType>::value
                                  , offset_ptr&>::type
       operator= (const offset_ptr<T2, DifferenceType, OffsetType, OffsetAlignment> &ptr)

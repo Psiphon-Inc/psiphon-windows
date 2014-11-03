@@ -13,7 +13,7 @@ namespace boost { namespace polygon{
   template <typename coordinate_type>
   inline void polygon_set_data<coordinate_type>::clean() const {
     if(dirty_) {
-      polygon_45_set_data<coordinate_type> tmp;
+      //polygon_45_set_data<coordinate_type> tmp;
       //very important:
       //the 45 degree algorithm does not satisfy
       //the precondition of arbitrary polygon formation
@@ -92,7 +92,7 @@ namespace boost { namespace polygon{
   template <typename value_type, typename geometry_type_1, typename geometry_type_2, int op_type>
   void execute_boolean_op(value_type& output_, const geometry_type_1& lvalue_, const geometry_type_2& rvalue_) {
     typedef geometry_type_1 ltype;
-    typedef geometry_type_2 rtype;
+    //typedef geometry_type_2 rtype;
     typedef typename polygon_set_traits<ltype>::coordinate_type coordinate_type;
     value_type linput_;
     value_type rinput_;
@@ -102,6 +102,7 @@ namespace boost { namespace polygon{
 //    if(linput_.downcast(l45) && rinput_.downcast(r45)) {
 //      //the op codes are screwed up between 45 and arbitrary
 //#ifdef BOOST_POLYGON_MSVC
+//#pragma warning (push)
 //#pragma warning (disable: 4127)
 //#endif
 //      if(op_type < 2)
@@ -111,7 +112,7 @@ namespace boost { namespace polygon{
 //      else
 //        l45.template applyAdaptiveBoolean_<2>(o45, r45);
 //#ifdef BOOST_POLYGON_MSVC
-//#pragma warning (default: 4127)
+//#pragma warning (pop)
 //#endif
 //      output_.insert(o45);
 //    } else {

@@ -93,7 +93,7 @@
 # endif
 #endif
 
-#ifdef BOOST_NO_DECLTYPE_N3276
+#ifdef BOOST_NO_CXX11_DECLTYPE_N3276
 # // Proto can only use the decltype-based result_of if N3276 has been
 # // implemented by the compiler.
 # // See http://www.open-std.org/JTC1/SC22/WG21/docs/papers/2011/n3276.pdf
@@ -123,7 +123,7 @@
 # define BOOST_PROTO_EXTENDED_TEMPLATE_PARAMETERS_MATCHING 
 #endif
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # define BOOST_PROTO_DISABLE_MSVC_C4522 __pragma(warning(disable : 4522))  // 'class' : multiple assignment operators specified
 # define BOOST_PROTO_DISABLE_MSVC_C4714 __pragma(warning(disable : 4714))  // function 'xxx' marked as __forceinline not inlined
 #else

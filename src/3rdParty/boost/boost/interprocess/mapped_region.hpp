@@ -21,6 +21,7 @@
 #include <boost/interprocess/detail/os_file_functions.hpp>
 #include <string>
 #include <boost/cstdint.hpp>
+#include <boost/assert.hpp>
 //Some Unixes use caddr_t instead of void * in madvise
 //              SunOS                                 Tru64                               HP-UX                    AIX
 #if defined(sun) || defined(__sun) || defined(__osf__) || defined(__osf) || defined(_hpux) || defined(hpux) || defined(_AIX)
@@ -52,7 +53,7 @@
 #    error Unknown platform
 #  endif
 
-#endif   //#if (defined BOOST_INTERPROCESS_WINDOWS)
+#endif   //#if defined (BOOST_INTERPROCESS_WINDOWS)
 
 //!\file
 //!Describes mapped region class
@@ -95,6 +96,22 @@ class mapped_region
    //!If an address is specified, both the offset and the address must be
    //!multiples of the page size.
    //!
+   //!The map is created using "default_map_options". This flag is OS
+   //!dependant and it should not be changed unless the user needs to
+   //!specify special options.
+   //!
+   //!In Windows systems "map_options" is a DWORD value passed as
+   //!"dwDesiredAccess" to "MapViewOfFileEx". If "default_map_options" is passed
+   //!it's initialized to zero. "map_options" is XORed with FILE_MAP_[COPY|READ|WRITE].
+   //!
+   //!In UNIX systems and POSIX mappings "map_options" is an int value passed as "flags"
+   //!to "mmap". If "default_map_options" is specified it's initialized to MAP_NOSYNC
+   //!if that option exists and to zero otherwise. "map_options" XORed with MAP_PRIVATE or MAP_SHARED.
+   //!
+   //!In UNIX systems and XSI mappings "map_options" is an int value passed as "shmflg"
+   //!to "shmat". If "default_map_options" is specified it's initialized to zero.
+   //!"map_options" is XORed with SHM_RDONLY if needed.
+   //!
    //!The OS could allocate more pages than size/page_size(), but get_address()
    //!will always return the address passed in this function (if not null) and
    //!get_size() will return the specified size.
@@ -103,7 +120,8 @@ class mapped_region
                 ,mode_t mode
                 ,offset_t offset = 0
                 ,std::size_t size = 0
-                ,const void *address = 0);
+                ,const void *address = 0
+                ,map_options_t map_options = default_map_options);
 
    //!Default constructor. Address will be 0 (nullptr).
    //!Size will be 0.
@@ -168,7 +186,7 @@ class mapped_region
 
    //!This enum specifies region usage behaviors that an application can specify
    //!to the mapped region implementation.
-   enum advice_types{ 
+   enum advice_types{
       //!Specifies that the application has no advice to give on its behavior with respect to
       //!the region. It is the default characteristic if no advice is given for a range of memory.
       advice_normal,
@@ -308,7 +326,7 @@ inline bool mapped_region::priv_shrink_param_check
          m_page_offset = m_page_offset % page_size;
          m_size -= bytes;
          m_base  = static_cast<char *>(m_base) + bytes;
-         assert(shrink_page_bytes%page_size == 0);
+         BOOST_ASSERT(shrink_page_bytes%page_size == 0);
       }
       return true;
    }
@@ -366,7 +384,8 @@ inline mapped_region::mapped_region
    ,mode_t mode
    ,offset_t offset
    ,std::size_t size
-   ,const void *address)
+   ,const void *address
+   ,map_options_t map_options)
    :  m_base(0), m_size(0), m_page_offset(0), m_mode(mode)
    ,  m_file_or_mapping_hnd(ipcdetail::invalid_file())
 {
@@ -378,7 +397,7 @@ inline mapped_region::mapped_region
       //For "create_file_mapping"
       unsigned long protection = 0;
       //For "mapviewoffile"
-      unsigned long map_access = 0;
+      unsigned long map_access = map_options == default_map_options ? 0 : map_options;
 
       switch(mode)
       {
@@ -444,7 +463,6 @@ inline mapped_region::mapped_region
          priv_size_from_mapping_size(mapping_size, offset, page_offset, size);
       }
 
-
       //Map with new offsets and size
       void *base = winapi::map_view_of_file_ex
                                  (native_mapping_handle,
@@ -486,7 +504,7 @@ inline bool mapped_region::flush(std::size_t mapping_offset, std::size_t numbyte
    }
    //m_file_or_mapping_hnd can be a file handle or a mapping handle.
    //so flushing file buffers has only sense for files...
-   else if(async && m_file_or_mapping_hnd != winapi::invalid_handle_value &&
+   else if(!async && m_file_or_mapping_hnd != winapi::invalid_handle_value &&
            winapi::get_file_type(m_file_or_mapping_hnd) == winapi::file_type_disk){
       return winapi::flush_file_buffers(m_file_or_mapping_hnd);
    }
@@ -502,7 +520,7 @@ inline bool mapped_region::shrink_by(std::size_t bytes, bool from_back)
    }
    else if(shrink_page_bytes){
       //In Windows, we can't decommit the storage or release the virtual address space,
-      //the best we can do is try to remove some memory from the process working set. 
+      //the best we can do is try to remove some memory from the process working set.
       //With a bit of luck we can free some physical memory.
       unsigned long old_protect_ignored;
       bool b_ret = winapi::virtual_unlock(shrink_page_start, shrink_page_bytes)
@@ -543,7 +561,7 @@ inline void mapped_region::priv_close()
 inline void mapped_region::dont_close_on_destruction()
 {}
 
-#else    //#if (defined BOOST_INTERPROCESS_WINDOWS)
+#else    //#if defined (BOOST_INTERPROCESS_WINDOWS)
 
 inline mapped_region::mapped_region()
    :  m_base(0), m_size(0), m_page_offset(0), m_mode(read_only), m_is_xsi(false)
@@ -559,7 +577,8 @@ inline mapped_region::mapped_region
    , mode_t mode
    , offset_t offset
    , std::size_t size
-   , const void *address)
+   , const void *address
+   , map_options_t map_options)
    : m_base(0), m_size(0), m_page_offset(0), m_mode(mode), m_is_xsi(false)
 {
    mapping_handle_t map_hnd = mapping.get_mapping_handle();
@@ -583,7 +602,7 @@ inline mapped_region::mapped_region
          throw interprocess_exception(err);
       }
       //Calculate flag
-      int flag = 0;
+      int flag = map_options == default_map_options ? 0 : map_options;
       if(m_mode == read_only){
          flag |= SHM_RDONLY;
       }
@@ -620,15 +639,17 @@ inline mapped_region::mapped_region
       priv_size_from_mapping_size(buf.st_size, offset, page_offset, size);
    }
 
+   #ifdef MAP_NOSYNC
+      #define BOOST_INTERPROCESS_MAP_NOSYNC MAP_NOSYNC
+   #else
+      #define BOOST_INTERPROCESS_MAP_NOSYNC 0
+   #endif   //MAP_NOSYNC
+
    //Create new mapping
    int prot    = 0;
-   int flags   = 
-      #ifdef MAP_NOSYNC
-      //Avoid excessive syncing in BSD systems
-      MAP_NOSYNC;
-      #else
-      0;
-      #endif
+   int flags   = map_options == default_map_options ? BOOST_INTERPROCESS_MAP_NOSYNC : map_options;
+
+   #undef BOOST_INTERPROCESS_MAP_NOSYNC
 
    switch(mode)
    {
@@ -720,6 +741,9 @@ inline bool mapped_region::advise(advice_types advice)
    const unsigned int mode_none = 0;
    const unsigned int mode_padv = 1;
    const unsigned int mode_madv = 2;
+   // Suppress "unused variable" warnings
+   (void)mode_padv;
+   (void)mode_madv;
    unsigned int mode = mode_none;
    //Choose advice either from POSIX (preferred) or native Unix
    switch(advice){
@@ -809,7 +833,7 @@ inline void mapped_region::priv_close()
 inline void mapped_region::dont_close_on_destruction()
 {  m_base = 0;   }
 
-#endif   //##if (defined BOOST_INTERPROCESS_WINDOWS)
+#endif   //#if defined (BOOST_INTERPROCESS_WINDOWS)
 
 template<int dummy>
 const std::size_t mapped_region::page_size_holder<dummy>::PageSize
@@ -829,7 +853,7 @@ inline void mapped_region::swap(mapped_region &other)
    ipcdetail::do_swap(this->m_size, other.m_size);
    ipcdetail::do_swap(this->m_page_offset, other.m_page_offset);
    ipcdetail::do_swap(this->m_mode,  other.m_mode);
-   #if (defined BOOST_INTERPROCESS_WINDOWS)
+   #if defined (BOOST_INTERPROCESS_WINDOWS)
    ipcdetail::do_swap(this->m_file_or_mapping_hnd, other.m_file_or_mapping_hnd);
    #else
    ipcdetail::do_swap(this->m_is_xsi, other.m_is_xsi);
@@ -841,6 +865,9 @@ struct null_mapped_region_function
 {
    bool operator()(void *, std::size_t , bool) const
       {   return true;   }
+
+   std::size_t get_min_size() const
+   {  return 0;  }
 };
 
 /// @endcond
