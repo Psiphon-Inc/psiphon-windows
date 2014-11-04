@@ -10,6 +10,8 @@
 #ifndef BOOST_POLYGON_VORONOI_GEOMETRY_TYPE
 #define BOOST_POLYGON_VORONOI_GEOMETRY_TYPE
 
+#include <cstddef>
+
 namespace boost {
 namespace polygon {
 // Represents topology type of the voronoi site.
@@ -33,7 +35,7 @@ enum SourceCategory {
   SOURCE_CATEGORY_BITMASK = 0x1F
 };
 
-bool belongs(
+inline bool belongs(
     SourceCategory source_category,
     GeometryCategory geometry_category) {
   return (static_cast<std::size_t>(source_category) >>

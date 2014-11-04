@@ -42,7 +42,8 @@ void _AddDiagnosticInfoHelper(const char* entry)
 
 void AddDiagnosticInfoYaml(const char* message, const char* yaml)
 {
-    AddDiagnosticInfo(message, YAML::Load(yaml));
+    YAML::Node node = YAML::Load(yaml);
+    AddDiagnosticInfo(message, node);
 }
 
 void GetDiagnosticHistory(YAML::Emitter& out)
@@ -53,7 +54,8 @@ void GetDiagnosticHistory(YAML::Emitter& out)
          it != g_diagnosticHistory.end();
          it++)
     {
-        out << YAML::Load(*it);
+        YAML::Node node = YAML::Load(*it);
+        out << node;
     }
     out << YAML::EndSeq;
 }

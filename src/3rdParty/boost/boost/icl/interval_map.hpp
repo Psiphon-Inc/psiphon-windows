@@ -86,19 +86,12 @@ public:
                                  Traits,Compare,Combine,Section,Interval,Alloc>& src)
     { this->assign(src); }
 
-    explicit interval_map(domain_mapping_type& base_pair): base_type()
+    explicit interval_map(const domain_mapping_type& base_pair): base_type()
     { this->add(base_pair); }
 
     explicit interval_map(const value_type& value_pair): base_type()
     { this->add(value_pair); }
 
-
-    /// Assignment operator
-    template<class SubType>
-    interval_map& operator =
-        (const interval_base_map<SubType,DomainT,CodomainT,
-                                 Traits,Compare,Combine,Section,Interval,Alloc>& src)
-    { this->assign(src); return *this; }
 
     /// Assignment from a base interval_map.
     template<class SubType>
@@ -113,7 +106,17 @@ public:
             prior_ = this->add(prior_, *it_); 
     }
 
-#   ifndef BOOST_NO_RVALUE_REFERENCES
+    /// Assignment operator for base type
+    template<class SubType>
+    interval_map& operator =
+        (const interval_base_map<SubType,DomainT,CodomainT,
+                                 Traits,Compare,Combine,Section,Interval,Alloc>& src)
+    { 
+        this->assign(src); 
+        return *this; 
+    }
+
+#   ifndef BOOST_ICL_NO_CXX11_RVALUE_REFERENCES
     //==========================================================================
     //= Move semantics
     //==========================================================================
@@ -124,14 +127,23 @@ public:
     {}
 
     /// Move assignment operator
-    interval_map& operator = (interval_map&& src)
+    interval_map& operator = (interval_map src)
     { 
         base_type::operator=(boost::move(src));
         return *this;
     }
 
     //==========================================================================
-#   endif // BOOST_NO_RVALUE_REFERENCES
+#   else
+
+    /// Assignment operator
+    interval_map& operator = (const interval_map& src)
+    { 
+        base_type::operator=(src);
+        return *this;
+    }
+
+#   endif // BOOST_ICL_NO_CXX11_RVALUE_REFERENCES
 
 private:
     // Private functions that shall be accessible by the baseclass:
