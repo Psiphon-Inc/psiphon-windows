@@ -32,11 +32,20 @@ struct ServerEntry
         const string& webServerSecret, const string& webServerCertificate, 
         int sshPort, const string& sshUsername, const string& sshPassword, 
         const string& sshHostKey, int sshObfuscatedPort, 
-        const string& sshObfuscatedKey);
+        const string& sshObfuscatedKey,
+        const string& meekObfuscatedKey, const int meekServerPort,
+        const string& meekCookieEncryptionPublicKey,
+        const string& meekFrontingDomain, const string& meekFrontingHost,
+        const vector<string>& capabilities);
     void Copy(const ServerEntry& src);
 
     string ToString() const;
     void FromString(const string& str);
+
+    bool HasCapability(const string& capability) const;
+
+    // returns -1 if there's no port
+    int GetPreferredReachablityTestPort() const;
 
     string serverAddress;
     int webServerPort;
@@ -48,6 +57,12 @@ struct ServerEntry
     string sshHostKey;
     int sshObfuscatedPort;
     string sshObfuscatedKey;
+    vector<string> capabilities;
+    string meekObfuscatedKey;
+    int meekServerPort;
+    string meekCookieEncryptionPublicKey;
+    string meekFrontingDomain;
+    string meekFrontingHost;
 };
 
 typedef vector<ServerEntry> ServerEntries;
@@ -56,23 +71,28 @@ typedef ServerEntries::const_iterator ServerEntryIterator;
 class ServerList
 {
 public:
-    ServerList();
+    ServerList(LPCSTR listName);
     virtual ~ServerList();
 
-    void MarkCurrentServerFailed();
-    ServerEntry GetNextServer();
     ServerEntries GetList();
 
     // serverEntry is optional. It is an extra server entry that should be
     // stored. Typically this is the current server with additional info.
-    void AddEntriesToList(
+    // Returns the number of new entries added.
+    size_t AddEntriesToList(
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry);
 
-    void MoveEntriesToFront(
-        const ServerEntries& entries);
+    void MarkServersFailed(const ServerEntries& failedServerEntries);
+    void MarkServerFailed(const ServerEntry& failedServerEntry);
+
+    // Setting `veryFront` to true will force entries to go to the actual head
+    // of the list, instead of just near it. Use carefully -- it can break server affinity.
+    void MoveEntriesToFront(const ServerEntries& entries, bool veryFront=false);
+    void MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront=false);
 
 private:
+    string GetListName() const;
     ServerEntries GetListFromEmbeddedValues();
     ServerEntries GetListFromSystem();
     ServerEntries ParseServerEntries(const char* serverEntryListString);
@@ -81,4 +101,5 @@ private:
     string EncodeServerEntries(const ServerEntries& serverEntryList);
 
     HANDLE m_mutex;
+    string m_name;
 };

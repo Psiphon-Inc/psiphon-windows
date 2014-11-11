@@ -29,6 +29,7 @@ class SystemProxySettings;
 class ILocalProxyStatsCollector
 {
 public:
+    // May throw StopSignal::StopException subclass if not `final`
     virtual bool SendStatusMessage(
                     bool final,
                     const map<string, int>& pageViewEntries,
@@ -44,7 +45,7 @@ public:
     // be the case for temporary connections.)
     LocalProxy(
         ILocalProxyStatsCollector* statsCollector, 
-        const SessionInfo& sessionInfo, 
+        LPCSTR serverAddress, 
         SystemProxySettings* systemProxySettings,
         int parentPort, 
         const tstring& splitTunnelingFilePath);
@@ -62,11 +63,11 @@ protected:
     void StopImminent();
     void DoStop(bool cleanly);
 
-    void Cleanup();
+    void Cleanup(bool doStats);
 
     bool StartPolipo(int localHttpProxyPort);
     bool CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
-    bool ProcessStatsAndStatus(bool connected);
+    bool ProcessStatsAndStatus(bool final);
     void UpsertPageView(const string& entry);
     void UpsertHttpsRequest(string entry);
     void ParsePolipoStatsBuffer(const char* page_view_buffer);
@@ -86,7 +87,7 @@ private:
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
     bool m_finalStatsSent;
-    tstring m_serverAddress;
+    string m_serverAddress;
     map<string, bool> m_reportedUnproxiedDomains;
 };
 

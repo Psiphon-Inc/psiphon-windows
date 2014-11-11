@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2014, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,11 @@
 
 #include "transport.h"
 #include "transport_registry.h"
+#include "usersettings.h"
+#include "meek.h"
 
 class SessionInfo;
+class PlonkConnection;
 
 
 //
@@ -31,48 +34,71 @@ class SessionInfo;
 class SSHTransportBase: public ITransport
 {
 public:
-    SSHTransportBase(); 
+    SSHTransportBase(LPCTSTR transportProtocolName); 
     virtual ~SSHTransportBase();
 
     // Subclasses must implement these members
     virtual tstring GetTransportProtocolName() const = 0;
     virtual tstring GetTransportDisplayName() const = 0;
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const = 0;
-    virtual bool IsServerRequestTunnelled() const;
+    virtual bool IsHandshakeRequired() const;
+    virtual bool IsWholeSystemTunneled() const;
+    virtual bool IsSplitTunnelSupported() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const = 0;
 
-    virtual tstring GetSessionID(SessionInfo sessionInfo);
+    virtual tstring GetSessionID(const SessionInfo& sessionInfo);
     virtual int GetLocalProxyParentPort() const;
     virtual tstring GetLastTransportError() const;
+    virtual bool GetUserParentProxySettings(
+        bool firstServer,
+        const SessionInfo& sessionInfo,
+        SystemProxySettings* systemProxySettings,
+        tstring& o_UserParentProxyType,
+        tstring& o_UserParentProxyHostname,
+        int& o_UserParentProxyPort,
+        tstring& o_UserParentProxyUsername,
+        tstring& o_UserParentProxyPassword);
+
+    virtual void ProxySetupComplete();
 
     virtual bool Cleanup();
 
 protected:
     // ITransport implementation
-    virtual void TransportConnect(
-                    const SessionInfo& sessionInfo, 
-                    SystemProxySettings* systemProxySettings);
+    virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
 
-    // Subclasses must implement this member
-    virtual bool GetSSHParams(
-                    const SessionInfo& sessionInfo,
-                    const int localSocksProxyPort,
-                    const string& sshPassword,
-                    tstring& o_serverAddress, 
-                    int& o_serverPort, 
-                    tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine) = 0;
+    virtual void GetSSHParams(
+        int meekListenPort,
+        bool firstServer,
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        SystemProxySettings* systemProxySettings,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_transportRequestName,
+        tstring& o_plonkCommandLine) = 0;
 
-    void TransportConnectHelper(
-            const SessionInfo& sessionInfo,
-            SystemProxySettings* systemProxySettings);
-    bool IsServerSSHCapable(const SessionInfo& sessionInfo) const;
-    bool LaunchPlonk(const TCHAR* plonkCommandLine);
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const = 0;
+
+    void TransportConnectHelper();
+    bool InitiateConnection(
+        int meekListenPort,
+        bool firstServer,
+        const SessionInfo& sessionInfo,
+        boost::shared_ptr<PlonkConnection>& o_plonkConnection);
 
 protected:
     tstring m_plonkPath;
-    PROCESS_INFORMATION m_plonkProcessInfo;
     int m_localSocksProxyPort;
+
+    boost::shared_ptr<PlonkConnection> m_currentPlonk;
+    boost::shared_ptr<PlonkConnection> m_previousPlonk;
+
+    Meek* m_meekClient;
+    StopInfo* m_meekClientStopInfo;
+    StopSignal* m_meekClientStopSignal;
+    tstring m_transportRequestName;
 };
 
 
@@ -85,22 +111,30 @@ public:
     SSHTransport(); 
     virtual ~SSHTransport();
 
-    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+    static void GetFactory(
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory, 
+                    AddServerEntriesFn& o_addServerEntriesFn);
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
-
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual tstring GetTransportRequestName() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
 protected:
-    virtual bool GetSSHParams(
-                    const SessionInfo& sessionInfo,
-                    const int localSocksProxyPort,
-                    const string& sshPassword,
-                    tstring& o_serverAddress, 
-                    int& o_serverPort, 
-                    tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine);
+    virtual void GetSSHParams(
+        int meekListenPort,
+        bool firstServer,
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        SystemProxySettings* systemProxySettings,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_transportRequestName,
+        tstring& o_plonkCommandLine);
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 };
 
 
@@ -113,20 +147,30 @@ public:
     OSSHTransport(); 
     virtual ~OSSHTransport();
 
-    static void GetFactory(tstring& o_transportName, TransportFactory& o_transportFactory);
+    static void GetFactory(
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory, 
+                    AddServerEntriesFn& o_addServerEntriesFn);
 
     virtual tstring GetTransportProtocolName() const;
     virtual tstring GetTransportDisplayName() const;
-
-    virtual bool IsHandshakeRequired(SessionInfo sessionInfo) const;
+    virtual tstring GetTransportRequestName() const;
+    virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
 protected:
-    virtual bool GetSSHParams(
-                    const SessionInfo& sessionInfo,
-                    const int localSocksProxyPort,
-                    const string& sshPassword,
-                    tstring& o_serverAddress, 
-                    int& o_serverPort, 
-                    tstring& o_serverHostKey, 
-                    tstring& o_plonkCommandLine);
+    virtual void GetSSHParams(
+        int meekListenPort,
+        bool firstServer,
+        const SessionInfo& sessionInfo,
+        const int localSocksProxyPort,
+        SystemProxySettings* systemProxySettings,
+        tstring& o_serverAddress, 
+        int& o_serverPort, 
+        tstring& o_serverHostKey, 
+        tstring& o_transportRequestName,
+        tstring& o_plonkCommandLine);
+    virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
 };
+
+

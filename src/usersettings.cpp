@@ -29,10 +29,16 @@ void InitializeUserSettings(void)
     UserSkipBrowser();
     UserSkipProxySettings();
     UserLocalHTTPProxyPort();
+    UserSkipSSHParentProxySettings();
+    UserSSHParentProxyHostname();
+    UserSSHParentProxyPort();
+    UserSSHParentProxyUsername();
+    UserSSHParentProxyPassword();
+    UserSSHParentProxyType();
 }
 
 
-int GetUserSetting(const string& settingName, int defaultValue /* = 0 */)
+int GetUserSettingDword(const string& settingName, int defaultValue /* = 0 */)
 {
     DWORD value = 0;
 
@@ -47,19 +53,71 @@ int GetUserSetting(const string& settingName, int defaultValue /* = 0 */)
     return value;
 }
 
+string GetUserSettingString(const string& settingName, string defaultValue /* = 0 */)
+{
+    string value;
+
+    if (!ReadRegistryStringValue(settingName.c_str(), value))
+    {
+        // Write out the setting with a default value so that it's there
+        // for users to see and use, if they want to set it.
+        value = defaultValue;
+        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+        WriteRegistryStringValue(settingName, value, reason);
+    }
+
+    return value;
+}
+
 
 bool UserSkipBrowser(void)
 {
-    return 1 == GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_BROWSER);
 }
 
 
 bool UserSkipProxySettings(void)
 {
-    return 1 == GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_PROXY_SETTINGS);
 }
 
 int UserLocalHTTPProxyPort(void)
 {
-    return GetUserSetting(LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, DEFAULT_LOCAL_HTTP_PROXY_PORT);
+    return GetUserSettingDword(
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_LOCAL_HTTP_PROXY_PORT, 
+        DEFAULT_LOCAL_HTTP_PROXY_PORT);
 }
+
+bool UserSkipSSHParentProxySettings(void)
+{
+    //don't use parent proxy for SSH by default
+    return 1 == GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SKIP_SSH_PARENT_PROXY_SETTINGS, true);
+}
+
+string UserSSHParentProxyHostname(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_HOSTNAME);
+}
+
+int UserSSHParentProxyPort(void)
+{
+    return GetUserSettingDword(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PORT);
+}
+
+string UserSSHParentProxyUsername(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_USERNAME);
+}
+
+string UserSSHParentProxyPassword(void)
+{
+    return GetUserSettingString(LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_PASSWORD);
+}
+
+string UserSSHParentProxyType(void)
+{
+    return GetUserSettingString(
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_TYPE, 
+        LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_DEFAULT_TYPE);
+}
+

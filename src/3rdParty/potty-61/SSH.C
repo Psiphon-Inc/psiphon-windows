@@ -1952,6 +1952,14 @@ static int ssh2_pkt_construct(Ssh ssh, struct Packet *pkt)
 	}
     }
 
+    // PSIPHON
+    // Use SSH variable length random padding (http://tools.ietf.org/html/rfc4253#section-6)
+    // in the early stages of the protocol (algorithm negotiation, key exchange) to avoid
+    // a fixed-size packet length sequence.
+    if (ssh->obfuscate && pkt->forcepad == 0) {
+        pkt->forcepad = pkt->length + random_byte() % 256;
+    }
+
     /*
      * Add padding. At least four bytes, and must also bring total
      * length (minus MAC) up to a multiple of the block size.
@@ -2789,6 +2797,9 @@ static int do_ssh_init(Ssh ssh, unsigned char c)
     update_specials_menu(ssh->frontend);
     ssh->state = SSH_STATE_BEFORE_SIZE;
     ssh->pinger = pinger_new(&ssh->cfg, &ssh_backend, ssh);
+
+    /* PSIPHON */
+    do_psiphon_setup(&(ssh->portfwds));
 
     sfree(s->vstring);
 
@@ -5311,7 +5322,6 @@ static void do_ssh1_connection(Ssh ssh, unsigned char *in, int inlen,
 	    }
 	}
     }
-
     crFinishV;
 }
 
@@ -6367,8 +6377,14 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     logeventf(ssh, "Initialised %.200s server->client MAC algorithm",
 	      ssh->scmac->text_name);
     if (ssh->sccomp->text_name)
-	logeventf(ssh, "Initialised %s decompression",
+    {
+	    logeventf(ssh, "Initialised %s decompression",
 		  ssh->sccomp->text_name);
+
+        /* PSIPHON: Indicate connection is ready */
+        logeventf(ssh, get_psiphon_connected_message());
+    }
+
 
     /*
      * Free shared secret.

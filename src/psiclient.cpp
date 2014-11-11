@@ -26,6 +26,9 @@
 #pragma comment (lib, "Comctl32.lib")
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+// This is for COM functions
+# pragma comment(lib, "wbemuuid.lib")
+
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
@@ -35,8 +38,9 @@
 #include "webbrowser.h"
 #include "limitsingleinstance.h"
 #include "htmldlg.h"
-#include "server_list_reordering.h"
 #include "stopsignal.h"
+#include "diagnostic_info.h"
+#include "systemproxysettings.h"
 
 
 //==== Globals ================================================================
@@ -50,7 +54,6 @@ TCHAR g_szWindowClass[MAX_LOADSTRING];
 HWND g_hWnd;
 ConnectionManager g_connectionManager;
 tstring g_lastTransportSelection;
-ServerListReorder g_serverListReorder;
 
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
@@ -572,7 +575,8 @@ void StoreSelectedTransport(void)
     string selectedTransport = TStringToNarrow(GetSelectedTransport());
     if (selectedTransport.length() > 0)
     {
-        WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport);
+        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+        WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport, reason);
     }
 }
 
@@ -619,7 +623,6 @@ void RestoreSelectedTransport(void)
 void EnableSplitTunnelForSelectedTransport()
 {
     // Split tunnel isn't implemented for VPN
-
     if (_T("VPN") == GetSelectedTransport())
     {
         ShowWindow(g_hSplitTunnelCheckBox, FALSE);
@@ -662,39 +665,83 @@ void RestoreSplitTunnel()
 
 //==== my_print (logging) =====================================================
 
+vector<MessageHistoryEntry> g_messageHistory;
+HANDLE g_messageHistoryMutex = CreateMutex(NULL, FALSE, 0);
+
+void GetMessageHistory(vector<MessageHistoryEntry>& history)
+{
+    AutoMUTEX mutex(g_messageHistoryMutex);
+    history = g_messageHistory;
+}
+
+void AddMessageEntryToHistory(
+        LogSensitivity sensitivity, 
+        bool bDebugMessage, 
+        const TCHAR* formatString,
+        const TCHAR* finalString)
+{
+    AutoMUTEX mutex(g_messageHistoryMutex);
+
+    const TCHAR* historicalMessage = NULL;
+    if (sensitivity == NOT_SENSITIVE)
+    {
+        historicalMessage = finalString;
+    }
+    else if (sensitivity == SENSITIVE_FORMAT_ARGS)
+    {
+        historicalMessage = formatString;
+    }
+    else // SENSITIVE_LOG
+    {
+        historicalMessage = NULL;
+    }
+
+    if (historicalMessage != NULL)
+    {
+        MessageHistoryEntry entry;
+        entry.message = historicalMessage;
+        entry.timestamp = GetISO8601DatetimeString();
+        entry.debug = bDebugMessage;
+        g_messageHistory.push_back(entry);
+    }
+}
+
+
 #ifdef _DEBUG
 bool g_bShowDebugMessages = true;
 #else
 bool g_bShowDebugMessages = false;
 #endif
 
-void my_print(bool bDebugMessage, const TCHAR* format, ...)
+void my_print(LogSensitivity sensitivity, bool bDebugMessage, const TCHAR* format, ...)
 {
+    TCHAR* debugPrefix = _T("DEBUG: ");
+    size_t debugPrefixLength = _tcsclen(debugPrefix);
+    TCHAR* buffer = NULL;
+    va_list args;
+    va_start(args, format);
+    int length = _vsctprintf(format, args) + 1;
+    if (bDebugMessage)
+    {
+        length += debugPrefixLength;
+    }
+    buffer = (TCHAR*)malloc(length * sizeof(TCHAR));
+    if (!buffer) return;
+    if (bDebugMessage)
+    {
+        _tcscpy_s(buffer, length, debugPrefix);
+        _vstprintf_s(buffer + debugPrefixLength, length - debugPrefixLength, format, args);
+    }
+    else
+    {
+        _vstprintf_s(buffer, length, format, args);
+    }
+    va_end(args);
+
+    AddMessageEntryToHistory(sensitivity, bDebugMessage, format, buffer);
+
     if (!bDebugMessage || g_bShowDebugMessages)
     {
-        TCHAR* debugPrefix = _T("DEBUG: ");
-        size_t debugPrefixLength = _tcsclen(debugPrefix);
-        TCHAR* buffer = NULL;
-        va_list args;
-        va_start(args, format);
-        int length = _vsctprintf(format, args) + 1;
-        if (bDebugMessage)
-        {
-            length += debugPrefixLength;
-        }
-        buffer = (TCHAR*)malloc(length * sizeof(TCHAR));
-        if (!buffer) return;
-        if (bDebugMessage)
-        {
-            _tcscpy_s(buffer, length, debugPrefix);
-            _vstprintf_s(buffer + debugPrefixLength, length - debugPrefixLength, format, args);
-        }
-        else
-        {
-            _vstprintf_s(buffer, length, format, args);
-        }
-        va_end(args);
-
         // NOTE:
         // Main window handles displaying the message. This avoids
         // deadlocks with SendMessage. Main window will deallocate
@@ -704,9 +751,9 @@ void my_print(bool bDebugMessage, const TCHAR* format, ...)
     }
 }
 
-void my_print(bool bDebugMessage, const string& message)
+void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& message)
 {
-    my_print(bDebugMessage, NarrowToTString(message).c_str());
+    my_print(sensitivity, bDebugMessage, NarrowToTString(message).c_str());
 }
 
 
@@ -739,6 +786,10 @@ int APIENTRY _tWinMain(
 
     HACCEL hAccelTable;
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PSICLIENT));
+
+    // If this set of calls gets any longer, we may want to do something generic.
+    DoStartupSystemProxyWork();
+    DoStartupDiagnosticCollection();
 
     // Main message loop
 
@@ -796,7 +847,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     g_hInst = hInstance;
 
-    RECT rect;
+    RECT rect = {0};
     SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
 
     g_hWnd = CreateWindowEx(
@@ -830,13 +881,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         CreateControls(hWnd);
 
+        // We shouldn't try to start connecting while processing the WM_CREATE
+        // message because otherwise messages logged by called functions will be lost.
+        PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
+
+        break;
+
+    case WM_PSIPHON_CREATED:
         // Display client version number 
 
-        SendMessage(
-            g_hLogListBox,
-            LB_ADDSTRING,
-            NULL,
-            (LPARAM)(tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
+        my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // NOTE: we leave the connection animation timer running even after fully connected
         // when the icon no longer animates -- since the timer handler also updates the UI
@@ -852,10 +906,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         g_lastTransportSelection = GetSelectedTransport();
         g_connectionManager.Toggle(g_lastTransportSelection, GetSplitTunnel());
-
-        // Optimize the server list
-
-        g_serverListReorder.Start(&g_connectionManager.GetServerList());
 
         break;
 
@@ -884,7 +934,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
             case IDM_SHOW_DEBUG_MESSAGES:
                 g_bShowDebugMessages = !g_bShowDebugMessages;
-                my_print(false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
+                my_print(NOT_SENSITIVE, false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
                 break;
             // TODO: remove help, about, and exit?  The menu is currently hidden
             case IDM_HELP:
@@ -905,7 +955,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         else if (lParam == (LPARAM)g_hToggleButton && wmEvent == BN_CLICKED)
         {
-            my_print(true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
 
             // See comment below about Stop() blocking the UI
             SetCursor(LoadCursor(0, IDC_WAIT));
@@ -992,17 +1042,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         else if (lParam == (LPARAM)g_hFeedbackButton && wmEvent == BN_CLICKED)
         {
-            my_print(true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
-            
+            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
+
+            tstringstream feedbackArgs;
+            feedbackArgs << "{ \"newVersionURL\": \"" << GET_NEW_VERSION_URL << "\", ";
+            feedbackArgs << "\"newVersionEmail\": \"" << GET_NEW_VERSION_EMAIL << "\", ";
+            feedbackArgs << "\"faqURL\": \"" << FAQ_URL << "\", ";
+            feedbackArgs << "\"dataCollectionInfoURL\": \"" << DATA_COLLECTION_INFO_URL << "\" }";
+
             tstring feedbackResult;
             if (ShowHTMLDlg(
                     hWnd, 
                     _T("FEEDBACK_HTML_RESOURCE"), 
                     GetLocaleName().c_str(),
-                    NULL,
+                    feedbackArgs.str().c_str(),
                     feedbackResult) == 1)
             {
-                my_print(false, _T("Sending feedback..."));
+                my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
 
                 g_connectionManager.SendFeedback(feedbackResult.c_str());
 
@@ -1034,9 +1090,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             g_hFeedbackButton,
             BM_SETIMAGE,
             IMAGE_ICON,
-            (LPARAM)g_hFeedbackButtonIcons[1]);
-        EnableWindow(g_hFeedbackButton, FALSE);
-        my_print(false, _T("Feedback sent. Thank you!"));
+            (LPARAM)g_hFeedbackButtonIcons[0]);
+        EnableWindow(g_hFeedbackButton, TRUE);
+        my_print(NOT_SENSITIVE, false, _T("Feedback sent. Thank you!"));
         break;
 
     case WM_PSIPHON_FEEDBACK_FAILED:
@@ -1046,7 +1102,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             IMAGE_ICON,
             (LPARAM)g_hFeedbackButtonIcons[0]);
         EnableWindow(g_hFeedbackButton, TRUE);
-        my_print(false, _T("Failed to send feedback."));
+        my_print(NOT_SENSITIVE, false, _T("Failed to send feedback."));
         break;
 
     case WM_PAINT:
@@ -1063,11 +1119,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         return result;
 
+    case WM_ENDSESSION:
+        // Stop the tunnel -- particularly to ensure system proxy settings are reverted -- on OS shutdown
+        // Note: due to the following bug, the system proxy settings revert may silently fail:
+        // https://connect.microsoft.com/IE/feedback/details/838086/internet-explorer-10-11-wininet-api-drops-proxy-change-events-during-system-shutdown
     case WM_DESTROY:
-        // Stop VPN if running
-        // The order of these calls is important. The serverListReorder
-        // requires connectionManager to stay up while it shuts down.
-        g_serverListReorder.Stop();
+        // Stop transport if running
         g_connectionManager.Stop(STOP_REASON_EXIT);
         PostQuitMessage(0);
         break;

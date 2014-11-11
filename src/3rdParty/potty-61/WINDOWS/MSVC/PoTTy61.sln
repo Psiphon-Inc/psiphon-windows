@@ -1,19 +1,19 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pogeant", "pogeant\pogeant.vcproj", "{C3DA1BC4-6808-44C8-AC6B-28914129967B}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pogeant", "pogeant\pogeant.vcxproj", "{C3DA1BC4-6808-44C8-AC6B-28914129967B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plonk", "plonk\plonk.vcproj", "{FCC32A19-B459-4F70-92E2-916DC78D131D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plonk", "plonk\plonk.vcxproj", "{FCC32A19-B459-4F70-92E2-916DC78D131D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oscp", "oscp\oscp.vcproj", "{674F7A60-07B1-473D-9A91-60D3AD5575C6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oscp", "oscp\oscp.vcxproj", "{674F7A60-07B1-473D-9A91-60D3AD5575C6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osftp", "osftp\osftp.vcproj", "{CB172A8E-7A2D-4CF5-BF99-FB57929E6871}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "osftp", "osftp\osftp.vcxproj", "{CB172A8E-7A2D-4CF5-BF99-FB57929E6871}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "potty", "potty\potty.vcproj", "{F0D16118-2C6E-4F1A-BF53-419CD5FC504E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "potty", "potty\potty.vcxproj", "{F0D16118-2C6E-4F1A-BF53-419CD5FC504E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pottygen", "pottygen\pottygen.vcproj", "{DEC13C4A-D0A9-4C64-AF86-EBBE9D63285B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pottygen", "pottygen\pottygen.vcxproj", "{DEC13C4A-D0A9-4C64-AF86-EBBE9D63285B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pottytel", "pottytel\pottytel.vcproj", "{E07276A0-7E8F-4F4F-BC19-A0D34EE48989}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pottytel", "pottytel\pottytel.vcxproj", "{E07276A0-7E8F-4F4F-BC19-A0D34EE48989}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

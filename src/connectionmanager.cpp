@@ -6,7 +6,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -27,7 +27,6 @@
 #include "webbrowser.h"
 #include "embeddedvalues.h"
 #include "usersettings.h"
-#include "systemproxysettings.h"
 #include "zlib.h"
 #include <algorithm>
 #include <sstream>
@@ -35,8 +34,9 @@
 #include "transport.h"
 #include "transport_registry.h"
 #include "transport_connection.h"
-#include "server_entry_auth.h"
+#include "authenticated_data_package.h"
 #include "stopsignal.h"
+#include "diagnostic_info.h"
 
 
 // Upgrade process posts a Quit message
@@ -63,11 +63,6 @@ ConnectionManager::~ConnectionManager(void)
 {
     Stop(STOP_REASON_NONE);
     CloseHandle(m_mutex);
-}
-
-ServerList& ConnectionManager::GetServerList()
-{
-    return m_serverList;
 }
 
 void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
@@ -138,7 +133,7 @@ ConnectionManagerState ConnectionManager::GetState()
 
 void ConnectionManager::Stop(DWORD reason)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     // NOTE: no lock, to allow thread to access object
 
@@ -154,32 +149,32 @@ void ConnectionManager::Stop(DWORD reason)
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
     {
-        my_print(true, _T("%s: Waiting for thread to die"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_thread, INFINITE);
-        my_print(true, _T("%s: Thread died"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Thread died"), __TFUNCTION__);
         m_thread = 0;
     }
 
     if (m_upgradeThread)
     {
-        my_print(true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_upgradeThread, INFINITE);
-        my_print(true, _T("%s: Upgrade thread died"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Upgrade thread died"), __TFUNCTION__);
         m_upgradeThread = 0;
     }
 
     if (m_feedbackThread)
     {
-        my_print(true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
         WaitForSingleObject(m_feedbackThread, INFINITE);
-        my_print(true, _T("%s: Feedback thread died"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Feedback thread died"), __TFUNCTION__);
         m_feedbackThread = 0;
     }
 
     delete m_transport;
     m_transport = 0;
 
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::FetchRemoteServerList(void)
@@ -218,7 +213,7 @@ void ConnectionManager::FetchRemoteServerList(void)
                 false) // don't use local proxy
             || response.length() <= 0)
         {
-            my_print(false, _T("Fetch remote server list failed"));
+            my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
             return;
         }
     }
@@ -231,9 +226,14 @@ void ConnectionManager::FetchRemoteServerList(void)
     m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
 
     string serverEntryList;
-    if (!verifySignedServerList(response.c_str(), serverEntryList))
+    if (!verifySignedDataPackage(
+            REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
+            response.c_str(), 
+            response.length(), 
+            false, 
+            serverEntryList))
     {
-        my_print(false, _T("Verify remote server list failed"));
+        my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
         return;
     }
 
@@ -247,12 +247,24 @@ void ConnectionManager::FetchRemoteServerList(void)
             newServerEntryVector.push_back(line);
         }
     }
-    m_serverList.AddEntriesToList(newServerEntryVector, 0);
+
+    try
+    {
+        // This adds the new server entries to all transports' server lists.
+        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
+
+        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
+    }
+    catch (std::exception &ex)
+    {
+        my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
+        // This isn't fatal.
+    }
 }
 
 void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     // Call Stop to cleanup in case thread failed on last Start attempt
     Stop(STOP_REASON_USER_DISCONNECT);
@@ -260,13 +272,20 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
     AutoMUTEX lock(m_mutex);
 
     m_transport = TransportRegistry::New(transport);
+
+    if (!m_transport->ServerWithCapabilitiesExists())
+    {
+        my_print(NOT_SENSITIVE, false, _T("No servers support this protocol."));
+        return;
+    }
+
     m_startSplitTunnel = startSplitTunnel;
 
-    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_USER_DISCONNECT | STOP_REASON_UNEXPECTED_DISCONNECT);
+    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
-        my_print(false, _T("Invalid connection manager state in Start (%d)"), m_state);
+        my_print(NOT_SENSITIVE, false, _T("Invalid connection manager state in Start (%d)"), m_state);
         return;
     }
 
@@ -274,18 +293,46 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     if (!(m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0)))
     {
-        my_print(false, _T("Start: CreateThread failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("Start: CreateThread failed (%d)"), GetLastError());
 
         SetState(CONNECTION_MANAGER_STATE_STOPPED);
     }
 
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }
 
 void ConnectionManager::StartSplitTunnel()
 {
     AutoMUTEX lock(m_mutex);
-    
+
+    if (m_splitTunnelRoutes.length() == 0)
+    {
+        try
+        {
+            tstring routesRequestPath = GetRoutesRequestPath(m_transport);
+
+            SessionInfo sessionInfo;
+            CopyCurrentSessionInfo(sessionInfo);
+                
+            string response;
+            if (ServerRequest::MakeRequest(
+                        ServerRequest::ONLY_IF_TRANSPORT,
+                        m_transport,
+                        sessionInfo,
+                        routesRequestPath.c_str(),
+                        response,
+                        StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+            {
+                // Process split tunnel response
+                ProcessSplitTunnelResponse(response);
+            }
+        }
+        catch (StopSignal::StopException&)
+        {
+            return;
+        }
+    }
+
     // Polipo is watching for changes to this file.
     // Note: there's some delay before the file change takes effect.
     WriteSplitTunnelRoutes(m_splitTunnelRoutes.c_str());
@@ -299,9 +346,17 @@ void ConnectionManager::StopSplitTunnel()
     DeleteSplitTunnelRoutes();
 }
 
+void ConnectionManager::ResetSplitTunnel()
+{
+    AutoMUTEX lock(m_mutex);
+    
+    m_splitTunnelRoutes = "";
+    StopSplitTunnel();
+}
+
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     ConnectionManager* manager = (ConnectionManager*)object;
 
@@ -309,19 +364,19 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     unsigned int seed = (unsigned)time(NULL);
     srand(seed);
 
+    // We only want to open the home page once per retry loop.
+    // This prevents auto-reconnect from opening the home page again.
+    bool homePageOpened = false;
+
     //
-    // Loop through server list, attempting to connect.
-    //
-    // When handshake and all connection types fail, the
-    // server is marked as failed in the local server list and
-    // the next server from the list is selected and retried.
+    // Repeatedly attempt to connect.
     //
     // All operations may be interrupted by user cancel.
     //
     // NOTE: this function doesn't hold the ConnectionManager
     // object lock to allow for cancel etc.
 
-    while (true) // Try servers loop
+    while (true)
     {
         if (manager->m_upgradePending)
         {
@@ -338,44 +393,55 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             }
         }
 
-        my_print(true, _T("%s: enter server loop"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: enter server loop"), __TFUNCTION__);
 
         try
         {
-            // Get the next server to try
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
 
-            tstring handshakeRequestPath;
+            manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-            manager->LoadNextServer(handshakeRequestPath);
+            // Ensure split tunnel routes are reset before new session
+            manager->ResetSplitTunnel();
 
-            // Note that the SessionInfo will only be partly filled in at this point.
-            SessionInfo sessionInfo;
-            manager->CopyCurrentSessionInfo(sessionInfo);
+            // Do we have any usable servers?
+            if (!manager->m_transport->ServerWithCapabilitiesExists())
+            {
+                my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
+                throw ConnectionManager::Abort();
+            }
 
             //
             // Set up the transport connection
             //
 
-            my_print(true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: doing transportConnection for %s"), __TFUNCTION__, manager->m_transport->GetTransportDisplayName().c_str());
 
             // Note that the TransportConnection will do any necessary cleanup.
             TransportConnection transportConnection;
 
             // May throw TryNextServer
-            transportConnection.Connect(
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                manager->m_transport,
-                manager,
-                sessionInfo,
-                handshakeRequestPath.c_str(),
-                manager->GetSplitTunnelingFilePath());
+            try
+            {
+                transportConnection.Connect(
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                    manager->m_transport,
+                    manager,    // ILocalProxyStatsCollector
+                    manager,    // IRemoteServerListFetcher
+                    manager->GetSplitTunnelingFilePath(),
+                    false);  // don't disallow handshake
+            }
+            catch (TransportConnection::TryNextServer&)
+            {
+                throw;
+            }
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
             // fuller than ours. Update ours and then update the server entries.
             //
 
-            sessionInfo = transportConnection.GetUpdatedSessionInfo();
+            SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
 
             //
@@ -389,7 +455,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 {
                     if (!(manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0)))
                     {
-                        my_print(false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
+                        my_print(NOT_SENSITIVE, false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
                 }
             }
@@ -402,36 +468,45 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             // Do post-connect work, like opening home pages.
             //
 
-            my_print(true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
-            manager->DoPostConnect(sessionInfo);
+            my_print(NOT_SENSITIVE, true, _T("%s: transport succeeded; DoPostConnect"), __TFUNCTION__);
+            manager->DoPostConnect(sessionInfo, !homePageOpened);
+            homePageOpened = true;
 
             //
             // Wait for transportConnection to stop (or fail)
             //
 
-            my_print(true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
             transportConnection.WaitForDisconnect();
 
-            //
-            // Disconnected
-            //
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
 
-            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            // The stop signal has not been set, so this was an unexpected disconnect. Retry.
 
-            my_print(true, _T("%s: breaking"), __TFUNCTION__);
-            break;
+            throw TransportConnection::TryNextServer();
+        }
+        catch (TransportConnection::TryNextServer&)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
+            // Fall through
+        }
+        catch (StopSignal::UnexpectedDisconnectStopException& ex)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: caught StopSignal::UnexpectedDisconnectStopException"), __TFUNCTION__);
+            GlobalStopSignal::Instance().ClearStopSignal(ex.GetType());
+            // Fall through
         }
         catch (IWorkerThread::Error& error)
         {
             // Unrecoverable error. Cleanup and exit.
-            my_print(true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: caught ITransport::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (IWorkerThread::Abort&)
         {
             // User requested cancel. Cleanup and exit.
-            my_print(true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught IWorkerThread::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
@@ -439,55 +514,53 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         catch (StopSignal::StopException&)
         {
             // User requested cancel or transport died, etc. Cleanup and exit.
-            my_print(true, _T("%s: caught StopSignal::StopException"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught StopSignal::StopException"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
         catch (ConnectionManager::Abort&)
         {
-            my_print(true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
-        catch (TransportConnection::TryNextServer&)
-        {
-            // Failed to connect to the server. Try the next one.
-            my_print(true, _T("%s: caught TryNextServer"), __TFUNCTION__);
-            manager->MarkCurrentServerFailed();
 
-            // Give users some feedback. Before, when the handshake failed
-            // all we displayed was "WinHttpCallbackFailed (200000)" and kept
-            // the arrow animation spinning. A user-authored FAQ mentioned
-            // this error in particular and recommended waiting. So here's
-            // a lightly more encouraging message.
-            my_print(false, _T("Trying next server..."));
+        // Failed to connect to the server. Try the next one.
 
-            // Continue while loop to try next server
+        manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-            manager->FetchRemoteServerList();
+        // Give users some feedback. Before, when the handshake failed
+        // all we displayed was "WinHttpCallbackFailed (200000)" and kept
+        // the arrow animation spinning. A user-authored FAQ mentioned
+        // this error in particular and recommended waiting. So here's
+        // a lightly more encouraging message.
+        my_print(NOT_SENSITIVE, false, _T("Still trying..."));
 
-            // Wait between 1 and 2 seconds before retrying. This is a quick
-            // fix to deal with the following problem: when a client can
-            // make an HTTPS connection but not a VPN connection, it ends
-            // up spamming "handshake" requests, resulting in PSK race conditions
-            // with other clients that are trying to connect. This is starving
-            // clients that are able to establish the VPN connection.
-            // TODO: a more optimal solution would only wait when re-trying
-            // a server where this condition (HTTPS ok, VPN failed) previously
-            // occurred.
-            // UPDATE: even with SSH as a fail over, we're leaving this delay
-            // in for now as clients blocked on both protocols would otherwise
-            // still spam handshakes. The delay is *after* SSH fail over so as
-            // not to delay that attempt (on the same server).
-            Sleep(1000 + rand()%1000);    
-        }
+        // Continue while loop to try next server
+
+        manager->FetchRemoteServerList();
+
+        // Wait between 1 and 2 seconds before retrying. This is a quick
+        // fix to deal with the following problem: when a client can
+        // make an HTTPS connection but not a VPN connection, it ends
+        // up spamming "handshake" requests, resulting in PSK race conditions
+        // with other clients that are trying to connect. This is starving
+        // clients that are able to establish the VPN connection.
+        // TODO: a more optimal solution would only wait when re-trying
+        // a server where this condition (HTTPS ok, VPN failed) previously
+        // occurred.
+        // UPDATE: even with SSH as a fail over, we're leaving this delay
+        // in for now as clients blocked on both protocols would otherwise
+        // still spam handshakes. The delay is *after* SSH fail over so as
+        // not to delay that attempt (on the same server).
+        Sleep(1000 + rand()%1000);
     }
 
-    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exiting thread"), __TFUNCTION__);
     return 0;
 }
 
-void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
+void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openHomePages)
 {
     // Called from connection thread
     // NOTE: no lock while waiting for network events
@@ -503,20 +576,45 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         
     DWORD start = GetTickCount();
     string response;
-    ServerRequest serverRequest;
-    if (serverRequest.MakeRequest(
-                        false, // don't allow adhoc
+    if (ServerRequest::MakeRequest(
+                        ServerRequest::ONLY_IF_TRANSPORT,
                         m_transport,
                         sessionInfo,
                         connectedRequestPath.c_str(),
                         response,
                         StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
     {
-        // Record the request time.
-        (void)WriteRegistryStringValue(
-                LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
-                TStringToNarrow(GetISO8601DatetimeString()));
+        // Get the server time from response json and record it
+        // connected_timestamp 
+        Json::Value json_entry;
+        Json::Reader reader;
+        string connected_timestamp;
 
+        bool parsingSuccessful = reader.parse(response, json_entry);
+        if(parsingSuccessful)
+        {
+            try
+            {
+                connected_timestamp = json_entry.get("connected_timestamp", 0).asString();
+                RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+                (void)WriteRegistryStringValue(
+                        LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
+                        connected_timestamp,
+                        reason);
+            }
+            catch (exception& e)
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
+            }
+        }
+        else
+        {
+            string fail = reader.getFormattedErrorMessages();
+            my_print(NOT_SENSITIVE, false, _T("%s:%d: 'connected' response parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+        }
+
+
+#ifdef SPEEDTEST
         // Speed feedback
         // Note: the /connected request *is* tunneled
 
@@ -524,13 +622,12 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            ServerRequest serverRequest;
-            (void)serverRequest.MakeRequest(
-                            false, // don't allow adhoc
+            (void)ServerRequest::MakeRequest(
+                            ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
-                                m_transport->GetTransportProtocolName(),
+                                m_transport->GetTransportRequestName(),
                                 _T("connected"),
                                 _T(""),
                                 now-start,
@@ -538,12 +635,10 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             speedResponse,
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
-
-        // Process split tunnel response
-        ProcessSplitTunnelResponse(response);
+#endif //SPEEDTEST
 
         // Process flag to start split tunnel after initial connection
-        if (m_startSplitTunnel)
+        if (m_transport->IsSplitTunnelSupported() && m_startSplitTunnel)
         {
             StartSplitTunnel();
         }
@@ -553,8 +648,12 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
     // Open home pages in browser
     //
     
-    OpenHomePages();
+    if (openHomePages)
+    {
+        OpenHomePages();
+    }
 
+#ifdef SPEEDTEST
     // Perform non-tunneled speed test when requested
     // Note that in VPN mode, the WinHttp request is implicitly tunneled.
 
@@ -591,13 +690,12 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
         if (now >= start) // GetTickCount can wrap
         {
             string speedResponse;
-            ServerRequest serverRequest;
-            serverRequest.MakeRequest(
-                            false, // don't allow adhoc
+            (void)ServerRequest::MakeRequest(
+                            ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
                             GetSpeedRequestPath(
-                                m_transport->GetTransportProtocolName(),
+                                m_transport->GetTransportRequestName(),
                                 success ? _T("speed_test") : _T("speed_test_failure"),
                                 speedTestURL.str().c_str(),
                                 now-start,
@@ -606,6 +704,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo)
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
         }
     }
+#endif //SPEEDTEST
 }
 
 bool ConnectionManager::SendStatusMessage(
@@ -626,8 +725,21 @@ bool ConnectionManager::SendStatusMessage(
     // Format stats data for consumption by the server. 
 
     Json::Value stats;
+
+    // Stats traffic analysis mitigation: [non-cryptographic] pseudorandom padding to ensure the size of status requests is not constant.
+    // Padding size is JSON field overhead + 0-255 bytes + 33% base64 encoding overhead
+    const int MAX_PADDING_LENGTH = 256;
+    unsigned char pseudorandom_bytes[MAX_PADDING_LENGTH];
+    assert(MAX_PADDING_LENGTH % sizeof(unsigned int) == 0);
+    for (int i = 0; i < MAX_PADDING_LENGTH/sizeof(unsigned int); i++)
+    {
+        rand_s(((unsigned int*)pseudorandom_bytes) + i);
+    }
+    string padding = Base64Encode(pseudorandom_bytes, rand() % 256);
+    stats["padding"] = padding;
+
     stats["bytes_transferred"] = bytesTransferred;
-    my_print(true, _T("BYTES: %llu"), bytesTransferred);
+    my_print(SENSITIVE_LOG, true, _T("BYTES: %llu"), bytesTransferred);
 
     map<string, int>::const_iterator pos = pageViewEntries.begin();
     Json::Value page_views(Json::arrayValue);
@@ -637,7 +749,7 @@ bool ConnectionManager::SendStatusMessage(
         entry["page"] = pos->first;
         entry["count"] = pos->second;
         page_views.append(entry);
-        my_print(true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
+        my_print(SENSITIVE_LOG, true, _T("PAGEVIEW: %d: %S"), pos->second, pos->first.c_str());
     }
     stats["page_views"] = page_views;
 
@@ -649,7 +761,7 @@ bool ConnectionManager::SendStatusMessage(
         entry["domain"] = pos->first;
         entry["count"] = pos->second;
         https_requests.append(entry);
-        my_print(true, _T("HTTPS REQUEST: %d: %S"), pos->second, pos->first.c_str());
+        my_print(SENSITIVE_LOG, true, _T("HTTPS REQUEST: %d: %S"), pos->second, pos->first.c_str());
     }
     stats["https_requests"] = https_requests;
 
@@ -666,7 +778,6 @@ bool ConnectionManager::SendStatusMessage(
     }
 
     string response;
-    ServerRequest serverRequest;
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -674,8 +785,11 @@ bool ConnectionManager::SendStatusMessage(
     // a shorter timeout in this case
     DWORD stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
 
-    bool success = serverRequest.MakeRequest(
-                                    final, // allow adhoc if this is the final stats request
+    // Allow adhoc tunnels if this is the final stats request
+    ServerRequest::ReqLevel reqLevel = final ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
+
+    bool success = ServerRequest::MakeRequest(
+                                    reqLevel,
                                     m_transport,
                                     sessionInfo,
                                     requestPath.c_str(),
@@ -730,7 +844,7 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
+           _T("&relay_protocol=") +  transport->GetTransportRequestName() + 
            _T("&error_code=") + transport->GetLastTransportError();
 }
 
@@ -750,9 +864,23 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") + transport->GetTransportProtocolName() + 
+           _T("&relay_protocol=") + transport->GetTransportRequestName() + 
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
            _T("&last_connected=") + NarrowToTString(lastConnected);
+}
+
+tstring ConnectionManager::GetRoutesRequestPath(ITransport* transport)
+{
+    AutoMUTEX lock(m_mutex);
+
+    return tstring(HTTP_ROUTES_REQUEST_PATH) + 
+           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
+           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
+           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("&relay_protocol=") +  (transport ? transport->GetTransportRequestName() : _T("")) + 
+           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T(""));
 }
 
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
@@ -764,7 +892,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
     // If there's no session ID, we can't send the status.
     if (sessionID.length() <= 0)
     {
-        my_print(true, _T("%s: no session ID; not sending status"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: no session ID; not sending status"), __TFUNCTION__);
         return _T("");
     }
 
@@ -776,7 +904,7 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportProtocolName() + 
+           _T("&relay_protocol=") +  transport->GetTransportRequestName() + 
            _T("&session_id=") + sessionID + 
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
@@ -794,79 +922,8 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
                     _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
 }
 
-tstring ConnectionManager::GetFeedbackRequestPath(ITransport* transport)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return tstring(HTTP_FEEDBACK_REQUEST_PATH) + 
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (transport ? transport->GetTransportProtocolName() : _T("")) + 
-           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T("")) + 
-           _T("&connected=") + ((GetState() == CONNECTION_MANAGER_STATE_CONNECTED) ? _T("1") : _T("0"));
-}
-
-void ConnectionManager::MarkCurrentServerFailed(void)
-{
-    AutoMUTEX lock(m_mutex);
-    
-    m_serverList.MarkCurrentServerFailed();
-}
 
 // ==== General Session Functions =============================================
-
-// Note that the SessionInfo structure will only be partly filled in by this function.
-void ConnectionManager::LoadNextServer(tstring& handshakeRequestPath)
-{
-    // Select next server to try to connect to
-
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntry serverEntry;
-    
-    try
-    {
-        // Try the next server in our list.
-        serverEntry = m_serverList.GetNextServer();
-    }
-    catch (std::exception &ex)
-    {
-        my_print(false, string("LoadNextServer caught exception: ") + ex.what());
-        throw Abort();
-    }
-
-    // Ensure split tunnel routes are reset before new session
-    m_splitTunnelRoutes = "";
-    StopSplitTunnel();
-
-    // Current session holds server entry info and will also be loaded
-    // with homepage and other info.
-    m_currentSessionInfo.Set(serverEntry);
-
-    // Generate a new client session ID to be included with all subsequent web requests
-    m_currentSessionInfo.GenerateClientSessionID();
-
-    // Output values used in next TryNextServer step
-
-    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-                           _T("&relay_protocol=") + m_transport->GetTransportProtocolName();
-
-    // Include a list of known server IP addresses in the request query string as required by /handshake
-    ServerEntries serverEntries =  m_serverList.GetList();
-    for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
-    {
-        handshakeRequestPath += _T("&known_server=");
-        handshakeRequestPath += NarrowToTString(ii->serverAddress);
-    }
-}
 
 bool ConnectionManager::RequireUpgrade(void)
 {
@@ -877,9 +934,9 @@ bool ConnectionManager::RequireUpgrade(void)
 
 DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
-    my_print(false, _T("Downloading new version..."));
+    my_print(NOT_SENSITIVE, false, _T("Downloading new version..."));
 
     ConnectionManager* manager = (ConnectionManager*)object;
 
@@ -897,14 +954,16 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
         // Download new binary
         DWORD start = GetTickCount();
-        ServerRequest serverRequest;
-        if (!serverRequest.MakeRequest(
-                    false, // don't allow adhoc
-                    manager->m_transport,
-                    sessionInfo,
-                    downloadRequestPath.c_str(),
-                    downloadResponse,
-                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+        HTTPSRequest httpsRequest;
+        if (!httpsRequest.MakeRequest(
+                NarrowToTString(UPGRADE_ADDRESS).c_str(),
+                443,
+                "",
+                NarrowToTString(UPGRADE_REQUEST_PATH).c_str(),
+                downloadResponse,
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                true) // tunnel request
+            || downloadResponse.length() <= 0)
         {
             // If the download failed, we simply do nothing.
             // Rationale:
@@ -917,19 +976,20 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         }
         else
         {
-            my_print(false, _T("Download complete"));
+            my_print(NOT_SENSITIVE, false, _T("Download complete"));
 
+#ifdef SPEEDTEST
             // Speed feedback
             DWORD now = GetTickCount();
             if (now >= start) // GetTickCount can wrap
             {
                 string speedResponse;
-                (void)serverRequest.MakeRequest( // Ignore failure
-                                false, // don't allow adhoc
+                (void)ServerRequest::MakeRequest( // Ignore failure
+                                ServerRequest::ONLY_IF_TRANSPORT,
                                 manager->m_transport,
                                 sessionInfo,
                                 manager->GetSpeedRequestPath(
-                                    _T(""),
+                                    manager->m_transport->GetTransportRequestName(),
                                     _T("download"),
                                     _T(""),
                                     now-start,
@@ -937,10 +997,32 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                                 speedResponse,
                                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
             }
+#endif //SPEEDTEST
 
             // Perform upgrade.
-        
-            manager->PaveUpgrade(downloadResponse);
+
+            string upgradeData;
+
+            if (verifySignedDataPackage(
+                    UPGRADE_SIGNATURE_PUBLIC_KEY,
+                    downloadResponse.c_str(), 
+                    downloadResponse.length(),
+                    true, // compressed
+                    upgradeData))
+            {
+                // Data in the package is Base64 encoded
+                upgradeData = Base64Decode(upgradeData);
+
+                if (upgradeData.length() > 0)
+                {
+                    manager->PaveUpgrade(upgradeData);
+                }
+            }
+            else
+            {
+                // Bad package. Log and continue.
+                my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
+            }
         }
     }
     catch (StopSignal::StopException&)
@@ -948,7 +1030,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         // do nothing, just exit
     }
 
-    my_print(true, _T("%s: exiting thread"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exiting thread"), __TFUNCTION__);
     return 0;
 }
 
@@ -1015,7 +1097,7 @@ void ConnectionManager::PaveUpgrade(const string& download)
     {
         std::stringstream s;
         s << ex.what() << " (" << GetLastError() << ")";
-        my_print(false, s.str().c_str());
+        my_print(NOT_SENSITIVE, false, s.str().c_str());
         
         // Try to restore the original version
         if (bArchiveCreated)
@@ -1068,7 +1150,7 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
         ret = inflate(&stream, Z_NO_FLUSH);
         if (ret != Z_OK && ret != Z_STREAM_END)
         {
-            my_print(true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
+            my_print(NOT_SENSITIVE, true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
             m_splitTunnelRoutes = "";
             break;
         }
@@ -1079,7 +1161,7 @@ void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoute
 
         if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
         {
-            my_print(true, _T("ProcessSplitTunnelResponse overflow"));
+            my_print(NOT_SENSITIVE, true, _T("ProcessSplitTunnelResponse overflow"));
             m_splitTunnelRoutes = "";
             break;
         }
@@ -1115,7 +1197,7 @@ bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
     tstring filePath = GetSplitTunnelingFilePath();
     if (filePath.length() == 0)
     {
-        my_print(false, _T("WriteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1123,7 +1205,7 @@ bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
 
     if (file == INVALID_HANDLE_VALUE)
     {
-        my_print(false, _T("WriteSplitTunnelRoutes - CreateFile failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - CreateFile failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1137,7 +1219,7 @@ bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
             NULL)
           || written != length)
     {
-        my_print(false, _T("WriteSplitTunnelRoutes - WriteFile failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - WriteFile failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1151,13 +1233,13 @@ bool ConnectionManager::DeleteSplitTunnelRoutes()
     tstring filePath = GetSplitTunnelingFilePath();
     if (filePath.length() == 0)
     {
-        my_print(false, _T("DeleteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("DeleteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
         return false;
     }
 
     if (!DeleteFile(filePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
     {
-        my_print(false, _T("DeleteSplitTunnelRoutes - DeleteFile failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("DeleteSplitTunnelRoutes - DeleteFile failed (%d)"), GetLastError());
         return false;
     }
 
@@ -1179,13 +1261,13 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
-        m_serverList.AddEntriesToList(
+        TransportRegistry::AddServerEntries(
             m_currentSessionInfo.GetDiscoveredServerEntries(), 
             &m_currentSessionInfo.GetServerEntry());
     }
     catch (std::exception &ex)
     {
-        my_print(false, string("HandleHandshakeResponse caught exception: ") + ex.what());
+        my_print(NOT_SENSITIVE, false, string("HandleHandshakeResponse caught exception: ") + ex.what());
         // This isn't fatal.  The transport connection can still be established.
     }
 }
@@ -1193,20 +1275,24 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 struct FeedbackThreadData
 {
     ConnectionManager* connectionManager;
-    wstring feedback;
+    wstring feedbackJSON;
 } g_feedbackThreadData;
 
-void ConnectionManager::SendFeedback(LPCWSTR feedback)
+void ConnectionManager::SendFeedback(LPCWSTR feedbackJSON)
 {
     g_feedbackThreadData.connectionManager = this;
-    g_feedbackThreadData.feedback = feedback;
+    g_feedbackThreadData.feedbackJSON = feedbackJSON;
 
     if (!m_feedbackThread ||
         WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
     {
-        if (!(m_upgradeThread = CreateThread(0, 0, ConnectionManager::ConnectionManagerFeedbackThread, (void*)&g_feedbackThreadData, 0, 0)))
+        if (!(m_feedbackThread = CreateThread(
+                                    0, 
+                                    0, 
+                                    ConnectionManager::ConnectionManagerFeedbackThread, 
+                                    (void*)&g_feedbackThreadData, 0, 0)))
         {
-            my_print(false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
             PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
             return;
         }
@@ -1215,24 +1301,31 @@ void ConnectionManager::SendFeedback(LPCWSTR feedback)
 
 DWORD WINAPI ConnectionManager::ConnectionManagerFeedbackThread(void* object)
 {
-    my_print(true, _T("%s: enter"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     FeedbackThreadData* data = (FeedbackThreadData*)object;
 
-    if (data->connectionManager->DoSendFeedback(data->feedback.c_str()))
+    try
     {
-        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+        if (data->connectionManager->DoSendFeedback(data->feedbackJSON.c_str()))
+        {
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_SUCCESS, 0, 0);
+        }
+        else
+        {
+            PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+        }
     }
-    else
+    catch (StopSignal::StopException&)
     {
-        PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);
+        // just fall through
     }
 
-    my_print(true, _T("%s: exit"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
     return 0;
 }
 
-bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
+bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
 {
     // NOTE: no lock while waiting for network events
 
@@ -1243,15 +1336,22 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
         sessionInfo = m_currentSessionInfo;
     }
 
-    string narrowFeedback;
-    if (feedback)
+    string narrowFeedbackJSON = WStringToUTF8(feedbackJSON);
+    Json::Value json_entry;
+    Json::Reader reader;
+    if (!reader.parse(narrowFeedbackJSON, json_entry))
     {
-        narrowFeedback = WStringToNarrow(feedback);
+        assert(0);
+        return false;
     }
 
-    tstring requestPath = GetFeedbackRequestPath(m_transport);
-    string response;
-    HTTPSRequest httpsRequest;
+    string feedback = json_entry.get("feedback", "").asString();
+    string email = json_entry.get("email", "").asString();
+    bool sendDiagnosticInfo = json_entry.get("sendDiagnosticInfo", false).asBool();
+
+    // Leave the survey responses as JSON.
+    Json::Value surveyResponses = json_entry.get("responses", Json::nullValue);
+    string surveyJSON = Json::FastWriter().write(surveyResponses);
 
     // When disconnected, ignore the user cancel flag in the HTTP request
     // wait loop.
@@ -1259,26 +1359,19 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedback)
     // a shorter timeout in this case
     DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
 
-    // Use the system proxy unless the currently connected transport forbids it.
-    bool useProxy = true;
-    if (m_transport 
-        && m_transport->IsConnected() 
-        && !m_transport->IsServerRequestTunnelled())
+    bool success = true;
+
+    // Upload diagnostic info
+    if (!feedback.empty() || !surveyJSON.empty() || sendDiagnosticInfo) 
     {
-        useProxy = false;
+        // We don't care if this succeeds.
+        success = SendFeedbackAndDiagnosticInfo(
+                    feedback,
+                    email,
+                    surveyJSON,
+                    sendDiagnosticInfo,
+                    StopInfo(&GlobalStopSignal::Instance(), stopReason));
     }
 
-    bool success = httpsRequest.MakeRequest(
-                                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                                    sessionInfo.GetWebPort() ,
-                                    sessionInfo.GetWebServerCertificate(),
-                                    requestPath.c_str(),
-                                    response,
-                                    StopInfo(&GlobalStopSignal::Instance(), stopReason),
-                                    useProxy,
-                                    L"Content-Type: application/json",
-                                    (LPVOID)narrowFeedback.c_str(),
-                                    narrowFeedback.length());
-    
     return success;
 }

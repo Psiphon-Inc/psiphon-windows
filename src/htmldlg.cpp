@@ -81,9 +81,11 @@ int ShowHTMLDlg(
                 HRESULT  hr;
                 VARIANT  varArgs, varReturn;
 
-                VariantInit(&varReturn);
+                VariantInit(&varArgs);
                 varArgs.vt = VT_BSTR;
                 varArgs.bstrVal = SysAllocString(args);
+
+                VariantInit(&varReturn);
 
                 hr = (*pfnShowHTMLDialog)(
                         hParentWnd, 

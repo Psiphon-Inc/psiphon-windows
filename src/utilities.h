@@ -41,14 +41,24 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
 
 void StopProcess(DWORD processID, HANDLE process);
 
+bool CreateSubprocessPipes(
+        HANDLE& o_parentOutputPipe, // Parent reads the child's stdout/stdin from this
+        HANDLE& o_parentInputPipe,  // Parent writes to the child's stdin with this
+        HANDLE& o_childStdinPipe,   // Child's stdin pipe
+        HANDLE& o_childStdoutPipe,  // Child's stdout pipe
+        HANDLE& o_childStderrPipe);  // Child's stderr pipe (dup of stdout)
+
+enum RegistryFailureReason
+{
+    REGISTRY_FAILURE_NO_REASON = 0,
+    REGISTRY_FAILURE_WRITE_TOO_LONG
+};
+
 bool WriteRegistryDwordValue(const string& name, DWORD value);
-
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
-
-bool WriteRegistryStringValue(const string& name, const string& value);
-
+bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason);
 bool ReadRegistryStringValue(LPCSTR name, string& value);
-bool ReadRegistryStringValue(LPCWSTR name, wstring& value);
+bool ReadRegistryStringValue(LPCSTR name, wstring& value);
 
 // Text metrics are relative to default font
 
@@ -65,6 +75,43 @@ string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
 
+string Base64Encode(const unsigned char* input, size_t length);
+string Base64Decode(const string& input);
+
 tstring GetLocaleName();
 
 tstring GetISO8601DatetimeString();
+
+bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
+
+DWORD GetTickCountDiff(DWORD start, DWORD end);
+
+wstring EscapeSOCKSArg(const char* input);
+
+/*
+String Utilities
+*/
+
+// Adapted from http://stackoverflow.com/questions/236129/splitting-a-string-in-c
+
+template <typename charT>
+vector<basic_string<charT>>& split(const basic_string<charT> &s, charT delim, std::vector<basic_string<charT>> &elems) {
+    basic_stringstream<charT> ss(s);
+    basic_string<charT> item;
+    while(std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+template <typename charT>
+std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim) {
+    vector<basic_string<charT>> elems;
+    return split(s, delim, elems);
+}
+
+#ifndef STRINGIZE
+// From MSVC++ 2012's _STRINGIZE macro
+#define __STRINGIZEX(x) #x
+#define STRINGIZE(x) __STRINGIZEX(x)
+#endif

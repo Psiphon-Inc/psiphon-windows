@@ -20,11 +20,11 @@
 #include "stdafx.h"
 #include "httpsrequest.h"
 #include "psiclient.h"
-#include <Winhttp.h>
 #include <WinCrypt.h>
 #include "config.h"
 #include "embeddedvalues.h"
 #include "stopsignal.h"
+#include "systemproxysettings.h"
 
 
 // NOTE: this code depends on built-in Windows crypto services
@@ -80,17 +80,16 @@ void CALLBACK WinHttpStatusCallback(
     // the dwContext parameter of the callback function."
     if (dwContext == NULL)
     {
-        my_print(true, _T("%s: received no context; thread exiting"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: received no context; thread exiting"), __TFUNCTION__);
         return;
     }
 
     HTTPSRequest* httpRequest = (HTTPSRequest*)dwContext;
-    CERT_CONTEXT *pCert = {0};
     DWORD dwStatusCode;
     DWORD dwLen;
     LPVOID pBuffer = NULL;
 
-    //my_print(true, _T("HTTPS request... (%d)"), dwInternetStatus);
+    //my_print(NOT_SENSITIVE, true, _T("HTTPS request... (%d)"), dwInternetStatus);
 
     switch (dwInternetStatus)
     {
@@ -100,35 +99,39 @@ void CALLBACK WinHttpStatusCallback(
         httpRequest->SetClosedEvent();
         break;
     case WINHTTP_CALLBACK_STATUS_SENDING_REQUEST:
-
         // NOTE: from experimentation, this is really the earliest we can inject our custom server cert validation.
         // As far as we know, this is before any data is sent over the SSL connection, so it's soon enough.
         // E.g., we tried to verify the cert earlier but:
         // WinHttpQueryOption(WINHTTP_OPTION_SERVER_CERT_CONTEXT) gives ERROR_WINHTTP_INCORRECT_HANDLE_STATE
         // during WINHTTP_CALLBACK_STATUS_CONNECTED_TO_SERVER...
-
-        // Validate server certificate (before requesting)
-
-        dwLen = sizeof(pCert);
-        if (!WinHttpQueryOption(
-                    hRequest,
-                    WINHTTP_OPTION_SERVER_CERT_CONTEXT,
-                    &pCert,
-                    &dwLen)
-            || NULL == pCert)
+        if (httpRequest->m_expectedServerCertificate.length() > 0)
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryOption failed (%d)"), GetLastError());
-            WinHttpCloseHandle(hRequest);
-            return;
-        }
+            // Validate server certificate (before requesting)
 
-        if (!httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert))
-        {
+            CERT_CONTEXT* pCert = NULL;
+            dwLen = sizeof(pCert);
+            if (!WinHttpQueryOption(
+                        hRequest,
+                        WINHTTP_OPTION_SERVER_CERT_CONTEXT,
+                        &pCert,
+                        &dwLen)
+                || NULL == pCert)
+            {
+                my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryOption failed (%d)"), GetLastError());
+                WinHttpCloseHandle(hRequest);
+                return;
+            }
+
+            bool valid = httpRequest->ValidateServerCert((PCCERT_CONTEXT)pCert);
             CertFreeCertificateContext(pCert);
-            my_print(httpRequest->m_silentMode, _T("ValidateServerCert failed"));
-            // Close request handle immediately to prevent sending of data
-            WinHttpCloseHandle(hRequest);
-            return;
+
+            if (!valid)
+            {
+                my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("ValidateServerCert failed"));
+                // Close request handle immediately to prevent sending of data
+                WinHttpCloseHandle(hRequest);
+                return;
+            }
         }
         break;
     case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
@@ -137,7 +140,7 @@ void CALLBACK WinHttpStatusCallback(
 
         if (!WinHttpReceiveResponse(hRequest, NULL))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpReceiveResponse failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -155,21 +158,21 @@ void CALLBACK WinHttpStatusCallback(
                         &dwLen, 
                         NULL))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
 
         if (200 != dwStatusCode)
         {
-            my_print(httpRequest->m_silentMode, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
             WinHttpCloseHandle(hRequest);
             return;
         }
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -199,7 +202,7 @@ void CALLBACK WinHttpStatusCallback(
     
         if (!WinHttpReadData(hRequest, pBuffer, dwLen, &dwLen))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpReadData failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpReadData failed (%d)"), GetLastError());
             HeapFree(GetProcessHeap(), 0, pBuffer);
             WinHttpCloseHandle(hRequest);
             return;
@@ -216,7 +219,7 @@ void CALLBACK WinHttpStatusCallback(
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
-            my_print(httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
+            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryDataAvailable failed (%d)"), GetLastError());
             WinHttpCloseHandle(hRequest);
             return;
         }
@@ -225,14 +228,15 @@ void CALLBACK WinHttpStatusCallback(
         // Get error value as per http://msdn.microsoft.com/en-us/library/aa383917%28v=VS.85%29.aspx
         if (ERROR_WINHTTP_OPERATION_CANCELLED != ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError)
         {
-            my_print(httpRequest->m_silentMode, _T("HTTP request error (%d, %d)"),
+            my_print(NOT_SENSITIVE, 
+                     httpRequest->m_silentMode, _T("HTTP request error (%d, %d)"),
                      ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
                      ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
         }
         WinHttpCloseHandle(hRequest);
         break;
     case WINHTTP_CALLBACK_STATUS_SECURE_FAILURE:
-        my_print(httpRequest->m_silentMode, _T("HTTP secure failure (%d)"), lpvStatusInformation);
+        my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("HTTP secure failure (%d)"), lpvStatusInformation);
         WinHttpCloseHandle(hRequest);
         break;
     default:
@@ -241,6 +245,38 @@ void CALLBACK WinHttpStatusCallback(
     }
 }
 
+
+/*
+                                  VPN                             SSH
+                            conn         disconn             conn     disconn         generic/ignorant
+                            ----------------------------------------------------------------------------
+FetchRemoteServerList      !matter        native          native*     native            use_native
+DiagnosticData             !matter        native          native*     native            use_native
+
+Upgrade                    !matter        native          tunnel      native            use_tunnel
+
+SpeedTest (non)            n/a            native          native      native            use_native
+
+untunneled server request  n/a            native          n/a         native            use_native
+  - pre-handshake, post-status
+
+tunneled request           !matter        n/a             tunnel      n/a               use_tunnel
+  - post-handshake, /connected, /status
+
+
+!matter: doesn't matter, do whatever, polipo or don't polipo (because it'll be in the VPN tunnel)
+      - but don't use previous system proxy settings if tunnel is up, of course
+native: native internet connection, including any proxy settings
+      - while connected, this means using *previous* system proxy settings
+~native: use native, even though we could in theory use the tunnel
+n/a: can't do it
+tunnel: use polipo
+      - regardless of what system proxy settings are
+
+NOTE: There is a registry setting (UserSkipProxySettings) that prevents setting the system proxy when connected.
+
+Assumption: Remnant system proxy settings from a Psiphon crash will be cleaned up.
+*/
 bool HTTPSRequest::MakeRequest(
         const TCHAR* serverAddress,
         int serverWebPort,
@@ -248,42 +284,77 @@ bool HTTPSRequest::MakeRequest(
         const TCHAR* requestPath,
         string& response,
         const StopInfo& stopInfo,
-        bool useLocalProxy/*=true*/,
+        bool usePsiphonLocalProxy,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
-        DWORD additionalDataLength/*=0*/)
+        DWORD additionalDataLength/*=0*/,
+        LPCWSTR httpVerb/*=NULL*/)
 {
     // Throws if signaled
     stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
 
-    DWORD dwFlags = SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
+    DWORD dwFlags = 0;
+    
+    if (webServerCertificate.length() > 0)
+    {
+        // We're doing our own validation, so don't choke on cert errors.
+        dwFlags |= SECURITY_FLAG_IGNORE_CERT_CN_INVALID |
                     SECURITY_FLAG_IGNORE_CERT_DATE_INVALID |
                     SECURITY_FLAG_IGNORE_UNKNOWN_CA;
-
-    tstring proxy;
-    if (useLocalProxy)
-    {
-        proxy = GetSystemDefaultHTTPSProxy();
     }
+
+    tstring proxyHost;
+    if (usePsiphonLocalProxy)
+    {
+        proxyHost = GetTunneledDefaultHttpsProxyHost();
+    }
+    else
+    {
+        proxyHost = GetNativeDefaultHttpsProxyHost();
+    }
+
+    tstring reqType(requestPath);
+    size_t reqEnd = reqType.find(_T('?'));
+    if (reqEnd != string::npos)
+    {
+        reqType.resize(reqEnd);
+    }
+    my_print(NOT_SENSITIVE, true, _T("%s: %s; proxy: {use: %d, set: %d}"), __TFUNCTION__, reqType.c_str(), usePsiphonLocalProxy, !!proxyHost.length());
 
     AutoHINTERNET hSession =
                 WinHttpOpen(
                     _T("Mozilla/4.0 (compatible; MSIE 5.22)"),
-                    proxy.length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-                    proxy.length() ? proxy.c_str() : WINHTTP_NO_PROXY_NAME,
+                    proxyHost.length() ? WINHTTP_ACCESS_TYPE_NAMED_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                    proxyHost.length() ? proxyHost.c_str() : WINHTTP_NO_PROXY_NAME,
                     WINHTTP_NO_PROXY_BYPASS,
                     WINHTTP_FLAG_ASYNC);
 
     if (NULL == hSession)
     {
-        my_print(m_silentMode, _T("WinHttpOpen failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpOpen failed (%d)"), GetLastError());
         return false;
     }
 
     if (FALSE == WinHttpSetTimeouts(hSession, 0, HTTPS_REQUEST_CONNECT_TIMEOUT_MS,
                             HTTPS_REQUEST_SEND_TIMEOUT_MS, HTTPS_REQUEST_RECEIVE_TIMEOUT_MS))
     {
-        my_print(m_silentMode, _T("WinHttpSetTimeouts failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetTimeouts failed (%d)"), GetLastError());
+        return false;
+    }
+
+    // WinHTTP defaults to SSLv3 and TLSv1. Exclude SSLv3 due to POODLE flaw:
+    // http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566
+    // TODO: should also enable WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1 and WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+    // however doing so will require OS version checking as WinHTTP in XP doesn't support these, etc.
+    DWORD dwProtocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1;
+
+    if (FALSE == WinHttpSetOption(
+                    hSession,
+                    WINHTTP_OPTION_SECURE_PROTOCOLS,
+                    &dwProtocols,
+                    sizeof(DWORD)))
+    {
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption WINHTTP_OPTION_SECURE_PROTOCOLS failed (%d)"), GetLastError());
         return false;
     }
 
@@ -296,14 +367,19 @@ bool HTTPSRequest::MakeRequest(
 
     if (NULL == hConnect)
     {
-        my_print(m_silentMode, _T("WinHttpConnect failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpConnect failed (%d)"), GetLastError());
         return false;
+    }
+
+    if (!httpVerb)
+    {
+        httpVerb = additionalData ? _T("POST") : _T("GET");
     }
 
     AutoHINTERNET hRequest =
             WinHttpOpenRequest(
                     hConnect,
-                    additionalData ? _T("POST") : _T("GET"),
+                    httpVerb,
                     requestPath,
                     NULL,
                     WINHTTP_NO_REFERER,
@@ -312,7 +388,7 @@ bool HTTPSRequest::MakeRequest(
 
     if (NULL == hRequest)
     {
-        my_print(m_silentMode, _T("WinHttpOpenRequest failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpOpenRequest failed (%d)"), GetLastError());
         return false;
     }
 
@@ -322,7 +398,7 @@ bool HTTPSRequest::MakeRequest(
                     &dwFlags,
                     sizeof(DWORD)))
     {
-        my_print(m_silentMode, _T("WinHttpSetOption failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption WINHTTP_OPTION_SECURITY_FLAGS failed (%d)"), GetLastError());
         return false;
     }
 
@@ -332,7 +408,7 @@ bool HTTPSRequest::MakeRequest(
                                                 WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS,
                                                 NULL))
     {
-        my_print(m_silentMode, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetStatusCallback failed (%d)"), GetLastError());
         return false;
     }
 
@@ -341,6 +417,13 @@ bool HTTPSRequest::MakeRequest(
     // Must use a manual event: multiple things wait on the same event
     assert(m_closedEvent == NULL);
     m_closedEvent = CreateEvent(NULL, TRUE, FALSE, 0);
+
+    if (m_closedEvent == NULL)
+    {
+        stringstream error;
+        error << __FUNCTION__ << ":" << __LINE__ << ": CreateEvent failed. Out of memory";
+        throw std::exception(error.str().c_str());
+    }
 
     m_expectedServerCertificate = webServerCertificate;
     m_requestSuccess = false;
@@ -357,7 +440,7 @@ bool HTTPSRequest::MakeRequest(
     {
         CloseHandle(m_closedEvent);
         m_closedEvent = NULL;
-        my_print(m_silentMode, _T("WinHttpSendRequest failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSendRequest failed (%d)"), GetLastError());
         return false;
     }
 
@@ -422,11 +505,13 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
 
     if (m_expectedServerCertificate.length() == 0)
     {
-        return true;
+        // We shouldn't be here if there's no cert to check against.
+        assert(0);
+        return false;
     }
 
     BYTE* pbBinary = NULL; //base64 decoded pem
-    DWORD cbBinary; //base64 decoded pem size
+    DWORD cbBinary = 0; //base64 decoded pem size
     bool bResult = false;
 
     //Base64 decode pem string to BYTE*
@@ -436,14 +521,14 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
             (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
             CRYPT_STRING_BASE64, NULL, &cbBinary, NULL, NULL))
     {
-        my_print(m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
         return false;
     }
 
     pbBinary = new (std::nothrow) BYTE[cbBinary];
     if (!pbBinary)
     {
-        my_print(m_silentMode, _T("ValidateServerCert: memory allocation failed"));
+        my_print(NOT_SENSITIVE, m_silentMode, _T("ValidateServerCert: memory allocation failed"));
         return false;
     }
 
@@ -452,7 +537,7 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
         (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
         CRYPT_STRING_BASE64, pbBinary, &cbBinary, NULL, NULL))
     {
-        my_print(m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
         return false;
     }
     
@@ -474,44 +559,4 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     delete pbBinary;
 
     return bResult;
-}
-
-tstring HTTPSRequest::GetSystemDefaultHTTPSProxy()
-{
-    WINHTTP_CURRENT_USER_IE_PROXY_CONFIG proxyConfig;
-    if (!WinHttpGetIEProxyConfigForCurrentUser(&proxyConfig))
-    {
-        return _T("");
-    }
-
-    // Proxy settings look something like this:
-    // http=127.0.0.1:8081;https=127.0.0.1:8082;ftp=127.0.0.1:8083;socks=127.0.0.1:8084
-
-    tstringstream stream(proxyConfig.lpszProxy ? proxyConfig.lpszProxy : _T(""));
-
-    if (proxyConfig.lpszProxy) GlobalFree(proxyConfig.lpszProxy);
-    if (proxyConfig.lpszProxyBypass) GlobalFree(proxyConfig.lpszProxyBypass);
-    if (proxyConfig.lpszAutoConfigUrl) GlobalFree(proxyConfig.lpszAutoConfigUrl);
-
-    tstring proxy_setting;
-    while (std::getline(stream, proxy_setting, _T(';')))
-    {
-        size_t proxy_type_end = proxy_setting.find(_T('='));
-        if (proxy_type_end != tstring::npos && proxy_type_end < proxy_setting.length())
-        {
-            // Convert to lowercase.
-            std::transform(
-                proxy_setting.begin(), 
-                proxy_setting.begin() + proxy_type_end, 
-                proxy_setting.begin(), 
-                ::tolower);
-
-            if (proxy_setting.compare(0, proxy_type_end, _T("https")) == 0)
-            {
-                return proxy_setting.substr(proxy_type_end+1);
-            }
-        }
-    }
-
-    return _T("");
 }

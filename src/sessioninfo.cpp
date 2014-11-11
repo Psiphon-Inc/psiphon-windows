@@ -25,10 +25,19 @@
 #include <sstream>
 
 
-void SessionInfo::Set(const ServerEntry& serverEntry)
-{
-    m_serverEntry = serverEntry;
+// This value determines whether or not we will perform preemptive reconnect
+// behaviour if the handshake fails. If it's zero (or MAXDWORD, really), then 
+// we won't, if it's something like 60000, then we will.
+#define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT MAXDWORD
 
+
+SessionInfo::SessionInfo()
+{
+    Clear();
+}
+
+void SessionInfo::Clear()
+{
     m_clientSessionID.clear();
     m_upgradeVersion.clear();
     m_psk.clear();
@@ -39,6 +48,11 @@ void SessionInfo::Set(const ServerEntry& serverEntry)
     m_sshSessionID.clear();
     m_sshObfuscatedPort = 0;
     m_sshObfuscatedKey.clear();
+    m_meekObfuscatedKey.clear();
+    m_meekServerPort = 0;
+    m_meekCookieEncryptionPublicKey.clear();
+    m_meekFrontingDomain.clear();
+    m_meekFrontingHost.clear();
     m_homepages.clear();
     m_servers.clear();
     m_pageViewRegexes.clear();
@@ -46,6 +60,19 @@ void SessionInfo::Set(const ServerEntry& serverEntry)
     m_speedTestServerAddress.clear();
     m_speedTestServerPort = 0;
     m_speedTestRequestPath.clear();
+    m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
+}
+
+void SessionInfo::Set(const ServerEntry& serverEntry, bool generateClientSessionID/*=true*/)
+{
+    Clear();
+
+    m_serverEntry = serverEntry;
+
+    if (generateClientSessionID)
+    {
+        GenerateClientSessionID();
+    }
 }
 
 void SessionInfo::GenerateClientSessionID()
@@ -104,6 +131,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     m_speedTestServerAddress.clear();
     m_speedTestServerPort = 0;
     m_speedTestRequestPath.clear();
+    m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 
     Json::Value config;
     Json::Reader reader;
@@ -111,7 +139,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: Page view regex parse failed: %S"), __TFUNCTION__, __LINE__, fail.c_str());
         return false;
     }
 
@@ -178,13 +206,17 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         {
             m_speedTestServerAddress = speedTestURL.get("server_address", "").asString();
             string speedTestServerPort = speedTestURL.get("server_port", "").asString();
-            m_speedTestServerPort = atoi(speedTestServerPort.c_str());
+            m_speedTestServerPort = (int)strtol(speedTestServerPort.c_str(), NULL, 10);
             m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
         }
+
+        // Preemptive Reconnect Lifetime Milliseconds
+        m_preemptiveReconnectLifetimeMilliseconds = (DWORD)config.get("preemptive_reconnect_lifetime_milliseconds", 0).asUInt();
+        // A zero value indicates that it should be disabled.
     }
     catch (exception& e)
     {
-        my_print(false, _T("%s:%d: Config parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: Config parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
         return false;
     }
 
@@ -253,6 +285,31 @@ string SessionInfo::GetSSHObfuscatedKey() const
     return Coalesce(m_sshObfuscatedKey, m_serverEntry.sshObfuscatedKey);
 }
 
+string SessionInfo::GetMeekObfuscatedKey() const
+{
+    return Coalesce(m_meekObfuscatedKey, m_serverEntry.meekObfuscatedKey);
+}
+
+int SessionInfo::GetMeekServerPort() const
+{
+    return Coalesce(m_meekServerPort, m_serverEntry.meekServerPort);
+}
+
+string SessionInfo::GetMeekFrontingDomain() const
+{
+    return Coalesce(m_meekFrontingDomain, m_serverEntry.meekFrontingDomain);
+}
+
+string SessionInfo::GetMeekFrontingHost() const
+{
+    return Coalesce(m_meekFrontingHost, m_serverEntry.meekFrontingHost);
+}
+
+string SessionInfo::GetMeekCookieEncryptionPublicKey() const
+{
+    return Coalesce(m_meekCookieEncryptionPublicKey, m_serverEntry.meekCookieEncryptionPublicKey);
+}
+
 vector<string> SessionInfo::GetDiscoveredServerEntries() const 
 {
     return m_servers;
@@ -269,6 +326,10 @@ ServerEntry SessionInfo::GetServerEntry() const
         GetWebServerSecret(), GetWebServerCertificate(), 
         GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
         GetSSHHostKey(), GetSSHObfuscatedPort(), 
-        GetSSHObfuscatedKey());
+        GetSSHObfuscatedKey(),
+        GetMeekObfuscatedKey(), GetMeekServerPort(),
+        GetMeekCookieEncryptionPublicKey(),
+        GetMeekFrontingDomain(), GetMeekFrontingHost(),
+        m_serverEntry.capabilities);
     return newServerEntry;
 }

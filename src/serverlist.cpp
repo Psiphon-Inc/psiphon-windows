@@ -27,9 +27,14 @@
 #include <sstream>
 
 
-ServerList::ServerList()
+ServerList::ServerList(LPCSTR listName)
 {
-    m_mutex = CreateMutex(NULL, FALSE, 0);
+    assert(listName && strlen(listName));
+    m_name = listName;
+
+    // Used a named mutex, because we'll need to use the mutex across instances.
+    tstring mutexName = _T("Local\\ServerListMutex-") + NarrowToTString(listName);
+    m_mutex = CreateMutex(NULL, FALSE, mutexName.c_str());
 }
 
 ServerList::~ServerList()
@@ -37,15 +42,18 @@ ServerList::~ServerList()
     CloseHandle(m_mutex);
 }
 
-void ServerList::AddEntriesToList(
+// This function may throw
+size_t ServerList::AddEntriesToList(
                     const vector<string>& newServerEntryList,
                     const ServerEntry* serverEntry)
 {
     AutoMUTEX lock(m_mutex);
 
+    size_t entriesAdded = 0;
+
     if (newServerEntryList.size() < 1 && !serverEntry)
     {
-        return;
+        return entriesAdded;
     }
 
     // We're going to loop through the server entries twice -- once to decode
@@ -92,15 +100,23 @@ void ServerList::AddEntriesToList(
         if (!alreadyKnown)
         {
             // Insert the new entry as the second entry, so that the first entry can continue
-            // to be used if it is reachable
-            oldServerEntryList.insert(oldServerEntryList.begin() + 1, *decodedEntryIter);
+            // to be used if it is reachable (unless there are no pre-existing entries).
+            oldServerEntryList.insert(
+                oldServerEntryList.size() == 0 ? 
+                    oldServerEntryList.begin() :
+                    oldServerEntryList.begin() + 1, 
+                *decodedEntryIter);
+
+            entriesAdded++;
         }
     }
 
     WriteListToSystem(oldServerEntryList);
+
+    return entriesAdded;
 }
 
-void ServerList::MoveEntriesToFront(const ServerEntries& entries)
+void ServerList::MoveEntriesToFront(const ServerEntries& entries, bool veryFront/*=false*/)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -118,6 +134,9 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
 
         bool existingEntryChanged = false;
 
+        // If we replace the head item, we want to make sure we insert at the head.
+        bool forceHead = false;
+
         for (ServerEntries::iterator persistentEntry = persistentServerEntryList.begin();
              persistentEntry != persistentServerEntryList.end();
              ++persistentEntry)
@@ -130,6 +149,7 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
                 }
                 else
                 {
+                    forceHead = (persistentEntry == persistentServerEntryList.begin());
                     persistentServerEntryList.erase(persistentEntry);
                 }
                 break;
@@ -140,43 +160,85 @@ void ServerList::MoveEntriesToFront(const ServerEntries& entries)
 
         if (!existingEntryChanged)
         {
-            persistentServerEntryList.insert(persistentServerEntryList.begin(), *entry);
+            ServerEntries::const_iterator insertionPoint;
+            if (veryFront || forceHead || persistentServerEntryList.size() == 0)
+            {
+                insertionPoint = persistentServerEntryList.begin();
+            }
+            else
+            {
+                insertionPoint = persistentServerEntryList.begin() + 1;
+            }
+
+            persistentServerEntryList.insert(insertionPoint, *entry);
         }
     }
 
     WriteListToSystem(persistentServerEntryList);
 }
 
-void ServerList::MarkCurrentServerFailed()
+void ServerList::MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront/*=false*/)
+{
+    ServerEntries serverEntries;
+    serverEntries.push_back(serverEntry);
+    MoveEntriesToFront(serverEntries, veryFront);
+}
+
+void ServerList::MarkServersFailed(const ServerEntries& failedServerEntries)
 {
     AutoMUTEX lock(m_mutex);
 
     ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() > 1)
+    if (serverEntryList.size() == 0 || failedServerEntries.size() == 0)
     {
-        // Move the first server to the end of the list
-        serverEntryList.push_back(serverEntryList[0]);
-        serverEntryList.erase(serverEntryList.begin());
+        return;
+    }
+
+    my_print(NOT_SENSITIVE, true, _T("%s: Marking %d servers failed"), __TFUNCTION__, failedServerEntries.size());
+
+    bool changeMade = false;
+
+    for (ServerEntries::const_iterator failed = failedServerEntries.begin();
+            failed != failedServerEntries.end();
+            ++failed)
+    {
+        for (ServerEntries::iterator entry = serverEntryList.begin();
+             entry != serverEntryList.end();
+             ++entry)
+        {
+            if (failed->serverAddress == entry->serverAddress)
+            {
+                ServerEntry failedServer;
+                failedServer.Copy(*entry);
+
+                // Move the failed server to the end of the list
+                serverEntryList.erase(entry);
+                serverEntryList.push_back(failedServer);
+
+                changeMade = true;
+                break;
+            }
+        }
+    }
+
+    if (changeMade)
+    {
         WriteListToSystem(serverEntryList);
     }
-}
-
-ServerEntry ServerList::GetNextServer()
-{
-    AutoMUTEX lock(m_mutex);
-
-    ServerEntries serverEntryList = GetList();
-    if (serverEntryList.size() < 1)
+    else
     {
-        throw std::exception("No servers found.  This application is possibly corrupt.");
+        my_print(NOT_SENSITIVE, true, _T("%s: Couldn't find server"), __TFUNCTION__);
     }
-
-    // The client always tries the first entry in the list.
-    // The list will be rearranged elsewhere, such as when a server has failed,
-    // or when new servers are discovered.
-    return serverEntryList[0];
 }
 
+void ServerList::MarkServerFailed(const ServerEntry& failedServerEntry)
+{
+    ServerEntries failedServerEntries;
+    failedServerEntries.push_back(failedServerEntry);
+    MarkServersFailed(failedServerEntries);
+}
+
+// This function should not throw
 ServerEntries ServerList::GetList()
 {
     AutoMUTEX lock(m_mutex);
@@ -193,7 +255,7 @@ ServerEntries ServerList::GetList()
         }
         catch (std::exception &ex)
         {
-            my_print(false, string("Not using corrupt System Server List: ") + ex.what());
+            my_print(NOT_SENSITIVE, false, string("Not using corrupt System Server List: ") + ex.what());
         }
     }
 
@@ -211,8 +273,8 @@ ServerEntries ServerList::GetList()
     }
     catch (std::exception &ex)
     {
-        string message = string("Corrupt Embedded Server List: ") + ex.what();
-        throw std::exception(message.c_str());
+        my_print(NOT_SENSITIVE, false, string("Not using corrupt Embedded Server List: ") + ex.what());
+        embeddedServerEntryList.clear();
     }
 
     for (ServerEntries::iterator embeddedServerEntry = embeddedServerEntryList.begin();
@@ -255,7 +317,22 @@ ServerEntries ServerList::GetList()
     // (Also so MarkCurrentServerFailed reads the same list we're returning)
     WriteListToSystem(systemServerEntryList);
 
-    return systemServerEntryList;
+    // WriteListToSystem could truncate the list if it is too long to write to the registry.
+    // Try to return what is stored in the system for consistency.
+    try
+    {
+        return GetListFromSystem();
+    }
+    catch (std::exception &ex)
+    {
+        my_print(NOT_SENSITIVE, true, string("Just wrote a corrupt System Server List: ") + ex.what());
+        return systemServerEntryList;
+    }
+}
+
+string ServerList::GetListName() const
+{
+    return string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + m_name;
 }
 
 ServerEntries ServerList::GetListFromEmbeddedValues()
@@ -267,9 +344,17 @@ ServerEntries ServerList::GetListFromSystem()
 {
     string serverEntryListString;
 
-    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, serverEntryListString))
+    if (!ReadRegistryStringValue(
+            GetListName().c_str(), 
+            serverEntryListString))
     {
-         return ServerEntries();
+        // If we're migrating from an old version, there's no m_name qualifier.
+        if (!ReadRegistryStringValue(
+                LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 
+                serverEntryListString))
+        {
+            return ServerEntries();
+        }
     }
 
     return ParseServerEntries(serverEntryListString.c_str());
@@ -310,7 +395,31 @@ void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
 {
     string encodedServerEntryList = EncodeServerEntries(serverEntryList);
 
-    WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, encodedServerEntryList);
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+
+    if (!WriteRegistryStringValue(
+            GetListName().c_str(), 
+            encodedServerEntryList, 
+            reason))
+    {
+        if (REGISTRY_FAILURE_WRITE_TOO_LONG == reason)
+        {
+            int bisect = serverEntryList.size()/2;
+            if (bisect > 1)
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s: List is too long to write to registry, truncating"), __TFUNCTION__);
+                ServerEntries truncatedServerEntryList(serverEntryList.begin(),
+                                                       serverEntryList.begin() + bisect);
+                WriteListToSystem(truncatedServerEntryList);
+            }
+            else
+            {
+                my_print(NOT_SENSITIVE, true,
+                    _T("%s: List is still too long to write to registry, but there are only %ld entries"),
+                    __TFUNCTION__, serverEntryList.size());
+            }
+        }
+    }
 }
 
 string ServerList::EncodeServerEntries(const ServerEntries& serverEntryList)
@@ -336,7 +445,11 @@ ServerEntry::ServerEntry(
     const string& webServerSecret, const string& webServerCertificate, 
     int sshPort, const string& sshUsername, const string& sshPassword, 
     const string& sshHostKey, int sshObfuscatedPort, 
-    const string& sshObfuscatedKey)
+    const string& sshObfuscatedKey,
+    const string& meekObfuscatedKey, const int meekServerPort,
+    const string& meekCookieEncryptionPublicKey,
+    const string& meekFrontingDomain, const string& meekFrontingHost,
+    const vector<string>& capabilities)
 {
     this->serverAddress = serverAddress;
     this->webServerPort = webServerPort;
@@ -348,6 +461,13 @@ ServerEntry::ServerEntry(
     this->sshHostKey = sshHostKey;
     this->sshObfuscatedPort = sshObfuscatedPort;
     this->sshObfuscatedKey = sshObfuscatedKey;
+    this->meekObfuscatedKey = meekObfuscatedKey;
+    this->meekServerPort =  meekServerPort;
+    this->meekCookieEncryptionPublicKey = meekCookieEncryptionPublicKey;
+    this->meekFrontingDomain = meekFrontingDomain;
+    this->meekFrontingHost = meekFrontingHost;
+
+    this->capabilities = capabilities;
 }
 
 void ServerEntry::Copy(const ServerEntry& src)
@@ -380,6 +500,18 @@ string ServerEntry::ToString() const
     entry["sshHostKey"] = sshHostKey;
     entry["sshObfuscatedPort"] = sshObfuscatedPort;
     entry["sshObfuscatedKey"] = sshObfuscatedKey;
+    entry["meekObfuscatedKey"] = meekObfuscatedKey;
+    entry["meekServerPort"] = meekServerPort;
+    entry["meekFrontingDomain"] = meekFrontingDomain;
+    entry["meekFrontingHost"] = meekFrontingHost;
+    entry["meekCookieEncryptionPublicKey"] = meekCookieEncryptionPublicKey;
+
+    Json::Value capabilities(Json::arrayValue);
+    for (vector<string>::const_iterator i = this->capabilities.begin(); i != this->capabilities.end(); i++)
+    {
+        capabilities.append(*i);
+    }
+    entry["capabilities"] = capabilities;
 
     Json::FastWriter jsonWriter;
     ss << jsonWriter.write(entry);
@@ -406,7 +538,7 @@ void ServerEntry::FromString(const string& str)
     {
         throw std::exception("Server Entries are corrupt: can't parse Web Server Port");
     }
-    webServerPort = atoi(lineItem.c_str());
+    webServerPort = (int) strtol(lineItem.c_str(), NULL, 10);
 
     if (!getline(lineStream, lineItem, ' '))
     {
@@ -426,7 +558,7 @@ void ServerEntry::FromString(const string& str)
 
     if (!getline(lineStream, lineItem, '\0'))
     {
-        my_print(true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
         
         // Assumption: we're not reading into a ServerEntry struct that already
         // has values set. So we're relying on the default values being set by
@@ -440,9 +572,18 @@ void ServerEntry::FromString(const string& str)
     if (!parsingSuccessful)
     {
         string fail = reader.getFormattedErrorMessages();
-        my_print(false, _T("%s: Extended JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        my_print(NOT_SENSITIVE, false, _T("%s: Extended JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
         throw std::exception("Server Entries are corrupt: can't parse JSON");
     }
+
+
+    // At the time of introduction of the server capabilities feature
+    // these are the default capabilities possessed by all servers.
+    Json::Value defaultCapabilities(Json::arrayValue);
+    defaultCapabilities.append("OSSH");
+    defaultCapabilities.append("SSH");
+    defaultCapabilities.append("VPN");
+    defaultCapabilities.append("handshake");
 
     try
     {
@@ -452,10 +593,78 @@ void ServerEntry::FromString(const string& str)
         sshHostKey = json_entry.get("sshHostKey", "").asString();
         sshObfuscatedPort = json_entry.get("sshObfuscatedPort", 0).asInt();
         sshObfuscatedKey = json_entry.get("sshObfuscatedKey", "").asString();
+
+        Json::Value capabilities;
+        capabilities = json_entry.get("capabilities", defaultCapabilities);
+
+        this->capabilities.clear();
+        for (Json::ArrayIndex i = 0; i < capabilities.size(); i++)
+        {
+            string item = capabilities.get(i, "").asString();
+            if (!item.empty())
+            {
+                this->capabilities.push_back(item);
+            }
+        }
+        
+        if(HasCapability("FRONTED-MEEK") ||  HasCapability("UNFRONTED-MEEK"))
+        {
+            meekServerPort = json_entry.get("meekServerPort", 0).asInt();
+            meekObfuscatedKey = json_entry.get("meekObfuscatedKey", "").asString();
+            meekCookieEncryptionPublicKey = json_entry.get("meekCookieEncryptionPublicKey", "").asString();
+        }
+        else
+        {
+            meekServerPort = -1;
+            meekObfuscatedKey = "";
+            meekCookieEncryptionPublicKey = "";
+        }
+
+        if(HasCapability("FRONTED-MEEK"))
+        {
+            meekFrontingDomain = json_entry.get("meekFrontingDomain", "").asString();
+            meekFrontingHost  = json_entry.get("meekFrontingHost", "").asString();
+        }
+        else
+        {
+            meekFrontingDomain = "";
+            meekFrontingHost  = "";
+        }
     }
     catch (exception& e)
     {
-        my_print(false, _T("%s: Extended JSON parse exception: %S"), __TFUNCTION__, e.what());
+        my_print(NOT_SENSITIVE, false, _T("%s: Extended JSON parse exception: %S"), __TFUNCTION__, e.what());
         throw std::exception("Server Entries are corrupt: parse JSON exception");
     }
+}
+
+bool ServerEntry::HasCapability(const string& capability) const
+{
+    for (size_t i = 0; i < this->capabilities.size(); i++)
+    {
+        if (this->capabilities[i] == capability)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int ServerEntry::GetPreferredReachablityTestPort() const
+{
+    if (HasCapability("OSSH"))
+    {
+        return sshObfuscatedPort;
+    }
+    else if (HasCapability("SSH"))
+    {
+        return sshPort;
+    }
+    else if (HasCapability("handshake"))
+    {
+        return webServerPort;
+    }
+
+    return -1;
 }

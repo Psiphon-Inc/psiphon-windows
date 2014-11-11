@@ -40,13 +40,16 @@
 // The connected transport unexpectedly disconnected
 #define STOP_REASON_UNEXPECTED_DISCONNECT   (1L << 2)
 
+// A module can use this to cancel itself or its threads
+#define STOP_REASON_CANCEL                  (1L << 3)
+
 // Base class that can be used for implementing stop signals.
 // Can also be used directly if no customizations are necessary.
 class StopSignal
 {
 public:
     // Base class for exceptions
-    class StopException 
+    class StopException : public std::exception
     {
     public:
         virtual DWORD GetType() const = 0;

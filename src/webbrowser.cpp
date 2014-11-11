@@ -29,22 +29,33 @@
 // resulting process. Returns 0 on error; call GetLastError to find out why.
 HANDLE LaunchApplication(LPCTSTR command)
 {
-   STARTUPINFO startupInfo = {0};
-   PROCESS_INFORMATION processInfo = {0};
+    STARTUPINFO startupInfo = {0};
+    PROCESS_INFORMATION processInfo = {0};
 
-   // The command argument is in-out, so we need to pass a modifiable buffer.
-   TCHAR command_buffer[MAX_PATH] = {0};
-   _tcsncpy_s(command_buffer, MAX_PATH, command, MAX_PATH);
+    // The command argument is in-out, so we need to pass a modifiable buffer.
+    int command_length = _tcslen(command) + 1; // includes the null terminator
+    TCHAR *command_buffer = new TCHAR[command_length];
 
-   if(::CreateProcess(NULL, 
-                      command_buffer,
-                      NULL, NULL, FALSE, 0, NULL, NULL,
-                      &startupInfo, &processInfo))
-   {
-      return processInfo.hProcess;
-   }
+    try
+    {
+        _tcsncpy_s(command_buffer, command_length, command, command_length);
 
-   return 0;
+        if(::CreateProcess(NULL, 
+                           command_buffer,
+                           NULL, NULL, FALSE, 0, NULL, NULL,
+                           &startupInfo, &processInfo))
+        {
+            delete[] command_buffer;
+            return processInfo.hProcess;
+        }
+    }
+    catch (...)
+    {
+        // Fall through to error condition
+    }
+
+    delete[] command_buffer;
+    return 0;
 }
 
 // Wait for the browser to become available for more page launching.
@@ -67,7 +78,7 @@ void LaunchWebPage(const tstring& url)
     // http://msdn.microsoft.com/en-us/library/bb762153(v=vs.85).aspx
     if ((int)returnValue <= 32)
     {
-        my_print(false, _T("ShellExecute failed (%d)"), (int)returnValue);
+        my_print(NOT_SENSITIVE, false, _T("ShellExecute failed (%d)"), (int)returnValue);
     }
 }
 
@@ -124,7 +135,7 @@ void OpenBrowser(const vector<tstring>& urls)
 
         if (hProcess == 0)
         {
-            my_print(true, _T("LaunchApplication failed"));
+            my_print(NOT_SENSITIVE, true, _T("LaunchApplication failed"));
             // But we'll continue anyway. Hopefully ShellExecute will still succeed.
         }
     }

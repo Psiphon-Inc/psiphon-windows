@@ -40,12 +40,15 @@
     </ClCompile>
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="transport_connection.cpp" />
-    <ClCompile Include="server_entry_auth.cpp" />
+    <ClCompile Include="authenticated_data_package.cpp" />
     <ClCompile Include="htmldlg.cpp">
       <Filter>WebCtrl</Filter>
     </ClCompile>
     <ClCompile Include="server_list_reordering.cpp" />
     <ClCompile Include="stopsignal.cpp" />
+    <ClCompile Include="diagnostic_info.cpp" />
+    <ClCompile Include="wininet_network_check.cpp" />
+    <ClCompile Include="meek.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -504,12 +507,15 @@
     <ClInclude Include="3rdParty\cryptopp\zlib.h">
       <Filter>cryptopp</Filter>
     </ClInclude>
-    <ClInclude Include="server_entry_auth.h" />
+    <ClInclude Include="authenticated_data_package.h" />
     <ClInclude Include="htmldlg.h">
       <Filter>WebCtrl</Filter>
     </ClInclude>
     <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="stopsignal.h" />
+    <ClInclude Include="diagnostic_info.h" />
+    <ClInclude Include="wininet_network_check.h" />
+    <ClInclude Include="meek.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

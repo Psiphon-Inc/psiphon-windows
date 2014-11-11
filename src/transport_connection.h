@@ -24,9 +24,12 @@
 #include "utilities.h"
 #include "worker_thread.h"
 
+
 class LocalProxy;
 class ILocalProxyStatsCollector;
 class ITransport;
+class IRemoteServerListFetcher;
+class Meek;
 
 
 /*
@@ -44,9 +47,10 @@ public:
     /*
     May throw the same exceptions as ITransport::Connect and WorkerThread::Start,
     but *not* ITransport::TransportFailed. Also throws TryNextServer, in 
-    the case of a normal failure.
+    the case of a normal failure. May also throw StopSignal::StopException.
     If statsCollector is null, then stats will not be collected.
-    If handshakeRequestPath is null, then no handshake will be done. (This 
+    If tempConnectServerEntry is non-NULL, then that server and only that 
+    server will be used. In addition, no handshake will be done. (This 
     means that transports that require a pre-handshake will fail, and others
     will have no following handshake. This should only be the case for 
     tempoary connections.)
@@ -55,9 +59,9 @@ public:
             const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
-            const SessionInfo& sessionInfo, 
-            const TCHAR* handshakeRequestPath,
-            const tstring& splitTunnelingFilePath);
+            IRemoteServerListFetcher* remoteServerListFetcher,
+            const tstring& splitTunnelingFilePath,
+            ServerEntry* tempConnectServerEntry=NULL);
 
     // Blocks until the transport disconnects.
     void WaitForDisconnect();
@@ -67,13 +71,9 @@ public:
     SessionInfo GetUpdatedSessionInfo() const;
 
     // Exception class
-    class TryNextServer { };
+    class TryNextServer : public std::exception { };
 
 private:
-    bool DoHandshake(
-            bool preTransport, 
-            const StopInfo& stopInfo, 
-            const TCHAR* handshakeRequestPath);
     void Cleanup();
 
 private:

@@ -23,6 +23,10 @@
 #include "psiclient.h"
 #include "stopsignal.h"
 
+/*****************
+ * WorkerThreadStopSignal
+ *****************/
+
 /*
 IWorkerThread needs to mix in its own stop signals to the one that's passed in.
 This custom stop signal class will encapsulate that.
@@ -35,6 +39,7 @@ public:
 
     virtual DWORD CheckSignal(DWORD reasons, bool throwIfTrue=false) const;
     virtual void SignalStop(DWORD reason);
+    virtual void ClearStopSignal(DWORD reason);
 
 private:
     StopSignal* m_parentStopSignal;
@@ -66,6 +71,16 @@ void WorkerThreadStopSignal::SignalStop(DWORD reason)
     m_parentStopSignal->SignalStop(reason);
 }
 
+void WorkerThreadStopSignal::ClearStopSignal(DWORD reason)
+{
+    StopSignal::ClearStopSignal(reason);
+    m_parentStopSignal->ClearStopSignal(reason);
+}
+
+
+/*****************
+ * IWorkerThread
+ *****************/
 
 IWorkerThread::IWorkerThread()
     : m_thread(0),
@@ -83,6 +98,11 @@ IWorkerThread::IWorkerThread()
                         TRUE,  // manual reset
                         TRUE,  // initial state should be SET
                         0);
+
+    if (m_startedEvent == NULL || m_stoppedEvent == NULL)
+    {
+        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) " CreateEvent failed");
+    }
 }
 
 IWorkerThread::~IWorkerThread()
@@ -136,7 +156,7 @@ bool IWorkerThread::Start(
         Stop();
 
         std::stringstream s;
-        s << "IWorkerThread::Start: CreateThread failed (" << GetLastError() << ")";
+        s << typeid(*this).name() << "::IWorkerThread::Start: CreateThread failed (" << GetLastError() << ")";
         throw Error(s.str().c_str());
     }
 
@@ -154,7 +174,7 @@ bool IWorkerThread::Start(
         Stop();
 
         std::stringstream s;
-        s << "IWorkerThread::Start: WaitForMultipleObjects failed (" << waitReturn << ", " << GetLastError() << ")";
+        s << typeid(*this).name() << "::IWorkerThread::Start: WaitForMultipleObjects failed (" << waitReturn << ", " << GetLastError() << ")";
         throw Error(s.str().c_str());
     }
 
@@ -198,6 +218,9 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
 {
     IWorkerThread* _this = (IWorkerThread*)object;
 
+    unsigned int tid = GetCurrentThreadId();
+    srand((unsigned)time(0) + tid);
+
     // See the comments in the WorkerThreadSynch code below for info about the
     // thread synchronization.
 
@@ -233,7 +256,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
             {
                 // Stop request signalled. Need to stop now.
                 stoppingCleanly = true;
-                my_print(true, _T("%s: CheckSignal or IsThreadStopping returned true"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%S::%s: CheckSignal or IsThreadStopping returned true"), typeid(*_this).name(), __TFUNCTION__);
                 break;
             }
             else
@@ -241,7 +264,7 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
                 if (!_this->DoPeriodicCheck())
                 {
                     // Implementation indicates that we need to stop.
-                    my_print(true, _T("%s: DoPeriodicCheck returned false"), __TFUNCTION__);
+                    my_print(NOT_SENSITIVE, true, _T("%S::%s: DoPeriodicCheck returned false"), typeid(*_this).name(), __TFUNCTION__);
                     break;
                 }
             }
@@ -261,14 +284,14 @@ DWORD WINAPI IWorkerThread::Thread(void* object)
         // But if we're not, then just get out of here.
         if (stoppingCleanly)
         {
-            my_print(true, _T("%s: Waiting for all threads to indicate clean stop"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%S::%s: Waiting for all threads to indicate clean stop"), typeid(*_this).name(), __TFUNCTION__);
             if (_this->m_workerThreadSynch->BlockUntil_AllThreadsStoppingCleanly())
             {
-                my_print(true, _T("%s: All threads indicated clean stop"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%S::%s: All threads indicated clean stop"), typeid(*_this).name(), __TFUNCTION__);
                 
                 _this->StopImminent();
 
-                my_print(true, _T("%s: Waiting for all threads to indicate ready to stop"), __TFUNCTION__);
+                my_print(NOT_SENSITIVE, true, _T("%S::%s: Waiting for all threads to indicate ready to stop"), typeid(*_this).name(), __TFUNCTION__);
                 _this->m_workerThreadSynch->ThreadReadyForStop();
                 _this->m_workerThreadSynch->BlockUntil_AllThreadsReadyToStop();
             }

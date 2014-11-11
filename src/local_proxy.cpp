@@ -34,7 +34,7 @@
 
 LocalProxy::LocalProxy(
                 ILocalProxyStatsCollector* statsCollector, 
-                const SessionInfo& sessionInfo, 
+                LPCSTR serverAddress, 
                 SystemProxySettings* systemProxySettings,
                 int parentPort, 
                 const tstring& splitTunnelingFilePath)
@@ -45,26 +45,37 @@ LocalProxy::LocalProxy(
       m_bytesTransferred(0),
       m_lastStatusSendTimeMS(0),
       m_splitTunnelingFilePath(splitTunnelingFilePath),
-      m_finalStatsSent(false)
+      m_finalStatsSent(false),
+      m_serverAddress(serverAddress)
 {
     ZeroMemory(&m_polipoProcessInfo, sizeof(m_polipoProcessInfo));
 
-    m_pageViewRegexes = sessionInfo.GetPageViewRegexes();
-    m_httpsRequestRegexes = sessionInfo.GetHttpsRequestRegexes();
-    m_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
-
     m_mutex = CreateMutex(NULL, FALSE, 0);
+    if (m_mutex == NULL)
+    {
+        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) " CreateMutex failed");
+    }
 
     assert(systemProxySettings);
 }
 
 LocalProxy::~LocalProxy()
 {
-    IWorkerThread::Stop();
+    try
+    {
+        IWorkerThread::Stop();
 
-    Cleanup();
+        Cleanup(true);
+    }
+    catch (...)
+    {
+        // Cleanup might throw, but we're in the destructor, so just swallow it.
+    }
 
-    CloseHandle(m_mutex);
+    if (m_mutex != NULL)
+    {
+        CloseHandle(m_mutex);
+    }
 }
 
 void LocalProxy::UpdateSessionInfo(const SessionInfo& sessionInfo)
@@ -86,7 +97,7 @@ bool LocalProxy::DoStart()
     }
 
     // Ensure we start from a disconnected/clean state
-    Cleanup();
+    Cleanup(false);
     
     int localHttpProxyPort = UserLocalHTTPProxyPort();
 
@@ -94,13 +105,13 @@ bool LocalProxy::DoStart()
     // one that is available.
     if (!TestForOpenPort(localHttpProxyPort, 10, m_stopInfo))
     {
-        my_print(false, _T("HTTP proxy could not find an available port."));
+        my_print(NOT_SENSITIVE, false, _T("HTTP proxy could not find an available port."));
         return false;
     }
 
     if (!StartPolipo(localHttpProxyPort))
     {
-        Cleanup();
+        Cleanup(false);
         return false;
     }
 
@@ -110,8 +121,8 @@ bool LocalProxy::DoStart()
     m_systemProxySettings->SetHttpProxyPort(localHttpProxyPort);
     m_systemProxySettings->SetHttpsProxyPort(localHttpProxyPort);
 
-    my_print(true, _T("Polipo successfully started."));
-    my_print(false, _T("HTTP proxy is running on localhost port %d."), localHttpProxyPort);
+    my_print(NOT_SENSITIVE, true, _T("Polipo successfully started."));
+    my_print(NOT_SENSITIVE, false, _T("HTTP proxy is running on localhost port %d."), localHttpProxyPort);
 
     return true;
 }
@@ -156,7 +167,7 @@ void LocalProxy::StopImminent()
     if (m_polipoProcessInfo.hProcess != 0)
     {
         // We are (probably) connected, so send a final stats message
-        my_print(true, _T("%s: Stopping cleanly. Sending final stats."), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Stopping cleanly. Sending final stats."), __TFUNCTION__);
         (void)ProcessStatsAndStatus(true);
     }
 }
@@ -168,10 +179,10 @@ void LocalProxy::DoStop(bool cleanly)
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
     }
 
-    Cleanup();
+    Cleanup(cleanly);
 }
 
-void LocalProxy::Cleanup()
+void LocalProxy::Cleanup(bool doStats)
 {
     // Give the process an opportunity for graceful shutdown, then terminate
     if (m_polipoProcessInfo.hProcess != 0
@@ -201,9 +212,9 @@ void LocalProxy::Cleanup()
 
     // If we have stats, and we didn't get a chance to send our final stats, 
     // we'll try one last time.
-    if (!m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
+    if (doStats && !m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
-        my_print(true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
         if (m_statsCollector->SendStatusMessage(
                                 true, // Note: there's a timeout side-effect when final=false
                                 m_pageViewEntries, 
@@ -211,14 +222,14 @@ void LocalProxy::Cleanup()
                                 m_bytesTransferred))
         {
             m_finalStatsSent = true;
-            my_print(true, _T("%s: Stopped dirtily. Final stats sent."), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Stopped dirtily. Final stats sent."), __TFUNCTION__);
         }
         else
         {
             // Not setting m_finalStatsSent to true if SendStatusMessage failed.
             // This will allow the possibility of trying again a bit later (this
             // function is called from both DoStop and the destructor).
-            my_print(true, _T("%s: Stopped dirtily. Final stats send failed."), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Stopped dirtily. Final stats send failed."), __TFUNCTION__);
         }
     }
 }
@@ -234,7 +245,8 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     polipoCommandLine << m_polipoPath
                       << _T(" psiphonStats=true")
                       << _T(" proxyPort=") << localHttpProxyPort
-                      << _T(" diskCacheRoot=\"\"")
+                      // Polipo is now built with -DNO_DISK_CACHE
+                      // << _T(" diskCacheRoot=\"\"")
                       << _T(" disableLocalInterface=true")
                       << _T(" logLevel=1");
 
@@ -243,7 +255,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     if (m_parentPort > 0)
     {
         polipoCommandLine << _T(" socksParentProxy=127.0.0.1:") << m_parentPort;
-        if(m_splitTunnelingFilePath.length() > 0)
+        if (m_splitTunnelingFilePath.length() > 0)
         {
             polipoCommandLine << _T(" splitTunnelingFile=\"") << m_splitTunnelingFilePath << _T("\"");
 
@@ -253,7 +265,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
         }
         if(m_serverAddress.length() > 0)
         {
-            polipoCommandLine << _T(" psiphonServer=") << m_serverAddress ;
+            polipoCommandLine << _T(" psiphonServer=") << NarrowToTString(m_serverAddress);
         }
     }
 
@@ -265,7 +277,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     polipoStartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
     if (!CreatePolipoPipe(polipoStartupInfo.hStdOutput, polipoStartupInfo.hStdError))
     {
-        my_print(false, _T("%s - CreatePolipoPipe failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s - CreatePolipoPipe failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
 
@@ -285,7 +297,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
             &polipoStartupInfo,
             &m_polipoProcessInfo))
     {
-        my_print(false, _T("%s - Polipo CreateProcess failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s - Polipo CreateProcess failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
 
@@ -299,7 +311,12 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     // not close when the child process exits and the ReadFile will hang.
     if (!CloseHandle(polipoStartupInfo.hStdOutput))
     {
-        my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+    if (!CloseHandle(polipoStartupInfo.hStdError))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
@@ -317,7 +334,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     }
     else if (ERROR_SUCCESS != connected)
     {
-        my_print(false, _T("Failed to start the HTTP proxy (%d, %d)"), connected, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("Failed to start the HTTP proxy (%d, %d)"), connected, GetLastError());
         return false;
     }
 
@@ -332,65 +349,24 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
 // Returns true on success.
 bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 {
+    m_polipoPipe = INVALID_HANDLE_VALUE;
     o_outputPipe = INVALID_HANDLE_VALUE;
     o_errorPipe = INVALID_HANDLE_VALUE;
 
-    // Most of this code is adapted from:
-    // http://support.microsoft.com/kb/190351
+    HANDLE parentInputPipe = INVALID_HANDLE_VALUE, childStdinPipe = INVALID_HANDLE_VALUE;
 
-    // Set up the security attributes struct.
-    SECURITY_ATTRIBUTES sa;
-    sa.nLength= sizeof(SECURITY_ATTRIBUTES);
-    sa.lpSecurityDescriptor = NULL;
-    sa.bInheritHandle = TRUE;
-
-    HANDLE hOutputReadTmp, hOutputWrite, hOutputRead, hErrorWrite;
-
-    // Create the child output pipe.
-    if (!CreatePipe(&hOutputReadTmp, &hOutputWrite, &sa, 0))
+    if (!CreateSubprocessPipes(
+            m_polipoPipe,
+            parentInputPipe,
+            childStdinPipe,
+            o_outputPipe,
+            o_errorPipe))
     {
-        my_print(false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
-    // Create a duplicate of the output write handle for the std error
-    // write handle. This is necessary in case the child application
-    // closes one of its std output handles.
-    if (!DuplicateHandle(
-            GetCurrentProcess(), hOutputWrite, 
-            GetCurrentProcess(), &hErrorWrite,
-            0, TRUE, DUPLICATE_SAME_ACCESS))
-    {
-        my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Create new output read handle and the input write handles. Set
-    // the Properties to FALSE. Otherwise, the child inherits the
-    // properties and, as a result, non-closeable handles to the pipes
-    // are created.
-    if (!DuplicateHandle(GetCurrentProcess(), hOutputReadTmp,
-                         GetCurrentProcess(),
-                         &hOutputRead, // Address of new handle.
-                         0, 
-                         FALSE, // Make it uninheritable.
-                         DUPLICATE_SAME_ACCESS))
-    {
-        my_print(false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    // Close inheritable copies of the handles you do not want to be
-    // inherited.
-    if (!CloseHandle(hOutputReadTmp))
-    {
-        my_print(false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    m_polipoPipe = hOutputRead;
-    o_outputPipe = hOutputWrite;
-    o_errorPipe = hErrorWrite;
+    CloseHandle(parentInputPipe);
+    CloseHandle(childStdinPipe);
 
     return true;
 }
@@ -401,6 +377,7 @@ bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
 // time or size limits have been exceeded; if connected is false, the stats will
 // be sent regardlesss of limits.
 // Returns true on success, false otherwise.
+// May throw StopSignal::StopException if not `final`.
 bool LocalProxy::ProcessStatsAndStatus(bool final)
 {
     if (!m_statsCollector)
@@ -428,7 +405,7 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
     // to check if there's data available to read first.
     if (!PeekNamedPipe(m_polipoPipe, NULL, 0, NULL, &bytes_avail, NULL))
     {
-        my_print(false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
@@ -439,7 +416,7 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
         DWORD num_read = 0;
         if (!ReadFile(m_polipoPipe, page_view_buffer, bytes_avail, &num_read, NULL))
         {
-            my_print(false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
             false;
         }
         page_view_buffer[bytes_avail] = '\0';
@@ -461,7 +438,7 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
         || m_pageViewEntries.size() >= s_send_max_entries
         || m_httpsRequestEntries.size() >= s_send_max_entries)
     {
-        my_print(true, _T("%s: Sending %s stats."), __TFUNCTION__, final ? _T("final") : _T("non-final"));
+        my_print(NOT_SENSITIVE, true, _T("%s: Sending %s stats."), __TFUNCTION__, final ? _T("final") : _T("non-final"));
 
         if (m_statsCollector->SendStatusMessage(
                                 final, // Note: there's a timeout side-effect when final=false
@@ -469,11 +446,16 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
                                 m_httpsRequestEntries, 
                                 m_bytesTransferred))
         {
-            my_print(true, _T("%s: Stats send success"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Stats send success"), __TFUNCTION__);
 
             // Reset thresholds
             s_send_interval_ms = DEFAULT_SEND_INTERVAL_MS;
             s_send_max_entries = DEFAULT_SEND_MAX_ENTRIES;
+
+            // Stats traffic analysis mitigation: add some [non-cryptographic] pseudorandom jitter to the time interval
+            unsigned int pseudorandom_bytes;
+            rand_s(&pseudorandom_bytes);
+            s_send_interval_ms += pseudorandom_bytes % DEFAULT_SEND_INTERVAL_MS;
 
             // Reset stats
             m_pageViewEntries.clear();
@@ -483,7 +465,7 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
         }
         else
         {
-            my_print(true, _T("%s: Stats send failure"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: Stats send failure"), __TFUNCTION__);
 
             // Status sending failures are fairly common.
             // We'll back off the thresholds and try again later.
@@ -504,7 +486,7 @@ void LocalProxy::UpsertPageView(const string& entry)
 
     AutoMUTEX lock(m_mutex);
 
-    my_print(true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
+    my_print(SENSITIVE_LOG, true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
 
     string store_entry = "(OTHER)";
 
@@ -549,6 +531,8 @@ void LocalProxy::UpsertHttpsRequest(string entry)
     if (entry.length() <= 0) return;
 
     AutoMUTEX lock(m_mutex);
+
+    my_print(SENSITIVE_LOG, true, _T("%s:%d: %S"), __TFUNCTION__, __LINE__, entry.c_str());
 
     string store_entry = "(OTHER)";
 
@@ -658,7 +642,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            int bytes = atoi(string(entry_start, entry_end-entry_start).c_str());
+            long bytes = strtol(string(entry_start, entry_end-entry_start).c_str(), NULL, 10);
             if (bytes > 0)
             {
                 m_bytesTransferred += bytes;
@@ -680,7 +664,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
             if (m_reportedUnproxiedDomains.count(unproxiedDomain) == 0)
             {
                 m_reportedUnproxiedDomains[unproxiedDomain] = true;
-                my_print(false, _T("Unproxied: %S"), unproxiedDomain.c_str());
+                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Unproxied: %S"), unproxiedDomain.c_str());
             }
         }
         else // if (next == debug_start)
@@ -695,7 +679,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
                 break;
             }
 
-            my_print(true, _T("POLIPO-DEBUG: %S"), string(entry_start, entry_end-entry_start).c_str());
+            my_print(SENSITIVE_FORMAT_ARGS, true, _T("POLIPO-DEBUG: %S"), string(entry_start, entry_end-entry_start).c_str());
         }
 
         curr_pos = entry_end + strlen(ENTRY_END);

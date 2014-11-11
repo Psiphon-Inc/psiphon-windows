@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2013, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,11 +20,10 @@
 #include "stdafx.h"
 #include "transport_connection.h"
 #include "systemproxysettings.h"
-#include "server_request.h"
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
-
+#include "meek.h"
 
 
 TransportConnection::TransportConnection()
@@ -35,7 +34,13 @@ TransportConnection::TransportConnection()
 
 TransportConnection::~TransportConnection()
 {
-    Cleanup();
+    try
+    {
+        Cleanup();
+    }
+    catch (...)
+    {
+    }
 }
 
 SessionInfo TransportConnection::GetUpdatedSessionInfo() const
@@ -47,16 +52,17 @@ void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
                             ILocalProxyStatsCollector* statsCollector, 
-                            const SessionInfo& sessionInfo, 
-                            const TCHAR* handshakeRequestPath,
-                            const tstring& splitTunnelingFilePath)
+                            IRemoteServerListFetcher* remoteServerListFetcher,
+                            const tstring& splitTunnelingFilePath,
+                            ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     assert(m_transport == 0);
-    assert(m_localProxy == 0); 
+    assert(m_localProxy == 0);
+
+    assert(transport);
+    assert(!tempConnectServerEntry || !transport->IsHandshakeRequired());
 
     m_transport = transport;
-    m_sessionInfo = sessionInfo;
-    bool handshakeDone = false;
 
     try
     {
@@ -66,40 +72,24 @@ void TransportConnection::Connect(
             throw std::exception("TransportConnection::Connect - DeleteFile failed");
         }
 
-        // Some transports require a handshake before connecting; with others we
-        // can connect before doing the handshake.    
-        if (m_transport->IsHandshakeRequired(m_sessionInfo))
-        {
-            my_print(true, _T("%s: Doing pre-handshake; insufficient server info for immediate connection"), __TFUNCTION__);
-
-            if (!handshakeRequestPath
-                || !DoHandshake(true, stopInfo, handshakeRequestPath))
-            {
-                // Need a handshake but can't do a handshake or handshake failing.
-                throw TryNextServer();
-            }
-
-            handshakeDone = true;
-        }
-        else
-        {
-            my_print(true, _T("%s: Not doing pre-handshake; enough server info for immediate connection"), __TFUNCTION__);
-        }
-
         m_workerThreadSynch.Reset();
 
-        // Connect with the transport.
-        // May throw.
-        m_transport->Connect(
-                    m_sessionInfo, 
+        // Connect with the transport. Will throw on error.
+		m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
-                    &m_workerThreadSynch);
+                    &m_workerThreadSynch,
+                    remoteServerListFetcher,
+                    tempConnectServerEntry);
+
+        // Get initial SessionInfo. Note that this might be pre-handshake
+        // and therefore not be totally filled in.
+        m_sessionInfo = m_transport->GetSessionInfo();
 
         // Set up and start the local proxy.
         m_localProxy = new LocalProxy(
                             statsCollector, 
-                            m_sessionInfo, 
+                            m_sessionInfo.GetServerAddress().c_str(), 
                             &m_systemProxySettings,
                             m_transport->GetLocalProxyParentPort(), 
                             splitTunnelingFilePath);
@@ -111,17 +101,24 @@ void TransportConnection::Connect(
             throw IWorkerThread::Error("LocalProxy::Start failed");
         }
 
+        // If the whole system is tunneled (i.e., VPN), then we can't leave the
+        // original system proxy settings intact -- because that proxy would 
+        // (probably) not be reachable in VPN mode and the user would 
+        // effectively have no connectivity.
+        bool allowedToSkipProxySettings = !m_transport->IsWholeSystemTunneled();
+
         // Apply the system proxy settings that have been collected by the transport
         // and the local proxy.
-        m_systemProxySettings.Apply();
-
-        // If we didn't do the handshake before, do it now.
-        if (!handshakeDone && handshakeRequestPath)
+        if (!m_systemProxySettings.Apply(allowedToSkipProxySettings))
         {
-            // We do not fail regardless of whether the handshake succeeds.
-            (void)DoHandshake(false, stopInfo, handshakeRequestPath);
-            handshakeDone = true;
+            throw IWorkerThread::Error("SystemProxySettings::Apply failed");
         }
+
+        // Let the transport do a handshake
+        m_transport->ProxySetupComplete();
+
+        // If the transport did a handshake, there may be updated session info.
+        m_sessionInfo = m_transport->GetSessionInfo();
 
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
@@ -130,6 +127,9 @@ void TransportConnection::Connect(
     catch (ITransport::TransportFailed&)
     {
         Cleanup();
+
+        // Check for stop signal and throw if it's set
+        stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
 
         // We don't fail over transports, so...
         throw TransportConnection::TryNextServer();
@@ -146,7 +146,7 @@ void TransportConnection::Connect(
 void TransportConnection::WaitForDisconnect()
 {
     HANDLE waitHandles[] = { m_transport->GetStoppedEvent(), 
-                             m_localProxy->GetStoppedEvent() };
+                             m_localProxy->GetStoppedEvent()};
     size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
 
     DWORD result = WaitForMultipleObjects(
@@ -154,11 +154,6 @@ void TransportConnection::WaitForDisconnect()
                     waitHandles, 
                     FALSE, // wait for any event
                     INFINITE);
-
-    // One of the transport or the local proxy has stopped. 
-    // Make sure they both are.
-    m_localProxy->Stop();
-    m_transport->Stop();
 
     Cleanup();
 
@@ -168,43 +163,6 @@ void TransportConnection::WaitForDisconnect()
     }
 }
 
-bool TransportConnection::DoHandshake(
-                            bool preTransport,
-                            const StopInfo& stopInfo, 
-                            const TCHAR* handshakeRequestPath)
-{
-    if (!handshakeRequestPath)
-    {
-        return true;
-    }
-
-    ServerRequest serverRequest;
-    string handshakeResponse;
-
-    // Send list of known server IP addresses (used for stats logging on the server)
-
-    if (!serverRequest.MakeRequest(
-                        preTransport, // allow adhoc if this is a pre-transport handshake (i.e, for VPN)
-                        m_transport,
-                        m_sessionInfo,
-                        handshakeRequestPath,
-                        handshakeResponse,
-                        stopInfo)
-        || handshakeResponse.length() <= 0)
-    {
-        my_print(false, _T("Handshake failed"));
-        return false;
-    }
-
-    if (!m_sessionInfo.ParseHandshakeResponse(handshakeResponse.c_str()))
-    {
-        // If the handshake parsing has failed, something is very wrong.
-        my_print(false, _T("%s: ParseHandshakeResponse failed"), __TFUNCTION__);
-        throw TryNextServer();
-    }
-
-    return true;
-}
 
 void TransportConnection::Cleanup()
 {
@@ -214,12 +172,16 @@ void TransportConnection::Cleanup()
     // our own -- like final /status requests).
     m_systemProxySettings.Revert();
 
+    if (m_localProxy) 
+    {
+        m_localProxy->Stop();
+        delete m_localProxy;
+    }
+    m_localProxy = 0;
+
     if (m_transport)
     {
         m_transport->Stop();
         m_transport->Cleanup();
     }
-
-    if (m_localProxy) delete m_localProxy;
-    m_localProxy = 0;
 }

@@ -75,6 +75,8 @@ request through them.
 #include "httpsrequest.h"
 #include "transport_connection.h"
 #include "psiclient.h"
+#include "serverlist.h"
+#include "config.h"
 
 
 ServerRequest::ServerRequest()
@@ -86,7 +88,7 @@ ServerRequest::~ServerRequest()
 }
 
 bool ServerRequest::MakeRequest(
-        bool adhocIfNeeded,
+        ReqLevel reqLevel,
         const ITransport* currentTransport,
         const SessionInfo& sessionInfo,
         const TCHAR* requestPath,
@@ -105,10 +107,20 @@ bool ServerRequest::MakeRequest(
 
     response.clear();
 
-    bool transportConnected = currentTransport && currentTransport->IsConnected();
+    bool transportConnected = currentTransport && currentTransport->IsConnected(true);
 
     if (transportConnected)
     {
+        // We need untunnelled web request capabilites, or don't make the request.
+        // TODO: Keep a tunnel up permanently when using VPN on such a server and use it for requests?
+        if (currentTransport->IsWholeSystemTunneled() &&
+            !sessionInfo.GetServerEntry().HasCapability(UNTUNNELED_WEB_REQUEST_CAPABILITY))
+        {
+            // TODO: suppress errors up the stack
+            my_print(NOT_SENSITIVE, true, _T("%s: insufficient capabilities for untunnelled web request"), __TFUNCTION__);
+            return false;
+        }
+
         // This is the simple case: we just connect through the transport
         HTTPSRequest httpsRequest;
         bool requestSuccess = 
@@ -119,13 +131,13 @@ bool ServerRequest::MakeRequest(
                 requestPath,
                 response,
                 stopInfo,
-                currentTransport->IsServerRequestTunnelled(), // use local proxy?
+                true, // use tunnel?
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
         return requestSuccess;
     }
-    else if (!adhocIfNeeded)
+    else if (reqLevel == ONLY_IF_TRANSPORT)
     {
         // If ad hoc/temporary connections aren't allowed, and the transport
         // isn't currently connected, bail.
@@ -135,41 +147,52 @@ bool ServerRequest::MakeRequest(
     // We don't have a connected transport. 
     // We'll fail over between a bunch of methods.
 
-    // The ports we'll try to connect to directly, in order.
-    vector<int> ports;
-    ports.push_back(sessionInfo.GetWebPort());
-    ports.push_back(443); // Also try the standard HTTPS port.
-    vector<int>::const_iterator port_iter;
-    for (port_iter = ports.begin(); port_iter != ports.end(); port_iter++)
+    if (sessionInfo.GetServerEntry().HasCapability(UNTUNNELED_WEB_REQUEST_CAPABILITY))
     {
-        HTTPSRequest httpsRequest;
-        if (httpsRequest.MakeRequest(
-                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
-                *port_iter,
-                sessionInfo.GetWebServerCertificate(),
-                requestPath,
-                response,
-                stopInfo,
-                false, // don't use local proxy -- there's no transport, and there may be bad/remnant system proxy settings
-                additionalHeaders,
-                additionalData,
-                additionalDataLength))
-        {
-            return true;
-        }
+        // TODO: check separate capability for additional ports
 
-        my_print(true, _T("%s: HTTPS:%d failed"), __TFUNCTION__, *port_iter);
+        // The ports we'll try to connect to directly, in order.
+        vector<int> ports;
+        ports.push_back(sessionInfo.GetWebPort());
+        ports.push_back(443); // Also try the standard HTTPS port.
+        vector<int>::const_iterator port_iter;
+        for (port_iter = ports.begin(); port_iter != ports.end(); port_iter++)
+        {
+            HTTPSRequest httpsRequest;
+            if (httpsRequest.MakeRequest(
+                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                    *port_iter,
+                    sessionInfo.GetWebServerCertificate(),
+                    requestPath,
+                    response,
+                    stopInfo,
+                    false, // don't try to tunnel -- there's no transport
+                    additionalHeaders,
+                    additionalData,
+                    additionalDataLength))
+            {
+                return true;
+            }
+
+            my_print(NOT_SENSITIVE, true, _T("%s: HTTPS:%d failed"), __TFUNCTION__, *port_iter);
+        }
+    }
+
+    if (reqLevel == NO_TEMP_TUNNEL)
+    {
+        // Caller doesn't want a temp tunnel.
+        return false;
     }
 
     // Connecting directly via HTTPS failed. 
     // Now we'll try don't-need-handshake transports.
 
-    vector<auto_ptr<ITransport>> tempTransports;
-    GetTempTransports(sessionInfo, tempTransports);
+    vector<boost::shared_ptr<ITransport>> tempTransports;
+    GetTempTransports(sessionInfo.GetServerEntry(), tempTransports);
 
     bool success = false;
 
-    vector<auto_ptr<ITransport>>::iterator transport_iter;
+    vector<boost::shared_ptr<ITransport>>::iterator transport_iter;
     for (transport_iter = tempTransports.begin(); 
          transport_iter != tempTransports.end(); 
          transport_iter++)
@@ -187,9 +210,9 @@ bool ServerRequest::MakeRequest(
                 stopInfo,
                 (*transport_iter).get(),
                 NULL, // not collecting stats
-                sessionInfo, 
-                NULL, // no handshake allowed
-                tstring()); // splitTunnelingFilePath -- not providing it
+                NULL, // don't want to trigger a remote server list pull
+                tstring(),  // splitTunnelingFilePath -- not providing it
+                &sessionInfo.GetServerEntry());  // force use of this server
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
@@ -199,7 +222,7 @@ bool ServerRequest::MakeRequest(
                     requestPath,
                     response,
                     stopInfo,
-                    (*transport_iter).get()->IsServerRequestTunnelled(), // use local proxy?
+                    true, // tunnel request
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
@@ -208,7 +231,7 @@ bool ServerRequest::MakeRequest(
                 break;
             }
 
-            my_print(true, _T("%s: transport:%s failed"), __TFUNCTION__, (*transport_iter)->GetTransportProtocolName().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: transport:%s failed"), __TFUNCTION__, (*transport_iter)->GetTransportProtocolName().c_str());
 
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.
@@ -236,8 +259,8 @@ thrown, so we could just iterate over all transports sanely. But this makes
 our logic more explicit. And not dependent on the internals of another function.
 */
 void ServerRequest::GetTempTransports(
-                            const SessionInfo& sessionInfo,
-                            vector<auto_ptr<ITransport>>& o_tempTransports)
+                            const ServerEntry& serverEntry,
+                            vector<boost::shared_ptr<ITransport>>& o_tempTransports)
 {
     o_tempTransports.clear();
 
@@ -251,9 +274,10 @@ void ServerRequest::GetTempTransports(
         // Only try transports that aren't the same as the current 
         // transport (because there's a reason it's not connected) 
         // and doesn't require a handshake.
-        if (!(*it)->IsHandshakeRequired(sessionInfo))
+        if (!(*it)->IsHandshakeRequired()
+            && (*it)->ServerHasCapabilities(serverEntry))
         {
-            o_tempTransports.push_back(auto_ptr<ITransport>(*it));
+            o_tempTransports.push_back(boost::shared_ptr<ITransport>(*it));
             // no early break, so that we delete all the unused transports
         }
         else
@@ -261,4 +285,20 @@ void ServerRequest::GetTempTransports(
             delete *it;
         }
     }
+}
+
+bool ServerRequest::ServerHasRequestCapabilities(const ServerEntry& serverEntry)
+{
+    // We can make a request if the server supports either direct web requests
+    // or tunnelled requests through a tunnel that doesn't need a handshake.
+
+    if (serverEntry.HasCapability("handshake"))
+    {
+        return true;
+    }
+
+    vector<boost::shared_ptr<ITransport>> tempTransports;
+    GetTempTransports(serverEntry, tempTransports);
+
+    return tempTransports.size() > 0;
 }

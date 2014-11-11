@@ -32,9 +32,11 @@ struct RegexReplace
 class SessionInfo
 {
 public:
-    SessionInfo() : m_sshPort(0), m_sshObfuscatedPort(0), m_speedTestServerPort(0) {}
+    SessionInfo();
 
-    void Set(const ServerEntry& serverEntry);
+    void Set(const ServerEntry& serverEntry, bool generateClientSessionID=true);
+
+    // Generate a new client session ID to be included with subsequent web requests
     void GenerateClientSessionID();
 
     string GetClientSessionID() const {return m_clientSessionID;}
@@ -50,6 +52,12 @@ public:
     int GetSSHObfuscatedPort() const;
     string GetSSHObfuscatedKey() const;
 
+    string GetMeekObfuscatedKey() const;
+    int GetMeekServerPort() const;
+    string GetMeekFrontingDomain() const;
+    string GetMeekFrontingHost() const;
+    string GetMeekCookieEncryptionPublicKey() const;
+
     string GetSSHSessionID() const {return m_sshSessionID;}
     string GetUpgradeVersion() const {return m_upgradeVersion;}
     string GetPSK() const {return m_psk;}
@@ -60,10 +68,17 @@ public:
     string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
     int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
     string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
+    
+    // A value of zero means disabled.
+    DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
+    
     ServerEntry GetServerEntry() const;
 
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);
+
+protected:
+    void Clear();
 
 private:
     ServerEntry m_serverEntry;
@@ -78,6 +93,11 @@ private:
     string m_sshSessionID;
     int m_sshObfuscatedPort;
     string m_sshObfuscatedKey;
+    string m_meekObfuscatedKey;
+    int m_meekServerPort;
+    string m_meekCookieEncryptionPublicKey;
+    string m_meekFrontingDomain;
+    string m_meekFrontingHost;
     vector<tstring> m_homepages;
     vector<string> m_servers;
     vector<RegexReplace> m_pageViewRegexes;
@@ -85,4 +105,5 @@ private:
     string m_speedTestServerAddress;
     int m_speedTestServerPort;
     string m_speedTestRequestPath;
+    DWORD m_preemptiveReconnectLifetimeMilliseconds;
 };

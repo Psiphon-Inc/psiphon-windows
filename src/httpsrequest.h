@@ -40,14 +40,13 @@ public:
         const TCHAR* requestPath,
         string& response,
         const StopInfo& stopInfo,
-        bool useLocalProxy=true,
+        bool usePsiphonLocalProxy,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
-        DWORD additionalDataLength=0);
+        DWORD additionalDataLength=0,
+        LPCWSTR httpVerb=NULL);
 
 private:
-    tstring GetSystemDefaultHTTPSProxy();
-
     void SetClosedEvent() {SetEvent(m_closedEvent);}
     void SetRequestSuccess() {m_requestSuccess = true;}
   	bool ValidateServerCert(PCCERT_CONTEXT pCert);
