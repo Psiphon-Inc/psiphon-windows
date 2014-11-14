@@ -15,43 +15,7 @@
 #define BOOST_GEOMETRY_MULTI_ALGORITHMS_AREA_HPP
 
 
-#include <boost/range/metafunctions.hpp>
-
 #include <boost/geometry/algorithms/area.hpp>
-#include <boost/geometry/multi/core/point_type.hpp>
-#include <boost/geometry/multi/algorithms/detail/multi_sum.hpp>
-#include <boost/geometry/multi/algorithms/num_points.hpp>
-
-
-namespace boost { namespace geometry
-{
-
-
-#ifndef DOXYGEN_NO_DISPATCH
-namespace dispatch
-{
-template <typename MultiGeometry, typename Strategy>
-struct area<MultiGeometry, Strategy, multi_polygon_tag>
-    : detail::multi_sum
-        <
-            typename Strategy::return_type,
-            MultiGeometry,
-            Strategy,
-            area
-                <
-                    typename boost::range_value<MultiGeometry>::type,
-                    Strategy,
-                    polygon_tag
-                >
-    >
-{};
-
-
-} // namespace dispatch
-#endif
-
-
-}} // namespace boost::geometry
 
 
 #endif // BOOST_GEOMETRY_MULTI_ALGORITHMS_AREA_HPP

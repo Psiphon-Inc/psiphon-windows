@@ -15,42 +15,7 @@
 #define BOOST_GEOMETRY_MULTI_ALGORITHMS_PERIMETER_HPP
 
 
-#include <boost/range/metafunctions.hpp>
-
 #include <boost/geometry/algorithms/perimeter.hpp>
-
-#include <boost/geometry/multi/core/tags.hpp>
-
-#include <boost/geometry/multi/algorithms/detail/multi_sum.hpp>
-#include <boost/geometry/multi/algorithms/num_points.hpp>
-
-namespace boost { namespace geometry
-{
-
-#ifndef DOXYGEN_NO_DISPATCH
-namespace dispatch
-{
-template <typename MultiPolygon, typename Strategy>
-struct perimeter<multi_polygon_tag, MultiPolygon, Strategy>
-    : detail::multi_sum
-        <
-            typename default_length_result<MultiPolygon>::type,
-            MultiPolygon,
-            Strategy,
-            perimeter
-                <
-                    polygon_tag,
-                    typename boost::range_value<MultiPolygon>::type,
-                    Strategy
-                >
-        >
-{};
-
-} // namespace dispatch
-#endif
-
-
-}} // namespace boost::geometry
 
 
 #endif // BOOST_GEOMETRY_MULTI_ALGORITHMS_PERIMETER_HPP

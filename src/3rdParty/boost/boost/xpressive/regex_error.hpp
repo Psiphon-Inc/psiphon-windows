@@ -10,7 +10,7 @@
 #define BOOST_XPRESSIVE_REGEX_ERROR_HPP_EAN_10_04_2005
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -107,7 +107,7 @@ namespace detail
 }
 
 #define BOOST_XPR_ENSURE_(pred, code, msg)                                                          \
-    boost::xpressive::detail::ensure_(pred, code, msg, BOOST_CURRENT_FUNCTION, __FILE__, __LINE__)  \
+    boost::xpressive::detail::ensure_(!!(pred), code, msg, BOOST_CURRENT_FUNCTION, __FILE__, __LINE__)  \
     /**/
 
 }} // namespace boost::xpressive

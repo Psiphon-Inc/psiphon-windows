@@ -16,7 +16,7 @@
 
 // MS compatible compilers support #pragma once
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER)
 # pragma once
 #endif
 
@@ -284,6 +284,7 @@ class weak_count
 
    weak_count & operator= (weak_count const & r) // nothrow
    {
+      m_px = r.m_px;
       counted_impl_ptr tmp = r.m_pi;
       if(tmp != 0) tmp->weak_add_ref();
       if(m_pi != 0) m_pi->weak_release();

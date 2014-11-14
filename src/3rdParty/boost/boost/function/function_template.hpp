@@ -677,7 +677,7 @@ namespace boost {
 
     vtable_type* get_vtable() const {
       return reinterpret_cast<vtable_type*>(
-               reinterpret_cast<std::size_t>(vtable) & ~static_cast<size_t>(0x01));
+               reinterpret_cast<std::size_t>(vtable) & ~static_cast<std::size_t>(0x01));
     }
 
     struct clear_type {};
@@ -749,7 +749,7 @@ namespace boost {
       this->assign_to_own(f);
     }
     
-#ifndef BOOST_NO_RVALUE_REFERENCES
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
     BOOST_FUNCTION_FUNCTION(BOOST_FUNCTION_FUNCTION&& f) : function_base()
     {
       this->move_assign(f);
@@ -838,7 +838,7 @@ namespace boost {
       return *this;
     }
     
-#ifndef BOOST_NO_RVALUE_REFERENCES
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
     // Move assignment from another BOOST_FUNCTION_FUNCTION
     BOOST_FUNCTION_FUNCTION& operator=(BOOST_FUNCTION_FUNCTION&& f)
     {
@@ -935,10 +935,11 @@ namespace boost {
 
       if (stored_vtable.assign_to(f, functor)) {
         std::size_t value = reinterpret_cast<std::size_t>(&stored_vtable.base);
+        // coverity[pointless_expression]: suppress coverity warnings on apparant if(const).
         if (boost::has_trivial_copy_constructor<Functor>::value &&
             boost::has_trivial_destructor<Functor>::value &&
             detail::function::function_allows_small_object_optimization<Functor>::value)
-          value |= static_cast<size_t>(0x01);
+          value |= static_cast<std::size_t>(0x01);
         vtable = reinterpret_cast<detail::function::vtable_base *>(value);
       } else 
         vtable = 0;
@@ -969,6 +970,7 @@ namespace boost {
 
       if (stored_vtable.assign_to_a(f, functor, a)) { 
         std::size_t value = reinterpret_cast<std::size_t>(&stored_vtable.base);
+        // coverity[pointless_expression]: suppress coverity warnings on apparant if(const).
         if (boost::has_trivial_copy_constructor<Functor>::value &&
             boost::has_trivial_destructor<Functor>::value &&
             detail::function::function_allows_small_object_optimization<Functor>::value)
@@ -1090,7 +1092,7 @@ public:
 
   function(const base_type& f) : base_type(static_cast<const base_type&>(f)){}
 
-#ifndef BOOST_NO_RVALUE_REFERENCES
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
   // Move constructors
   function(self_type&& f): base_type(static_cast<base_type&&>(f)){}
   function(base_type&& f): base_type(static_cast<base_type&&>(f)){}
@@ -1102,7 +1104,7 @@ public:
     return *this;
   }
 
-#ifndef BOOST_NO_RVALUE_REFERENCES
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
   self_type& operator=(self_type&& f)
   {
     self_type(static_cast<self_type&&>(f)).swap(*this);
@@ -1139,7 +1141,7 @@ public:
     return *this;
   }
   
-#ifndef BOOST_NO_RVALUE_REFERENCES
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
   self_type& operator=(base_type&& f)
   {
     self_type(static_cast<base_type&&>(f)).swap(*this);

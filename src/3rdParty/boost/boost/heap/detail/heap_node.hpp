@@ -142,6 +142,7 @@ struct node_disposer
     {
         node_pointer n = static_cast<node_pointer>(base);
         n->clear_subtree(alloc_);
+        alloc_.destroy(n);
         alloc_.deallocate(n, 1);
     }
 
@@ -171,7 +172,7 @@ public:
         value(v)
     {}
 
-#if defined(BOOST_HAS_RVALUE_REFS) && !defined(BOOST_NO_VARIADIC_TEMPLATES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
     template <class... Args>
     heap_node(Args&&... args):
         value(std::forward<Args>(args)...)
@@ -230,7 +231,7 @@ struct parent_pointing_heap_node:
         super_t(v), parent(NULL)
     {}
 
-#if defined(BOOST_HAS_RVALUE_REFS) && !defined(BOOST_NO_VARIADIC_TEMPLATES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
     template <class... Args>
     parent_pointing_heap_node(Args&&... args):
         super_t(std::forward<Args>(args)...), parent(NULL)
@@ -310,7 +311,7 @@ struct marked_heap_node:
         super_t(v), mark(false)
     {}
 
-#if defined(BOOST_HAS_RVALUE_REFS) && !defined(BOOST_NO_VARIADIC_TEMPLATES)
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
     template <class... Args>
     marked_heap_node(Args&&... args):
         super_t(std::forward<Args>(args)...), mark(false)
