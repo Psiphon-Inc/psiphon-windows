@@ -13,6 +13,7 @@
 #include <boost/parameter/keyword.hpp>
 #include <boost/range.hpp>
 #include <boost/mpl/placeholders.hpp>
+#include <boost/accumulators/accumulators_fwd.hpp>
 #include <boost/accumulators/framework/accumulator_base.hpp>
 #include <boost/accumulators/framework/extractor.hpp>
 #include <boost/accumulators/numeric/functional.hpp>
@@ -26,6 +27,8 @@ namespace boost { namespace accumulators
 // num_cells named parameter
 //
 BOOST_PARAMETER_NESTED_KEYWORD(tag, p_square_cumulative_distribution_num_cells, num_cells)
+
+BOOST_ACCUMULATORS_IGNORE_GLOBAL(p_square_cumulative_distribution_num_cells)
 
 namespace impl
 {
@@ -41,7 +44,7 @@ namespace impl
 
         For further details, see
 
-        R. Jain and I. Chlamtac, The P^2 algorithmus for dynamic calculation of quantiles and
+        R. Jain and I. Chlamtac, The P^2 algorithm for dynamic calculation of quantiles and
         histograms without storing observations, Communications of the ACM,
         Volume 28 (October), Number 10, 1985, p. 1076-1085.
 
@@ -51,7 +54,7 @@ namespace impl
     struct p_square_cumulative_distribution_impl
       : accumulator_base
     {
-        typedef typename numeric::functional::average<Sample, std::size_t>::result_type float_type;
+        typedef typename numeric::functional::fdiv<Sample, std::size_t>::result_type float_type;
         typedef std::vector<float_type> array_type;
         typedef std::vector<std::pair<float_type, float_type> > histogram_type;
         // for boost::result_of
@@ -73,7 +76,7 @@ namespace impl
             {
                 this->actual_positions[i] = i + 1.;
                 this->desired_positions[i] = i + 1.;
-                this->positions_increments[i] = numeric::average(i, b);
+                this->positions_increments[i] = numeric::fdiv(i, b);
             }
         }
 
@@ -195,7 +198,7 @@ namespace impl
 
                 for (std::size_t i = 0; i < this->histogram.size(); ++i)
                 {
-                    this->histogram[i] = std::make_pair(this->heights[i], numeric::average(this->actual_positions[i], cnt));
+                    this->histogram[i] = std::make_pair(this->heights[i], numeric::fdiv(this->actual_positions[i], cnt));
                 }
             }
             //return histogram;

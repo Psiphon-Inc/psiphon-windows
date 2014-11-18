@@ -28,6 +28,12 @@
 namespace boost { namespace geometry
 {
 
+// Silence warning C4512: assignment operator could not be generated
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4512)
+#endif
+
 #ifndef DOXYGEN_NO_DETAIL
 
 namespace detail
@@ -61,7 +67,7 @@ private :
 /*!
 \brief View on a range, either closing it or leaving it as it is
 \details The closeable_view is used internally by the library to handle all rings,
-    either closed or open, the same way. The default method is closed, all 
+    either closed or open, the same way. The default method is closed, all
     algorithms process rings as if they are closed. Therefore, if they are opened,
     a view is created which closes them.
     The closeable_view might be used by library users, but its main purpose is
@@ -93,6 +99,9 @@ struct closeable_view<Range, open>
 #endif // DOXYGEN_NO_SPECIALIZATIONS
 
 
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 }} // namespace boost::geometry
 

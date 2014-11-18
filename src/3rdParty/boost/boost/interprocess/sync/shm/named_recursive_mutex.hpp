@@ -11,7 +11,7 @@
 #ifndef BOOST_INTERPROCESS_SHM_NAMED_RECURSIVE_MUTEX_HPP
 #define BOOST_INTERPROCESS_SHM_NAMED_RECURSIVE_MUTEX_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -101,8 +101,8 @@ class shm_named_recursive_mutex
 
    interprocess_recursive_mutex *mutex() const
    {  return static_cast<interprocess_recursive_mutex*>(m_shmem.get_user_address()); }
-
-   managed_open_or_create_impl<shared_memory_object> m_shmem;
+   typedef ipcdetail::managed_open_or_create_impl<shared_memory_object, 0, true, false> open_create_impl_t;
+   open_create_impl_t m_shmem;
    typedef named_creation_functor<interprocess_recursive_mutex> construct_func_t;
    /// @endcond
 };
@@ -117,8 +117,7 @@ inline shm_named_recursive_mutex::shm_named_recursive_mutex(create_only_t, const
    :  m_shmem  (create_only
                ,name
                ,sizeof(interprocess_recursive_mutex) +
-                  managed_open_or_create_impl<shared_memory_object>::
-                     ManagedOpenOrCreateUserOffset
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
                ,read_write
                ,0
                ,construct_func_t(DoCreate)
@@ -129,8 +128,7 @@ inline shm_named_recursive_mutex::shm_named_recursive_mutex(open_or_create_t, co
    :  m_shmem  (open_or_create
                ,name
                ,sizeof(interprocess_recursive_mutex) +
-                  managed_open_or_create_impl<shared_memory_object>::
-                     ManagedOpenOrCreateUserOffset
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
                ,read_write
                ,0
                ,construct_func_t(DoOpenOrCreate)
@@ -155,13 +153,7 @@ inline bool shm_named_recursive_mutex::try_lock()
 {  return this->mutex()->try_lock();  }
 
 inline bool shm_named_recursive_mutex::timed_lock(const boost::posix_time::ptime &abs_time)
-{
-   if(abs_time == boost::posix_time::pos_infin){
-      this->lock();
-      return true;
-   }
-   return this->mutex()->timed_lock(abs_time);
-}
+{  return this->mutex()->timed_lock(abs_time);  }
 
 inline bool shm_named_recursive_mutex::remove(const char *name)
 {  return shared_memory_object::remove(name); }

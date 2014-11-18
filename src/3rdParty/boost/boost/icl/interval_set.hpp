@@ -115,16 +115,6 @@ public:
         this->add(itv); 
     }
 
-    /// Assignment operator
-    template<class SubType>
-    interval_set& operator =
-        (const interval_base_set<SubType,DomainT,Compare,Interval,Alloc>& src)
-    { 
-        this->assign(src); 
-        return *this; 
-    }
-
-
     /// Assignment from a base interval_set.
     template<class SubType>
     void assign(const interval_base_set<SubType,DomainT,Compare,Interval,Alloc>& src)
@@ -137,7 +127,16 @@ public:
             prior_ = this->add(prior_, *it_);
     }
 
-#   ifndef BOOST_NO_RVALUE_REFERENCES
+    /// Assignment operator for base type
+    template<class SubType>
+    interval_set& operator =
+        (const interval_base_set<SubType,DomainT,Compare,Interval,Alloc>& src)
+    { 
+        this->assign(src); 
+        return *this; 
+    }
+
+#   ifndef BOOST_ICL_NO_CXX11_RVALUE_REFERENCES
     //==========================================================================
     //= Move semantics
     //==========================================================================
@@ -148,13 +147,22 @@ public:
     {}
 
     /// Move assignment operator
-    interval_set& operator = (interval_set&& src)
+    interval_set& operator = (interval_set src)
     { 
         base_type::operator=(boost::move(src));
         return *this;
     }
+
     //==========================================================================
-#   endif // BOOST_NO_RVALUE_REFERENCES
+#   else
+    /// Assignment operator
+    interval_set& operator = (const interval_set& src)
+    { 
+        base_type::operator=(src);
+        return *this;
+    }
+
+#   endif // BOOST_ICL_NO_CXX11_RVALUE_REFERENCES
 
 private:
     // Private functions that shall be accessible by the baseclass:
