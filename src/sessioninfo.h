@@ -65,9 +65,6 @@ public:
     vector<string> GetDiscoveredServerEntries() const;
     vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
     vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
-    string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
-    int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
-    string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
     
     // A value of zero means disabled.
     DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
@@ -102,8 +99,5 @@ private:
     vector<string> m_servers;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
-    string m_speedTestServerAddress;
-    int m_speedTestServerPort;
-    string m_speedTestRequestPath;
     DWORD m_preemptiveReconnectLifetimeMilliseconds;
 };

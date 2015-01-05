@@ -37,9 +37,8 @@
 #define IDB_BANNER                          201
 #define IDB_EMAIL                           202
 #define IDB_FEEDBACK_BUTTON_IMAGES          203
-#define IDR_PLONK_EXE                       500
+#define IDR_PSIPHON_TUNNEL_CORE_EXE         500
 #define IDR_POLIPO_EXE                      501
-#define IDR_MEEK_EXE                        502
 #define IDC_TOGGLE_BUTTON                   600
 #define IDC_BANNER_STATIC                   601
 #define IDC_LOG_LISTBOX                     602

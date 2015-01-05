@@ -21,7 +21,7 @@
 #include "transport_registry.h"
 #include "transport.h"
 #include "vpntransport.h"
-#include "sshtransport.h"
+#include "coretransport.h"
 #include "serverlist.h"
 #include "psiclient.h"
 

@@ -29,21 +29,7 @@ NOTES
 #include "sessioninfo.h"
 
 
-class ITransport;
 class SystemProxySettings;
-
-
-// This should be implemented by something like ConnectionManager to provide a 
-// way for Transports to (optionally) trigger remote server list fetches 
-// during connection sequences.
-// In concrete terms, SSHTransport can take a long time to try connecting to
-// all available servers, so we want to be able to trigger a remote server list
-// fetch after a certain amount of time.
-class IRemoteServerListFetcher
-{
-public:
-    virtual void FetchRemoteServerList() = 0;
-};
 
 
 // All transport implementations must implement this interface
@@ -73,10 +59,10 @@ public:
     // Only valid when connected
     virtual tstring GetSessionID(const SessionInfo& sessionInfo) = 0;
 
-    // Find out what port, if any, the local proxy should connect to in order 
-    // to use this transport.
-    // Returns zero if the local proxy should not connect directly to the transport.
-    virtual int GetLocalProxyParentPort() const = 0;
+    // Returns true if:
+    // - needs a local HTTP proxy to be run (used to proxy Psiphon API web requests, etc.)
+    // - needs assistance in calling /connected and /status requests
+    virtual bool RequiresStatsSupport() const = 0;
 
     virtual tstring GetLastTransportError() const = 0;
 
@@ -107,7 +93,6 @@ public:
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             WorkerThreadSynch* workerThreadSynch,
-            IRemoteServerListFetcher* remoteServerListFetcher,
             ServerEntry* tempConnectServerEntry=NULL);
 
     // Do any necessary final cleanup. 
@@ -121,12 +106,6 @@ public:
     // Must be called after connecting, if there has been a handshake that 
     // added more data to sessionInfo.
     SessionInfo GetSessionInfo() const;
-
-    // Must be called after the local proxy is running and the system proxy
-    // settings are in place. 
-    // Subclasses may use this opportunity to make a handshake.
-    // May throw StopSignal::StopException
-    virtual void ProxySetupComplete() = 0;
 
     static size_t AddServerEntries(
             LPCTSTR transportProtocolName,
@@ -166,6 +145,5 @@ protected:
     SystemProxySettings* m_systemProxySettings;
     ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
-    IRemoteServerListFetcher* m_remoteServerListFetcher;
     bool m_firstConnectionAttempt;
 };

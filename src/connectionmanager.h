@@ -37,7 +37,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector, IRemoteServerListFetcher
+class ConnectionManager : public ILocalProxyStatsCollector
 {
 public:
     ConnectionManager();
@@ -46,9 +46,6 @@ public:
     void Toggle(const tstring& transport, bool startSplitTunnel);
     void Stop(DWORD reason);
     void Start(const tstring& transport, bool startSplitTunnel);
-    void StartSplitTunnel();
-    void StopSplitTunnel();
-    void ResetSplitTunnel();
     time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
@@ -80,25 +77,12 @@ private:
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);
-    tstring GetRoutesRequestPath(ITransport* transport);
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
 
-    tstring GetSpeedRequestPath(
-        const tstring& relayProtocol,
-        const tstring& operation,
-        const tstring& info,
-        DWORD milliseconds,
-        DWORD size);
-    void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
-
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);
-    void ProcessSplitTunnelResponse(const string& compressedRoutes);
-    tstring GetSplitTunnelingFilePath();
-    bool WriteSplitTunnelRoutes(const char* routes);
-    bool DeleteSplitTunnelRoutes();
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
@@ -118,6 +102,5 @@ private:
     ITransport* m_transport;
     bool m_upgradePending;
     bool m_startSplitTunnel;
-    string m_splitTunnelRoutes;
     time_t m_nextFetchRemoteServerListAttempt;
 };

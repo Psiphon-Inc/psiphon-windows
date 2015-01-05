@@ -59,8 +59,6 @@ public:
             const StopInfo& stopInfo,
             ITransport* transport,
             ILocalProxyStatsCollector* statsCollector, 
-            IRemoteServerListFetcher* remoteServerListFetcher,
-            const tstring& splitTunnelingFilePath,
             ServerEntry* tempConnectServerEntry=NULL);
 
     // Blocks until the transport disconnects.

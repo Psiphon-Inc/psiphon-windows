@@ -57,9 +57,6 @@ void SessionInfo::Clear()
     m_servers.clear();
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
-    m_speedTestServerAddress.clear();
-    m_speedTestServerPort = 0;
-    m_speedTestRequestPath.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 }
 
@@ -128,9 +125,6 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     m_servers.clear();
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
-    m_speedTestServerAddress.clear();
-    m_speedTestServerPort = 0;
-    m_speedTestRequestPath.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 
     Json::Value config;
@@ -198,16 +192,6 @@ bool SessionInfo::ProcessConfig(const string& config_json)
             rx_re.replace = regexes[i].get("replace", "").asString();
 
             m_httpsRequestRegexes.push_back(rx_re);
-        }
-
-        // Speed Test URL
-        Json::Value speedTestURL = config["speed_test_url"];
-        if (Json::Value::null != speedTestURL)
-        {
-            m_speedTestServerAddress = speedTestURL.get("server_address", "").asString();
-            string speedTestServerPort = speedTestURL.get("server_port", "").asString();
-            m_speedTestServerPort = (int)strtol(speedTestServerPort.c_str(), NULL, 10);
-            m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
         }
 
         // Preemptive Reconnect Lifetime Milliseconds

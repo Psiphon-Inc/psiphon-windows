@@ -622,6 +622,8 @@ void RestoreSelectedTransport(void)
 
 void EnableSplitTunnelForSelectedTransport()
 {
+    // TODO: decide if we're retaining split tunnel support in core (SSH/OSSH) modes
+    /*
     // Split tunnel isn't implemented for VPN
     if (_T("VPN") == GetSelectedTransport())
     {
@@ -632,6 +634,9 @@ void EnableSplitTunnelForSelectedTransport()
     {
         ShowWindow(g_hSplitTunnelCheckBox, TRUE);
     }
+    */
+    ShowWindow(g_hSplitTunnelCheckBox, FALSE);
+    SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
 }
 
 
@@ -1018,13 +1023,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Store the selection for next app run
             StoreSplitTunnel();
 
-            if (GetSplitTunnel())
+            int state = g_connectionManager.GetState();
+            if (CONNECTION_MANAGER_STATE_STOPPED != state)
             {
-                g_connectionManager.StartSplitTunnel();
-            }
-            else
-            {
-                g_connectionManager.StopSplitTunnel();
+                g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+                g_connectionManager.Start(GetSelectedTransport(), GetSplitTunnel());
             }
         }
 

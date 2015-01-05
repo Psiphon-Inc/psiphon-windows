@@ -110,9 +110,9 @@ tstring VPNTransport::GetSessionID(const SessionInfo& sessionInfo)
     return m_pppIPAddress;
 }
 
-int VPNTransport::GetLocalProxyParentPort() const
+bool VPNTransport::RequiresStatsSupport() const
 {
-    return 0;
+    return true;
 }
 
 tstring VPNTransport::GetLastTransportError() const
@@ -144,12 +144,6 @@ bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
     bool canHandshake = ServerRequest::ServerHasRequestCapabilities(entry);
 
     return canHandshake && entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
-}
-
-void VPNTransport::ProxySetupComplete()
-{
-    // VPN doesn't do post-handshake
-    return;
 }
 
 bool VPNTransport::Cleanup()
