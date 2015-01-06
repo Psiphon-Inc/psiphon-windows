@@ -235,13 +235,13 @@
     <ClInclude Include="authenticated_data_package.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="connectionmanager.h" />
+    <ClInclude Include="coretransport.h" />
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="htmldlg.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="limitsingleinstance.h" />
     <ClInclude Include="local_proxy.h" />
-    <ClInclude Include="meek.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="Resource.h" />
@@ -249,7 +249,6 @@
     <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="server_request.h" />
     <ClInclude Include="sessioninfo.h" />
-    <ClInclude Include="sshtransport.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stopsignal.h" />
     <ClInclude Include="systemproxysettings.h" />
@@ -295,11 +294,11 @@
     </ClCompile>
     <ClCompile Include="authenticated_data_package.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
+    <ClCompile Include="coretransport.cpp" />
     <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="htmldlg.cpp" />
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="local_proxy.cpp" />
-    <ClCompile Include="meek.cpp" />
     <ClCompile Include="wininet_network_check.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -309,7 +308,6 @@
     <ClCompile Include="server_list_reordering.cpp" />
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="sessioninfo.cpp" />
-    <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
