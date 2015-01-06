@@ -50,6 +50,7 @@ SessionInfo TransportConnection::GetUpdatedSessionInfo() const
 void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
+                            IReconnectStateReceiver* reconnectStateReceiver,
                             ILocalProxyStatsCollector* statsCollector, 
                             ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
@@ -69,6 +70,7 @@ void TransportConnection::Connect(
         m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
+                    reconnectStateReceiver,
                     &m_workerThreadSynch,
                     tempConnectServerEntry);
 

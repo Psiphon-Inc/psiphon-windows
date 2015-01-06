@@ -27,9 +27,8 @@
 
 class LocalProxy;
 class ILocalProxyStatsCollector;
+class IReconnectStateReceiver;
 class ITransport;
-class IRemoteServerListFetcher;
-class Meek;
 
 
 /*
@@ -58,7 +57,8 @@ public:
     void Connect(
             const StopInfo& stopInfo,
             ITransport* transport,
-            ILocalProxyStatsCollector* statsCollector, 
+            IReconnectStateReceiver* reconnectStateReceiver,
+            ILocalProxyStatsCollector* statsCollector,
             ServerEntry* tempConnectServerEntry=NULL);
 
     // Blocks until the transport disconnects.

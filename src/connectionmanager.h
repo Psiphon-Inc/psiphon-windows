@@ -37,7 +37,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector
+class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver
 {
 public:
     ConnectionManager();
@@ -51,16 +51,17 @@ public:
     ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);
 
+    // IReconnectStateReceiver implementation
+    virtual void SetReconnecting();
+    virtual void SetReconnected();
+
     // ILocalProxyStatsCollector implementation
     // May throw StopSignal::StopException subclass if not `final`
-    bool SendStatusMessage(
+    virtual bool SendStatusMessage(
             bool final,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
-
-    // IRemoteServerListFetcher implementation
-    void FetchRemoteServerList();
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
@@ -80,6 +81,8 @@ private:
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
+
+    void FetchRemoteServerList();
 
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);

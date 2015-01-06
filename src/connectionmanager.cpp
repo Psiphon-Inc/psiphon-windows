@@ -131,6 +131,24 @@ ConnectionManagerState ConnectionManager::GetState()
     return m_state;
 }
 
+// Note: these IReconnectStateReceiver functions allow e.g., a Transport, to
+// indirectly update the connection state. In the core case, this is used
+// when the core process automatically reconnects when all tunnels are
+// disconnected -- without ending the Transport lifetime.
+// These m_state changes are currently safe to make... unlike changing
+// m_state to CONNECTION_MANAGER_STATE_STOPPED, which would break Toggle.
+// 
+
+void ConnectionManager::SetReconnecting()
+{
+    SetState(CONNECTION_MANAGER_STATE_STARTING);
+}
+
+void ConnectionManager::SetReconnected()
+{
+    SetState(CONNECTION_MANAGER_STATE_CONNECTED);
+}
+
 void ConnectionManager::Stop(DWORD reason)
 {
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
@@ -373,7 +391,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
                     manager,    // ILocalProxyStatsCollector
-                    false);  // don't disallow handshake
+                    manager);   // IReconnectStateReceiver
             }
             catch (TransportConnection::TryNextServer&)
             {

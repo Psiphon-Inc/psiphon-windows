@@ -209,6 +209,7 @@ bool ServerRequest::MakeRequest(
             connection.Connect(
                 stopInfo,
                 (*transport_iter).get(),
+                NULL, // not receiving reconnection notifications
                 NULL, // not collecting stats
                 &sessionInfo.GetServerEntry());  // force use of this server
 

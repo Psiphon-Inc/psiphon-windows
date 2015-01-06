@@ -32,6 +32,14 @@ NOTES
 class SystemProxySettings;
 
 
+class IReconnectStateReceiver
+{
+public:
+    virtual void SetReconnecting() = 0;
+    virtual void SetReconnected() = 0;
+};
+
+
 // All transport implementations must implement this interface
 class ITransport : public IWorkerThread
 {
@@ -92,6 +100,7 @@ public:
     void Connect(
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
+            IReconnectStateReceiver* reconnectStateReceiver,
             WorkerThreadSynch* workerThreadSynch,
             ServerEntry* tempConnectServerEntry=NULL);
 
@@ -146,4 +155,5 @@ protected:
     ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
     bool m_firstConnectionAttempt;
+    IReconnectStateReceiver* m_reconnectStateReceiver;
 };

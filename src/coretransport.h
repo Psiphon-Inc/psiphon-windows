@@ -65,12 +65,11 @@ protected:
     tstring m_exePath;
     int m_localSocksProxyPort;
     int m_localHttpProxyPort;
-    // [homepages]
-    // [upgrade version#]
     PROCESS_INFORMATION m_processInfo;
     HANDLE m_pipe;
     string m_pipeBuffer;
-    bool m_tunnelActive;
+    bool m_hasEverConnected;
+    bool m_isConnected;
 };
 
 

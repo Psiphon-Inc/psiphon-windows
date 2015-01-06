@@ -51,7 +51,8 @@ CoreTransportBase::CoreTransportBase(LPCTSTR transportProtocolName)
       m_pipe(NULL),
       m_localSocksProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
-      m_tunnelActive(false)
+      m_hasEverConnected(false),
+      m_isConnected(false)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -87,7 +88,8 @@ bool CoreTransportBase::Cleanup()
     m_pipe = NULL;
     m_pipeBuffer.clear();
 
-    m_tunnelActive = false;
+    m_hasEverConnected = false;
+    m_isConnected = false;
 
     return true;
 }
@@ -196,16 +198,19 @@ void CoreTransportBase::TransportConnectHelper()
         throw TransportFailed();
     }
 
-    // Wait for first active tunnel (or stop signal)
+    // Wait and poll for first active tunnel (or stop signal)
 
     while (true)
     {
+        // Check that the process is still running and consume output
+        DoPeriodicCheck();
+
         if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
         {
             throw Abort();
         }
 
-        if (m_tunnelActive)
+        if (m_isConnected)
         {
             break;
         }
@@ -318,7 +323,7 @@ bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename)
         }
     }
 
-    commandLine << m_exePath << _T("--config ") << configFilename;
+    commandLine << m_exePath << _T(" --config ") << configFilename;
 
     STARTUPINFO startupInfo;
     ZeroMemory(&startupInfo, sizeof(startupInfo));
@@ -481,20 +486,32 @@ void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
     }
     else if (0 == strcmp(line, firstTunnelStarted))
     {
-        m_tunnelActive = true;
+        if (m_hasEverConnected && m_reconnectStateReceiver)
+        {
+            m_reconnectStateReceiver->SetReconnected();
+        }
+        m_isConnected = true;
+        m_hasEverConnected = true;
     }
     else if (0 == strcmp(line, lastTunnelStopped))
     {
-        m_tunnelActive = false;
-        //***************************************************************************
-        // !TODO!: transition to reconnecting state in ConnectionManager/UI
-        //***************************************************************************
+        if (m_hasEverConnected && m_reconnectStateReceiver)
+        {
+            m_reconnectStateReceiver->SetReconnecting();
+        }
+        m_isConnected = false;
     }
 }
 
 
 bool CoreTransportBase::DoPeriodicCheck()
 {
+    // Notes:
+    // - used in both IWorkerThread::Thread and in local TransportConnectHelper
+    // - ConsumeCoreProcessOutput accesses local state (m_pipeBuffer) without
+    //   a mutex. This is safe because one thread (IWorkerThread::Thread) is currently
+    //   making all the calls to DoPeriodicCheck()
+
     // Check if the subprocess is still running, and consume any buffered output
 
     if (m_processInfo.hProcess != 0)
