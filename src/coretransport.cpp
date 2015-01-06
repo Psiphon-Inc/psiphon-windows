@@ -107,7 +107,7 @@ bool CoreTransportBase::IsWholeSystemTunneled() const
 
 bool CoreTransportBase::IsSplitTunnelSupported() const
 {
-    // TODO: support may be added to core
+    // Currently unsupported in the core.
     return false;
 }
 
@@ -241,18 +241,20 @@ bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
         my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
-    tstring configFilename = path;
+    configFilename = path;
 
     //***************************************************************************
-    // TODO: set "TunnelProcotol" (in OSSH case, multiple protocols?)
+    // !TODO!: set "TunnelProcotol" (in OSSH case, multiple protocols?)
     //***************************************************************************
 
     Json::Value config;
+    config["ClientPlatform"] = CLIENT_PLATFORM;
+    config["ClientVersion"] = CLIENT_VERSION;
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
-    config["DataStoreDirectory"] = dataStoreDirectory;
+    config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
     config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
 
     ostringstream dataStream;
@@ -450,13 +452,14 @@ void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
     // Parse output to extract data
 
     //***************************************************************************
-    // TODO: log structured data: AddDiagnosticInfoYaml("ConnectedServer")
+    // !TODO!: log structured data: AddDiagnosticInfoYaml("ConnectedServer")
     //***************************************************************************
 
     // Note: this is based on tentative log line formats
     const char* socksProxy = "SOCKS-PROXY-PORT ";
     const char* httpProxy = "HTTP-PROXY-PORT ";
     const char* homePage = "HOMEPAGE ";
+    const char* upgrade = "UPGRADE ";
     const char* firstTunnelStarted = "TUNNELS 1";
     const char* lastTunnelStopped = "TUNNELS 0";
 
@@ -468,12 +471,13 @@ void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
     {
         m_localHttpProxyPort = atoi(line + strlen(httpProxy));
     }
+    else if (0 == strncmp(line, homePage, strlen(upgrade)))
+    {
+        m_sessionInfo.SetUpgradeVersion(line + strlen(upgrade));
+    }
     else if (0 == strncmp(line, homePage, strlen(homePage)))
     {
-        //***************************************************************************
-        // TODO: add homepage to m_sessionInfo
-        //***************************************************************************
-        string(line + strlen(homePage));
+        m_sessionInfo.SetHomepage(line + strlen(homePage));
     }
     else if (0 == strcmp(line, firstTunnelStarted))
     {
@@ -483,7 +487,7 @@ void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
     {
         m_tunnelActive = false;
         //***************************************************************************
-        // TODO: transition to reconnecting state in ConnectionManager/UI
+        // !TODO!: transition to reconnecting state in ConnectionManager/UI
         //***************************************************************************
     }
 }

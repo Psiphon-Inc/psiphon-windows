@@ -207,6 +207,20 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     return true;
 }
 
+void SessionInfo::SetHomepage(const char* homepage)
+{
+    tstring newHomepage = NarrowToTString(homepage);
+    if (m_homepages.end() == std::find(m_homepages.begin(), m_homepages.end(), newHomepage))
+    {
+        m_homepages.push_back(newHomepage);
+    }
+}
+
+void SessionInfo::SetUpgradeVersion(const char* upgradeVersion)
+{
+    m_upgradeVersion = upgradeVersion;
+}
+
 string SessionInfo::GetServerAddress() const 
 {
     return m_serverEntry.serverAddress;

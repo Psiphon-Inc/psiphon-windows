@@ -41,6 +41,7 @@ static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_TYPE = "U
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_USER_SSH_PARENT_PROXY_DEFAULT_TYPE = "https";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO = "NativeProxyInfo";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO = "PsiphonProxyInfo";
+static const char* CLIENT_PLATFORM = "Windows";
 static const TCHAR* HTTP_HANDSHAKE_REQUEST_PATH = _T("/handshake");
 static const TCHAR* HTTP_CONNECTED_REQUEST_PATH = _T("/connected");
 static const TCHAR* HTTP_STATUS_REQUEST_PATH = _T("/status");

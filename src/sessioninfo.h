@@ -74,6 +74,9 @@ public:
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);
 
+    void SetHomepage(const char* homepage);
+    void SetUpgradeVersion(const char* upgradeVersion);
+
 protected:
     void Clear();
 
