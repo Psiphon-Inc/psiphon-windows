@@ -203,7 +203,10 @@ void CoreTransportBase::TransportConnectHelper()
     while (true)
     {
         // Check that the process is still running and consume output
-        DoPeriodicCheck();
+        if (!DoPeriodicCheck())
+        {
+            throw TransportFailed();
+        }
 
         if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
         {
@@ -229,7 +232,7 @@ void CoreTransportBase::TransportConnectHelper()
 bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
 {
     TCHAR path[MAX_PATH];
-    if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, path))
+    if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
@@ -269,7 +272,8 @@ bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
 
     HANDLE file;
     DWORD bytesWritten;
-    if (INVALID_HANDLE_VALUE == (file = CreateFile(
+    if ((!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+        || INVALID_HANDLE_VALUE == (file = CreateFile(
                                             configFilename.c_str(), GENERIC_WRITE, 0,
                                             NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
         || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
@@ -291,7 +295,7 @@ string CoreTransportBase::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (UserSSHParentProxyType() == "https")
+    if (UserSSHParentProxyHostname().length() > 0 && UserSSHParentProxyType() == "https")
     {
         upstreamProxyAddress << UserSSHParentProxyHostname() << ":" << UserSSHParentProxyPort();
     }
