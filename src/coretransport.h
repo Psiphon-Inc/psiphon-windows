@@ -54,7 +54,7 @@ protected:
     virtual bool DoPeriodicCheck();
 
     void TransportConnectHelper();
-	bool WriteConfigFile(tstring& configFilename);
+    bool WriteConfigFile(tstring& configFilename);
     string GetUpstreamProxyAddress();
     bool SpawnCoreProcess(const tstring& configFilename);
     bool CreateCoreProcessPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
@@ -69,8 +69,8 @@ protected:
     // [upgrade version#]
     PROCESS_INFORMATION m_processInfo;
     HANDLE m_pipe;
-	string m_pipeBuffer;
-	bool m_tunnelActive;
+    string m_pipeBuffer;
+    bool m_tunnelActive;
 };
 
 

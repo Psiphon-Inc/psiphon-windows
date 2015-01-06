@@ -66,7 +66,7 @@ void TransportConnection::Connect(
         m_workerThreadSynch.Reset();
 
         // Connect with the transport. Will throw on error.
-		m_transport->Connect(
+        m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
                     &m_workerThreadSynch,

@@ -229,7 +229,7 @@ vector<tstring> GetRasConnectionNames()
         for (DWORD i = 0; i < entries; i++)
         {
             connections.push_back(rasEntryNames[i].szEntryName);
-	    }
+        }
     }
     catch (...)
     {

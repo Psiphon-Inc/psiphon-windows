@@ -64,7 +64,7 @@ void ITransport::Connect(
                     WorkerThreadSynch* workerThreadSynch,
                     ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
-	m_systemProxySettings = systemProxySettings;
+    m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
 
     assert(m_systemProxySettings);
