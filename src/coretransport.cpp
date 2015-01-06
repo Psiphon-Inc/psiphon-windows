@@ -18,17 +18,19 @@
  */
 
 #include "stdafx.h"
+#include <shlwapi.h>
+#pragma comment(lib,"shlwapi.lib")
+#include "shlobj.h"
+
 #include "coretransport.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
-#include <WinSock2.h>
-#include <WinCrypt.h>
 #include "utilities.h"
 #include "systemproxysettings.h"
 #include "config.h"
 #include "diagnostic_info.h"
-#include <stdlib.h>
-#include <time.h>
+#include "embeddedvalues.h"
+
 
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
@@ -48,7 +50,8 @@ CoreTransportBase::CoreTransportBase(LPCTSTR transportProtocolName)
     : ITransport(transportProtocolName),
       m_pipe(NULL),
       m_localSocksProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
-      m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER)
+      m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
+      m_tunnelActive(false)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -82,6 +85,9 @@ bool CoreTransportBase::Cleanup()
         CloseHandle(m_pipe);
     }
     m_pipe = NULL;
+    m_pipeBuffer.clear();
+
+    m_tunnelActive = false;
 
     return true;
 }
@@ -149,68 +155,6 @@ tstring CoreTransportBase::GetLastTransportError() const
 }
 
 
-bool CoreTransportBase::DoPeriodicCheck()
-{
-    // Check if the subprocess is still running, and consume any buffered output
-
-    if (m_processInfo.hProcess != 0)
-    {
-        // The process handle will be signalled when the process terminates
-        DWORD result = WaitForSingleObject(m_processInfo.hProcess, 0);
-
-        if (result == WAIT_TIMEOUT)
-        {
-            if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
-            {
-                throw Abort();
-            }
-
-            ConsumeSubprocessOutput();
-
-            return true;
-        }
-        else if (result == WAIT_OBJECT_0)
-        {
-            // The process has signalled -- which implies that it's died
-            return false;
-        }
-        else
-        {
-            std::stringstream s;
-            s << __FUNCTION__ << ": WaitForSingleObject failed (" << result << ", " << GetLastError() << ")";
-            throw Error(s.str().c_str());
-        }
-    }
-
-    return false;
-}
-
-
-void CoreTransportBase::ConsumeSubprocessOutput()
-{
-    //***************************************************************************
-    // TODO: parse output and get ports, home pages, #tunnels, etc.
-    //***************************************************************************
-
-    //***************************************************************************
-    // TODO: log raw output; plus structured data: AddDiagnosticInfoYaml("ConnectedServer")
-    //***************************************************************************
-
-    /*
-    ostringstream ss;
-    ss << "ipAddress: " << m_sessionInfo.GetServerAddress() << "\n";
-    ss << "connType: " << TStringToNarrow(transportRequestName) << "\n";
-    if (serverAddress != NarrowToTString(m_sessionInfo.GetServerAddress())) 
-    {
-        ss << "front: " << TStringToNarrow(serverAddress) << "\n";
-    }
-    AddDiagnosticInfoYaml("ConnectedServer", ss.str().c_str());
-    */
-
-    // TODO: AddDiagnosticInfoYaml
-}
-
-
 void CoreTransportBase::TransportConnect()
 {
     my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
@@ -239,23 +183,35 @@ void CoreTransportBase::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
 
-    //***************************************************************************
-    // TODO: pave app data subdir; pave config file (here is where to call GetUpstreamProxySettings)
-    //***************************************************************************
-
-    //***************************************************************************
-    // TODO: use m_tempConnectServerEntry when set
-    //***************************************************************************
-
-    if (!SpawnSubprocess())
+    tstring configFilename;
+    if (!WriteConfigFile(configFilename))
     {
         throw TransportFailed();
     }
 
-    //***************************************************************************
-    // TODO: monitor output and wait for TUNNELS > 0; or throw when stop signalled
-    //***************************************************************************
-    //WaitForActiveTunnel();
+    // Run core process; it will begin establishing a tunnel
+
+    if (!SpawnCoreProcess(configFilename))
+    {
+        throw TransportFailed();
+    }
+
+    // Wait for first active tunnel (or stop signal)
+
+    while (true)
+    {
+        if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+        {
+            throw Abort();
+        }
+
+        if (m_tunnelActive)
+        {
+            break;
+        }
+
+        Sleep(100);
+    }
 
     m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
@@ -265,7 +221,90 @@ void CoreTransportBase::TransportConnectHelper()
 }
 
 
-bool CoreTransportBase::SpawnSubprocess()
+bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
+{
+    TCHAR path[MAX_PATH];
+    if (!SHGetFolderPath( NULL, CSIDL_COMMON_APPDATA, NULL, 0, path))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_SUBDIRECTORY))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    tstring dataStoreDirectory = path;
+
+    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    tstring configFilename = path;
+
+    //***************************************************************************
+    // TODO: set "TunnelProcotol" (in OSSH case, multiple protocols?)
+    //***************************************************************************
+
+    Json::Value config;
+    config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
+    config["SponsorId"] = SPONSOR_ID;
+    config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
+    config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
+    config["DataStoreDirectory"] = dataStoreDirectory;
+    config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
+
+    ostringstream dataStream;
+    Json::FastWriter jsonWriter;
+    dataStream << jsonWriter.write(config); 
+    string data = dataStream.str();
+
+    HANDLE file;
+    DWORD bytesWritten;
+    if (INVALID_HANDLE_VALUE == (file = CreateFile(
+                                            configFilename.c_str(), GENERIC_WRITE, 0,
+                                            NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
+        || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
+        || bytesWritten != data.length())
+    {
+        CloseHandle(file);
+        my_print(NOT_SENSITIVE, false, _T("%s - write config file failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    CloseHandle(file);
+
+    return true;
+}
+
+    
+string CoreTransportBase::GetUpstreamProxyAddress()
+{
+    // Note: upstream SOCKS proxy and proxy auth currently not supported in core
+
+    ostringstream upstreamProxyAddress;
+
+    if (UserSSHParentProxyType() == "https")
+    {
+        upstreamProxyAddress << UserSSHParentProxyHostname() << ":" << UserSSHParentProxyPort();
+    }
+    else
+    {
+        DecomposedProxyConfig proxyConfig;
+        GetNativeDefaultProxyInfo(proxyConfig);
+
+        if (!proxyConfig.httpsProxy.empty())
+        {
+            upstreamProxyAddress <<
+                TStringToNarrow(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
+        }
+    }
+
+    return upstreamProxyAddress.str();
+}
+
+
+bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename)
 {
     tstringstream commandLine;
 
@@ -277,7 +316,7 @@ bool CoreTransportBase::SpawnSubprocess()
         }
     }
 
-    commandLine << m_exePath;
+    commandLine << m_exePath << _T("--config ") << configFilename;
 
     STARTUPINFO startupInfo;
     ZeroMemory(&startupInfo, sizeof(startupInfo));
@@ -285,19 +324,12 @@ bool CoreTransportBase::SpawnSubprocess()
 
     startupInfo.dwFlags = STARTF_USESTDHANDLES;
     startupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    if (!CreateSubprocessPipe(startupInfo.hStdOutput, startupInfo.hStdError))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - CreateSubprocessPipe failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
-    }
 
     m_pipe = INVALID_HANDLE_VALUE;
     startupInfo.hStdOutput = INVALID_HANDLE_VALUE;
     startupInfo.hStdError = INVALID_HANDLE_VALUE;
-
     HANDLE parentInputPipe = INVALID_HANDLE_VALUE;
     HANDLE childStdinPipe = INVALID_HANDLE_VALUE;
-
     if (!CreateSubprocessPipes(
             m_pipe,
             parentInputPipe,
@@ -305,10 +337,9 @@ bool CoreTransportBase::SpawnSubprocess()
             startupInfo.hStdOutput,
             startupInfo.hStdError))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - CreateSubprocessPipe failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s - CreateSubprocessPipes failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
-
     CloseHandle(parentInputPipe);
     CloseHandle(childStdinPipe);
 
@@ -364,113 +395,131 @@ bool CoreTransportBase::SpawnSubprocess()
 }
 
 
-bool CoreTransportBase::CreateSubprocessPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
+void CoreTransportBase::ConsumeCoreProcessOutput()
 {
-    m_pipe = INVALID_HANDLE_VALUE;
-    o_outputPipe = INVALID_HANDLE_VALUE;
-    o_errorPipe = INVALID_HANDLE_VALUE;
+    DWORD bytes_avail = 0;
 
-    HANDLE parentInputPipe = INVALID_HANDLE_VALUE, childStdinPipe = INVALID_HANDLE_VALUE;
-
-    if (!CreateSubprocessPipes(
-            m_pipe,
-            parentInputPipe,
-            childStdinPipe,
-            o_outputPipe,
-            o_errorPipe))
+    // ReadFile will block forever if there's no data to read, so we need
+    // to check if there's data available to read first.
+    if (!PeekNamedPipe(m_pipe, NULL, 0, NULL, &bytes_avail, NULL))
     {
-        return false;
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - PeekNamedPipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
     }
 
-    CloseHandle(parentInputPipe);
-    CloseHandle(childStdinPipe);
+    if (bytes_avail <= 0)
+    {
+        return;
+    }
 
-    return true;
+    // If there's data available from the pipe, process it.
+    char* buffer = new char[bytes_avail+1];
+    DWORD num_read = 0;
+    if (!ReadFile(m_pipe, buffer, bytes_avail, &num_read, NULL))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
+    }
+    buffer[bytes_avail] = '\0';
+
+    // Don't assume we receive complete lines in a read: "Data is written to an anonymous pipe
+    // as a stream of bytes. This means that the parent process reading from a pipe cannot
+    // distinguish between the bytes written in separate write operations, unless both the
+    // parent and child processes use a protocol to indicate where the write operation ends."
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365782%28v=vs.85%29.aspx
+
+    m_pipeBuffer.append(buffer);
+
+    std::stringstream stream(m_pipeBuffer);
+    std::string line;
+    while (std::getline(stream, line)) {
+        HandleCoreProcessOutputLine(line.c_str());
+    }
+
+    m_pipeBuffer = stream.get();
+
+    delete buffer;
 }
 
 
-bool CoreTransportBase::GetUpstreamProxySettings(
-    bool firstServer,
-    const SessionInfo& sessionInfo,
-    SystemProxySettings* systemProxySettings,
-    tstring& o_UserSSHParentProxyType,
-    tstring& o_UserSSHParentProxyHostname,
-    int& o_UserSSHParentProxyPort,
-    tstring& o_UserSSHParentProxyUsername,
-    tstring& o_UserSSHParentProxyPassword)
+void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
 {
-    o_UserSSHParentProxyType.clear();
-    o_UserSSHParentProxyHostname.clear();
-    o_UserSSHParentProxyUsername.clear();
-    o_UserSSHParentProxyPassword.clear();
-    o_UserSSHParentProxyPort = 0;
+    // Log output
 
-    //Check if user wants to use parent proxy
-    if (UserSkipSSHParentProxySettings())
+    my_print(NOT_SENSITIVE, true, _T("core output: %S"), line);
+    AddDiagnosticInfo("CoreOutput", line);
+
+    // Parse output to extract data
+
+    //***************************************************************************
+    // TODO: log structured data: AddDiagnosticInfoYaml("ConnectedServer")
+    //***************************************************************************
+
+    // Note: this is based on tentative log line formats
+    const char* socksProxy = "SOCKS-PROXY-PORT ";
+    const char* httpProxy = "HTTP-PROXY-PORT ";
+    const char* homePage = "HOMEPAGE ";
+    const char* firstTunnelStarted = "TUNNELS 1";
+    const char* lastTunnelStopped = "TUNNELS 0";
+
+    if (0 == strncmp(line, socksProxy, strlen(socksProxy)))
     {
-        /*
-        // Embedded http in-proxies
-        // NOTE: this feature breaks split tunnelling since the server will resolve
-        // the geolocation of the client as the in-proxy's location
-        vector<tstring> proxyIpAddresses;
-        
-        bool useProxy = !proxyIpAddresses.empty() && (rand() % 2 == 0);
+        m_localSocksProxyPort = atoi(line + strlen(socksProxy));
+    }
+    else if (0 == strncmp(line, httpProxy, strlen(httpProxy)))
+    {
+        m_localHttpProxyPort = atoi(line + strlen(httpProxy));
+    }
+    else if (0 == strncmp(line, homePage, strlen(homePage)))
+    {
+        //***************************************************************************
+        // TODO: add homepage to m_sessionInfo
+        //***************************************************************************
+        string(line + strlen(homePage));
+    }
+    else if (0 == strcmp(line, firstTunnelStarted))
+    {
+        m_tunnelActive = true;
+    }
+    else if (0 == strcmp(line, lastTunnelStopped))
+    {
+        m_tunnelActive = false;
+        //***************************************************************************
+        // TODO: transition to reconnecting state in ConnectionManager/UI
+        //***************************************************************************
+    }
+}
 
-        if (useProxy && !firstServer)
+
+bool CoreTransportBase::DoPeriodicCheck()
+{
+    // Check if the subprocess is still running, and consume any buffered output
+
+    if (m_processInfo.hProcess != 0)
+    {
+        // The process handle will be signalled when the process terminates
+        DWORD result = WaitForSingleObject(m_processInfo.hProcess, 0);
+
+        if (result == WAIT_TIMEOUT)
         {
-            o_UserSSHParentProxyType = _T("https");
-            o_UserSSHParentProxyUsername = _T("user");
-            o_UserSSHParentProxyPassword = _T("password");
-            o_UserSSHParentProxyPort = 3128;
+            if (m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
+            {
+                throw Abort();
+            }
 
-            random_shuffle(proxyIpAddresses.begin(), proxyIpAddresses.end());
-            o_UserSSHParentProxyHostname = proxyIpAddresses.at(0);
+            ConsumeCoreProcessOutput();
 
-            ostringstream ss;
-            string hostnameWithDashes = TStringToNarrow(o_UserSSHParentProxyHostname);
-            std::replace(hostnameWithDashes.begin(), hostnameWithDashes.end(), '.', '-');
-            ss << "{ipAddress: " << sessionInfo.GetServerAddress() << ", throughProxy: " << hostnameWithDashes << "}";
-            AddDiagnosticInfoYaml("ProxiedConnection", ss.str().c_str());
             return true;
         }
-        */
-        return false;
-    }
-    //Registry values take precedence over system settings
-    //Username and password for 'Basic' HTTP or SOCKS authentication
-    //must be stored in registry
-
-    o_UserSSHParentProxyType = NarrowToTString(UserSSHParentProxyType());
-    o_UserSSHParentProxyHostname = NarrowToTString(UserSSHParentProxyHostname());
-    o_UserSSHParentProxyPort =  UserSSHParentProxyPort();
-    o_UserSSHParentProxyUsername = NarrowToTString(UserSSHParentProxyUsername());
-    o_UserSSHParentProxyPassword =  NarrowToTString(UserSSHParentProxyPassword());
-
-    if(!o_UserSSHParentProxyType.empty() 
-        && !o_UserSSHParentProxyHostname.empty()
-        && 0 != o_UserSSHParentProxyPort)
-    {
-        return true;
-    }
-
-    //if no registry values try system settings
-
-    DecomposedProxyConfig proxyConfig;
-    GetNativeDefaultProxyInfo(proxyConfig);
-
-    if (!proxyConfig.httpsProxy.empty())
-    {
-        o_UserSSHParentProxyType = _T("https");
-        o_UserSSHParentProxyHostname = proxyConfig.httpsProxy;
-        o_UserSSHParentProxyPort = proxyConfig.httpsProxyPort;
-        return true;
-    }
-    else if (!proxyConfig.socksProxy.empty())
-    {
-        o_UserSSHParentProxyType = _T("socks");
-        o_UserSSHParentProxyHostname = proxyConfig.socksProxy;
-        o_UserSSHParentProxyPort = proxyConfig.socksProxyPort;
-        return true;
+        else if (result == WAIT_OBJECT_0)
+        {
+            // The process has signalled -- which implies that it's died
+            return false;
+        }
+        else
+        {
+            std::stringstream s;
+            s << __FUNCTION__ << ": WaitForSingleObject failed (" << result << ", " << GetLastError() << ")";
+            throw Error(s.str().c_str());
+        }
     }
 
     return false;

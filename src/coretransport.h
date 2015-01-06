@@ -54,20 +54,12 @@ protected:
     virtual bool DoPeriodicCheck();
 
     void TransportConnectHelper();
-    bool SpawnSubprocess();
-    bool CreateSubprocessPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
-    void ConsumeSubprocessOutput();
-
-    bool GetUpstreamProxySettings(
-        bool firstServer,
-        const SessionInfo& sessionInfo,
-        SystemProxySettings* systemProxySettings,
-        tstring& o_UserParentProxyType,
-        tstring& o_UserParentProxyHostname,
-        int& o_UserParentProxyPort,
-        tstring& o_UserParentProxyUsername,
-        tstring& o_UserParentProxyPassword);
-
+	bool WriteConfigFile(tstring& configFilename);
+    string GetUpstreamProxyAddress();
+    bool SpawnCoreProcess(const tstring& configFilename);
+    bool CreateCoreProcessPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe);
+    void ConsumeCoreProcessOutput();
+    void HandleCoreProcessOutputLine(const char* line);
 
 protected:
     tstring m_exePath;
@@ -77,6 +69,8 @@ protected:
     // [upgrade version#]
     PROCESS_INFORMATION m_processInfo;
     HANDLE m_pipe;
+	string m_pipeBuffer;
+	bool m_tunnelActive;
 };
 
 
