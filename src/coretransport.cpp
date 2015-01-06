@@ -224,7 +224,7 @@ void CoreTransportBase::TransportConnectHelper()
 bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
 {
     TCHAR path[MAX_PATH];
-    if (!SHGetFolderPath( NULL, CSIDL_COMMON_APPDATA, NULL, 0, path))
+    if (!SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, path))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
