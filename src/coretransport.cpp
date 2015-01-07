@@ -439,13 +439,19 @@ void CoreTransportBase::ConsumeCoreProcessOutput()
 
     m_pipeBuffer.append(buffer);
 
-    std::stringstream stream(m_pipeBuffer);
-    std::string line;
-    while (std::getline(stream, line)) {
+    int start = 0;
+    while (true)
+    {
+        int end = m_pipeBuffer.find("\n", start);
+        if (end == string::npos)
+        {
+            m_pipeBuffer = m_pipeBuffer.substr(start);
+            break;
+        }
+        string line = m_pipeBuffer.substr(start, end - start);
         HandleCoreProcessOutputLine(line.c_str());
+        start = end + 1;
     }
-
-    m_pipeBuffer = stream.get();
 
     delete buffer;
 }
@@ -472,6 +478,13 @@ void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
     const char* firstTunnelStarted = "TUNNELS 1";
     const char* lastTunnelStopped = "TUNNELS 0";
 
+    // Skip timestamp 'YYYY/MM/DD HH:MM:SS ...'
+    // TODO: configure core to omit timestamp
+    if (strlen(line) > 20)
+    {
+        line += 20;
+    }
+
     if (0 == strncmp(line, socksProxy, strlen(socksProxy)))
     {
         m_localSocksProxyPort = atoi(line + strlen(socksProxy));
@@ -480,7 +493,7 @@ void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
     {
         m_localHttpProxyPort = atoi(line + strlen(httpProxy));
     }
-    else if (0 == strncmp(line, homePage, strlen(upgrade)))
+    else if (0 == strncmp(line, upgrade, strlen(upgrade)))
     {
         m_sessionInfo.SetUpgradeVersion(line + strlen(upgrade));
     }
