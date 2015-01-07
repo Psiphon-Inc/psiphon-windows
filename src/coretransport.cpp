@@ -327,7 +327,7 @@ bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename)
         }
     }
 
-    commandLine << m_exePath << _T(" --config ") << configFilename;
+    commandLine << m_exePath << _T(" --config \"") << configFilename << _T("\"");
 
     STARTUPINFO startupInfo;
     ZeroMemory(&startupInfo, sizeof(startupInfo));
