@@ -9,25 +9,18 @@
 #include <boost/thread/detail/config.hpp>
 #ifdef BOOST_THREAD_USES_CHRONO
 #include <boost/chrono/system_clocks.hpp>
+#include <boost/chrono/ceil.hpp>
 #endif
 #include <boost/thread/condition_variable.hpp>
-#include <boost/thread/locks.hpp>
+#include <boost/thread/lock_types.hpp>
 
 namespace boost
 {
   namespace this_thread
   {
-
-#ifdef BOOST_THREAD_USES_CHRONO
-
-    template <class Rep, class Period>
-    void sleep_for(const chrono::duration<Rep, Period>& d)
+    namespace no_interruption_point
     {
-      using namespace chrono;
-      nanoseconds ns = duration_cast<nanoseconds> (d);
-      if (ns < d) ++ns;
-      sleep_for(ns);
-    }
+#ifdef BOOST_THREAD_USES_CHRONO
 
     template <class Clock, class Duration>
     void sleep_until(const chrono::time_point<Clock, Duration>& t)
@@ -40,6 +33,28 @@ namespace boost
         cv.wait_until(lk, t);
     }
 
+#ifdef BOOST_THREAD_SLEEP_FOR_IS_STEADY
+
+    template <class Rep, class Period>
+    void sleep_for(const chrono::duration<Rep, Period>& d)
+    {
+      using namespace chrono;
+      if (d > duration<Rep, Period>::zero())
+      {
+          duration<long double> Max = nanoseconds::max BOOST_PREVENT_MACRO_SUBSTITUTION ();
+          nanoseconds ns;
+          if (d < Max)
+          {
+              ns = duration_cast<nanoseconds>(d);
+              if (ns < d)
+                  ++ns;
+          }
+          else
+              ns = nanoseconds:: max BOOST_PREVENT_MACRO_SUBSTITUTION ();
+          sleep_for(ns);
+      }
+    }
+
     template <class Duration>
     inline BOOST_SYMBOL_VISIBLE
     void sleep_until(const chrono::time_point<chrono::steady_clock, Duration>& t)
@@ -47,6 +62,77 @@ namespace boost
       using namespace chrono;
       sleep_for(t - steady_clock::now());
     }
+#else
+    template <class Rep, class Period>
+    void sleep_for(const chrono::duration<Rep, Period>& d)
+    {
+      using namespace chrono;
+      if (d > duration<Rep, Period>::zero())
+      {
+        steady_clock::time_point c_timeout = steady_clock::now() + ceil<nanoseconds>(d);
+        sleep_until(c_timeout);
+      }
+    }
+
+#endif
+
+#endif
+    }
+#ifdef BOOST_THREAD_USES_CHRONO
+
+    template <class Clock, class Duration>
+    void sleep_until(const chrono::time_point<Clock, Duration>& t)
+    {
+      using namespace chrono;
+      mutex mut;
+      condition_variable cv;
+      unique_lock<mutex> lk(mut);
+      while (Clock::now() < t)
+        cv.wait_until(lk, t);
+    }
+
+#ifdef BOOST_THREAD_SLEEP_FOR_IS_STEADY
+
+    template <class Rep, class Period>
+    void sleep_for(const chrono::duration<Rep, Period>& d)
+    {
+      using namespace chrono;
+      if (d > duration<Rep, Period>::zero())
+      {
+          duration<long double> Max = nanoseconds::max BOOST_PREVENT_MACRO_SUBSTITUTION ();
+          nanoseconds ns;
+          if (d < Max)
+          {
+              ns = duration_cast<nanoseconds>(d);
+              if (ns < d)
+                  ++ns;
+          }
+          else
+              ns = nanoseconds:: max BOOST_PREVENT_MACRO_SUBSTITUTION ();
+          sleep_for(ns);
+      }
+    }
+
+    template <class Duration>
+    inline BOOST_SYMBOL_VISIBLE
+    void sleep_until(const chrono::time_point<chrono::steady_clock, Duration>& t)
+    {
+      using namespace chrono;
+      sleep_for(t - steady_clock::now());
+    }
+#else
+    template <class Rep, class Period>
+    void sleep_for(const chrono::duration<Rep, Period>& d)
+    {
+      using namespace chrono;
+      if (d > duration<Rep, Period>::zero())
+      {
+        steady_clock::time_point c_timeout = steady_clock::now() + ceil<nanoseconds>(d);
+        sleep_until(c_timeout);
+      }
+    }
+
+#endif
 
 #endif
   }

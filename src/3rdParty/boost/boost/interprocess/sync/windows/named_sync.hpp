@@ -11,7 +11,7 @@
 #ifndef BOOST_INTERPROCESS_WINDOWS_NAMED_SYNC_HPP
 #define BOOST_INTERPROCESS_WINDOWS_NAMED_SYNC_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -19,12 +19,12 @@
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/permissions.hpp>
-#include <boost/interprocess/detail/tmp_dir_helpers.hpp>
+#include <boost/interprocess/detail/shared_dir_helpers.hpp>
 #include <boost/interprocess/sync/windows/sync_utils.hpp>
 #include <boost/interprocess/errors.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <string>
-#include <cassert>
+#include <boost/assert.hpp>
 
 namespace boost {
 namespace interprocess {
@@ -106,7 +106,7 @@ inline void windows_named_sync::open_or_create
    //Use a file to emulate POSIX lifetime semantics. After this logic
    //we'll obtain the ID of the native handle to open in aux_str
    {
-      create_tmp_and_clean_old_and_get_filename(name, aux_str);
+      create_shared_dir_cleaning_old_and_get_filepath(name, aux_str);
       //Create a file with required permissions.
       m_file_hnd = winapi::create_file
          ( aux_str.c_str()
@@ -145,7 +145,7 @@ inline void windows_named_sync::open_or_create
                      success = true;
                   }
                   winapi::get_file_size(m_file_hnd, filesize);
-                  assert(std::size_t(filesize) == sizeof_file_info);
+                  BOOST_ASSERT(std::size_t(filesize) == sizeof_file_info);
                }
                else{
                   void *buf = sync_interface.buffer_to_store_init_data_from_file();
@@ -198,7 +198,7 @@ inline bool windows_named_sync::remove(const char *name)
    try{
       //Make sure a temporary path is created for shared memory
       std::string semfile;
-      ipcdetail::tmp_filename(name, semfile);
+      ipcdetail::shared_filepath(name, semfile);
       return winapi::unlink_file(semfile.c_str());
    }
    catch(...){

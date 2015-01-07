@@ -177,7 +177,7 @@ private:
 
     inline void advance(difference_type n)
     {
-        if (m_index >= 0 && m_index < m_size 
+        if (m_index >= 0 && m_index < m_size
             && m_index + n >= 0 && m_index + n < m_size)
         {
             m_index += n;
@@ -196,7 +196,7 @@ private:
         {
             m_index += m_size;
         }
-		m_index = m_index % m_size;
+        m_index = m_index % m_size;
         this->m_iterator = boost::begin(*m_range) + m_index;
     }
 
