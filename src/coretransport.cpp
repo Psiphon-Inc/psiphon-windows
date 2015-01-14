@@ -225,6 +225,7 @@ void CoreTransportBase::TransportConnectHelper()
     my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
 
     m_systemProxySettings->SetHttpProxyPort(m_localHttpProxyPort);
+    m_systemProxySettings->SetHttpsProxyPort(m_localHttpProxyPort);
     my_print(NOT_SENSITIVE, false, _T("HTTP proxy is running on localhost port %d."), m_localHttpProxyPort);
 }
 
