@@ -24,6 +24,8 @@ struct StopInfo;
 
 bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
 
+bool WriteFile(const tstring& filename, const string& data);
+
 // Possible return values:
 //  ERROR_SUCCESS on success
 //  WAIT_TIMEOUT if timeout exceeded

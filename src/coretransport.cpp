@@ -185,15 +185,15 @@ void CoreTransportBase::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
 
-    tstring configFilename;
-    if (!WriteConfigFile(configFilename))
+    tstring configFilename, serverListFilename;
+    if (!WriteParameterFiles(configFilename, serverListFilename))
     {
         throw TransportFailed();
     }
 
     // Run core process; it will begin establishing a tunnel
 
-    if (!SpawnCoreProcess(configFilename))
+    if (!SpawnCoreProcess(configFilename, serverListFilename))
     {
         throw TransportFailed();
     }
@@ -230,7 +230,7 @@ void CoreTransportBase::TransportConnectHelper()
 }
 
 
-bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
+bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename)
 {
     TCHAR path[MAX_PATH];
     if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
@@ -245,16 +245,11 @@ bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
     }
     tstring dataStoreDirectory = path;
 
-    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME))
+    if (!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
-    configFilename = path;
-
-    //***************************************************************************
-    // !TODO!: set "TunnelProcotol" (in OSSH case, multiple protocols?)
-    //***************************************************************************
 
     Json::Value config;
     config["ClientPlatform"] = CLIENT_PLATFORM;
@@ -266,25 +261,36 @@ bool CoreTransportBase::WriteConfigFile(tstring& configFilename)
     config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
     config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
 
-    ostringstream dataStream;
+    ostringstream configDataStream;
     Json::FastWriter jsonWriter;
-    dataStream << jsonWriter.write(config); 
-    string data = dataStream.str();
+    configDataStream << jsonWriter.write(config);
 
-    HANDLE file;
-    DWORD bytesWritten;
-    if ((!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
-        || INVALID_HANDLE_VALUE == (file = CreateFile(
-                                            configFilename.c_str(), GENERIC_WRITE, 0,
-                                            NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
-        || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
-        || bytesWritten != data.length())
+    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME))
     {
-        CloseHandle(file);
+        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    configFilename = path;
+
+    if (!WriteFile(configFilename, configDataStream.str()))
+    {
         my_print(NOT_SENSITIVE, false, _T("%s - write config file failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
-    CloseHandle(file);
+
+    _tcsncpy_s(path, dataStoreDirectory.c_str(), _TRUNCATE);
+    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    serverListFilename = path;
+
+    if (!WriteFile(serverListFilename, embedded_server_list))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
 
     return true;
 }
@@ -316,7 +322,7 @@ string CoreTransportBase::GetUpstreamProxyAddress()
 }
 
 
-bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename)
+bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
     tstringstream commandLine;
 
@@ -328,7 +334,9 @@ bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename)
         }
     }
 
-    commandLine << m_exePath << _T(" --config \"") << configFilename << _T("\"");
+    commandLine << m_exePath
+        << _T(" --config \"") << configFilename << _T("\"")
+        << _T(" --serverList \"") << serverListFilename << _T("\"");
 
     STARTUPINFO startupInfo;
     ZeroMemory(&startupInfo, sizeof(startupInfo));

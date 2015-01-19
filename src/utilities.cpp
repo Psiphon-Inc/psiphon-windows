@@ -156,6 +156,25 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 }
 
 
+bool WriteFile(const tstring& filename, const string& data)
+{
+    HANDLE file;
+    DWORD bytesWritten;
+    if (INVALID_HANDLE_VALUE == (file = CreateFile(
+                                            filename.c_str(), GENERIC_WRITE, 0,
+                                            NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
+        || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
+        || bytesWritten != data.length())
+    {
+        CloseHandle(file);
+        my_print(NOT_SENSITIVE, false, _T("%s - write file failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    CloseHandle(file);
+    return true;
+}
+
+
 DWORD WaitForConnectability(
         int port,
         DWORD timeout,
