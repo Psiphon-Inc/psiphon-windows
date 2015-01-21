@@ -25,6 +25,7 @@
 #include "embeddedvalues.h"
 #include "stopsignal.h"
 #include "systemproxysettings.h"
+#include "utilities.h"
 
 
 // NOTE: this code depends on built-in Windows crypto services

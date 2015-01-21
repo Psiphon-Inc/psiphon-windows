@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 #include "embeddedvalues.h"
 #include "transport.h"
 #include "config.h"
+#include "settings.h"
 #include "utilities.h"
 #include "webbrowser.h"
 #include "limitsingleinstance.h"
@@ -41,6 +42,7 @@
 #include "stopsignal.h"
 #include "diagnostic_info.h"
 #include "systemproxysettings.h"
+#include "settings.h"
 
 
 //==== Globals ================================================================
@@ -63,12 +65,11 @@ LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887
 //==== UI layout ===============================================================
 
 //
-//                 + - - - - - - - - - - - +           +----------+
-//                 ' ^                     '           |          |
-// [toggle button] ' | transport selection ' [banner]  | feedback |
-//                 ' v                     '           | button   |  
-//                 + - - - - - - - - - - - +           |          |
-//                 [split tunnel check box.......]     +----------+ 
+//                 + - - - - - - - - - -+ +----------+ +----------+
+//                 |                    | |          | |          |
+// [toggle button] | [banner]           | | settings | | feedback |
+//                 |                    | | button   | | button   |  
+//                 + - - - - - - - - - -+ +----------+ +----------+
 // +--------------------------------------------------------------+   
 // | ^                                                            |   
 // | | log list box                                               |   
@@ -79,48 +80,29 @@ LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887
 
 
 const int SPACER = 5;
+const int FIRST_ROW_HEIGHT = 48;
 
 const int TOGGLE_BUTTON_X = 0 + SPACER;
-const int TOGGLE_BUTTON_IMAGE_WIDTH = 48;
+const int TOGGLE_BUTTON_IMAGE_WIDTH = FIRST_ROW_HEIGHT;
 const int TOGGLE_BUTTON_WIDTH = 56;
 const int TOGGLE_BUTTON_HEIGHT = 56;
+const int TOGGLE_BUTTON_Y = 0 + SPACER;
 
-// First transport in this list is the default
-
-const TCHAR* transportOptions[] = {_T("SSH+"), _T("VPN"), _T("SSH")};
-const int transportOptionCount = sizeof(transportOptions)/sizeof(const TCHAR*);
-
-const int TRANSPORT_FIRST_ITEM_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
-const int TRANSPORT_FIRST_ITEM_Y = 0 + SPACER;
-const int TRANSPORT_ITEM_WIDTH = 16 + LongestTextWidth(transportOptions, transportOptionCount);
-const int TRANSPORT_ITEM_HEIGHT = TextHeight();
-const int TRANSPORT_TOTAL_HEIGHT = TRANSPORT_ITEM_HEIGHT + (transportOptionCount-1)*(SPACER + TRANSPORT_ITEM_HEIGHT);
-
-// Toggle button and banner are vertically centered relative to transport section
-
-const int TOGGLE_BUTTON_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > TOGGLE_BUTTON_HEIGHT ?
-                                          (TRANSPORT_TOTAL_HEIGHT - TOGGLE_BUTTON_HEIGHT)/2 : 0);
-
-const int BANNER_X = TRANSPORT_FIRST_ITEM_X + TRANSPORT_ITEM_WIDTH + SPACER;
+const int BANNER_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
 const int BANNER_WIDTH = 200;
-const int BANNER_HEIGHT = 48;
+const int BANNER_HEIGHT = FIRST_ROW_HEIGHT;
+const int BANNER_Y = 0 + SPACER;
 
-const int BANNER_Y = 0 + SPACER + (TRANSPORT_TOTAL_HEIGHT > BANNER_HEIGHT ?
-                                          (TRANSPORT_TOTAL_HEIGHT - BANNER_HEIGHT)/2 : 0);
+const int SETTINGS_BUTTON_IMAGE_WIDTH = FIRST_ROW_HEIGHT;
+const int SETTINGS_BUTTON_WIDTH = 56;
+const int SETTINGS_BUTTON_HEIGHT = 56;
+const int SETTINGS_BUTTON_X = BANNER_X + BANNER_WIDTH + SPACER;
+const int SETTINGS_BUTTON_Y = TOGGLE_BUTTON_Y;
 
-const TCHAR* splitTunnelPrompt = _T("Don't proxy domestic web sites");
-
-const int SPLIT_TUNNEL_X = TRANSPORT_FIRST_ITEM_X + SPACER;
-const int SPLIT_TUNNEL_Y = max(TOGGLE_BUTTON_HEIGHT,
-                               max(BANNER_HEIGHT,
-                                   transportOptionCount*(TRANSPORT_ITEM_HEIGHT+SPACER))) + SPACER;
-const int SPLIT_TUNNEL_WIDTH = TextWidth(splitTunnelPrompt);
-const int SPLIT_TUNNEL_HEIGHT = TextHeight() + SPACER;
-
-const int FEEDBACK_BUTTON_IMAGE_WIDTH = 48;
+const int FEEDBACK_BUTTON_IMAGE_WIDTH = FIRST_ROW_HEIGHT;
 const int FEEDBACK_BUTTON_WIDTH = 56;
 const int FEEDBACK_BUTTON_HEIGHT = 56;
-const int FEEDBACK_BUTTON_X = BANNER_X + BANNER_WIDTH + SPACER;
+const int FEEDBACK_BUTTON_X = SETTINGS_BUTTON_X + SETTINGS_BUTTON_WIDTH + SPACER;
 const int FEEDBACK_BUTTON_Y = TOGGLE_BUTTON_Y;
 
 const int WINDOW_WIDTH = FEEDBACK_BUTTON_X + FEEDBACK_BUTTON_WIDTH + SPACER + 20; // non-client-area hack adjustment
@@ -132,7 +114,7 @@ const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
 const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
 
 const int LOG_LIST_BOX_X = 0;
-const int LOG_LIST_BOX_Y = SPLIT_TUNNEL_Y + SPLIT_TUNNEL_HEIGHT + SPACER;
+const int LOG_LIST_BOX_Y = TOGGLE_BUTTON_Y + TOGGLE_BUTTON_HEIGHT + SPACER;
 const int LOG_LIST_BOX_WIDTH = WINDOW_WIDTH;
 const int LOG_LIST_BOX_HEIGHT = WINDOW_HEIGHT - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT);
 
@@ -146,8 +128,6 @@ HICON g_hToggleButtonIcons[TOGGLE_BUTTON_ICON_COUNT];
 HWND g_hBannerStatic = NULL;
 HBITMAP g_hBannerBitmap = NULL;
 HBITMAP g_hEmailBitmap = NULL;
-HWND g_hTransportRadioButtons[transportOptionCount];
-HWND g_hSplitTunnelCheckBox = NULL;
 HWND g_hLogListBox = NULL;
 HWND g_hInfoLinkStatic = NULL;
 HWND g_hInfoLinkTooltip = NULL;
@@ -156,8 +136,12 @@ HFONT g_hUnderlineFont = NULL;
 bool g_bShowEmail = false;
 HWND g_hFeedbackButton = NULL;
 HIMAGELIST g_hFeedbackButtonImageList = NULL;
-const int FEEDBACK_BUTTON_ICON_COUNT = 2;
+const int FEEDBACK_BUTTON_ICON_COUNT = 1;
 HICON g_hFeedbackButtonIcons[FEEDBACK_BUTTON_ICON_COUNT];
+HWND g_hSettingsButton = NULL;
+HIMAGELIST g_hSettingsButtonImageList = NULL;
+const int SETTINGS_BUTTON_ICON_COUNT = 1;
+HICON g_hSettingsButtonIcons[SETTINGS_BUTTON_ICON_COUNT];
 
 
 void ResizeControls(HWND hWndParent)
@@ -258,52 +242,6 @@ void CreateControls(HWND hWndParent)
 
     SubclassHyperlink(g_hBannerStatic);
 
-    // Transport Radio Buttons
-
-    for (int i = 0; i < transportOptionCount; i++)
-    {
-        g_hTransportRadioButtons[i] = CreateWindow(
-            L"Button",
-            transportOptions[i],
-            WS_CHILD|WS_VISIBLE|BS_AUTORADIOBUTTON|(i == 0 ? WS_GROUP : 0),
-            TRANSPORT_FIRST_ITEM_X + SPACER,
-            TRANSPORT_FIRST_ITEM_Y + i*(TRANSPORT_ITEM_HEIGHT + SPACER),
-            TRANSPORT_ITEM_WIDTH,
-            TRANSPORT_ITEM_HEIGHT,
-            hWndParent,
-            (HMENU)(IDC_TRANSPORT_OPTION_RADIO_FIRST + i),
-            g_hInst,
-            NULL);
-
-        SendMessage(g_hTransportRadioButtons[i], WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
-
-        if (i == 0)
-        {
-            SendMessage(
-                g_hTransportRadioButtons[i],
-                BM_SETCHECK,
-                BST_CHECKED,
-                0);
-        }
-    }
-
-    // Split Tunnel Check Box
-
-    g_hSplitTunnelCheckBox = CreateWindow(
-        L"Button",
-        splitTunnelPrompt,
-        WS_CHILD|WS_VISIBLE|BS_AUTOCHECKBOX,
-        SPLIT_TUNNEL_X,
-        SPLIT_TUNNEL_Y,
-        SPLIT_TUNNEL_WIDTH,
-        SPLIT_TUNNEL_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_SPLIT_TUNNEL_CHECKBOX,
-        g_hInst,
-        NULL);
-    
-    SendMessage(g_hSplitTunnelCheckBox, WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
-
     // Log List
 
     g_hLogListBox = CreateWindow(
@@ -381,9 +319,9 @@ void CreateControls(HWND hWndParent)
     g_hFeedbackButtonImageList = ImageList_LoadImage(
         g_hInst,
         MAKEINTRESOURCE(IDB_FEEDBACK_BUTTON_IMAGES),
-        FEEDBACK_BUTTON_IMAGE_WIDTH,
+        FEEDBACK_BUTTON_WIDTH,
         0,
-        CLR_DEFAULT,
+        CLR_NONE,
         IMAGE_BITMAP,
         LR_CREATEDIBSECTION);
 
@@ -402,6 +340,46 @@ void CreateControls(HWND hWndParent)
         BM_SETIMAGE,
         IMAGE_ICON,
         (LPARAM)g_hFeedbackButtonIcons[0]);
+
+    // Settings Button
+
+    g_hSettingsButton = CreateWindow(
+        L"Button",
+        L"",
+        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
+        SETTINGS_BUTTON_X,
+        SETTINGS_BUTTON_Y,
+        SETTINGS_BUTTON_WIDTH,
+        SETTINGS_BUTTON_HEIGHT,
+        hWndParent,
+        (HMENU)IDC_SETTINGS_BUTTON,
+        g_hInst,
+        NULL);
+
+    g_hSettingsButtonImageList = ImageList_LoadImage(
+        g_hInst,
+        MAKEINTRESOURCE(IDB_SETTINGS_BUTTON_IMAGES),
+        SETTINGS_BUTTON_WIDTH,
+        0,
+        CLR_NONE,
+        IMAGE_BITMAP,
+        LR_CREATEDIBSECTION);
+
+    assert(SETTINGS_BUTTON_ICON_COUNT == ImageList_GetImageCount(g_hSettingsButtonImageList));
+
+    for (int i = 0; i < SETTINGS_BUTTON_ICON_COUNT; i++)
+    {
+        g_hSettingsButtonIcons[i] = ImageList_GetIcon(
+            g_hSettingsButtonImageList,
+            i,
+            ILD_NORMAL);
+    }
+
+    SendMessage(
+        g_hSettingsButton,
+        BM_SETIMAGE,
+        IMAGE_ICON,
+        (LPARAM)g_hSettingsButtonIcons[0]);
 }
 
 
@@ -553,118 +531,6 @@ void UpdateBanner(HWND hWndParent)
     {
         SendMessage(g_hBannerStatic, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
     }
-}
-
-
-tstring GetSelectedTransport(void)
-{
-    for (int i = 0; i < transportOptionCount; i++)
-    {
-        if (BST_CHECKED == SendMessage(g_hTransportRadioButtons[i], BM_GETCHECK, 0, 0))
-        {
-            return transportOptions[i];
-        }
-    }
-    assert(0);
-    return _T("");
-}
-
-
-void StoreSelectedTransport(void)
-{
-    string selectedTransport = TStringToNarrow(GetSelectedTransport());
-    if (selectedTransport.length() > 0)
-    {
-        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
-        WriteRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport, reason);
-    }
-}
-
-
-void EnableSplitTunnelForSelectedTransport();
-
-void RestoreSelectedTransport(void)
-{
-    string selectedTransport;
-    if (!ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_TRANSPORT, selectedTransport))
-    {
-        return;
-    }
-
-    int matchIndex = -1;
-    for (int i = 0; i < transportOptionCount; i++)
-    {
-        if (selectedTransport == TStringToNarrow(transportOptions[i]))
-        {
-            matchIndex = i;
-            break;
-        }
-    }
-
-    // First check that it's a valid transport identifier
-    if (-1 == matchIndex)
-    {
-        return;
-    }
-
-    for (int i = 0; i < transportOptionCount; i++)
-    {
-        SendMessage(
-            g_hTransportRadioButtons[i],
-            BM_SETCHECK,
-            (i == matchIndex) ? BST_CHECKED : BST_UNCHECKED,
-            0);
-    }    
-
-    EnableSplitTunnelForSelectedTransport();
-}
-
-
-void EnableSplitTunnelForSelectedTransport()
-{
-    // TODO: decide if we're retaining split tunnel support in core (SSH/OSSH) modes
-    /*
-    // Split tunnel isn't implemented for VPN
-    if (_T("VPN") == GetSelectedTransport())
-    {
-        ShowWindow(g_hSplitTunnelCheckBox, FALSE);
-        SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
-    }
-    else
-    {
-        ShowWindow(g_hSplitTunnelCheckBox, TRUE);
-    }
-    */
-    ShowWindow(g_hSplitTunnelCheckBox, FALSE);
-    SendMessage(g_hSplitTunnelCheckBox, BM_SETCHECK, BST_UNCHECKED, 0);
-}
-
-
-bool GetSplitTunnel()
-{
-    return (BST_CHECKED == SendMessage(g_hSplitTunnelCheckBox, BM_GETCHECK, 0, 0)) ? 1 : 0;
-}
-
-
-void StoreSplitTunnel()
-{
-    WriteRegistryDwordValue(LOCAL_SETTINGS_REGISTRY_VALUE_SPLIT_TUNNEL, GetSplitTunnel() ? 1 : 0);
-}
-
-
-void RestoreSplitTunnel()
-{
-    DWORD splitTunnel = 0;
-    if (!ReadRegistryDwordValue(LOCAL_SETTINGS_REGISTRY_VALUE_SPLIT_TUNNEL, splitTunnel))
-    {
-        return;
-    }
-
-    SendMessage(
-        g_hSplitTunnelCheckBox,
-        BM_SETCHECK,
-        splitTunnel ? BST_CHECKED : BST_UNCHECKED,
-        0);
 }
 
 
@@ -824,7 +690,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PSICLIENT));
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_BTNFACE+1);
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     //wcex.lpszMenuName = MAKEINTRESOURCE(IDC_PSICLIENT);
     wcex.lpszMenuName = 0;
     wcex.lpszClassName = g_szWindowClass;
@@ -904,13 +770,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         // If there's a transport preference setting, restore it
 
-        RestoreSelectedTransport();
-        RestoreSplitTunnel();
+        // ************
+        // RestoreSelectedTransport();
+        // RestoreSplitTunnel();
 
         // Start a connection on the selected transport
 
         g_lastTransportSelection = GetSelectedTransport();
-        g_connectionManager.Toggle(g_lastTransportSelection, GetSplitTunnel());
+        g_connectionManager.Toggle(g_lastTransportSelection, Settings::SplitTunnel());
 
         break;
 
@@ -965,39 +832,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // See comment below about Stop() blocking the UI
             SetCursor(LoadCursor(0, IDC_WAIT));
 
-            g_connectionManager.Toggle(GetSelectedTransport(), GetSplitTunnel());
+            g_connectionManager.Toggle(GetSelectedTransport(), Settings::SplitTunnel());
         }
 
-        // Transport radio button clicked
-
-        else if (lParam != 0
-                 && wmId >= IDC_TRANSPORT_OPTION_RADIO_FIRST && wmId <= IDC_TRANSPORT_OPTION_RADIO_LAST
-                 && wmEvent == BN_CLICKED)
-        {
-            // Store the selection for next app run
-            StoreSelectedTransport();
-
-            tstring newTransportSelection = GetSelectedTransport();
-
-            EnableSplitTunnelForSelectedTransport();
-
-            RestoreSplitTunnel();
-
-            if (newTransportSelection != g_lastTransportSelection)
-            {
-                // Restart with the new transport immediately
-
-                // Show a Wait cursor since ConnectionManager::Stop() (called by Start) can
-                // take a few seconds to complete, which blocks the radio button redrawing
-                // animation. WM_SETCURSOR will reset the cursor automatically.
-                SetCursor(LoadCursor(0, IDC_WAIT));
-
-                g_connectionManager.Start(newTransportSelection, GetSplitTunnel());
-
-                g_lastTransportSelection = newTransportSelection;
-            }
-        }
-        
         // Banner clicked
         
         else if (lParam == (LPARAM)g_hBannerStatic && wmEvent == STN_CLICKED)
@@ -1016,21 +853,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
 
-        // Split tunnel checkbox clicked
-        
-        else if (lParam == (LPARAM)g_hSplitTunnelCheckBox && wmEvent == STN_CLICKED)
-        {
-            // Store the selection for next app run
-            StoreSplitTunnel();
-
-            int state = g_connectionManager.GetState();
-            if (CONNECTION_MANAGER_STATE_STOPPED != state)
-            {
-                g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
-                g_connectionManager.Start(GetSelectedTransport(), GetSplitTunnel());
-            }
-        }
-
         // Info link clicked
         
         else if (lParam == (LPARAM)g_hInfoLinkStatic && wmEvent == STN_CLICKED)
@@ -1039,6 +861,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // NOTE: Info link may be opened when not tunneled
             
             OpenBrowser(INFO_LINK_URL);
+        }
+
+        // Settings button clicked
+
+        else if (lParam == (LPARAM)g_hSettingsButton && wmEvent == BN_CLICKED)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Settings called"), __TFUNCTION__);
+            Settings::Show(g_hInst, hWnd);
         }
 
         // Feedback button clicked
@@ -1159,4 +989,10 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+
+// DEBUG TEMP
+tstring GetSelectedTransport() {
+    return _T("SSH+");
 }

@@ -115,3 +115,28 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 #define __STRINGIZEX(x) #x
 #define STRINGIZE(x) __STRINGIZEX(x)
 #endif
+
+/*
+AutoHANDLE and AutoMUTEX
+*/
+class AutoHANDLE
+{
+public:
+    AutoHANDLE(HANDLE handle) { m_handle = handle; }
+    ~AutoHANDLE() { CloseHandle(m_handle); }
+    operator HANDLE() { return m_handle; }
+private:
+    HANDLE m_handle;
+};
+
+class AutoMUTEX
+{
+public:
+    AutoMUTEX(HANDLE mutex, TCHAR* logInfo = 0);
+    ~AutoMUTEX();
+private:
+    HANDLE m_mutex;
+    tstring m_logInfo;
+};
+
+#define AUTOMUTEX(mutex) 
