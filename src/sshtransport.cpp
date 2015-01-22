@@ -35,6 +35,7 @@
 #define DEFAULT_PLONK_SOCKS_PROXY_PORT  1080
 #define SSH_CONNECTION_TIMEOUT_SECONDS  20
 #define PLONK_EXE_NAME                  _T("psiphon3-plonk.exe")
+#define CAPABILITY_OSSH                 "OSSH"
 #define CAPABILITY_UNFRONTED_MEEK       "UNFRONTED-MEEK"
 #define CAPABILITY_FRONTED_MEEK         "FRONTED-MEEK"
 
@@ -451,6 +452,11 @@ void SSHTransportBase::TransportConnectHelper()
     {
         my_print(NOT_SENSITIVE, false, _T("No known servers support this transport type."));
 
+        if (RetryOnProtocolNotSupported())
+        {
+            throw TransportFailed();
+        }
+
         // Cause this transport's connect sequence (and immediate failover) to 
         // stop. Otherwise we'll quickly fail over and over.
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_CANCEL);
@@ -569,11 +575,19 @@ void SSHTransportBase::TransportConnectHelper()
            && (connectionAttempts.size() > 0                // either ongoing connection attempts
                || nextServerEntry != serverEntries.end()))  // or more servers left to try
     {
-        if (!tentativeConnection.plonkConnection.get()
-            && GetTickCountDiff(lastProgressTime, GetTickCount()) > PROGRESS_INTERVAL_MS)
+        if (!tentativeConnection.plonkConnection.get())
         {
-            my_print(NOT_SENSITIVE, false, _T("Have attempted to connect to %d of %d known servers. Still trying..."), totalInitialServers - (serverEntries.end() - nextServerEntry) - connectionAttempts.size(), totalInitialServers), 
-            lastProgressTime = GetTickCount();
+            if (GetTickCountDiff(lastProgressTime, GetTickCount()) > TARGET_PROTOCOL_ROTATION_PERIOD_MS)
+            {
+                // Note: HandleRotatePeriodElapsed throws TransportFailed unconditionally
+                HandleRotatePeriodElapsed();
+            }
+
+            if (GetTickCountDiff(lastProgressTime, GetTickCount()) > PROGRESS_INTERVAL_MS)
+            {
+                my_print(NOT_SENSITIVE, false, _T("Have attempted to connect to %d of %d known servers. Still trying..."), totalInitialServers - (serverEntries.end() - nextServerEntry) - connectionAttempts.size(), totalInitialServers), 
+                lastProgressTime = GetTickCount();
+            }
         }
 
         // Iterate in reverse, so we can remove dead connections.
@@ -680,34 +694,41 @@ void SSHTransportBase::TransportConnectHelper()
                 throw Abort();
             }
 
-            ConnectionInfo newConnection;
-            newConnection.firstServer = (nextServerEntry == serverEntries.begin());
-            newConnection.startTime = GetTickCount();
-            newConnection.sessionInfo.Set(*nextServerEntry++);
-
-            if (InitiateConnection(m_meekClient->GetListenPort(), 
-                    newConnection.firstServer, 
-                    newConnection.sessionInfo, 
-                    newConnection.plonkConnection))
+            try
             {
-                tstring transportRequestName, serverAddress;
-                newConnection.plonkConnection->GetTransportInfo(transportRequestName, serverAddress);
-                tstring serverEntryAddress = NarrowToTString(newConnection.sessionInfo.GetServerAddress());
-                if (serverAddress != serverEntryAddress)
+                ConnectionInfo newConnection;
+                newConnection.firstServer = (nextServerEntry == serverEntries.begin());
+                newConnection.startTime = GetTickCount();
+                newConnection.sessionInfo.Set(*nextServerEntry++);
+
+                if (InitiateConnection(m_meekClient->GetListenPort(), 
+                        newConnection.firstServer, 
+                        newConnection.sessionInfo, 
+                        newConnection.plonkConnection))
                 {
-                    serverAddress = serverEntryAddress + _T(" via ") + serverAddress;
+                    tstring transportRequestName, serverAddress;
+                    newConnection.plonkConnection->GetTransportInfo(transportRequestName, serverAddress);
+                    tstring serverEntryAddress = NarrowToTString(newConnection.sessionInfo.GetServerAddress());
+                    if (serverAddress != serverEntryAddress)
+                    {
+                        serverAddress = serverEntryAddress + _T(" via ") + serverAddress;
+                    }
+
+                    my_print(
+                        NOT_SENSITIVE, true, 
+                        _T("%s:%d: Server connect STARTED, adding: %s, using %s. Servers connecting: %d. Servers remaining: %d."), 
+                        __TFUNCTION__, __LINE__, 
+                        serverAddress.c_str(), 
+                        transportRequestName.c_str(), 
+                        connectionAttempts.size(), 
+                        serverEntries.end() - nextServerEntry);
+
+                    connectionAttempts.push_back(newConnection);
                 }
-
-                my_print(
-                    NOT_SENSITIVE, true, 
-                    _T("%s:%d: Server connect STARTED, adding: %s, using %s. Servers connecting: %d. Servers remaining: %d."), 
-                    __TFUNCTION__, __LINE__, 
-                    serverAddress.c_str(), 
-                    transportRequestName.c_str(), 
-                    connectionAttempts.size(), 
-                    serverEntries.end() - nextServerEntry);
-
-                connectionAttempts.push_back(newConnection);
+            }
+            catch (TransportFailed&)
+            {
+                // Skip this server and proceed with the next
             }
         }
 
@@ -1503,6 +1524,7 @@ void OSSHTransport::GetFactory(
 OSSHTransport::OSSHTransport()
     : SSHTransportBase(OSSH_TRANSPORT_PROTOCOL_NAME)
 {
+    InitializeTargetProtocols();
 }
 
 OSSHTransport::~OSSHTransport()
@@ -1529,9 +1551,7 @@ tstring OSSHTransport::GetTransportRequestName() const
 
 bool OSSHTransport::ServerHasCapabilities(const ServerEntry& entry) const
 {
-    return ( entry.HasCapability(TStringToNarrow(GetTransportProtocolName())) ||
-        entry.HasCapability(string(CAPABILITY_UNFRONTED_MEEK)) ||
-         entry.HasCapability(string(CAPABILITY_FRONTED_MEEK)));
+    return !SelectProtocol(entry).empty();
 }
 
 void OSSHTransport::GetSSHParams(
@@ -1558,7 +1578,11 @@ void OSSHTransport::GetSSHParams(
     o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
     o_serverPort = sessionInfo.GetSSHObfuscatedPort();
     o_serverHostKey = NarrowToTString(sessionInfo.GetSSHHostKey());
-    o_transportRequestName = OSSH_REQUEST_PROTOCOL_NAME;
+
+    // From current list of target protocols, select first supported protocol for this server 
+    tstring protocol = SelectProtocol(sessionInfo.GetServerEntry());
+
+    o_transportRequestName = protocol;
 
     // Client transmits its session ID prepended to the SSH password; the server
     // uses this to associate the tunnel with web requests -- for GeoIP region stats
@@ -1570,6 +1594,7 @@ void OSSHTransport::GetSSHParams(
     tstringstream args;
     args << _T(" -ssh -C -N -batch");
 
+    bool hasUpstreamProxy = false;
     if(GetUserParentProxySettings(
         firstServer,
         sessionInfo,
@@ -1591,24 +1616,30 @@ void OSSHTransport::GetSSHParams(
         {
             args << _T(" -proxy_password ") << proxy_password.c_str();
         }
+        hasUpstreamProxy = true;
     }
-    else if (sessionInfo.GetServerEntry().HasCapability(CAPABILITY_FRONTED_MEEK) || 
-        sessionInfo.GetServerEntry().HasCapability(CAPABILITY_UNFRONTED_MEEK))
+
+    // TODO: Add upstream HTTP proxy support to other protocols.
+    if (hasUpstreamProxy && protocol != OSSH_REQUEST_PROTOCOL_NAME)
     {
-        if(sessionInfo.GetServerEntry().HasCapability(CAPABILITY_FRONTED_MEEK))
+        throw TransportFailed();
+    }
+
+    if (protocol == FRONTED_MEEK_REQUEST_PROTOCOL_NAME || 
+        protocol == UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME)
+    {
+        if (protocol == FRONTED_MEEK_REQUEST_PROTOCOL_NAME)
         {
             o_serverAddress = NarrowToTString(sessionInfo.GetMeekFrontingDomain());
             o_serverPort = 443; 
-            o_transportRequestName = FRONTED_MEEK_REQUEST_PROTOCOL_NAME;
         }
-        else if(sessionInfo.GetServerEntry().HasCapability(CAPABILITY_UNFRONTED_MEEK)) 
+        else if (protocol == UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME) 
         {
             o_serverAddress = NarrowToTString(sessionInfo.GetServerAddress());
             o_serverPort = sessionInfo.GetMeekServerPort();
-            o_transportRequestName = UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME;
         }
 
-        //Parameters passed to the meek client via SOCKS interface(via -proxy_username)
+        // Parameters passed to the meek client via SOCKS interface(via -proxy_username)
         
         string sArg;
 
@@ -1622,7 +1653,6 @@ void OSSHTransport::GetSSHParams(
 
         sArg = sessionInfo.GetMeekObfuscatedKey();
         args << _T("obfskey=") << EscapeSOCKSArg(sArg.c_str()) << _T(";");
-
 
         sArg = sessionInfo.GetMeekFrontingHost();
         if(!sArg.empty())
@@ -1673,6 +1703,87 @@ bool OSSHTransport::IsHandshakeRequired(const ServerEntry& entry) const
     return !sufficientInfo;
 }
 
+void OSSHTransport::LogTargetProtocols(const char* message) const
+{
+    my_print(NOT_SENSITIVE, true, _T("LogTargetProtocols"));
+    ostringstream ss;
+    for (int i = 0; i < mTargetProtocols[mCurrentTargetProtocols].size(); i++)
+    {
+        my_print(NOT_SENSITIVE, true, mTargetProtocols[mCurrentTargetProtocols][i].c_str());
+        ss << "- " << TStringToNarrow(mTargetProtocols[mCurrentTargetProtocols][i]) << "\n";
+    }
+    AddDiagnosticInfoYaml(message, ss.str().c_str());
+}
+
+void OSSHTransport::InitializeTargetProtocols()
+{
+    mCurrentTargetProtocols = 0;
+    mTargetProtocols.clear();
+
+    mTargetProtocols.push_back(vector<tstring>());
+    mTargetProtocols[0].push_back(OSSH_REQUEST_PROTOCOL_NAME);
+    mTargetProtocols[0].push_back(UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME);
+    mTargetProtocols[0].push_back(FRONTED_MEEK_REQUEST_PROTOCOL_NAME);
+
+    mTargetProtocols.push_back(vector<tstring>());
+    mTargetProtocols[1].push_back(OSSH_REQUEST_PROTOCOL_NAME);
+
+    mTargetProtocols.push_back(vector<tstring>());
+    mTargetProtocols[2].push_back(UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME);
+
+    mTargetProtocols.push_back(vector<tstring>());
+    mTargetProtocols[3].push_back(FRONTED_MEEK_REQUEST_PROTOCOL_NAME);
+
+    LogTargetProtocols("InitializeTargetProtocols");
+}
+
+void OSSHTransport::RotateTargetProtocols()
+{
+    mCurrentTargetProtocols = (mCurrentTargetProtocols + 1) % mTargetProtocols.size();
+    LogTargetProtocols("RotateTargetProtocols");
+}
+
+void OSSHTransport::HandleRotatePeriodElapsed()
+{
+    AddDiagnosticInfoYaml("HandleRotatePeriodElapsed", "");
+    RotateTargetProtocols();
+    throw TransportFailed();
+}
+
+bool OSSHTransport::RetryOnProtocolNotSupported()
+{
+    // When the target protocol set is restricted, we want to retry when no supporting servers are available
+    return mCurrentTargetProtocols != 0;
+}
+
+tstring OSSHTransport::SelectProtocol(const ServerEntry& serverEntry) const
+{
+    for (int i = 0; i < mTargetProtocols[mCurrentTargetProtocols].size(); i++)
+    {
+        if (SupportsProtocol(serverEntry, mTargetProtocols[mCurrentTargetProtocols][i]))
+        {
+            return mTargetProtocols[mCurrentTargetProtocols][i];
+        }
+    }
+    return _T("");
+}
+
+bool OSSHTransport::SupportsProtocol(const ServerEntry& serverEntry, const tstring& protocol) const
+{
+    if (protocol == OSSH_REQUEST_PROTOCOL_NAME)
+    {
+        return serverEntry.HasCapability(CAPABILITY_OSSH);
+    }
+    else if (protocol == UNFRONTED_MEEK_REQUEST_PROTOCOL_NAME)
+    {
+        return serverEntry.HasCapability(CAPABILITY_UNFRONTED_MEEK);
+    }
+    else if (protocol == FRONTED_MEEK_REQUEST_PROTOCOL_NAME)
+    {
+        return serverEntry.HasCapability(CAPABILITY_FRONTED_MEEK);
+    }
+    return false;
+}
 
 /******************************************************************************
  Helpers
