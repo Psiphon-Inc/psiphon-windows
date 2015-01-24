@@ -82,8 +82,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="psiclient.ico" />
-    <None Include="small.ico" />
+    <None Include="3rdParty\polipo.exe" />
+    <None Include="3rdParty\psiphon-tunnel-core.exe" />
+    <None Include="feedback.html" />
+    <None Include="settings.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\cryptopp\3way.h" />
@@ -242,7 +244,7 @@
     <ClInclude Include="local_proxy.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="psiclient.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="serverlist.h" />
     <ClInclude Include="server_list_reordering.h" />
     <ClInclude Include="server_request.h" />
@@ -323,6 +325,15 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="psiclient.ico" />
+    <Image Include="small.ico" />
+    <Image Include="banner.bmp" />
+    <Image Include="email.bmp" />
+    <Image Include="feedback.bmp" />
+    <Image Include="settings.bmp" />
+    <Image Include="toggle_images.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
