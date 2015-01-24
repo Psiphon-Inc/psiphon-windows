@@ -34,7 +34,7 @@
 #include "embeddedvalues.h"
 #include "transport.h"
 #include "config.h"
-#include "settings.h"
+#include "usersettings.h"
 #include "utilities.h"
 #include "webbrowser.h"
 #include "limitsingleinstance.h"
@@ -42,7 +42,6 @@
 #include "stopsignal.h"
 #include "diagnostic_info.h"
 #include "systemproxysettings.h"
-#include "settings.h"
 
 
 //==== Globals ================================================================
@@ -808,9 +807,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 g_bShowDebugMessages = !g_bShowDebugMessages;
                 my_print(NOT_SENSITIVE, false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
                 break;
-            // TODO: remove help, about, and exit?  The menu is currently hidden
-            case IDM_HELP:
-                break;
+            // TODO: remove about, and exit?  The menu is currently hidden
             case IDM_ABOUT:
                 DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;

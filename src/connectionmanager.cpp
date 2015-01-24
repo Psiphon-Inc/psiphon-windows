@@ -56,7 +56,7 @@ ConnectionManager::ConnectionManager(void) :
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
-    InitializeUserSettings();
+    Settings::Initialize();
 }
 
 ConnectionManager::~ConnectionManager(void)
@@ -69,7 +69,7 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
 {
     AutoMUTEX lock(m_mutex);
     
-    if (!UserSkipBrowser())
+    if (!Settings::SkipBrowser())
     {
         vector<tstring> urls = m_currentSessionInfo.GetHomepages();
         if (urls.size() == 0 && defaultHomePage)

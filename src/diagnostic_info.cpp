@@ -26,7 +26,7 @@
 #include "utilities.h"
 #include "diagnostic_info.h"
 #include "osrng.h"
-#include "settings.h"
+#include "usersettings.h"
 
 
 HANDLE g_diagnosticHistoryMutex = CreateMutex(NULL, FALSE, 0);
