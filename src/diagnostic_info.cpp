@@ -26,6 +26,7 @@
 #include "utilities.h"
 #include "diagnostic_info.h"
 #include "osrng.h"
+#include "usersettings.h"
 
 
 HANDLE g_diagnosticHistoryMutex = CreateMutex(NULL, FALSE, 0);
@@ -976,7 +977,7 @@ void GetDiagnosticInfo(YAML::Emitter& out)
     out << YAML::Key << "PROPAGATION_CHANNEL_ID" << YAML::Value << PROPAGATION_CHANNEL_ID;
     out << YAML::Key << "SPONSOR_ID" << YAML::Value << SPONSOR_ID;
     out << YAML::Key << "CLIENT_VERSION" << YAML::Value << CLIENT_VERSION;
-    out << YAML::Key << "splitTunnel" << YAML::Value << GetSplitTunnel();
+    out << YAML::Key << "splitTunnel" << YAML::Value << Settings::SplitTunnel();
     out << YAML::Key << "selectedTransport" << YAML::Value << TStringToNarrow(GetSelectedTransport()).c_str();
     out << YAML::EndMap; // embedded
 

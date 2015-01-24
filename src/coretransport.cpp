@@ -300,14 +300,22 @@ string CoreTransportBase::GetUpstreamProxyAddress()
 {
     // Note: upstream SOCKS proxy and proxy auth currently not supported in core
 
+    if (Settings::SkipUpstreamProxy())
+    {
+        // Don't use an upstream proxy of any kind.
+        return "";
+    }
+
     ostringstream upstreamProxyAddress;
 
-    if (UserSSHParentProxyHostname().length() > 0 && UserSSHParentProxyType() == "https")
+    if (Settings::UpstreamProxyHostname().length() > 0 && Settings::UpstreamProxyType() == "https")
     {
-        upstreamProxyAddress << UserSSHParentProxyHostname() << ":" << UserSSHParentProxyPort();
+        // Use a custom, user-set upstream proxy
+        upstreamProxyAddress << Settings::UpstreamProxyHostname() << ":" << Settings::UpstreamProxyPort();
     }
     else
     {
+        // Use the native default proxy (that is, the one that was set before we tried to connect).
         DecomposedProxyConfig proxyConfig;
         GetNativeDefaultProxyInfo(proxyConfig);
 

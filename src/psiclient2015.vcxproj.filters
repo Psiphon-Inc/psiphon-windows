@@ -55,7 +55,7 @@
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="psiclient.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="sessioninfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />
@@ -541,10 +541,11 @@
   <ItemGroup>
     <Image Include="psiclient.ico" />
     <Image Include="small.ico" />
+    <Image Include="settings.bmp" />
+    <Image Include="toggle_images.bmp" />
     <Image Include="banner.bmp" />
     <Image Include="email.bmp" />
     <Image Include="feedback.bmp" />
-    <Image Include="settings.bmp" />
-    <Image Include="toggle_images.bmp" />
+    <Image Include="settings2.bmp" />
   </ItemGroup>
 </Project>
