@@ -26,6 +26,7 @@
 
 
 #define NULL_PORT                       0
+#define MAX_PORT                        0xFFFF
 
 #define SPLIT_TUNNEL_NAME               "SplitTunnel"
 #define SPLIT_TUNNEL_DEFAULT            FALSE
@@ -191,24 +192,24 @@ string Settings::Transport()
     return transport;
 }
 
-UINT16 Settings::LocalHttpProxyPort()
+unsigned int Settings::LocalHttpProxyPort()
 {
     DWORD port = GetUserSettingDword(HTTP_PROXY_PORT_NAME, HTTP_PROXY_PORT_DEFAULT);
-    if (port > UINT16_MAX)
+    if (port > MAX_PORT)
     {
         port = HTTP_PROXY_PORT_DEFAULT;
     }
-    return (UINT16)port;
+    return (unsigned int)port;
 }
 
-UINT16 Settings::LocalSocksProxyPort()
+unsigned int Settings::LocalSocksProxyPort()
 {
     DWORD port = GetUserSettingDword(SOCKS_PROXY_PORT_NAME, SOCKS_PROXY_PORT_DEFAULT);
-    if (port > UINT16_MAX)
+    if (port > MAX_PORT)
     {
         port = SOCKS_PROXY_PORT_DEFAULT;
     }
-    return (UINT16)port;
+    return (unsigned int)port;
 }
 
 /*
@@ -242,13 +243,12 @@ string Settings::UpstreamProxyHostname()
     return GetUserSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
 }
 
-UINT16 Settings::UpstreamProxyPort()
+unsigned int Settings::UpstreamProxyPort()
 {
     DWORD port = GetUserSettingDword(UPSTREAM_PROXY_PORT_NAME, UPSTREAM_PROXY_PORT_DEFAULT);
-    if (port > UINT16_MAX)
+    if (port > MAX_PORT)
     {
         port = UPSTREAM_PROXY_PORT_DEFAULT;
     }
-    return (UINT16)port;
+    return (unsigned int)port;
 }
-

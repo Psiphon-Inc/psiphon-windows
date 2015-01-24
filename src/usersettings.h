@@ -30,14 +30,14 @@ namespace Settings
     string Transport();
     
     // Returns 0 if port should be chosen automatically.
-    UINT16 LocalHttpProxyPort();
+    unsigned int LocalHttpProxyPort();
     // Returns 0 if port should be chosen automatically.
-    UINT16 LocalSocksProxyPort();
+    unsigned int LocalSocksProxyPort();
 
     bool SkipUpstreamProxy();
     string UpstreamProxyType();
     string UpstreamProxyHostname();
-    UINT16 UpstreamProxyPort();
+    unsigned int UpstreamProxyPort();
 
     bool SkipBrowser();
     bool SkipProxySettings();
