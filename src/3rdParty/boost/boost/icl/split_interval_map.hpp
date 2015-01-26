@@ -72,18 +72,11 @@ public:
     /// Copy constructor
     split_interval_map(const split_interval_map& src): base_type(src) {}
 
-    explicit split_interval_map(domain_mapping_type& base_pair): base_type()
+    explicit split_interval_map(const domain_mapping_type& base_pair): base_type()
     { this->add(base_pair); }
 
     explicit split_interval_map(const value_type& value_pair): base_type()
     { this->add(value_pair); }
-
-    /// Copy assignment operator
-    template<class SubType>
-    split_interval_map& operator =
-        (const interval_base_map<SubType,DomainT,CodomainT,
-                                 Traits,Compare,Combine,Section,Interval,Alloc>& src)
-    { this->assign(src); return *this; }
 
     /// Assignment from a base interval_map.
     template<class SubType>
@@ -94,7 +87,17 @@ public:
         this->_map.insert(src.begin(), src.end());
     }
 
-#   ifndef BOOST_NO_RVALUE_REFERENCES
+    /// Assignment operator for base type
+    template<class SubType>
+    split_interval_map& operator =
+        (const interval_base_map<SubType,DomainT,CodomainT,
+                                 Traits,Compare,Combine,Section,Interval,Alloc>& src)
+    { 
+        this->assign(src); 
+        return *this; 
+    }
+
+#   ifndef BOOST_ICL_NO_CXX11_RVALUE_REFERENCES
     //==========================================================================
     //= Move semantics
     //==========================================================================
@@ -105,14 +108,23 @@ public:
     {}
 
     /// Move assignment operator
-    split_interval_map& operator = (split_interval_map&& src)
+    split_interval_map& operator = (split_interval_map src)
     { 
         base_type::operator=(boost::move(src));
         return *this;
     }
 
     //==========================================================================
-#   endif // BOOST_NO_RVALUE_REFERENCES
+#   else
+
+    /// Assignment operator
+    split_interval_map& operator = (const split_interval_map& src)
+    { 
+        base_type::operator=(src);
+        return *this;
+    }
+
+#   endif // BOOST_ICL_NO_CXX11_RVALUE_REFERENCES
 
 private:
     // Private functions that shall be accessible by the baseclass:

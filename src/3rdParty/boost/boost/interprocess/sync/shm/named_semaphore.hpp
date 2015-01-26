@@ -11,7 +11,7 @@
 #ifndef BOOST_INTERPROCESS_SHM_NAMED_SEMAPHORE_HPP
 #define BOOST_INTERPROCESS_SHM_NAMED_SEMAPHORE_HPP
 
-#if (defined _MSC_VER) && (_MSC_VER >= 1200)
+#if defined(_MSC_VER)
 #  pragma once
 #endif
 
@@ -65,7 +65,8 @@ class shm_named_semaphore
    interprocess_semaphore *semaphore() const
    {  return static_cast<interprocess_semaphore*>(m_shmem.get_user_address()); }
 
-   managed_open_or_create_impl<shared_memory_object> m_shmem;
+   typedef ipcdetail::managed_open_or_create_impl<shared_memory_object, 0, true, false> open_create_impl_t;
+   open_create_impl_t m_shmem;
    typedef named_creation_functor<interprocess_semaphore, int> construct_func_t;
    /// @endcond
 };
@@ -81,8 +82,7 @@ inline shm_named_semaphore::shm_named_semaphore
    :  m_shmem  (create_only
                ,name
                ,sizeof(interprocess_semaphore) +
-                  managed_open_or_create_impl<shared_memory_object>::
-                     ManagedOpenOrCreateUserOffset
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
                ,read_write
                ,0
                ,construct_func_t(DoCreate, initialCount)
@@ -94,8 +94,7 @@ inline shm_named_semaphore::shm_named_semaphore
    :  m_shmem  (open_or_create
                ,name
                ,sizeof(interprocess_semaphore) +
-                  managed_open_or_create_impl<shared_memory_object>::
-                     ManagedOpenOrCreateUserOffset
+                  open_create_impl_t::ManagedOpenOrCreateUserOffset
                ,read_write
                ,0
                ,construct_func_t(DoOpenOrCreate, initialCount)
@@ -121,13 +120,7 @@ inline bool shm_named_semaphore::try_wait()
 {  return semaphore()->try_wait();   }
 
 inline bool shm_named_semaphore::timed_wait(const boost::posix_time::ptime &abs_time)
-{
-   if(abs_time == boost::posix_time::pos_infin){
-      this->wait();
-      return true;
-   }
-   return semaphore()->timed_wait(abs_time);
-}
+{  return semaphore()->timed_wait(abs_time); }
 
 inline bool shm_named_semaphore::remove(const char *name)
 {  return shared_memory_object::remove(name); }
