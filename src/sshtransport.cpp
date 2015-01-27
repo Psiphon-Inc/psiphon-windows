@@ -1707,7 +1707,7 @@ void OSSHTransport::LogTargetProtocols(const char* message) const
 {
     my_print(NOT_SENSITIVE, true, _T("LogTargetProtocols"));
     ostringstream ss;
-    for (int i = 0; i < mTargetProtocols[mCurrentTargetProtocols].size(); i++)
+    for (size_t i = 0; i < mTargetProtocols[mCurrentTargetProtocols].size(); i++)
     {
         my_print(NOT_SENSITIVE, true, mTargetProtocols[mCurrentTargetProtocols][i].c_str());
         ss << "- " << TStringToNarrow(mTargetProtocols[mCurrentTargetProtocols][i]) << "\n";
@@ -1758,7 +1758,7 @@ bool OSSHTransport::RetryOnProtocolNotSupported()
 
 tstring OSSHTransport::SelectProtocol(const ServerEntry& serverEntry) const
 {
-    for (int i = 0; i < mTargetProtocols[mCurrentTargetProtocols].size(); i++)
+    for (size_t i = 0; i < mTargetProtocols[mCurrentTargetProtocols].size(); i++)
     {
         if (SupportsProtocol(serverEntry, mTargetProtocols[mCurrentTargetProtocols][i]))
         {
