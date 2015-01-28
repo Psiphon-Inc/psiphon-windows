@@ -89,6 +89,7 @@ protected:
         boost::shared_ptr<PlonkConnection>& o_plonkConnection);
 
     virtual void HandleRotatePeriodElapsed() {};
+    virtual void HandleRotateAllServersFailed() {throw TransportFailed();};
 
 protected:
     tstring m_plonkPath;
@@ -162,6 +163,7 @@ public:
 
 protected:
     virtual void HandleRotatePeriodElapsed();
+    virtual void HandleRotateAllServersFailed();
     virtual bool RetryOnProtocolNotSupported();
     void LogTargetProtocols(const char* message) const;
     void InitializeTargetProtocols();

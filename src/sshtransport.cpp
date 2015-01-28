@@ -745,7 +745,7 @@ void SSHTransportBase::TransportConnectHelper()
     }
     else
     {
-        throw TransportFailed();
+        HandleRotateAllServersFailed();
     }
 
     assert(m_currentPlonk.get() != NULL);
@@ -1746,6 +1746,13 @@ void OSSHTransport::RotateTargetProtocols()
 void OSSHTransport::HandleRotatePeriodElapsed()
 {
     AddDiagnosticInfoYaml("HandleRotatePeriodElapsed", "");
+    RotateTargetProtocols();
+    throw TransportFailed();
+}
+
+void OSSHTransport::HandleRotateAllServersFailed()
+{
+    AddDiagnosticInfoYaml("HandleRotateAllServersFailed", "");
     RotateTargetProtocols();
     throw TransportFailed();
 }
