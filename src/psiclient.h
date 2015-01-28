@@ -63,8 +63,3 @@ struct MessageHistoryEntry
 };
 
 void GetMessageHistory(vector<MessageHistoryEntry>& history);
-
-
-//==== miscellaneous====================================================
-
-tstring GetSelectedTransport();

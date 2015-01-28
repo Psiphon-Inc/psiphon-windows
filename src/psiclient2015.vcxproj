@@ -90,6 +90,7 @@
     <None Include="3rdParty\psiphon-tunnel-core.exe" />
     <None Include="feedback.html" />
     <None Include="settings.html" />
+    <None Include="webui\settings.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\cryptopp\3way.h" />
@@ -332,7 +333,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="psiclient.ico" />
-    <Image Include="settings2.bmp" />
     <Image Include="small.ico" />
     <Image Include="banner.bmp" />
     <Image Include="email.bmp" />

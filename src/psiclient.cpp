@@ -54,7 +54,6 @@ TCHAR g_szWindowClass[MAX_LOADSTRING];
 
 HWND g_hWnd;
 ConnectionManager g_connectionManager;
-tstring g_lastTransportSelection;
 
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
@@ -79,12 +78,12 @@ LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887
 
 
 const int SPACER = 5;
-const int FIRST_ROW_HEIGHT = 48;
+const int FIRST_ROW_HEIGHT = 76; // must be like SETTINGS_BUTTON_HEIGHT + SPACER*2
 
 const int TOGGLE_BUTTON_X = 0 + SPACER;
-const int TOGGLE_BUTTON_IMAGE_WIDTH = FIRST_ROW_HEIGHT;
-const int TOGGLE_BUTTON_WIDTH = 56;
-const int TOGGLE_BUTTON_HEIGHT = 56;
+const int TOGGLE_BUTTON_IMAGE_WIDTH = 48;
+const int TOGGLE_BUTTON_WIDTH = 66;
+const int TOGGLE_BUTTON_HEIGHT = 66;
 const int TOGGLE_BUTTON_Y = 0 + SPACER;
 
 const int BANNER_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
@@ -92,17 +91,17 @@ const int BANNER_WIDTH = 200;
 const int BANNER_HEIGHT = FIRST_ROW_HEIGHT;
 const int BANNER_Y = 0 + SPACER;
 
-const int SETTINGS_BUTTON_IMAGE_WIDTH = FIRST_ROW_HEIGHT;
-const int SETTINGS_BUTTON_WIDTH = 56;
-const int SETTINGS_BUTTON_HEIGHT = 56;
+const int SETTINGS_BUTTON_IMAGE_WIDTH = 56;
+const int SETTINGS_BUTTON_WIDTH = 66;
+const int SETTINGS_BUTTON_HEIGHT = 66;
 const int SETTINGS_BUTTON_X = BANNER_X + BANNER_WIDTH + SPACER;
 const int SETTINGS_BUTTON_Y = TOGGLE_BUTTON_Y;
 
-const int FEEDBACK_BUTTON_IMAGE_WIDTH = FIRST_ROW_HEIGHT;
-const int FEEDBACK_BUTTON_WIDTH = 56;
-const int FEEDBACK_BUTTON_HEIGHT = 56;
+const int FEEDBACK_BUTTON_IMAGE_WIDTH = SETTINGS_BUTTON_IMAGE_WIDTH;
+const int FEEDBACK_BUTTON_WIDTH = SETTINGS_BUTTON_WIDTH;
+const int FEEDBACK_BUTTON_HEIGHT = SETTINGS_BUTTON_HEIGHT;
 const int FEEDBACK_BUTTON_X = SETTINGS_BUTTON_X + SETTINGS_BUTTON_WIDTH + SPACER;
-const int FEEDBACK_BUTTON_Y = TOGGLE_BUTTON_Y;
+const int FEEDBACK_BUTTON_Y = SETTINGS_BUTTON_Y;
 
 const int WINDOW_WIDTH = FEEDBACK_BUTTON_X + FEEDBACK_BUTTON_WIDTH + SPACER + 20; // non-client-area hack adjustment
 const int WINDOW_HEIGHT = 200;
@@ -113,12 +112,13 @@ const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
 const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
 
 const int LOG_LIST_BOX_X = 0;
-const int LOG_LIST_BOX_Y = TOGGLE_BUTTON_Y + TOGGLE_BUTTON_HEIGHT + SPACER;
+const int LOG_LIST_BOX_Y = FIRST_ROW_HEIGHT + SPACER;
 const int LOG_LIST_BOX_WIDTH = WINDOW_WIDTH;
 const int LOG_LIST_BOX_HEIGHT = WINDOW_HEIGHT - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT);
 
 
 //==== Controls ================================================================
+
 
 HWND g_hToggleButton = NULL;
 HIMAGELIST g_hToggleButtonImageList = NULL;
@@ -318,9 +318,9 @@ void CreateControls(HWND hWndParent)
     g_hFeedbackButtonImageList = ImageList_LoadImage(
         g_hInst,
         MAKEINTRESOURCE(IDB_FEEDBACK_BUTTON_IMAGES),
-        FEEDBACK_BUTTON_WIDTH,
+        FEEDBACK_BUTTON_IMAGE_WIDTH,
         0,
-        CLR_NONE,
+        CLR_DEFAULT,
         IMAGE_BITMAP,
         LR_CREATEDIBSECTION);
 
@@ -358,9 +358,9 @@ void CreateControls(HWND hWndParent)
     g_hSettingsButtonImageList = ImageList_LoadImage(
         g_hInst,
         MAKEINTRESOURCE(IDB_SETTINGS_BUTTON_IMAGES),
-        SETTINGS_BUTTON_WIDTH,
+        SETTINGS_BUTTON_IMAGE_WIDTH,
         0,
-        CLR_NONE,
+        CLR_DEFAULT,
         IMAGE_BITMAP,
         LR_CREATEDIBSECTION);
 
@@ -477,7 +477,7 @@ void UpdateButton(HWND hWndParent)
     }
     else /* if CONNECTION_MANAGER_STATE_STARTING */
     {
-        iconIndex = 2 + (g_nextAnimationIndex++)%4;
+        iconIndex = 2 + (g_nextAnimationIndex++) % 4;
     }
 
     HANDLE currentIcon = (HANDLE)SendMessage(
@@ -689,7 +689,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PSICLIENT));
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.hbrBackground = (HBRUSH)(COLOR_BTNFACE+1);
     //wcex.lpszMenuName = MAKEINTRESOURCE(IDC_PSICLIENT);
     wcex.lpszMenuName = 0;
     wcex.lpszClassName = g_szWindowClass;
@@ -767,16 +767,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // when unexpectedly disconnected.
         SetTimer(hWnd, IDT_BUTTON_ANIMATION, 250, NULL);
 
-        // If there's a transport preference setting, restore it
-
-        // ************
-        // RestoreSelectedTransport();
-        // RestoreSplitTunnel();
-
-        // Start a connection on the selected transport
-
-        g_lastTransportSelection = GetSelectedTransport();
-        g_connectionManager.Toggle(g_lastTransportSelection, Settings::SplitTunnel());
+        // Start a connection
+        g_connectionManager.Toggle();
 
         break;
 
@@ -829,7 +821,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // See comment below about Stop() blocking the UI
             SetCursor(LoadCursor(0, IDC_WAIT));
 
-            g_connectionManager.Toggle(GetSelectedTransport(), Settings::SplitTunnel());
+            g_connectionManager.Toggle();
         }
 
         // Banner clicked
@@ -986,10 +978,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
-}
-
-
-// DEBUG TEMP
-tstring GetSelectedTransport() {
-    return _T("SSH+");
 }

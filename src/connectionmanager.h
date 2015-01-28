@@ -43,7 +43,7 @@ public:
     ConnectionManager();
     virtual ~ConnectionManager();
 
-    void Toggle(const tstring& transport, bool startSplitTunnel);
+    void Toggle();
     void Stop(DWORD reason);
     void Start(const tstring& transport, bool startSplitTunnel);
     time_t GetStartingTime();

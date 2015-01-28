@@ -33,13 +33,16 @@
 
 #define TRANSPORT_NAME                  "Transport"
 // TODO: Don't hardcode transport names? Or get rid of transport registry (since the dynamic-ness is gone anyway).
-#define TRANSPORT_DEFAULT               "SSH+"
-#define TRANSPORT_VPN                   "VPN"
+#define TRANSPORT_DEFAULT               _T("SSH+")
+#define TRANSPORT_VPN                   _T("VPN")
 
 #define HTTP_PROXY_PORT_NAME            "UserLocalHTTPProxyPort"
 #define HTTP_PROXY_PORT_DEFAULT         NULL_PORT
 #define SOCKS_PROXY_PORT_NAME           "UserLocalSOCKSProxyPort"
 #define SOCKS_PROXY_PORT_DEFAULT        NULL_PORT
+
+#define EGRESS_REGION_NAME              "EgressRegion"
+#define EGRESS_REGION_DEFAULT           ""
 
 #define SKIP_BROWSER_NAME               "UserSkipBrowser"
 #define SKIP_BROWSER_DEFAULT            FALSE
@@ -96,6 +99,24 @@ string GetUserSettingString(const string& settingName, string defaultValue)
     return value;
 }
 
+wstring GetUserSettingString(const string& settingName, wstring defaultValue)
+{
+    AutoMUTEX lock(g_registryMutex);
+
+    wstring value;
+
+    if (!ReadRegistryStringValue(settingName.c_str(), value))
+    {
+        // Write out the setting with a default value so that it's there
+        // for users to see and use, if they want to set it.
+        value = defaultValue;
+        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+        WriteRegistryStringValue(settingName, value, reason);
+    }
+
+    return value;
+}
+
 void Settings::Initialize()
 {
     // Read - and consequently write out default values for - all settings
@@ -107,22 +128,35 @@ void Settings::Initialize()
 
 void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
 {
-    //DialogBox(hInst, MAKEINTRESOURCE(IDD_SETTINGS_DLG), hParentWnd, SettingsDlg);
+    Json::Value config;
+    config["SplitTunnel"] = Settings::SplitTunnel();
+    config["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
+    config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+    config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+    config["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
+    config["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
+    config["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
+    config["EgressRegion"] = Settings::EgressRegion();
+    config["defaults"] = Json::Value();
+    config["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
+    config["defaults"]["VPN"] = FALSE;
+    config["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+    config["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+    config["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
+    config["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
+    config["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+    config["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
 
-    tstringstream args;
-    args << "{ \"SplitTunnel\": " << Settings::SplitTunnel() << ", ";
-    args << "\"VPN\": " << (Settings::Transport() == TRANSPORT_VPN) << ", ";
-    args << "\"LocalHttpProxyPort\": " << Settings::LocalHttpProxyPort() << ", ";
-    args << "\"LocalSocksProxyPort\": " << Settings::LocalSocksProxyPort() << ", ";
-    args << "\"UpstreamProxyHostname\": \"" << Settings::UpstreamProxyHostname().c_str() << "\", ";
-    args << "\"UpstreamProxyPort\": " << Settings::UpstreamProxyPort() << " }";
+    stringstream configDataStream;
+    Json::FastWriter jsonWriter;
+    configDataStream << jsonWriter.write(config);
 
     tstring result;
     if (ShowHTMLDlg(
         hParentWnd,
         _T("SETTINGS_HTML_RESOURCE"),
         GetLocaleName().c_str(),
-        args.str().c_str(),
+        NarrowToTString(configDataStream.str()).c_str(),
         result) != 1)
     {
         // error or user cancelled
@@ -169,6 +203,15 @@ void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", 0).asUInt();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
+
+        BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", 0).asUInt();
+        WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
+
+        string egressRegion = json.get("EgressRegion", "").asString();
+        WriteRegistryStringValue(
+            EGRESS_REGION_NAME,
+            egressRegion,
+            failReason);
     }
     catch (exception& e)
     {
@@ -182,9 +225,9 @@ bool Settings::SplitTunnel()
     return !!GetUserSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
 }
 
-string Settings::Transport()
+tstring Settings::Transport()
 {
-    string transport = GetUserSettingString(TRANSPORT_NAME, TRANSPORT_DEFAULT);
+    tstring transport = GetUserSettingString(TRANSPORT_NAME, TRANSPORT_DEFAULT);
     if (transport != TRANSPORT_VPN)
     {
         transport = TRANSPORT_DEFAULT;
@@ -212,25 +255,6 @@ unsigned int Settings::LocalSocksProxyPort()
     return (unsigned int)port;
 }
 
-/*
-Settings that are not exposed in the UI.
-*/
-
-bool Settings::SkipBrowser()
-{
-    return !!GetUserSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT);
-}
-    
-bool Settings::SkipProxySettings()
-{
-    return !!GetUserSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
-}
-
-bool Settings::SkipUpstreamProxy()
-{
-    return !!GetUserSettingDword(SKIP_UPSTREAM_PROXY_NAME, SKIP_UPSTREAM_PROXY_DEFAULT);
-}
-
 string Settings::UpstreamProxyType()
 {
     // We only support one type, but we'll call this to create the registry entry
@@ -251,4 +275,28 @@ unsigned int Settings::UpstreamProxyPort()
         port = UPSTREAM_PROXY_PORT_DEFAULT;
     }
     return (unsigned int)port;
+}
+
+bool Settings::SkipUpstreamProxy()
+{
+    return !!GetUserSettingDword(SKIP_UPSTREAM_PROXY_NAME, SKIP_UPSTREAM_PROXY_DEFAULT);
+}
+
+string Settings::EgressRegion()
+{
+    return GetUserSettingString(EGRESS_REGION_NAME, EGRESS_REGION_DEFAULT);
+}
+
+/*
+Settings that are not exposed in the UI.
+*/
+
+bool Settings::SkipBrowser()
+{
+    return !!GetUserSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT);
+}
+    
+bool Settings::SkipProxySettings()
+{
+    return !!GetUserSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
 }

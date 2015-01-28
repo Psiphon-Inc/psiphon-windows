@@ -80,13 +80,13 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
     }
 }
 
-void ConnectionManager::Toggle(const tstring& transport, bool startSplitTunnel)
+void ConnectionManager::Toggle()
 {
     // NOTE: no lock, to allow thread to access object
 
     if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        Start(transport,startSplitTunnel);
+        Start(Settings::Transport(), Settings::SplitTunnel());
     }
     else
     {

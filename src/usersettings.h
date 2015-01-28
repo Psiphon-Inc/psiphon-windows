@@ -27,7 +27,7 @@ namespace Settings
     void Show(HINSTANCE hInst, HWND hParentWnd);
 
     bool SplitTunnel();
-    string Transport();
+    tstring Transport();
     
     // Returns 0 if port should be chosen automatically.
     unsigned int LocalHttpProxyPort();
@@ -38,6 +38,8 @@ namespace Settings
     string UpstreamProxyType();
     string UpstreamProxyHostname();
     unsigned int UpstreamProxyPort();
+
+    string EgressRegion();
 
     bool SkipBrowser();
     bool SkipProxySettings();

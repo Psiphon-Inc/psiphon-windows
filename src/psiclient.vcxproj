@@ -86,6 +86,7 @@
     <None Include="3rdParty\psiphon-tunnel-core.exe" />
     <None Include="feedback.html" />
     <None Include="settings.html" />
+    <None Include="webui\settings.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\cryptopp\3way.h" />

@@ -55,7 +55,7 @@
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="psiclient.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="sessioninfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />

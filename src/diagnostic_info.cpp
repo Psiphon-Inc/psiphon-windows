@@ -978,7 +978,7 @@ void GetDiagnosticInfo(YAML::Emitter& out)
     out << YAML::Key << "SPONSOR_ID" << YAML::Value << SPONSOR_ID;
     out << YAML::Key << "CLIENT_VERSION" << YAML::Value << CLIENT_VERSION;
     out << YAML::Key << "splitTunnel" << YAML::Value << Settings::SplitTunnel();
-    out << YAML::Key << "selectedTransport" << YAML::Value << TStringToNarrow(GetSelectedTransport()).c_str();
+    out << YAML::Key << "selectedTransport" << YAML::Value << TStringToNarrow(Settings::Transport()).c_str();
     out << YAML::EndMap; // embedded
 
     SystemInfo sysInfo;

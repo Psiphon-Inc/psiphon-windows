@@ -260,6 +260,7 @@ bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& se
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
     config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
+    config["EgressRegion"] = Settings::EgressRegion();
 
     ostringstream configDataStream;
     Json::FastWriter jsonWriter;
@@ -286,7 +287,7 @@ bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& se
     }
     serverListFilename = path;
 
-    if (!WriteFile(serverListFilename, embedded_server_list))
+    if (!WriteFile(serverListFilename, EMBEDDED_SERVER_LIST))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
         return false;

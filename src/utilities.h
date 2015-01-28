@@ -59,6 +59,7 @@ enum RegistryFailureReason
 bool WriteRegistryDwordValue(const string& name, DWORD value);
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
 bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason);
+bool WriteRegistryStringValue(const string& name, const wstring& value, RegistryFailureReason& reason);
 bool ReadRegistryStringValue(LPCSTR name, string& value);
 bool ReadRegistryStringValue(LPCSTR name, wstring& value);
 
