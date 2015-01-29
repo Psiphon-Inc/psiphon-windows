@@ -599,7 +599,7 @@ bool WriteRegistryStringValue(const string& name, const wstring& value, Registry
         0,
         REG_SZ,
         (LPBYTE)value.c_str(),
-        value.length() + 1))) // Write the null terminator
+        (value.length()+1)*sizeof(wchar_t)))) // Write the null terminator
     {
         my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExW failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
 
