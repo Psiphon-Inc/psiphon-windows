@@ -318,8 +318,18 @@ vector<string> SessionInfo::GetDiscoveredServerEntries() const
     return m_servers;
 }
 
+bool SessionInfo::HasServerEntry() const
+{
+    return m_serverEntry.serverAddress.length() > 0;
+}
+
 ServerEntry SessionInfo::GetServerEntry() const 
 {
+    if (!HasServerEntry()) {
+        assert(false);
+        throw std::exception("SessionInfo::GetServerEntry(): !HasServerEntry()");
+    }
+
     // It is sometimes the case that we know more about our current server than
     // is contained in m_serverEntry or in the ServerEntry in the registry. So
     // we'll construct a new ServerEntry with the best info we have.

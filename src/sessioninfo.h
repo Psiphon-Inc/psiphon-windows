@@ -70,6 +70,9 @@ public:
     // A value of zero means disabled.
     DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
     
+    // Will be false if Set() never called with a valid ServerEntry.
+    bool HasServerEntry() const;
+    // Will throw exception if this instance does not have a ServerEntry.
     ServerEntry GetServerEntry() const;
 
     bool ParseHandshakeResponse(const string& response);

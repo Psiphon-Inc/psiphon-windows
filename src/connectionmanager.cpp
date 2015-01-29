@@ -942,9 +942,12 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
+        // CoreTransport does not provide a ServerEntry, but VPNTransport does.
+        ServerEntry* pServerEntry = m_currentSessionInfo.HasServerEntry() ? &m_currentSessionInfo.GetServerEntry() : 0;
+
         TransportRegistry::AddServerEntries(
             m_currentSessionInfo.GetDiscoveredServerEntries(), 
-            &m_currentSessionInfo.GetServerEntry());
+            pServerEntry);
     }
     catch (std::exception &ex)
     {
