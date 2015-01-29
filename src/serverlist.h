@@ -28,7 +28,7 @@ struct ServerEntry
     ServerEntry() : webServerPort(0), sshPort(0), sshObfuscatedPort(0) {}
     ServerEntry(const ServerEntry& src) { Copy(src); }
     ServerEntry(
-        const string& serverAddress, int webServerPort, 
+        const string& serverAddress, const string& region, int webServerPort,
         const string& webServerSecret, const string& webServerCertificate, 
         int sshPort, const string& sshUsername, const string& sshPassword, 
         const string& sshHostKey, int sshObfuscatedPort, 
@@ -48,6 +48,7 @@ struct ServerEntry
     int GetPreferredReachablityTestPort() const;
 
     string serverAddress;
+    string region;
     int webServerPort;
     string webServerSecret;
     string webServerCertificate;

@@ -441,7 +441,7 @@ ServerEntry members
 */
 
 ServerEntry::ServerEntry(
-    const string& serverAddress, int webServerPort, 
+    const string& serverAddress, const string& region, int webServerPort,
     const string& webServerSecret, const string& webServerCertificate, 
     int sshPort, const string& sshUsername, const string& sshPassword, 
     const string& sshHostKey, int sshObfuscatedPort, 
@@ -452,6 +452,7 @@ ServerEntry::ServerEntry(
     const vector<string>& capabilities)
 {
     this->serverAddress = serverAddress;
+    this->region = region;
     this->webServerPort = webServerPort;
     this->webServerSecret = webServerSecret;
     this->webServerCertificate = webServerCertificate;
@@ -494,6 +495,11 @@ string ServerEntry::ToString() const
 
     Json::Value entry;
     
+    entry["ipAddress"] = serverAddress;
+    entry["region"] = region;
+    entry["webServerPort"] = webServerPort;
+    entry["webServerCertificate"] = webServerCertificate;
+    entry["webServerSecret"] = webServerSecret;
     entry["sshPort"] = sshPort;
     entry["sshUsername"] = sshUsername;
     entry["sshPassword"] = sshPassword;
@@ -587,6 +593,7 @@ void ServerEntry::FromString(const string& str)
 
     try
     {
+        region = json_entry.get("region", "").asString();
         sshPort = json_entry.get("sshPort", 0).asInt();
         sshUsername = json_entry.get("sshUsername", "").asString();
         sshPassword = json_entry.get("sshPassword", "").asString();

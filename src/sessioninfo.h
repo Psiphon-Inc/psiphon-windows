@@ -42,6 +42,7 @@ public:
     string GetClientSessionID() const {return m_clientSessionID;}
 
     string GetServerAddress() const;
+    string GetRegion() const;
     int GetWebPort() const;
     string GetWebServerSecret() const;
     string GetWebServerCertificate() const;

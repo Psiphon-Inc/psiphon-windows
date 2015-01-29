@@ -226,7 +226,12 @@ string SessionInfo::GetServerAddress() const
     return m_serverEntry.serverAddress;
 }
 
-int SessionInfo::GetWebPort() const 
+string SessionInfo::GetRegion() const
+{
+    return m_serverEntry.region;
+}
+
+int SessionInfo::GetWebPort() const
 {
     return m_serverEntry.webServerPort;
 }
@@ -320,7 +325,7 @@ ServerEntry SessionInfo::GetServerEntry() const
     // we'll construct a new ServerEntry with the best info we have.
 
     ServerEntry newServerEntry(
-        GetServerAddress(), GetWebPort(), 
+        GetServerAddress(), GetRegion(), GetWebPort(), 
         GetWebServerSecret(), GetWebServerCertificate(), 
         GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
         GetSSHHostKey(), GetSSHObfuscatedPort(), 
