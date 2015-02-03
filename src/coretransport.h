@@ -27,18 +27,23 @@
 class SessionInfo;
 
 
-//
-// Base class for the tunnel core transports
-//
-class CoreTransportBase : public ITransport
+class CoreTransport : public ITransport
 {
 public:
-    CoreTransportBase(LPCTSTR transportProtocolName); 
-    virtual ~CoreTransportBase();
+    CoreTransport(); 
+    virtual ~CoreTransport();
+
+    static void GetFactory(
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactory, 
+                    AddServerEntriesFn& o_addServerEntriesFn);
+
+    virtual tstring GetTransportProtocolName() const;
+    virtual tstring GetTransportDisplayName() const;
+    virtual tstring GetTransportRequestName() const;
 
     virtual bool Cleanup();
-    virtual tstring GetTransportProtocolName() const = 0;
-    virtual tstring GetTransportDisplayName() const = 0;
     virtual bool IsHandshakeRequired() const;
     virtual bool IsWholeSystemTunneled() const;
     virtual bool IsSplitTunnelSupported() const;
@@ -70,51 +75,3 @@ protected:
     bool m_hasEverConnected;
     bool m_isConnected;
 };
-
-
-//
-// Standard SSH
-//
-class SSHTransport : public CoreTransportBase
-{
-public:
-    SSHTransport(); 
-    virtual ~SSHTransport();
-
-    static void GetFactory(
-                    tstring& o_transportDisplayName,
-                    tstring& o_transportProtocolName,
-                    TransportFactoryFn& o_transportFactory, 
-                    AddServerEntriesFn& o_addServerEntriesFn);
-
-    virtual tstring GetTransportProtocolName() const;
-    virtual tstring GetTransportDisplayName() const;
-    virtual tstring GetTransportRequestName() const;
-
-protected:
-};
-
-
-//
-// Obfuscated SSH
-//
-class OSSHTransport : public CoreTransportBase
-{
-public:
-    OSSHTransport(); 
-    virtual ~OSSHTransport();
-
-    static void GetFactory(
-                    tstring& o_transportDisplayName,
-                    tstring& o_transportProtocolName,
-                    TransportFactoryFn& o_transportFactory, 
-                    AddServerEntriesFn& o_addServerEntriesFn);
-
-    virtual tstring GetTransportProtocolName() const;
-    virtual tstring GetTransportDisplayName() const;
-    virtual tstring GetTransportRequestName() const;
-
-protected:
-};
-
-
