@@ -30,11 +30,6 @@
 #define WM_PSIPHON_CREATED             WM_USER + 103
 
 
-//==== miscellaneous====================================================
-
-bool GetSplitTunnel();
-
-
 //==== logging =========================================================
 
 enum LogSensitivity
@@ -68,46 +63,3 @@ struct MessageHistoryEntry
 };
 
 void GetMessageHistory(vector<MessageHistoryEntry>& history);
-
-
-//==== global helpers ==================================================
-
-class AutoHANDLE
-{
-public:
-    AutoHANDLE(HANDLE handle) {m_handle = handle;}
-    ~AutoHANDLE() {CloseHandle(m_handle);}
-    operator HANDLE() {return m_handle;}
-private:
-    HANDLE m_handle;
-};
-
-
-class AutoMUTEX
-{
-public:
-    AutoMUTEX(HANDLE mutex, TCHAR* logInfo=0) : m_mutex(mutex)
-    {
-        if (logInfo) m_logInfo = logInfo;
-        if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: obtaining 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
-        WaitForSingleObject(m_mutex, INFINITE);
-        if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: obtained 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
-    }
-
-    ~AutoMUTEX() 
-    {
-        if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: releasing 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
-        ReleaseMutex(m_mutex);
-    }
-private:
-    HANDLE m_mutex;
-    tstring m_logInfo;
-};
-
-#define AUTOMUTEX(mutex) 
-
-
-//==== miscellaneous====================================================
-
-bool GetSplitTunnel();
-tstring GetSelectedTransport();

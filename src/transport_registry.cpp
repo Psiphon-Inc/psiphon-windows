@@ -21,7 +21,7 @@
 #include "transport_registry.h"
 #include "transport.h"
 #include "vpntransport.h"
-#include "sshtransport.h"
+#include "coretransport.h"
 #include "serverlist.h"
 #include "psiclient.h"
 
@@ -56,6 +56,14 @@ int TransportRegistry::Register()
 // static 
 ITransport* TransportRegistry::New(tstring transportDisplayName)
 {
+    // Backwards compatibility: existing installs may have these
+    // obsolete transports configured as "Transport" in the registry.
+    if (transportDisplayName == _T("SSH") ||
+        transportDisplayName == _T("SSH+"))
+    {
+        transportDisplayName = _T("CoreTransport");
+    }
+
     for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
          it != m_registeredTransports.end();
          ++it)
@@ -124,6 +132,5 @@ void TransportRegistry::AddServerEntries(
 // This is the actual registration of the available transports.
 // NOTE: The order of these lines indicates the priority of the transports.
 
-static int _ossh = TransportRegistry::Register<OSSHTransport>();
-static int _ssh = TransportRegistry::Register<SSHTransport>();
+static int _coreTransport = TransportRegistry::Register<CoreTransport>();
 static int _vpn = TransportRegistry::Register<VPNTransport>();

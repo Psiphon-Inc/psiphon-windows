@@ -37,33 +37,31 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector, IRemoteServerListFetcher
+class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver
 {
 public:
     ConnectionManager();
     virtual ~ConnectionManager();
 
-    void Toggle(const tstring& transport, bool startSplitTunnel);
+    void Toggle();
     void Stop(DWORD reason);
     void Start(const tstring& transport, bool startSplitTunnel);
-    void StartSplitTunnel();
-    void StopSplitTunnel();
-    void ResetSplitTunnel();
     time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);
 
+    // IReconnectStateReceiver implementation
+    virtual void SetReconnecting();
+    virtual void SetReconnected();
+
     // ILocalProxyStatsCollector implementation
     // May throw StopSignal::StopException subclass if not `final`
-    bool SendStatusMessage(
+    virtual bool SendStatusMessage(
             bool final,
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
-
-    // IRemoteServerListFetcher implementation
-    void FetchRemoteServerList();
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
@@ -80,25 +78,14 @@ private:
 
     tstring GetFailedRequestPath(ITransport* transport);
     tstring GetConnectRequestPath(ITransport* transport);
-    tstring GetRoutesRequestPath(ITransport* transport);
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
     void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
 
-    tstring GetSpeedRequestPath(
-        const tstring& relayProtocol,
-        const tstring& operation,
-        const tstring& info,
-        DWORD milliseconds,
-        DWORD size);
-    void GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath);
+    void FetchRemoteServerList();
 
     bool RequireUpgrade();
     void PaveUpgrade(const string& download);
-    void ProcessSplitTunnelResponse(const string& compressedRoutes);
-    tstring GetSplitTunnelingFilePath();
-    bool WriteSplitTunnelRoutes(const char* routes);
-    bool DeleteSplitTunnelRoutes();
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
@@ -118,6 +105,5 @@ private:
     ITransport* m_transport;
     bool m_upgradePending;
     bool m_startSplitTunnel;
-    string m_splitTunnelRoutes;
     time_t m_nextFetchRemoteServerListAttempt;
 };

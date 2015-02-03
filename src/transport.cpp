@@ -37,8 +37,8 @@ ITransport::ITransport(LPCTSTR transportProtocolName)
     : m_systemProxySettings(NULL),
       m_tempConnectServerEntry(NULL),
       m_serverList(TStringToNarrow(transportProtocolName).c_str()),
-      m_remoteServerListFetcher(NULL),
-      m_firstConnectionAttempt(true)
+      m_firstConnectionAttempt(true),
+      m_reconnectStateReceiver(NULL)
 {
 }
 
@@ -62,13 +62,13 @@ bool ITransport::ServerWithCapabilitiesExists()
 void ITransport::Connect(
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
+                    IReconnectStateReceiver* reconnectStateReceiver,
                     WorkerThreadSynch* workerThreadSynch,
-                    IRemoteServerListFetcher* remoteServerListFetcher,
                     ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
-	m_systemProxySettings = systemProxySettings;
+    m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
-    m_remoteServerListFetcher = remoteServerListFetcher;
+    m_reconnectStateReceiver = reconnectStateReceiver;
 
     assert(m_systemProxySettings);
 

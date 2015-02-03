@@ -29,7 +29,6 @@
     </ClCompile>
     <ClCompile Include="transport.cpp" />
     <ClCompile Include="vpntransport.cpp" />
-    <ClCompile Include="sshtransport.cpp" />
     <ClCompile Include="transport_registry.cpp" />
     <ClCompile Include="serverlist.cpp" />
     <ClCompile Include="local_proxy.cpp" />
@@ -48,7 +47,7 @@
     <ClCompile Include="stopsignal.cpp" />
     <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="wininet_network_check.cpp" />
-    <ClCompile Include="meek.cpp" />
+    <ClCompile Include="coretransport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -56,7 +55,7 @@
     <ClInclude Include="embeddedvalues.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="psiclient.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="sessioninfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="systemproxysettings.h" />
@@ -90,7 +89,6 @@
     </ClInclude>
     <ClInclude Include="transport.h" />
     <ClInclude Include="vpntransport.h" />
-    <ClInclude Include="sshtransport.h" />
     <ClInclude Include="transport_registry.h" />
     <ClInclude Include="serverlist.h" />
     <ClInclude Include="local_proxy.h" />
@@ -515,14 +513,16 @@
     <ClInclude Include="stopsignal.h" />
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="wininet_network_check.h" />
-    <ClInclude Include="meek.h" />
+    <ClInclude Include="coretransport.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="psiclient.ico" />
-    <None Include="small.ico" />
+    <None Include="3rdParty\polipo.exe" />
+    <None Include="3rdParty\psiphon-tunnel-core.exe" />
+    <None Include="feedback.html" />
+    <None Include="settings.html" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="json">
@@ -537,5 +537,14 @@
     <Filter Include="WebCtrl">
       <UniqueIdentifier>{9cab73d3-bc74-49ac-b02d-501929a49dd6}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="psiclient.ico" />
+    <Image Include="small.ico" />
+    <Image Include="banner.bmp" />
+    <Image Include="email.bmp" />
+    <Image Include="feedback.bmp" />
+    <Image Include="settings.bmp" />
+    <Image Include="toggle_images.bmp" />
   </ItemGroup>
 </Project>

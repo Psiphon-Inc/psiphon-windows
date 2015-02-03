@@ -156,6 +156,25 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 }
 
 
+bool WriteFile(const tstring& filename, const string& data)
+{
+    HANDLE file;
+    DWORD bytesWritten;
+    if (INVALID_HANDLE_VALUE == (file = CreateFile(
+                                            filename.c_str(), GENERIC_WRITE, 0,
+                                            NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
+        || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
+        || bytesWritten != data.length())
+    {
+        CloseHandle(file);
+        my_print(NOT_SENSITIVE, false, _T("%s - write file failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    CloseHandle(file);
+    return true;
+}
+
+
 DWORD WaitForConnectability(
         int port,
         DWORD timeout,
@@ -542,6 +561,48 @@ bool WriteRegistryStringValue(const string& name, const string& value, RegistryF
     {
         my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExA failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
         
+        if (ERROR_NO_SYSTEM_RESOURCES == returnCode)
+        {
+            reason = REGISTRY_FAILURE_WRITE_TOO_LONG;
+        }
+    }
+
+    RegCloseKey(key);
+
+    return ERROR_SUCCESS == returnCode;
+}
+
+
+bool WriteRegistryStringValue(const string& name, const wstring& value, RegistryFailureReason& reason)
+{
+    HKEY key = 0;
+    LONG returnCode = 0;
+    reason = REGISTRY_FAILURE_NO_REASON;
+    wstring wName = NarrowToTString(name);
+
+    if (ERROR_SUCCESS != (returnCode = RegCreateKeyEx(
+        HKEY_CURRENT_USER,
+        LOCAL_SETTINGS_REGISTRY_KEY,
+        0,
+        0,
+        0,
+        KEY_WRITE,
+        0,
+        &key,
+        0)))
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+    }
+    else if (ERROR_SUCCESS != (returnCode = RegSetValueExW(
+        key,
+        wName.c_str(),
+        0,
+        REG_SZ,
+        (LPBYTE)value.c_str(),
+        (value.length()+1)*sizeof(wchar_t)))) // Write the null terminator
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExW failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+
         if (ERROR_NO_SYSTEM_RESOURCES == returnCode)
         {
             reason = REGISTRY_FAILURE_WRITE_TOO_LONG;
@@ -1085,4 +1146,23 @@ DWORD GetTickCountDiff(DWORD start, DWORD end)
     }
 
     return end - start;
+}
+
+/*
+AutoHANDLE and AutoMUTEX
+*/
+
+AutoMUTEX::AutoMUTEX(HANDLE mutex, TCHAR* logInfo/*=0*/) 
+    : m_mutex(mutex)
+{
+    if (logInfo) m_logInfo = logInfo;
+    if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: obtaining 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
+    WaitForSingleObject(m_mutex, INFINITE);
+    if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: obtained 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
+}
+
+AutoMUTEX::~AutoMUTEX()
+{
+    if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: releasing 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
+    ReleaseMutex(m_mutex);
 }

@@ -51,14 +51,12 @@ public:
     virtual tstring GetTransportDisplayName() const;
     virtual tstring GetTransportRequestName() const;
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
-    virtual int GetLocalProxyParentPort() const;
+    virtual bool RequiresStatsSupport() const;
     virtual tstring GetLastTransportError() const;
     virtual bool IsHandshakeRequired() const;
     virtual bool IsWholeSystemTunneled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
-
-    virtual void ProxySetupComplete();
 
     virtual bool Cleanup();
 

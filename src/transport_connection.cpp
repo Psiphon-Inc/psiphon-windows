@@ -23,7 +23,6 @@
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
-#include "meek.h"
 
 
 TransportConnection::TransportConnection()
@@ -51,9 +50,8 @@ SessionInfo TransportConnection::GetUpdatedSessionInfo() const
 void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
+                            IReconnectStateReceiver* reconnectStateReceiver,
                             ILocalProxyStatsCollector* statsCollector, 
-                            IRemoteServerListFetcher* remoteServerListFetcher,
-                            const tstring& splitTunnelingFilePath,
                             ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     assert(m_transport == 0);
@@ -66,39 +64,36 @@ void TransportConnection::Connect(
 
     try
     {
-        // Delete any leftover split tunnelling rules
-        if(splitTunnelingFilePath.length() > 0 && !DeleteFile(splitTunnelingFilePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
-        {
-            throw std::exception("TransportConnection::Connect - DeleteFile failed");
-        }
-
         m_workerThreadSynch.Reset();
 
         // Connect with the transport. Will throw on error.
-		m_transport->Connect(
+        m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
+                    reconnectStateReceiver,
                     &m_workerThreadSynch,
-                    remoteServerListFetcher,
                     tempConnectServerEntry);
 
         // Get initial SessionInfo. Note that this might be pre-handshake
         // and therefore not be totally filled in.
         m_sessionInfo = m_transport->GetSessionInfo();
 
-        // Set up and start the local proxy.
-        m_localProxy = new LocalProxy(
-                            statsCollector, 
-                            m_sessionInfo.GetServerAddress().c_str(), 
-                            &m_systemProxySettings,
-                            m_transport->GetLocalProxyParentPort(), 
-                            splitTunnelingFilePath);
-
-        // Launches the local proxy thread and doesn't return until it
-        // observes a successful (or not) connection.
-        if (!m_localProxy->Start(stopInfo, &m_workerThreadSynch))
+        if (m_transport->RequiresStatsSupport())
         {
-            throw IWorkerThread::Error("LocalProxy::Start failed");
+            // Set up and start the local proxy.
+            m_localProxy = new LocalProxy(
+                                statsCollector, 
+                                m_sessionInfo.GetServerAddress().c_str(), 
+                                &m_systemProxySettings,
+                                0, // no parent port
+                                tstring()); // no split tunnel file path
+
+            // Launches the local proxy thread and doesn't return until it
+            // observes a successful (or not) connection.
+            if (!m_localProxy->Start(stopInfo, &m_workerThreadSynch))
+            {
+                throw IWorkerThread::Error("LocalProxy::Start failed");
+            }
         }
 
         // If the whole system is tunneled (i.e., VPN), then we can't leave the
@@ -114,15 +109,15 @@ void TransportConnection::Connect(
             throw IWorkerThread::Error("SystemProxySettings::Apply failed");
         }
 
-        // Let the transport do a handshake
-        m_transport->ProxySetupComplete();
-
         // If the transport did a handshake, there may be updated session info.
         m_sessionInfo = m_transport->GetSessionInfo();
 
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
-        m_localProxy->UpdateSessionInfo(m_sessionInfo);
+        if (m_localProxy)
+        {
+            m_localProxy->UpdateSessionInfo(m_sessionInfo);
+        }
     }
     catch (ITransport::TransportFailed&)
     {
@@ -145,9 +140,14 @@ void TransportConnection::Connect(
 
 void TransportConnection::WaitForDisconnect()
 {
-    HANDLE waitHandles[] = { m_transport->GetStoppedEvent(), 
-                             m_localProxy->GetStoppedEvent()};
-    size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
+    HANDLE waitHandles[2];
+    size_t waitHandlesCount = 1;
+    waitHandles[0] = m_transport->GetStoppedEvent();
+    if (m_localProxy)
+    {
+        waitHandles[1] = m_localProxy->GetStoppedEvent();
+        waitHandlesCount += 1;
+    }
 
     DWORD result = WaitForMultipleObjects(
                     waitHandlesCount, 

@@ -90,7 +90,7 @@ bool SystemProxySettings::Apply(bool allowedToSkipProxySettings)
     SetPsiphonProxyForConnections(proxyInfo, psiphonProxyAddress);
     WriteRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO, proxyInfo);
 
-    if (allowedToSkipProxySettings && UserSkipProxySettings())
+    if (allowedToSkipProxySettings && Settings::SkipProxySettings())
     {
         return true;
     }
@@ -229,7 +229,7 @@ vector<tstring> GetRasConnectionNames()
         for (DWORD i = 0; i < entries; i++)
         {
             connections.push_back(rasEntryNames[i].szEntryName);
-	    }
+        }
     }
     catch (...)
     {
