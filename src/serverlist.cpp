@@ -493,11 +493,15 @@ string ServerEntry::ToString() const
     // Extended values are JSON-encoded.
     //
 
+    // Note: for legacy reasons, webServerPort is a string, not an int
+    ostringstream webServerPortString;
+    webServerPortString << webServerPort;
+
     Json::Value entry;
     
     entry["ipAddress"] = serverAddress;
     entry["region"] = region;
-    entry["webServerPort"] = webServerPort;
+    entry["webServerPort"] = webServerPortString.str();
     entry["webServerCertificate"] = webServerCertificate;
     entry["webServerSecret"] = webServerSecret;
     entry["sshPort"] = sshPort;

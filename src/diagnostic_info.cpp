@@ -44,7 +44,14 @@ void _AddDiagnosticInfoHelper(const char* entry)
 void AddDiagnosticInfoYaml(const char* message, const char* yaml)
 {
     YAML::Node node = YAML::Load(yaml);
-    AddDiagnosticInfo(message, node);
+    if (!node.IsNull())
+    {
+        AddDiagnosticInfo(message, node);
+    }
+    else
+    {
+        AddDiagnosticInfo(message, "");
+    }
 }
 
 void GetDiagnosticHistory(YAML::Emitter& out)
