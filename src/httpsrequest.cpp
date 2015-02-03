@@ -92,6 +92,7 @@ void CALLBACK WinHttpStatusCallback(
 
     //my_print(NOT_SENSITIVE, true, _T("HTTPS request... (%d)"), dwInternetStatus);
 
+    DWORD errorCode = 0;
     switch (dwInternetStatus)
     {
     case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING:
@@ -237,7 +238,11 @@ void CALLBACK WinHttpStatusCallback(
         WinHttpCloseHandle(hRequest);
         break;
     case WINHTTP_CALLBACK_STATUS_SECURE_FAILURE:
-        my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("HTTP secure failure (%d)"), lpvStatusInformation);
+        if (lpvStatusInformation)
+        {
+            errorCode = *(DWORD *)lpvStatusInformation;
+        }
+        my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("HTTP secure failure (%d)"), errorCode);
         WinHttpCloseHandle(hRequest);
         break;
     default:

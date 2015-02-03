@@ -36,18 +36,15 @@
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
 
-static const TCHAR* SSH_TRANSPORT_PROTOCOL_NAME = _T("SSH");
-static const TCHAR* SSH_TRANSPORT_DISPLAY_NAME = _T("SSH");
-
-static const TCHAR* OSSH_TRANSPORT_PROTOCOL_NAME = _T("OSSH");
-static const TCHAR* OSSH_TRANSPORT_DISPLAY_NAME = _T("SSH+");
+static const TCHAR* CORE_TRANSPORT_PROTOCOL_NAME = _T("CoreTransport");
+static const TCHAR* CORE_TRANSPORT_DISPLAY_NAME = _T("CoreTransport");
 
 /******************************************************************************
- CoreTransportBase
+ CoreTransport
 ******************************************************************************/
 
-CoreTransportBase::CoreTransportBase(LPCTSTR transportProtocolName)
-    : ITransport(transportProtocolName),
+CoreTransport::CoreTransport()
+    : ITransport(CORE_TRANSPORT_PROTOCOL_NAME),
       m_pipe(NULL),
       m_localSocksProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
@@ -58,13 +55,14 @@ CoreTransportBase::CoreTransportBase(LPCTSTR transportProtocolName)
 }
 
 
-CoreTransportBase::~CoreTransportBase()
+CoreTransport::~CoreTransport()
 {
     (void)Cleanup();
+    IWorkerThread::Stop();
 }
 
 
-bool CoreTransportBase::Cleanup()
+bool CoreTransport::Cleanup()
 {
      // Give the process an opportunity for graceful shutdown, then terminate
     if (m_processInfo.hProcess != 0
@@ -95,26 +93,68 @@ bool CoreTransportBase::Cleanup()
 }
 
 
-bool CoreTransportBase::IsHandshakeRequired() const
+// Support the registration of this transport type
+static ITransport* NewCoreTransport()
+{
+    return new CoreTransport();
+}
+
+
+// static
+void CoreTransport::GetFactory(
+                    tstring& o_transportDisplayName,
+                    tstring& o_transportProtocolName,
+                    TransportFactoryFn& o_transportFactoryFn,
+                    AddServerEntriesFn& o_addServerEntriesFn)
+{
+    o_transportFactoryFn = NewCoreTransport;
+    o_transportDisplayName = CORE_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = CORE_TRANSPORT_PROTOCOL_NAME;
+    // Note: these server entries are not used as the core manages its own
+    // database of entries.
+    // TODO: add code to harvest these entries?
+    o_addServerEntriesFn = ITransport::AddServerEntries;
+}
+
+
+tstring CoreTransport::GetTransportProtocolName() const 
+{
+    return CORE_TRANSPORT_PROTOCOL_NAME;
+}
+
+
+tstring CoreTransport::GetTransportDisplayName() const 
+{ 
+    return CORE_TRANSPORT_DISPLAY_NAME; 
+}
+
+
+tstring CoreTransport::GetTransportRequestName() const
+{
+    return GetTransportProtocolName();
+}
+
+
+bool CoreTransport::IsHandshakeRequired() const
 {
     return false;
 }
 
 
-bool CoreTransportBase::IsWholeSystemTunneled() const
+bool CoreTransport::IsWholeSystemTunneled() const
 {
     return false;
 }
 
 
-bool CoreTransportBase::IsSplitTunnelSupported() const
+bool CoreTransport::IsSplitTunnelSupported() const
 {
     // Currently unsupported in the core.
     return false;
 }
 
 
-bool CoreTransportBase::ServerWithCapabilitiesExists()
+bool CoreTransport::ServerWithCapabilitiesExists()
 {
     // For now, we assume there are sufficient server entries for SSH/OSSH.
     // Even if there are not any in the core database, it will automatically
@@ -123,27 +163,31 @@ bool CoreTransportBase::ServerWithCapabilitiesExists()
 }
 
 
-bool CoreTransportBase::ServerHasCapabilities(const ServerEntry& entry) const
+bool CoreTransport::ServerHasCapabilities(const ServerEntry& entry) const
 {
-    // Should not be called for core.
-    assert(false);
+    // At the moment, this is only called by ServerRequest::GetTempTransports
+    // to check if the core can establish a temporary tunnel to the given
+    // server. Since the core's supported protocols and future server entry
+    // capabilities are opaque and unknown, respectively, we will just report
+    // that the core supports this server and let it fail to establish if
+    // it does not.
+    return true;
+}
+
+
+bool CoreTransport::RequiresStatsSupport() const
+{
     return false;
 }
 
 
-bool CoreTransportBase::RequiresStatsSupport() const
-{
-    return false;
-}
-
-
-tstring CoreTransportBase::GetSessionID(const SessionInfo& sessionInfo)
+tstring CoreTransport::GetSessionID(const SessionInfo& sessionInfo)
 {
     return NarrowToTString(sessionInfo.GetSSHSessionID());
 }
 
 
-int CoreTransportBase::GetLocalProxyParentPort() const
+int CoreTransport::GetLocalProxyParentPort() const
 {
     // Should not be called for core.
     assert(false);
@@ -151,13 +195,13 @@ int CoreTransportBase::GetLocalProxyParentPort() const
 }
 
 
-tstring CoreTransportBase::GetLastTransportError() const
+tstring CoreTransport::GetLastTransportError() const
 {
     return _T("0");
 }
 
 
-void CoreTransportBase::TransportConnect()
+void CoreTransport::TransportConnect()
 {
     my_print(NOT_SENSITIVE, false, _T("%s connecting..."), GetTransportDisplayName().c_str());
 
@@ -181,7 +225,7 @@ void CoreTransportBase::TransportConnect()
 }
 
 
-void CoreTransportBase::TransportConnectHelper()
+void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
 
@@ -230,7 +274,7 @@ void CoreTransportBase::TransportConnectHelper()
 }
 
 
-bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename)
+bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename)
 {
     TCHAR path[MAX_PATH];
     if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
@@ -261,6 +305,19 @@ bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& se
     config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
     config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
     config["EgressRegion"] = Settings::EgressRegion();
+
+    // In temporary tunnel mode, only the specific server should be connected to,
+    // and a handshake is not performed.
+    // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
+    // perform its own handshake request to get a PSK.
+    if (m_tempConnectServerEntry != 0)
+    {
+        config["DisableApi"] = true;
+        config["DisableRemoteServerListFetcher"] = true;
+        string serverEntry = m_tempConnectServerEntry->ToString();
+        config["TargetServerEntry"] =
+            Hexlify((const unsigned char*)(serverEntry.c_str()), serverEntry.length());
+    }
 
     ostringstream configDataStream;
     Json::FastWriter jsonWriter;
@@ -297,7 +354,7 @@ bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& se
 }
 
     
-string CoreTransportBase::GetUpstreamProxyAddress()
+string CoreTransport::GetUpstreamProxyAddress()
 {
     // Note: upstream SOCKS proxy and proxy auth currently not supported in core
 
@@ -331,7 +388,7 @@ string CoreTransportBase::GetUpstreamProxyAddress()
 }
 
 
-bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
+bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
     tstringstream commandLine;
 
@@ -424,7 +481,7 @@ bool CoreTransportBase::SpawnCoreProcess(const tstring& configFilename, const ts
 }
 
 
-void CoreTransportBase::ConsumeCoreProcessOutput()
+void CoreTransport::ConsumeCoreProcessOutput()
 {
     DWORD bytes_avail = 0;
 
@@ -475,71 +532,99 @@ void CoreTransportBase::ConsumeCoreProcessOutput()
 }
 
 
-void CoreTransportBase::HandleCoreProcessOutputLine(const char* line)
+void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 {
     // Log output
 
-    my_print(NOT_SENSITIVE, true, _T("core output: %S"), line);
-    AddDiagnosticInfo("CoreOutput", line);
+    my_print(NOT_SENSITIVE, true, _T("core notice: %S"), line);
+    AddDiagnosticInfoYaml("CoreNotice", line);
 
     // Parse output to extract data
 
-    //***************************************************************************
-    // !TODO!: log structured data: AddDiagnosticInfoYaml("ConnectedServer")
-    //***************************************************************************
-
-    // Note: this is based on tentative log line formats
-    const char* socksProxy = "SOCKS-PROXY-PORT ";
-    const char* httpProxy = "HTTP-PROXY-PORT ";
-    const char* homePage = "HOMEPAGE ";
-    const char* upgrade = "UPGRADE ";
-    const char* firstTunnelStarted = "TUNNELS 1";
-    const char* lastTunnelStopped = "TUNNELS 0";
-
-    // Skip timestamp 'YYYY/MM/DD HH:MM:SS ...'
-    // TODO: configure core to omit timestamp
-    if (strlen(line) > 20)
+    try
     {
-        line += 20;
-    }
-
-    if (0 == strncmp(line, socksProxy, strlen(socksProxy)))
-    {
-        m_localSocksProxyPort = atoi(line + strlen(socksProxy));
-    }
-    else if (0 == strncmp(line, httpProxy, strlen(httpProxy)))
-    {
-        m_localHttpProxyPort = atoi(line + strlen(httpProxy));
-    }
-    else if (0 == strncmp(line, upgrade, strlen(upgrade)))
-    {
-        m_sessionInfo.SetUpgradeVersion(line + strlen(upgrade));
-    }
-    else if (0 == strncmp(line, homePage, strlen(homePage)))
-    {
-        m_sessionInfo.SetHomepage(line + strlen(homePage));
-    }
-    else if (0 == strcmp(line, firstTunnelStarted))
-    {
-        if (m_hasEverConnected && m_reconnectStateReceiver)
+        Json::Value notice;
+        Json::Reader reader;
+        if (!reader.parse(line, notice))
         {
-            m_reconnectStateReceiver->SetReconnected();
+            string fail = reader.getFormattedErrorMessages();
+            my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+            return;
         }
-        m_isConnected = true;
-        m_hasEverConnected = true;
-    }
-    else if (0 == strcmp(line, lastTunnelStopped))
-    {
-        if (m_hasEverConnected && m_reconnectStateReceiver)
+
+        if (!notice.isObject())
         {
-            m_reconnectStateReceiver->SetReconnecting();
+            // Ignore this line. The core internals may emit non-notice format
+            // lines, and this confuses the JSON parser. This test filters out
+            // those lines.
+            return;
         }
-        m_isConnected = false;
+
+        string noticeType = notice["noticeType"].asString();
+        string timestamp = notice["timestamp"].asString();
+        Json::Value data = notice["data"];
+
+        if (noticeType == "Tunnels")
+        {
+            int count = data["count"].asInt();
+            if (count == 0)
+            {
+                if (m_hasEverConnected && m_reconnectStateReceiver)
+                {
+                    m_reconnectStateReceiver->SetReconnecting();
+                }
+                m_isConnected = false;
+            }
+            else if (count == 1)
+            {
+                if (m_hasEverConnected && m_reconnectStateReceiver)
+                {
+                    m_reconnectStateReceiver->SetReconnected();
+                }
+                m_isConnected = true;
+                m_hasEverConnected = true;
+            }
+        }
+        else if (noticeType == "ClientUpgradeAvailable")
+        {
+            string version = data["version"].asString();
+            m_sessionInfo.SetUpgradeVersion(version.c_str());
+        }
+        else if (noticeType == "Homepage")
+        {
+            string url = data["url"].asString();
+            m_sessionInfo.SetHomepage(url.c_str());
+        }
+        else if (noticeType == "ListeningSocksProxyPort")
+        {
+            int port = data["port"].asInt();
+            m_localSocksProxyPort = port;
+        }
+        else if (noticeType == "ListeningHttpProxyPort")
+        {
+            int port = data["port"].asInt();
+            m_localHttpProxyPort = port;
+        }
+        else if (noticeType == "SocksProxyPortInUse")
+        {
+            int port = data["port"].asInt();
+            my_print(NOT_SENSITIVE, false, _T("SOCKS proxy port not available: %d"), port);
+        }
+        else if (noticeType == "HttpProxyPortInUse")
+        {
+            int port = data["port"].asInt();
+            my_print(NOT_SENSITIVE, false, _T("HTTP proxy port not available: %d"), port);
+        }
+    }
+    catch (exception& e)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse exception: %S"), __TFUNCTION__, e.what());
+        return;
     }
 }
 
 
-bool CoreTransportBase::DoPeriodicCheck()
+bool CoreTransport::DoPeriodicCheck()
 {
     // Notes:
     // - used in both IWorkerThread::Thread and in local TransportConnectHelper
@@ -579,123 +664,4 @@ bool CoreTransportBase::DoPeriodicCheck()
     }
 
     return false;
-}
-
-
-/******************************************************************************
- SSHTransport
-******************************************************************************/
-
-// Support the registration of this transport type
-static ITransport* NewSSH()
-{
-    return new SSHTransport();
-}
-
-
-// static
-void SSHTransport::GetFactory(
-                    tstring& o_transportDisplayName,
-                    tstring& o_transportProtocolName,
-                    TransportFactoryFn& o_transportFactoryFn,
-                    AddServerEntriesFn& o_addServerEntriesFn)
-{
-    o_transportFactoryFn = NewSSH;
-    o_transportDisplayName = SSH_TRANSPORT_DISPLAY_NAME;
-    o_transportProtocolName = SSH_TRANSPORT_PROTOCOL_NAME;
-    // Note: these server entries are not used as the core manages its own
-    // database of entries.
-    // TODO: add code to harvest these entries?
-    o_addServerEntriesFn = ITransport::AddServerEntries;
-}
-
-
-SSHTransport::SSHTransport()
-    : CoreTransportBase(GetTransportProtocolName().c_str())
-{
-}
-
-
-SSHTransport::~SSHTransport()
-{
-    IWorkerThread::Stop();
-}
-
-
-// static
-tstring SSHTransport::GetTransportProtocolName() const 
-{
-    return SSH_TRANSPORT_PROTOCOL_NAME;
-}
-
-
-tstring SSHTransport::GetTransportDisplayName() const 
-{ 
-    return SSH_TRANSPORT_DISPLAY_NAME; 
-}
-
-
-tstring SSHTransport::GetTransportRequestName() const
-{
-    return GetTransportProtocolName();
-}
-
-
-/******************************************************************************
- OSSHTransport
-******************************************************************************/
-
-// Support the registration of this transport type
-static ITransport* NewOSSH()
-{
-    return new OSSHTransport();
-}
-
-
-// static
-void OSSHTransport::GetFactory(
-                    tstring& o_transportDisplayName,
-                    tstring& o_transportProtocolName,
-                    TransportFactoryFn& o_transportFactory,
-                    AddServerEntriesFn& o_addServerEntriesFn)
-{
-    o_transportFactory = NewOSSH;
-    o_transportDisplayName = OSSH_TRANSPORT_DISPLAY_NAME;
-    o_transportProtocolName = OSSH_TRANSPORT_PROTOCOL_NAME;
-    // Note: these server entries are not used as the core manages its own
-    // database of entries.
-    // TODO: add code to harvest these entries?
-    o_addServerEntriesFn = ITransport::AddServerEntries;
-}
-
-
-OSSHTransport::OSSHTransport()
-    : CoreTransportBase(OSSH_TRANSPORT_PROTOCOL_NAME)
-{
-}
-
-
-OSSHTransport::~OSSHTransport()
-{
-    IWorkerThread::Stop();
-}
-
-
-tstring OSSHTransport::GetTransportProtocolName() const 
-{
-    return OSSH_TRANSPORT_PROTOCOL_NAME;
-}
-
-
-tstring OSSHTransport::GetTransportDisplayName() const 
-{
-    return OSSH_TRANSPORT_DISPLAY_NAME;
-}
-
-
-tstring OSSHTransport::GetTransportRequestName() const
-{
-    // Should not be called for core as there should be no Psiphon API web requests outside of the core.
-    assert(false);
-    return GetTransportProtocolName();
 }
