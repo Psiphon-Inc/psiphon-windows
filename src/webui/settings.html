@@ -48,7 +48,13 @@
     }
 
     .disabled-text {
-      opacity: 0.5
+      zoom: 1; filter: alpha(opacity=60); /* IE<=8 */
+      opacity: 0.6;
+    }
+
+    .perma-disabled {
+      zoom: 1; filter: alpha(opacity=60); /* IE<=8 */
+      opacity: 0.6;
     }
 
     .checkbox-description {
@@ -169,18 +175,6 @@ html {
     </div>
   </div>
 
-  <div class="setting-item vpn-incompatible">
-    <input type="checkbox" id="SplitTunnel"/>
-    <label for="SplitTunnel">
-      <strong>Don't proxy domestic websites</strong>
-      <span class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</span>
-    </label>
-    <div class="checkbox-description setting-description">
-      If enabled, requests made to servers within your home country will not be
-      tunneled through Psiphon.
-    </div>
-  </div>
-
   <div class="setting-item">
     <input type="checkbox" id="VPN"/>
     <label for="VPN">
@@ -209,9 +203,9 @@ html {
           </td>
         </tr>
         <tr class="vpn-incompatible">
-          <td style="text-align:right;">SOCKS:</td>
-          <td><input type="text" id="LocalSocksProxyPort" class="port-entry"/></td>
-          <td>
+          <td style="text-align:right;" class="vpn-incompatible">SOCKS:</td>
+          <td><input type="text" id="LocalSocksProxyPort" class="port-entry vpn-incompatible"/></td>
+          <td class="vpn-incompatible">
             <span class="error-help hidden LocalSocksProxyPort">
               Must be a number between 1 and 65535.
             </span>
@@ -261,6 +255,18 @@ html {
     </fieldset>
   </div>
 
+  <div class="setting-item vpn-incompatible perma-disabled">
+    <input type="checkbox" id="SplitTunnel" disabled/>
+    <label for="SplitTunnel">
+      <strong>Don't proxy domestic websites (Not yet supported!)</strong>
+      <span class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</span>
+    </label>
+    <div class="checkbox-description setting-description">
+      If enabled, requests made to servers within your home country will not be
+      tunneled through Psiphon.
+    </div>
+  </div>
+
   <div>
     <a id="OK" class="submit btn btn-primary inline-block" href="#">OK</a>
     <a id="Reset" class="submit btn btn-secondary inline-block" href="#">Reset</a>
@@ -298,6 +304,13 @@ $(function() {
   $('#OK').click(onOK);
   $('#Cancel').click(onCancel);
   $('#Reset').click(function(event) { onReset(event, args.defaults); });
+  // Treat the ESC key like Cancel
+  $(document).keydown(function(e) {
+      // ESCAPE key pressed
+      if (e.keyCode === 27) {
+          onCancel(e);
+      }
+  });
   // Make all submit buttons equal width.
   var maxWidth = 0;
   $('.submit.btn').each(function() {
@@ -426,7 +439,7 @@ function checkPortField(event) {
 // depending on the choice of VPN mode.
 function vpnModeUpdate() {
   var vpn = $('#VPN').prop('checked');
-  $('.vpn-incompatible').prop('disabled', vpn);
+  $('input.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) input').prop('disabled', vpn);
   $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
   $('.vpn-incompatible').toggleClass('disabled-text', vpn);
 }

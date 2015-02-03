@@ -24,7 +24,8 @@ namespace Settings
 {
     void Initialize();
 
-    void Show(HINSTANCE hInst, HWND hParentWnd);
+    // Returns true if settings changed.
+    bool Show(HINSTANCE hInst, HWND hParentWnd);
 
     bool SplitTunnel();
     tstring Transport();

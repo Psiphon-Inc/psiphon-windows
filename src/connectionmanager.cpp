@@ -86,7 +86,7 @@ void ConnectionManager::Toggle()
 
     if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        Start(Settings::Transport(), Settings::SplitTunnel());
+        Start();
     }
     else
     {
@@ -282,7 +282,7 @@ void ConnectionManager::FetchRemoteServerList(void)
     }
 }
 
-void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
+void ConnectionManager::Start()
 {
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
@@ -291,7 +291,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     AutoMUTEX lock(m_mutex);
 
-    m_transport = TransportRegistry::New(transport);
+    m_transport = TransportRegistry::New(Settings::Transport());
 
     if (!m_transport->ServerWithCapabilitiesExists())
     {
@@ -299,7 +299,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
         return;
     }
 
-    m_startSplitTunnel = startSplitTunnel;
+    m_startSplitTunnel = Settings::SplitTunnel();
 
     GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
 

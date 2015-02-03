@@ -261,6 +261,8 @@ bool CoreTransportBase::WriteParameterFiles(tstring& configFilename, tstring& se
     config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
     config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
     config["EgressRegion"] = Settings::EgressRegion();
+    config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+    config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
 
     ostringstream configDataStream;
     Json::FastWriter jsonWriter;

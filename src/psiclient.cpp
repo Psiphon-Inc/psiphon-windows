@@ -857,7 +857,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (lParam == (LPARAM)g_hSettingsButton && wmEvent == BN_CLICKED)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Settings called"), __TFUNCTION__);
-            Settings::Show(g_hInst, hWnd);
+            if (Settings::Show(g_hInst, hWnd))
+            {
+                // If the settings changed and we're connected, reconnect.
+                ConnectionManagerState state = g_connectionManager.GetState();
+                if (state == ConnectionManagerState::CONNECTION_MANAGER_STATE_CONNECTED
+                    || state == ConnectionManagerState::CONNECTION_MANAGER_STATE_STARTING)
+                {
+                    g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+                    g_connectionManager.Start();
+                }
+            }
         }
 
         // Feedback button clicked

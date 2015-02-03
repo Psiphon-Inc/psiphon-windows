@@ -45,7 +45,7 @@ public:
 
     void Toggle();
     void Stop(DWORD reason);
-    void Start(const tstring& transport, bool startSplitTunnel);
+    void Start();
     time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();

@@ -126,7 +126,7 @@ void Settings::Initialize()
     (void)Settings::LocalSocksProxyPort();
 }
 
-void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
 {
     Json::Value config;
     config["SplitTunnel"] = Settings::SplitTunnel();
@@ -160,7 +160,7 @@ void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
         result) != 1)
     {
         // error or user cancelled
-        return;
+        return false;
     }
 
     Json::Value json;
@@ -169,8 +169,10 @@ void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
     if (!parsingSuccessful)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to save settings!"));
-        return;
+        return false;
     }
+
+    bool settingsChanged = false;
 
     try
     {
@@ -181,33 +183,41 @@ void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
         RegistryFailureReason failReason;
 
         BOOL splitTunnel = json.get("SplitTunnel", 0).asUInt();
+        settingsChanged = settingsChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
-        bool useVPN = !!json.get("VPN", 0).asUInt();
+        wstring transport = json.get("VPN", 0).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
+        settingsChanged = settingsChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
             TRANSPORT_NAME,
-            useVPN ? TRANSPORT_VPN : TRANSPORT_DEFAULT,
+            transport,
             failReason);
 
         DWORD httpPort = json.get("LocalHttpProxyPort", 0).asUInt();
+        settingsChanged = settingsChanged || httpPort != Settings::LocalHttpProxyPort();
         WriteRegistryDwordValue(HTTP_PROXY_PORT_NAME, httpPort);
 
         DWORD socksPort = json.get("LocalSocksProxyPort", 0).asUInt();
+        settingsChanged = settingsChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", "").asString();
+        settingsChanged = settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
             upstreamProxyHostname,
             failReason);
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", 0).asUInt();
+        settingsChanged = settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
 
         BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", 0).asUInt();
+        settingsChanged = settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
         WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
 
         string egressRegion = json.get("EgressRegion", "").asString();
+        settingsChanged = settingsChanged || egressRegion != Settings::EgressRegion();
         WriteRegistryStringValue(
             EGRESS_REGION_NAME,
             egressRegion,
@@ -216,13 +226,16 @@ void Settings::Show(HINSTANCE hInst, HWND hParentWnd)
     catch (exception& e)
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
-        return;
     }
+
+    return settingsChanged;
 }
 
 bool Settings::SplitTunnel()
 {
-    return !!GetUserSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
+    // Not yet supported!
+    //return !!GetUserSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
+    return false;
 }
 
 tstring Settings::Transport()
