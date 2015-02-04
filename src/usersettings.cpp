@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@
 #include "usersettings.h"
 #include "utilities.h"
 #include "htmldlg.h"
+#include "coretransport.h"
+#include "vpntransport.h"
 
 
 #define NULL_PORT                       0
@@ -33,8 +35,8 @@
 
 #define TRANSPORT_NAME                  "Transport"
 // TODO: Don't hardcode transport names? Or get rid of transport registry (since the dynamic-ness is gone anyway).
-#define TRANSPORT_DEFAULT               _T("SSH+")
-#define TRANSPORT_VPN                   _T("VPN")
+#define TRANSPORT_DEFAULT               CORE_TRANSPORT_DISPLAY_NAME
+#define TRANSPORT_VPN                   VPN_TRANSPORT_DISPLAY_NAME
 
 #define HTTP_PROXY_PORT_NAME            "UserLocalHTTPProxyPort"
 #define HTTP_PROXY_PORT_DEFAULT         NULL_PORT

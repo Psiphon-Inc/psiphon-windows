@@ -32,12 +32,9 @@
 #include "embeddedvalues.h"
 
 
-
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
 
-static const TCHAR* CORE_TRANSPORT_PROTOCOL_NAME = _T("CoreTransport");
-static const TCHAR* CORE_TRANSPORT_DISPLAY_NAME = _T("CoreTransport");
 
 /******************************************************************************
  CoreTransport

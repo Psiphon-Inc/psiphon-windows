@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -56,14 +56,6 @@ int TransportRegistry::Register()
 // static 
 ITransport* TransportRegistry::New(tstring transportDisplayName)
 {
-    // Backwards compatibility: existing installs may have these
-    // obsolete transports configured as "Transport" in the registry.
-    if (transportDisplayName == _T("SSH") ||
-        transportDisplayName == _T("SSH+"))
-    {
-        transportDisplayName = _T("CoreTransport");
-    }
-
     for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
          it != m_registeredTransports.end();
          ++it)

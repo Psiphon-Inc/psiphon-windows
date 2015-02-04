@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,13 +33,9 @@
 #define VPN_CONNECTION_NAME             _T("Psiphon3")
 
 
-
 void TweakVPN();
 void TweakDNS();
 
-
-static const TCHAR* TRANSPORT_PROTOCOL_NAME = _T("VPN");
-static const TCHAR* TRANSPORT_DISPLAY_NAME = _T("VPN");
 
 // Support the registration of this transport type
 static ITransport* New()
@@ -55,8 +51,8 @@ void VPNTransport::GetFactory(
                     AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = New;
-    o_transportDisplayName = TRANSPORT_DISPLAY_NAME;
-    o_transportProtocolName = TRANSPORT_PROTOCOL_NAME;
+    o_transportDisplayName = VPN_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = VPN_TRANSPORT_PROTOCOL_NAME;
     o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
@@ -88,12 +84,12 @@ VPNTransport::~VPNTransport()
 
 tstring VPNTransport::GetTransportProtocolName() const 
 { 
-    return TRANSPORT_PROTOCOL_NAME;
+    return VPN_TRANSPORT_PROTOCOL_NAME;
 }
 
 tstring VPNTransport::GetTransportDisplayName() const 
 { 
-    return TRANSPORT_DISPLAY_NAME;
+    return VPN_TRANSPORT_DISPLAY_NAME;
 }
 
 tstring VPNTransport::GetTransportRequestName() const
