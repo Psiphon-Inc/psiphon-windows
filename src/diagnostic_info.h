@@ -64,7 +64,7 @@ void AddDiagnosticInfo(const char* message, const T& entry)
     out << YAML::BeginMap;
     out << YAML::Key << "timestamp" << YAML::Value << TStringToNarrow(GetISO8601DatetimeString()).c_str();
     out << YAML::Key << "msg" << YAML::Value << message;
-    out << YAML::Key << "data" << entry;
+    out << YAML::Key << "data" << YAML::Value << entry;
     out << YAML::EndMap;
     _AddDiagnosticInfoHelper(out.c_str());
 }
