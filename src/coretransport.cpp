@@ -316,6 +316,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         string serverEntry = m_tempConnectServerEntry->ToString();
         config["TargetServerEntry"] =
             Hexlify((const unsigned char*)(serverEntry.c_str()), serverEntry.length());
+        config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
     }
 
     ostringstream configDataStream;

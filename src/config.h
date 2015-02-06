@@ -45,3 +45,4 @@ static const int HTTPS_REQUEST_SEND_TIMEOUT_MS = 30000;
 static const int HTTPS_REQUEST_RECEIVE_TIMEOUT_MS = 30000;
 static const int TERMINATE_PROCESS_WAIT_MS = 5000;
 static const char* UNTUNNELED_WEB_REQUEST_CAPABILITY = "handshake";
+static const int TEMPORARY_TUNNEL_TIMEOUT_SECONDS = 20;
