@@ -27,7 +27,7 @@
 class SessionInfo;
 
 #define CORE_TRANSPORT_PROTOCOL_NAME    _T("CoreTransport")
-#define CORE_TRANSPORT_DISPLAY_NAME     _T("CoreTransport")
+#define CORE_TRANSPORT_DISPLAY_NAME     _T("Psiphon Tunnel")
 
 class CoreTransport : public ITransport
 {
