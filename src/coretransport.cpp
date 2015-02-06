@@ -608,11 +608,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         {
             int port = data["port"].asInt();
             my_print(NOT_SENSITIVE, false, _T("SOCKS proxy port not available: %d"), port);
+            // Don't try to reconnect with the same configuration
+            throw TransportFailed(false);
         }
         else if (noticeType == "HttpProxyPortInUse")
         {
             int port = data["port"].asInt();
             my_print(NOT_SENSITIVE, false, _T("HTTP proxy port not available: %d"), port);
+            // Don't try to reconnect with the same configuration
+            throw TransportFailed(false);
         }
     }
     catch (exception& e)
@@ -651,7 +655,10 @@ bool CoreTransport::DoPeriodicCheck()
         }
         else if (result == WAIT_OBJECT_0)
         {
-            // The process has signalled -- which implies that it's died
+            // The process has signalled -- which implies that it has died.
+            // We'll consume the output anyway, as it might contain information
+            // about why the process death occurred (such as port conflict).
+            ConsumeCoreProcessOutput();
             return false;
         }
         else

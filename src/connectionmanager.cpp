@@ -452,6 +452,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
             // Fall through
         }
+        catch (TransportConnection::PermanentFailure&)
+        {
+            // Unrecoverable error. Cleanup and exit.
+            my_print(NOT_SENSITIVE, true, _T("%s: caught TransportConnection::PermanentFailure"), __TFUNCTION__);
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            break;
+        }
         catch (StopSignal::UnexpectedDisconnectStopException& ex)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: caught StopSignal::UnexpectedDisconnectStopException"), __TFUNCTION__);

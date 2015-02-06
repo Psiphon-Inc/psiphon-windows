@@ -38,7 +38,8 @@ ITransport::ITransport(LPCTSTR transportProtocolName)
       m_tempConnectServerEntry(NULL),
       m_serverList(TStringToNarrow(transportProtocolName).c_str()),
       m_firstConnectionAttempt(true),
-      m_reconnectStateReceiver(NULL)
+      m_reconnectStateReceiver(NULL),
+      m_connectRetryOkay(true)
 {
 }
 
@@ -69,6 +70,7 @@ void ITransport::Connect(
     m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
     m_reconnectStateReceiver = reconnectStateReceiver;
+    m_connectRetryOkay = true;
 
     assert(m_systemProxySettings);
 
@@ -76,6 +78,12 @@ void ITransport::Connect(
     {
         throw TransportFailed();
     }
+}
+
+
+bool ITransport::IsConnectRetryOkay() const
+{
+    return m_connectRetryOkay;
 }
 
 
@@ -90,6 +98,12 @@ bool ITransport::DoStart()
     try
     {
         TransportConnect();
+    }
+    catch (TransportFailed& ex)
+    {
+        m_connectRetryOkay = ex.m_connectRetryOkay;
+        m_firstConnectionAttempt = false;
+        return false;
     }
     catch(...)
     {

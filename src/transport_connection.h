@@ -70,6 +70,7 @@ public:
 
     // Exception class
     class TryNextServer : public std::exception { };
+    class PermanentFailure : public std::exception { };
 
 private:
     void Cleanup();

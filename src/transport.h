@@ -104,6 +104,10 @@ public:
             WorkerThreadSynch* workerThreadSynch,
             ServerEntry* tempConnectServerEntry=NULL);
 
+    // Returns true if it's okay to retry the connection using the same transport
+    // and connection parameters. If it returns false, then the failure is permanent.
+    bool IsConnectRetryOkay() const;
+
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
@@ -128,8 +132,18 @@ public:
     // IWorkerThread::Error may be thrown at any time. 
     // (Except in const members?)
     //
-    // Indicates that this transport was not successful
-    class TransportFailed { };
+    // Indicates that this transport was not successful.
+    // If connectRetryOkay is not true, then there should not be another connection
+    // attempt made with the transport using the same parameters.
+    class TransportFailed 
+    { 
+        friend class ITransport;
+    public:
+        TransportFailed() : m_connectRetryOkay(true) {}
+        TransportFailed(bool connectRetryOkay) : m_connectRetryOkay(connectRetryOkay) {}
+    protected:
+        bool m_connectRetryOkay;
+    };
 
 protected:
     // May throw TransportFailed or IWorkerThread::Abort
@@ -156,4 +170,5 @@ protected:
     ServerList m_serverList;
     bool m_firstConnectionAttempt;
     IReconnectStateReceiver* m_reconnectStateReceiver;
+    bool m_connectRetryOkay;
 };
