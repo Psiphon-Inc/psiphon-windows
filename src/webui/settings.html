@@ -26,8 +26,14 @@
       padding: 1em;
     }
 
+    /* Takes no space in the layout */
     .hidden {
       display: none;
+    }
+
+    /* Takes up space in the layout, but is not visible */
+    .invisible {
+      visibility: hidden;
     }
 
     .error-help {
@@ -44,17 +50,15 @@
     }
 
     .vpn-incompatible-msg {
-      size: 0.8em;
+      font-size: 0.8em;
     }
 
     .disabled-text {
-      zoom: 1; filter: alpha(opacity=60); /* IE<=8 */
-      opacity: 0.6;
+      color: #888;
     }
 
     .perma-disabled {
-      zoom: 1; filter: alpha(opacity=60); /* IE<=8 */
-      opacity: 0.6;
+      color: #888;
     }
 
     .checkbox-description {
@@ -139,7 +143,7 @@ body {
 <style type="text/css">
 html {
   width:720px;
-  height:670px;
+  height:680px;
   }
 </style>
 <![endif]-->
@@ -149,7 +153,7 @@ html {
 <body>
   <h1>Psiphon Settings</h1>
 
-  <div class="setting-item">
+  <div class="setting-item vpn-incompatible">
     <!-- The inline styles are hacks to keep the text from shifting when the
          fancy combobox opens and closes. -->
     <div style="height:24px">
@@ -172,6 +176,9 @@ html {
       Psiphon has servers in many different countries. For the fastest connection
       speed you should choose "Best Performance", but you may instead prefer to
       use a server in a specific country.
+    </div>
+    <div class="vpn-incompatible-msg setting-description">
+      <em>(Doesn't work with VPN mode.)</em>
     </div>
   </div>
 
@@ -209,7 +216,9 @@ html {
             <span class="error-help hidden LocalSocksProxyPort">
               Must be a number between 1 and 65535.
             </span>
-            <span class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</span>
+            <span class="vpn-incompatible-msg">
+              <em>(Doesn't work with VPN mode.)</em>
+            </span>
           </td>
         </tr>
       </table>
@@ -218,7 +227,10 @@ html {
 
   <div class="setting-item">
     <fieldset class="vpn-incompatible">
-    <legend><strong>Upstream Proxy</strong> <span class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</span></legend>
+      <legend>
+        <strong>Upstream Proxy</strong>
+        <span class="vpn-incompatible-msg"><em>(Doesn't work with VPN mode.)</em></span>
+      </legend>
       <div class="setting-description">
         If your computer already has a proxy configured, by default Psiphon will
         use that proxy when establishing a tunnel. You can override that by specifying
@@ -259,7 +271,7 @@ html {
     <input type="checkbox" id="SplitTunnel" disabled/>
     <label for="SplitTunnel">
       <strong>Don't proxy domestic websites (Not yet supported!)</strong>
-      <span class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</span>
+      <span class="vpn-incompatible-msg"><em>(Doesn't work with VPN mode.)</em></span>
     </label>
     <div class="checkbox-description setting-description">
       If enabled, requests made to servers within your home country will not be
@@ -291,6 +303,8 @@ function exceptionString(ex) {
 
 <script>
 $(function() {
+  "use strict";
+
   // This is assignment is merely to help with testing
   if (!window.dialogArguments) window.dialogArguments = '{ "SplitTunnel": 1, "VPN": 0, "LocalHttpProxyPort": 7771, "LocalSocksProxyPort": 7770, "SkipUpstreamProxy": 1, "UpstreamProxyHostname": "", "UpstreamProxyPort": 234, "EgressRegion": "GB", "defaults": { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": "", "LocalSocksProxyPort": "", "SkipUpstreamProxy": 0, "UpstreamProxyHostname": "", "UpstreamProxyPort": "", "EgressRegion": ""  } }';
 
@@ -362,7 +376,9 @@ function fillSettingsValues(obj) {
   if (typeof(obj.EgressRegion) !== 'undefined') {
     $('#EgressRegion').val(obj.EgressRegion);
   }
-  $('body select').each(function(){if (this.refresh) this.refresh()});
+  $('body select').each(function() {
+    if (this.refresh) this.refresh();
+  });
 }
 
 function onOK(event) {
@@ -439,9 +455,16 @@ function checkPortField(event) {
 // depending on the choice of VPN mode.
 function vpnModeUpdate() {
   var vpn = $('#VPN').prop('checked');
-  $('input.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) input').prop('disabled', vpn);
-  $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
+  $('input.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) input, select..vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) select').prop('disabled', vpn);
+  $('.vpn-incompatible-msg').toggleClass('invisible', !vpn);
   $('.vpn-incompatible').toggleClass('disabled-text', vpn);
+
+  // The fancy msDropDown controls require more work to disable.
+  $('body select').each(function() {
+    if ($(this).data('dd')) {
+      $(this).data('dd').set('disabled', this.disabled);
+    }
+  });
 }
 
 // The other upstream proxy settings should be disabled if skip-upstream-proxy is set.
