@@ -35,38 +35,38 @@
 
 #define TRANSPORT_NAME                  "Transport"
 // TODO: Don't hardcode transport names? Or get rid of transport registry (since the dynamic-ness is gone anyway).
-#define TRANSPORT_DEFAULT               CORE_TRANSPORT_DISPLAY_NAME
-#define TRANSPORT_VPN                   VPN_TRANSPORT_DISPLAY_NAME
+#define TRANSPORT_DEFAULT               CORE_TRANSPORT_PROTOCOL_NAME
+#define TRANSPORT_VPN                   VPN_TRANSPORT_PROTOCOL_NAME
 
-#define HTTP_PROXY_PORT_NAME            "UserLocalHTTPProxyPort"
+#define HTTP_PROXY_PORT_NAME            "LocalHTTPProxyPort"
 #define HTTP_PROXY_PORT_DEFAULT         NULL_PORT
-#define SOCKS_PROXY_PORT_NAME           "UserLocalSOCKSProxyPort"
+#define SOCKS_PROXY_PORT_NAME           "LocalSOCKSProxyPort"
 #define SOCKS_PROXY_PORT_DEFAULT        NULL_PORT
 
 #define EGRESS_REGION_NAME              "EgressRegion"
 #define EGRESS_REGION_DEFAULT           ""
 
-#define SKIP_BROWSER_NAME               "UserSkipBrowser"
+#define SKIP_BROWSER_NAME               "SkipBrowser"
 #define SKIP_BROWSER_DEFAULT            FALSE
 
-#define SKIP_PROXY_SETTINGS_NAME        "UserSkipProxySettings"
+#define SKIP_PROXY_SETTINGS_NAME        "SkipProxySettings"
 #define SKIP_PROXY_SETTINGS_DEFAULT     FALSE
 
-#define SKIP_UPSTREAM_PROXY_NAME        "UserSkipSSHParentProxySettings"
+#define SKIP_UPSTREAM_PROXY_NAME        "SSHParentProxySkip"
 #define SKIP_UPSTREAM_PROXY_DEFAULT     FALSE
 
-#define UPSTREAM_PROXY_TYPE_NAME        "UserSSHParentProxyType"
+#define UPSTREAM_PROXY_TYPE_NAME        "SSHParentProxyType"
 #define UPSTREAM_PROXY_TYPE_DEFAULT     "https"
 
-#define UPSTREAM_PROXY_HOSTNAME_NAME    "UserSSHParentProxyHostname"
+#define UPSTREAM_PROXY_HOSTNAME_NAME    "SSHParentProxyHostname"
 #define UPSTREAM_PROXY_HOSTNAME_DEFAULT ""
 
-#define UPSTREAM_PROXY_PORT_NAME        "UserSSHParentProxyPort"
+#define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
 
 static HANDLE g_registryMutex = CreateMutex(NULL, FALSE, 0);
 
-int GetUserSettingDword(const string& settingName, int defaultValue)
+int GetSettingDword(const string& settingName, int defaultValue, bool writeDefault=false)
 {
     AutoMUTEX lock(g_registryMutex);
 
@@ -74,16 +74,18 @@ int GetUserSettingDword(const string& settingName, int defaultValue)
 
     if (!ReadRegistryDwordValue(settingName, value))
     {
-        // Write out the setting with a default value so that it's there
-        // for users to see and use, if they want to set it.
         value = defaultValue;
-        WriteRegistryDwordValue(settingName, value);
+
+        if (writeDefault)
+        {
+            WriteRegistryDwordValue(settingName, value);
+        }
     }
 
     return value;
 }
 
-string GetUserSettingString(const string& settingName, string defaultValue)
+string GetSettingString(const string& settingName, string defaultValue, bool writeDefault=false)
 {
     AutoMUTEX lock(g_registryMutex);
 
@@ -91,17 +93,19 @@ string GetUserSettingString(const string& settingName, string defaultValue)
 
     if (!ReadRegistryStringValue(settingName.c_str(), value))
     {
-        // Write out the setting with a default value so that it's there
-        // for users to see and use, if they want to set it.
         value = defaultValue;
-        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
-        WriteRegistryStringValue(settingName, value, reason);
+
+        if (writeDefault)
+        {
+            RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+            WriteRegistryStringValue(settingName, value, reason);
+        }
     }
 
     return value;
 }
 
-wstring GetUserSettingString(const string& settingName, wstring defaultValue)
+wstring GetSettingString(const string& settingName, wstring defaultValue, bool writeDefault=false)
 {
     AutoMUTEX lock(g_registryMutex);
 
@@ -109,11 +113,13 @@ wstring GetUserSettingString(const string& settingName, wstring defaultValue)
 
     if (!ReadRegistryStringValue(settingName.c_str(), value))
     {
-        // Write out the setting with a default value so that it's there
-        // for users to see and use, if they want to set it.
         value = defaultValue;
-        RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
-        WriteRegistryStringValue(settingName, value, reason);
+
+        if (writeDefault)
+        {
+            RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+            WriteRegistryStringValue(settingName, value, reason);
+        }
     }
 
     return value;
@@ -121,11 +127,10 @@ wstring GetUserSettingString(const string& settingName, wstring defaultValue)
 
 void Settings::Initialize()
 {
-    // Read - and consequently write out default values for - all settings
-    (void)Settings::SplitTunnel();
-    (void)Settings::Transport();
-    (void)Settings::LocalHttpProxyPort();
-    (void)Settings::LocalSocksProxyPort();
+    // Write out the default values for our non-exposed (registry-only) settings. 
+    // This is to help users find and modify them.
+    (void)GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT, true);
+    (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
 }
 
 bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
@@ -242,7 +247,7 @@ bool Settings::SplitTunnel()
 
 tstring Settings::Transport()
 {
-    tstring transport = GetUserSettingString(TRANSPORT_NAME, TRANSPORT_DEFAULT);
+    tstring transport = GetSettingString(TRANSPORT_NAME, TRANSPORT_DEFAULT);
     if (transport != TRANSPORT_VPN)
     {
         transport = TRANSPORT_DEFAULT;
@@ -252,7 +257,7 @@ tstring Settings::Transport()
 
 unsigned int Settings::LocalHttpProxyPort()
 {
-    DWORD port = GetUserSettingDword(HTTP_PROXY_PORT_NAME, HTTP_PROXY_PORT_DEFAULT);
+    DWORD port = GetSettingDword(HTTP_PROXY_PORT_NAME, HTTP_PROXY_PORT_DEFAULT);
     if (port > MAX_PORT)
     {
         port = HTTP_PROXY_PORT_DEFAULT;
@@ -262,7 +267,7 @@ unsigned int Settings::LocalHttpProxyPort()
 
 unsigned int Settings::LocalSocksProxyPort()
 {
-    DWORD port = GetUserSettingDword(SOCKS_PROXY_PORT_NAME, SOCKS_PROXY_PORT_DEFAULT);
+    DWORD port = GetSettingDword(SOCKS_PROXY_PORT_NAME, SOCKS_PROXY_PORT_DEFAULT);
     if (port > MAX_PORT)
     {
         port = SOCKS_PROXY_PORT_DEFAULT;
@@ -273,18 +278,18 @@ unsigned int Settings::LocalSocksProxyPort()
 string Settings::UpstreamProxyType()
 {
     // We only support one type, but we'll call this to create the registry entry
-    (void)GetUserSettingString(UPSTREAM_PROXY_TYPE_NAME, UPSTREAM_PROXY_TYPE_DEFAULT);
+    (void)GetSettingString(UPSTREAM_PROXY_TYPE_NAME, UPSTREAM_PROXY_TYPE_DEFAULT);
     return UPSTREAM_PROXY_TYPE_DEFAULT;
 }
 
 string Settings::UpstreamProxyHostname()
 {
-    return GetUserSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    return GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
 }
 
 unsigned int Settings::UpstreamProxyPort()
 {
-    DWORD port = GetUserSettingDword(UPSTREAM_PROXY_PORT_NAME, UPSTREAM_PROXY_PORT_DEFAULT);
+    DWORD port = GetSettingDword(UPSTREAM_PROXY_PORT_NAME, UPSTREAM_PROXY_PORT_DEFAULT);
     if (port > MAX_PORT)
     {
         port = UPSTREAM_PROXY_PORT_DEFAULT;
@@ -294,12 +299,12 @@ unsigned int Settings::UpstreamProxyPort()
 
 bool Settings::SkipUpstreamProxy()
 {
-    return !!GetUserSettingDword(SKIP_UPSTREAM_PROXY_NAME, SKIP_UPSTREAM_PROXY_DEFAULT);
+    return !!GetSettingDword(SKIP_UPSTREAM_PROXY_NAME, SKIP_UPSTREAM_PROXY_DEFAULT);
 }
 
 string Settings::EgressRegion()
 {
-    return GetUserSettingString(EGRESS_REGION_NAME, EGRESS_REGION_DEFAULT);
+    return GetSettingString(EGRESS_REGION_NAME, EGRESS_REGION_DEFAULT);
 }
 
 /*
@@ -308,10 +313,10 @@ Settings that are not exposed in the UI.
 
 bool Settings::SkipBrowser()
 {
-    return !!GetUserSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT);
+    return !!GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT);
 }
     
 bool Settings::SkipProxySettings()
 {
-    return !!GetUserSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
+    return !!GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
 }

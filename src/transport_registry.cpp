@@ -54,13 +54,13 @@ int TransportRegistry::Register()
 
 
 // static 
-ITransport* TransportRegistry::New(tstring transportDisplayName)
+ITransport* TransportRegistry::New(tstring transportProtocolName)
 {
     for (vector<RegisteredTransport>::const_iterator it = m_registeredTransports.begin();
          it != m_registeredTransports.end();
          ++it)
     {
-        if (it->transportDisplayName == transportDisplayName)
+        if (it->transportProtocolName == transportProtocolName)
         {
             return it->transportFactoryFn();
         }
