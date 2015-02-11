@@ -193,6 +193,11 @@ DWORD WaitForConnectability(
     // requests through the entire stack from time to time or switching
     // to integrated ssh/http libraries with APIs.
 
+    if (port <= 0 || port > 0xFFFF)
+    {
+        return ERROR_UNKNOWN_PORT;
+    }
+
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
@@ -273,11 +278,14 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
     int maxPort = targetPort + maxIncrement;
     do
     {
-        if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, stopInfo))
+        if (targetPort > 0 && targetPort <= 0xFFFF)
         {
-            return true;
+            if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, stopInfo))
+            {
+                return true;
+            }
+            my_print(NOT_SENSITIVE, false, _T("Localhost port %d is already in use."), targetPort);
         }
-        my_print(NOT_SENSITIVE, false, _T("Localhost port %d is already in use."), targetPort);
     }
     while (++targetPort <= maxPort);
 
