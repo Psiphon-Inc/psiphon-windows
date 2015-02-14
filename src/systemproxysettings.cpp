@@ -55,6 +55,21 @@ SystemProxySettings::~SystemProxySettings()
     Revert();
 }
 
+int SystemProxySettings::GetHttpProxyPort() const
+{
+    return m_httpProxyPort;
+}
+
+int SystemProxySettings::GetHttpsProxyPort() const
+{
+    return m_httpsProxyPort;
+}
+
+int SystemProxySettings::GetSocksProxyPort() const
+{
+    return m_socksProxyPort;
+}
+
 void SystemProxySettings::SetHttpProxyPort(int port)
 {
     m_httpProxyPort = port;

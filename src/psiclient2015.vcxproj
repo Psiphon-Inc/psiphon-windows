@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdParty\mctrl;3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <EnablePREfast>false</EnablePREfast>
@@ -62,7 +62,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>3rdParty\cryptopp\Debug2013\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Debug2013\libyaml-cppmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>3rdParty\mctrl\Debug2013\mCtrl.lib;3rdParty\cryptopp\Debug2013\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Debug2013\libyaml-cppmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -73,7 +73,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdParty\mctrl;3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -82,7 +82,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>3rdParty\cryptopp\Release2013\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Release2013\libyaml-cppmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>3rdParty\mctrl\Release2013\mCtrl.lib;3rdParty\cryptopp\Release2013\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Release2013\libyaml-cppmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -90,6 +92,12 @@
     <None Include="3rdParty\psiphon-tunnel-core.exe" />
     <None Include="feedback.html" />
     <None Include="settings.html" />
+    <None Include="webui\flags16.css" />
+    <None Include="webui\jquery.js" />
+    <None Include="webui\json.js" />
+    <None Include="webui\main.html" />
+    <None Include="webui\msdropdown.css" />
+    <None Include="webui\msdropdown.js" />
     <None Include="webui\settings.html" />
   </ItemGroup>
   <ItemGroup>
@@ -339,6 +347,8 @@
     <Image Include="feedback.bmp" />
     <Image Include="settings.bmp" />
     <Image Include="toggle_images.bmp" />
+    <Image Include="webui\flags16.png" />
+    <Image Include="webui\flag_unknown_16.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

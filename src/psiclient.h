@@ -22,13 +22,19 @@
 #include "resource.h"
 
 
-//==== global constants ================================================
+//==== global window message constants =================================
 
 #define WM_PSIPHON_MY_PRINT            WM_USER + 100
 #define WM_PSIPHON_FEEDBACK_SUCCESS    WM_USER + 101
 #define WM_PSIPHON_FEEDBACK_FAILED     WM_USER + 102
 #define WM_PSIPHON_CREATED             WM_USER + 103
 
+
+//==== UI Interaction ==================================================
+
+void UI_SetStateStopped();
+void UI_SetStateStarting(const tstring& transportProtocolName);
+void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort);
 
 //==== logging =========================================================
 

@@ -46,7 +46,6 @@ public:
     void Toggle();
     void Stop(DWORD reason);
     void Start();
-    time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);
@@ -101,7 +100,6 @@ private:
     HANDLE m_thread;
     HANDLE m_upgradeThread;
     HANDLE m_feedbackThread;
-    time_t m_startingTime;
     ITransport* m_transport;
     bool m_upgradePending;
     bool m_startSplitTunnel;

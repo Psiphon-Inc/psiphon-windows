@@ -524,6 +524,12 @@
     <None Include="feedback.html" />
     <None Include="settings.html" />
     <None Include="webui\settings.html" />
+    <None Include="webui\flags16.css" />
+    <None Include="webui\json.js" />
+    <None Include="webui\jquery.js" />
+    <None Include="webui\msdropdown.css" />
+    <None Include="webui\msdropdown.js" />
+    <None Include="webui\main.html" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="json">
@@ -547,5 +553,7 @@
     <Image Include="banner.bmp" />
     <Image Include="email.bmp" />
     <Image Include="feedback.bmp" />
+    <Image Include="webui\flags16.png" />
+    <Image Include="webui\flag_unknown_16.png" />
   </ItemGroup>
 </Project>

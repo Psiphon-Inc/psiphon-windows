@@ -30,6 +30,7 @@
 # pragma comment(lib, "wbemuuid.lib")
 
 #include "psiclient.h"
+#include <mCtrl/html.h>
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
 #include "transport.h"
@@ -52,484 +53,36 @@ HINSTANCE g_hInst;
 TCHAR g_szTitle[MAX_LOADSTRING];
 TCHAR g_szWindowClass[MAX_LOADSTRING];
 
-HWND g_hWnd;
+HWND g_hWnd = NULL;
 ConnectionManager g_connectionManager;
 
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
-// (...more globals in Controls section)
-
-
-//==== UI layout ===============================================================
-
-//
-//                 + - - - - - - - - - -+ +----------+ +----------+
-//                 |                    | |          | |          |
-// [toggle button] | [banner]           | | settings | | feedback |
-//                 |                    | | button   | | button   |  
-//                 + - - - - - - - - - -+ +----------+ +----------+
-// +--------------------------------------------------------------+   
-// | ^                                                            |   
-// | | log list box                                               |   
-// | v                                                            |   
-// +--------------------------------------------------------------+   
-//                   [info link]
-//
-
-
-const int SPACER = 5;
-const int FIRST_ROW_HEIGHT = 76; // must be like SETTINGS_BUTTON_HEIGHT + SPACER*2
-
-const int TOGGLE_BUTTON_X = 0 + SPACER;
-const int TOGGLE_BUTTON_IMAGE_WIDTH = 48;
-const int TOGGLE_BUTTON_WIDTH = 66;
-const int TOGGLE_BUTTON_HEIGHT = 66;
-const int TOGGLE_BUTTON_Y = 0 + SPACER;
-
-const int BANNER_X = TOGGLE_BUTTON_X + TOGGLE_BUTTON_WIDTH + SPACER;
-const int BANNER_WIDTH = 200;
-const int BANNER_HEIGHT = FIRST_ROW_HEIGHT;
-const int BANNER_Y = 0 + SPACER;
-
-const int SETTINGS_BUTTON_IMAGE_WIDTH = 56;
-const int SETTINGS_BUTTON_WIDTH = 66;
-const int SETTINGS_BUTTON_HEIGHT = 66;
-const int SETTINGS_BUTTON_X = BANNER_X + BANNER_WIDTH + SPACER;
-const int SETTINGS_BUTTON_Y = TOGGLE_BUTTON_Y;
-
-const int FEEDBACK_BUTTON_IMAGE_WIDTH = SETTINGS_BUTTON_IMAGE_WIDTH;
-const int FEEDBACK_BUTTON_WIDTH = SETTINGS_BUTTON_WIDTH;
-const int FEEDBACK_BUTTON_HEIGHT = SETTINGS_BUTTON_HEIGHT;
-const int FEEDBACK_BUTTON_X = SETTINGS_BUTTON_X + SETTINGS_BUTTON_WIDTH + SPACER;
-const int FEEDBACK_BUTTON_Y = SETTINGS_BUTTON_Y;
-
-const int WINDOW_WIDTH = FEEDBACK_BUTTON_X + FEEDBACK_BUTTON_WIDTH + SPACER + 20; // non-client-area hack adjustment
-const int WINDOW_HEIGHT = 200;
-
-const int INFO_LINK_WIDTH = TextWidth(INFO_LINK_PROMPT);
-const int INFO_LINK_HEIGHT = TextHeight();
-const int INFO_LINK_X = 0 + (WINDOW_WIDTH - INFO_LINK_WIDTH)/2;
-const int INFO_LINK_Y = WINDOW_HEIGHT - INFO_LINK_HEIGHT;
-
-const int LOG_LIST_BOX_X = 0;
-const int LOG_LIST_BOX_Y = FIRST_ROW_HEIGHT + SPACER;
-const int LOG_LIST_BOX_WIDTH = WINDOW_WIDTH;
-const int LOG_LIST_BOX_HEIGHT = WINDOW_HEIGHT - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT);
+static HWND g_hHtmlCtrl = NULL;
+static bool g_htmlUiReady = false;
 
 
 //==== Controls ================================================================
 
-
-HWND g_hToggleButton = NULL;
-HIMAGELIST g_hToggleButtonImageList = NULL;
-const int TOGGLE_BUTTON_ICON_COUNT = 6;
-HICON g_hToggleButtonIcons[TOGGLE_BUTTON_ICON_COUNT];
-HWND g_hBannerStatic = NULL;
-HBITMAP g_hBannerBitmap = NULL;
-HBITMAP g_hEmailBitmap = NULL;
-HWND g_hLogListBox = NULL;
-HWND g_hInfoLinkStatic = NULL;
-HWND g_hInfoLinkTooltip = NULL;
-HFONT g_hDefaultFont = NULL;
-HFONT g_hUnderlineFont = NULL;
-bool g_bShowEmail = false;
-HWND g_hFeedbackButton = NULL;
-HIMAGELIST g_hFeedbackButtonImageList = NULL;
-const int FEEDBACK_BUTTON_ICON_COUNT = 1;
-HICON g_hFeedbackButtonIcons[FEEDBACK_BUTTON_ICON_COUNT];
-HWND g_hSettingsButton = NULL;
-HIMAGELIST g_hSettingsButtonImageList = NULL;
-const int SETTINGS_BUTTON_ICON_COUNT = 1;
-HICON g_hSettingsButtonIcons[SETTINGS_BUTTON_ICON_COUNT];
-
-
-void ResizeControls(HWND hWndParent)
+static void OnResize(HWND hWnd, UINT uWidth, UINT uHeight)
 {
-    RECT rect;
-    GetClientRect(hWndParent, &rect);
-
-    int windowWidth = rect.right - rect.left;
-    int windowHeight = rect.bottom - rect.top;
-
-    if (g_hLogListBox != NULL)
-    {
-        MoveWindow(
-            g_hLogListBox,
-            LOG_LIST_BOX_X,
-            LOG_LIST_BOX_Y,
-            windowWidth,
-            windowHeight - (LOG_LIST_BOX_Y + SPACER + INFO_LINK_HEIGHT),
-            TRUE);
-    }
-
-    if (g_hInfoLinkStatic != NULL)
-    {
-        MoveWindow(
-            g_hInfoLinkStatic,
-            (windowWidth - INFO_LINK_WIDTH)/2,
-            windowHeight - INFO_LINK_HEIGHT,
-            INFO_LINK_WIDTH,
-            INFO_LINK_HEIGHT,
-            TRUE);
-    }
+    SetWindowPos(g_hHtmlCtrl, NULL, 0, 0, uWidth, uHeight, SWP_NOZORDER);
 }
 
-
-void SubclassHyperlink(HWND hWnd);
-
-void CreateControls(HWND hWndParent)
+void OnCreate(HWND hWndParent)
 {
-    g_hDefaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-    LOGFONT logfont;
-    GetObject(g_hDefaultFont, sizeof(logfont), &logfont);
-    logfont.lfUnderline = TRUE;
-    g_hUnderlineFont = CreateFontIndirect(&logfont);
+    tstring url = ResourceToUrl(_T("main.html"), NULL);
 
-    // Toggle Button
-
-    g_hToggleButton = CreateWindow(
-        L"Button",
-        L"",
-        WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON|BS_ICON,
-        TOGGLE_BUTTON_X,
-        TOGGLE_BUTTON_Y,
-        TOGGLE_BUTTON_WIDTH,
-        TOGGLE_BUTTON_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_TOGGLE_BUTTON,
+    /* Create the html control */
+    g_hHtmlCtrl = CreateWindow(
+        MC_WC_HTML, 
+        url.c_str(),
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | MC_HS_NOCONTEXTMENU,
+        0, 0, 0, 0, 
+        hWndParent, 
+        (HMENU)IDC_HTML_CTRL,
         g_hInst,
         NULL);
-
-    g_hToggleButtonImageList = ImageList_LoadImage(
-        g_hInst,
-        MAKEINTRESOURCE(IDB_TOGGLE_BUTTON_IMAGES),
-        TOGGLE_BUTTON_IMAGE_WIDTH,
-        0,
-        CLR_DEFAULT,
-        IMAGE_BITMAP,
-        LR_CREATEDIBSECTION);
-
-    assert(TOGGLE_BUTTON_ICON_COUNT == ImageList_GetImageCount(g_hToggleButtonImageList));
-
-    for (int i = 0; i < TOGGLE_BUTTON_ICON_COUNT; i++)
-    {
-        g_hToggleButtonIcons[i] = ImageList_GetIcon(
-            g_hToggleButtonImageList,
-            i,
-            ILD_NORMAL);
-    }
-
-    // Banner
-
-    g_hBannerStatic = CreateWindow(
-        L"Static",
-        0,
-        WS_CHILD|WS_VISIBLE|SS_CENTERIMAGE|SS_BITMAP|SS_NOTIFY,
-        BANNER_X,
-        BANNER_Y,
-        BANNER_WIDTH,
-        BANNER_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_BANNER_STATIC,
-        g_hInst,
-        NULL);
-    g_hBannerBitmap = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_BANNER));
-    g_hEmailBitmap = LoadBitmap(g_hInst, MAKEINTRESOURCE(IDB_EMAIL));
-    SendMessage(g_hBannerStatic, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)g_hBannerBitmap);
-    EnableWindow(g_hBannerStatic, TRUE);
-    ShowWindow(g_hBannerStatic, TRUE);
-
-    SubclassHyperlink(g_hBannerStatic);
-
-    // Log List
-
-    g_hLogListBox = CreateWindow(
-        L"Listbox",
-        L"",
-        WS_CHILD|WS_VISIBLE|WS_VSCROLL|LBS_NOINTEGRALHEIGHT|LBS_DISABLENOSCROLL|LBS_NOTIFY,
-        LOG_LIST_BOX_X,
-        LOG_LIST_BOX_Y,
-        LOG_LIST_BOX_WIDTH,
-        LOG_LIST_BOX_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_LOG_LISTBOX,
-        g_hInst,
-        NULL);
-    SendMessage(g_hLogListBox, WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
-
-    // Info Link
-
-    // Hyperlink-like static control implementation adapted from:
-    // http://www.olivierlanglois.net/hyperlinkdemo.htm
-
-    g_hInfoLinkStatic = CreateWindow(
-        L"Static",
-        INFO_LINK_PROMPT,
-        WS_CHILD|WS_VISIBLE|SS_NOTIFY,
-        INFO_LINK_X,
-        INFO_LINK_Y,
-        INFO_LINK_WIDTH,
-        INFO_LINK_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_INFO_LINK_STATIC,
-        g_hInst,
-        NULL);
-    SendMessage(g_hInfoLinkStatic, WM_SETFONT, (WPARAM)g_hDefaultFont, NULL);
-
-    g_hInfoLinkTooltip = CreateWindowEx(
-        NULL,
-        TOOLTIPS_CLASS,
-        NULL,
-        WS_POPUP|TTS_ALWAYSTIP|TTS_BALLOON,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        hWndParent,
-        NULL, 
-        g_hInst,
-        NULL);
-    
-    TOOLINFO toolInfo = {0};
-    toolInfo.cbSize = sizeof(toolInfo);
-    toolInfo.hwnd = hWndParent;
-    toolInfo.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
-    toolInfo.uId = (UINT_PTR)g_hInfoLinkStatic;
-    toolInfo.lpszText = (TCHAR*)INFO_LINK_URL;
-    SendMessage(g_hInfoLinkTooltip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
-
-    SubclassHyperlink(g_hInfoLinkStatic);
-
-    // Feedback Button
-
-    g_hFeedbackButton = CreateWindow(
-        L"Button",
-        L"",
-        WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON|BS_ICON,
-        FEEDBACK_BUTTON_X,
-        FEEDBACK_BUTTON_Y,
-        FEEDBACK_BUTTON_WIDTH,
-        FEEDBACK_BUTTON_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_FEEDBACK_BUTTON,
-        g_hInst,
-        NULL);
-
-    g_hFeedbackButtonImageList = ImageList_LoadImage(
-        g_hInst,
-        MAKEINTRESOURCE(IDB_FEEDBACK_BUTTON_IMAGES),
-        FEEDBACK_BUTTON_IMAGE_WIDTH,
-        0,
-        CLR_DEFAULT,
-        IMAGE_BITMAP,
-        LR_CREATEDIBSECTION);
-
-    assert(FEEDBACK_BUTTON_ICON_COUNT == ImageList_GetImageCount(g_hFeedbackButtonImageList));
-
-    for (int i = 0; i < FEEDBACK_BUTTON_ICON_COUNT; i++)
-    {
-        g_hFeedbackButtonIcons[i] = ImageList_GetIcon(
-            g_hFeedbackButtonImageList,
-            i,
-            ILD_NORMAL);
-    }
-
-    SendMessage(
-        g_hFeedbackButton,
-        BM_SETIMAGE,
-        IMAGE_ICON,
-        (LPARAM)g_hFeedbackButtonIcons[0]);
-
-    // Settings Button
-
-    g_hSettingsButton = CreateWindow(
-        L"Button",
-        L"",
-        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
-        SETTINGS_BUTTON_X,
-        SETTINGS_BUTTON_Y,
-        SETTINGS_BUTTON_WIDTH,
-        SETTINGS_BUTTON_HEIGHT,
-        hWndParent,
-        (HMENU)IDC_SETTINGS_BUTTON,
-        g_hInst,
-        NULL);
-
-    g_hSettingsButtonImageList = ImageList_LoadImage(
-        g_hInst,
-        MAKEINTRESOURCE(IDB_SETTINGS_BUTTON_IMAGES),
-        SETTINGS_BUTTON_IMAGE_WIDTH,
-        0,
-        CLR_DEFAULT,
-        IMAGE_BITMAP,
-        LR_CREATEDIBSECTION);
-
-    assert(SETTINGS_BUTTON_ICON_COUNT == ImageList_GetImageCount(g_hSettingsButtonImageList));
-
-    for (int i = 0; i < SETTINGS_BUTTON_ICON_COUNT; i++)
-    {
-        g_hSettingsButtonIcons[i] = ImageList_GetIcon(
-            g_hSettingsButtonImageList,
-            i,
-            ILD_NORMAL);
-    }
-
-    SendMessage(
-        g_hSettingsButton,
-        BM_SETIMAGE,
-        IMAGE_ICON,
-        (LPARAM)g_hSettingsButtonIcons[0]);
-}
-
-
-const TCHAR* HYPERLINK_ORIGINAL_WINDOWS_PROCEDURE = _T("Original Static Control Windows Procedure");
-
-LRESULT CALLBACK HyperlinkProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-    case WM_MOUSEMOVE:
-        if (GetCapture() != hWnd)
-        {
-            SendMessage(hWnd, WM_SETFONT, (WPARAM)g_hUnderlineFont, FALSE);
-            InvalidateRect(hWnd, NULL, FALSE);
-            SetCapture(hWnd);
-        }
-        else
-        {
-            RECT rect;
-            GetWindowRect(hWnd, &rect);
-            POINT point = {LOWORD(lParam), HIWORD(lParam)};
-            ClientToScreen(hWnd, &point);
-            if (!PtInRect(&rect, point))
-            {
-                SendMessage(hWnd, WM_SETFONT, (WPARAM)g_hDefaultFont, FALSE);
-                InvalidateRect(hWnd, NULL, FALSE);
-                ReleaseCapture();
-            }
-        }
-        break;
-
-    case WM_CAPTURECHANGED:
-        SendMessage(hWnd, WM_SETFONT, (WPARAM)g_hDefaultFont, FALSE);
-        InvalidateRect(hWnd, NULL, FALSE);
-        break;
-
-    case WM_SETCURSOR:
-        SetCursor(LoadCursor(0, IDC_HAND));
-        return TRUE;
-    }
-
-    WNDPROC proc = (WNDPROC)GetProp(hWnd, HYPERLINK_ORIGINAL_WINDOWS_PROCEDURE);
-    return CallWindowProc(proc, hWnd, message, wParam, lParam);
-}
-
-
-void SubclassHyperlink(HWND hWnd)
-{
-    // NOTE: link color is handled in WM_CTLCOLORSTATIC in
-    // the parent window function without subclassing
-
-    SetProp(
-        hWnd,
-        HYPERLINK_ORIGINAL_WINDOWS_PROCEDURE,
-        (HANDLE)GetWindowLong(hWnd, GWL_WNDPROC));
-    SetWindowLong(
-        hWnd,
-        GWL_WNDPROC,
-        (LONG)HyperlinkProc);
-}
-
-
-void UpdateButton(HWND hWndParent)
-{
-    static ConnectionManagerState g_lastState = g_connectionManager.GetState();
-
-    static int g_nextAnimationIndex = 0;
-    int iconIndex = 0;
-
-    ConnectionManagerState state = g_connectionManager.GetState();
-
-    // Flash the taskbar after disconnected
-
-    if (state == CONNECTION_MANAGER_STATE_STOPPED && state != g_lastState)
-    {
-        FLASHWINFO info;
-        info.cbSize = sizeof(FLASHWINFO);
-        info.hwnd = hWndParent;
-        info.dwFlags = FLASHW_ALL|FLASHW_TIMERNOFG;
-        info.uCount = 1;
-        info.dwTimeout = 0;
-        FlashWindowEx(&info);
-    }
-
-    g_lastState = state;
-
-    // Update the button
-
-    if (state == CONNECTION_MANAGER_STATE_STOPPED)
-    {
-        iconIndex = 0;
-    }
-    else if (state == CONNECTION_MANAGER_STATE_CONNECTED)
-    {
-        iconIndex = 1;
-    }
-    else /* if CONNECTION_MANAGER_STATE_STARTING */
-    {
-        iconIndex = 2 + (g_nextAnimationIndex++) % 4;
-    }
-
-    HANDLE currentIcon = (HANDLE)SendMessage(
-        g_hToggleButton,
-        BM_GETIMAGE,
-        IMAGE_ICON,
-        0);
-
-    if (currentIcon != g_hToggleButtonIcons[iconIndex])
-    {
-        SendMessage(
-            g_hToggleButton,
-            BM_SETIMAGE,
-            IMAGE_ICON,
-            (LPARAM)g_hToggleButtonIcons[iconIndex]);
-    }
-}
-
-
-void UpdateBanner(HWND hWndParent)
-{
-    // Replace the sponsor banner with an image promoting email propagation:
-    // - When starting takes more than N seconds
-    // - After cancelling a start that took more than N seconds
-    // The sponsor banner is restored on a sucessful connection and when the
-    // start button is toggled again.
-
-    ConnectionManagerState state = g_connectionManager.GetState();
-    time_t startingTime = g_connectionManager.GetStartingTime();
-    time_t timeUntilEmail = 120;
-
-    if (state == CONNECTION_MANAGER_STATE_STARTING && startingTime > timeUntilEmail)
-    {
-        g_bShowEmail = true;
-    }
-    else if ((state == CONNECTION_MANAGER_STATE_STARTING && startingTime <= timeUntilEmail) ||
-             state == CONNECTION_MANAGER_STATE_CONNECTED)
-    {
-        g_bShowEmail = false;
-    }
-
-    HBITMAP hBitmap = g_hBannerBitmap;
-
-    if (g_bShowEmail)
-    {
-        hBitmap = g_hEmailBitmap;
-    }
-
-    if (hBitmap != (HBITMAP)SendMessage(g_hBannerStatic, STM_GETIMAGE, (WPARAM)IMAGE_BITMAP, 0))
-    {
-        SendMessage(g_hBannerStatic, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
-    }
 }
 
 
@@ -617,13 +170,147 @@ void my_print(LogSensitivity sensitivity, bool bDebugMessage, const TCHAR* forma
         // deadlocks with SendMessage. Main window will deallocate
         // buffer.
 
-        PostMessage(g_hWnd, WM_PSIPHON_MY_PRINT, NULL, (LPARAM)buffer);
+        PostMessage(g_hWnd, WM_PSIPHON_MY_PRINT, bDebugMessage ? 0 : 1, (LPARAM)buffer);
     }
 }
 
 void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& message)
 {
     my_print(sensitivity, bDebugMessage, NarrowToTString(message).c_str());
+}
+
+
+//==== HTML UI helpers ========================================================
+
+// Many of these helpers (particularly the ones that don't need an immediate 
+// response from the page script) come in pairs: one function to receive the
+// arguments, create a buffer, and post a message; and one function to receive
+// the posted message and actually do the work. 
+// We do this so that we won't end up deadlocked between message handling and
+// background stuff. For example, the Stop button in the HTML will block the 
+// page script until the AppLink is processed; but if ConnectionManager.Stop()
+// is called directly, then it will wait for the connection thread to die, but
+// that thread calls ConnectionManager.SetState(), which calls HtmlUI_SetState(),
+// which tries to talk to the page script, but it can't, because the page script
+// is blocked!
+// So, we're going to PostMessages to ourself whenever possible.
+
+#define WM_PSIPHON_HTMLUI_APPLINK      WM_USER + 200
+#define WM_PSIPHON_HTMLUI_SETSTATE     WM_USER + 201
+#define WM_PSIPHON_HTMLUI_ADDMESSAGE   WM_USER + 202
+
+static void HtmlUI_AddMessage(int priority, LPCTSTR message)
+{
+    Json::Value json;
+    json["priority"] = priority;
+    json["message"] = WStringToUTF8(message);
+    Json::FastWriter jsonWriter;
+    wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
+
+    size_t bufLen = wJson.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, wJson.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_ADDMESSAGE, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_AddMessageHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFN argStruct = { 0 };
+    argStruct.pszFnName = _T("CtrlInterface_AddMessage");
+    argStruct.pszArguments = json;
+    (void)SendMessage(g_hHtmlCtrl, MC_HM_CALLSCRIPTFN, (WPARAM)&argStruct, NULL);
+    delete[] json;
+}
+
+static void HtmlUI_SetState(const wstring& json)
+{
+    size_t bufLen = json.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, json.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_SETSTATE, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_SetStateHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFN argStruct = { 0 };
+    argStruct.pszFnName = _T("HtmlCtrlInterface_SetState");
+    argStruct.pszArguments = json;
+    (void)SendMessage(g_hHtmlCtrl, MC_HM_CALLSCRIPTFN, (WPARAM)&argStruct, NULL);
+    delete[] json;
+}
+
+static void HtmlUI_AppLink(MC_NMHTMLURL* nmHtmlUrl)
+{
+    size_t bufLen = _tcslen(nmHtmlUrl->pszUrl) + 1;
+    TCHAR* buf = new TCHAR[bufLen];
+    _tcsncpy_s(buf, bufLen, nmHtmlUrl->pszUrl, bufLen);
+    buf[bufLen - 1] = _T('\0');
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_APPLINK, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_AppLinkHandler(LPCTSTR url)
+{
+    if (_tcscmp(url, _T("app:start")) == 0)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Start requested"), __TFUNCTION__);
+        g_connectionManager.Start();
+    }
+    else if (_tcscmp(url, _T("app:stop")) == 0)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Stop requested"), __TFUNCTION__);
+        g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+    }
+    delete[] url;
+}
+
+
+//==== Exported functions ========================================================
+
+void UI_SetStateStopped()
+{
+    Json::Value json;
+    json["state"] = "stopped";
+    Json::FastWriter jsonWriter;
+    wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
+    HtmlUI_SetState(wJson);
+}
+
+void UI_SetStateStarting(const tstring& transportProtocolName)
+{
+    Json::Value json;
+    json["state"] = "starting";
+    json["transport"] = WStringToUTF8(transportProtocolName.c_str());
+    Json::FastWriter jsonWriter;
+    wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
+    HtmlUI_SetState(wJson);
+}
+
+void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort)
+{
+    Json::Value json;
+    json["state"] = "connected";
+    json["transport"] = WStringToUTF8(transportProtocolName.c_str());
+    json["socksPort"] = socksPort;
+    json["socksPortAuto"] = Settings::LocalSocksProxyPort() == 0;
+    json["httpPort"] = httpPort;
+    json["httpPortAuto"] = Settings::LocalHttpProxyPort() == 0;
+    Json::FastWriter jsonWriter;
+    wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
+    HtmlUI_SetState(wJson);
 }
 
 
@@ -646,6 +333,9 @@ int APIENTRY _tWinMain(
     LoadString(hInstance, IDS_APP_TITLE, g_szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_PSICLIENT, g_szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
+
+    /* Register class of HTML control. */
+    mcHtml_Initialize();
 
     // Perform application initialization
 
@@ -673,6 +363,8 @@ int APIENTRY _tWinMain(
         }
     }
 
+    mcHtml_Terminate();
+
     return (int) msg.wParam;
 }
 
@@ -699,12 +391,73 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 
-//==== Main window function ===================================================
+//==== Main window functions ==================================================
+
+static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
+{
+    int i = 0;
+
+    if (hdr->idFrom == IDC_HTML_CTRL) 
+    {
+        if (hdr->code == MC_HN_APPLINK)
+        {
+            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+            HtmlUI_AppLink(nmHtmlUrl);
+        }
+        else if (hdr->code == MC_HN_DOCUMENTCOMPLETE)
+        {
+            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+
+            // The UI is ready to function now.
+            g_htmlUiReady = true;
+            PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
+        }
+        else if (hdr->code == MC_HN_PROGRESS)
+        {
+            MC_NMHTMLPROGRESS* nmHtmlProgress = (MC_NMHTMLPROGRESS*)hdr;
+        }
+        else if (hdr->code == MC_HN_STATUSTEXT)
+        {
+            MC_NMHTMLTEXT* nmHtmlText = (MC_NMHTMLTEXT*)hdr;
+        }
+        else if (hdr->code == MC_HN_TITLETEXT)
+        {
+            MC_NMHTMLTEXT* nmHtmlText = (MC_NMHTMLTEXT*)hdr;
+            int i = 0;
+        }
+        else if (hdr->code == MC_HN_HISTORY)
+        {
+            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+        }
+        else if (hdr->code == MC_HN_NEWWINDOW)
+        {
+            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+            i = 1;
+            // Prevent new window from opening
+            return 0;
+        }
+        else if (hdr->code == MC_HN_HTTPERROR)
+        {
+            MC_NMHTTPERROR* nmHttpError = (MC_NMHTTPERROR*)hdr;
+            i = 1;
+            assert(false);
+            // Prevent HTTP error from being shown.
+            return 0;
+        }
+        else
+        {
+            assert(false);
+        }
+    }
+
+    return 0;
+}
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     // Don't allow multiple instances of this application to run
-    if (g_singleInstanceObject.IsAnotherInstanceRunning())
+    // DEBUG ONLY: allowing multiple instances
+    if (false && g_singleInstanceObject.IsAnotherInstanceRunning())
     {
         HWND otherWindow = FindWindow(g_szWindowClass, g_szTitle);
         if (otherWindow)
@@ -717,22 +470,16 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     g_hInst = hInstance;
 
-    RECT rect = {0};
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
-
     g_hWnd = CreateWindowEx(
         WS_EX_APPWINDOW,
         g_szWindowClass,
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
-        rect.right - WINDOW_WIDTH,
-        rect.bottom - WINDOW_HEIGHT,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
+        CW_USEDEFAULT, CW_USEDEFAULT, 
+        600, 400,
         NULL, NULL, hInstance, NULL);
 
     ShowWindow(g_hWnd, nCmdShow);
-    UpdateWindow(g_hWnd);
 
     return TRUE;
 }
@@ -743,18 +490,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     int wmId, wmEvent;
     PAINTSTRUCT ps;
     HDC hdc;
-    TCHAR* myPrintMessage;
     LRESULT result;
 
     switch (message)
     {
     case WM_CREATE:
-        CreateControls(hWnd);
-
-        // We shouldn't try to start connecting while processing the WM_CREATE
-        // message because otherwise messages logged by called functions will be lost.
-        PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
-
+        OnCreate(hWnd);
         break;
 
     case WM_PSIPHON_CREATED:
@@ -762,30 +503,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
-        // NOTE: we leave the connection animation timer running even after fully connected
-        // when the icon no longer animates -- since the timer handler also updates the UI
-        // when unexpectedly disconnected.
-        SetTimer(hWnd, IDT_BUTTON_ANIMATION, 250, NULL);
-
         // Start a connection
-        g_connectionManager.Toggle();
+        // DEBUG: Don't auto-start connection
+        //g_connectionManager.Toggle();
+        break;
 
+    case WM_PSIPHON_HTMLUI_APPLINK:
+        HtmlUI_AppLinkHandler((LPCTSTR)wParam);
+        break;
+    case WM_PSIPHON_HTMLUI_SETSTATE:
+        HtmlUI_SetStateHandler((LPCWSTR)wParam);
+        break;
+    case WM_PSIPHON_HTMLUI_ADDMESSAGE:
+        HtmlUI_AddMessageHandler((LPCWSTR)wParam);
         break;
 
     case WM_SIZE:
-        ResizeControls(hWnd);
-        break;
-
-    case WM_TIMER:
-        if (IDT_BUTTON_ANIMATION == wParam)
+        if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED)
         {
-            UpdateButton(hWnd);
-            UpdateBanner(hWnd);
+            OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
         }
         break;
 
-    case WM_COMMAND:
+    case WM_SETFOCUS:
+        SetFocus(g_hHtmlCtrl);
+        break;
 
+    case WM_NOTIFY:
+        return HandleNotify(hWnd, (NMHDR*)lParam);
+        break;
+
+    case WM_COMMAND:
+        /*
         wmId = LOWORD(wParam);
         wmEvent = HIWORD(wParam);
 
@@ -903,21 +652,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             // else error or user cancelled
         }
-
+        */
         break;
 
     case WM_PSIPHON_MY_PRINT:
-        // Display message in listbox and scroll to bottom of listbox.
-        myPrintMessage = (TCHAR*)lParam;
-        SendMessage(g_hLogListBox, LB_ADDSTRING, NULL, (LPARAM)myPrintMessage);
-        OutputDebugString(myPrintMessage);
+    {
+        int priority = (int)wParam;
+        TCHAR* message = (TCHAR*)lParam;
+        HtmlUI_AddMessage(priority, message);
+        OutputDebugString(message);
         OutputDebugString(L"\n");
-        free(myPrintMessage);
-        SendMessage(g_hLogListBox, LB_SETCURSEL,
-        SendMessage(g_hLogListBox, LB_GETCOUNT, NULL, NULL)-1, NULL);
+        free(message);
         break;
+    }
 
     case WM_PSIPHON_FEEDBACK_SUCCESS:
+        /*
         SendMessage(
             g_hFeedbackButton,
             BM_SETIMAGE,
@@ -925,9 +675,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             (LPARAM)g_hFeedbackButtonIcons[0]);
         EnableWindow(g_hFeedbackButton, TRUE);
         my_print(NOT_SENSITIVE, false, _T("Feedback sent. Thank you!"));
+        */
         break;
 
     case WM_PSIPHON_FEEDBACK_FAILED:
+        /*
         SendMessage(
             g_hFeedbackButton,
             BM_SETIMAGE,
@@ -935,21 +687,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             (LPARAM)g_hFeedbackButtonIcons[0]);
         EnableWindow(g_hFeedbackButton, TRUE);
         my_print(NOT_SENSITIVE, false, _T("Failed to send feedback."));
+        */
         break;
-
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        EndPaint(hWnd, &ps);
-        break;
-
-    case WM_CTLCOLORSTATIC:
-        result = DefWindowProc(hWnd, message, wParam, lParam);
-        // Set color for info link static control
-        if ((HWND)lParam == g_hInfoLinkStatic)
-        {
-            SetTextColor((HDC)wParam, RGB(0, 0, 192));
-        }
-        return result;
 
     case WM_ENDSESSION:
         // Stop the tunnel -- particularly to ensure system proxy settings are reverted -- on OS shutdown
@@ -957,6 +696,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // https://connect.microsoft.com/IE/feedback/details/838086/internet-explorer-10-11-wininet-api-drops-proxy-change-events-during-system-shutdown
     case WM_DESTROY:
         // Stop transport if running
+        g_htmlUiReady = false;
         g_connectionManager.Stop(STOP_REASON_EXIT);
         PostQuitMessage(0);
         break;
@@ -966,26 +706,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
-}
-
-
-//==== About box ==============================================================
-
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
 }

@@ -48,7 +48,6 @@ ConnectionManager::ConnectionManager(void) :
     m_thread(0),
     m_upgradeThread(0),
     m_feedbackThread(0),
-    m_startingTime(0),
     m_transport(0),
     m_upgradePending(false),
     m_startSplitTunnel(false),
@@ -94,21 +93,6 @@ void ConnectionManager::Toggle()
     }
 }
 
-time_t ConnectionManager::GetStartingTime()
-{
-    // NOTE: no lock, to prevent blocking connection thread with UI polling
-    // Starting Time is informational only, consistency with state isn't critical
-
-    if (m_state != CONNECTION_MANAGER_STATE_STARTING)
-    {
-        return 0;
-    }
-    else
-    {
-        return time(0) - m_startingTime;
-    }
-}
-
 void ConnectionManager::SetState(ConnectionManagerState newState)
 {
     // NOTE: no lock, to prevent blocking connection thread with UI polling
@@ -116,11 +100,18 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
 
     if (newState == CONNECTION_MANAGER_STATE_STARTING)
     {
-        m_startingTime = time(0);
+        UI_SetStateStarting(m_transport->GetTransportProtocolName());
     }
-    else
+    else if (newState == CONNECTION_MANAGER_STATE_CONNECTED)
     {
-        m_startingTime = 0;
+        UI_SetStateConnected(
+            m_transport->GetTransportProtocolName(),
+            m_currentSessionInfo.GetLocalSocksProxyPort(),
+            m_currentSessionInfo.GetLocalHttpProxyPort());
+    }
+    else //if (newState == CONNECTION_MANAGER_STATE_STOPPED)
+    {
+        UI_SetStateStopped();
     }
 
     m_state = newState;
@@ -191,6 +182,8 @@ void ConnectionManager::Stop(DWORD reason)
 
     delete m_transport;
     m_transport = 0;
+
+    SetState(CONNECTION_MANAGER_STATE_STOPPED);
 
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }

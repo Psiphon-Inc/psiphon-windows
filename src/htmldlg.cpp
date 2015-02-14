@@ -24,11 +24,8 @@
 
 
 /**************************************************************************
-
    ShowHTMLDlg()
-
 **************************************************************************/
-
 int ShowHTMLDlg(
         HWND hParentWnd, 
         LPCTSTR resourceName, 
@@ -56,22 +53,7 @@ int ShowHTMLDlg(
 
         if (pfnShowHTMLDialog)
         {
-            tstring url;
-
-            url += _T("res://");
-            
-            TCHAR   szTemp[MAX_PATH*2];
-            GetModuleFileName(NULL, szTemp, ARRAYSIZE(szTemp));
-            url += szTemp;
-
-            url += _T("/");
-            url += resourceName;
-            
-            if (urlFragment) 
-            {
-                url += _T("#");
-                url += urlFragment;
-            }
+            tstring url = ResourceToUrl(resourceName, urlFragment);
 
             IMoniker* pmk = NULL;
             CreateURLMonikerEx(NULL, url.c_str(), &pmk, URL_MK_UNIFORM);
@@ -141,4 +123,30 @@ int ShowHTMLDlg(
 
     if (error) return -1;
     return o_result.length() > 0 ? 1 : 0;
+}
+
+
+/**************************************************************************
+ShowHTMLDlg()
+**************************************************************************/
+tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlFragment)
+{
+    tstring url;
+
+    url += _T("res://");
+
+    TCHAR   szTemp[MAX_PATH * 2];
+    GetModuleFileName(NULL, szTemp, ARRAYSIZE(szTemp));
+    url += szTemp;
+
+    url += _T("/");
+    url += resourceName;
+
+    if (urlFragment)
+    {
+        url += _T("#");
+        url += urlFragment;
+    }
+
+    return url;
 }
