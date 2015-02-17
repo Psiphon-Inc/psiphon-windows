@@ -334,7 +334,8 @@ int APIENTRY _tWinMain(
     LoadString(hInstance, IDC_PSICLIENT, g_szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
-    /* Register class of HTML control. */
+    /* Register mCtrl and its HTML control. */
+    mc_StaticLibInitialize();
     mcHtml_Initialize();
 
     // Perform application initialization
@@ -364,6 +365,7 @@ int APIENTRY _tWinMain(
     }
 
     mcHtml_Terminate();
+    mc_StaticLibTerminate();
 
     return (int) msg.wParam;
 }
