@@ -1,17 +1,75 @@
-<!DOCTYPE html>
-
-<html>
-
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Psiphon Main</title>
+  <link rel="stylesheet" href="css/normalize.css?__inline=true">
+  <link rel="stylesheet" href="css/main.css?__inline=true">
+
+  <script src="vendor/respond.src.js?__inline=true"></script>
 </head>
 
 <body>
+
+  <div class="header-container">
+      <header class="wrapper clearfix">
+          <h1 class="title">h1.title</h1>
+          <nav>
+              <ul>
+                  <li><a href="#">nav ul li a</a></li>
+                  <li><a href="#">nav ul li a</a></li>
+                  <li><a href="#">nav ul li a</a></li>
+              </ul>
+          </nav>
+      </header>
+  </div>
+
+  <div class="main-container">
+      <div class="main wrapper clearfix">
+
+          <article>
+              <header>
+                  <h1>article header h1</h1>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec.</p>
+              </header>
+              <section>
+                  <h2>article section h2</h2>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices. Proin in est sed erat facilisis pharetra.</p>
+              </section>
+              <section>
+                  <h2>article section h2</h2>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices. Proin in est sed erat facilisis pharetra.</p>
+              </section>
+              <footer>
+                  <h3>article footer h3</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor.</p>
+              </footer>
+          </article>
+
+          <aside>
+              <h3>aside</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices.</p>
+          </aside>
+
+      </div> <!-- #main -->
+  </div> <!-- #main-container -->
+
+  <div class="footer-container">
+      <footer class="wrapper">
+          <h3>footer</h3>
+      </footer>
+  </div>
+
+
   <h1>Psiphon</h1>
+    <img src="flag_unknown_32.png?__inline=true">
+
   <div>
     <input type="submit" id="start" value="Start">
     <input type="submit" id="stop" value="Stop">
@@ -21,37 +79,10 @@
   </ol>
 </body>
 
-<script>
-////////////////////////////////////////////////////////////////////////////////
-// Workaround for the fact that there's no JSON support in the Windows HTML control
-// From https://github.com/douglascrockford/JSON-js (and then minified)
-if(typeof JSON!=="object"){JSON={}}(function(){"use strict";function f(e){return e<10?"0"+e:e}function quote(e){escapable.lastIndex=0;return escapable.test(e)?'"'+e.replace(escapable,function(e){var t=meta[e];return typeof t==="string"?t:"\\u"+("0000"+e.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+e+'"'}function str(e,t){var n,r,i,s,o=gap,u,a=t[e];if(a&&typeof a==="object"&&typeof a.toJSON==="function"){a=a.toJSON(e)}if(typeof rep==="function"){a=rep.call(t,e,a)}switch(typeof a){case"string":return quote(a);case"number":return isFinite(a)?String(a):"null";case"boolean":case"null":return String(a);case"object":if(!a){return"null"}gap+=indent;u=[];if(Object.prototype.toString.apply(a)==="[object Array]"){s=a.length;for(n=0;n<s;n+=1){u[n]=str(n,a)||"null"}i=u.length===0?"[]":gap?"[\n"+gap+u.join(",\n"+gap)+"\n"+o+"]":"["+u.join(",")+"]";gap=o;return i}if(rep&&typeof rep==="object"){s=rep.length;for(n=0;n<s;n+=1){if(typeof rep[n]==="string"){r=rep[n];i=str(r,a);if(i){u.push(quote(r)+(gap?": ":":")+i)}}}}else{for(r in a){if(Object.prototype.hasOwnProperty.call(a,r)){i=str(r,a);if(i){u.push(quote(r)+(gap?": ":":")+i)}}}}i=u.length===0?"{}":gap?"{\n"+gap+u.join(",\n"+gap)+"\n"+o+"}":"{"+u.join(",")+"}";gap=o;return i}}if(typeof Date.prototype.toJSON!=="function"){Date.prototype.toJSON=function(e){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+f(this.getUTCMonth()+1)+"-"+f(this.getUTCDate())+"T"+f(this.getUTCHours())+":"+f(this.getUTCMinutes())+":"+f(this.getUTCSeconds())+"Z":null};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(e){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={"\b":"\\b"," ":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},rep;if(typeof JSON.stringify!=="function"){JSON.stringify=function(e,t,n){var r;gap="";indent="";if(typeof n==="number"){for(r=0;r<n;r+=1){indent+=" "}}else if(typeof n==="string"){indent=n}rep=t;if(t&&typeof t!=="function"&&(typeof t!=="object"||typeof t.length!=="number")){throw new Error("JSON.stringify")}return str("",{"":e})}}if(typeof JSON.parse!=="function"){JSON.parse=function(text,reviver){function walk(e,t){var n,r,i=e[t];if(i&&typeof i==="object"){for(n in i){if(Object.prototype.hasOwnProperty.call(i,n)){r=walk(i,n);if(r!==undefined){i[n]=r}else{delete i[n]}}}}return reviver.call(e,t,i)}var j;text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(e){return"\\u"+("0000"+e.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,""))){j=eval("("+text+")");return typeof reviver==="function"?walk({"":j},""):j}throw new SyntaxError("JSON.parse")}}})()
-////////////////////////////////////////////////////////////////////////////////
+<script src="vendor/json.js?__inline=true"></script>
+<script src="vendor/jquery-1.11.2.min.js?__inline=true"></script>
 
-function CtrlInterface_AddMessage(jsonArgs) {
-  var msgElem = document.createElement('li');
-  msgElem.textContent = jsonArgs;
-  document.getElementById('messages').appendChild(msgElem);
-}
+<script src="js/plugins.js?__inline=true"></script>
+<script src="js/main.js?__inline=true"></script>
 
-function HtmlCtrlInterface_SetState(jsonArgs) {
-  document.getElementById('status').textContent = jsonArgs;
-  var args = JSON.parse(jsonArgs);
-  if (args.state === 'stopped') {
-    document.getElementById('start').disabled = false;
-    document.getElementById('stop').disabled = true;
-  }
-  else {
-    document.getElementById('start').disabled = true;
-    document.getElementById('stop').disabled = false;
-  }
-}
-
-document.getElementById('start').onclick = function() {
-  setTimeout(function () { window.location = 'app:start'; }, 0);
-};
-document.getElementById('stop').onclick = function() {
-  setTimeout(function () { window.location = 'app:stop'; }, 0);
-};
-</script>
 </html>
