@@ -42,6 +42,13 @@
       return xmlhttpmethod;
     };
   }(), ajax = function(url, callback) {
+    // PSIPHON
+    var dataUrlStart = 'data:text/css;base64,', dataUrlIndex = url.indexOf(dataUrlStart);
+    if (dataUrlIndex >= 0) {
+      return callback(base64.decode(url.slice(dataUrlIndex+dataUrlStart.length)));
+    }
+    // /PSIPHON
+
     var req = xmlHttp();
     if (!req) {
       return;
@@ -143,7 +150,10 @@
         var ss = doc.createElement("style"), css = styleBlocks[k].join("\n");
         ss.type = "text/css";
         ss.media = k;
-        head.insertBefore(ss, lastLink.nextSibling);
+        // PSIPHON
+        //head.insertBefore(ss, lastLink.nextSibling);
+        head.insertBefore(ss, lastLink ? lastLink.nextSibling : head.lastChild);
+        // /PSIPHON
         if (ss.styleSheet) {
           ss.styleSheet.cssText = css;
         } else {
@@ -222,6 +232,15 @@
       }
     }
     makeRequests();
+
+    // PSIPHON
+    for (var i = 0; i < doc.styleSheets.length; i++) {
+      var sheet = doc.styleSheets[i];
+      if (sheet.href) continue;
+        var rawCss = sheet.rawCssText || sheet.cssText;
+        translate(rawCss, "", "");
+    }
+    // /PSIPHON
   };
   ripCSS();
   respond.update = ripCSS;
