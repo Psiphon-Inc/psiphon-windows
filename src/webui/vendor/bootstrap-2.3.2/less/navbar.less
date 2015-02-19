@@ -179,7 +179,11 @@
 }
 .navbar-fixed-top .navbar-inner,
 .navbar-static-top .navbar-inner {
-  border-width: 0 0 1px;
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 1px;
+  // PSIPHON: This style crashes our app on IE<=9
+  //border-left-width: 0;
 }
 .navbar-fixed-bottom .navbar-inner {
   border-width: 1px 0 0;
