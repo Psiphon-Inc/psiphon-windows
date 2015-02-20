@@ -1,0 +1,49 @@
+/* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
+
+@import "vendor/bootstrap-2.3.2/less/variables.less";
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  // Without this, there will always be a scrollbar on the window.
+  overflow: hidden;
+}
+
+body {
+  /*position:absolute; top:0; bottom:0; right:0; left:0;*/
+  // Try to prevent a vertical scroll bar.
+  height: 100%;
+  margin: 0;
+  // Leave padding on the right in case there's a scroll bar (it obscures text on later IE).
+  padding: 0 0 0 0;
+  overflow-y: hidden;
+}
+
+// The element focus outlines spoils the illusion of being an app vs. a webpage.
+// Note that this doesn't seem to have an effect with IE<=9.
+// Note also that this is a bad usuability and accessibility trick for real webpages,
+// but keyboard (tab) navigation doesn't seem to work with our UI anyway.
+* {
+  outline: 0 !important;
+}
+
+.main-container {
+}
+
+.nav, .nav ul {
+  margin-bottom: 0;
+}
+
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus {
+  color: @white;
+  background-color: @linkColor;
+  outline: none;
+}
+
+.banner {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}

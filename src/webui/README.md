@@ -11,4 +11,4 @@ Send messages from C to HTML via new JS thing.
       border-width: 0 0 1px;
     }
     ```
-
+- IE<=9: Can't remove the `outline` around focused elements.

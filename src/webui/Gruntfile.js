@@ -19,7 +19,8 @@ module.exports = function(grunt) {
         },
         files: {
           'vendor/bootstrap-2.3.2/css/bootstrap.css': 'vendor/bootstrap-2.3.2/less/bootstrap.less',
-          'vendor/bootstrap-2.3.2/css/bootstrap-responsive.css': 'vendor/bootstrap-2.3.2/less/responsive.less'
+          'vendor/bootstrap-2.3.2/css/bootstrap-responsive.css': 'vendor/bootstrap-2.3.2/less/responsive.less',
+          'css/main.css': 'css/main.less'
         }
       }
     },
