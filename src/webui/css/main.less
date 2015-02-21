@@ -1,6 +1,7 @@
 /* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
 
-@import "vendor/bootstrap-2.3.2/less/variables.less";
+@import "vendor/bootstrap-2.3.2/less/bootstrap.less";
+@import "vendor/bootstrap-2.3.2/less/responsive.less";
 
 html {
   height: 100%;
@@ -47,3 +48,52 @@ body {
   margin-top: 5px;
   margin-bottom: 10px;
 }
+
+/* SETTINGS */
+
+.vpn-incompatible-msg {
+  .text-warning;
+}
+
+.disabled-text *:not(.vpn-incompatible-msg) {
+  .muted;
+}
+
+.port-entry {
+  width: 5em;
+}
+
+/* FEEDBACK */
+
+.feedback {
+  padding: 0px;
+}
+
+.feedback .feedback-choice {
+  padding: 1em;
+  text-align: center;
+  opacity: 0.6;
+  filter:alpha(opacity=60); /* For IE8 and earlier */
+  width: 50%;
+  border: thin #ccc solid;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow:    0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  box-shadow:         0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+}
+
+.feedback .feedback-choice:hover {
+  cursor: pointer;
+  cursor: hand;
+}
+
+.feedback .selected {
+  color: #000;
+  opacity: 1.0;
+  filter:alpha(opacity=100); /* For IE8 and earlier */
+  background-color:#EEE;
+  border: 1px solid #888;
+}
+

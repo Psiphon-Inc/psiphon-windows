@@ -28,7 +28,7 @@ module.exports = function(grunt) {
       dist: {
         options:{
             cssmin: true,
-            uglify: true
+            //uglify: true
         },
         src: 'bs.html',
         dest: 'bs-inline.html'
