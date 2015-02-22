@@ -1,8 +1,33 @@
+"use strict";
+
+/* CONNECTION ****************************************************************/
+
 $(function() {
   $('#start').click(function() {
+    if ($(this).hasClass('disabled')) {
+      return;
+    }
     setTimeout(function () { window.location = 'app:start'; }, 0);
   });
   $('#stop').click(function() {
+    if ($(this).hasClass('disabled')) {
+      return;
+    }
+    setTimeout(function () { window.location = 'app:stop'; }, 0);
+  });
+
+  $('#connect').click(function() {
+    if ($(this).hasClass('disabled')) {
+      return;
+    }
+    $('#toggle-connect').bootstrapToggle('on');
+    setTimeout(function () { window.location = 'app:start'; }, 0);
+  });
+  $('#disconnect').click(function() {
+    if ($(this).hasClass('disabled')) {
+      return;
+    }
+    $('#toggle-connect').bootstrapToggle('off');
     setTimeout(function () { window.location = 'app:stop'; }, 0);
   });
 
@@ -27,18 +52,24 @@ function CtrlInterface_AddMessage(jsonArgs) {
 
 function HtmlCtrlInterface_SetState(jsonArgs) {
   $('#status').text(jsonArgs);
-  var args = JSON.parse(jsonArgs);
-  if (args.state === 'stopped') {
-    $('#start').removeClass('disabled');
-    $('#stop').addClass('disabled');
+  var args = JSON.parse(jsonArgs);HtmlCtrlInterface_SetState
+  $('#start').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
+  $('#stop').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
+  $('#connect').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
+  $('#disconnect').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
+  if (args.state === 'started' || args.state === 'starting') {
+    $('.toggle-connect .toggle-on').toggleClass('btn-success', args.state === 'started')
+      .toggleClass('btn-warning', args.state === 'starting');
+    $('#toggle-connect').bootstrapToggle('on');
   }
   else {
-    $('#start').addClass('disabled');
-    $('#stop').removeClass('disabled');
+    $('.toggle-connect .toggle-off').toggleClass('btn-danger', args.state === 'stopped')
+      .toggleClass('btn-warning', args.state === 'stopping');
+    $('#toggle-connect').bootstrapToggle('off');
   }
 }
 
-/* Settings ******************************************************************/
+/* SETTINGS ******************************************************************/
 
 $(function() {
   // ****** FILL VALUES
@@ -102,3 +133,5 @@ function skipUpstreamProxyUpdate() {
   $('.skip-upstream-proxy-incompatible input').prop('disabled', skipUpstreamProxy);
   $('.skip-upstream-proxy-incompatible').toggleClass('disabled-text', skipUpstreamProxy);
 }
+
+/* FEEDBACK ******************************************************************/

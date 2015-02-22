@@ -5647,6 +5647,9 @@ body {
   margin-top: 5px;
   margin-bottom: 10px;
 }
+.tab-pane {
+  padding-right: 1em;
+}
 /* SETTINGS */
 .vpn-incompatible-msg {
   color: #c09853;
