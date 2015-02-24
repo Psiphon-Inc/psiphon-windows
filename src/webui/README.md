@@ -29,6 +29,7 @@ Send messages from C to HTML via new JS thing.
 * Clean up psiclient code.
 * Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)
 * Fix bug: crash on exit.
+* Add flags to egress region combo
 
 
 ## Technical and compatibility notes

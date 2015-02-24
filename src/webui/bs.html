@@ -46,6 +46,7 @@
   <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
   <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
   <script src="vendor/spin.js?__inline=true"></script>
+  <script src="vendor/raphael.min.js?__inline=true"></script>
 
   <script src="js/plugins.js?__inline=true"></script>
   <script src="js/main.js?__inline=true"></script>
@@ -172,6 +173,99 @@
 
           <ol id="messages">
           </ol>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <rect width="150" height="150" fill="rgb(0, 255, 0)" stroke-width="1" stroke="rgb(0, 0, 0)" />
+</svg>
+          <img src="sine_tree_final.svg?__inline=true" width="300"/>
+
+          <script>
+// Creates canvas 60 x 60 at 10, 50
+var paper = Raphael(10, 250, 60, 60);
+
+// Creates circle at x = 50, y = 40, with radius 10
+var circle = paper.circle(50, 40, 10);
+// Sets the fill attribute of the circle to red (#f00)
+circle.attr("fill", "#f00");
+
+// Sets the stroke attribute of the circle to white
+circle.attr("stroke", "#fff");
+</script>
+
+       <style media="screen">
+            #holder {
+                height: 400px;
+                width: 400px;
+                background-color: darkblue;
+            }
+            #form {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 400px;
+                height: 100px;
+                margin: -200px 0 0 -200px;
+            }
+        </style>
+        <script>
+            Raphael(function () {
+                var r = Raphael("holder"),
+                    easingx = document.getElementById("easingx"),
+                    easingy = document.getElementById("easingy"),
+                    run = document.getElementById("run"),
+                    set = r.set(r.circle(300, 200, 8),r.circle(200, 100, 8),r.circle(100, 200, 8),r.circle(200, 300, 8),r.circle(200, 200, 8)).attr({stroke: "none", fill: "#666"}),
+                    c = r.circle(200, 200, 10).attr({stroke: "#fff", "stroke-width": 4}),
+                    fade = function (id) {
+                        return function () {
+                            set[id].attr({fill: "#fff", r: 12}).animate({fill: "#666", r: 8}, 500);
+                        };
+                    };
+
+
+                run.onclick = function () {
+                    var ex = easingx.value,
+                        ey = easingy.value;
+                    c.stop().animate({
+                        "20%": {cy: 200, easing: ey, callback: fade(0)},
+                        "40%": {cy: 100, easing: ey, callback: fade(1)},
+                        "60%": {cy: 200, easing: ey, callback: fade(2)},
+                        "80%": {cy: 300, easing: ey, callback: fade(3)},
+                        "100%": {cy: 200, easing: ey, callback: fade(4)}
+                    }, 5000).animate({
+                        "20%": {cx: 300, easing: ex},
+                        "40%": {cx: 200, easing: ex},
+                        "60%": {cx: 100, easing: ex},
+                        "80%": {cx: 200, easing: ex},
+                        "100%": {cx: 200, easing: ex}
+                    }, 5000);
+                };
+            });
+        </script>
+
+        <div id="holder"></div>
+        <div id="form">
+            <select id="easingx">
+                <option value="">Linear</option>
+                <option value=">">Ease In</option>
+                <option value="<">Ease Out</option>
+                <option value="<>">Ease In and Out</option>
+                <option value="bounce">Bounce</option>
+                <option value="elastic">Elastic</option>
+                <option value="backIn">Back In</option>
+                <option value="backOut">Back Out</option>
+            </select>
+            <select id="easingy">
+                <option value="">Linear</option>
+                <option value=">">Ease In</option>
+                <option value="<">Ease Out</option>
+                <option value="<>">Ease In and Out</option>
+                <option value="bounce">Bounce</option>
+                <option value="elastic">Elastic</option>
+                <option value="backIn">Back In</option>
+                <option value="backOut">Back Out</option>
+            </select>
+            <button id="run">Run</button>
+        </div>
 
         </div><!-- /connection-pane -->
 
