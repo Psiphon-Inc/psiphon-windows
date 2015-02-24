@@ -1,9 +1,40 @@
+## Design
+
 Send messages from HTML to C via either "app:" (like, window.location="app:blah") or via page title (like, document.title="blah".
 Send messages from C to HTML via new JS thing.
 
-- IE7: Can't use data URIs. But IE8+ okay.
-- IE7, IE8, IE9: Responsive-ness doesn't work.
-- IE7, IE8, IE9: Navbar with `navbar-fixed-top` crashes view. The problem is setting `border-width` to 0, as in `border-width: 0 0 1px;`
+
+## Notes and discussion points
+
+* Nothing is set in stone. For example, if consensus is against the left-side tabs, they can be changed. Et cetera.
+* I have done no custom styling (colours, etc.) at all yet. Everything is default Bootstrap. Some styling notes in the TODO section (probably — haven’t go there).
+  - This means that the UI looks quite web-y. Like, probably too web-y.
+* XP-with-IE7 will probably be a somewhat degraded visual experience, but it will work fine.
+* I realized yesterday that Bittorrent Sync also uses this IE-based web view thing. I attached screenshots of it. It mimics some chrome in its UI. And uses modals, which I’d like to avoid, but maybe blah.
+* It feels like there should be more icons or images — it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used. You can see a few of them in the nav tabs.
+* Status messages… something. Not a big permanently visible list box, though. I refuse.
+
+
+## TODO
+
+* Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
+* Window size: Choose a starting size; fix it as minimum.
+* Wire up settings.
+* Wire up feedback.
+* Add i18n.
+* Fix bug: Nav away from connect; resize; nav back to connect. Button is messed up.
+* Add “stopping” state.
+* Do something with status messages.
+* Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change.
+* Clean up psiclient code.
+* Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)
+
+
+## Technical and compatibility notes
+
+* IE7: Can't use data URIs. But IE8+ okay.
+* IE7, IE8, IE9: Responsive-ness doesn't work.
+* IE7, IE8, IE9: Navbar with `navbar-fixed-top` crashes view. The problem is setting `border-width` to 0, as in `border-width: 0 0 1px;`
   - Caused by this, in navbar.less:
     ```
     .navbar-fixed-top .navbar-inner,
@@ -11,4 +42,4 @@ Send messages from C to HTML via new JS thing.
       border-width: 0 0 1px;
     }
     ```
-- IE<=9: Can't remove the `outline` around focused elements.
+* IE<=9: Can't remove the `outline` around focused elements.
