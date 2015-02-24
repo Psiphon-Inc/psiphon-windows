@@ -28,6 +28,7 @@ Send messages from C to HTML via new JS thing.
 * Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change.
 * Clean up psiclient code.
 * Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)
+* Fix bug: crash on exit.
 
 
 ## Technical and compatibility notes
