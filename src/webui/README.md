@@ -28,7 +28,6 @@ Send messages from C to HTML via new JS thing.
 * Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change.
 * Clean up psiclient code.
 * Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)
-* Fix bug: crash on exit.
 * Add flags to egress region combo
 
 
@@ -48,3 +47,4 @@ Send messages from C to HTML via new JS thing.
 
 * When building Modernizr, do *not* include the HTML5 video check. This causes `MF.dll` (or the like) to load, which doesn't exist on the "N" version of Windows and triggers an error dialog. (The "N" versions don't have Media Player, IE, etc.)
 
+* If we ever want to show home pages inside the app, we will want to disable script error messages. To do so, we'll probably need to implement the [`IOleCommandTarget`](https://msdn.microsoft.com/en-us/library/windows/desktop/ms683797%28v=vs.85%29.aspx) interface. [Ref1](https://groups.google.com/forum/#!topic/microsoft.public.inetsdk.programming.webbrowser_ctl/tE19dIF1uog), [ref2](https://support.microsoft.com/kb/261003).

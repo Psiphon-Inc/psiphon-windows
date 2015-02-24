@@ -59,7 +59,9 @@ ConnectionManager g_connectionManager;
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
 static HWND g_hHtmlCtrl = NULL;
-static bool g_htmlUiReady = false;
+// The HTML control has a bad habit of sending messages after we've posted WM_QUIT,
+// which leads to a crash on exit. 
+static bool g_htmlUiReady = true;
 
 
 //==== Controls ================================================================
@@ -359,6 +361,10 @@ int APIENTRY _tWinMain(
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
+            // Bit of a dirty hack to prevent the HTML control code from crashing
+            // on exit. WM_APP+2 is the message used for MC_HN_STATUSTEXT. 
+            if (msg.message == (WM_APP+2) && !g_htmlUiReady)
+                continue;
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -694,8 +700,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // https://connect.microsoft.com/IE/feedback/details/838086/internet-explorer-10-11-wininet-api-drops-proxy-change-events-during-system-shutdown
     case WM_DESTROY:
         // Stop transport if running
-        g_htmlUiReady = false;
         g_connectionManager.Stop(STOP_REASON_EXIT);
+        g_htmlUiReady = false;
         PostQuitMessage(0);
         break;
 
