@@ -458,8 +458,7 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     // Don't allow multiple instances of this application to run
-    // DEBUG ONLY: allowing multiple instances
-    if (false && g_singleInstanceObject.IsAnotherInstanceRunning())
+    if (g_singleInstanceObject.IsAnotherInstanceRunning())
     {
         HWND otherWindow = FindWindow(g_szWindowClass, g_szTitle);
         if (otherWindow)
@@ -481,7 +480,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         600, 400,
         NULL, NULL, hInstance, NULL);
 
-    ShowWindow(g_hWnd, nCmdShow);
+    // Don't show the window until the content loads.
 
     return TRUE;
 }
@@ -497,8 +496,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_PSIPHON_CREATED:
         // Display client version number 
-
         my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
+
+        // Content is loaded, so show the window.
+        ShowWindow(g_hWnd, SW_SHOW);
 
         // Start a connection
         // DEBUG: Don't auto-start connection
