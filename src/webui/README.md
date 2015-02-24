@@ -45,3 +45,6 @@ Send messages from C to HTML via new JS thing.
     }
     ```
 * IE<=9: Can't remove the `outline` around focused elements.
+
+* When building Modernizr, do *not* include the HTML5 video check. This causes `MF.dll` (or the like) to load, which doesn't exist on the "N" version of Windows and triggers an error dialog. (The "N" versions don't have Media Player, IE, etc.)
+
