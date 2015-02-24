@@ -223,7 +223,7 @@ static void HtmlUI_AddMessageHandler(LPCWSTR json)
     }
 
     MC_HMCALLSCRIPTFN argStruct = { 0 };
-    argStruct.pszFnName = _T("CtrlInterface_AddMessage");
+    argStruct.pszFnName = _T("HtmlCtrlInterface_AddMessage");
     argStruct.pszArguments = json;
     (void)SendMessage(g_hHtmlCtrl, MC_HM_CALLSCRIPTFN, (WPARAM)&argStruct, NULL);
     delete[] json;
@@ -383,7 +383,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PSICLIENT));
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_BTNFACE+1);
+    wcex.hbrBackground = NULL;
     //wcex.lpszMenuName = MAKEINTRESOURCE(IDC_PSICLIENT);
     wcex.lpszMenuName = 0;
     wcex.lpszClassName = g_szWindowClass;
