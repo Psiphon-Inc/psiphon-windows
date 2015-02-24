@@ -130,3 +130,17 @@ body {
   border: 1px solid #888;
 }
 
+/* LOG MESSAGES */
+
+.log-messages .priority-0 {
+  display: none;
+  .showing-priority-0& {
+    display: table-row;
+  }
+}
+
+.log-messages .priority-1 {
+  .showing-priority-0& {
+    background-color: @infoBackground;
+  }
+}

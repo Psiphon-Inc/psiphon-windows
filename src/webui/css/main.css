@@ -5259,3 +5259,13 @@ body {
   background-color: #EEE;
   border: 1px solid #888;
 }
+/* LOG MESSAGES */
+.log-messages .priority-0 {
+  display: none;
+}
+.showing-priority-0.log-messages .priority-0 {
+  display: table-row;
+}
+.showing-priority-0.log-messages .priority-1 {
+  background-color: #d9edf7;
+}

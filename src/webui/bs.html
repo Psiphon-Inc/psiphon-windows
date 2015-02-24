@@ -87,6 +87,12 @@
             Feedback
           </a>
         </li>
+        <li>
+          <a href="#messages-pane" data-toggle="tab">
+            <i class="icon-fixed-width icon-list"></i>
+            Log Messages
+          </a>
+        </li>
       </ul>
       <div class="tab-content main-height">
 
@@ -198,14 +204,6 @@ circle.attr("stroke", "#fff");
                 width: 400px;
                 background-color: darkblue;
             }
-            #form {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 400px;
-                height: 100px;
-                margin: -200px 0 0 -200px;
-            }
         </style>
         <script>
             Raphael(function () {
@@ -243,7 +241,7 @@ circle.attr("stroke", "#fff");
         </script>
 
         <div id="holder"></div>
-        <div id="form">
+        <div id="holder-form">
             <select id="easingx">
                 <option value="">Linear</option>
                 <option value=">">Ease In</option>
@@ -267,7 +265,7 @@ circle.attr("stroke", "#fff");
             <button id="run">Run</button>
         </div>
 
-        </div><!-- /connection-pane -->
+        </div><!-- /connection2-pane -->
 
         <!-- SETTINGS ==================================================-->
         <div class="tab-pane fade" id="settings-pane">
@@ -482,6 +480,19 @@ circle.attr("stroke", "#fff");
           </p>
 
         </div><!-- /feedback-pane -->
+
+        <!-- LOG MESSAGES ==================================================-->
+        <div class="tab-pane fade" id="messages-pane">
+          <div>
+            <label class="checkbox" for="show-debug-messages">
+                <input type="checkbox" id="show-debug-messages"/>
+                Show debug messages
+            </label>
+
+            <table class="log-messages table">
+            </table>
+          </div>
+        </div><!-- /messages-pane -->
 
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->

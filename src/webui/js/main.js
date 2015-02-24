@@ -113,54 +113,6 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
   });
 }
 
-function HtmlCtrlInterface_AddMessage(jsonArgs) {
-  setTimeout(function() {
-    var msgElem = $('<li>');
-    msgElem.text(jsonArgs);
-    $('#messages').append(msgElem);
-  }, 1);
-}
-
-function HtmlCtrlInterface_SetState(jsonArgs) {
-  setTimeout(function() {
-    $('#status').text(jsonArgs);
-    var args = JSON.parse(jsonArgs);
-    $('#start').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
-    $('#stop').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
-    $('#connect').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
-    $('#disconnect').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
-    if (args.state === 'started' || args.state === 'starting') {
-      $('.toggle-connect .toggle-on').toggleClass('btn-success', args.state === 'started')
-        .toggleClass('btn-warning', args.state === 'starting');
-    }
-    else {
-      $('.toggle-connect .toggle-off').toggleClass('btn-danger', args.state === 'stopped')
-        .toggleClass('btn-warning', args.state === 'stopping');
-    }
-    g_lastState = args.state;
-    updateConnectToggle();
-  }, 1);
-}
-
-function HtmlCtrlInterface_Start() {
-  // Prevent duplicate state change attempts
-  if (g_lastState === 'starting' || g_lastState === 'connected') {
-    return;
-  }
-  setTimeout(function() {
-    window.location = 'app:start';
-  }, 1);
-}
-
-function HtmlCtrlInterface_Stop() {
-  // Prevent duplicate state change attempts
-  if (g_lastState === 'stopping' || g_lastState === 'disconnected') {
-    return;
-  }
-  setTimeout(function() {
-    window.location = 'app:stop';
-  }, 1);
-}
 
 /* SETTINGS ******************************************************************/
 
@@ -228,6 +180,77 @@ function skipUpstreamProxyUpdate() {
 }
 
 /* FEEDBACK ******************************************************************/
+
+
+/* LOG MESSAGES **************************************************************/
+
+$(function() {
+  $('#show-debug-messages').click(showDebugMessagesClicked);
+});
+
+function showDebugMessagesClicked() {
+  var show = $(this).prop('checked');
+  $('.log-messages').toggleClass('showing-priority-0', show);
+}
+
+function addLogMessage(obj) {
+  var row = $('<tr>');
+  var msgCell = $('<td>');
+  msgCell.text(obj.message);
+  row.addClass('priority-' + obj.priority);
+  row.append(msgCell);
+  $('.log-messages').prepend(row);
+}
+
+/* INTERFACE METHODS *********************************************************/
+
+function HtmlCtrlInterface_AddMessage(jsonArgs) {
+  setTimeout(function() {
+    addLogMessage(JSON.parse(jsonArgs));
+  }, 1);
+}
+
+function HtmlCtrlInterface_SetState(jsonArgs) {
+  setTimeout(function() {
+    $('#status').text(jsonArgs);
+    var args = JSON.parse(jsonArgs);
+    $('#start').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
+    $('#stop').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
+    $('#connect').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
+    $('#disconnect').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
+    if (args.state === 'started' || args.state === 'starting') {
+      $('.toggle-connect .toggle-on').toggleClass('btn-success', args.state === 'started')
+        .toggleClass('btn-warning', args.state === 'starting');
+    }
+    else {
+      $('.toggle-connect .toggle-off').toggleClass('btn-danger', args.state === 'stopped')
+        .toggleClass('btn-warning', args.state === 'stopping');
+    }
+    g_lastState = args.state;
+    updateConnectToggle();
+  }, 1);
+}
+
+function HtmlCtrlInterface_Start() {
+  // Prevent duplicate state change attempts
+  if (g_lastState === 'starting' || g_lastState === 'connected') {
+    return;
+  }
+  setTimeout(function() {
+    window.location = 'app:start';
+  }, 1);
+}
+
+function HtmlCtrlInterface_Stop() {
+  // Prevent duplicate state change attempts
+  if (g_lastState === 'stopping' || g_lastState === 'disconnected') {
+    return;
+  }
+  setTimeout(function() {
+    window.location = 'app:stop';
+  }, 1);
+}
+
 
 /* EXPORTS */
 
