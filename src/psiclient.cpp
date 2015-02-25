@@ -59,9 +59,10 @@ ConnectionManager g_connectionManager;
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
 
 static HWND g_hHtmlCtrl = NULL;
+static bool g_htmlUiReady = false;
 // The HTML control has a bad habit of sending messages after we've posted WM_QUIT,
 // which leads to a crash on exit. 
-static bool g_htmlUiReady = true;
+static bool g_htmlUiFinished = false;
 
 
 //==== Controls ================================================================
@@ -363,8 +364,9 @@ int APIENTRY _tWinMain(
         {
             // Bit of a dirty hack to prevent the HTML control code from crashing
             // on exit. WM_APP+2 is the message used for MC_HN_STATUSTEXT. 
-            if (msg.message == (WM_APP+2) && !g_htmlUiReady)
+            if (msg.message == (WM_APP+2) && g_htmlUiFinished)
                 continue;
+
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -401,6 +403,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 //==== Main window functions ==================================================
 
+static bool g_documentCompleted = false;
+
 static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 {
     int i = 0;
@@ -414,11 +418,16 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
         }
         else if (hdr->code == MC_HN_DOCUMENTCOMPLETE)
         {
+            // Note that this message may be received more than once.
             MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
 
             // The UI is ready to function now.
-            g_htmlUiReady = true;
-            PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
+            if (!g_documentCompleted)
+            {
+                g_documentCompleted = true;
+                g_htmlUiReady = true;
+                PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
+            }
         }
         else if (hdr->code == MC_HN_PROGRESS)
         {
@@ -701,7 +710,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         // Stop transport if running
         g_connectionManager.Stop(STOP_REASON_EXIT);
-        g_htmlUiReady = false;
+        g_htmlUiFinished = true;
         PostQuitMessage(0);
         break;
 
