@@ -200,6 +200,12 @@ function addLogMessage(obj) {
   row.addClass('priority-' + obj.priority);
   row.append(msgCell);
   $('.log-messages').prepend(row);
+
+  // The "Show Debug Messages" checkbox is hidden until we actually get a debug
+  // message.
+  if (obj.priority < 1) {
+    $('label[for="show-debug-messages"]').removeClass('invisible');
+  }
 }
 
 /* INTERFACE METHODS *********************************************************/
