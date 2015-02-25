@@ -22,7 +22,6 @@ Send messages from C to HTML via new JS thing.
 * Wire up settings.
 * Wire up feedback.
 * Add i18n.
-* Fix bug: Nav away from connect; resize; nav back to connect. Button is messed up.
 * Add “stopping” state.
 * Do something with status messages.
 * Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change.

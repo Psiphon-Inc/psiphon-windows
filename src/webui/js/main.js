@@ -21,8 +21,15 @@ $(function() {
 
   setupConnectToggle();
 
+  // Update the size of our elements when the window resizes...
   $(window).resize(function() {
-    setTimeout(resizeConnectContent, 1)});
+    setTimeout(resizeConnectContent, 1);
+  });
+  // ...and when the tab is activated...
+  $('a[href="#connection-pane"][data-toggle="tab"]').on('shown', function() {
+    setTimeout(resizeConnectContent, 1);
+  });
+  // ...and now.
   resizeConnectContent();
 });
 

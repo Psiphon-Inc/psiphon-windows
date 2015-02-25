@@ -380,7 +380,7 @@ int APIENTRY _tWinMain(
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEX wcex;
+    WNDCLASSEX wcex = {0};
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -392,7 +392,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PSICLIENT));
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground = NULL;
-    //wcex.lpszMenuName = MAKEINTRESOURCE(IDC_PSICLIENT);
     wcex.lpszMenuName = 0;
     wcex.lpszClassName = g_szWindowClass;
     wcex.hIconSm = NULL;
