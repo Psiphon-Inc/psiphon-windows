@@ -17,6 +17,7 @@ Send messages from C to HTML via new JS thing.
 
 ## TODO
 
+* Use FontAwesome instead of inline images for happy/sad. Fixes broken image on IE7.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
 * Window size: Choose a starting size; fix it as minimum.
 * Wire up settings.

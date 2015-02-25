@@ -67,6 +67,18 @@
           <a href="#connection-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-home"></i>
             Connection
+            <span class="label label-warning hidden" data-connect-state="starting">
+              <i class="icon-fixed-width icon-refresh icon-spin"></i>
+            </span>
+            <span class="label label-warning hidden" data-connect-state="stopping">
+              <i class="icon-fixed-width icon-refresh icon-spin"></i>
+            </span>
+            <span class="label label-success hidden" data-connect-state="connected">
+              <i class="icon-fixed-width icon-ok-sign"></i>
+            </span>
+            <span class="label label-important" data-connect-state="stopped">
+              <i class="icon-fixed-width icon-exclamation-sign"></i>
+            </span>
           </a>
         </li>
         <li>

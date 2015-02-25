@@ -95,8 +95,13 @@ function setupConnectToggle() {
   updateConnectToggle();
 }
 
+// Update the main connect button, as well as the connection indicator on the tab.
 function updateConnectToggle() {
   $('.connect-toggle-content').each(function() {
+    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+  });
+
+  $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
     $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
   });
 
@@ -137,6 +142,9 @@ $(function() {
   // Disable the other upstream proxy settings if skipping
   $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
   skipUpstreamProxyUpdate();
+
+  // The settings are saved (and applied) when the user navigates away from the
+  // Settings tab.
 });
 
 // Returns the numeric port if valid, otherwise false
