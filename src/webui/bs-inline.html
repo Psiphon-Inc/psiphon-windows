@@ -3731,10 +3731,30 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
 
 // Place any jQuery/helper plugins in here.
 
+/**
+ * Copyright (c) 2007-2014 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+ * Licensed under MIT
+ * @author Ariel Flesler
+ * @version 1.4.14
+ */
+;(function(k){'use strict';k(['jquery'],function($){var j=$.scrollTo=function(a,b,c){return $(window).scrollTo(a,b,c)};j.defaults={axis:'xy',duration:0,limit:!0};j.window=function(a){return $(window)._scrollable()};$.fn._scrollable=function(){return this.map(function(){var a=this,isWin=!a.nodeName||$.inArray(a.nodeName.toLowerCase(),['iframe','#document','html','body'])!=-1;if(!isWin)return a;var b=(a.contentWindow||a).document||a.ownerDocument||a;return/webkit/i.test(navigator.userAgent)||b.compatMode=='BackCompat'?b.body:b.documentElement})};$.fn.scrollTo=function(f,g,h){if(typeof g=='object'){h=g;g=0}if(typeof h=='function')h={onAfter:h};if(f=='max')f=9e9;h=$.extend({},j.defaults,h);g=g||h.duration;h.queue=h.queue&&h.axis.length>1;if(h.queue)g/=2;h.offset=both(h.offset);h.over=both(h.over);return this._scrollable().each(function(){if(f==null)return;var d=this,$elem=$(d),targ=f,toff,attr={},win=$elem.is('html,body');switch(typeof targ){case'number':case'string':if(/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ)){targ=both(targ);break}targ=win?$(targ):$(targ,this);if(!targ.length)return;case'object':if(targ.is||targ.style)toff=(targ=$(targ)).offset()}var e=$.isFunction(h.offset)&&h.offset(d,targ)||h.offset;$.each(h.axis.split(''),function(i,a){var b=a=='x'?'Left':'Top',pos=b.toLowerCase(),key='scroll'+b,old=d[key],max=j.max(d,a);if(toff){attr[key]=toff[pos]+(win?0:old-$elem.offset()[pos]);if(h.margin){attr[key]-=parseInt(targ.css('margin'+b))||0;attr[key]-=parseInt(targ.css('border'+b+'Width'))||0}attr[key]+=e[pos]||0;if(h.over[pos])attr[key]+=targ[a=='x'?'width':'height']()*h.over[pos]}else{var c=targ[pos];attr[key]=c.slice&&c.slice(-1)=='%'?parseFloat(c)/100*max:c}if(h.limit&&/^\d+$/.test(attr[key]))attr[key]=attr[key]<=0?0:Math.min(attr[key],max);if(!i&&h.queue){if(old!=attr[key])animate(h.onAfterFirst);delete attr[key]}});animate(h.onAfter);function animate(a){$elem.animate(attr,g,h.easing,a&&function(){a.call(this,targ,h)})}}).end()};j.max=function(a,b){var c=b=='x'?'Width':'Height',scroll='scroll'+c;if(!$(a).is('html,body'))return a[scroll]-$(a)[c.toLowerCase()]();var d='client'+c,html=a.ownerDocument.documentElement,body=a.ownerDocument.body;return Math.max(html[scroll],body[scroll])-Math.min(html[d],body[d])};function both(a){return $.isFunction(a)||$.isPlainObject(a)?a:{top:a,left:a}}return j})}(typeof define==='function'&&define.amd?define:function(a,b){if(typeof module!=='undefined'&&module.exports){module.exports=b(require('jquery'))}else{b(jQuery)}}));
+
 </script>
   <script>
 ;(function(window) {
 "use strict";
+
+/* GENERAL */
+
+// Parse whatever JSON parameters were passed by the application.
+var g_initObj = {};
+(function() {
+  var uriSearch = location.search;
+  if (uriSearch) {
+    g_initObj = JSON.parse(decodeURIComponent(uriSearch.slice(1)));
+  }
+})();
+
 
 /* CONNECTION ****************************************************************/
 
@@ -3863,8 +3883,17 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
 
 /* SETTINGS ******************************************************************/
 
+// We will use this later to check if any settings have changed.
+var g_initialSettingsJSON;
+
 $(function() {
-  // ****** FILL VALUES
+  // This is merely to help with testing
+  if (!g_initObj.Settings)
+  {
+    g_initObj.Settings = { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": 7771, "LocalSocksProxyPort": 7770, "SkipUpstreamProxy": 1, "UpstreamProxyHostname": "upstreamhost", "UpstreamProxyPort": 234, "EgressRegion": "GB", "defaults": { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": "", "LocalSocksProxyPort": "", "SkipUpstreamProxy": 0, "UpstreamProxyHostname": "", "UpstreamProxyPort": "", "EgressRegion": ""  } };
+  }
+
+  fillSettingsValues(g_initObj.Settings);
 
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
@@ -3878,11 +3907,103 @@ $(function() {
   $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
   skipUpstreamProxyUpdate();
 
+  // Capture the settings as the tab is entered, to check for changes later.
+  $('a[href="#settings-pane"][data-toggle="tab"]').on('shown', function(e) {
+    g_initialSettingsJSON = settingsToJSON();
+  });
+
   // The settings are saved (and applied) when the user navigates away from the
   // Settings tab.
+  $('a[data-toggle="tab"]').on('show', function(e) {
+    // If we are navigating away from our tab, then we need to apply our settings
+    // (if changed).
+    if ($('#settings-tab').hasClass('active') &&    // we were active
+        !$(this).parent().is($('#settings-tab'))) { // we won't be active
+      var settingsJSON = settingsToJSON();
+      if (settingsJSON === false) {
+        // Settings are invalid. Scroll to the (first) offender and prevent switching tabs.
+        $('.tab-content').scrollTo($('#settings-pane .error'), 500, {offset: -25});
+        e.preventDefault();
+        return;
+      }
+    }
+  });
 });
 
-// Returns the numeric port if valid, otherwise false
+function fillSettingsValues(obj) {
+  if (typeof(obj.SplitTunnel) !== 'undefined') {
+    $('#SplitTunnel').prop('checked', obj.SplitTunnel);
+  }
+
+  if (typeof(obj.VPN) !== 'undefined') {
+    $('#VPN').prop('checked', obj.VPN);
+  }
+  $('#VPN').change(vpnModeUpdate);
+  vpnModeUpdate();
+
+  if (typeof(obj.LocalHttpProxyPort) !== 'undefined') {
+    $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : "");
+  }
+  $('#LocalHttpProxyPort').trigger('keyup');
+
+  if (typeof(obj.LocalSocksProxyPort) !== 'undefined') {
+    $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : "");
+  }
+  $('#LocalSocksProxyPort').trigger('keyup');
+
+  if (typeof(obj.UpstreamProxyHostname) !== 'undefined') {
+    $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
+  }
+
+  if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
+    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : "");
+  }
+  $('#UpstreamProxyPort').trigger('keyup');
+
+  if (typeof(obj.SkipUpstreamProxy) !== 'undefined') {
+    $('#SkipUpstreamProxy').prop('checked', obj.SkipUpstreamProxy);
+  }
+  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
+  skipUpstreamProxyUpdate();
+
+  if (typeof(obj.EgressRegion) !== 'undefined') {
+    $('#EgressRegion').val(obj.EgressRegion);
+  }
+  $('body select').each(function() {
+    if (this.refresh) this.refresh();
+  });
+}
+
+// Packages the current settings into JSON string. Returns if invalid value found.
+function settingsToJSON() {
+  var valid = true;
+
+  $('.port-entry').each(function() {
+    if (checkPortField(this) === false) {
+      valid = false;
+    }
+  });
+
+  if (!valid) {
+    return false;
+  }
+
+  var returnValue = {
+    VPN: $('#VPN').prop('checked') ? 1 : 0,
+    SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
+    LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
+    LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
+    UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
+    UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
+    SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
+    EgressRegion: $('#EgressRegion').val()
+  };
+
+  return JSON.stringify(returnValue);
+}
+
+// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
+// return value, and falsy, so use `=== false`.
 function validatePort(val) {
   if (val.length === 0) {
     return 0;
@@ -3896,12 +4017,16 @@ function validatePort(val) {
   return val;
 }
 
+// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
+// return value, and falsy, so use `=== false`.
 function checkPortField(target) {
   var val = $(target).val();
-  var portOK = (validatePort(val) !== false);
+  var port = validatePort(val);
+  var portOK = (port !== false);
   $('.help-inline.'+target.id)
     .toggleClass('hidden', portOK)
     .parents('.control-group').eq(0).toggleClass('error', !portOK);
+  return port;
 }
 
 // Some of the settings are incompatible with VPN mode. We'll modify the display
@@ -4032,43 +4157,43 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
   <div class="main-container">
     <div class="tabbable tabs-left">
       <ul class="main-nav nav nav-tabs">
-        <li class="active">
+        <li id="connection-tab" class="active">
           <a href="#connection-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-home"></i>
             Connection
             <span class="label label-warning hidden" data-connect-state="starting">
-              <i class="icon-fixed-width icon-refresh icon-spin"></i>
+              <i class="icon-refresh icon-spin"></i>
             </span>
             <span class="label label-warning hidden" data-connect-state="stopping">
-              <i class="icon-fixed-width icon-refresh icon-spin"></i>
+              <i class="icon-refresh icon-spin"></i>
             </span>
             <span class="label label-success hidden" data-connect-state="connected">
-              <i class="icon-fixed-width icon-ok-sign"></i>
+              <i class="icon-ok-sign"></i>
             </span>
             <span class="label label-important" data-connect-state="stopped">
-              <i class="icon-fixed-width icon-exclamation-sign"></i>
+              <i class="icon-exclamation-sign"></i>
             </span>
           </a>
         </li>
-        <li>
+        <li id="connection2-tab">
           <a href="#connection2-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-home"></i>
             Connection2
           </a>
         </li>
-        <li>
+        <li id="settings-tab">
           <a href="#settings-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-cogs"></i>
             Settings
           </a>
         </li>
-        <li>
+        <li id="feedback-tab">
           <a href="#feedback-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-comment-alt"></i>
             Feedback
           </a>
         </li>
-        <li>
+        <li id="messages-tab">
           <a href="#messages-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-list"></i>
             Log Messages
@@ -4250,6 +4375,12 @@ circle.attr("stroke", "#fff");
 
         <!-- SETTINGS ==================================================-->
         <div class="tab-pane fade" id="settings-pane">
+        <div style="position:relative">
+<div class="alert" style="position:absolute">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Warning!</strong> Best check yo self, you're not looking too good.
+</div>
+</div>
           <form class="vpn-incompatible">
             <fieldset>
               <legend><i class="icon-fixed-width icon-globe"></i>Psiphon server region</legend>
@@ -4294,9 +4425,9 @@ circle.attr("stroke", "#fff");
           <form class="form-horizontal">
             <fieldset>
               <legend>Local Proxy Ports</legend>
-              <span class="help-block">
+              <p>
                 Leave blank for automatic port selection (recommended).
-              </span>
+              </p>
               <div class="control-group">
                 <label for="LocalHttpProxyPort" class="control-label">HTTP/HTTPS</label>
                 <div class="controls">
@@ -4325,12 +4456,12 @@ circle.attr("stroke", "#fff");
           <form class="form-horizontal vpn-incompatible">
             <fieldset>
               <legend>Upstream Proxy</legend>
-              <span class="help-block">
+              <p>
                 If your computer already has a proxy configured, by default Psiphon will
                 use that proxy when establishing a tunnel. You can override that by specifying
                 a proxy to use, or by specifying that no such "upstream proxy" should be used.<br>
                 Only HTTP proxies that support HTTPS are allowed.
-              </span>
+              </p>
               <div class="control-group skip-upstream-proxy-incompatible">
                 <label for="UpstreamProxyHostname" class="control-label">Hostname</label>
                 <div class="controls">
@@ -4363,10 +4494,10 @@ circle.attr("stroke", "#fff");
           <form class="perma-disabled disabled-text">
             <fieldset>
               <legend>Split Tunnel (Not yet supported!)</legend>
-              <span class="help-block">
+              <p>
                 If enabled, requests made to servers within your home country will not be
                 tunneled through Psiphon.
-              </span>
+              </p>
               <label for="SplitTunnel" class="checkbox">
                 <input type="checkbox" id="SplitTunnel" disabled/>
                 Don't proxy domestic websites

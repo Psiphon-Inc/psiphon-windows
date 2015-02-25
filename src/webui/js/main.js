@@ -1,6 +1,18 @@
 ;(function(window) {
 "use strict";
 
+/* GENERAL */
+
+// Parse whatever JSON parameters were passed by the application.
+var g_initObj = {};
+(function() {
+  var uriSearch = location.search;
+  if (uriSearch) {
+    g_initObj = JSON.parse(decodeURIComponent(uriSearch.slice(1)));
+  }
+})();
+
+
 /* CONNECTION ****************************************************************/
 
 var g_lastState = 'stopped';
@@ -128,8 +140,17 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
 
 /* SETTINGS ******************************************************************/
 
+// We will use this later to check if any settings have changed.
+var g_initialSettingsJSON;
+
 $(function() {
-  // ****** FILL VALUES
+  // This is merely to help with testing
+  if (!g_initObj.Settings)
+  {
+    g_initObj.Settings = { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": 7771, "LocalSocksProxyPort": 7770, "SkipUpstreamProxy": 1, "UpstreamProxyHostname": "upstreamhost", "UpstreamProxyPort": 234, "EgressRegion": "GB", "defaults": { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": "", "LocalSocksProxyPort": "", "SkipUpstreamProxy": 0, "UpstreamProxyHostname": "", "UpstreamProxyPort": "", "EgressRegion": ""  } };
+  }
+
+  fillSettingsValues(g_initObj.Settings);
 
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
@@ -143,11 +164,103 @@ $(function() {
   $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
   skipUpstreamProxyUpdate();
 
+  // Capture the settings as the tab is entered, to check for changes later.
+  $('a[href="#settings-pane"][data-toggle="tab"]').on('shown', function(e) {
+    g_initialSettingsJSON = settingsToJSON();
+  });
+
   // The settings are saved (and applied) when the user navigates away from the
   // Settings tab.
+  $('a[data-toggle="tab"]').on('show', function(e) {
+    // If we are navigating away from our tab, then we need to apply our settings
+    // (if changed).
+    if ($('#settings-tab').hasClass('active') &&    // we were active
+        !$(this).parent().is($('#settings-tab'))) { // we won't be active
+      var settingsJSON = settingsToJSON();
+      if (settingsJSON === false) {
+        // Settings are invalid. Scroll to the (first) offender and prevent switching tabs.
+        $('.tab-content').scrollTo($('#settings-pane .error'), 500, {offset: -25});
+        e.preventDefault();
+        return;
+      }
+    }
+  });
 });
 
-// Returns the numeric port if valid, otherwise false
+function fillSettingsValues(obj) {
+  if (typeof(obj.SplitTunnel) !== 'undefined') {
+    $('#SplitTunnel').prop('checked', obj.SplitTunnel);
+  }
+
+  if (typeof(obj.VPN) !== 'undefined') {
+    $('#VPN').prop('checked', obj.VPN);
+  }
+  $('#VPN').change(vpnModeUpdate);
+  vpnModeUpdate();
+
+  if (typeof(obj.LocalHttpProxyPort) !== 'undefined') {
+    $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : "");
+  }
+  $('#LocalHttpProxyPort').trigger('keyup');
+
+  if (typeof(obj.LocalSocksProxyPort) !== 'undefined') {
+    $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : "");
+  }
+  $('#LocalSocksProxyPort').trigger('keyup');
+
+  if (typeof(obj.UpstreamProxyHostname) !== 'undefined') {
+    $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
+  }
+
+  if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
+    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : "");
+  }
+  $('#UpstreamProxyPort').trigger('keyup');
+
+  if (typeof(obj.SkipUpstreamProxy) !== 'undefined') {
+    $('#SkipUpstreamProxy').prop('checked', obj.SkipUpstreamProxy);
+  }
+  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
+  skipUpstreamProxyUpdate();
+
+  if (typeof(obj.EgressRegion) !== 'undefined') {
+    $('#EgressRegion').val(obj.EgressRegion);
+  }
+  $('body select').each(function() {
+    if (this.refresh) this.refresh();
+  });
+}
+
+// Packages the current settings into JSON string. Returns if invalid value found.
+function settingsToJSON() {
+  var valid = true;
+
+  $('.port-entry').each(function() {
+    if (checkPortField(this) === false) {
+      valid = false;
+    }
+  });
+
+  if (!valid) {
+    return false;
+  }
+
+  var returnValue = {
+    VPN: $('#VPN').prop('checked') ? 1 : 0,
+    SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
+    LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
+    LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
+    UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
+    UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
+    SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
+    EgressRegion: $('#EgressRegion').val()
+  };
+
+  return JSON.stringify(returnValue);
+}
+
+// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
+// return value, and falsy, so use `=== false`.
 function validatePort(val) {
   if (val.length === 0) {
     return 0;
@@ -161,12 +274,16 @@ function validatePort(val) {
   return val;
 }
 
+// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
+// return value, and falsy, so use `=== false`.
 function checkPortField(target) {
   var val = $(target).val();
-  var portOK = (validatePort(val) !== false);
+  var port = validatePort(val);
+  var portOK = (port !== false);
   $('.help-inline.'+target.id)
     .toggleClass('hidden', portOK)
     .parents('.control-group').eq(0).toggleClass('error', !portOK);
+  return port;
 }
 
 // Some of the settings are incompatible with VPN mode. We'll modify the display

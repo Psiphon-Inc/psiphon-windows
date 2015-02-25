@@ -63,43 +63,43 @@
   <div class="main-container">
     <div class="tabbable tabs-left">
       <ul class="main-nav nav nav-tabs">
-        <li class="active">
+        <li id="connection-tab" class="active">
           <a href="#connection-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-home"></i>
             Connection
             <span class="label label-warning hidden" data-connect-state="starting">
-              <i class="icon-fixed-width icon-refresh icon-spin"></i>
+              <i class="icon-refresh icon-spin"></i>
             </span>
             <span class="label label-warning hidden" data-connect-state="stopping">
-              <i class="icon-fixed-width icon-refresh icon-spin"></i>
+              <i class="icon-refresh icon-spin"></i>
             </span>
             <span class="label label-success hidden" data-connect-state="connected">
-              <i class="icon-fixed-width icon-ok-sign"></i>
+              <i class="icon-ok-sign"></i>
             </span>
             <span class="label label-important" data-connect-state="stopped">
-              <i class="icon-fixed-width icon-exclamation-sign"></i>
+              <i class="icon-exclamation-sign"></i>
             </span>
           </a>
         </li>
-        <li>
+        <li id="connection2-tab">
           <a href="#connection2-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-home"></i>
             Connection2
           </a>
         </li>
-        <li>
+        <li id="settings-tab">
           <a href="#settings-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-cogs"></i>
             Settings
           </a>
         </li>
-        <li>
+        <li id="feedback-tab">
           <a href="#feedback-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-comment-alt"></i>
             Feedback
           </a>
         </li>
-        <li>
+        <li id="messages-tab">
           <a href="#messages-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-list"></i>
             Log Messages
@@ -281,6 +281,12 @@ circle.attr("stroke", "#fff");
 
         <!-- SETTINGS ==================================================-->
         <div class="tab-pane fade" id="settings-pane">
+
+<div class="alert" style="position:absolute;width:90%">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Warning!</strong> Best check yo self, you're not looking too good.
+</div>
+
           <form class="vpn-incompatible">
             <fieldset>
               <legend><i class="icon-fixed-width icon-globe"></i>Psiphon server region</legend>
@@ -325,9 +331,9 @@ circle.attr("stroke", "#fff");
           <form class="form-horizontal">
             <fieldset>
               <legend>Local Proxy Ports</legend>
-              <span class="help-block">
+              <p>
                 Leave blank for automatic port selection (recommended).
-              </span>
+              </p>
               <div class="control-group">
                 <label for="LocalHttpProxyPort" class="control-label">HTTP/HTTPS</label>
                 <div class="controls">
@@ -356,12 +362,12 @@ circle.attr("stroke", "#fff");
           <form class="form-horizontal vpn-incompatible">
             <fieldset>
               <legend>Upstream Proxy</legend>
-              <span class="help-block">
+              <p>
                 If your computer already has a proxy configured, by default Psiphon will
                 use that proxy when establishing a tunnel. You can override that by specifying
                 a proxy to use, or by specifying that no such "upstream proxy" should be used.<br>
                 Only HTTP proxies that support HTTPS are allowed.
-              </span>
+              </p>
               <div class="control-group skip-upstream-proxy-incompatible">
                 <label for="UpstreamProxyHostname" class="control-label">Hostname</label>
                 <div class="controls">
@@ -394,10 +400,10 @@ circle.attr("stroke", "#fff");
           <form class="perma-disabled disabled-text">
             <fieldset>
               <legend>Split Tunnel (Not yet supported!)</legend>
-              <span class="help-block">
+              <p>
                 If enabled, requests made to servers within your home country will not be
                 tunneled through Psiphon.
-              </span>
+              </p>
               <label for="SplitTunnel" class="checkbox">
                 <input type="checkbox" id="SplitTunnel" disabled/>
                 Don't proxy domestic websites

@@ -24,6 +24,8 @@ namespace Settings
 {
     void Initialize();
 
+    void ToJson(Json::Value& o_json);
+
     // Returns true if settings changed.
     bool Show(HINSTANCE hInst, HWND hParentWnd);
 

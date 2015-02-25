@@ -74,7 +74,15 @@ static void OnResize(HWND hWnd, UINT uWidth, UINT uHeight)
 
 void OnCreate(HWND hWndParent)
 {
+    Json::Value initJson, settingsJson;
+    Settings::ToJson(settingsJson);
+    initJson["Settings"] = settingsJson;
+    Json::FastWriter jsonWriter;    
+    tstring initJsonString = NarrowToTString(jsonWriter.write(initJson));
+
     tstring url = ResourceToUrl(_T("main.html"), NULL);
+    // URI encoding seems to be taken care of automatically (fortuitous, but unsettling)
+    url += _T("?") + initJsonString;
 
     /* Create the html control */
     g_hHtmlCtrl = CreateWindow(

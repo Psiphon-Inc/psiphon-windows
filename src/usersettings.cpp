@@ -133,26 +133,32 @@ void Settings::Initialize()
     (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
 }
 
+void Settings::ToJson(Json::Value& o_json)
+{
+    o_json.clear();
+    o_json["SplitTunnel"] = Settings::SplitTunnel();
+    o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
+    o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+    o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+    o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
+    o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
+    o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
+    o_json["EgressRegion"] = Settings::EgressRegion();
+    o_json["defaults"] = Json::Value();
+    o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
+    o_json["defaults"]["VPN"] = FALSE;
+    o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+    o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+    o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
+    o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
+    o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+    o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+}
+
 bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
 {
     Json::Value config;
-    config["SplitTunnel"] = Settings::SplitTunnel();
-    config["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
-    config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-    config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-    config["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
-    config["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
-    config["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
-    config["EgressRegion"] = Settings::EgressRegion();
-    config["defaults"] = Json::Value();
-    config["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
-    config["defaults"]["VPN"] = FALSE;
-    config["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
-    config["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
-    config["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
-    config["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
-    config["defaults"]["UpstreamProxyPort"] = NULL_PORT;
-    config["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+    Settings::ToJson(config);
 
     stringstream configDataStream;
     Json::FastWriter jsonWriter;
