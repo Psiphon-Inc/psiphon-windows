@@ -5191,8 +5191,10 @@ body {
   margin-top: 5px;
   margin-bottom: 10px;
 }
-.tab-content {
+.tab-content > .tab-pane {
   padding-right: 1em;
+  height: 100%;
+  overflow: auto;
 }
 /* CONNECT */
 #connect-toggle {

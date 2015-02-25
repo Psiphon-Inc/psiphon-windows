@@ -155,82 +155,63 @@ void Settings::ToJson(Json::Value& o_json)
     o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
 }
 
-bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
 {
-    Json::Value config;
-    Settings::ToJson(config);
-
-    stringstream configDataStream;
-    Json::FastWriter jsonWriter;
-    configDataStream << jsonWriter.write(config);
-
-    tstring result;
-    if (ShowHTMLDlg(
-        hParentWnd,
-        _T("SETTINGS_HTML_RESOURCE"),
-        GetLocaleName().c_str(),
-        NarrowToTString(configDataStream.str()).c_str(),
-        result) != 1)
-    {
-        // error or user cancelled
-        return false;
-    }
+    o_settingsChanged = false;
 
     Json::Value json;
     Json::Reader reader;
-    bool parsingSuccessful = reader.parse(WStringToUTF8(result.c_str()), json);
+    bool parsingSuccessful = reader.parse(utf8JSON, json);
     if (!parsingSuccessful)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to save settings!"));
         return false;
     }
 
-    bool settingsChanged = false;
-
     try
     {
         AutoMUTEX lock(g_registryMutex);
 
-        // Note: We're not purposely not bothering to check registry write return values.
+        // Note: We're purposely not bothering to check registry write return values.
 
         RegistryFailureReason failReason;
 
         BOOL splitTunnel = json.get("SplitTunnel", 0).asUInt();
-        settingsChanged = settingsChanged || !!splitTunnel != Settings::SplitTunnel();
+        o_settingsChanged = o_settingsChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
         wstring transport = json.get("VPN", 0).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
-        settingsChanged = settingsChanged || transport != Settings::Transport();
+        o_settingsChanged = o_settingsChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
             TRANSPORT_NAME,
             transport,
             failReason);
 
         DWORD httpPort = json.get("LocalHttpProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || httpPort != Settings::LocalHttpProxyPort();
+        o_settingsChanged = o_settingsChanged || httpPort != Settings::LocalHttpProxyPort();
         WriteRegistryDwordValue(HTTP_PROXY_PORT_NAME, httpPort);
 
         DWORD socksPort = json.get("LocalSocksProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || socksPort != Settings::LocalSocksProxyPort();
+        o_settingsChanged = o_settingsChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", "").asString();
-        settingsChanged = settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
+        o_settingsChanged = o_settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
             upstreamProxyHostname,
             failReason);
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
+        o_settingsChanged = o_settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
 
         BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", 0).asUInt();
-        settingsChanged = settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
+        o_settingsChanged = o_settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
         WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
 
         string egressRegion = json.get("EgressRegion", "").asString();
-        settingsChanged = settingsChanged || egressRegion != Settings::EgressRegion();
+        o_settingsChanged = o_settingsChanged || egressRegion != Settings::EgressRegion();
         WriteRegistryStringValue(
             EGRESS_REGION_NAME,
             egressRegion,
@@ -239,6 +220,33 @@ bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
     catch (exception& e)
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        return false;
+    }
+
+    return true;
+}
+
+bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+{
+    Json::Value config;
+    Settings::ToJson(config);
+
+    tstring result;
+    if (ShowHTMLDlg(
+        hParentWnd,
+        _T("SETTINGS_HTML_RESOURCE"),
+        GetLocaleName().c_str(),
+        NarrowToTString(Json::FastWriter().write(config)).c_str(),
+        result) != 1)
+    {
+        // error or user cancelled
+        return false;
+    }
+
+    bool settingsChanged = false;
+    if (!FromJson(WStringToUTF8(result.c_str()), settingsChanged))
+    {
+        return false;
     }
 
     return settingsChanged;

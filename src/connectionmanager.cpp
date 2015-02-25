@@ -79,20 +79,6 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
     }
 }
 
-void ConnectionManager::Toggle()
-{
-    // NOTE: no lock, to allow thread to access object
-
-    if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
-    {
-        Start();
-    }
-    else
-    {
-        Stop(STOP_REASON_USER_DISCONNECT);
-    }
-}
-
 void ConnectionManager::SetState(ConnectionManagerState newState)
 {
     // NOTE: no lock, to prevent blocking connection thread with UI polling
@@ -138,6 +124,20 @@ void ConnectionManager::SetReconnecting()
 void ConnectionManager::SetReconnected()
 {
     SetState(CONNECTION_MANAGER_STATE_CONNECTED);
+}
+
+void ConnectionManager::Toggle()
+{
+    // NOTE: no lock, to allow thread to access object
+
+    if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
+    {
+        Start();
+    }
+    else
+    {
+        Stop(STOP_REASON_USER_DISCONNECT);
+    }
 }
 
 void ConnectionManager::Stop(DWORD reason)
@@ -186,93 +186,6 @@ void ConnectionManager::Stop(DWORD reason)
     SetState(CONNECTION_MANAGER_STATE_STOPPED);
 
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
-}
-
-void ConnectionManager::FetchRemoteServerList(void)
-{
-    // Note: not used by CoreTransport
-
-    AutoMUTEX lock(m_mutex);
-
-    if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
-    {
-        return;
-    }
-
-    // After at least one failed connection attempt, and no more than once
-    // per few hours (if successful), or not more than once per few minutes
-    // (if unsuccessful), check for a new remote server list.
-    if (m_nextFetchRemoteServerListAttempt != 0 &&
-        m_nextFetchRemoteServerListAttempt > time(0))
-    {
-        return;
-    }
-
-    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
-
-    string response;
-
-    try
-    {
-        HTTPSRequest httpsRequest;
-        // NOTE: Not using local proxy
-        if (!httpsRequest.MakeRequest(
-                NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
-                443,
-                "",
-                NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
-                response,
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
-                false) // don't use local proxy
-            || response.length() <= 0)
-        {
-            my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
-            return;
-        }
-    }
-    catch (StopSignal::StopException&)
-    {
-        // Application is exiting.
-        return;
-    }
-
-    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
-
-    string serverEntryList;
-    if (!verifySignedDataPackage(
-            REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
-            response.c_str(), 
-            response.length(), 
-            false, 
-            serverEntryList))
-    {
-        my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
-        return;
-    }
-
-    vector<string> newServerEntryVector;
-    istringstream serverEntryListStream(serverEntryList);
-    string line;
-    while (getline(serverEntryListStream, line))
-    {
-        if (!line.empty())
-        {
-            newServerEntryVector.push_back(line);
-        }
-    }
-
-    try
-    {
-        // This adds the new server entries to all transports' server lists.
-        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
-
-        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
-    }
-    catch (std::exception &ex)
-    {
-        my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
-        // This isn't fatal.
-    }
 }
 
 void ConnectionManager::Start()
@@ -760,6 +673,93 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
 
 // ==== General Session Functions =============================================
+
+void ConnectionManager::FetchRemoteServerList(void)
+{
+    // Note: not used by CoreTransport
+
+    AutoMUTEX lock(m_mutex);
+
+    if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
+    {
+        return;
+    }
+
+    // After at least one failed connection attempt, and no more than once
+    // per few hours (if successful), or not more than once per few minutes
+    // (if unsuccessful), check for a new remote server list.
+    if (m_nextFetchRemoteServerListAttempt != 0 &&
+        m_nextFetchRemoteServerListAttempt > time(0))
+    {
+        return;
+    }
+
+    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
+
+    string response;
+
+    try
+    {
+        HTTPSRequest httpsRequest;
+        // NOTE: Not using local proxy
+        if (!httpsRequest.MakeRequest(
+            NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
+            443,
+            "",
+            NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
+            response,
+            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
+            false) // don't use local proxy
+            || response.length() <= 0)
+        {
+            my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
+            return;
+        }
+    }
+    catch (StopSignal::StopException&)
+    {
+        // Application is exiting.
+        return;
+    }
+
+    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
+
+    string serverEntryList;
+    if (!verifySignedDataPackage(
+        REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
+        response.c_str(),
+        response.length(),
+        false,
+        serverEntryList))
+    {
+        my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
+        return;
+    }
+
+    vector<string> newServerEntryVector;
+    istringstream serverEntryListStream(serverEntryList);
+    string line;
+    while (getline(serverEntryListStream, line))
+    {
+        if (!line.empty())
+        {
+            newServerEntryVector.push_back(line);
+        }
+    }
+
+    try
+    {
+        // This adds the new server entries to all transports' server lists.
+        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
+
+        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
+    }
+    catch (std::exception &ex)
+    {
+        my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
+        // This isn't fatal.
+    }
+}
 
 bool ConnectionManager::RequireUpgrade(void)
 {

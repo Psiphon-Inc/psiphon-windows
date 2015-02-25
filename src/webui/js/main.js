@@ -12,6 +12,14 @@ var g_initObj = {};
   }
 })();
 
+$(function() {
+  // When the tab is changed, reset the scroll to the top.
+  //$('a[href="#connection-pane"][data-toggle="tab"]').on('shown', function() {
+//    setTimeout(resizeConnectContent, 1);
+  //});
+
+});
+
 
 /* CONNECTION ****************************************************************/
 
@@ -157,7 +165,7 @@ $(function() {
   vpnModeUpdate();
 
   // Check for valid input in port number fields
-  $('.port-entry').keyup(function(event) {checkPortField(event.target);});
+  $('.port-entry').on('keyup change blur', function(event) {checkPortField(event.target);});
   $('.port-entry').each(function() {checkPortField(this);});
 
   // Disable the other upstream proxy settings if skipping
@@ -179,9 +187,17 @@ $(function() {
       var settingsJSON = settingsToJSON();
       if (settingsJSON === false) {
         // Settings are invalid. Scroll to the (first) offender and prevent switching tabs.
-        $('.tab-content').scrollTo($('#settings-pane .error'), 500, {offset: -25});
+        $('.tab-content').scrollTo(
+          $('#settings-pane .error').eq(0),
+          500,            // animation time
+          {offset: -50}); // leave some space for the alert
+        $('#settings-pane .error input').eq(0).focus();
         e.preventDefault();
         return;
+      }
+      else if (settingsJSON !== g_initialSettingsJSON) {
+        // Settings have changed -- update them in the application (and trigger a reconnect).
+        HtmlCtrlInterface_UpdateSettings(settingsJSON);
       }
     }
   });
@@ -283,6 +299,11 @@ function checkPortField(target) {
   $('.help-inline.'+target.id)
     .toggleClass('hidden', portOK)
     .parents('.control-group').eq(0).toggleClass('error', !portOK);
+
+  // Show/hide the error alert depending on whether we have an erroneous field
+  $('#settings-pane .value-error-alert').toggleClass(
+    'hidden', $('#settings-pane .control-group.error').length === 0);
+
   return port;
 }
 
@@ -386,6 +407,13 @@ function HtmlCtrlInterface_Stop() {
   }
   setTimeout(function() {
     window.location = 'app:stop';
+  }, 1);
+}
+
+function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
+  setTimeout(function() {
+    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
+    window.location = 'app:updatesettings?' + settingsJSON;
   }, 1);
 }
 

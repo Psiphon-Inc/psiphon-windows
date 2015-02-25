@@ -275,15 +275,36 @@ static void HtmlUI_AppLink(MC_NMHTMLURL* nmHtmlUrl)
 
 static void HtmlUI_AppLinkHandler(LPCTSTR url)
 {
-    if (_tcscmp(url, _T("app:start")) == 0)
+    const LPCTSTR appStart = _T("app:start");
+    const LPCTSTR appStop = _T("app:stop");
+    const LPCTSTR appUpdateSettings = _T("app:updatesettings?");
+    const size_t appUpdateSettingsLen = _tcslen(appUpdateSettings);
+
+    if (_tcscmp(url, appStart) == 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Start requested"), __TFUNCTION__);
         g_connectionManager.Start();
     }
-    else if (_tcscmp(url, _T("app:stop")) == 0)
+    else if (_tcscmp(url, appStop) == 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Stop requested"), __TFUNCTION__);
         g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+    }
+    else if (_tcsncmp(url, appUpdateSettings, appUpdateSettingsLen) == 0
+             && _tcslen(url) > appUpdateSettingsLen)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Update settings requested"), __TFUNCTION__);
+        tstring tstringJSON(url + appUpdateSettingsLen);
+        string stringJSON = TStringToNarrow(tstringJSON);
+        bool settingsChanged = false;
+        if (Settings::FromJson(stringJSON, settingsChanged) && settingsChanged
+            && (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
+                || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING))
+        {
+            my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
+            g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+            g_connectionManager.Start();
+        }
     }
     delete[] url;
 }
