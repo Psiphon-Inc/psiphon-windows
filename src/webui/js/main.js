@@ -13,13 +13,30 @@ var g_initObj = {};
 })();
 
 $(function() {
-  // When the tab is changed, reset the scroll to the top.
-  //$('a[href="#connection-pane"][data-toggle="tab"]').on('shown', function() {
-//    setTimeout(resizeConnectContent, 1);
-  //});
+  // Update the size of our tab content element when the window resizes...
+  $(window).smartresize(function() {
+    setTimeout(resizeContent, 1);
+  });
+  // ...and when a tab is activated...
+  $('a[data-toggle="tab"]').on('shown', function() {
+    setTimeout(resizeContent, 1);
+  });
+  // ...and now.
+  resizeContent();
 
 });
 
+function resizeContent() {
+  // We want the content part of our window to fill the window, we don't want
+  // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
+  // with just CSS, so we're going to do some on-resize height adjustment in JS.
+  var fillHeight = $(window).innerHeight() - $('.main-height').position().top;
+  $('.main-height').outerHeight(fillHeight);
+  $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
+
+  // Let the panes know that content resized
+  $('.main-height').trigger('resize');
+}
 
 /* CONNECTION ****************************************************************/
 
@@ -41,8 +58,8 @@ $(function() {
 
   setupConnectToggle();
 
-  // Update the size of our elements when the window resizes...
-  $(window).resize(function() {
+  // Update the size of our elements when the tab content element resizes...
+  $('.main-height').on('resize', function() {
     setTimeout(resizeConnectContent, 1);
   });
   // ...and when the tab is activated...
@@ -54,13 +71,6 @@ $(function() {
 });
 
 function resizeConnectContent() {
-  // We want the content part of our window to fill the window, we don't want
-  // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
-  // with just CSS, so we're going to do some on-resize height adjustment in JS.
-  var fillHeight = $(window).innerHeight() - $('.main-height').position().top;
-  $('.main-height').outerHeight(fillHeight);
-  $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
-
   // In the connection toggle box, make all the sub-boxes the same size by
   // padding the top (effectively aligning the bottoms).
   var maxHeight = 0, maxstate = '';
@@ -79,6 +89,10 @@ function resizeConnectContent() {
 
   // Set the outer box to the correct height
   $('#connect-toggle').height(maxHeight);
+
+  // Reposition the button part-way down the available space
+  var buttonTop = ($('#connection-pane').innerHeight() - maxHeight) / 3;
+  $('#connect-toggle').css('top', buttonTop > 0 ? buttonTop : 0);
 }
 
 function setupConnectToggle() {

@@ -520,7 +520,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 
-        600, 400,
+        800, 600,
         NULL, NULL, hInstance, NULL);
 
     // Don't show the window until the content loads.

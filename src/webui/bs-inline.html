@@ -3739,6 +3739,36 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
  */
 ;(function(k){'use strict';k(['jquery'],function($){var j=$.scrollTo=function(a,b,c){return $(window).scrollTo(a,b,c)};j.defaults={axis:'xy',duration:0,limit:!0};j.window=function(a){return $(window)._scrollable()};$.fn._scrollable=function(){return this.map(function(){var a=this,isWin=!a.nodeName||$.inArray(a.nodeName.toLowerCase(),['iframe','#document','html','body'])!=-1;if(!isWin)return a;var b=(a.contentWindow||a).document||a.ownerDocument||a;return/webkit/i.test(navigator.userAgent)||b.compatMode=='BackCompat'?b.body:b.documentElement})};$.fn.scrollTo=function(f,g,h){if(typeof g=='object'){h=g;g=0}if(typeof h=='function')h={onAfter:h};if(f=='max')f=9e9;h=$.extend({},j.defaults,h);g=g||h.duration;h.queue=h.queue&&h.axis.length>1;if(h.queue)g/=2;h.offset=both(h.offset);h.over=both(h.over);return this._scrollable().each(function(){if(f==null)return;var d=this,$elem=$(d),targ=f,toff,attr={},win=$elem.is('html,body');switch(typeof targ){case'number':case'string':if(/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ)){targ=both(targ);break}targ=win?$(targ):$(targ,this);if(!targ.length)return;case'object':if(targ.is||targ.style)toff=(targ=$(targ)).offset()}var e=$.isFunction(h.offset)&&h.offset(d,targ)||h.offset;$.each(h.axis.split(''),function(i,a){var b=a=='x'?'Left':'Top',pos=b.toLowerCase(),key='scroll'+b,old=d[key],max=j.max(d,a);if(toff){attr[key]=toff[pos]+(win?0:old-$elem.offset()[pos]);if(h.margin){attr[key]-=parseInt(targ.css('margin'+b))||0;attr[key]-=parseInt(targ.css('border'+b+'Width'))||0}attr[key]+=e[pos]||0;if(h.over[pos])attr[key]+=targ[a=='x'?'width':'height']()*h.over[pos]}else{var c=targ[pos];attr[key]=c.slice&&c.slice(-1)=='%'?parseFloat(c)/100*max:c}if(h.limit&&/^\d+$/.test(attr[key]))attr[key]=attr[key]<=0?0:Math.min(attr[key],max);if(!i&&h.queue){if(old!=attr[key])animate(h.onAfterFirst);delete attr[key]}});animate(h.onAfter);function animate(a){$elem.animate(attr,g,h.easing,a&&function(){a.call(this,targ,h)})}}).end()};j.max=function(a,b){var c=b=='x'?'Width':'Height',scroll='scroll'+c;if(!$(a).is('html,body'))return a[scroll]-$(a)[c.toLowerCase()]();var d='client'+c,html=a.ownerDocument.documentElement,body=a.ownerDocument.body;return Math.max(html[scroll],body[scroll])-Math.min(html[d],body[d])};function both(a){return $.isFunction(a)||$.isPlainObject(a)?a:{top:a,left:a}}return j})}(typeof define==='function'&&define.amd?define:function(a,b){if(typeof module!=='undefined'&&module.exports){module.exports=b(require('jquery'))}else{b(jQuery)}}));
 
+
+// Smarter resize event
+// http://www.paulirish.com/2009/throttled-smartresize-jquery-event-handler/
+(function($,sr){
+  // debouncing function from John Hann
+  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+  var debounce = function (func, threshold, execAsap) {
+      var timeout;
+
+      return function debounced () {
+          var obj = this, args = arguments;
+          function delayed () {
+              if (!execAsap)
+                  func.apply(obj, args);
+              timeout = null;
+          };
+
+          if (timeout)
+              clearTimeout(timeout);
+          else if (execAsap)
+              func.apply(obj, args);
+
+          timeout = setTimeout(delayed, threshold || 100);
+      };
+  }
+  // smartresize
+  jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
+
+})(jQuery,'smartresize');
+
 </script>
   <script>
 ;(function(window) {
@@ -3756,13 +3786,30 @@ var g_initObj = {};
 })();
 
 $(function() {
-  // When the tab is changed, reset the scroll to the top.
-  //$('a[href="#connection-pane"][data-toggle="tab"]').on('shown', function() {
-//    setTimeout(resizeConnectContent, 1);
-  //});
+  // Update the size of our tab content element when the window resizes...
+  $(window).smartresize(function() {
+    setTimeout(resizeContent, 1);
+  });
+  // ...and when a tab is activated...
+  $('a[data-toggle="tab"]').on('shown', function() {
+    setTimeout(resizeContent, 1);
+  });
+  // ...and now.
+  resizeContent();
 
 });
 
+function resizeContent() {
+  // We want the content part of our window to fill the window, we don't want
+  // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
+  // with just CSS, so we're going to do some on-resize height adjustment in JS.
+  var fillHeight = $(window).innerHeight() - $('.main-height').position().top;
+  $('.main-height').outerHeight(fillHeight);
+  $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
+
+  // Let the panes know that content resized
+  $('.main-height').trigger('resize');
+}
 
 /* CONNECTION ****************************************************************/
 
@@ -3784,8 +3831,8 @@ $(function() {
 
   setupConnectToggle();
 
-  // Update the size of our elements when the window resizes...
-  $(window).resize(function() {
+  // Update the size of our elements when the tab content element resizes...
+  $('.main-height').on('resize', function() {
     setTimeout(resizeConnectContent, 1);
   });
   // ...and when the tab is activated...
@@ -3797,13 +3844,6 @@ $(function() {
 });
 
 function resizeConnectContent() {
-  // We want the content part of our window to fill the window, we don't want
-  // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
-  // with just CSS, so we're going to do some on-resize height adjustment in JS.
-  var fillHeight = $(window).innerHeight() - $('.main-height').position().top;
-  $('.main-height').outerHeight(fillHeight);
-  $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
-
   // In the connection toggle box, make all the sub-boxes the same size by
   // padding the top (effectively aligning the bottoms).
   var maxHeight = 0, maxstate = '';
@@ -3822,6 +3862,10 @@ function resizeConnectContent() {
 
   // Set the outer box to the correct height
   $('#connect-toggle').height(maxHeight);
+
+  // Reposition the button part-way down the available space
+  var buttonTop = ($('#connection-pane').innerHeight() - maxHeight) / 3;
+  $('#connect-toggle').css('top', buttonTop > 0 ? buttonTop : 0);
 }
 
 function setupConnectToggle() {
