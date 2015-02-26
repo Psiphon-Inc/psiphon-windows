@@ -23,7 +23,6 @@ $(function() {
   });
   // ...and now.
   resizeContent();
-
 });
 
 function resizeContent() {
@@ -60,7 +59,10 @@ $(function() {
 
   // Update the size of our elements when the tab content element resizes...
   $('.main-height').on('resize', function() {
-    setTimeout(resizeConnectContent, 1);
+    // Only if this tab is active
+    if ($('#connection-pane').hasClass('active')) {
+      setTimeout(resizeConnectContent, 1);
+    }
   });
   // ...and when the tab is activated...
   $('a[href="#connection-pane"][data-toggle="tab"]').on('shown', function() {

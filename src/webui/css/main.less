@@ -55,6 +55,11 @@ body {
   overflow: auto;
 }
 
+.tab-pane.fade {
+  // Shorten the default fade animation time.
+  .transition(opacity .10s linear);
+}
+
 /* CONNECT */
 
 #connect-toggle {
@@ -90,7 +95,7 @@ body {
   .text-warning;
 }
 
-.disabled-text *:not(.vpn-incompatible-msg) {
+.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
   .muted;
 }
 
@@ -105,10 +110,8 @@ body {
 }
 
 .feedback .feedback-choice {
+  .text-center;
   padding: 1em;
-  text-align: center;
-  opacity: 0.6;
-  filter:alpha(opacity=60); /* For IE8 and earlier */
   width: 50%;
   border: thin #ccc solid;
   -webkit-border-radius: 5px;
@@ -117,20 +120,25 @@ body {
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow:    0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow:         0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+
+  i {
+    font-size: 50px;
+  }
+
+  &.deselected {
+    .muted;
+  }
+
+  &.selected {
+    .alert-info;
+  }
+
+  &:hover {
+    cursor: pointer;
+    cursor: hand;
+  }
 }
 
-.feedback .feedback-choice:hover {
-  cursor: pointer;
-  cursor: hand;
-}
-
-.feedback .selected {
-  color: #000;
-  opacity: 1.0;
-  filter:alpha(opacity=100); /* For IE8 and earlier */
-  background-color:#EEE;
-  border: 1px solid #888;
-}
 
 /* LOG MESSAGES */
 
