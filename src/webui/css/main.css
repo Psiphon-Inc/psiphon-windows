@@ -5160,6 +5160,36 @@ a.badge:focus {
     overflow: visible !important;
   }
 }
+body[dir="rtl"] .radio,
+body[dir="rtl"] .checkbox {
+  padding-right: 20px;
+}
+body[dir="rtl"] .radio input[type="radio"],
+body[dir="rtl"] .checkbox input[type="checkbox"] {
+  float: right;
+  margin-left: 0;
+  margin-right: -20px;
+}
+body[dir="rtl"] .form-horizontal .control-label {
+  float: right;
+  text-align: left;
+}
+body[dir="rtl"] .form-horizontal .controls {
+  *padding-left: 0;
+  *padding-right: 20px;
+  margin-left: 0;
+  *margin-left: 0;
+  margin-right: 180px;
+  *margin-right: 0;
+}
+body[dir="rtl"] .form-horizontal .controls:first-child {
+  *padding-left: 0;
+  *padding-right: 180px;
+}
+body[dir="rtl"] .form-horizontal .form-actions {
+  padding-left: 0;
+  padding-right: 180px;
+}
 html {
   height: 100%;
   margin: 0;
@@ -5187,14 +5217,36 @@ body {
   background-color: #0088cc;
   outline: none;
 }
+.main-nav i.icon-fixed-width {
+  vertical-align: middle;
+}
+body[dir="ltr"] .main-nav .multiline-tab-icon {
+  float: left;
+  padding-right: 0.28571429em;
+}
+body[dir="rtl"] .main-nav .multiline-tab-icon {
+  float: right;
+  padding-left: 0.28571429em;
+}
+.main-nav .multiline-tab-text {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+}
 .banner {
   margin-top: 5px;
   margin-bottom: 10px;
 }
 .tab-content > .tab-pane {
-  padding-right: 1em;
   height: 100%;
   overflow: auto;
+}
+body[dir="ltr"] .tab-content > .tab-pane {
+  padding-right: 1em;
+}
+body[dir="rtl"] .tab-content > .tab-pane {
+  padding-left: 1em;
 }
 .tab-pane.fade {
   -webkit-transition: opacity 0.1s linear;
@@ -5213,9 +5265,14 @@ body {
   position: absolute;
   bottom: 0;
   width: 70%;
-  left: 10%;
   padding: 20px;
   margin: auto;
+}
+body[dir="ltr"] #connect-toggle > .connect-toggle-content {
+  left: 10%;
+}
+body[dir="rtl"] #connect-toggle > .connect-toggle-content {
+  right: 10%;
 }
 #connect-toggle a {
   min-width: 10em;

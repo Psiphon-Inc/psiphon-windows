@@ -1,5 +1,25 @@
+/*
+ * Copyright (c) 2015, Psiphon Inc.
+ * All rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 ;(function(window) {
 "use strict";
+/* jshint strict:true, newcap:false */
 
 /* GENERAL */
 
@@ -23,6 +43,17 @@ $(function() {
   });
   // ...and now.
   resizeContent();
+
+  //
+  // i18n
+  //
+  /*
+  i18n.init({ lng: 'en', resStore: resources,
+    objectTreeKeyHandler: function(key, value, lng, ns, options) {
+      return value.message;
+    }
+  });
+  */
 });
 
 function resizeContent() {
@@ -30,12 +61,14 @@ function resizeContent() {
   // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
   // with just CSS, so we're going to do some on-resize height adjustment in JS.
   var fillHeight = $(window).innerHeight() - $('.main-height').position().top;
-  $('.main-height').outerHeight(fillHeight);
+  var footerHeight = $('.footer').outerHeight();
+  $('.main-height').outerHeight(fillHeight - footerHeight);
   $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
 
   // Let the panes know that content resized
   $('.main-height').trigger('resize');
 }
+
 
 /* CONNECTION ****************************************************************/
 
@@ -156,7 +189,9 @@ function updateConnectToggle() {
 function cycleToggleClass(elem, cls, untilStateChangeFrom) {
   $(elem).toggleClass(cls, 1000, function() {
     if (g_lastState === untilStateChangeFrom) {
-      setTimeout(function() {cycleToggleClass(elem, cls, untilStateChangeFrom)}, 1);
+      setTimeout(function() {
+        cycleToggleClass(elem, cls, untilStateChangeFrom);
+      }, 1);
     }
   });
 }
@@ -358,6 +393,7 @@ $(function() {
 });
 
 function showDebugMessagesClicked() {
+  /*jshint validthis:true */
   var show = $(this).prop('checked');
   $('.log-messages').toggleClass('showing-priority-0', show);
 }
@@ -376,6 +412,39 @@ function addLogMessage(obj) {
     $('label[for="show-debug-messages"]').removeClass('invisible');
   }
 }
+
+/* LANGUAGE ******************************************************************/
+
+var RTL_LOCALES = ['devrtl', 'fa', 'ar', 'he'];
+
+$(function() {
+  i18n.init({ fallbackLng: 'en', resStore: window.PSIPHON.LOCALES });
+
+  $('.language-choice').click(function() { switchLocale(this.name); });
+});
+
+function switchLocale(locale) {
+  i18n.setLng(locale, function() {
+    $('body').i18n();
+  });
+
+  //
+  // Right-to-left languages need special consideration.
+  //
+
+  var rtl = RTL_LOCALES.indexOf(locale) >= 0;
+
+  $('body').attr('dir', rtl ? 'rtl' : 'ltr')
+           .css('direction', rtl ? 'rtl' : 'ltr');
+
+  // We'll use a data attribute to store classes which should only be used
+  // for RTL and not LTR, and vice-versa.
+  $('[data-i18n-rtl-classes]').each(function() {
+      $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
+             .toggleClass($(this).data('i18n-rtl-classes'), rtl);
+  });
+}
+
 
 /* INTERFACE METHODS *********************************************************/
 

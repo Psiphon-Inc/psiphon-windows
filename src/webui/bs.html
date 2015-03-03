@@ -1,8 +1,8 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,26 +47,29 @@
   <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
   <script src="vendor/spin.js?__inline=true"></script>
   <script src="vendor/raphael.min.js?__inline=true"></script>
+  <script src="vendor/i18next.min.js?__inline=true"></script>
 
   <script src="js/plugins.js?__inline=true"></script>
+  <script src="js/locales.js?__inline=true"></script>
   <script src="js/main.js?__inline=true"></script>
 </head>
 
-<body>
+<body dir="ltr">
 
   <div class="banner row">
     <div class="span12 text-center">
-      <img src="banner.png?__inline=true">
+      <img src="banner.png">
     </div>
   </div>
 
   <div class="main-container">
-    <div class="tabbable tabs-left">
+    <div class="tabbable tabs-left"
+         data-i18n-ltr-classes="tabs-left" data-i18n-rtl-classes="tabs-right">
       <ul class="main-nav nav nav-tabs">
         <li id="connection-tab" class="active">
           <a href="#connection-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-home"></i>
-            Connection
+            <span data-i18n="nav#connection">Connection</span>
             <span class="label label-warning hidden" data-connect-state="starting">
               <i class="icon-refresh icon-spin"></i>
             </span>
@@ -81,32 +84,40 @@
             </span>
           </a>
         </li>
-        <li id="connection2-tab">
-          <a href="#connection2-pane" data-toggle="tab">
-            <i class="icon-fixed-width icon-home"></i>
-            Connection2
-          </a>
-        </li>
         <li id="settings-tab">
           <a href="#settings-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-cogs"></i>
-            Settings
+            <span data-i18n="nav#settings">Settings</span>
           </a>
         </li>
         <li id="feedback-tab">
           <a href="#feedback-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-comment-alt"></i>
-            Feedback
+            <span data-i18n="nav#feedback">Feedback</span>
           </a>
         </li>
         <li id="messages-tab">
           <a href="#messages-pane" data-toggle="tab">
             <i class="icon-fixed-width icon-list"></i>
-            Log Messages
+            <span data-i18n="nav#messages">Log Messages</span>
+          </a>
+        </li>
+
+        <li id="language-tab">
+          <a href="#language-pane" data-toggle="tab">
+            <div class="multiline-tab-icon" style="">
+              <i class="icon-fixed-width icon-globe"></i>
+            </div>
+            <div class="multiline-tab-text" style="">
+              Language<br>
+              زبان<br>
+              语言
+            </div>
           </a>
         </li>
       </ul>
       <div class="tab-content main-height">
+
 
         <!-- CONNECTION ================================================-->
         <div class="tab-pane active fade in" id="connection-pane">
@@ -115,12 +126,12 @@
                  data-connect-state="starting">
               <div>
                 <h2>
-                  <span>Psiphon is connecting...</span>
+                  <span data-i18n="connection#starting-msg">Psiphon is connecting...</span>
                 </h2>
               </div>
               <div>
                 <a href="#" class="btn btn-danger">
-                  <h3>Stop</h3>
+                  <h3 data-i18n="connection#stop-btn">Stop</h3>
                 </a>
               </div>
             </div><!-- /starting -->
@@ -128,12 +139,12 @@
                  data-connect-state="connected">
               <div>
                 <h2>
-                  <span>Psiphon is connected</span>
+                  <span data-i18n="connection#connected-msg">Psiphon is connected</span>
                 </h2>
               </div>
               <div>
                 <a href="#" class="btn btn-danger">
-                  <h3>Disconnect</h3>
+                  <h3 data-i18n="connection#disconnect-btn">Disconnect</h3>
                 </a>
               </div>
             </div><!-- /connected -->
@@ -141,13 +152,13 @@
                  data-connect-state="stopping">
               <div>
                 <h2>
-                  <span>Psiphon is disconnecting...</span>
+                  <span data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
                 </h2>
               </div>
               <div>
                 <a href="#" class="btn btn-warning disabled" disabled>
                     <h3>
-                      <span class="">Please wait...</span>
+                      <span data-i18n="connection#wait-btn">Please wait...</span>
                       <span class="wait-spinner"></span>
                     </h3>
                 </a>
@@ -157,169 +168,77 @@
                  data-connect-state="stopped">
               <div>
                 <h2>
-                  <span>Psiphon is disconnected</span>
+                  <span data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
                 </h2>
               </div>
               <div>
                 <a href="#" class="btn btn-success">
-                  <h3>Connect</h3>
+                  <h3 data-i18n="connection#connect-btn">Connect</h3>
                 </a>
               </div>
             </div><!-- /disconnected -->
           </div><!-- /connect-toggle -->
         </div><!-- /connection-pane -->
 
-        <!-- CONNECTION2 ================================================-->
-        <div class="tab-pane fade in" id="connection2-pane">
-          <div>Experimental stuff!</div>
-          <div class="btn-group">
-            <a href="#" class="btn btn-success btn-large" id="start">Start</a>
-            <a href="#" class="btn btn-danger btn-large" id="stop">Stop</a>
-          </div>
-          <div id="status">Probably disconnected!</div>
-
-          <br>
-          <br>
-
-          <span class="icon-stack">
-<i class="icon-sun icon-spin  icon-stack-base"></i>
-<i class="icon-globe"></i>
-</span>
-
-          <div class="text-center"><i class="icon-camera-retro icon-4x"></i></div>
-          <div><span class="wait-spinner"></span></div>
-
-          <ol id="messages">
-          </ol>
-
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <rect width="150" height="150" fill="rgb(0, 255, 0)" stroke-width="1" stroke="rgb(0, 0, 0)" />
-</svg>
-          <img src="sine_tree_final.svg?__inline=true" width="300"/>
-
-          <script>
-// Creates canvas 60 x 60 at 10, 50
-var paper = Raphael(10, 250, 60, 60);
-
-// Creates circle at x = 50, y = 40, with radius 10
-var circle = paper.circle(50, 40, 10);
-// Sets the fill attribute of the circle to red (#f00)
-circle.attr("fill", "#f00");
-
-// Sets the stroke attribute of the circle to white
-circle.attr("stroke", "#fff");
-</script>
-
-       <style media="screen">
-            #holder {
-                height: 400px;
-                width: 400px;
-                background-color: darkblue;
-            }
-        </style>
-        <script>
-            Raphael(function () {
-                var r = Raphael("holder"),
-                    easingx = document.getElementById("easingx"),
-                    easingy = document.getElementById("easingy"),
-                    run = document.getElementById("run"),
-                    set = r.set(r.circle(300, 200, 8),r.circle(200, 100, 8),r.circle(100, 200, 8),r.circle(200, 300, 8),r.circle(200, 200, 8)).attr({stroke: "none", fill: "#666"}),
-                    c = r.circle(200, 200, 10).attr({stroke: "#fff", "stroke-width": 4}),
-                    fade = function (id) {
-                        return function () {
-                            set[id].attr({fill: "#fff", r: 12}).animate({fill: "#666", r: 8}, 500);
-                        };
-                    };
-
-
-                run.onclick = function () {
-                    var ex = easingx.value,
-                        ey = easingy.value;
-                    c.stop().animate({
-                        "20%": {cy: 200, easing: ey, callback: fade(0)},
-                        "40%": {cy: 100, easing: ey, callback: fade(1)},
-                        "60%": {cy: 200, easing: ey, callback: fade(2)},
-                        "80%": {cy: 300, easing: ey, callback: fade(3)},
-                        "100%": {cy: 200, easing: ey, callback: fade(4)}
-                    }, 5000).animate({
-                        "20%": {cx: 300, easing: ex},
-                        "40%": {cx: 200, easing: ex},
-                        "60%": {cx: 100, easing: ex},
-                        "80%": {cx: 200, easing: ex},
-                        "100%": {cx: 200, easing: ex}
-                    }, 5000);
-                };
-            });
-        </script>
-
-        <div id="holder"></div>
-        <div id="holder-form">
-            <select id="easingx">
-                <option value="">Linear</option>
-                <option value=">">Ease In</option>
-                <option value="<">Ease Out</option>
-                <option value="<>">Ease In and Out</option>
-                <option value="bounce">Bounce</option>
-                <option value="elastic">Elastic</option>
-                <option value="backIn">Back In</option>
-                <option value="backOut">Back Out</option>
-            </select>
-            <select id="easingy">
-                <option value="">Linear</option>
-                <option value=">">Ease In</option>
-                <option value="<">Ease Out</option>
-                <option value="<>">Ease In and Out</option>
-                <option value="bounce">Bounce</option>
-                <option value="elastic">Elastic</option>
-                <option value="backIn">Back In</option>
-                <option value="backOut">Back Out</option>
-            </select>
-            <button id="run">Run</button>
-        </div>
-
-        </div><!-- /connection2-pane -->
 
         <!-- SETTINGS ==================================================-->
         <div class="tab-pane fade" id="settings-pane">
 
-          <div class="alert alert-error affix value-error-alert hidden">
+          <div class="alert alert-error affix value-error-alert hidden"
+               data-i18n="[html]settings#error-alert">
             <strong>Error!</strong> Please fix incorrect values before proceeding.
           </div>
 
           <form class="vpn-incompatible">
             <fieldset>
-              <legend><i class="icon-fixed-width icon-globe"></i>Psiphon server region</legend>
-              <label class="control-label" for="EgressRegion">Select desired Psiphon server region:</label>
+              <legend>
+                <i class="icon-fixed-width icon-globe"></i>
+                <span data-i18n="settings#egress-region#heading">Psiphon server region</span>
+              </legend>
+              <label class="control-label" for="EgressRegion" data-i18n="settings#egress-region#select-label">
+                Select desired Psiphon server region:
+              </label>
               <div class="controls">
                 <select style="width:15em" id="EgressRegion" data-usesprite="f16" data-roundedcorner=no>
-                  <option value="" class="flag flag-unknown" selected>Best Performance</option>
-                  <option value="US" class="flag us">United States</option>
-                  <option value="GB" class="flag gb">United Kingdom</option>
-                  <option value="JP" class="flag jp">Japan</option>
-                  <option value="SG" class="flag sg">Singapore</option>
-                  <option value="NL" class="flag nl">Netherlands</option>
-                  <option value="DE" class="flag de">Germany</option>
+                  <option value="" class="flag flag-unknown" selected
+                          data-i18n="settings#egress-region#select-best-performance">Best Performance</option>
+                  <option value="US" class="flag us"
+                          data-i18n="settings#egress-region#select-us">United States</option>
+                  <option value="GB" class="flag gb"
+                          data-i18n="settings#egress-region#select-gb">United Kingdom</option>
+                  <option value="JP" class="flag jp"
+                          data-i18n="settings#egress-region#select-jp">Japan</option>
+                  <option value="SG" class="flag sg"
+                          data-i18n="settings#egress-region#select-sg">Singapore</option>
+                  <option value="NL" class="flag nl"
+                          data-i18n="settings#egress-region#select-nl">Netherlands</option>
+                  <option value="DE" class="flag de"
+                          data-i18n="settings#egress-region#select-de">Germany</option>
                 </select>
               </div>
-              <span class="help-block">
+              <span class="help-block" data-i18n="settings#egress-region#help-text">
                 Psiphon has servers in many different countries. For the fastest connection
                 speed you should choose "Best Performance", but you may instead prefer to
                 use a server in a specific country.
               </span>
               <span class="help-block">
-                <small class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</small>
+                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                  (Doesn't work with VPN mode.)
+                </small>
               </span>
             </fieldset>
           </form>
 
           <form>
             <fieldset>
-              <legend>VPN Mode</legend>
+              <legend data-i18n="settings#vpn-mode#heading">VPN Mode</legend>
                 <label class="checkbox" for="VPN">
                     <input type="checkbox" id="VPN"/>
-                    Use VPN Mode
+                    <span data-i18n="settings#vpn-mode#check-label">
+                      Use VPN Mode
+                    </span>
                 </label>
-                <span class="help-block">
+                <span class="help-block" data-i18n="[html]settings#vpn-mode#help-text">
                   Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it
                   doesn't provide obfuscation. It is <strong>not recommended</strong>
                   unless VPN-like behavior is required.
@@ -329,30 +248,38 @@ circle.attr("stroke", "#fff");
 
           <form class="form-horizontal">
             <fieldset>
-              <legend>Local Proxy Ports</legend>
-              <p>
+              <legend data-i18n="settings#local-proxy-ports#heading">
+                Local Proxy Ports
+              </legend>
+              <p data-i18n="settings#local-proxy-ports#leave-blank">
                 Leave blank for automatic port selection (recommended).
               </p>
               <div class="control-group">
-                <label for="LocalHttpProxyPort" class="control-label">HTTP/HTTPS</label>
+                <label for="LocalHttpProxyPort" class="control-label"
+                       data-i18n="settings#local-proxy-ports#http-label">
+                  HTTP/HTTPS
+                </label>
                 <div class="controls">
                   <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
-                  <span class="help-inline LocalHttpProxyPort">
+                  <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
                     Must be between 1 and 65535.
                   </span>
                 </div>
               </div>
 
               <div class="control-group vpn-incompatible">
-                <label for="LocalSocksProxyPort" class="control-label">SOCKS</label>
+                <label for="LocalSocksProxyPort" class="control-label"
+                        data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
                 <div class="controls">
                   <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
-                  <span class="help-inline LocalSocksProxyPort">
+                  <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
                     Must be between 1 and 65535.
                   </span>
                 </div>
                 <span class="help-block">
-                  <small class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</small>
+                  <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                    (Doesn't work with VPN mode.)
+                  </small>
                 </span>
               </div>
             </fieldset>
@@ -360,24 +287,30 @@ circle.attr("stroke", "#fff");
 
           <form class="form-horizontal vpn-incompatible">
             <fieldset>
-              <legend>Upstream Proxy</legend>
-              <p>
+              <legend data-i18n="settings#upstream-proxy#heading">Upstream Proxy</legend>
+              <p data-i18n="[html]settings#upstream-proxy#by-default">
                 If your computer already has a proxy configured, by default Psiphon will
                 use that proxy when establishing a tunnel. You can override that by specifying
                 a proxy to use, or by specifying that no such "upstream proxy" should be used.<br>
                 Only HTTP proxies that support HTTPS are allowed.
               </p>
               <div class="control-group skip-upstream-proxy-incompatible">
-                <label for="UpstreamProxyHostname" class="control-label">Hostname</label>
+                <label for="UpstreamProxyHostname" class="control-label"
+                        data-i18n="settings#upstream-proxy#hostname-label">
+                  Hostname
+                </label>
                 <div class="controls">
                   <input type="text" id="UpstreamProxyHostname"/>
                 </div>
               </div>
               <div class="control-group skip-upstream-proxy-incompatible">
-                <label for="UpstreamProxyPort" class="control-label">Port</label>
+                <label for="UpstreamProxyPort" class="control-label"
+                        data-i18n="settings#upstream-proxy#port-label">
+                  Port
+                </label>
                 <div class="controls">
                   <input type="text" id="UpstreamProxyPort" class="port-entry"/>
-                  <span class="help-inline UpstreamProxyPort">
+                  <span class="help-inline UpstreamProxyPort" data-i18n="settings#port-value-error-msg">
                     Must be between 1 and 65535.
                   </span>
                 </div>
@@ -386,26 +319,39 @@ circle.attr("stroke", "#fff");
                 <div class="controls">
                   <label class="checkbox" for="SkipUpstreamProxy">
                     <input type="checkbox" id="SkipUpstreamProxy"/>
-                    Don't use upstream proxy
+                    <span data-i18n="settings#upstream-proxy#skip-label">
+                      Don't use upstream proxy
+                    </span>
                   </label>
                 </div>
               </div>
               <span class="help-block">
-                <small class="vpn-incompatible-msg">(Doesn't work with VPN mode.)</small>
+                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                  (Doesn't work with VPN mode.)
+                </small>
               </span>
             </fieldset>
           </form>
 
           <form class="perma-disabled disabled-text">
             <fieldset>
-              <legend>Split Tunnel (Not yet supported!)</legend>
-              <p>
+              <legend>
+                <span data-i18n="settings#split-tunnel#heading">
+                  Split Tunnel
+                </span>
+                <span data-i18n="settings#split-tunnel#not-yet-supported">
+                  (Not yet supported!)
+                </span>
+              </legend>
+              <p data-i18n="settings#split-tunnel#help-text">
                 If enabled, requests made to servers within your home country will not be
                 tunneled through Psiphon.
               </p>
               <label for="SplitTunnel" class="checkbox">
                 <input type="checkbox" id="SplitTunnel" disabled/>
-                Don't proxy domestic websites
+                <span data-i18n="settings#split-tunnel#enable-label">
+                  Don't proxy domestic websites
+                </span>
               </label>
             </fieldset>
           </form>
@@ -414,22 +360,26 @@ circle.attr("stroke", "#fff");
         <!-- FEEDBACK ==================================================-->
 
         <div class="tab-pane fade" id="feedback-pane">
-          <h2 id="top_content_title">Give Us Your Feedback</h2>
+          <h2 data-i18n="feedback#top_content_title">Give Us Your Feedback</h2>
 
-          <div id="questionnaireContent">
+          <div>
             <div>
-              <p id="top_para_1">Please let us know how Psiphon is working for you so we can make the system better!
+              <p data-i18n="feedback#top_para_1">
+                Please let us know how Psiphon is working for you so we can make the system better!
               </p>
-              <p id="top_para_2" style="display: none;">Many problems can be fixed by downloading the latest version. You can
-                <a class="newVersionURL" href="#">download the latest version by clicking here</a>, or you can send an email to <span id="newVersionEmail"></span>.
+              <p data-i18n="[html]feedback#top_para_2" style="display: none;">
+                Many problems can be fixed by downloading the latest version. You can
+                <a class="newVersionURL" href="#">download the latest version by clicking here</a>,
+                or you can send an email to <span id="newVersionEmail"></span>.
               </p>
-              <p id="top_para_3" style="display: none;">You can also find solutions to many common problems in our
+              <p data-i18n="[html]feedback#top_para_3" style="display: none;">
+                You can also find solutions to many common problems in our
                 <a class="faqURL" href="#">Frequently Asked Questions</a>.
               </p>
             </div>
             <br>
 
-            <form name="feedback" action="feedback" method="get" id="feedback">
+            <form name="feedback" action="feedback" method="get">
 
               <div>
                 <table class="feedback" id="smiley">
@@ -438,12 +388,16 @@ circle.attr("stroke", "#fff");
                       <td class="happy feedback-choice deselected">
                         <i class="icon-smile"></i>
                         <br>
-                        <span id="smiley_happy">Psiphon connects and performs the way I want it to.</span>
+                        <span data-i18n="feedback#smiley_happy">
+                          Psiphon connects and performs the way I want it to.
+                        </span>
                       </td>
                       <td class="sad feedback-choice deselected">
                         <i class="icon-frown"></i>
                         <br>
-                        <span id="smiley_sad">Psiphon often fails to connect or doesn't perform well enough.</span>
+                        <span data-i18n="feedback#smiley_sad">
+                          Psiphon often fails to connect or doesn't perform well enough.
+                        </span>
                       </td>
                     </tr>
                   </tbody>
@@ -454,13 +408,15 @@ circle.attr("stroke", "#fff");
 
               <div id="text_feedback_form">
                 <p>
-                  <span id="text_feedback_prompt">Please enter your comments here:</span>
+                  <span data-i18n="feedback#text_feedback_prompt">
+                    Please enter your comments here:
+                  </span>
                 </p>
                 <textarea class="input-block-level" id="text_feedback_textarea" rows="3"></textarea>
 
                 <div>
                   <p>
-                    <span id="text_feedback_email_prompt">
+                    <span data-i18n="feedback#text_feedback_email_prompt">
                       If you would like us to respond to you, please enter your email address:
                     </span>
                   </p>
@@ -474,7 +430,7 @@ circle.attr("stroke", "#fff");
               <div>
                 <label for="send_diagnostic" class="checkbox">
                   <input type="checkbox" checked="" id="send_diagnostic">
-                  <span id="diagnostic_check">
+                  <span data-i18n="[html]feedback#diagnostic_check">
                     Upload diagnostic data. Please note that this diagnostic data does not
                     identify you, and it will help us to keep Psiphon running smoothly.
                     <a class="dataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
@@ -484,7 +440,9 @@ circle.attr("stroke", "#fff");
 
               <input type="hidden" value="" id="formdata" name="formdata">
               <div class="form-actions">
-                <a id="submit_button" class="btn btn-primary  btn-large">Submit</a>
+                <a id="submit_button" class="btn btn-primary btn-large" data-i18n="feedback#submit_button">
+                  Submit
+                </a>
               </div>
             </form>
 
@@ -492,24 +450,45 @@ circle.attr("stroke", "#fff");
           <!-- /questionnaireContent -->
 
           <p>
-            <span id="text_feedback_bottom_para">If the above form is not working, or you would like to send screenshots, please email us at <a id="emailAddress" href="mailto:feedback+android@psiphon.ca">feedback+android@psiphon.ca</a>
-          </span>
+            <span data-i18n="[html]feedback#text_feedback_bottom_para">
+              If the above form is not working, or you would like to send screenshots, please email us at
+              <a id="emailAddress" href="mailto:feedback+android@psiphon.ca">feedback+android@psiphon.ca</a>
+            </span>
           </p>
 
         </div><!-- /feedback-pane -->
+
 
         <!-- LOG MESSAGES ==================================================-->
         <div class="tab-pane fade" id="messages-pane">
           <div>
             <label class="checkbox invisible" for="show-debug-messages">
                 <input type="checkbox" id="show-debug-messages"/>
-                Show debug messages
+                <span data-i18n="feedback#messages#show-debug-label">
+                  Show debug messages
+                </span>
             </label>
 
             <table class="log-messages table">
             </table>
           </div>
         </div><!-- /messages-pane -->
+
+
+        <!-- LANGUAGE ======================================================-->
+        <div class="tab-pane fade" id="language-pane">
+          <ul>
+            <li>
+              <a href="#" class="language-choice" name="en">English</a>
+            </li>
+            <li>
+              <a href="#" class="language-choice dev" name="devltr">[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]</a>
+            </li>
+            <li>
+              <a href="#" class="language-choice dev" name="devrtl">Ԁɐɔʞɐƃǝp‬ ‮Wıɹɹoɹǝp</a>
+            </li>
+          </ul>
+        </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->

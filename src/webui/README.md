@@ -22,7 +22,7 @@ Send messages from C to HTML via new JS thing.
 * Add i18n.
 * Add “stopping” state.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
-* Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change.
+* Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change. UPDATE: Only broken because all data-URI images are broken on IE7.
 * Clean up psiclient code.
 * Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)
 * Add flags to egress region combo
@@ -30,6 +30,7 @@ Send messages from C to HTML via new JS thing.
 * Fix: Delete key doesn't work in Settings (or in Feedback?)
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
+* Investigate/fix: Resize event handler causes a ton of constant CPU use on IE7 (and probably elsewhere).
 
 ## Technical and compatibility notes
 

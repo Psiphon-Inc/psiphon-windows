@@ -1,7 +1,24 @@
+// Copyright (c) 2015, Psiphon Inc.
+// All rights reserved.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 /* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
 
 @import "vendor/bootstrap-2.3.2/less/bootstrap.less";
 @import "vendor/bootstrap-2.3.2/less/responsive.less";
+@import "_rtl-support.less";
 
 html {
   height: 100%;
@@ -44,21 +61,53 @@ body {
   outline: none;
 }
 
+.main-nav {
+  i.icon-fixed-width {
+   vertical-align: middle;
+  }
+
+  .multiline-tab-icon {
+    body[dir="ltr"] & {
+      .pull-left();
+      // pull-left causes us to lose the icon's padding-right. This rule is copied from FontAwesome's core.less.
+      padding-right: 4/14em;
+    }
+
+    body[dir="rtl"] & {
+      .pull-right();
+      padding-left: 4/14em;
+    }
+  }
+
+  .multiline-tab-text {
+    display: inline-block;
+    .ie7-inline-block();
+  }
+}
+
 .banner {
   margin-top: 5px;
   margin-bottom: 10px;
 }
 
 .tab-content > .tab-pane {
-  padding-right: 1em;
   height: 100%;
   overflow: auto;
+
+  body[dir="ltr"] & {
+    padding-right: 1em;
+  }
+
+  body[dir="rtl"] & {
+    padding-left: 1em;
+  }
 }
 
 .tab-pane.fade {
   // Shorten the default fade animation time.
   .transition(opacity .10s linear);
 }
+
 
 /* CONNECT */
 
@@ -73,9 +122,16 @@ body {
   position: absolute;
   bottom: 0;
   width: 70%;
-  left: 10%;
   padding: 20px;
   margin: auto;
+
+  body[dir="ltr"] & {
+    left: 10%;
+  }
+
+  body[dir="rtl"] & {
+    right: 10%;
+  }
 }
 
 #connect-toggle a {

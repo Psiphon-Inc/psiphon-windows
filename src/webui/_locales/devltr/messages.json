@@ -1,0 +1,214 @@
+{
+  "nav#connection": {
+    "message": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
+    "description": ""
+  },
+  "nav#settings": {
+    "message": "[Şḗḗŧŧīīƞɠş]",
+    "description": ""
+  },
+  "nav#feedback": {
+    "message": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
+    "description": ""
+  },
+  "nav#messages": {
+    "message": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
+    "description": ""
+  },
+  "connection#starting-msg": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧīīƞɠ...]",
+    "description": ""
+  },
+  "connection#stop-btn": {
+    "message": "[Şŧǿǿƥ]",
+    "description": ""
+  },
+  "connection#connected-msg": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
+    "description": ""
+  },
+  "connection#disconnect-btn": {
+    "message": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
+    "description": ""
+  },
+  "connection#stopping-msg": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ḓīīşƈǿǿƞƞḗḗƈŧīīƞɠ...]",
+    "description": ""
+  },
+  "connection#wait-btn": {
+    "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ...]",
+    "description": ""
+  },
+  "connection#stopped-msg": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ]",
+    "description": ""
+  },
+  "connection#connect-btn": {
+    "message": "[Ƈǿǿƞƞḗḗƈŧ]",
+    "description": ""
+  },
+  "settings#error-alert": {
+    "message": "[<strong>Ḗḗřřǿǿř!</strong> Ƥŀḗḗȧȧşḗḗ ƒīīẋ īīƞƈǿǿřřḗḗƈŧ ṽȧȧŀŭŭḗḗş ƀḗḗƒǿǿřḗḗ ƥřǿǿƈḗḗḗḗḓīīƞɠ.]",
+    "description": ""
+  },
+  "settings#egress-region#heading": {
+    "message": "[Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ]",
+    "description": ""
+  },
+  "settings#egress-region#select-label": {
+    "message": "[Şḗḗŀḗḗƈŧ ḓḗḗşīīřḗḗḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ:]",
+    "description": ""
+  },
+  "settings#egress-region#select-best-performance": {
+    "message": "[Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ]",
+    "description": ""
+  },
+  "settings#egress-region#select-us": {
+    "message": "[Ŭŭƞīīŧḗḗḓ Şŧȧȧŧḗḗş]",
+    "description": ""
+  },
+  "settings#egress-region#select-gb": {
+    "message": "[Ŭŭƞīīŧḗḗḓ Ķīīƞɠḓǿǿḿ]",
+    "description": ""
+  },
+  "settings#egress-region#select-jp": {
+    "message": "[Ĵȧȧƥȧȧƞ]",
+    "description": ""
+  },
+  "settings#egress-region#select-sg": {
+    "message": "[Şīīƞɠȧȧƥǿǿřḗḗ]",
+    "description": ""
+  },
+  "settings#egress-region#select-nl": {
+    "message": "[Ƞḗḗŧħḗḗřŀȧȧƞḓş]",
+    "description": ""
+  },
+  "settings#egress-region#select-de": {
+    "message": "[Ɠḗḗřḿȧȧƞẏ]",
+    "description": ""
+  },
+  "settings#egress-region#help-text": {
+    "message": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ƒǿǿř ŧħḗḗ ƒȧȧşŧḗḗşŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ şƥḗḗḗḗḓ ẏǿǿŭŭ şħǿǿŭŭŀḓ ƈħǿǿǿǿşḗḗ \"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\", ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ īīƞşŧḗḗȧȧḓ ƥřḗḗƒḗḗř ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
+    "description": ""
+  },
+  "settings#vpn-incompatible-msg": {
+    "message": "[(Ḓǿǿḗḗşƞ'ŧ ẇǿǿřķ ẇīīŧħ ṼƤȠ ḿǿǿḓḗḗ.)]",
+    "description": ""
+  },
+  "settings#vpn-mode#heading": {
+    "message": "[ṼƤȠ Ḿǿǿḓḗḗ]",
+    "description": ""
+  },
+  "settings#vpn-mode#check-label": {
+    "message": "[Ŭŭşḗḗ ṼƤȠ Ḿǿǿḓḗḗ]",
+    "description": ""
+  },
+  "settings#vpn-mode#help-text": {
+    "message": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş ĪīƤŞḗḗƈ/Ŀ2ŦƤ ṼƤȠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ŭŭƞŀḗḗşş ṼƤȠ-ŀīīķḗḗ ƀḗḗħȧȧṽīīǿǿř īīş řḗḗɋŭŭīīřḗḗḓ.]",
+    "description": ""
+  },
+  "settings#local-proxy-ports#heading": {
+    "message": "[Ŀǿǿƈȧȧŀ Ƥřǿǿẋẏ Ƥǿǿřŧş]",
+    "description": ""
+  },
+  "settings#local-proxy-ports#leave-blank": {
+    "message": "[Ŀḗḗȧȧṽḗḗ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ ƥǿǿřŧ şḗḗŀḗḗƈŧīīǿǿƞ (řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ).]",
+    "description": ""
+  },
+  "settings#local-proxy-ports#http-label": {
+    "message": "[ĦŦŦƤ/ĦŦŦƤŞ]",
+    "description": ""
+  },
+  "settings#port-value-error-msg": {
+    "message": "[Ḿŭŭşŧ ƀḗḗ ƀḗḗŧẇḗḗḗḗƞ 1 ȧȧƞḓ 65535.]",
+    "description": ""
+  },
+  "settings#local-proxy-ports#socks-label": {
+    "message": "[ŞǾǿƇĶŞ]",
+    "description": ""
+  },
+  "settings#upstream-proxy#heading": {
+    "message": "[Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ]",
+    "description": ""
+  },
+  "settings#upstream-proxy#by-default": {
+    "message": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.<br> Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
+    "description": ""
+  },
+  "settings#upstream-proxy#hostname-label": {
+    "message": "[Ħǿǿşŧƞȧȧḿḗḗ]",
+    "description": ""
+  },
+  "settings#upstream-proxy#port-label": {
+    "message": "[Ƥǿǿřŧ]",
+    "description": ""
+  },
+  "settings#upstream-proxy#skip-label": {
+    "message": "[Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ]",
+    "description": ""
+  },
+  "settings#split-tunnel#heading": {
+    "message": "[Şƥŀīīŧ Ŧŭŭƞƞḗḗŀ]",
+    "description": ""
+  },
+  "settings#split-tunnel#not-yet-supported": {
+    "message": "[(Ƞǿǿŧ ẏḗḗŧ şŭŭƥƥǿǿřŧḗḗḓ!)]",
+    "description": ""
+  },
+  "settings#split-tunnel#help-text": {
+    "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, řḗḗɋŭŭḗḗşŧş ḿȧȧḓḗḗ ŧǿǿ şḗḗřṽḗḗřş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŧŭŭƞƞḗḗŀḗḗḓ ŧħřǿǿŭŭɠħ Ƥşīīƥħǿǿƞ.]",
+    "description": ""
+  },
+  "settings#split-tunnel#enable-label": {
+    "message": "[Ḓǿǿƞ'ŧ ƥřǿǿẋẏ ḓǿǿḿḗḗşŧīīƈ ẇḗḗƀşīīŧḗḗş]",
+    "description": ""
+  },
+  "feedback#top_content_title": {
+    "message": "[Ɠīīṽḗḗ Ŭŭş Ẏǿǿŭŭř Ƒḗḗḗḗḓƀȧȧƈķ]",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "[Ƥŀḗḗȧȧşḗḗ ŀḗḗŧ ŭŭş ķƞǿǿẇ ħǿǿẇ Ƥşīīƥħǿǿƞ īīş ẇǿǿřķīīƞɠ ƒǿǿř ẏǿǿŭŭ şǿǿ ẇḗḗ ƈȧȧƞ ḿȧȧķḗḗ ŧħḗḗ şẏşŧḗḗḿ ƀḗḗŧŧḗḗř!]",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "[Ḿȧȧƞẏ ƥřǿǿƀŀḗḗḿş ƈȧȧƞ ƀḗḗ ƒīīẋḗḗḓ ƀẏ ḓǿǿẇƞŀǿǿȧȧḓīīƞɠ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ. Ẏǿǿŭŭ ƈȧȧƞ <a class=\"newVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ƀẏ ƈŀīīƈķīīƞɠ ħḗḗřḗḗ</a>, ǿǿř ẏǿǿŭŭ ƈȧȧƞ şḗḗƞḓ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <span id=\"newVersionEmail\"></span>.]",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "[Ẏǿǿŭŭ ƈȧȧƞ ȧȧŀşǿǿ ƒīīƞḓ şǿǿŀŭŭŧīīǿǿƞş ŧǿǿ ḿȧȧƞẏ ƈǿǿḿḿǿǿƞ ƥřǿǿƀŀḗḗḿş īīƞ ǿǿŭŭř <a class=\"faqURL\" href=\"#\">Ƒřḗḗɋŭŭḗḗƞŧŀẏ Ȧȧşķḗḗḓ Ɋŭŭḗḗşŧīīǿǿƞş</a>.]",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "[Ƥşīīƥħǿǿƞ ƈǿǿƞƞḗḗƈŧş ȧȧƞḓ ƥḗḗřƒǿǿřḿş ŧħḗḗ ẇȧȧẏ Īī ẇȧȧƞŧ īīŧ ŧǿǿ.]",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "[Ƥşīīƥħǿǿƞ ǿǿƒŧḗḗƞ ƒȧȧīīŀş ŧǿǿ ƈǿǿƞƞḗḗƈŧ ǿǿř ḓǿǿḗḗşƞ'ŧ ƥḗḗřƒǿǿřḿ ẇḗḗŀŀ ḗḗƞǿǿŭŭɠħ.]",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "[Ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ƈǿǿḿḿḗḗƞŧş ħḗḗřḗḗ:]",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "[Īīƒ ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŭŭş ŧǿǿ řḗḗşƥǿǿƞḓ ŧǿǿ ẏǿǿŭŭ, ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ḗḗḿȧȧīīŀ ȧȧḓḓřḗḗşş:]",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "[Ŭŭƥŀǿǿȧȧḓ ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ. Ƥŀḗḗȧȧşḗḗ ƞǿǿŧḗḗ ŧħȧȧŧ ŧħīīş ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ ḓǿǿḗḗş ƞǿǿŧ īīḓḗḗƞŧīīƒẏ ẏǿǿŭŭ, ȧȧƞḓ īīŧ ẇīīŀŀ ħḗḗŀƥ ŭŭş ŧǿǿ ķḗḗḗḗƥ Ƥşīīƥħǿǿƞ řŭŭƞƞīīƞɠ şḿǿǿǿǿŧħŀẏ. <a class=\"dataCollectionInfoURL\" href=\"#\">Ƈŀīīƈķ ħḗḗřḗḗ ŧǿǿ şḗḗḗḗ ẇħȧȧŧ ḓȧȧŧȧȧ ẇḗḗ ƈǿǿŀŀḗḗƈŧ.</a>]",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "[Şŭŭƀḿīīŧ]",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"emailAddress\" href=\"mailto:feedback+android@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ȧȧƞḓřǿǿīīḓ@ƥşīīƥħǿǿƞ.ƈȧȧ</a>]",
+    "description": ""
+  },
+  "feedback#messages#show-debug-label": {
+    "message": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
+    "description": ""
+  }
+}

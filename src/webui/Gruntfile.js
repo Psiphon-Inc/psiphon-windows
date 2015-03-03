@@ -1,7 +1,11 @@
-'use strict';
+"use strict";
+/* jshint strict:true, node:true */
+/* global grunt */
+
 
 module.exports = function(grunt) {
   grunt.initConfig({
+
     concat: {
       options: {
         separator: ';'
@@ -12,6 +16,7 @@ module.exports = function(grunt) {
         dest: 'vendor/bootstrap-2.3.2/js/bootstrap.js'
       }
     },
+
     less: {
       default: {
         options: {
@@ -24,6 +29,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
     inline: {
       dist: {
         options:{
@@ -33,12 +39,40 @@ module.exports = function(grunt) {
         src: 'bs.html',
         dest: 'bs-inline.html'
       }
+    },
+
+    locales: {
+      dist: {
+        src: '_locales/',
+        dest: 'js/locales.js'
+      }
     }
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-inline');
 
-  grunt.registerTask('default', ['concat', 'less', 'inline']);
+  grunt.registerTask('default', ['concat', 'less', 'locales', 'inline']);
+
+  grunt.registerMultiTask(
+    'locales',
+    'Process locale files for use in dev and production',
+    function() {
+      var locales = {};
+      grunt.file.recurse(this.data.src, function localesDirRecurse(abspath, rootdir, subdir, filename) {
+        var translation = grunt.file.readJSON(abspath);
+        for (var key in translation) {
+          translation[key] = translation[key].message;
+        }
+        locales[subdir] = { translation: translation };
+      });
+
+      grunt.file.write(
+        this.data.dest,
+        '(window.PSIPHON || (window.PSIPHON={})).LOCALES = ' + JSON.stringify(locales, null, '  ') + ';');
+      grunt.log.ok();
+    });
 };
+
