@@ -34,8 +34,18 @@ var g_initObj = {};
 
 $(function() {
   // Update the size of our tab content element when the window resizes...
+  var $window = $(window);
+  var lastWindowHeight = $window.height();
+  var lastWindowWidth = $window.width();
   $(window).smartresize(function() {
-    setTimeout(resizeContent, 1);
+    // Only go through the resize logic if the window actually changed size.
+    // This helps with the constant resize events we get with IE7.
+    if (lastWindowHeight !== $window.height() ||
+        lastWindowWidth !== $window.width()) {
+      lastWindowHeight = $window.height();
+      lastWindowWidth = $window.width();
+      setTimeout(resizeContent, 1);
+    }
   });
   // ...and when a tab is activated...
   $('a[data-toggle="tab"]').on('shown', function() {
@@ -43,17 +53,6 @@ $(function() {
   });
   // ...and now.
   resizeContent();
-
-  //
-  // i18n
-  //
-  /*
-  i18n.init({ lng: 'en', resStore: resources,
-    objectTreeKeyHandler: function(key, value, lng, ns, options) {
-      return value.message;
-    }
-  });
-  */
 });
 
 function resizeContent() {

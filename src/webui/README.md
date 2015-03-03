@@ -30,7 +30,7 @@ Send messages from C to HTML via new JS thing.
 * Fix: Delete key doesn't work in Settings (or in Feedback?)
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
-* Investigate/fix: Resize event handler causes a ton of constant CPU use on IE7 (and probably elsewhere).
+
 
 ## Technical and compatibility notes
 
