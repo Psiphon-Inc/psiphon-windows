@@ -55,4 +55,13 @@ body[dir="rtl"] {
       padding-right: @horizontalComponentOffset;
     }
   }
+
+  // See bootstrap:mixins.less
+  // If this explodes into more stuff, we might want to copy the whole #core mixin.
+  @media (min-width: 768px) and (max-width: 979px) {
+    .row {
+      margin-left: 0;
+      margin-right: @gridGutterWidth * -1;
+    }
+  }
 }

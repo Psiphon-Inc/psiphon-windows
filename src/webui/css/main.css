@@ -5190,6 +5190,12 @@ body[dir="rtl"] .form-horizontal .form-actions {
   padding-left: 0;
   padding-right: 180px;
 }
+@media (min-width: 768px) and (max-width: 979px) {
+  body[dir="rtl"] .row {
+    margin-left: 0;
+    margin-right: -20px;
+  }
+}
 html {
   height: 100%;
   margin: 0;
@@ -5200,7 +5206,7 @@ body {
   /*position:absolute; top:0; bottom:0; right:0; left:0;*/
   height: 100%;
   margin: 0;
-  padding: 0 0 0 0;
+  padding: 0;
   overflow-y: hidden;
 }
 * {
