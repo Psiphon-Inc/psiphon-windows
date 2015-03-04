@@ -417,7 +417,17 @@ function addLogMessage(obj) {
 var RTL_LOCALES = ['devrtl', 'fa', 'ar', 'he'];
 
 $(function() {
-  i18n.init({ fallbackLng: 'en', resStore: window.PSIPHON.LOCALES });
+  var fallbackLanguage = 'en';
+  var lang = g_initObj.Language || fallbackLanguage;
+  i18n.init(
+    {
+      lang: lang,
+      fallbackLng: fallbackLanguage,
+      resStore: window.PSIPHON.LOCALES
+    },
+    function(t) {
+      switchLocale(lang);
+    });
 
   $('.language-choice').click(function() { switchLocale(this.name); });
 });

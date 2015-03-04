@@ -74,11 +74,12 @@ static void OnResize(HWND hWnd, UINT uWidth, UINT uHeight)
 
 void OnCreate(HWND hWndParent)
 {
-    Json::Value initJson, settingsJson;
-    Settings::ToJson(settingsJson);
-    initJson["Settings"] = settingsJson;
+    Json::Value initJSON, settingsJSON;
+    Settings::ToJson(settingsJSON);
+    initJSON["Settings"] = settingsJSON;
+    initJSON["Language"] = TStringToNarrow(GetLocaleName());
     Json::FastWriter jsonWriter;    
-    tstring initJsonString = NarrowToTString(jsonWriter.write(initJson));
+    tstring initJsonString = NarrowToTString(jsonWriter.write(initJSON));
 
     tstring url = ResourceToUrl(_T("main.html"), NULL);
     // URI encoding seems to be taken care of automatically (fortuitous, but unsettling)

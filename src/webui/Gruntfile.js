@@ -33,8 +33,8 @@ module.exports = function(grunt) {
     inline: {
       dist: {
         options:{
-            cssmin: true,
-            uglify: true
+            //cssmin: true,
+            //uglify: true
         },
         src: 'bs.html',
         dest: 'bs-inline.html'
