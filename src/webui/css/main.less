@@ -115,6 +115,9 @@ body {
   position: relative;
   padding: 0;
   margin: 30px auto auto auto;
+
+  // This pushes the button a bit down the page, making it feel more centered.
+  top: 10%;
 }
 
 #connect-toggle > .connect-toggle-content {
@@ -160,36 +163,45 @@ body {
 
 /* FEEDBACK */
 
-#smiley {
-  width: 100%;
+.feedback-smiley-container {
+  margin-left: 5px;
+  margin-right: 5px;
+
+    //.box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+    //.box-shadow(5px 5px 0px #ff0000);
 }
 
-.feedback {
+.feedback-smiley {
   padding: 0px;
-}
+  width: 100%;
 
-.feedback .feedback-choice {
-  .text-center;
-  width: 50%;
-  padding: 1em;
-  border: thin #ccc solid;
-  .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
-
-  i {
-    font-size: 50px;
+  & td {
+    width: 50%;
   }
 
-  &.deselected {
-    .muted;
-  }
+  & .feedback-choice {
+    .text-center;
+    .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+    margin: 10px;
+    padding: 1em;
+    border: thin #ccc solid;
 
-  &.selected {
-    .alert-info;
-  }
+    i {
+      font-size: 50px;
+    }
 
-  &:hover {
-    cursor: pointer;
-    cursor: hand;
+    &.deselected {
+      .muted;
+    }
+
+    &.selected {
+      .alert-info;
+    }
+
+    &:hover {
+      cursor: pointer;
+      cursor: hand;
+    }
   }
 }
 

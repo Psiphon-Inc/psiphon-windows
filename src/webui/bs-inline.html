@@ -12087,6 +12087,7 @@ body[dir="rtl"] .tab-content > .tab-pane {
   position: relative;
   padding: 0;
   margin: 30px auto auto auto;
+  top: 10%;
 }
 #connect-toggle > .connect-toggle-content {
   position: absolute;
@@ -12121,33 +12122,38 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
   width: 5em;
 }
 /* FEEDBACK */
-#smiley {
+.feedback-smiley-container {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.feedback-smiley {
+  padding: 0px;
   width: 100%;
 }
-.feedback {
-  padding: 0px;
-}
-.feedback .feedback-choice {
-  text-align: center;
+.feedback-smiley td {
   width: 50%;
-  padding: 1em;
-  border: thin #ccc solid;
+}
+.feedback-smiley .feedback-choice {
+  text-align: center;
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  margin: 10px;
+  padding: 1em;
+  border: thin #ccc solid;
 }
-.feedback .feedback-choice i {
+.feedback-smiley .feedback-choice i {
   font-size: 50px;
 }
-.feedback .feedback-choice.deselected {
+.feedback-smiley .feedback-choice.deselected {
   color: #999999;
 }
-.feedback .feedback-choice.selected {
+.feedback-smiley .feedback-choice.selected {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #3a87ad;
 }
-.feedback .feedback-choice:hover {
+.feedback-smiley .feedback-choice:hover {
   cursor: pointer;
   cursor: hand;
 }
@@ -16098,6 +16104,8 @@ function resizeContent() {
 
   // Let the panes know that content resized
   $('.main-height').trigger('resize');
+
+  doMatchHeight();
 }
 
 
@@ -16137,28 +16145,8 @@ $(function() {
 });
 
 function resizeConnectContent() {
-  // In the connection toggle box, make all the sub-boxes the same size by
-  // padding the top (effectively aligning the bottoms).
-  var maxHeight = 0, maxstate = '';
-  // Assume the default top padding is the same as the bottom.
-  var prePad = parseInt($('#connect-toggle > div').css('padding-bottom'));
-  // Reset the padding before calculating height.
-  $('#connect-toggle > div').css('padding-top', prePad);
-
-  $('#connect-toggle > div').each(function() {
-    maxHeight = Math.max(maxHeight, $(this).outerHeight());
-  });
-  $('#connect-toggle > div').each(function() {
-    var reqPad = (maxHeight - $(this).outerHeight()) + prePad;
-    $(this).css('padding-top', reqPad+'px');
-  });
-
   // Set the outer box to the correct height
-  $('#connect-toggle').height(maxHeight);
-
-  // Reposition the button part-way down the available space
-  var buttonTop = ($('#connection-pane').innerHeight() - maxHeight) / 3;
-  $('#connect-toggle').css('top', buttonTop > 0 ? buttonTop : 0);
+  $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
 }
 
 function setupConnectToggle() {
@@ -16198,11 +16186,11 @@ function setupConnectToggle() {
 // Update the main connect button, as well as the connection indicator on the tab.
 function updateConnectToggle() {
   $('.connect-toggle-content').each(function() {
-    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
   });
 
   $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
-    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
   });
 
   if (g_lastState === 'starting') {
@@ -16416,6 +16404,72 @@ function skipUpstreamProxyUpdate() {
 
 /* FEEDBACK ******************************************************************/
 
+$(function() {
+  // This is to help with testing
+  if (!g_initObj.Settings)
+  {
+    g_initObj.Feedback = {
+      "NewVersionURL": "http://www.example.com/en/download.html",
+      "NewVersionEmail": "get@example.com",
+      "FaqURL": "http://www.example.com/en/faq.html"
+    };
+  }
+
+  // Add click listener to the happy/sad choices
+  $('.feedback .feedback-choice').click(function() {
+    $('.feedback .feedback-choice').removeClass('selected');
+    $(this).addClass('selected');
+  });
+
+  $('.feedback.smiley').data('hash', '24f5c290039e5b0a2fd17bfcdb8d3108')
+                       .data('title', 'Overall satisfaction');
+
+/*
+.NewVersionURL
+.NewVersionEmail
+.FaqURL
+*/
+
+  $('#submit_button').click(function(e) {
+    e.preventDefault();
+    responses = new Array();
+    // get all selected and their parents
+    selected = $('.feedback .selected');
+    selected.each(function() {
+      var hash = $('#smiley').data('hash');
+      var title = $('#smiley').data('title');
+      var answer = null;
+
+      if ($(this).hasClass('happy')) {
+        answer = 0;
+      }
+      else if ($(this).hasClass('sad')) {
+        answer = 1;
+      }
+
+      responses.push({title: title, question: hash, answer: answer});
+    });
+
+    s = JSON.stringify({
+      'responses': responses,
+      'feedback': $('#text_feedback_textarea').val(),
+      'email': $('#text_feedback_email').val(),
+      'sendDiagnosticInfo': !!$('#send_diagnostic').attr('checked')
+    });
+
+    //Windows client expects result in the window.returnValue magic variable
+    //No need to actually submit data
+    if (window.dialogArguments !== undefined) {
+      window.returnValue = s;
+      window.close();
+    }
+    else {
+      $('input[name=formdata]').val(s);
+      $('#feedback').submit();
+    }
+  });
+
+});
 
 /* LOG MESSAGES **************************************************************/
 
@@ -16484,7 +16538,71 @@ function switchLocale(locale) {
       $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
              .toggleClass($(this).data('i18n-rtl-classes'), rtl);
   });
+
+  // The content of elements will have changed, so trigger a resize event
+  $(window).trigger('resize');
 }
+
+
+/* HELPERS *******************************************************************/
+
+// Support the `data-match-height` feature
+function doMatchHeight() {
+  var matchSelectors = [];
+  $('[data-match-height]').each(function() {
+    var $this = $(this);
+
+    // Store the original padding, if we don't already have it.
+    if (typeof($this.data('match-height-orig-padding-top')) === 'undefined') {
+      $this.data('match-height-orig-padding-top', parseInt($this.css('padding-top')))
+           .data('match-height-orig-padding-bottom', parseInt($this.css('padding-bottom')));
+    }
+
+    var matchSelector = $this.data('match-height');
+    if (matchSelectors.indexOf(matchSelector) < 0) {
+      matchSelectors.push(matchSelector);
+    }
+  });
+
+  for (var i = 0; i < matchSelectors.length; i++) {
+    matchHeights(matchSelectors[0]);
+  }
+
+  function matchHeights(matchSelector) {
+    var maxHeight = 0;
+    $(matchSelector).each(function() {
+      var $this = $(this);
+      // Reset the padding to its original state
+      $this.css('padding-top', $this.data('match-height-orig-padding-top'))
+           .css('padding-bottom', $this.data('match-height-orig-padding-bottom'));
+
+      maxHeight = Math.max(maxHeight, $this.height());
+    });
+
+    $(matchSelector).each(function() {
+      var $this = $(this);
+
+      var heightDiff = maxHeight - $this.height();
+      if (heightDiff <= 0) {
+        // Don't adjust the largest
+        return;
+      }
+
+      var align = $this.data('match-height-align');
+      if (align === 'top') {
+        $this.css('padding-bottom', heightDiff + $this.data('match-height-orig-padding-bottom'));
+      }
+      else if (align === 'bottom') {
+        $this.css('padding-top', heightDiff + $this.data('match-height-orig-padding-top'));
+      }
+      else { // center
+        $this.css('padding-top', heightDiff/2 + $this.data('match-height-orig-padding-top'))
+             .css('padding-bottom', heightDiff/2 + $this.data('match-height-orig-padding-bottom'));
+      }
+    });
+  }
+}
+
 
 
 /* INTERFACE METHODS *********************************************************/
@@ -16625,8 +16743,9 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
         <!-- CONNECTION ================================================-->
         <div class="tab-pane active fade in" id="connection-pane">
           <div id="connect-toggle">
-            <div class="connect-toggle-content hidden well text-center alert"
-                 data-connect-state="starting">
+            <div class="connect-toggle-content invisible well text-center alert"
+                 data-connect-state="starting"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#starting-msg">Psiphon is connecting...</span>
@@ -16638,8 +16757,9 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                 </a>
               </div>
             </div><!-- /starting -->
-            <div class="connect-toggle-content hidden well text-center alert alert-success"
-                 data-connect-state="connected">
+            <div class="connect-toggle-content invisible well text-center alert alert-success"
+                 data-connect-state="connected"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#connected-msg">Psiphon is connected</span>
@@ -16651,8 +16771,9 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                 </a>
               </div>
             </div><!-- /connected -->
-            <div class="connect-toggle-content hidden well text-center alert"
-                 data-connect-state="stopping">
+            <div class="connect-toggle-content invisible well text-center alert"
+                 data-connect-state="stopping"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
@@ -16667,8 +16788,9 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                 </a>
               </div>
             </div><!-- /stopping -->
-            <div class="connect-toggle-content hidden well text-center alert alert-danger"
-                 data-connect-state="stopped">
+            <div class="connect-toggle-content invisible well text-center alert alert-danger"
+                 data-connect-state="stopped"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
@@ -16870,37 +16992,43 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
               <p data-i18n="feedback#top_para_1">
                 Please let us know how Psiphon is working for you so we can make the system better!
               </p>
-              <p data-i18n="[html]feedback#top_para_2" style="display: none;">
-                Many problems can be fixed by downloading the latest version. You can
-                <a class="newVersionURL" href="#">download the latest version by clicking here</a>,
-                or you can send an email to <span id="newVersionEmail"></span>.
+              <p data-i18n="[html]feedback#top_para_2" class="hidden">
+                Many problems can be fixed by downloading the latestb version. You can
+                <a class="NewVersionURL" href="#">download the latest version by clicking here</a>,
+                or you can send an email to <a class="NewVersionEmail" href="#"></a>.
               </p>
               <p data-i18n="[html]feedback#top_para_3" style="display: none;">
                 You can also find solutions to many common problems in our
-                <a class="faqURL" href="#">Frequently Asked Questions</a>.
+                <a class="FaqURL" href="#">Frequently Asked Questions</a>.
               </p>
             </div>
             <br>
 
-            <form name="feedback" action="feedback" method="get">
+            <form id="feedback-form" action="feedback" method="get">
 
-              <div>
-                <table class="feedback" id="smiley">
+              <div class="feedback-smiley-container">
+                <table class="feedback-smiley">
                   <tbody>
                     <tr>
-                      <td class="happy feedback-choice deselected">
-                        <i class="icon-smile"></i>
-                        <br>
-                        <span data-i18n="feedback#smiley_happy">
-                          Psiphon connects and performs the way I want it to.
-                        </span>
+                      <td>
+                        <div class="happy feedback-choice deselected"
+                             data-match-height=".feedback-choice" data-match-height-align="center">
+                          <i class="icon-smile"></i>
+                          <br>
+                          <span data-i18n="feedback#smiley_happy">
+                            Psiphon connects and performs the way I want it to.
+                          </span>
+                        </div>
                       </td>
-                      <td class="sad feedback-choice deselected">
-                        <i class="icon-frown"></i>
-                        <br>
-                        <span data-i18n="feedback#smiley_sad">
-                          Psiphon often fails to connect or doesn't perform well enough.
-                        </span>
+                      <td>
+                        <div class="sad feedback-choice deselected"
+                             data-match-height=".feedback-choice" data-match-height-align="center">
+                          <i class="icon-frown"></i>
+                          <br>
+                          <span data-i18n="feedback#smiley_sad">
+                            Psiphon often fails to connect or doesn't perform well enough.
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   </tbody>

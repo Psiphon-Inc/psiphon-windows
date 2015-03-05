@@ -19,9 +19,9 @@ Send messages from C to HTML via new JS thing.
 
 * Wire up feedback.
 * Window size: Choose a starting size; fix it as minimum.
-* Add i18n.
 * Add “stopping” state.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
+  - Also add more branding and Psiphon-ness. Like, logo, colours, word art, ...?
 * Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change. UPDATE: Only broken because all data-URI images are broken on IE7.
 * Clean up psiclient code.
 * Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)

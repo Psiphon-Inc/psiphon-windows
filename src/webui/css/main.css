@@ -5266,6 +5266,7 @@ body[dir="rtl"] .tab-content > .tab-pane {
   position: relative;
   padding: 0;
   margin: 30px auto auto auto;
+  top: 10%;
 }
 #connect-toggle > .connect-toggle-content {
   position: absolute;
@@ -5300,33 +5301,38 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
   width: 5em;
 }
 /* FEEDBACK */
-#smiley {
+.feedback-smiley-container {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.feedback-smiley {
+  padding: 0px;
   width: 100%;
 }
-.feedback {
-  padding: 0px;
-}
-.feedback .feedback-choice {
-  text-align: center;
+.feedback-smiley td {
   width: 50%;
-  padding: 1em;
-  border: thin #ccc solid;
+}
+.feedback-smiley .feedback-choice {
+  text-align: center;
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  margin: 10px;
+  padding: 1em;
+  border: thin #ccc solid;
 }
-.feedback .feedback-choice i {
+.feedback-smiley .feedback-choice i {
   font-size: 50px;
 }
-.feedback .feedback-choice.deselected {
+.feedback-smiley .feedback-choice.deselected {
   color: #999999;
 }
-.feedback .feedback-choice.selected {
+.feedback-smiley .feedback-choice.selected {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #3a87ad;
 }
-.feedback .feedback-choice:hover {
+.feedback-smiley .feedback-choice:hover {
   cursor: pointer;
   cursor: hand;
 }

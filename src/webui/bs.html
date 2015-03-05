@@ -122,8 +122,9 @@
         <!-- CONNECTION ================================================-->
         <div class="tab-pane active fade in" id="connection-pane">
           <div id="connect-toggle">
-            <div class="connect-toggle-content hidden well text-center alert"
-                 data-connect-state="starting">
+            <div class="connect-toggle-content invisible well text-center alert"
+                 data-connect-state="starting"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#starting-msg">Psiphon is connecting...</span>
@@ -135,8 +136,9 @@
                 </a>
               </div>
             </div><!-- /starting -->
-            <div class="connect-toggle-content hidden well text-center alert alert-success"
-                 data-connect-state="connected">
+            <div class="connect-toggle-content invisible well text-center alert alert-success"
+                 data-connect-state="connected"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#connected-msg">Psiphon is connected</span>
@@ -148,8 +150,9 @@
                 </a>
               </div>
             </div><!-- /connected -->
-            <div class="connect-toggle-content hidden well text-center alert"
-                 data-connect-state="stopping">
+            <div class="connect-toggle-content invisible well text-center alert"
+                 data-connect-state="stopping"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
@@ -164,8 +167,9 @@
                 </a>
               </div>
             </div><!-- /stopping -->
-            <div class="connect-toggle-content hidden well text-center alert alert-danger"
-                 data-connect-state="stopped">
+            <div class="connect-toggle-content invisible well text-center alert alert-danger"
+                 data-connect-state="stopped"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
                 <h2>
                   <span data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
@@ -367,37 +371,43 @@
               <p data-i18n="feedback#top_para_1">
                 Please let us know how Psiphon is working for you so we can make the system better!
               </p>
-              <p data-i18n="[html]feedback#top_para_2" style="display: none;">
-                Many problems can be fixed by downloading the latest version. You can
-                <a class="newVersionURL" href="#">download the latest version by clicking here</a>,
-                or you can send an email to <span id="newVersionEmail"></span>.
+              <p data-i18n="[html]feedback#top_para_2" class="hidden">
+                Many problems can be fixed by downloading the latestb version. You can
+                <a class="NewVersionURL" href="#">download the latest version by clicking here</a>,
+                or you can send an email to <a class="NewVersionEmail" href="#"></a>.
               </p>
               <p data-i18n="[html]feedback#top_para_3" style="display: none;">
                 You can also find solutions to many common problems in our
-                <a class="faqURL" href="#">Frequently Asked Questions</a>.
+                <a class="FaqURL" href="#">Frequently Asked Questions</a>.
               </p>
             </div>
             <br>
 
-            <form name="feedback" action="feedback" method="get">
+            <form id="feedback-form" action="feedback" method="get">
 
-              <div>
-                <table class="feedback" id="smiley">
+              <div class="feedback-smiley-container">
+                <table class="feedback-smiley">
                   <tbody>
                     <tr>
-                      <td class="happy feedback-choice deselected">
-                        <i class="icon-smile"></i>
-                        <br>
-                        <span data-i18n="feedback#smiley_happy">
-                          Psiphon connects and performs the way I want it to.
-                        </span>
+                      <td>
+                        <div class="happy feedback-choice deselected"
+                             data-match-height=".feedback-choice" data-match-height-align="center">
+                          <i class="icon-smile"></i>
+                          <br>
+                          <span data-i18n="feedback#smiley_happy">
+                            Psiphon connects and performs the way I want it to.
+                          </span>
+                        </div>
                       </td>
-                      <td class="sad feedback-choice deselected">
-                        <i class="icon-frown"></i>
-                        <br>
-                        <span data-i18n="feedback#smiley_sad">
-                          Psiphon often fails to connect or doesn't perform well enough.
-                        </span>
+                      <td>
+                        <div class="sad feedback-choice deselected"
+                             data-match-height=".feedback-choice" data-match-height-align="center">
+                          <i class="icon-frown"></i>
+                          <br>
+                          <span data-i18n="feedback#smiley_sad">
+                            Psiphon often fails to connect or doesn't perform well enough.
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   </tbody>

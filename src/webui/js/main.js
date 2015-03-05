@@ -66,6 +66,8 @@ function resizeContent() {
 
   // Let the panes know that content resized
   $('.main-height').trigger('resize');
+
+  doMatchHeight();
 }
 
 
@@ -105,28 +107,8 @@ $(function() {
 });
 
 function resizeConnectContent() {
-  // In the connection toggle box, make all the sub-boxes the same size by
-  // padding the top (effectively aligning the bottoms).
-  var maxHeight = 0, maxstate = '';
-  // Assume the default top padding is the same as the bottom.
-  var prePad = parseInt($('#connect-toggle > div').css('padding-bottom'));
-  // Reset the padding before calculating height.
-  $('#connect-toggle > div').css('padding-top', prePad);
-
-  $('#connect-toggle > div').each(function() {
-    maxHeight = Math.max(maxHeight, $(this).outerHeight());
-  });
-  $('#connect-toggle > div').each(function() {
-    var reqPad = (maxHeight - $(this).outerHeight()) + prePad;
-    $(this).css('padding-top', reqPad+'px');
-  });
-
   // Set the outer box to the correct height
-  $('#connect-toggle').height(maxHeight);
-
-  // Reposition the button part-way down the available space
-  var buttonTop = ($('#connection-pane').innerHeight() - maxHeight) / 3;
-  $('#connect-toggle').css('top', buttonTop > 0 ? buttonTop : 0);
+  $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
 }
 
 function setupConnectToggle() {
@@ -166,11 +148,11 @@ function setupConnectToggle() {
 // Update the main connect button, as well as the connection indicator on the tab.
 function updateConnectToggle() {
   $('.connect-toggle-content').each(function() {
-    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
   });
 
   $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
-    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
   });
 
   if (g_lastState === 'starting') {
@@ -384,6 +366,72 @@ function skipUpstreamProxyUpdate() {
 
 /* FEEDBACK ******************************************************************/
 
+$(function() {
+  // This is to help with testing
+  if (!g_initObj.Settings)
+  {
+    g_initObj.Feedback = {
+      "NewVersionURL": "http://www.example.com/en/download.html",
+      "NewVersionEmail": "get@example.com",
+      "FaqURL": "http://www.example.com/en/faq.html"
+    };
+  }
+
+  // Add click listener to the happy/sad choices
+  $('.feedback .feedback-choice').click(function() {
+    $('.feedback .feedback-choice').removeClass('selected');
+    $(this).addClass('selected');
+  });
+
+  $('.feedback.smiley').data('hash', '24f5c290039e5b0a2fd17bfcdb8d3108')
+                       .data('title', 'Overall satisfaction');
+
+/*
+.NewVersionURL
+.NewVersionEmail
+.FaqURL
+*/
+
+  $('#submit_button').click(function(e) {
+    e.preventDefault();
+    responses = new Array();
+    // get all selected and their parents
+    selected = $('.feedback .selected');
+    selected.each(function() {
+      var hash = $('#smiley').data('hash');
+      var title = $('#smiley').data('title');
+      var answer = null;
+
+      if ($(this).hasClass('happy')) {
+        answer = 0;
+      }
+      else if ($(this).hasClass('sad')) {
+        answer = 1;
+      }
+
+      responses.push({title: title, question: hash, answer: answer});
+    });
+
+    s = JSON.stringify({
+      'responses': responses,
+      'feedback': $('#text_feedback_textarea').val(),
+      'email': $('#text_feedback_email').val(),
+      'sendDiagnosticInfo': !!$('#send_diagnostic').attr('checked')
+    });
+
+    //Windows client expects result in the window.returnValue magic variable
+    //No need to actually submit data
+    if (window.dialogArguments !== undefined) {
+      window.returnValue = s;
+      window.close();
+    }
+    else {
+      $('input[name=formdata]').val(s);
+      $('#feedback').submit();
+    }
+  });
+
+});
 
 /* LOG MESSAGES **************************************************************/
 
@@ -452,6 +500,69 @@ function switchLocale(locale) {
       $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
              .toggleClass($(this).data('i18n-rtl-classes'), rtl);
   });
+
+  // The content of elements will have changed, so trigger a resize event
+  $(window).trigger('resize');
+}
+
+
+/* HELPERS *******************************************************************/
+
+// Support the `data-match-height` feature
+function doMatchHeight() {
+  var matchSelectors = [];
+  $('[data-match-height]').each(function() {
+    var $this = $(this);
+
+    // Store the original padding, if we don't already have it.
+    if (typeof($this.data('match-height-orig-padding-top')) === 'undefined') {
+      $this.data('match-height-orig-padding-top', parseInt($this.css('padding-top')))
+           .data('match-height-orig-padding-bottom', parseInt($this.css('padding-bottom')));
+    }
+
+    var matchSelector = $this.data('match-height');
+    if (matchSelectors.indexOf(matchSelector) < 0) {
+      matchSelectors.push(matchSelector);
+    }
+  });
+
+  for (var i = 0; i < matchSelectors.length; i++) {
+    matchHeights(matchSelectors[i]);
+  }
+
+  function matchHeights(matchSelector) {
+    var maxHeight = 0;
+    $(matchSelector).each(function() {
+      var $this = $(this);
+      // Reset the padding to its original state
+      $this.css('padding-top', $this.data('match-height-orig-padding-top'))
+           .css('padding-bottom', $this.data('match-height-orig-padding-bottom'));
+
+      maxHeight = Math.max(maxHeight, $this.height());
+    });
+
+    $(matchSelector).each(function() {
+      var $this = $(this);
+
+      var heightDiff = maxHeight - $this.height();
+      if (heightDiff <= 0) {
+        // Don't adjust the largest
+        return;
+      }
+
+      var align = $this.data('match-height-align');
+      if (align === 'top') {
+        $this.css('padding-bottom', heightDiff + $this.data('match-height-orig-padding-bottom'));
+      }
+      else if (align === 'bottom') {
+        $this.css('padding-top', heightDiff + $this.data('match-height-orig-padding-top'));
+      }
+      else { // center
+        $this.css('padding-top', heightDiff/2 + $this.data('match-height-orig-padding-top'))
+             .css('padding-bottom', heightDiff/2 + $this.data('match-height-orig-padding-bottom'));
+      }
+    });
+  }
 }
 
 
