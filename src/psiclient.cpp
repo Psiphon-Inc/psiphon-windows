@@ -280,6 +280,8 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
     const LPCTSTR appStop = _T("app:stop");
     const LPCTSTR appUpdateSettings = _T("app:updatesettings?");
     const size_t appUpdateSettingsLen = _tcslen(appUpdateSettings);
+    const LPCTSTR appSendFeedback = _T("app:sendfeedback?");
+    const size_t appSendFeedbackLen = _tcslen(appSendFeedback);
 
     if (_tcscmp(url, appStart) == 0)
     {
@@ -306,6 +308,15 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
             g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
             g_connectionManager.Start();
         }
+    }
+    else if (_tcsncmp(url, appSendFeedback, appSendFeedbackLen) == 0
+        && _tcslen(url) > appSendFeedbackLen)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Send feedback requested"), __TFUNCTION__);
+        tstring tstringJSON(url + appSendFeedbackLen);
+        string stringJSON = TStringToNarrow(tstringJSON);
+        my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
+        g_connectionManager.SendFeedback(tstringJSON.c_str());
     }
     delete[] url;
 }

@@ -23,6 +23,11 @@
 
 /* GENERAL */
 
+var $window = $(window);
+
+// Fired when the UI language changes
+var LANGUAGE_CHANGE_EVENT = 'language-change';
+
 // Parse whatever JSON parameters were passed by the application.
 var g_initObj = {};
 (function() {
@@ -34,10 +39,9 @@ var g_initObj = {};
 
 $(function() {
   // Update the size of our tab content element when the window resizes...
-  var $window = $(window);
   var lastWindowHeight = $window.height();
   var lastWindowWidth = $window.width();
-  $(window).smartresize(function() {
+  $window.smartresize(function() {
     // Only go through the resize logic if the window actually changed size.
     // This helps with the constant resize events we get with IE7.
     if (lastWindowHeight !== $window.height() ||
@@ -51,6 +55,10 @@ $(function() {
   $('a[data-toggle="tab"]').on('shown', function() {
     setTimeout(resizeContent, 1);
   });
+  // ...and when the language changes...
+  $window.on(LANGUAGE_CHANGE_EVENT, function() {
+    setTimeout(resizeContent, 1);
+  });
   // ...and now.
   resizeContent();
 });
@@ -59,7 +67,7 @@ function resizeContent() {
   // We want the content part of our window to fill the window, we don't want
   // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
   // with just CSS, so we're going to do some on-resize height adjustment in JS.
-  var fillHeight = $(window).innerHeight() - $('.main-height').position().top;
+  var fillHeight = $window.innerHeight() - $('.main-height').position().top;
   var footerHeight = $('.footer').outerHeight();
   $('.main-height').outerHeight(fillHeight - footerHeight);
   $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
@@ -368,70 +376,71 @@ function skipUpstreamProxyUpdate() {
 
 $(function() {
   // This is to help with testing
-  if (!g_initObj.Settings)
+  if (!g_initObj.Feedback)
   {
     g_initObj.Feedback = {
       "NewVersionURL": "http://www.example.com/en/download.html",
       "NewVersionEmail": "get@example.com",
-      "FaqURL": "http://www.example.com/en/faq.html"
+      "FaqURL": "http://www.example.com/en/faq.html",
+      "DataCollectionInfoURL": "http://example.com/en/faq.html#information-collected"
     };
   }
 
   // Add click listener to the happy/sad choices
-  $('.feedback .feedback-choice').click(function() {
-    $('.feedback .feedback-choice').removeClass('selected');
+  $('.feedback-smiley .feedback-choice').click(function() {
+    $('.feedback-smiley .feedback-choice').removeClass('selected');
     $(this).addClass('selected');
   });
 
-  $('.feedback.smiley').data('hash', '24f5c290039e5b0a2fd17bfcdb8d3108')
-                       .data('title', 'Overall satisfaction');
+  // Values in the feedback text need to be replaced when the text changes -- i.e., on language switch.
+  $window.on(LANGUAGE_CHANGE_EVENT, fillFeedbackValues);
+  fillFeedbackValues();
 
-/*
-.NewVersionURL
-.NewVersionEmail
-.FaqURL
-*/
-
-  $('#submit_button').click(function(e) {
+  $('#feedback-submit').click(function(e) {
     e.preventDefault();
-    responses = new Array();
-    // get all selected and their parents
-    selected = $('.feedback .selected');
-    selected.each(function() {
-      var hash = $('#smiley').data('hash');
-      var title = $('#smiley').data('title');
-      var answer = null;
+    sendFeedback();
+  });
+});
 
-      if ($(this).hasClass('happy')) {
-        answer = 0;
-      }
-      else if ($(this).hasClass('sad')) {
-        answer = 1;
-      }
+// Some of the text in the feedback form has values that need to be replaced at runtime.
+// They also need to be replaced when switching values.
+function fillFeedbackValues() {
+  if (g_initObj.Feedback.NewVersionURL && g_initObj.Feedback.NewVersionEmail) {
+    // Fill in the links and addresses that are specific to this client
+    $('.NewVersionURL').attr('href', g_initObj.Feedback.NewVersionURL);
+    $('.NewVersionEmail').attr('href', 'mailto:'+g_initObj.Feedback.NewVersionEmail)
+                         .text(g_initObj.Feedback.NewVersionEmail);
+    $('.NewVersionURL').parent().removeClass('hidden');
+  }
 
-      responses.push({title: title, question: hash, answer: answer});
+  if (g_initObj.Feedback.FaqURL) {
+    $('.FaqURL').attr('href', g_initObj.Feedback.FaqURL);
+  }
+
+  if (g_initObj.Feedback.DataCollectionInfoURL) {
+    $('.DataCollectionInfoURL').attr('href', g_initObj.Feedback.DataCollectionInfoURL);
+  }
+}
+
+function sendFeedback() {
+  var smileyResponses = [];
+  $('.feedback-choice.selected').each(function() {
+    smileyResponses.push({
+      title: $(this).data('feedback-choice-title'),
+      question: $(this).data('feedback-choice-hash'),
+      answer: $(this).data('feedback-choice-value')
     });
-
-    s = JSON.stringify({
-      'responses': responses,
-      'feedback': $('#text_feedback_textarea').val(),
-      'email': $('#text_feedback_email').val(),
-      'sendDiagnosticInfo': !!$('#send_diagnostic').attr('checked')
-    });
-
-    //Windows client expects result in the window.returnValue magic variable
-    //No need to actually submit data
-    if (window.dialogArguments !== undefined) {
-      window.returnValue = s;
-      window.close();
-    }
-    else {
-      $('input[name=formdata]').val(s);
-      $('#feedback').submit();
-    }
   });
 
-});
+  var fields = {
+    responses: smileyResponses,
+    feedback: $('#feedback-comments').val(),
+    email: $('#feedback-email').val(),
+    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').attr('checked')
+  };
+
+  HtmlCtrlInterface_SendFeedback(JSON.stringify(fields));
+}
 
 /* LOG MESSAGES **************************************************************/
 
@@ -483,6 +492,10 @@ $(function() {
 function switchLocale(locale) {
   i18n.setLng(locale, function() {
     $('body').i18n();
+
+    // The content of elements will have changed, so trigger custom event that can
+    // be listened for to take additional actions.
+    $window.trigger(LANGUAGE_CHANGE_EVENT);
   });
 
   //
@@ -500,9 +513,6 @@ function switchLocale(locale) {
       $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
              .toggleClass($(this).data('i18n-rtl-classes'), rtl);
   });
-
-  // The content of elements will have changed, so trigger a resize event
-  $(window).trigger('resize');
 }
 
 
@@ -619,6 +629,13 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
     // Don't call encodeURIComponent. The application code can more easily handle a plain string.
     window.location = 'app:updatesettings?' + settingsJSON;
+  }, 1);
+}
+
+function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
+  setTimeout(function() {
+    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
+    window.location = 'app:sendfeedback?' + feedbackJSON;
   }, 1);
 }
 

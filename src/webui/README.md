@@ -17,7 +17,9 @@ Send messages from C to HTML via new JS thing.
 
 ## TODO
 
-* Wire up feedback.
+* Feedback message is URI encoded!?! And smiley title
+  - if URI decoding in C++ is too onerous, maybe should hex or b64 the strings
+* After sending feedback, clear form. Also show temporary notification of thanks. Also switch to Connection tab?
 * Window size: Choose a starting size; fix it as minimum.
 * Add “stopping” state.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
