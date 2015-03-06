@@ -207,7 +207,11 @@
     "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
     "description": ""
   },
-  "feedback#messages#show-debug-label": {
+  "feedback#success-message": {
+    "message": "<strong>Thank you!</strong> Your feedback has been sent.",
+    "description": "Message shown to user after their feedback has been sent successufully"
+  },
+  "messages#show-debug-label": {
     "message": "Show debug messages",
     "description": ""
   }

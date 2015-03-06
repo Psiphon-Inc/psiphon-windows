@@ -207,7 +207,11 @@
     "message": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.]",
     "description": ""
   },
-  "feedback#messages#show-debug-label": {
+  "feedback#success-message": {
+    "message": "[<şŧřǿǿƞɠ>Ŧħȧȧƞķ ẏǿǿŭŭ!</şŧřǿǿƞɠ> Ẏǿǿŭŭř ƒḗḗḗḗḓƀȧȧƈķ ħȧȧş ƀḗḗḗḗƞ şḗḗƞŧ.]",
+    "description": "Message shown to user after their feedback has been sent successufully"
+  },
+  "messages#show-debug-label": {
     "message": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
     "description": ""
   }

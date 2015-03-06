@@ -53,7 +53,8 @@
       "feedback#diagnostic_check": "[Ŭŭƥŀǿǿȧȧḓ ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ. Ƥŀḗḗȧȧşḗḗ ƞǿǿŧḗḗ ŧħȧȧŧ ŧħīīş ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ ḓǿǿḗḗş ƞǿǿŧ īīḓḗḗƞŧīīƒẏ ẏǿǿŭŭ, ȧȧƞḓ īīŧ ẇīīŀŀ ħḗḗŀƥ ŭŭş ŧǿǿ ķḗḗḗḗƥ Ƥşīīƥħǿǿƞ řŭŭƞƞīīƞɠ şḿǿǿǿǿŧħŀẏ. <a class=\"DataCollectionInfoURL\" href=\"#\">Ƈŀīīƈķ ħḗḗřḗḗ ŧǿǿ şḗḗḗḗ ẇħȧȧŧ ḓȧȧŧȧȧ ẇḗḗ ƈǿǿŀŀḗḗƈŧ.</a>]",
       "feedback#submit_button": "[Şŭŭƀḿīīŧ]",
       "feedback#text_feedback_bottom_para": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.]",
-      "feedback#messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]"
+      "feedback#success-message": "[<şŧřǿǿƞɠ>Ŧħȧȧƞķ ẏǿǿŭŭ!</şŧřǿǿƞɠ> Ẏǿǿŭŭř ƒḗḗḗḗḓƀȧȧƈķ ħȧȧş ƀḗḗḗḗƞ şḗḗƞŧ.]",
+      "messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]"
     }
   },
   "devrtl": {
@@ -110,7 +111,8 @@
       "feedback#diagnostic_check": "‮∩dʅoɐp‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬. ‮Ԁʅǝɐsǝ‬ ‮uoʇǝ‬ ‮ʇɥɐʇ‬ ‮ʇɥıs‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬ ‮poǝs‬ ‮uoʇ‬ ‮ıpǝuʇıɟʎ‬ ‮ʎon‬, ‮ɐup‬ ‮ıʇ‬ ‮ʍıʅʅ‬ ‮ɥǝʅd‬ ‮ns‬ ‮ʇo‬ ‮ʞǝǝd‬ ‮Ԁsıdɥou‬ ‮ɹnuuıuƃ‬ ‮sɯooʇɥʅʎ‬. <a class=\"DataCollectionInfoURL\" href=\"#\">‮Ↄʅıɔʞ‬ ‮ɥǝɹǝ‬ ‮ʇo‬ ‮sǝǝ‬ ‮ʍɥɐʇ‬ ‮pɐʇɐ‬ ‮ʍǝ‬ ‮ɔoʅʅǝɔʇ‬.</a>",
       "feedback#submit_button": "‮Snqɯıʇ‬",
       "feedback#text_feedback_bottom_para": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
-      "feedback#messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬"
+      "feedback#success-message": "<‮sʇɹouƃ‬>‮⊥ɥɐuʞ‬ ‮ʎon‬!</‮sʇɹouƃ‬> ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮sǝuʇ‬.",
+      "messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬"
     }
   },
   "en": {
@@ -167,7 +169,8 @@
       "feedback#diagnostic_check": "Upload diagnostic data. Please note that this diagnostic data does not identify you, and it will help us to keep Psiphon running smoothly. <a class=\"DataCollectionInfoURL\" href=\"#\">Click here to see what data we collect.</a>",
       "feedback#submit_button": "Submit",
       "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
-      "feedback#messages#show-debug-label": "Show debug messages"
+      "feedback#success-message": "<strong>Thank you!</strong> Your feedback has been sent.",
+      "messages#show-debug-label": "Show debug messages"
     }
   }
 };
