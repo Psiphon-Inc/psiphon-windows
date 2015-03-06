@@ -160,7 +160,7 @@ function updateConnectToggle() {
   });
 
   $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
-    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
   });
 
   if (g_lastState === 'starting') {
