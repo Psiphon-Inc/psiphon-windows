@@ -436,10 +436,27 @@ function sendFeedback() {
     responses: smileyResponses,
     feedback: $('#feedback-comments').val(),
     email: $('#feedback-email').val(),
-    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').attr('checked')
+    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').prop('checked')
   };
 
+  // Switch to the connection tab
+  $('.main-nav a:first').tab('show');
+
+  // Clear the feedback form
+  $('.feedback-choice.selected').removeClass('selected');
+  $('#feedback-comments').val('');
+  $('#feedback-email').val('');
+  $('#feedback-send-diagnostic').prop('checked', true);
+
+  // Actually send the feedback
   HtmlCtrlInterface_SendFeedback(JSON.stringify(fields));
+
+  // Show (and hide) the success alert
+  $('#feedback-success-alert').toggle('fold', {horizFirst: true}, function() {
+    setTimeout(function() {
+      $('#feedback-success-alert').toggle('fold', {horizFirst: true}, 1000);
+    }, 5000);
+  });
 }
 
 /* LOG MESSAGES **************************************************************/

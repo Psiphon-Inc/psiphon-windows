@@ -5260,6 +5260,16 @@ body[dir="rtl"] .tab-content > .tab-pane {
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
 }
+.global-alert {
+  position: fixed;
+  bottom: 0;
+}
+body[dir="ltr"] .global-alert {
+  right: 0;
+}
+body[dir="rtl"] .global-alert {
+  left: 0;
+}
 /* CONNECT */
 #connect-toggle {
   max-width: 600px;
@@ -5314,6 +5324,7 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 }
 .feedback-smiley .feedback-choice {
   text-align: center;
+  color: #999999;
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
@@ -5323,9 +5334,6 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 }
 .feedback-smiley .feedback-choice i {
   font-size: 50px;
-}
-.feedback-smiley .feedback-choice.deselected {
-  color: #999999;
 }
 .feedback-smiley .feedback-choice.selected {
   background-color: #d9edf7;

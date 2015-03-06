@@ -16,7 +16,6 @@ Send messages from C to HTML via new JS thing.
 
 ## TODO
 
-* After sending feedback, clear form. Also show temporary notification of thanks. Also switch to Connection tab?
 * Window size: Choose a starting size; fix it as minimum.
 * Add “stopping” state.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
