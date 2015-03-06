@@ -52,6 +52,9 @@
 #define SKIP_PROXY_SETTINGS_NAME        "SkipProxySettings"
 #define SKIP_PROXY_SETTINGS_DEFAULT     FALSE
 
+#define SKIP_AUTO_CONNECT_NAME          "SkipAutoConnect"
+#define SKIP_AUTO_CONNECT_DEFAULT       FALSE
+
 #define SKIP_UPSTREAM_PROXY_NAME        "SSHParentProxySkip"
 #define SKIP_UPSTREAM_PROXY_DEFAULT     FALSE
 
@@ -131,6 +134,7 @@ void Settings::Initialize()
     // This is to help users find and modify them.
     (void)GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT, true);
     (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
+    (void)GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT, true);
 }
 
 void Settings::ToJson(Json::Value& o_json)
@@ -333,4 +337,9 @@ bool Settings::SkipBrowser()
 bool Settings::SkipProxySettings()
 {
     return !!GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
+}
+
+bool Settings::SkipAutoConnect()
+{
+    return !!GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT);
 }

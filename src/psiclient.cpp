@@ -568,8 +568,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         ShowWindow(g_hWnd, SW_SHOW);
 
         // Start a connection
-        // DEBUG: Don't auto-start connection
-        //g_connectionManager.Toggle();
+        if (!Settings::SkipAutoConnect())
+        {
+            g_connectionManager.Toggle();
+        }
         break;
 
     case WM_PSIPHON_HTMLUI_APPLINK:

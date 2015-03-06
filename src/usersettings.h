@@ -48,4 +48,5 @@ namespace Settings
 
     bool SkipBrowser();
     bool SkipProxySettings();
+    bool SkipAutoConnect();
 }
