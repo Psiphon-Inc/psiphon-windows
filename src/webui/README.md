@@ -16,7 +16,6 @@ Send messages from C to HTML via new JS thing.
 
 ## TODO
 
-* Window size: Choose a starting size; fix it as minimum.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
   - Also add more branding and Psiphon-ness. Like, logo, colours, word art, ...?
 * Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change. UPDATE: Only broken because all data-URI images are broken on IE7.
@@ -26,6 +25,7 @@ Send messages from C to HTML via new JS thing.
 * Fix: Delete key doesn't work in Settings (or in Feedback?). Nor does Tab. 
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
+* Bug: IE7: While connected, Stop button doesn't show
 
 
 ## Technical and compatibility notes

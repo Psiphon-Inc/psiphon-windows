@@ -543,7 +543,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 
-        800, 600,
+        900, 470,
         NULL, NULL, hInstance, NULL);
 
     // Don't show the window until the content loads.
@@ -590,6 +590,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
         }
         break;
+
+    case WM_GETMINMAXINFO:
+    {
+        MINMAXINFO* mmi = (MINMAXINFO*)lParam;
+        mmi->ptMinTrackSize.x = 525;
+        mmi->ptMinTrackSize.y = 400;
+        break;
+    }
 
     case WM_SETFOCUS:
         SetFocus(g_hHtmlCtrl);
