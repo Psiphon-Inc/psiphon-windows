@@ -627,15 +627,13 @@ function HtmlCtrlInterface_Stop() {
 
 function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
-    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
-    window.location = 'app:updatesettings?' + settingsJSON;
+    window.location = 'app:updatesettings?' + encodeURIComponent(settingsJSON);
   }, 1);
 }
 
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
-    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
-    window.location = 'app:sendfeedback?' + feedbackJSON;
+    window.location = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
   }, 1);
 }
 
