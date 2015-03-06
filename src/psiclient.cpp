@@ -335,6 +335,15 @@ void UI_SetStateStopped()
     HtmlUI_SetState(wJson);
 }
 
+void UI_SetStateStopping()
+{
+    Json::Value json;
+    json["state"] = "stopping";
+    Json::FastWriter jsonWriter;
+    wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
+    HtmlUI_SetState(wJson);
+}
+
 void UI_SetStateStarting(const tstring& transportProtocolName)
 {
     Json::Value json;

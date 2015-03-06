@@ -33,6 +33,7 @@
 //==== UI Interaction ==================================================
 
 void UI_SetStateStopped();
+void UI_SetStateStopping();
 void UI_SetStateStarting(const tstring& transportProtocolName);
 void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort);
 

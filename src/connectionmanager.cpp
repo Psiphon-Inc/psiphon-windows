@@ -95,6 +95,10 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
             m_currentSessionInfo.GetLocalSocksProxyPort(),
             m_currentSessionInfo.GetLocalHttpProxyPort());
     }
+    else if (newState == CONNECTION_MANAGER_STATE_STOPPING)
+    {
+        UI_SetStateStopping();
+    }
     else //if (newState == CONNECTION_MANAGER_STATE_STOPPED)
     {
         UI_SetStateStopped();
@@ -154,6 +158,8 @@ void ConnectionManager::Stop(DWORD reason)
 
     // This will signal (some) running tasks to terminate.
     GlobalStopSignal::Instance().SignalStop(reason);
+
+    SetState(CONNECTION_MANAGER_STATE_STOPPING);
 
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
