@@ -12081,6 +12081,16 @@ body[dir="rtl"] .tab-content > .tab-pane {
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
 }
+.global-alert {
+  position: fixed;
+  bottom: 0;
+}
+body[dir="ltr"] .global-alert {
+  right: 0;
+}
+body[dir="rtl"] .global-alert {
+  left: 0;
+}
 /* CONNECT */
 #connect-toggle {
   max-width: 600px;
@@ -12135,6 +12145,7 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 }
 .feedback-smiley .feedback-choice {
   text-align: center;
+  color: #999999;
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
@@ -12144,9 +12155,6 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 }
 .feedback-smiley .feedback-choice i {
   font-size: 50px;
-}
-.feedback-smiley .feedback-choice.deselected {
-  color: #999999;
 }
 .feedback-smiley .feedback-choice.selected {
   background-color: #d9edf7;
@@ -16474,10 +16482,27 @@ function sendFeedback() {
     responses: smileyResponses,
     feedback: $('#feedback-comments').val(),
     email: $('#feedback-email').val(),
-    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').attr('checked')
+    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').prop('checked')
   };
 
+  // Switch to the connection tab
+  $('.main-nav a:first').tab('show');
+
+  // Clear the feedback form
+  $('.feedback-choice.selected').removeClass('selected');
+  $('#feedback-comments').val('');
+  $('#feedback-email').val('');
+  $('#feedback-send-diagnostic').prop('checked', true);
+
+  // Actually send the feedback
   HtmlCtrlInterface_SendFeedback(JSON.stringify(fields));
+
+  // Show (and hide) the success alert
+  $('#feedback-success-alert').toggle('fold', {horizFirst: true}, function() {
+    setTimeout(function() {
+      $('#feedback-success-alert').toggle('fold', {horizFirst: true}, 1000);
+    }, 5000);
+  });
 }
 
 /* LOG MESSAGES **************************************************************/
@@ -16665,15 +16690,13 @@ function HtmlCtrlInterface_Stop() {
 
 function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
-    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
-    window.location = 'app:updatesettings?' + settingsJSON;
+    window.location = 'app:updatesettings?' + encodeURIComponent(settingsJSON);
   }, 1);
 }
 
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
-    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
-    window.location = 'app:sendfeedback?' + feedbackJSON;
+    window.location = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
   }, 1);
 }
 
@@ -16833,7 +16856,6 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
           <form class="vpn-incompatible">
             <fieldset>
               <legend>
-                <i class="icon-fixed-width icon-globe"></i>
                 <span data-i18n="settings#egress-region#heading">Psiphon server region</span>
               </legend>
               <label class="control-label" for="EgressRegion" data-i18n="settings#egress-region#select-label">
@@ -17027,7 +17049,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                   <tbody>
                     <tr>
                       <td>
-                        <div class="happy feedback-choice deselected"
+                        <div class="happy feedback-choice"
                              data-feedback-choice-value=0
                              data-feedback-choice-hash="24f5c290039e5b0a2fd17bfcdb8d3108"
                              data-feedback-choice-title="Overall satisfaction"
@@ -17040,7 +17062,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                         </div>
                       </td>
                       <td>
-                        <div class="sad feedback-choice deselected"
+                        <div class="sad feedback-choice"
                              data-feedback-choice-value=1
                              data-feedback-choice-hash="24f5c290039e5b0a2fd17bfcdb8d3108"
                              data-feedback-choice-title="Overall satisfaction"
@@ -17133,6 +17155,11 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->
   </div><!-- /main-container -->
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="feedback-success-alert" class="alert alert-success global-alert" style="display:none">
+    <strong>Thank you!</strong> Your feedback has been sent.
+  </div>
 
 </body>
 </html>

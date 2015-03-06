@@ -276,6 +276,8 @@ static void HtmlUI_AppLink(MC_NMHTMLURL* nmHtmlUrl)
 
 static void HtmlUI_AppLinkHandler(LPCTSTR url)
 {
+    // NOTE: Incoming query parameters will be URI-encoded
+
     const LPCTSTR appStart = _T("app:start");
     const LPCTSTR appStop = _T("app:stop");
     const LPCTSTR appUpdateSettings = _T("app:updatesettings?");
@@ -297,8 +299,8 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
              && _tcslen(url) > appUpdateSettingsLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Update settings requested"), __TFUNCTION__);
-        tstring tstringJSON(url + appUpdateSettingsLen);
-        string stringJSON = TStringToNarrow(tstringJSON);
+        tstring uriEncoded(url + appUpdateSettingsLen);
+        string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
         bool settingsChanged = false;
         if (Settings::FromJson(stringJSON, settingsChanged) && settingsChanged
             && (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
@@ -313,10 +315,10 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
         && _tcslen(url) > appSendFeedbackLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Send feedback requested"), __TFUNCTION__);
-        tstring tstringJSON(url + appSendFeedbackLen);
-        string stringJSON = TStringToNarrow(tstringJSON);
+        tstring uriEncoded(url + appSendFeedbackLen);
+        string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
         my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
-        g_connectionManager.SendFeedback(tstringJSON.c_str());
+        g_connectionManager.SendFeedback(NarrowToTString(stringJSON).c_str());
     }
     delete[] url;
 }

@@ -12,14 +12,10 @@ Send messages from C to HTML via new JS thing.
 * XP-with-IE7 will probably be a somewhat degraded visual experience, but it will work fine.
 * I realized yesterday that Bittorrent Sync also uses this IE-based web view thing. I attached screenshots of it. It mimics some chrome in its UI. And uses modals, which I’d like to avoid, but maybe blah.
 * It feels like there should be more icons or images — it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used. You can see a few of them in the nav tabs.
-* Status messages… something. Not a big permanently visible list box, though. I refuse.
 
 
 ## TODO
 
-* Feedback message is URI encoded!?! And smiley title
-  - if URI decoding in C++ is too onerous, maybe should hex or b64 the strings
-* After sending feedback, clear form. Also show temporary notification of thanks. Also switch to Connection tab?
 * Window size: Choose a starting size; fix it as minimum.
 * Add “stopping” state.
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
@@ -29,7 +25,7 @@ Send messages from C to HTML via new JS thing.
 * Put auto-connect back in. (Should make a registry setting to disable so I don’t have to alter code to stop it.)
 * Add flags to egress region combo
 * Add settings reset button?
-* Fix: Delete key doesn't work in Settings (or in Feedback?)
+* Fix: Delete key doesn't work in Settings (or in Feedback?). Nor does Tab. 
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 

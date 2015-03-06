@@ -196,7 +196,6 @@
           <form class="vpn-incompatible">
             <fieldset>
               <legend>
-                <i class="icon-fixed-width icon-globe"></i>
                 <span data-i18n="settings#egress-region#heading">Psiphon server region</span>
               </legend>
               <label class="control-label" for="EgressRegion" data-i18n="settings#egress-region#select-label">
@@ -390,7 +389,7 @@
                   <tbody>
                     <tr>
                       <td>
-                        <div class="happy feedback-choice deselected"
+                        <div class="happy feedback-choice"
                              data-feedback-choice-value=0
                              data-feedback-choice-hash="24f5c290039e5b0a2fd17bfcdb8d3108"
                              data-feedback-choice-title="Overall satisfaction"
@@ -403,7 +402,7 @@
                         </div>
                       </td>
                       <td>
-                        <div class="sad feedback-choice deselected"
+                        <div class="sad feedback-choice"
                              data-feedback-choice-value=1
                              data-feedback-choice-hash="24f5c290039e5b0a2fd17bfcdb8d3108"
                              data-feedback-choice-title="Overall satisfaction"
@@ -496,6 +495,11 @@
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->
   </div><!-- /main-container -->
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="feedback-success-alert" class="alert alert-success global-alert" style="display:none">
+    <strong>Thank you!</strong> Your feedback has been sent.
+  </div>
 
 </body>
 </html>

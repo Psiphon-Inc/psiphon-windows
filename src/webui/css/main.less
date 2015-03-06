@@ -107,6 +107,19 @@ body {
   .transition(opacity .10s linear);
 }
 
+.global-alert {
+  position: fixed;
+  bottom: 0;
+
+  body[dir="ltr"] & {
+    right: 0;
+  }
+
+  body[dir="rtl"] & {
+    left: 0;
+  }
+}
+
 
 /* CONNECT */
 
@@ -181,6 +194,7 @@ body {
 
   & .feedback-choice {
     .text-center;
+    .muted; // will get trumped when selected
     .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
     margin: 10px;
     padding: 1em;
@@ -188,10 +202,6 @@ body {
 
     i {
       font-size: 50px;
-    }
-
-    &.deselected {
-      .muted;
     }
 
     &.selected {

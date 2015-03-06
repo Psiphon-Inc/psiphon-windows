@@ -91,6 +91,10 @@ DWORD GetTickCountDiff(DWORD start, DWORD end);
 
 wstring EscapeSOCKSArg(const char* input);
 
+string UriEncode(const std::string & sSrc);
+string UriDecode(const std::string & sSrc);
+
+
 /*
 String Utilities
 */
@@ -118,6 +122,7 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 #define __STRINGIZEX(x) #x
 #define STRINGIZE(x) __STRINGIZEX(x)
 #endif
+
 
 /*
 AutoHANDLE and AutoMUTEX

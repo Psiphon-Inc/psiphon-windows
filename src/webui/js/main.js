@@ -436,10 +436,27 @@ function sendFeedback() {
     responses: smileyResponses,
     feedback: $('#feedback-comments').val(),
     email: $('#feedback-email').val(),
-    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').attr('checked')
+    sendDiagnosticInfo: !!$('#feedback-send-diagnostic').prop('checked')
   };
 
+  // Switch to the connection tab
+  $('.main-nav a:first').tab('show');
+
+  // Clear the feedback form
+  $('.feedback-choice.selected').removeClass('selected');
+  $('#feedback-comments').val('');
+  $('#feedback-email').val('');
+  $('#feedback-send-diagnostic').prop('checked', true);
+
+  // Actually send the feedback
   HtmlCtrlInterface_SendFeedback(JSON.stringify(fields));
+
+  // Show (and hide) the success alert
+  $('#feedback-success-alert').toggle('fold', {horizFirst: true}, function() {
+    setTimeout(function() {
+      $('#feedback-success-alert').toggle('fold', {horizFirst: true}, 1000);
+    }, 5000);
+  });
 }
 
 /* LOG MESSAGES **************************************************************/
@@ -627,15 +644,13 @@ function HtmlCtrlInterface_Stop() {
 
 function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
-    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
-    window.location = 'app:updatesettings?' + settingsJSON;
+    window.location = 'app:updatesettings?' + encodeURIComponent(settingsJSON);
   }, 1);
 }
 
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
-    // Don't call encodeURIComponent. The application code can more easily handle a plain string.
-    window.location = 'app:sendfeedback?' + feedbackJSON;
+    window.location = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
   }, 1);
 }
 
