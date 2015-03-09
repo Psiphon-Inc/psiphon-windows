@@ -4,6 +4,16 @@ Send messages from HTML to C via either "app:" (like, window.location="app:blah"
 Send messages from C to HTML via new JS thing.
 
 
+## i18n
+
+To generate fake translation files from the English `messages.json`:
+
+```
+$ cd utils
+$ node fake-translations.js
+```
+
+
 ## Notes and discussion points
 
 * Nothing is set in stone. For example, if consensus is against the left-side tabs, they can be changed. Et cetera.
@@ -16,7 +26,6 @@ Send messages from C to HTML via new JS thing.
 
 ## TODO
 
-* Make Node util to generate fake translation files.
 * Bug: IE7: While connected, Stop button doesn't show
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
   - Also add more branding and Psiphon-ness. Like, logo, colours, word art, ...?

@@ -1,26 +1,6 @@
 {
-  "nav#connection": {
-    "message": "‮Ↄouuǝɔʇıou‬",
-    "description": ""
-  },
-  "nav#settings": {
-    "message": "‮Sǝʇʇıuƃs‬",
-    "description": ""
-  },
-  "nav#feedback": {
-    "message": "‮ɟǝǝpqɐɔʞ‬",
-    "description": ""
-  },
-  "nav#messages": {
-    "message": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
-    "description": ""
-  },
-  "connection#starting-msg": {
-    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇıuƃ‬...",
-    "description": ""
-  },
-  "connection#stop-btn": {
-    "message": "‮Sʇod‬",
+  "connection#connect-btn": {
+    "message": "‮Ↄouuǝɔʇ‬",
     "description": ""
   },
   "connection#connected-msg": {
@@ -31,6 +11,18 @@
     "message": "‮pısɔouuǝɔʇ‬",
     "description": ""
   },
+  "connection#starting-msg": {
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇıuƃ‬...",
+    "description": ""
+  },
+  "connection#stop-btn": {
+    "message": "‮Sʇod‬",
+    "description": ""
+  },
+  "connection#stopped-msg": {
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇǝp‬",
+    "description": ""
+  },
   "connection#stopping-msg": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇıuƃ‬...",
     "description": ""
@@ -39,128 +31,36 @@
     "message": "‮Ԁʅǝɐsǝ‬ ‮ʍɐıʇ‬...",
     "description": ""
   },
-  "connection#stopped-msg": {
-    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇǝp‬",
+  "feedback#diagnostic_check": {
+    "message": "‮∩dʅoɐp‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬. ‮Ԁʅǝɐsǝ‬ ‮uoʇǝ‬ ‮ʇɥɐʇ‬ ‮ʇɥıs‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬ ‮poǝs‬ ‮uoʇ‬ ‮ıpǝuʇıɟʎ‬ ‮ʎon‬, ‮ɐup‬ ‮ıʇ‬ ‮ʍıʅʅ‬ ‮ɥǝʅd‬ ‮ns‬ ‮ʇo‬ ‮ʞǝǝd‬ ‮Ԁsıdɥou‬ ‮ɹnuuıuƃ‬ ‮sɯooʇɥʅʎ‬. <a class=\"DataCollectionInfoURL\" href=\"#\">‮Ↄʅıɔʞ‬ ‮ɥǝɹǝ‬ ‮ʇo‬ ‮sǝǝ‬ ‮ʍɥɐʇ‬ ‮pɐʇɐ‬ ‮ʍǝ‬ ‮ɔoʅʅǝɔʇ‬.</a>",
     "description": ""
   },
-  "connection#connect-btn": {
-    "message": "‮Ↄouuǝɔʇ‬",
+  "feedback#smiley_happy": {
+    "message": "‮Ԁsıdɥou‬ ‮ɔouuǝɔʇs‬ ‮ɐup‬ ‮dǝɹɟoɹɯs‬ ‮ʇɥǝ‬ ‮ʍɐʎ‬ ‮I‬ ‮ʍɐuʇ‬ ‮ıʇ‬ ‮ʇo‬.",
     "description": ""
   },
-  "settings#error-alert": {
-    "message": "<strong>‮Ǝɹɹoɹ‬!</strong> ‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ıuɔoɹɹǝɔʇ‬ ‮ʌɐʅnǝs‬ ‮qǝɟoɹǝ‬ ‮dɹoɔǝǝpıuƃ‬.",
+  "feedback#smiley_sad": {
+    "message": "‮Ԁsıdɥou‬ ‮oɟʇǝu‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮oɹ‬ ‮poǝsu‬'‮ʇ‬ ‮dǝɹɟoɹɯ‬ ‮ʍǝʅʅ‬ ‮ǝuonƃɥ‬.",
     "description": ""
   },
-  "settings#egress-region#heading": {
-    "message": "‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬",
+  "feedback#submit_button": {
+    "message": "‮Snqɯıʇ‬",
     "description": ""
   },
-  "settings#egress-region#select-label": {
-    "message": "‮Sǝʅǝɔʇ‬ ‮pǝsıɹǝp‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬:",
+  "feedback#success-message": {
+    "message": "<strong>‮⊥ɥɐuʞ‬ ‮ʎon‬!</strong> ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮sǝuʇ‬.",
+    "description": "Message shown to user after their feedback has been sent successufully"
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬+‮ʍıupoʍs‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
     "description": ""
   },
-  "settings#egress-region#select-best-performance": {
-    "message": "‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬",
+  "feedback#text_feedback_email_prompt": {
+    "message": "‮Iɟ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ns‬ ‮ʇo‬ ‮ɹǝsdoup‬ ‮ʇo‬ ‮ʎon‬, ‮dʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ǝɯɐıʅ‬ ‮ɐppɹǝss‬:",
     "description": ""
   },
-  "settings#egress-region#select-us": {
-    "message": "‮∩uıʇǝp‬ ‮Sʇɐʇǝs‬",
-    "description": ""
-  },
-  "settings#egress-region#select-gb": {
-    "message": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
-    "description": ""
-  },
-  "settings#egress-region#select-jp": {
-    "message": "‮ſɐdɐu‬",
-    "description": ""
-  },
-  "settings#egress-region#select-sg": {
-    "message": "‮Sıuƃɐdoɹǝ‬",
-    "description": ""
-  },
-  "settings#egress-region#select-nl": {
-    "message": "‮Nǝʇɥǝɹʅɐups‬",
-    "description": ""
-  },
-  "settings#egress-region#select-de": {
-    "message": "‮פǝɹɯɐuʎ‬",
-    "description": ""
-  },
-  "settings#egress-region#help-text": {
-    "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ \"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\", ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
-    "description": ""
-  },
-  "settings#vpn-incompatible-msg": {
-    "message": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮ɅԀN‬ ‮ɯopǝ‬.)",
-    "description": ""
-  },
-  "settings#vpn-mode#heading": {
-    "message": "‮ɅԀN‬ ‮Wopǝ‬",
-    "description": ""
-  },
-  "settings#vpn-mode#check-label": {
-    "message": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
-    "description": ""
-  },
-  "settings#vpn-mode#help-text": {
-    "message": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬.",
-    "description": ""
-  },
-  "settings#local-proxy-ports#heading": {
-    "message": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇs‬",
-    "description": ""
-  },
-  "settings#local-proxy-ports#leave-blank": {
-    "message": "‮˥ǝɐʌǝ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮doɹʇ‬ ‮sǝʅǝɔʇıou‬ (‮ɹǝɔoɯɯǝupǝp‬).",
-    "description": ""
-  },
-  "settings#local-proxy-ports#http-label": {
-    "message": "‮H⊥⊥Ԁ‬/‮H⊥⊥ԀS‬",
-    "description": ""
-  },
-  "settings#port-value-error-msg": {
-    "message": "‮Wnsʇ‬ ‮qǝ‬ ‮qǝʇʍǝǝu‬ 1 ‮ɐup‬ 65535.",
-    "description": ""
-  },
-  "settings#local-proxy-ports#socks-label": {
-    "message": "‮SOↃӼS‬",
-    "description": ""
-  },
-  "settings#upstream-proxy#heading": {
-    "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬",
-    "description": ""
-  },
-  "settings#upstream-proxy#by-default": {
-    "message": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
-    "description": ""
-  },
-  "settings#upstream-proxy#hostname-label": {
-    "message": "‮Hosʇuɐɯǝ‬",
-    "description": ""
-  },
-  "settings#upstream-proxy#port-label": {
-    "message": "‮Ԁoɹʇ‬",
-    "description": ""
-  },
-  "settings#upstream-proxy#skip-label": {
-    "message": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
-    "description": ""
-  },
-  "settings#split-tunnel#heading": {
-    "message": "‮Sdʅıʇ‬ ‮⊥nuuǝʅ‬",
-    "description": ""
-  },
-  "settings#split-tunnel#not-yet-supported": {
-    "message": "(‮Noʇ‬ ‮ʎǝʇ‬ ‮snddoɹʇǝp‬!)",
-    "description": ""
-  },
-  "settings#split-tunnel#help-text": {
-    "message": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
-    "description": ""
-  },
-  "settings#split-tunnel#enable-label": {
-    "message": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮poɯǝsʇıɔ‬ ‮ʍǝqsıʇǝs‬",
+  "feedback#text_feedback_prompt": {
+    "message": "‮Ԁʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ɔoɯɯǝuʇs‬ ‮ɥǝɹǝ‬:",
     "description": ""
   },
   "feedback#top_content_title": {
@@ -179,40 +79,140 @@
     "message": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
     "description": ""
   },
-  "feedback#smiley_happy": {
-    "message": "‮Ԁsıdɥou‬ ‮ɔouuǝɔʇs‬ ‮ɐup‬ ‮dǝɹɟoɹɯs‬ ‮ʇɥǝ‬ ‮ʍɐʎ‬ ‮I‬ ‮ʍɐuʇ‬ ‮ıʇ‬ ‮ʇo‬.",
-    "description": ""
-  },
-  "feedback#smiley_sad": {
-    "message": "‮Ԁsıdɥou‬ ‮oɟʇǝu‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮oɹ‬ ‮poǝsu‬'‮ʇ‬ ‮dǝɹɟoɹɯ‬ ‮ʍǝʅʅ‬ ‮ǝuonƃɥ‬.",
-    "description": ""
-  },
-  "feedback#text_feedback_prompt": {
-    "message": "‮Ԁʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ɔoɯɯǝuʇs‬ ‮ɥǝɹǝ‬:",
-    "description": ""
-  },
-  "feedback#text_feedback_email_prompt": {
-    "message": "‮Iɟ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ns‬ ‮ʇo‬ ‮ɹǝsdoup‬ ‮ʇo‬ ‮ʎon‬, ‮dʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ǝɯɐıʅ‬ ‮ɐppɹǝss‬:",
-    "description": ""
-  },
-  "feedback#diagnostic_check": {
-    "message": "‮∩dʅoɐp‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬. ‮Ԁʅǝɐsǝ‬ ‮uoʇǝ‬ ‮ʇɥɐʇ‬ ‮ʇɥıs‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬ ‮poǝs‬ ‮uoʇ‬ ‮ıpǝuʇıɟʎ‬ ‮ʎon‬, ‮ɐup‬ ‮ıʇ‬ ‮ʍıʅʅ‬ ‮ɥǝʅd‬ ‮ns‬ ‮ʇo‬ ‮ʞǝǝd‬ ‮Ԁsıdɥou‬ ‮ɹnuuıuƃ‬ ‮sɯooʇɥʅʎ‬. <a class=\"DataCollectionInfoURL\" href=\"#\">‮Ↄʅıɔʞ‬ ‮ɥǝɹǝ‬ ‮ʇo‬ ‮sǝǝ‬ ‮ʍɥɐʇ‬ ‮pɐʇɐ‬ ‮ʍǝ‬ ‮ɔoʅʅǝɔʇ‬.</a>",
-    "description": ""
-  },
-  "feedback#submit_button": {
-    "message": "‮Snqɯıʇ‬",
-    "description": ""
-  },
-  "feedback#text_feedback_bottom_para": {
-    "message": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
-    "description": ""
-  },
-  "feedback#success-message": {
-    "message": "<‮sʇɹouƃ‬>‮⊥ɥɐuʞ‬ ‮ʎon‬!</‮sʇɹouƃ‬> ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮sǝuʇ‬.",
-    "description": "Message shown to user after their feedback has been sent successufully"
-  },
   "messages#show-debug-label": {
     "message": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
+    "description": ""
+  },
+  "nav#connection": {
+    "message": "‮Ↄouuǝɔʇıou‬",
+    "description": ""
+  },
+  "nav#feedback": {
+    "message": "‮ɟǝǝpqɐɔʞ‬",
+    "description": ""
+  },
+  "nav#messages": {
+    "message": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
+    "description": ""
+  },
+  "nav#settings": {
+    "message": "‮Sǝʇʇıuƃs‬",
+    "description": ""
+  },
+  "settings#egress-region#heading": {
+    "message": "‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬",
+    "description": ""
+  },
+  "settings#egress-region#help-text": {
+    "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ \"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\", ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
+    "description": ""
+  },
+  "settings#egress-region#select-best-performance": {
+    "message": "‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬",
+    "description": ""
+  },
+  "settings#egress-region#select-de": {
+    "message": "‮פǝɹɯɐuʎ‬",
+    "description": ""
+  },
+  "settings#egress-region#select-gb": {
+    "message": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
+    "description": ""
+  },
+  "settings#egress-region#select-jp": {
+    "message": "‮ſɐdɐu‬",
+    "description": ""
+  },
+  "settings#egress-region#select-label": {
+    "message": "‮Sǝʅǝɔʇ‬ ‮pǝsıɹǝp‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬:",
+    "description": ""
+  },
+  "settings#egress-region#select-nl": {
+    "message": "‮Nǝʇɥǝɹʅɐups‬",
+    "description": ""
+  },
+  "settings#egress-region#select-sg": {
+    "message": "‮Sıuƃɐdoɹǝ‬",
+    "description": ""
+  },
+  "settings#egress-region#select-us": {
+    "message": "‮∩uıʇǝp‬ ‮Sʇɐʇǝs‬",
+    "description": ""
+  },
+  "settings#error-alert": {
+    "message": "<strong>‮Ǝɹɹoɹ‬!</strong> ‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ıuɔoɹɹǝɔʇ‬ ‮ʌɐʅnǝs‬ ‮qǝɟoɹǝ‬ ‮dɹoɔǝǝpıuƃ‬.",
+    "description": ""
+  },
+  "settings#local-proxy-ports#heading": {
+    "message": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇs‬",
+    "description": ""
+  },
+  "settings#local-proxy-ports#http-label": {
+    "message": "‮H⊥⊥Ԁ‬/‮H⊥⊥ԀS‬",
+    "description": ""
+  },
+  "settings#local-proxy-ports#leave-blank": {
+    "message": "‮˥ǝɐʌǝ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮doɹʇ‬ ‮sǝʅǝɔʇıou‬ (‮ɹǝɔoɯɯǝupǝp‬).",
+    "description": ""
+  },
+  "settings#local-proxy-ports#socks-label": {
+    "message": "‮SOↃӼS‬",
+    "description": ""
+  },
+  "settings#port-value-error-msg": {
+    "message": "‮Wnsʇ‬ ‮qǝ‬ ‮qǝʇʍǝǝu‬ 1 ‮ɐup‬ 65535.",
+    "description": ""
+  },
+  "settings#split-tunnel#enable-label": {
+    "message": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮poɯǝsʇıɔ‬ ‮ʍǝqsıʇǝs‬",
+    "description": ""
+  },
+  "settings#split-tunnel#heading": {
+    "message": "‮Sdʅıʇ‬ ‮⊥nuuǝʅ‬",
+    "description": ""
+  },
+  "settings#split-tunnel#help-text": {
+    "message": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
+    "description": ""
+  },
+  "settings#split-tunnel#not-yet-supported": {
+    "message": "(‮Noʇ‬ ‮ʎǝʇ‬ ‮snddoɹʇǝp‬!)",
+    "description": ""
+  },
+  "settings#upstream-proxy#by-default": {
+    "message": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
+    "description": ""
+  },
+  "settings#upstream-proxy#heading": {
+    "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬",
+    "description": ""
+  },
+  "settings#upstream-proxy#hostname-label": {
+    "message": "‮Hosʇuɐɯǝ‬",
+    "description": ""
+  },
+  "settings#upstream-proxy#port-label": {
+    "message": "‮Ԁoɹʇ‬",
+    "description": ""
+  },
+  "settings#upstream-proxy#skip-label": {
+    "message": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
+    "description": ""
+  },
+  "settings#vpn-incompatible-msg": {
+    "message": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮ɅԀN‬ ‮ɯopǝ‬.)",
+    "description": ""
+  },
+  "settings#vpn-mode#check-label": {
+    "message": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
+    "description": ""
+  },
+  "settings#vpn-mode#heading": {
+    "message": "‮ɅԀN‬ ‮Wopǝ‬",
+    "description": ""
+  },
+  "settings#vpn-mode#help-text": {
+    "message": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬.",
     "description": ""
   }
 }
