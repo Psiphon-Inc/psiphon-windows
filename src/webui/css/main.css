@@ -5212,6 +5212,32 @@ body {
 * {
   outline: 0 !important;
 }
+.psiphon-header {
+  *zoom: 1;
+  padding-top: 5px;
+}
+.psiphon-header:before,
+.psiphon-header:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.psiphon-header:after {
+  clear: both;
+}
+.psiphon-header .logo {
+  padding-left: 2em;
+  padding-right: 2em;
+}
+body[dir="ltr"] .psiphon-header .logo {
+  float: left;
+}
+body[dir="rtl"] .psiphon-header .logo {
+  float: right;
+}
+.psiphon-header .logo img {
+  height: 60px;
+}
 .nav,
 .nav ul {
   margin-bottom: 0;

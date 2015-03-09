@@ -45,6 +45,28 @@ body {
   outline: 0 !important;
 }
 
+.psiphon-header {
+  .clearfix;
+  padding-top: 5px;
+
+  & .logo {
+    padding-left: 2em;
+    padding-right: 2em;
+
+    body[dir="ltr"] & {
+      .pull-left;
+    }
+
+    body[dir="rtl"] & {
+      .pull-right;
+    }
+
+    & img {
+      height: 60px;
+    }
+  }
+}
+
 .main-container {
 }
 

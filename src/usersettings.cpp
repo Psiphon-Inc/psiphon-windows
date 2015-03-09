@@ -67,6 +67,9 @@
 #define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
 
+#define COOKIES_NAME                    "UICookies"
+#define COOKIES_DEFAULT                 ""
+
 static HANDLE g_registryMutex = CreateMutex(NULL, FALSE, 0);
 
 int GetSettingDword(const string& settingName, int defaultValue, bool writeDefault=false)
@@ -342,4 +345,16 @@ bool Settings::SkipProxySettings()
 bool Settings::SkipAutoConnect()
 {
     return !!GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT);
+}
+
+void Settings::SetCookies(const string& value)
+{
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+    (void)WriteRegistryStringValue(COOKIES_NAME, value, reason);
+    // ignoring failures
+}
+
+string Settings::GetCookies()
+{
+    return GetSettingString(COOKIES_NAME, COOKIES_DEFAULT);
 }

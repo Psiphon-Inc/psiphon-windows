@@ -78,7 +78,8 @@ void OnCreate(HWND hWndParent)
     Settings::ToJson(settingsJSON);
     initJSON["Settings"] = settingsJSON;
     initJSON["Language"] = TStringToNarrow(GetLocaleName());
-    Json::FastWriter jsonWriter;    
+    initJSON["Cookies"] = Settings::GetCookies();
+    Json::FastWriter jsonWriter;
     tstring initJsonString = NarrowToTString(jsonWriter.write(initJSON));
 
     tstring url = ResourceToUrl(_T("main.html"), NULL);
@@ -284,6 +285,8 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
     const size_t appUpdateSettingsLen = _tcslen(appUpdateSettings);
     const LPCTSTR appSendFeedback = _T("app:sendfeedback?");
     const size_t appSendFeedbackLen = _tcslen(appSendFeedback);
+    const LPCTSTR appSetCookies = _T("app:setcookies?");
+    const size_t appSetCookiesLen = _tcslen(appSetCookies);
 
     if (_tcscmp(url, appStart) == 0)
     {
@@ -319,6 +322,14 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
         string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
         my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
         g_connectionManager.SendFeedback(NarrowToTString(stringJSON).c_str());
+    }
+    else if (_tcsncmp(url, appSetCookies, appSetCookiesLen) == 0
+        && _tcslen(url) > appSetCookiesLen)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Set cookies requested"), __TFUNCTION__);
+        tstring uriEncoded(url + appSetCookiesLen);
+        string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
+        Settings::SetCookies(stringJSON);
     }
     delete[] url;
 }

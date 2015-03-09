@@ -49,4 +49,8 @@ namespace Settings
     bool SkipBrowser();
     bool SkipProxySettings();
     bool SkipAutoConnect();
+
+    // These are used by the web UI
+    void SetCookies(const string& value);
+    string GetCookies();
 }

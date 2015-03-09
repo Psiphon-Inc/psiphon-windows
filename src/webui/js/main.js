@@ -492,7 +492,10 @@ var RTL_LOCALES = ['devrtl', 'fa', 'ar', 'he'];
 
 $(function() {
   var fallbackLanguage = 'en';
-  var lang = g_initObj.Language || fallbackLanguage;
+
+  // Language priority: cookie, system locale, fallback
+  var lang = getCookie('language') || g_initObj.Language || fallbackLanguage;
+
   i18n.init(
     {
       lang: lang,
@@ -513,6 +516,9 @@ function switchLocale(locale) {
     // The content of elements will have changed, so trigger custom event that can
     // be listened for to take additional actions.
     $window.trigger(LANGUAGE_CHANGE_EVENT);
+
+    // Remember the user's choice
+    setCookie('language', locale);
   });
 
   //
@@ -592,6 +598,22 @@ function doMatchHeight() {
   }
 }
 
+//
+// We don't have the ability to use real cookies or DOM storage, so we'll store
+// persistent stuff in the registry via the win32 code.
+//
+
+var g_cookies = g_initObj.Cookies ? JSON.parse(g_initObj.Cookies) : {};
+
+function getCookie(name) {
+  return g_cookies[name];
+}
+
+function setCookie(name, value) {
+  g_cookies[name] = value;
+  HtmlCtrlInterface_SetCookies(JSON.stringify(g_cookies));
+}
+
 
 /* INTERFACE METHODS *********************************************************/
 
@@ -651,6 +673,12 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
     window.location = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
+  }, 1);
+}
+
+function HtmlCtrlInterface_SetCookies(cookiesJSON) {
+  setTimeout(function() {
+    window.location = 'app:setcookies?' + encodeURIComponent(cookiesJSON);
   }, 1);
 }
 
