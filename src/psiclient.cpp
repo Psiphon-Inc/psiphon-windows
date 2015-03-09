@@ -235,10 +235,13 @@ static void HtmlUI_AddMessageHandler(LPCWSTR json)
         return;
     }
 
-    MC_HMCALLSCRIPTFN argStruct = { 0 };
-    argStruct.pszFnName = _T("HtmlCtrlInterface_AddMessage");
-    argStruct.pszArguments = json;
-    (void)SendMessage(g_hHtmlCtrl, MC_HM_CALLSCRIPTFN, (WPARAM)&argStruct, NULL);
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    (void)SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC, 
+        (WPARAM)_T("HtmlCtrlInterface_AddMessage"), (LPARAM)&argStruct);
     delete[] json;
 }
 
@@ -259,10 +262,13 @@ static void HtmlUI_SetStateHandler(LPCWSTR json)
         return;
     }
 
-    MC_HMCALLSCRIPTFN argStruct = { 0 };
-    argStruct.pszFnName = _T("HtmlCtrlInterface_SetState");
-    argStruct.pszArguments = json;
-    (void)SendMessage(g_hHtmlCtrl, MC_HM_CALLSCRIPTFN, (WPARAM)&argStruct, NULL);
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    (void)SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC, 
+        (WPARAM)_T("HtmlCtrlInterface_SetState"), (LPARAM)&argStruct);
     delete[] json;
 }
 

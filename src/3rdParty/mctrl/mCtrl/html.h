@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2012 Martin Mitas
+ * Copyright (c) 2008-2015 Martin Mitas
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -101,7 +101,7 @@ extern "C" {
  * interpret application link URLs in any way.
  *
  *
- * @section html_generated_contents Generated Contents
+ * @section html_generated_contents Dynamically Generated Contents
  *
  * Generating HTML contents programmatically is also possible to some degree.
  * Note however that the application is not supposed to generate whole
@@ -129,24 +129,34 @@ extern "C" {
  * injected by application code into the HTML pages.
  *
  *
+ * @section html_script Calling Script Function
+ *
+ * The control supports also invoking a script (e.g. JavaScript) function
+ * within the HTML page from the application's code.
+ *
+ * There are actually two messages for this very purpose. The message @ref
+ * MC_HM_CALLSCRIPTFUNCEX is more powerful, and can call any script function,
+ * with any number of arguments of any type, and returning any type, but using
+ * this message requires manual setup of OLE variadic type (@c VARIANT) type
+ * and it requires more coding.
+ *
+ * The other message, @ref MC_HM_CALLSCRIPTFUNC, is easier to use but its use
+ * imposes some limitations: It can only deal with script functions with up
+ * to four arguments, and all arguments, as well as any return value, must be
+ * of string or integer type.
+ *
+ *
  * @section html_gotchas Gotchas
  *
  * - Keep in mind that the control is relatively thin wrapper of embedded MS
  *   Internet Explorer so exact behavior depends on the version of MS IE
  *   installed.
  *
- * - The HTML control implementation is based on OLE and COM technologies.
- *   During creation of the control @c OleInitialize() is called. I.e.
- *   the OLE subsystem is initialized for every thread which creates
- *   the HTML control. @c OleUninitialize() is similarly called when the
- *   control is destroyed.
- *
  * - The value of the URL in notifications might not match the URL that was
  *   originally given to the HTML control, because the URL might be converted
- *   to a qualified form. For example, the IE sometimes adds slash ('/') after
- *   URLs having two slashes after protocol and of there is no slash after.
- *   Furthermore IE can encode some special characters into their hexadecimal
- *   representation (i.e. space ' ' becomes "%20").
+ *   to a qualified form. For example, the IE sometimes may add a slash ('/')
+ *   at the end of some URLs. Furthermore IE can encode some special characters
+ *   into their hexadecimal representation (e.g. space ' ' becomes "%20").
  *
  *
  * @section std_msgs Standard Messages
@@ -200,6 +210,113 @@ void MCTRL_API mcHtml_Terminate(void);
 
 /** @brief Disables context menu */
 #define MC_HS_NOCONTEXTMENU    0x0001
+
+/*@}*/
+
+
+/**
+ * @name Message Structures
+ */
+/*@{*/
+
+/**
+ * @brief Structure for message @ref MC_HM_CALLSCRIPTFUNCW request (Unicode variant).
+ * @sa MC_HM_CALLSCRIPTFUNCW
+ */
+typedef struct MC_HMCALLSCRIPTFUNCW_tag {
+    /** Set to @c sizeof(MC_HMCALLSCRIPTFUNCW). */
+    UINT cbSize;
+    /** Set to address of a buffer to store string result of the function call,
+     *  or to @c NULL if the expected return value is of integer type or
+     *  there is no return value. */
+    LPWSTR pszRet;
+    /** If @c pszRet is not @c NULL, set to size of the buffer. If @c pszRet
+     *  is @c NULL and the function returns integer, it is stored here. */
+    int iRet;
+    /** Set to number of arguments passed to the function. (Four at most.) */
+    UINT cArgs;
+    /** Specify 1st argument (if it is of string type). */
+    LPCWSTR pszArg1;
+    /** Specify 1st argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg1;
+    /** Specify 2nd argument (if it is of string type). */
+    LPCWSTR pszArg2;
+    /** Specify 2nd argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg2;
+    /** Specify 3rd argument (if it is of string type). */
+    LPCWSTR pszArg3;
+    /** Specify 3rd argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg3;
+    /** Specify 4th argument (if it is of string type). */
+    LPCWSTR pszArg4;
+    /** Specify 4th argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg4;
+} MC_HMCALLSCRIPTFUNCW;
+
+/**
+ * @brief Structure for message @ref MC_HM_CALLSCRIPTFUNCA request (ANSI variant).
+ * @sa MC_HM_CALLSCRIPTFUNCA
+ */
+typedef struct MC_HMCALLSCRIPTFUNCA_tag {
+    /** Set to @c sizeof(MC_HMCALLSCRIPTFUNCA). */
+    UINT cbSize;
+    /** Set to address of a buffer to store string result of the function call,
+     *  or to @c NULL if the expected return value is of integer type or
+     *  there is no return value. */
+    LPCSTR pszRet;
+    /** If @c pszRet is not @c NULL, set to size of the buffer. If @c pszRet
+     *  is @c NULL and the function returns integer, it is stored here. */
+    int iRet;
+    /** Set to number of arguments passed to the function. (Four at most.) */
+    UINT cArgs;
+    /** Specify 1st argument (if it is of string type). */
+    LPCSTR pszArg1;
+    /** Specify 1st argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg1;
+    /** Specify 2nd argument (if it is of string type). */
+    LPCSTR pszArg2;
+    /** Specify 2nd argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg2;
+    /** Specify 3rd argument (if it is of string type). */
+    LPCSTR pszArg3;
+    /** Specify 3rd argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg3;
+    /** Specify 4th argument (if it is of string type). */
+    LPCSTR pszArg4;
+    /** Specify 4th argument (if it is of integer type). Ignored if
+     *  @c pszArg1 is not @c NULL. */
+    int iArg4;
+} MC_HMCALLSCRIPTFUNCA;
+
+/**
+ * @brief Structure for message @ref MC_HM_CALLSCRIPTFUNCEX.
+ * @sa MC_HM_CALLSCRIPTFUNCEX
+ */
+typedef struct MC_HMCALLSCRIPTFUNCEX_tag {
+    /** Set to @c sizeof(MC_HMCALLSCRIPTFUNCEX). */
+    UINT cbSize;
+    /** Name of function to call. */
+    const LPCOLESTR pszFuncName;
+    /** Pointer to array of arguments to be passed to the function. */
+    VARIANT* lpvArgs;
+    /** Count of the arguments. */
+    UINT cArgs;
+    /** Pointer to @c VARIANT which receives the return value.
+     *  May be @c NULL if caller does not expect to get a return value
+     *  (or if the caller ignores it).
+     *  If not @c NULL, the caller should initialize it to @c VT_EMPTY
+     *  before making the call and, after it returns, the caller is responsible
+     *  for its contents. I.e. if the returned type is @c VT_BSTR, the caller
+     *  must eventually free the string with @c SysFreeString(). */
+    VARIANT* lpRet;
+} MC_HMCALLSCRIPTFUNCEX;
 
 /*@}*/
 
@@ -263,33 +380,44 @@ void MCTRL_API mcHtml_Terminate(void);
  */
 #define MC_HM_CANBACK         (MC_HM_FIRST + 15)
 
-/*PSIPHON*/
 /**
-* @brief Calls script in HTML page, passing optional arguments, returning optional result (Unicode variant).
-* @param[in] wParam (@c MC_HMCALLSCRIPTFN) Pointer to structure containing function name, 
-*   arguments to function, etc. @sa MC_HMCALLSCRIPTFN
-* @param[out] lParam String buffer to receive result of function. Optional; may be NULL.
-* @return (@c int) @c 0 if successful, @c -1 for generic error, other values for specific 
-*   errors (like @c ERROR_INSUFFICIENT_BUFFER).
-*/
-#define MC_HM_CALLSCRIPTFNW   (MC_HM_FIRST + 16)
+ * @brief Calls script function in HTML page (Unicode variant).
+ * @param[in] wParam (@c LPCWSTR*) Name of the function to call.
+ * @param[in,out] lParam (@ref MC_HMCALLSCRIPTFUNCW*) Pointer to a function
+ * specifying function arguments and receiving the return value. May be @c NULL
+ * if the function takes no arguments and returns no value (or the return value
+ * is ignored).
+ * @return (@c BOOL) @c TRUE on success, @c FALSE otherwise.
+ */
+#define MC_HM_CALLSCRIPTFUNCW    (MC_HM_FIRST + 16)
 
 /**
-* @brief Calls script in HTML page, passing optional arguments, returning optional result (ANSI variant).
-* @param[in] wParam (@c MC_HMCALLSCRIPTFN) Pointer to structure containing function name,
-*   arguments to function, etc. @sa MC_HMCALLSCRIPTFN
-* @param[out] lParam String buffer to receive result of function. Optional; may be NULL.
-* @return (@c int) @c 0 if successful, @c -1 for generic error, other values for specific
-*   errors (like @c ERROR_INSUFFICIENT_BUFFER).
-*/
-#define MC_HM_CALLSCRIPTFNA   (MC_HM_FIRST + 17)
-/*/PSIPHON*/
+ * @brief Calls script function in HTML page (ANSI variant).
+ * @param[in] wParam (@c LPCSTR*) Name of the function to call.
+ * @param[in,out] lParam (@ref MC_HMCALLSCRIPTFUNCA*) Pointer to a function
+ * specifying function arguments and receiving the return value. May be @c NULL
+ * if the function takes no arguments and returns no value (or the return value
+ * is ignored).
+ * @return (@c BOOL) @c TRUE on success, @c FALSE otherwise.
+ */
+#define MC_HM_CALLSCRIPTFUNCA    (MC_HM_FIRST + 17)
+
+/**
+ * @brief Call script function in HTML page.
+ * @param wParam Reserved, set to zero.
+ * @param[in,out] lParam (@ref MC_HMCALLSCRIPTFUNCEX*) Pointer to structure
+ * specifying function to call, arguments to pass, and receiving the return
+ * value.
+ * @return (@c HRESULT) @c S_OK if the call was invokes successfully,
+ * otherwise the @c HRESULT code of the error.
+ */
+#define MC_HM_CALLSCRIPTFUNCEX   (MC_HM_FIRST + 18)
 
 /*@}*/
 
 
 /**
- * @name Structures
+ * @name Notifications Structures
  */
 /*@{*/
 
@@ -388,40 +516,6 @@ typedef struct MC_NMHTTPERRORA_tag {
     /** HTTP status code. */
     int iStatus;
 } MC_NMHTTPERRORA;
-
-/*PSIPHON*/
-/**
-* @brief Structure used to pass arguments in @c MC_HM_CALLSCRIPTFN request,
-* and to receive the result (Unicode variant).
-* @sa MC_HM_CALLSCRIPTFN
-*/
-typedef struct MC_HMCALLSCRIPTFNW_tag {
-    /** The name of the function to call. */
-    LPCWSTR pszFnName;
-    /** The argument (e.g. JSON encoded) to pass to the function. 
-        Optional. */
-    LPCWSTR pszArguments;
-    /** The size of the result buffer -- in characters passed as LPARAM. 
-        Can be zero if no result needed. */
-    UINT iResultBufCharCount;
-} MC_HMCALLSCRIPTFNW;
-
-/**
-* @brief Structure used to pass arguments in @c MC_HM_CALLSCRIPTFN request,
-* and to receive the result (ANSI variant).
-* @sa MC_HM_CALLSCRIPTFN
-*/
-typedef struct MC_HMCALLSCRIPTFNA_tag {
-    /** The name of the function to call. */
-    LPCSTR pszFnName;
-    /** The argument (e.g. JSON encoded) to pass to the function.
-    Optional. */
-    LPCSTR pszArguments;
-    /** The size of the result buffer -- in characters passed as LPARAM.
-    Can be zero if no result needed. */
-    UINT iResultBufCharCount;
-} MC_HMCALLSCRIPTFNA;
-/*/PSIPHON*/
 
 /*@}*/
 
@@ -541,19 +635,16 @@ typedef struct MC_HMCALLSCRIPTFNA_tag {
 #define MC_HM_GOTOURL          MCTRL_NAME_AW(MC_HM_GOTOURL)
 /** Unicode-resolution alias. @sa MC_HM_SETTAGCONTENTSW MC_HM_SETTAGCONTENTSA */
 #define MC_HM_SETTAGCONTENTS   MCTRL_NAME_AW(MC_HM_SETTAGCONTENTS)
+/** Unicode-resolution alias. @sa MC_HM_CALLSCRIPTFNW MC_HM_CALLSCRIPTFNA */
+#define MC_HM_CALLSCRIPTFUNC   MCTRL_NAME_AW(MC_HM_CALLSCRIPTFUNC)
 /** Unicode-resolution alias. @sa MC_NMHTMLURLW MC_NMHTMLURLA */
 #define MC_NMHTMLURL           MCTRL_NAME_AW(MC_NMHTMLURL)
 /** Unicode-resolution alias. @sa MC_NMHTMLTEXTW MC_NMHTMLTEXTA */
 #define MC_NMHTMLTEXT          MCTRL_NAME_AW(MC_NMHTMLTEXT)
 /** Unicode-resolution alias. @sa MC_NMHTTPERRORW MC_NMHTTPERRORA */
 #define MC_NMHTTPERROR         MCTRL_NAME_AW(MC_NMHTTPERROR)
-
-/*PSIPHON*/
-/** Unicode-resolution alias. @sa MC_HM_CALLSCRIPTFNW MC_HM_CALLSCRIPTFNA */
-#define MC_HM_CALLSCRIPTFN     MCTRL_NAME_AW(MC_HM_CALLSCRIPTFN)
-/** Unicode-resolution alias. @sa MC_HMCALLSCRIPTFNW MC_HMCALLSCRIPTFNA */
-#define MC_HMCALLSCRIPTFN      MCTRL_NAME_AW(MC_HMCALLSCRIPTFN)
-/*/PSIPHON*/
+/** Unicode-resolution alias. @sa MC_HMCALLSCRIPTFUNCW MC_HMCALLSCRIPTFUNCA */
+#define MC_HMCALLSCRIPTFUNC   MCTRL_NAME_AW(MC_HMCALLSCRIPTFUNC)
 
 /*@}*/
 
