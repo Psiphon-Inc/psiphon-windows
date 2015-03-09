@@ -28,12 +28,16 @@ var $window = $(window);
 // Fired when the UI language changes
 var LANGUAGE_CHANGE_EVENT = 'language-change';
 
+// We often test in-browser and need to behave a bit differently
+var IS_BROWSER = true;
+
 // Parse whatever JSON parameters were passed by the application.
 var g_initObj = {};
 (function() {
   var uriSearch = location.search;
   if (uriSearch) {
     g_initObj = JSON.parse(decodeURIComponent(uriSearch.slice(1)));
+    IS_BROWSER = false;
   }
 })();
 
@@ -625,20 +629,7 @@ function HtmlCtrlInterface_AddMessage(jsonArgs) {
 
 function HtmlCtrlInterface_SetState(jsonArgs) {
   setTimeout(function() {
-    $('#status').text(jsonArgs);
     var args = JSON.parse(jsonArgs);
-    $('#start').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
-    $('#stop').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
-    $('#connect').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
-    $('#disconnect').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
-    if (args.state === 'started' || args.state === 'starting') {
-      $('.toggle-connect .toggle-on').toggleClass('btn-success', args.state === 'started')
-        .toggleClass('btn-warning', args.state === 'starting');
-    }
-    else {
-      $('.toggle-connect .toggle-off').toggleClass('btn-danger', args.state === 'stopped')
-        .toggleClass('btn-warning', args.state === 'stopping');
-    }
     g_lastState = args.state;
     updateConnectToggle();
   }, 1);
@@ -650,7 +641,13 @@ function HtmlCtrlInterface_Start() {
     return;
   }
   setTimeout(function() {
-    window.location = 'app:start';
+    var appURL = 'app:start';
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
   }, 1);
 }
 
@@ -660,25 +657,49 @@ function HtmlCtrlInterface_Stop() {
     return;
   }
   setTimeout(function() {
-    window.location = 'app:stop';
+    var appURL = 'app:stop';
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
   }, 1);
 }
 
 function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
-    window.location = 'app:updatesettings?' + encodeURIComponent(settingsJSON);
+    var appURL = 'app:updatesettings?' + encodeURIComponent(settingsJSON);
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
   }, 1);
 }
 
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
-    window.location = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
+    var appURL = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
   }, 1);
 }
 
 function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   setTimeout(function() {
-    window.location = 'app:setcookies?' + encodeURIComponent(cookiesJSON);
+    var appURL = 'app:setcookies?' + encodeURIComponent(cookiesJSON);
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
   }, 1);
 }
 
