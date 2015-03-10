@@ -562,7 +562,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 
-        900, 470,
+        780, 580,
         NULL, NULL, hInstance, NULL);
 
     // Don't show the window until the content loads.
@@ -613,8 +613,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_GETMINMAXINFO:
     {
         MINMAXINFO* mmi = (MINMAXINFO*)lParam;
-        mmi->ptMinTrackSize.x = 525;
-        mmi->ptMinTrackSize.y = 400;
+        mmi->ptMinTrackSize.x = 680;
+        mmi->ptMinTrackSize.y = 410;
         break;
     }
 

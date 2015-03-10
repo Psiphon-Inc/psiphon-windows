@@ -20,6 +20,11 @@
 @import "vendor/bootstrap-2.3.2/less/responsive.less";
 @import "_rtl-support.less";
 
+
+@psiPrimary: #3A2319;
+@psiHightlight: #D43F27;
+@psiSecondary: #9E8E5F;
+
 html {
   height: 100%;
   margin: 0;
@@ -35,6 +40,9 @@ body {
   margin: 0;
   padding: 0;
   overflow-y: hidden;
+
+  /* Background pattern from subtlepatterns.com */
+  background-image: url(background.png);
 }
 
 // The element focus outlines spoils the illusion of being an app vs. a webpage.
@@ -48,38 +56,67 @@ body {
 
 /* HEADER AND NAV */
 
+@headerHeight: 70px;
+@headerPad: 10px;
+@headerBannerHeight: @headerHeight;
+@headerLogoHeight: 100px;
+// By default the nav top is at @headerHeight, but we want it to be below the
+// bottom of the logo image (with pad).
+@navTopPad: @headerLogoHeight - @headerHeight;
+
 .psiphon-header {
-  .clearfix;
-  padding-top: 5px;
+  height: @headerHeight;
+  padding: @headerPad @headerPad @headerPad (@headerLogoHeight + 2*@headerPad);
+
+  background-color: @psiPrimary;
+
+  & .banner img {
+    height: @headerBannerHeight;
+  }
 
   & .logo {
-    padding-left: 2em;
-    padding-right: 2em;
+    position: absolute;
 
     body[dir="ltr"] & {
-      .pull-left;
+      left: 20px
     }
 
     body[dir="rtl"] & {
-      .pull-right;
+      right: 20px
     }
 
     & img {
-      height: 60px;
+      height: 100px;
     }
   }
 }
 
 .nav, .nav ul {
+  padding-top: @navTopPad;
   margin-bottom: 0;
 }
 
-.nav-tabs > .active > a,
-.nav-tabs > .active > a:hover,
-.nav-tabs > .active > a:focus {
-  color: @white;
-  background-color: @linkColor;
-  outline: none;
+.nav-tabs {
+  background-color: @psiPrimary;
+
+  & > li > a {
+    outline: none;
+    color: @white;
+  }
+
+  & > li > a:hover,
+  & > li > a:focus {
+    color: @psiPrimary;
+    background-color: lighten(@psiSecondary, 30%);
+  }
+
+  & > .active > a,
+  & > .active > a:hover,
+  & > .active > a:focus {
+    outline: none;
+    color: @white;
+    background-color: @psiHightlight;
+  }
 }
 
 .main-nav {
@@ -104,10 +141,6 @@ body {
     display: inline-block;
     .ie7-inline-block();
   }
-}
-
-.banner img {
-  height: 60px;
 }
 
 .tab-content > .tab-pane {
