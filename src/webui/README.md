@@ -32,7 +32,6 @@ $ node fake-translations.js
 * Clean up psiclient code.
 * Add flags to egress region combo
 * Add settings reset button?
-* Fix: Delete key doesn't work in Settings (or in Feedback?). Nor does Tab. 
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 
