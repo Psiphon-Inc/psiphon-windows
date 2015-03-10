@@ -42,7 +42,7 @@ body {
   overflow-y: hidden;
 
   /* Background pattern from subtlepatterns.com */
-  background-image: url(background.png);
+  background-image: url(../background.png);
 }
 
 // The element focus outlines spoils the illusion of being an app vs. a webpage.
@@ -66,7 +66,14 @@ body {
 
 .psiphon-header {
   height: @headerHeight;
-  padding: @headerPad @headerPad @headerPad (@headerLogoHeight + 2*@headerPad);
+
+  body[dir="ltr"] & {
+    padding: @headerPad @headerPad @headerPad (@headerLogoHeight + 2*@headerPad);
+  }
+
+  body[dir="rtl"] & {
+    padding: @headerPad (@headerLogoHeight + 2*@headerPad) @headerPad @headerPad;
+  }
 
   background-color: @psiPrimary;
 
