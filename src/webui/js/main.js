@@ -39,9 +39,22 @@ var g_initObj = {};
     g_initObj = JSON.parse(decodeURIComponent(uriSearch.slice(1)));
     IS_BROWSER = false;
   }
+
+  // For browser debugging
+  if (IS_BROWSER) {
+    g_initObj = {
+      Config: {
+        Language: 'en',
+        Banner: 'banner.png'
+      }
+    };
+  }
 })();
 
 $(function() {
+  // The banner image filename is parameterized.
+  $('.banner img').attr('src', g_initObj.Config.Banner);
+
   // Update the size of our tab content element when the window resizes...
   var lastWindowHeight = $window.height();
   var lastWindowWidth = $window.width();
@@ -498,7 +511,9 @@ $(function() {
   var fallbackLanguage = 'en';
 
   // Language priority: cookie, system locale, fallback
-  var lang = getCookie('language') || g_initObj.Language || fallbackLanguage;
+  var lang = getCookie('language') ||
+              (g_initObj.Config && g_initObj.Config.Language) ||
+              fallbackLanguage;
 
   i18n.init(
     {

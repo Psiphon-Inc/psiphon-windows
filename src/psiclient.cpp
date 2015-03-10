@@ -77,8 +77,10 @@ void OnCreate(HWND hWndParent)
     Json::Value initJSON, settingsJSON;
     Settings::ToJson(settingsJSON);
     initJSON["Settings"] = settingsJSON;
-    initJSON["Language"] = TStringToNarrow(GetLocaleName());
     initJSON["Cookies"] = Settings::GetCookies();
+    initJSON["Config"] = Json::Value();
+    initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
+    initJSON["Config"]["Banner"] = string("banner.") + BANNER_FILETYPE;
     Json::FastWriter jsonWriter;
     tstring initJsonString = NarrowToTString(jsonWriter.write(initJSON));
 

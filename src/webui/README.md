@@ -28,12 +28,13 @@ $ node fake-translations.js
 
 * Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
   - Also add more branding and Psiphon-ness. Like, logo, colours, word art, ...?
-* Fix (or hide): Banner image is broken on IE7. Also, fixed-res bitmap banner is going to look shit on high-res screens. Need to change. UPDATE: Only broken because all data-URI images are broken on IE7.
 * Clean up psiclient code.
 * Add flags to egress region combo
 * Add settings reset button?
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
+* Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
+* Automation: Switch to VS2013. Banner changes/support.
 
 
 ## Technical and compatibility notes
