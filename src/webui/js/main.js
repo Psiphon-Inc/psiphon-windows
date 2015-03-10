@@ -160,7 +160,7 @@ function setupConnectToggle() {
 // Update the main connect button, as well as the connection indicator on the tab.
 function updateConnectToggle() {
   $('.connect-toggle-content').each(function() {
-    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('z-behind', $(this).data('connect-state') !== g_lastState);
   });
 
   $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {

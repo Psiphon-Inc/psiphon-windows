@@ -5212,6 +5212,7 @@ body {
 * {
   outline: 0 !important;
 }
+/* HEADER AND NAV */
 .psiphon-header {
   *zoom: 1;
   padding-top: 5px;
@@ -5285,16 +5286,6 @@ body[dir="rtl"] .tab-content > .tab-pane {
   -moz-transition: opacity 0.1s linear;
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
-}
-.global-alert {
-  position: fixed;
-  bottom: 0;
-}
-body[dir="ltr"] .global-alert {
-  right: 0;
-}
-body[dir="rtl"] .global-alert {
-  left: 0;
 }
 /* CONNECT */
 #connect-toggle {
@@ -5379,4 +5370,21 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 }
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
+}
+/* MISCELLANEOUS AND HELPERS */
+.global-alert {
+  position: fixed;
+  bottom: 0;
+}
+body[dir="ltr"] .global-alert {
+  right: 0;
+}
+body[dir="rtl"] .global-alert {
+  left: 0;
+}
+.z-behind {
+  z-index: -2;
+}
+.z-infront {
+  z-index: 2;
 }

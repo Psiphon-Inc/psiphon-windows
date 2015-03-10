@@ -12033,6 +12033,7 @@ body {
 * {
   outline: 0 !important;
 }
+/* HEADER AND NAV */
 .psiphon-header {
   *zoom: 1;
   padding-top: 5px;
@@ -12106,16 +12107,6 @@ body[dir="rtl"] .tab-content > .tab-pane {
   -moz-transition: opacity 0.1s linear;
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
-}
-.global-alert {
-  position: fixed;
-  bottom: 0;
-}
-body[dir="ltr"] .global-alert {
-  right: 0;
-}
-body[dir="rtl"] .global-alert {
-  left: 0;
 }
 /* CONNECT */
 #connect-toggle {
@@ -12200,6 +12191,23 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 }
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
+}
+/* MISCELLANEOUS AND HELPERS */
+.global-alert {
+  position: fixed;
+  bottom: 0;
+}
+body[dir="ltr"] .global-alert {
+  right: 0;
+}
+body[dir="rtl"] .global-alert {
+  left: 0;
+}
+.z-behind {
+  z-index: -2;
+}
+.z-infront {
+  z-index: 2;
 }
 
 </style>
@@ -16235,7 +16243,7 @@ function setupConnectToggle() {
 // Update the main connect button, as well as the connection indicator on the tab.
 function updateConnectToggle() {
   $('.connect-toggle-content').each(function() {
-    $(this).toggleClass('invisible', $(this).data('connect-state') !== g_lastState);
+    $(this).toggleClass('z-behind', $(this).data('connect-state') !== g_lastState);
   });
 
   $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
@@ -16704,27 +16712,9 @@ function HtmlCtrlInterface_AddMessage(jsonArgs) {
 
 function HtmlCtrlInterface_SetState(jsonArgs) {
   setTimeout(function() {
-    $('#status').text(jsonArgs);
     var args = JSON.parse(jsonArgs);
-
     g_lastState = args.state;
     updateConnectToggle();
-    console.log('aaa');
-
-    $('#start').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
-    $('#stop').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
-    $('#connect').toggleClass('disabled', (args.state === 'started' || args.state === 'starting'));
-    $('#disconnect').toggleClass('disabled', (args.state === 'stopped' || args.state === 'stopping'));
-    if (args.state === 'started' || args.state === 'starting') {
-      $('.toggle-connect .toggle-on').toggleClass('btn-success', args.state === 'started')
-        .toggleClass('btn-warning', args.state === 'starting');
-    }
-    else {
-      $('.toggle-connect .toggle-off').toggleClass('btn-danger', args.state === 'stopped')
-        .toggleClass('btn-warning', args.state === 'stopping');
-    }
-
-    console.log('bbb');
   }, 1);
 }
 
@@ -16882,7 +16872,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
         <div class="tab-pane active fade in" id="connection-pane">
           <div id="connect-toggle">
 
-            <div class="connect-toggle-content invisible well text-center alert"
+            <div class="connect-toggle-content z-behind well text-center alert"
                  data-connect-state="starting"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
@@ -16897,7 +16887,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
               </div>
             </div><!-- /starting -->
 
-            <div class="connect-toggle-content invisible well text-center alert alert-success"
+            <div class="connect-toggle-content z-behind well text-center alert alert-success"
                  data-connect-state="connected"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
@@ -16912,7 +16902,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
               </div>
             </div><!-- /connected -->
 
-            <div class="connect-toggle-content invisible well text-center alert"
+            <div class="connect-toggle-content z-behind well text-center alert"
                  data-connect-state="stopping"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
@@ -16930,7 +16920,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
               </div>
             </div><!-- /stopping -->
 
-            <div class="connect-toggle-content invisible well text-center alert alert-danger"
+            <div class="connect-toggle-content z-behind well text-center alert alert-danger"
                  data-connect-state="stopped"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>

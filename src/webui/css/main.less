@@ -45,6 +45,9 @@ body {
   outline: 0 !important;
 }
 
+
+/* HEADER AND NAV */
+
 .psiphon-header {
   .clearfix;
   padding-top: 5px;
@@ -65,9 +68,6 @@ body {
       height: 60px;
     }
   }
-}
-
-.main-container {
 }
 
 .nav, .nav ul {
@@ -127,19 +127,6 @@ body {
 .tab-pane.fade {
   // Shorten the default fade animation time.
   .transition(opacity .10s linear);
-}
-
-.global-alert {
-  position: fixed;
-  bottom: 0;
-
-  body[dir="ltr"] & {
-    right: 0;
-  }
-
-  body[dir="rtl"] & {
-    left: 0;
-  }
 }
 
 
@@ -251,4 +238,30 @@ body {
   .showing-priority-0& {
     background-color: @infoBackground;
   }
+}
+
+
+/* MISCELLANEOUS AND HELPERS */
+
+.global-alert {
+  position: fixed;
+  bottom: 0;
+
+  body[dir="ltr"] & {
+    right: 0;
+  }
+
+  body[dir="rtl"] & {
+    left: 0;
+  }
+}
+
+// IE7 behaves poorly when .invisible is used for hiding and showing elements.
+// In some cases we can instead use the z-index to achieve the desired effect.
+.z-behind {
+  z-index: -2;
+}
+
+.z-infront {
+  z-index: 2;
 }
