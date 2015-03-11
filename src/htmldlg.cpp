@@ -53,7 +53,7 @@ int ShowHTMLDlg(
 
         if (pfnShowHTMLDialog)
         {
-            tstring url = ResourceToUrl(resourceName, urlFragment);
+            tstring url = ResourceToUrl(resourceName, NULL, urlFragment);
 
             IMoniker* pmk = NULL;
             CreateURLMonikerEx(NULL, url.c_str(), &pmk, URL_MK_UNIFORM);
@@ -129,7 +129,7 @@ int ShowHTMLDlg(
 /**************************************************************************
 ShowHTMLDlg()
 **************************************************************************/
-tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlFragment)
+tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlQuery, LPCTSTR urlFragment)
 {
     tstring url;
 
@@ -141,6 +141,14 @@ tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlFragment)
 
     url += _T("/");
     url += resourceName;
+
+    // URI encoding seems to be taken care of automatically (fortuitous, but unsettling)
+
+    if (urlQuery)
+    {
+        url += _T("?");
+        url += urlQuery;
+    }
 
     if (urlFragment)
     {

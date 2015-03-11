@@ -84,15 +84,15 @@ void OnCreate(HWND hWndParent)
     Json::FastWriter jsonWriter;
     tstring initJsonString = NarrowToTString(jsonWriter.write(initJSON));
 
-    tstring url = ResourceToUrl(_T("main.html"), NULL);
-    // URI encoding seems to be taken care of automatically (fortuitous, but unsettling)
-    url += _T("?") + initJsonString;
+    tstring url = ResourceToUrl(_T("main.html"), initJsonString.c_str(), NULL);
 
     /* Create the html control */
     g_hHtmlCtrl = CreateWindow(
         MC_WC_HTML, 
         url.c_str(),
-        WS_CHILD | WS_VISIBLE | WS_TABSTOP | MC_HS_NOCONTEXTMENU,
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP | 
+            MC_HS_NOCONTEXTMENU |   // don't show context menu
+            MC_HS_NOTIFYNAV,        // notify owner window on navigation attempts
         0, 0, 0, 0, 
         hWndParent, 
         (HMENU)IDC_HTML_CTRL,
@@ -211,8 +211,9 @@ void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& mess
 // So, we're going to PostMessages to ourself whenever possible.
 
 #define WM_PSIPHON_HTMLUI_APPLINK      WM_USER + 200
-#define WM_PSIPHON_HTMLUI_SETSTATE     WM_USER + 201
-#define WM_PSIPHON_HTMLUI_ADDMESSAGE   WM_USER + 202
+#define WM_PSIPHON_HTMLUI_NAVLINK      WM_USER + 201
+#define WM_PSIPHON_HTMLUI_SETSTATE     WM_USER + 202
+#define WM_PSIPHON_HTMLUI_ADDMESSAGE   WM_USER + 203
 
 static void HtmlUI_AddMessage(int priority, LPCTSTR message)
 {
@@ -342,6 +343,20 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
     delete[] url;
 }
 
+static void HtmlUI_NavLink(MC_NMHTMLURL* nmHtmlUrl)
+{
+    size_t bufLen = _tcslen(nmHtmlUrl->pszUrl) + 1;
+    TCHAR* buf = new TCHAR[bufLen];
+    _tcsncpy_s(buf, bufLen, nmHtmlUrl->pszUrl, bufLen);
+    buf[bufLen - 1] = _T('\0');
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_NAVLINK, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_NavLinkHandler(LPCTSTR url)
+{
+    OpenBrowser(url);
+    delete[] url;
+}
 
 //==== Exported functions ========================================================
 
@@ -477,14 +492,25 @@ static bool g_documentCompleted = false;
 
 static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 {
-    int i = 0;
-
     if (hdr->idFrom == IDC_HTML_CTRL) 
     {
         if (hdr->code == MC_HN_APPLINK)
         {
             MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
             HtmlUI_AppLink(nmHtmlUrl);
+        }
+        else if (hdr->code == MC_HN_NAVLINK)
+        {
+            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+            // We should not interfere with the initial page load
+            static bool s_firstNav = true;
+            if (s_firstNav) {
+                s_firstNav = false;
+                return 0;
+            }
+
+            HtmlUI_NavLink(nmHtmlUrl);            
+            return -1; // Prevent navigation
         }
         else if (hdr->code == MC_HN_DOCUMENTCOMPLETE)
         {
@@ -510,7 +536,6 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
         else if (hdr->code == MC_HN_TITLETEXT)
         {
             MC_NMHTMLTEXT* nmHtmlText = (MC_NMHTMLTEXT*)hdr;
-            int i = 0;
         }
         else if (hdr->code == MC_HN_HISTORY)
         {
@@ -519,14 +544,12 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
         else if (hdr->code == MC_HN_NEWWINDOW)
         {
             MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
-            i = 1;
             // Prevent new window from opening
             return 0;
         }
         else if (hdr->code == MC_HN_HTTPERROR)
         {
             MC_NMHTTPERROR* nmHttpError = (MC_NMHTTPERROR*)hdr;
-            i = 1;
             assert(false);
             // Prevent HTTP error from being shown.
             return 0;
@@ -595,6 +618,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_PSIPHON_HTMLUI_APPLINK:
         HtmlUI_AppLinkHandler((LPCTSTR)wParam);
+        break;
+    case WM_PSIPHON_HTMLUI_NAVLINK:
+        HtmlUI_NavLinkHandler((LPCTSTR)wParam);
         break;
     case WM_PSIPHON_HTMLUI_SETSTATE:
         HtmlUI_SetStateHandler((LPCWSTR)wParam);

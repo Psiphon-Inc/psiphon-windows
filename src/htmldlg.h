@@ -47,4 +47,4 @@ int ShowHTMLDlg(
         tstring& o_result);
 
 // Returns a URL that can be used in a HTML control to retrieve the given resource.
-tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlFragment);
+tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlQuery, LPCTSTR urlFragment);

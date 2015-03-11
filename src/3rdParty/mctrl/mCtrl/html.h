@@ -211,6 +211,9 @@ void MCTRL_API mcHtml_Terminate(void);
 /** @brief Disables context menu */
 #define MC_HS_NOCONTEXTMENU    0x0001
 
+/** @brief Indicates that control should ask main window before navigating */
+#define MC_HS_NOTIFYNAV        0x0002
+
 /*@}*/
 
 
@@ -620,6 +623,15 @@ typedef struct MC_NMHTTPERRORA_tag {
  * error page corresponding to the error, or zero to disable that.
  */
 #define MC_HN_HTTPERROR          (MC_HN_FIRST + 7)
+
+ /**
+ * @brief Fired before the browser navigates to a new URL.
+ * @param[in] wParam (@c int) Id of the control sending the notification.
+ * @param[in] lParam (@ref MC_NMHTMLURL*) Pointer to a structure specifying
+ * details about the URL. 
+ * @return Application should return zero if navigation should continue.
+ */
+#define MC_HN_NAVLINK            (MC_HN_FIRST + 8)
 
 /*@}*/
 
