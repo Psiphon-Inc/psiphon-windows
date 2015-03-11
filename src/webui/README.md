@@ -28,8 +28,7 @@ $ node fake-translations.js
  
 * Open links in external browser
 * Dynamically load languages
-* Styling: Square rounded corners to be more “modern”. Tone down gradients. (Both those also help with old IE consistency, since they aren’t supported.)
-  - Also add more branding and Psiphon-ness. Like, logo, colours, word art, ...?
+* Need higher-res Psiphon logo
 * Clean up psiclient code.
 * Add flags to egress region combo
 * Add settings reset button?

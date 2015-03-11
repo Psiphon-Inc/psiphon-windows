@@ -26,6 +26,15 @@
   <link href="vendor/font-awesome/css/font-awesome-ie7.css?__inline=true" rel="stylesheet">
   <link href="css/main.css?__inline=true" rel="stylesheet">
 
+  <!-- Can be used to help with the IE7 "hasLayout" problem. http://www.satzansatz.de/cssd/onhavinglayout.html -->
+  <!--[if IE 7]>
+  <style>
+    .gainLayout { zoom: 1; }
+    div { display: inline-block; }
+    div { display: block; }
+  </style>
+  <![endif]-->
+
   <script>
     // We need to set up the window.onerror handler in a separate script block, otherwise
     // compilation errors in the main code might prevent the handler from getting set.

@@ -12132,6 +12132,7 @@ body[dir="rtl"] .tab-content > .tab-pane {
   width: 70%;
   padding: 20px;
   margin: auto;
+  overflow: hidden;
 }
 body[dir="ltr"] #connect-toggle > .connect-toggle-content {
   left: 10%;
@@ -12219,8 +12220,20 @@ body[dir="rtl"] .global-alert {
 .z-infront {
   z-index: 2;
 }
+img {
+  -ms-interpolation-mode: bicubic;
+}
 
 </style>
+
+  <!-- Can be used to help with the IE7 "hasLayout" problem. http://www.satzansatz.de/cssd/onhavinglayout.html -->
+  <!--[if IE 7]>
+  <style>
+    .gainLayout { zoom: 1; }
+    div { display: inline-block; }
+    div { display: block; }
+  </style>
+  <![endif]-->
 
   <script>
     // We need to set up the window.onerror handler in a separate script block, otherwise

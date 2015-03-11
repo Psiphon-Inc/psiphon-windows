@@ -187,6 +187,7 @@ body {
   width: 70%;
   padding: 20px;
   margin: auto;
+  overflow: hidden;
 
   body[dir="ltr"] & {
     left: 10%;
@@ -303,4 +304,10 @@ body {
 
 .z-infront {
   z-index: 2;
+}
+
+// IE7's image scaling is poor. This style helps.
+// https://css-tricks.com/ie-fix-bicubic-scaling-for-images/
+img {
+  -ms-interpolation-mode: bicubic;
 }
