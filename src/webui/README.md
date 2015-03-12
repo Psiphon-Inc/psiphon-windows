@@ -26,8 +26,9 @@ $ node fake-translations.js
 
 ## TODO
  
-* rename bs.html to main.html
+* Use download site font?
 * Write descriptions for all i18n messages
+* More elaborate connection animation?
 * Need higher-res Psiphon logo
 * Clean up psiclient code.
 * Add flags to egress region combo

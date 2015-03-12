@@ -36,8 +36,8 @@ module.exports = function(grunt) {
             //cssmin: true,
             //uglify: true
         },
-        src: 'bs.html',
-        dest: 'bs-inline.html'
+        src: 'main.html',
+        dest: 'main-inline.html'
       }
     },
 
