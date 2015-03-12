@@ -5382,6 +5382,17 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
 }
+/* LANGUAGES */
+#language-pane ul {
+  margin: 1em;
+}
+#language-pane ul li {
+  list-style-type: none;
+  margin-top: 0.5em;
+}
+#language-pane ul li i {
+  margin-right: 0.5em;
+}
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {
   position: fixed;

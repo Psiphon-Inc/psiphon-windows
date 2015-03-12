@@ -54,6 +54,7 @@
   <script src="vendor/jquery-1.11.2.min.js?__inline=true"></script>
   <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
   <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
+  <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
   <script src="vendor/spin.js?__inline=true"></script>
   <script src="vendor/raphael.min.js?__inline=true"></script>
   <script src="vendor/i18next.min.js?__inline=true"></script>
@@ -497,16 +498,17 @@
         <!-- LANGUAGE ======================================================-->
         <div class="tab-pane fade" id="language-pane">
           <ul>
-            <li>
-              <a href="#" class="language-choice" name="en">English</a>
-            </li>
-            <li>
-              <a href="#" class="language-choice dev" name="devltr">[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]</a>
-            </li>
-            <li>
-              <a href="#" class="language-choice dev" name="devrtl">Ԁɐɔʞɐƃǝp‬ ‮Wıɹɹoɹǝp</a>
-            </li>
+            <!-- Supported locales will be filled in here -->
           </ul>
+
+          <!-- Locale template -->
+          <script type="text/html" id="locale-template">
+            <li>
+              <i class="icon-li icon-globe"></i>
+              <a href="#" class="language-choice"
+                 data-value="localeCode" data-content="localeName"></a>
+            </li>
+          </script>
         </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->

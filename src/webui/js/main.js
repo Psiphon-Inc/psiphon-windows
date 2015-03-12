@@ -45,7 +45,8 @@ var g_initObj = {};
     g_initObj = {
       Config: {
         Language: 'en',
-        Banner: 'banner.png'
+        Banner: 'banner.png',
+        Debug: true
       }
     };
   }
@@ -530,10 +531,8 @@ $(function() {
       switchLocale(lang);
     });
 
-  $('.language-choice').click(function(e) {
-    e.preventDefault();
-    switchLocale(this.name);
-  });
+  // Populate the list of language choices
+  populateLocales();
 });
 
 function switchLocale(locale) {
@@ -562,6 +561,53 @@ function switchLocale(locale) {
   $('[data-i18n-rtl-classes]').each(function() {
       $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
              .toggleClass($(this).data('i18n-rtl-classes'), rtl);
+  });
+}
+
+function populateLocales() {
+  var localePriorityGuide = ['en', 'fa', 'zh', 'zh_CN', 'zh_TW'];
+  var locales = $.map(window.PSIPHON.LOCALES, function(val, key) { return key; });
+  // Sort the locales according to the priority guide
+  locales.sort(function(a, b) {
+    var localePriority_a = localePriorityGuide.indexOf(a);
+    var localePriority_b = localePriorityGuide.indexOf(b);
+    localePriority_a = (localePriority_a < 0) ? 999 : localePriority_a;
+    localePriority_b = (localePriority_b < 0) ? 999 : localePriority_b;
+
+    if (localePriority_a < localePriority_b) {
+      return -1;
+    }
+    else if (localePriority_a > localePriority_b) {
+      return 1;
+    }
+    else if (a < b) {
+      return -1;
+    }
+    else if (a > b) {
+      return 1;
+    }
+    return 0;
+  });
+
+  var $localeListElem = $('#language-pane ul');
+
+  for (var i = 0; i < locales.length; i++) {
+    // If we're not in debug mode, don't output the dev locales
+    if (!g_initObj.Config.Debug && locales[i].indexOf('dev') === 0) {
+      continue;
+    }
+
+    $localeListElem.loadTemplate(
+      $("#locale-template"),
+      { localeCode: locales[i],
+        localeName: window.PSIPHON.LOCALES[locales[i]].name},
+      { append:true });
+  }
+
+  // Set up the click handlers
+  $('.language-choice').click(function(e) {
+    e.preventDefault();
+    switchLocale($(this).attr('value'));
   });
 }
 

@@ -60,13 +60,28 @@ module.exports = function(grunt) {
     'locales',
     'Process locale files for use in dev and production',
     function() {
+      var localeNames = grunt.file.readJSON(this.data.src + 'locale-names.json');
       var locales = {};
       grunt.file.recurse(this.data.src, function localesDirRecurse(abspath, rootdir, subdir, filename) {
+        if (!subdir) {
+          // Not a subdirectory.
+          return;
+        }
+
+        var localeCode = subdir;
+
+        if (!localeNames[localeCode]) {
+          grunt.fail.fatal('Missing locale name for "' + localeCode + '"');
+        }
+
         var translation = grunt.file.readJSON(abspath);
         for (var key in translation) {
           translation[key] = translation[key].message;
         }
-        locales[subdir] = { translation: translation };
+        locales[localeCode] = {
+          name: localeNames[localeCode],
+          translation: translation
+        };
       });
 
       grunt.file.write(

@@ -79,6 +79,12 @@ void OnCreate(HWND hWndParent)
     initJSON["Config"] = Json::Value();
     initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
     initJSON["Config"]["Banner"] = string("banner.") + BANNER_FILETYPE;
+#ifdef _DEBUG
+    initJSON["Config"]["Debug"] = true;
+#else
+    initJSON["Config"]["Debug"] = false;
+#endif
+
     Json::FastWriter jsonWriter;
     tstring initJsonString = NarrowToTString(jsonWriter.write(initJSON));
 

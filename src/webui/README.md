@@ -26,7 +26,9 @@ $ node fake-translations.js
 
 ## TODO
  
-* Dynamically load languages
+* Add Hello message on language switch
+* rename bs.html to main.html
+* Write descriptions for all i18n messages
 * Need higher-res Psiphon logo
 * Clean up psiclient code.
 * Add flags to egress region combo
