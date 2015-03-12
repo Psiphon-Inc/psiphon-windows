@@ -636,6 +636,8 @@ function setCookie(name, value) {
 
 /* INTERFACE METHODS *********************************************************/
 
+var PSIPHON_LINK_PREFIX = 'psi:';
+
 function HtmlCtrlInterface_AddMessage(jsonArgs) {
   setTimeout(function() {
     addLogMessage(JSON.parse(jsonArgs));
@@ -656,7 +658,7 @@ function HtmlCtrlInterface_Start() {
     return;
   }
   setTimeout(function() {
-    var appURL = 'app:start';
+    var appURL = PSIPHON_LINK_PREFIX + 'start';
     if (IS_BROWSER) {
       console.log(appURL);
     }
@@ -672,7 +674,7 @@ function HtmlCtrlInterface_Stop() {
     return;
   }
   setTimeout(function() {
-    var appURL = 'app:stop';
+    var appURL = PSIPHON_LINK_PREFIX + 'stop';
     if (IS_BROWSER) {
       console.log(appURL);
     }
@@ -684,7 +686,7 @@ function HtmlCtrlInterface_Stop() {
 
 function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
-    var appURL = 'app:updatesettings?' + encodeURIComponent(settingsJSON);
+    var appURL = PSIPHON_LINK_PREFIX + 'updatesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
       console.log(appURL);
     }
@@ -696,7 +698,7 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
 
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
-    var appURL = 'app:sendfeedback?' + encodeURIComponent(feedbackJSON);
+    var appURL = PSIPHON_LINK_PREFIX + 'sendfeedback?' + encodeURIComponent(feedbackJSON);
     if (IS_BROWSER) {
       console.log(appURL);
     }
@@ -708,7 +710,7 @@ function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
 
 function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   setTimeout(function() {
-    var appURL = 'app:setcookies?' + encodeURIComponent(cookiesJSON);
+    var appURL = PSIPHON_LINK_PREFIX + 'setcookies?' + encodeURIComponent(cookiesJSON);
     if (IS_BROWSER) {
       console.log(appURL);
     }

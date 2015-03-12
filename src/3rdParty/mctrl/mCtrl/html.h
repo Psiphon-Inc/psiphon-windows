@@ -625,13 +625,17 @@ typedef struct MC_NMHTTPERRORA_tag {
 #define MC_HN_HTTPERROR          (MC_HN_FIRST + 7)
 
  /**
- * @brief Fired before the browser navigates to a new URL.
+ * @brief Fired before the browser navigates to a new URL. 
+ *
+ * Note that this is sent before (@ref MC_HN_APPLINK), and returning non-zero 
+ * will prevent (@ref MC_HN_APPLINK) from being sent.
+ *  
  * @param[in] wParam (@c int) Id of the control sending the notification.
  * @param[in] lParam (@ref MC_NMHTMLURL*) Pointer to a structure specifying
  * details about the URL. 
  * @return Application should return zero if navigation should continue.
  */
-#define MC_HN_NAVLINK            (MC_HN_FIRST + 8)
+#define MC_HN_BEFORENAVIGATE     (MC_HN_FIRST + 8)
 
 /*@}*/
 

@@ -6,18 +6,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-//==== Includes ===============================================================
+ //==== Includes ===============================================================
 
 #include "stdafx.h"
 
@@ -44,7 +44,6 @@
 #include "diagnostic_info.h"
 #include "systemproxysettings.h"
 
-
 //==== Globals ================================================================
 
 #define MAX_LOADSTRING 100
@@ -61,9 +60,8 @@ LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887
 static HWND g_hHtmlCtrl = NULL;
 static bool g_htmlUiReady = false;
 // The HTML control has a bad habit of sending messages after we've posted WM_QUIT,
-// which leads to a crash on exit. 
+// which leads to a crash on exit.
 static bool g_htmlUiFinished = false;
-
 
 //==== Controls ================================================================
 
@@ -88,18 +86,17 @@ void OnCreate(HWND hWndParent)
 
     /* Create the html control */
     g_hHtmlCtrl = CreateWindow(
-        MC_WC_HTML, 
+        MC_WC_HTML,
         url.c_str(),
-        WS_CHILD | WS_VISIBLE | WS_TABSTOP | 
-            MC_HS_NOCONTEXTMENU |   // don't show context menu
-            MC_HS_NOTIFYNAV,        // notify owner window on navigation attempts
-        0, 0, 0, 0, 
-        hWndParent, 
+        WS_CHILD | WS_VISIBLE | WS_TABSTOP |
+        MC_HS_NOCONTEXTMENU |   // don't show context menu
+        MC_HS_NOTIFYNAV,        // notify owner window on navigation attempts
+        0, 0, 0, 0,
+        hWndParent,
         (HMENU)IDC_HTML_CTRL,
         g_hInst,
         NULL);
 }
-
 
 //==== my_print (logging) =====================================================
 
@@ -113,10 +110,10 @@ void GetMessageHistory(vector<MessageHistoryEntry>& history)
 }
 
 void AddMessageEntryToHistory(
-        LogSensitivity sensitivity, 
-        bool bDebugMessage, 
-        const TCHAR* formatString,
-        const TCHAR* finalString)
+    LogSensitivity sensitivity,
+    bool bDebugMessage,
+    const TCHAR* formatString,
+    const TCHAR* finalString)
 {
     AutoMUTEX mutex(g_messageHistoryMutex);
 
@@ -143,7 +140,6 @@ void AddMessageEntryToHistory(
         g_messageHistory.push_back(entry);
     }
 }
-
 
 #ifdef _DEBUG
 bool g_bShowDebugMessages = true;
@@ -194,15 +190,14 @@ void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& mess
     my_print(sensitivity, bDebugMessage, NarrowToTString(message).c_str());
 }
 
-
 //==== HTML UI helpers ========================================================
 
-// Many of these helpers (particularly the ones that don't need an immediate 
+// Many of these helpers (particularly the ones that don't need an immediate
 // response from the page script) come in pairs: one function to receive the
 // arguments, create a buffer, and post a message; and one function to receive
-// the posted message and actually do the work. 
+// the posted message and actually do the work.
 // We do this so that we won't end up deadlocked between message handling and
-// background stuff. For example, the Stop button in the HTML will block the 
+// background stuff. For example, the Stop button in the HTML will block the
 // page script until the AppLink is processed; but if ConnectionManager.Stop()
 // is called directly, then it will wait for the connection thread to die, but
 // that thread calls ConnectionManager.SetState(), which calls HtmlUI_SetState(),
@@ -210,10 +205,9 @@ void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& mess
 // is blocked!
 // So, we're going to PostMessages to ourself whenever possible.
 
-#define WM_PSIPHON_HTMLUI_APPLINK      WM_USER + 200
-#define WM_PSIPHON_HTMLUI_NAVLINK      WM_USER + 201
-#define WM_PSIPHON_HTMLUI_SETSTATE     WM_USER + 202
-#define WM_PSIPHON_HTMLUI_ADDMESSAGE   WM_USER + 203
+#define WM_PSIPHON_HTMLUI_BEFORENAVIGATE    WM_USER + 200
+#define WM_PSIPHON_HTMLUI_SETSTATE          WM_USER + 201
+#define WM_PSIPHON_HTMLUI_ADDMESSAGE        WM_USER + 202
 
 static void HtmlUI_AddMessage(int priority, LPCTSTR message)
 {
@@ -243,7 +237,7 @@ static void HtmlUI_AddMessageHandler(LPCWSTR json)
     argStruct.cArgs = 1;
     argStruct.pszArg1 = json;
     (void)SendMessage(
-        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC, 
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
         (WPARAM)_T("HtmlCtrlInterface_AddMessage"), (LPARAM)&argStruct);
     delete[] json;
 }
@@ -270,31 +264,32 @@ static void HtmlUI_SetStateHandler(LPCWSTR json)
     argStruct.cArgs = 1;
     argStruct.pszArg1 = json;
     (void)SendMessage(
-        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC, 
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
         (WPARAM)_T("HtmlCtrlInterface_SetState"), (LPARAM)&argStruct);
     delete[] json;
 }
 
-static void HtmlUI_AppLink(MC_NMHTMLURL* nmHtmlUrl)
+static void HtmlUI_BeforeNavigate(MC_NMHTMLURL* nmHtmlUrl)
 {
     size_t bufLen = _tcslen(nmHtmlUrl->pszUrl) + 1;
     TCHAR* buf = new TCHAR[bufLen];
     _tcsncpy_s(buf, bufLen, nmHtmlUrl->pszUrl, bufLen);
     buf[bufLen - 1] = _T('\0');
-    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_APPLINK, (WPARAM)buf, 0);
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_BEFORENAVIGATE, (WPARAM)buf, 0);
 }
 
-static void HtmlUI_AppLinkHandler(LPCTSTR url)
+#define PSIPHON_LINK_PREFIX     _T("psi:")
+static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 {
     // NOTE: Incoming query parameters will be URI-encoded
 
-    const LPCTSTR appStart = _T("app:start");
-    const LPCTSTR appStop = _T("app:stop");
-    const LPCTSTR appUpdateSettings = _T("app:updatesettings?");
+    const LPCTSTR appStart = PSIPHON_LINK_PREFIX _T("start");
+    const LPCTSTR appStop = PSIPHON_LINK_PREFIX _T("stop");
+    const LPCTSTR appUpdateSettings = PSIPHON_LINK_PREFIX _T("updatesettings?");
     const size_t appUpdateSettingsLen = _tcslen(appUpdateSettings);
-    const LPCTSTR appSendFeedback = _T("app:sendfeedback?");
+    const LPCTSTR appSendFeedback = PSIPHON_LINK_PREFIX _T("sendfeedback?");
     const size_t appSendFeedbackLen = _tcslen(appSendFeedback);
-    const LPCTSTR appSetCookies = _T("app:setcookies?");
+    const LPCTSTR appSetCookies = PSIPHON_LINK_PREFIX _T("setcookies?");
     const size_t appSetCookiesLen = _tcslen(appSetCookies);
 
     if (_tcscmp(url, appStart) == 0)
@@ -308,7 +303,7 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
         g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
     }
     else if (_tcsncmp(url, appUpdateSettings, appUpdateSettingsLen) == 0
-             && _tcslen(url) > appUpdateSettingsLen)
+        && _tcslen(url) > appUpdateSettingsLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Update settings requested"), __TFUNCTION__);
         tstring uriEncoded(url + appUpdateSettingsLen);
@@ -316,7 +311,7 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
         bool settingsChanged = false;
         if (Settings::FromJson(stringJSON, settingsChanged) && settingsChanged
             && (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
-                || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING))
+            || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING))
         {
             my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
             g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
@@ -340,21 +335,11 @@ static void HtmlUI_AppLinkHandler(LPCTSTR url)
         string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
         Settings::SetCookies(stringJSON);
     }
-    delete[] url;
-}
+    else {
+        // Not one of our links. Open it in an external browser.
+        OpenBrowser(url);
+    }
 
-static void HtmlUI_NavLink(MC_NMHTMLURL* nmHtmlUrl)
-{
-    size_t bufLen = _tcslen(nmHtmlUrl->pszUrl) + 1;
-    TCHAR* buf = new TCHAR[bufLen];
-    _tcsncpy_s(buf, bufLen, nmHtmlUrl->pszUrl, bufLen);
-    buf[bufLen - 1] = _T('\0');
-    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_NAVLINK, (WPARAM)buf, 0);
-}
-
-static void HtmlUI_NavLinkHandler(LPCTSTR url)
-{
-    OpenBrowser(url);
     delete[] url;
 }
 
@@ -402,7 +387,6 @@ void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, i
     HtmlUI_SetState(wJson);
 }
 
-
 //==== Win32 boilerplate ======================================================
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -429,7 +413,7 @@ int APIENTRY _tWinMain(
 
     // Perform application initialization
 
-    if (!InitInstance (hInstance, nCmdShow))
+    if (!InitInstance(hInstance, nCmdShow))
     {
         return FALSE;
     }
@@ -449,8 +433,8 @@ int APIENTRY _tWinMain(
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
             // Bit of a dirty hack to prevent the HTML control code from crashing
-            // on exit. WM_APP+2 is the message used for MC_HN_STATUSTEXT. 
-            if (msg.message == (WM_APP+2) && g_htmlUiFinished)
+            // on exit. WM_APP+2 is the message used for MC_HN_STATUSTEXT.
+            if (msg.message == (WM_APP + 2) && g_htmlUiFinished)
                 continue;
 
             TranslateMessage(&msg);
@@ -461,12 +445,12 @@ int APIENTRY _tWinMain(
     mcHtml_Terminate();
     mc_StaticLibTerminate();
 
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-    WNDCLASSEX wcex = {0};
+    WNDCLASSEX wcex = { 0 };
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -485,21 +469,15 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassEx(&wcex);
 }
 
-
 //==== Main window functions ==================================================
 
 static bool g_documentCompleted = false;
 
 static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 {
-    if (hdr->idFrom == IDC_HTML_CTRL) 
+    if (hdr->idFrom == IDC_HTML_CTRL)
     {
-        if (hdr->code == MC_HN_APPLINK)
-        {
-            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
-            HtmlUI_AppLink(nmHtmlUrl);
-        }
-        else if (hdr->code == MC_HN_NAVLINK)
+        if (hdr->code == MC_HN_BEFORENAVIGATE)
         {
             MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
             // We should not interfere with the initial page load
@@ -509,8 +487,12 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
                 return 0;
             }
 
-            HtmlUI_NavLink(nmHtmlUrl);            
+            HtmlUI_BeforeNavigate(nmHtmlUrl);
             return -1; // Prevent navigation
+        }
+        else if (hdr->code == MC_HN_APPLINK) {
+            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+            // We won't get this one because we're handling MC_HN_BEFORENAVIGATE
         }
         else if (hdr->code == MC_HN_DOCUMENTCOMPLETE)
         {
@@ -584,7 +566,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         g_szWindowClass,
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 
+        CW_USEDEFAULT, CW_USEDEFAULT,
         780, 580,
         NULL, NULL, hInstance, NULL);
 
@@ -592,7 +574,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     return TRUE;
 }
-
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -603,7 +584,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_PSIPHON_CREATED:
-        // Display client version number 
+        // Display client version number
         my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // Content is loaded, so show the window.
@@ -616,11 +597,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
-    case WM_PSIPHON_HTMLUI_APPLINK:
-        HtmlUI_AppLinkHandler((LPCTSTR)wParam);
-        break;
-    case WM_PSIPHON_HTMLUI_NAVLINK:
-        HtmlUI_NavLinkHandler((LPCTSTR)wParam);
+    case WM_PSIPHON_HTMLUI_BEFORENAVIGATE:
+        HtmlUI_BeforeNavigateHandler((LPCTSTR)wParam);
         break;
     case WM_PSIPHON_HTMLUI_SETSTATE:
         HtmlUI_SetStateHandler((LPCWSTR)wParam);
@@ -693,7 +671,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
 
         // Banner clicked
-        
+
         else if (lParam == (LPARAM)g_hBannerStatic && wmEvent == STN_CLICKED)
         {
             // If connected, sponsor open home pages, or info link if
@@ -711,12 +689,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
 
         // Info link clicked
-        
+
         else if (lParam == (LPARAM)g_hInfoLinkStatic && wmEvent == STN_CLICKED)
         {
             // Info link static control was clicked, so open Psiphon 3 page
             // NOTE: Info link may be opened when not tunneled
-            
+
             OpenBrowser(INFO_LINK_URL);
         }
 
@@ -752,8 +730,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             tstring feedbackResult;
             if (ShowHTMLDlg(
-                    hWnd, 
-                    _T("FEEDBACK_HTML_RESOURCE"), 
+                    hWnd,
+                    _T("FEEDBACK_HTML_RESOURCE"),
                     GetLocaleName().c_str(),
                     feedbackArgs.str().c_str(),
                     feedbackResult) == 1)
