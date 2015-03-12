@@ -16140,9 +16140,9 @@ var IS_BROWSER = true;
 // Parse whatever JSON parameters were passed by the application.
 var g_initObj = {};
 (function() {
-  var uriSearch = location.search;
-  if (uriSearch) {
-    g_initObj = JSON.parse(decodeURIComponent(uriSearch.slice(1)));
+  var uriHash = location.hash;
+  if (uriHash) {
+    g_initObj = JSON.parse(decodeURIComponent(uriHash.slice(1)));
     IS_BROWSER = false;
   }
 
@@ -16207,13 +16207,15 @@ function resizeContent() {
 var g_lastState = 'stopped';
 
 $(function() {
-  $('#start').click(function() {
+  $('#start').click(function(e) {
+    e.preventDefault();
     if ($(this).hasClass('disabled')) {
       return;
     }
     HtmlCtrlInterface_Start();
   });
-  $('#stop').click(function() {
+  $('#stop').click(function(e) {
+    e.preventDefault();
     if ($(this).hasClass('disabled')) {
       return;
     }
@@ -16263,7 +16265,8 @@ function setupConnectToggle() {
   };
   var spinner = new Spinner(opts).spin($('#connect-toggle .wait-spinner')[0]);
 
-  $('#connect-toggle a').click(function() {
+  $('#connect-toggle a').click(function(e) {
+    e.preventDefault();
     var buttonConnectState = $(this).parents('.connect-toggle-content').data('connect-state');
     if (buttonConnectState === 'stopped') {
       HtmlCtrlInterface_Start();
@@ -16510,7 +16513,8 @@ $(function() {
   }
 
   // Add click listener to the happy/sad choices
-  $('.feedback-smiley .feedback-choice').click(function() {
+  $('.feedback-smiley .feedback-choice').click(function(e) {
+    e.preventDefault();
     $('.feedback-smiley .feedback-choice').removeClass('selected');
     $(this).addClass('selected');
   });
@@ -16588,8 +16592,9 @@ $(function() {
   $('#show-debug-messages').click(showDebugMessagesClicked);
 });
 
-function showDebugMessagesClicked() {
+function showDebugMessagesClicked(e) {
   /*jshint validthis:true */
+  e.preventDefault();
   var show = $(this).prop('checked');
   $('.log-messages').toggleClass('showing-priority-0', show);
 }
@@ -16631,7 +16636,10 @@ $(function() {
       switchLocale(lang);
     });
 
-  $('.language-choice').click(function() { switchLocale(this.name); });
+  $('.language-choice').click(function(e) {
+    e.preventDefault();
+    switchLocale(this.name);
+  });
 });
 
 function switchLocale(locale) {

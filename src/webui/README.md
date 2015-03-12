@@ -26,7 +26,6 @@ $ node fake-translations.js
 
 ## TODO
  
-* Use URL fragment instead of query parameters (more correct).
 * Dynamically load languages
 * Need higher-res Psiphon logo
 * Clean up psiclient code.
