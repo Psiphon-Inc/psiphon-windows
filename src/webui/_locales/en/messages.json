@@ -214,5 +214,9 @@
   "messages#show-debug-label": {
     "message": "Show debug messages",
     "description": ""
+  },
+  "language#success-message": {
+    "message": "<strong>Hello!</strong> Welcome to Psiphon.",
+    "description": "A welcome message shown to the user when they first switch to the correct UI language"
   }
 }

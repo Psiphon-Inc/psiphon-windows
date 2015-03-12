@@ -22,6 +22,7 @@
       "feedback#top_para_1": "[Ƥŀḗḗȧȧşḗḗ ŀḗḗŧ ŭŭş ķƞǿǿẇ ħǿǿẇ Ƥşīīƥħǿǿƞ īīş ẇǿǿřķīīƞɠ ƒǿǿř ẏǿǿŭŭ şǿǿ ẇḗḗ ƈȧȧƞ ḿȧȧķḗḗ ŧħḗḗ şẏşŧḗḗḿ ƀḗḗŧŧḗḗř!]",
       "feedback#top_para_2": "[Ḿȧȧƞẏ ƥřǿǿƀŀḗḗḿş ƈȧȧƞ ƀḗḗ ƒīīẋḗḗḓ ƀẏ ḓǿǿẇƞŀǿǿȧȧḓīīƞɠ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ. Ẏǿǿŭŭ ƈȧȧƞ <a class=\"NewVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ƀẏ ƈŀīīƈķīīƞɠ ħḗḗřḗḗ</a>, ǿǿř ẏǿǿŭŭ ƈȧȧƞ şḗḗƞḓ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"NewVersionEmail\" href=\"#\"></a>.]",
       "feedback#top_para_3": "[Ẏǿǿŭŭ ƈȧȧƞ ȧȧŀşǿǿ ƒīīƞḓ şǿǿŀŭŭŧīīǿǿƞş ŧǿǿ ḿȧȧƞẏ ƈǿǿḿḿǿǿƞ ƥřǿǿƀŀḗḗḿş īīƞ ǿǿŭŭř <a class=\"FaqURL\" href=\"#\">Ƒřḗḗɋŭŭḗḗƞŧŀẏ Ȧȧşķḗḗḓ Ɋŭŭḗḗşŧīīǿǿƞş</a>.]",
+      "language#success-message": "[<strong>Ħḗḗŀŀǿǿ!</strong> Ẇḗḗŀƈǿǿḿḗḗ ŧǿǿ Ƥşīīƥħǿǿƞ.]",
       "messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
       "nav#connection": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
@@ -81,6 +82,7 @@
       "feedback#top_para_1": "‮Ԁʅǝɐsǝ‬ ‮ʅǝʇ‬ ‮ns‬ ‮ʞuoʍ‬ ‮ɥoʍ‬ ‮Ԁsıdɥou‬ ‮ıs‬ ‮ʍoɹʞıuƃ‬ ‮ɟoɹ‬ ‮ʎon‬ ‮so‬ ‮ʍǝ‬ ‮ɔɐu‬ ‮ɯɐʞǝ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬ ‮qǝʇʇǝɹ‬!",
       "feedback#top_para_2": "‮Wɐuʎ‬ ‮dɹoqʅǝɯs‬ ‮ɔɐu‬ ‮qǝ‬ ‮ɟıxǝp‬ ‮qʎ‬ ‮poʍuʅoɐpıuƃ‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬. ‮ʎon‬ ‮ɔɐu‬ <a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬ ‮qʎ‬ ‮ɔʅıɔʞıuƃ‬ ‮ɥǝɹǝ‬</a>, ‮oɹ‬ ‮ʎon‬ ‮ɔɐu‬ ‮sǝup‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬ <a class=\"NewVersionEmail\" href=\"#\"></a>.",
       "feedback#top_para_3": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
+      "language#success-message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
       "messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
       "nav#connection": "‮Ↄouuǝɔʇıou‬",
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
@@ -173,7 +175,8 @@
       "feedback#submit_button": "Submit",
       "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
       "feedback#success-message": "<strong>Thank you!</strong> Your feedback has been sent.",
-      "messages#show-debug-label": "Show debug messages"
+      "messages#show-debug-label": "Show debug messages",
+      "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon."
     }
   }
 };

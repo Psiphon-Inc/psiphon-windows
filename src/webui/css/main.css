@@ -5397,6 +5397,8 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 .global-alert {
   position: fixed;
   bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
 }
 body[dir="ltr"] .global-alert {
   right: 0;

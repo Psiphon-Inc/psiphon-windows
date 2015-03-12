@@ -474,11 +474,7 @@ function sendFeedback() {
   HtmlCtrlInterface_SendFeedback(JSON.stringify(fields));
 
   // Show (and hide) the success alert
-  $('#feedback-success-alert').toggle('fold', {horizFirst: true}, function() {
-    setTimeout(function() {
-      $('#feedback-success-alert').toggle('fold', {horizFirst: true}, 1000);
-    }, 5000);
-  });
+  displayCornerAlert($('#feedback-success-alert'));
 }
 
 /* LOG MESSAGES **************************************************************/
@@ -528,23 +524,34 @@ $(function() {
       resStore: window.PSIPHON.LOCALES
     },
     function(t) {
-      switchLocale(lang);
+      switchLocale(lang, true);
     });
 
   // Populate the list of language choices
   populateLocales();
 });
 
-function switchLocale(locale) {
+function switchLocale(locale, initial) {
   i18n.setLng(locale, function() {
-    $('body').i18n();
+    // This callback does not seem to called asynchronously (probably because
+    // we're loading from an object and not a remote resource). But we want this
+    // code to run after everything else is done, so we'll force it to be async.
 
-    // The content of elements will have changed, so trigger custom event that can
-    // be listened for to take additional actions.
-    $window.trigger(LANGUAGE_CHANGE_EVENT);
+    setTimeout(function() {
+      $('body').i18n();
 
-    // Remember the user's choice
-    setCookie('language', locale);
+      // The content of elements will have changed, so trigger custom event that can
+      // be listened for to take additional actions.
+      $window.trigger(LANGUAGE_CHANGE_EVENT);
+
+      if (!initial) {
+        // Show (and hide) the success alert
+        displayCornerAlert($('#language-success-alert'));
+      }
+
+      // Remember the user's choice
+      setCookie('language', locale);
+    }, 1);
   });
 
   //
@@ -669,6 +676,15 @@ function doMatchHeight() {
       }
     });
   }
+}
+
+function displayCornerAlert(elem) {
+  // Show -- and then hide -- the alert
+  $(elem).toggle('fold', {horizFirst: true}, function() {
+    setTimeout(function() {
+      $(elem).toggle('fold', {horizFirst: true}, 1000);
+    }, 5000);
+  });
 }
 
 //

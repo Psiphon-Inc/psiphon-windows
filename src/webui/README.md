@@ -26,7 +26,6 @@ $ node fake-translations.js
 
 ## TODO
  
-* Add Hello message on language switch
 * rename bs.html to main.html
 * Write descriptions for all i18n messages
 * Need higher-res Psiphon logo
