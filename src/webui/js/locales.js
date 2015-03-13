@@ -1,6 +1,6 @@
 (window.PSIPHON || (window.PSIPHON={})).LOCALES = {
   "devltr": {
-    "name": "[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]",
+    "name": "devltr",
     "translation": {
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
@@ -60,7 +60,7 @@
     }
   },
   "devrtl": {
-    "name": "Ԁɐɔʞɐƃǝp‬ ‮Wıɹɹoɹǝp",
+    "name": "devrtl",
     "translation": {
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
