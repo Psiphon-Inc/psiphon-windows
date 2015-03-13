@@ -88,6 +88,9 @@ protected:
         const SessionInfo& sessionInfo,
         boost::shared_ptr<PlonkConnection>& o_plonkConnection);
 
+    virtual void HandleRotatePeriodElapsed() {};
+    virtual void HandleRotateAllServersFailed() {throw TransportFailed();};
+
 protected:
     tstring m_plonkPath;
     int m_localSocksProxyPort;
@@ -159,6 +162,16 @@ public:
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
 protected:
+    virtual void HandleRotatePeriodElapsed();
+    virtual void HandleRotateAllServersFailed();
+    virtual bool RetryOnProtocolNotSupported();
+    void LogTargetProtocols(const char* message) const;
+    void InitializeTargetProtocols();
+    void RotateTargetProtocols();
+    tstring SelectProtocol(const ServerEntry& serverEntry) const;
+    bool SupportsProtocol(const ServerEntry& serverEntry, const tstring& protocol) const;
+
+
     virtual void GetSSHParams(
         int meekListenPort,
         bool firstServer,
@@ -171,6 +184,8 @@ protected:
         tstring& o_transportRequestName,
         tstring& o_plonkCommandLine);
     virtual bool IsHandshakeRequired(const ServerEntry& entry) const;
+
+private:
+    int mCurrentTargetProtocols;
+    vector<vector<tstring>> mTargetProtocols;
 };
-
-

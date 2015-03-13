@@ -395,6 +395,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
         my_print(NOT_SENSITIVE, true, _T("%s: enter server loop"), __TFUNCTION__);
 
+        // Timer measures tunnel lifetime
+        DWORD tunnelStartTime = 0;
+
         try
         {
             GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
@@ -408,7 +411,15 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             if (!manager->m_transport->ServerWithCapabilitiesExists())
             {
                 my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
-                throw ConnectionManager::Abort();
+                if (manager->m_transport->RetryOnProtocolNotSupported())
+                {
+                    manager->m_transport->RotateTargetProtocols();
+                    throw TransportConnection::TryNextServer();
+                }
+                else
+                {
+                    throw ConnectionManager::Abort();
+                }
             }
 
             //
@@ -435,6 +446,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             {
                 throw;
             }
+
+            tunnelStartTime = GetTickCount();
 
             //
             // The transport connection did a handshake, so its sessionInfo is 
@@ -523,6 +536,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
+        }
+
+        // Rotate target protocols on unexpected disconnect -- when the tunnel connected, but only for a short time
+        if (tunnelStartTime != 0 &&
+            GetTickCountDiff(tunnelStartTime, GetTickCount()) < TARGET_PROTOCOL_ROTATION_SESSION_DURATION_THRESHOLD_MS)
+        {
+            manager->m_transport->RotateTargetProtocols();
         }
 
         // Failed to connect to the server. Try the next one.
