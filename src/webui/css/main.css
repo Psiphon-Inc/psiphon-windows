@@ -5399,6 +5399,9 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
   bottom: 0;
   white-space: nowrap;
   overflow: hidden;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
 }
 body[dir="ltr"] .global-alert {
   right: 0;

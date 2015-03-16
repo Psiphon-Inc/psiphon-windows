@@ -12220,6 +12220,9 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
   bottom: 0;
   white-space: nowrap;
   overflow: hidden;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
 }
 body[dir="ltr"] .global-alert {
   right: 0;
@@ -16739,6 +16742,9 @@ $(function() {
   populateLocales();
 });
 
+// We only want to show the success/welcome message once.
+var g_languageSuccessAlertShown = false;
+
 function switchLocale(locale, initial) {
   i18n.setLng(locale, function() {
     // This callback does not seem to called asynchronously (probably because
@@ -16752,8 +16758,9 @@ function switchLocale(locale, initial) {
       // be listened for to take additional actions.
       $window.trigger(LANGUAGE_CHANGE_EVENT);
 
-      if (!initial) {
+      if (!initial && !g_languageSuccessAlertShown) {
         // Show (and hide) the success alert
+        g_languageSuccessAlertShown = true;
         displayCornerAlert($('#language-success-alert'));
       }
 

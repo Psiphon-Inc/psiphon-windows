@@ -531,6 +531,9 @@ $(function() {
   populateLocales();
 });
 
+// We only want to show the success/welcome message once.
+var g_languageSuccessAlertShown = false;
+
 function switchLocale(locale, initial) {
   i18n.setLng(locale, function() {
     // This callback does not seem to called asynchronously (probably because
@@ -544,8 +547,9 @@ function switchLocale(locale, initial) {
       // be listened for to take additional actions.
       $window.trigger(LANGUAGE_CHANGE_EVENT);
 
-      if (!initial) {
+      if (!initial && !g_languageSuccessAlertShown) {
         // Show (and hide) the success alert
+        g_languageSuccessAlertShown = true;
         displayCornerAlert($('#language-success-alert'));
       }
 

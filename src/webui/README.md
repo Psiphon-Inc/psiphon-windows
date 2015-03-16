@@ -26,8 +26,6 @@ $ node fake-translations.js
 
 ## TODO
  
-* Throttle hello message (rapid lang clicks mess up)
-* Use download site font?
 * Write descriptions for all i18n messages
 * More elaborate connection animation?
 * Need higher-res Psiphon logo
@@ -38,6 +36,8 @@ $ node fake-translations.js
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
+* Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
+
 
 
 ## Technical and compatibility notes
