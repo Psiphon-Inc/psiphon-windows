@@ -26,7 +26,6 @@ $ node fake-translations.js
 
 ## TODO
  
-* Disable ctrl+f, ctrl+l, ctrl+p... too many
 * Throttle hello message (rapid lang clicks mess up)
 * Use download site font?
 * Write descriptions for all i18n messages
