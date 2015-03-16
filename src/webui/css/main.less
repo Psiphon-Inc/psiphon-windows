@@ -223,6 +223,21 @@ body {
   width: 5em;
 }
 
+.settings-reset {
+  .clearfix;
+  margin-top: 5px;
+
+  a {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+  }
+}
+
 /* FEEDBACK */
 
 .feedback-smiley-container {
@@ -317,10 +332,12 @@ body {
 // In some cases we can instead use the z-index to achieve the desired effect.
 .z-behind {
   z-index: -2;
+  .opacity(0);
 }
 
 .z-infront {
   z-index: 2;
+  .opacity(100);
 }
 
 // IE7's image scaling is poor. This style helps.

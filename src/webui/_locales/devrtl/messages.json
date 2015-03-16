@@ -167,6 +167,10 @@
     "message": "‮Wnsʇ‬ ‮qǝ‬ ‮qǝʇʍǝǝu‬ 1 ‮ɐup‬ 65535.",
     "description": ""
   },
+  "settings#reset-button": {
+    "message": "‮ᴚǝsǝʇ‬ ‮ʇo‬ ‮pǝɟɐnʅʇ‬",
+    "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+  },
   "settings#split-tunnel#enable-label": {
     "message": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮poɯǝsʇıɔ‬ ‮ʍǝqsıʇǝs‬",
     "description": ""

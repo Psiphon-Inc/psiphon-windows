@@ -221,6 +221,8 @@ $(function() {
 
   fillSettingsValues(g_initObj.Settings);
 
+  $('.settings-reset a').click(onSettingsReset);
+
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
@@ -306,6 +308,11 @@ function fillSettingsValues(obj) {
   $('body select').each(function() {
     if (this.refresh) this.refresh();
   });
+}
+
+function onSettingsReset(e) {
+  e.preventDefault();
+  fillSettingsValues(g_initObj.Settings.defaults);
 }
 
 // Packages the current settings into JSON string. Returns if invalid value found.
@@ -507,7 +514,7 @@ function addLogMessage(obj) {
 
 /* LANGUAGE ******************************************************************/
 
-var RTL_LOCALES = ['devrtl', 'fa', 'ar', 'he'];
+var RTL_LOCALES = ['devrtl', 'fa', 'ar' ];
 
 $(function() {
   var fallbackLanguage = 'en';

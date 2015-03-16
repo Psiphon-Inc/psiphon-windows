@@ -5338,6 +5338,25 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
 .port-entry {
   width: 5em;
 }
+.settings-reset {
+  *zoom: 1;
+  margin-top: 5px;
+}
+.settings-reset:before,
+.settings-reset:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.settings-reset:after {
+  clear: both;
+}
+body[dir="ltr"] .settings-reset a {
+  float: right;
+}
+body[dir="rtl"] .settings-reset a {
+  float: left;
+}
 /* FEEDBACK */
 .feedback-smiley-container {
   margin-left: 5px;
@@ -5411,9 +5430,13 @@ body[dir="rtl"] .global-alert {
 }
 .z-behind {
   z-index: -2;
+  opacity: 0;
+  filter: alpha(opacity=0);
 }
 .z-infront {
   z-index: 2;
+  opacity: 1;
+  filter: alpha(opacity=100);
 }
 img {
   -ms-interpolation-mode: bicubic;

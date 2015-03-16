@@ -51,6 +51,10 @@
     "message": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
     "description": ""
   },
+  "settings#reset-button": {
+    "message": "Reset to Default",
+    "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+  },
   "settings#egress-region#heading": {
     "message": "Psiphon server region",
     "description": ""
