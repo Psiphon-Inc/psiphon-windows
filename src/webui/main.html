@@ -24,6 +24,8 @@
   <link href="vendor/jqueryui/jquery-ui.structure.min.css?__inline=true" rel="stylesheet">
   <link href="vendor/font-awesome/css/font-awesome.css?__inline=true" rel="stylesheet">
   <link href="vendor/font-awesome/css/font-awesome-ie7.css?__inline=true" rel="stylesheet">
+  <link href="vendor/msdropdown/msdropdown.css?__inline=true" rel="stylesheet">
+  <link href="vendor/flags32.css?__inline=true" rel="stylesheet">
   <link href="css/main.css?__inline=true" rel="stylesheet">
 
   <!-- Can be used to help with the IE7 "hasLayout" problem. http://www.satzansatz.de/cssd/onhavinglayout.html -->
@@ -50,12 +52,14 @@
   <script src="vendor/base64.js?__inline=true"></script>
   <script src="vendor/respond.src.js?__inline=true"></script>
   <script src="vendor/modernizr.min.js?__inline=true"></script>
+  <script src="vendor/es5-shim.min.js?__inline=true"></script>
   <script src="vendor/json2.js?__inline=true"></script>
   <script src="vendor/jquery-1.11.2.min.js?__inline=true"></script>
   <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
   <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
   <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
   <script src="vendor/spin.js?__inline=true"></script>
+  <script src="vendor/msdropdown/jquery.msdropdown.min.js?__inline=true"></script>
   <script src="vendor/raphael.min.js?__inline=true"></script>
   <script src="vendor/i18next.min.js?__inline=true"></script>
 
@@ -226,9 +230,11 @@
                 Select desired Psiphon server region:
               </label>
               <div class="controls">
-                <select style="width:15em" id="EgressRegion" data-usesprite="f16" data-roundedcorner=no>
+                <select id="EgressRegion" data-usesprite="f32" data-roundedcorner=no>
                   <option value="" class="flag flag-unknown" selected
-                          data-i18n="settings#egress-region#select-best-performance">Best Performance</option>
+                          data-i18n="settings#egress-region#select-best-performance">
+                    Best Performance
+                  </option>
                   <option value="US" class="flag us"
                           data-i18n="settings#egress-region#select-us">United States</option>
                   <option value="GB" class="flag gb"

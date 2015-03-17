@@ -238,6 +238,45 @@ body {
   }
 }
 
+
+#EgressRegion {
+  // Hopefully the maximum width of any translations.
+  width: 20em;
+}
+
+.f16, .f32 {
+  zoom:1;
+  & .flag {
+    /* Restrict the height so the image file doesn't determine the dropdown size */
+    width: 100% !important;
+    margin: 2px 0 2px 2px !important;
+  }
+  li.flag {
+    border: 0 !important;
+  }
+}
+
+.f16 {
+  & .flag {
+    padding: 0 20px 0 20px !important;
+
+    &.flag-unknown{
+      background:url(../flag_unknown_16.png) no-repeat;
+    }
+  }
+}
+
+.f32 {
+  & .flag {
+    padding: 0 20px 0 40px !important;
+
+    &.flag-unknown{
+      background:url(../flag_unknown_32.png) no-repeat;
+    }
+  }
+}
+
+
 /* FEEDBACK */
 
 .feedback-smiley-container {

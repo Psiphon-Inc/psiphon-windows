@@ -27,18 +27,24 @@ $ node fake-translations.js
 ## TODO
 
 * Connect buttons resizes too much. Probably need to fix it to a particular height. 
-* Add flags to egress region combo
 * Bug (maybe): Check disabling of controls in older IE
 * Write descriptions for all i18n messages
 * More elaborate connection animation?
 * Need higher-res Psiphon logo
-* Clean up psiclient code.
+* Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 
+
+## Longer-term TODO
+
+* Split HTML into logical parts and use templating engine
+* Split up JS in logical modules
+* Ditto CSS
+* Unit tests
 
 
 ## Technical and compatibility notes

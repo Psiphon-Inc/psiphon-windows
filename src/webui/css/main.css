@@ -5357,6 +5357,35 @@ body[dir="ltr"] .settings-reset a {
 body[dir="rtl"] .settings-reset a {
   float: left;
 }
+#EgressRegion {
+  width: 20em;
+}
+.f16,
+.f32 {
+  zoom: 1;
+}
+.f16 .flag,
+.f32 .flag {
+  /* Restrict the height so the image file doesn't determine the dropdown size */
+  width: 100% !important;
+  margin: 2px 0 2px 2px !important;
+}
+.f16 li.flag,
+.f32 li.flag {
+  border: 0 !important;
+}
+.f16 .flag {
+  padding: 0 20px 0 20px !important;
+}
+.f16 .flag.flag-unknown {
+  background: url(../flag_unknown_16.png) no-repeat;
+}
+.f32 .flag {
+  padding: 0 20px 0 40px !important;
+}
+.f32 .flag.flag-unknown {
+  background: url(../flag_unknown_32.png) no-repeat;
+}
 /* FEEDBACK */
 .feedback-smiley-container {
   margin-left: 5px;

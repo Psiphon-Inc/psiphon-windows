@@ -305,14 +305,26 @@ function fillSettingsValues(obj) {
   if (typeof(obj.EgressRegion) !== 'undefined') {
     $('#EgressRegion').val(obj.EgressRegion);
   }
-  $('body select').each(function() {
-    if (this.refresh) this.refresh();
-  });
+  resetSettingsDropdowns();
+  $window.on(LANGUAGE_CHANGE_EVENT, resetSettingsDropdowns);
 }
 
 function onSettingsReset(e) {
   e.preventDefault();
   fillSettingsValues(g_initObj.Settings.defaults);
+}
+
+function resetSettingsDropdowns() {
+  if (browserCheck('lt-ie8')) {
+    // For IE7 we don't use fancy dropdowns.
+    return;
+  }
+
+  var dd = $('#EgressRegion').data('dd');
+  if (dd) {
+    dd.destroy();
+  }
+  $('#EgressRegion').msDropDown();
 }
 
 // Packages the current settings into JSON string. Returns if invalid value found.
@@ -696,6 +708,13 @@ function displayCornerAlert(elem) {
       $(elem).toggle('fold', {horizFirst: true}, 1000);
     }, 5000);
   });
+}
+
+// Check the current browser version number. `version` must be something like "lt-ie8".
+// Return value is boolean.
+// Note that this isn't super flexible yet. It will need to be improved as it's used.
+function browserCheck(version) {
+  return $('html').hasClass(version);
 }
 
 //
