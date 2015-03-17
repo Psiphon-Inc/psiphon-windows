@@ -26,7 +26,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Connect buttons resizes too much. Probably need to fix it to a particular height. 
 * Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
 * Write descriptions for all i18n messages
 * More elaborate connection animation?

@@ -136,8 +136,17 @@ $(function() {
 });
 
 function resizeConnectContent() {
+  // Resize the text in the button
+  var i;
+  var $slabs = $('.slabtext-container');
+  for (i = 0; i < $slabs.length; i++) {
+    if ($slabs.eq(i).data('slabText')) {
+      $slabs.eq(i).data('slabText').resizeSlabs();
+    }
+  }
+
   // Set the outer box to the correct height
-  $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
+  //$('#connect-toggle').height($('#connect-toggle > *').outerHeight());
 }
 
 function setupConnectToggle() {
@@ -173,6 +182,8 @@ function setupConnectToggle() {
     // the stopping button is disabled
   });
   updateConnectToggle();
+
+  $('.slabtext-container').slabText({noResizeEvent: true});
 }
 
 // Update the main connect button, as well as the connection indicator on the tab.

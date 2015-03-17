@@ -5302,12 +5302,11 @@ body[dir="rtl"] .tab-content > .tab-pane {
   max-width: 600px;
   position: relative;
   padding: 0;
-  margin: 30px auto auto auto;
-  top: 10%;
+  margin: 60px auto auto auto;
 }
 #connect-toggle > .connect-toggle-content {
   position: absolute;
-  bottom: 0;
+  top: 0;
   width: 70%;
   padding: 20px;
   margin: auto;
@@ -5319,8 +5318,15 @@ body[dir="ltr"] #connect-toggle > .connect-toggle-content {
 body[dir="rtl"] #connect-toggle > .connect-toggle-content {
   right: 10%;
 }
+#connect-toggle .slabtext-container {
+  height: 50px;
+}
 #connect-toggle a {
   min-width: 10em;
+}
+#connect-toggle a h3 {
+  white-space: nowrap;
+  overflow-x: hidden;
 }
 #connect-toggle .wait-spinner {
   position: relative;
@@ -5359,10 +5365,6 @@ body[dir="rtl"] .settings-reset a {
 }
 #EgressRegion {
   width: 20em;
-}
-.f16,
-.f32 {
-  zoom: 1;
 }
 .f16 .flag,
 .f32 .flag {

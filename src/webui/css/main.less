@@ -175,40 +175,45 @@ body {
   max-width: 600px;
   position: relative;
   padding: 0;
-  margin: 30px auto auto auto;
+  margin: 60px auto auto auto;
 
-  // This pushes the button a bit down the page, making it feel more centered.
-  top: 10%;
-}
+  > .connect-toggle-content {
+    position: absolute;
+    top: 0;
+    width: 70%;
+    padding: 20px;
+    margin: auto;
+    overflow: hidden;
 
-#connect-toggle > .connect-toggle-content {
-  position: absolute;
-  bottom: 0;
-  width: 70%;
-  padding: 20px;
-  margin: auto;
-  overflow: hidden;
+    body[dir="ltr"] & {
+      left: 10%;
+    }
 
-  body[dir="ltr"] & {
-    left: 10%;
+    body[dir="rtl"] & {
+      right: 10%;
+    }
   }
 
-  body[dir="rtl"] & {
-    right: 10%;
+  .slabtext-container {
+    height: 50px;
+  }
+
+  a {
+    min-width: 10em;
+
+    h3 {
+      white-space: nowrap;
+      overflow-x: hidden;
+    }
+  }
+
+  .wait-spinner {
+    position: relative;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
   }
 }
-
-#connect-toggle a {
-  min-width: 10em;
-}
-
-#connect-toggle .wait-spinner {
-  position: relative;
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-}
-
 /* SETTINGS */
 
 .vpn-incompatible-msg {

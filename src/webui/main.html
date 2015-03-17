@@ -25,6 +25,7 @@
   <link href="vendor/font-awesome/css/font-awesome.css?__inline=true" rel="stylesheet">
   <link href="vendor/font-awesome/css/font-awesome-ie7.css?__inline=true" rel="stylesheet">
   <link href="vendor/msdropdown/msdropdown.css?__inline=true" rel="stylesheet">
+  <link href="vendor/slabtext/slabtext.css?__inline=true" rel="stylesheet">
   <link href="vendor/flags32.css?__inline=true" rel="stylesheet">
   <link href="css/main.css?__inline=true" rel="stylesheet">
 
@@ -60,6 +61,7 @@
   <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
   <script src="vendor/spin.js?__inline=true"></script>
   <script src="vendor/msdropdown/jquery.msdropdown.min.js?__inline=true"></script>
+  <script src="vendor/slabtext/slabtext.js?__inline=true"></script>
   <script src="vendor/raphael.min.js?__inline=true"></script>
   <script src="vendor/i18next.min.js?__inline=true"></script>
 
@@ -145,8 +147,8 @@
                  data-connect-state="starting"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
-                <h2>
-                  <span data-i18n="connection#starting-msg">Psiphon is connecting...</span>
+                <h2 class="slabtext-container">
+                  <span class="slabtext" data-i18n="connection#starting-msg">Psiphon is connecting...</span>
                 </h2>
               </div>
               <div>
@@ -160,8 +162,8 @@
                  data-connect-state="connected"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
-                <h2>
-                  <span data-i18n="connection#connected-msg">Psiphon is connected</span>
+                <h2 class="slabtext-container">
+                  <span class="slabtext" data-i18n="connection#connected-msg">Psiphon is connected</span>
                 </h2>
               </div>
               <div>
@@ -175,8 +177,8 @@
                  data-connect-state="stopping"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
-                <h2>
-                  <span data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
+                <h2 class="slabtext-container">
+                  <span class="slabtext" data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
                 </h2>
               </div>
               <div>
@@ -193,8 +195,8 @@
                  data-connect-state="stopped"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div>
-                <h2>
-                  <span data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
+                <h2 class="slabtext-container">
+                  <span class="slabtext" data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
                 </h2>
               </div>
               <div>
