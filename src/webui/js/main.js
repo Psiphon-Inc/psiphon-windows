@@ -94,6 +94,7 @@ function resizeContent() {
   $('.main-height').trigger('resize');
 
   doMatchHeight();
+  doMatchWidth();
 }
 
 
@@ -697,6 +698,46 @@ function doMatchHeight() {
         $this.css('padding-top', heightDiff/2 + $this.data('match-height-orig-padding-top'))
              .css('padding-bottom', heightDiff/2 + $this.data('match-height-orig-padding-bottom'));
       }
+    });
+  }
+}
+
+// Support the `data-match-width` feature
+function doMatchWidth() {
+  var matchSelectors = [];
+  $('[data-match-width]').each(function() {
+    var $this = $(this);
+
+    var matchSelector = $this.data('match-width');
+    if (matchSelectors.indexOf(matchSelector) < 0) {
+      matchSelectors.push(matchSelector);
+    }
+  });
+
+  for (var i = 0; i < matchSelectors.length; i++) {
+    matchWidths(matchSelectors[i]);
+  }
+
+  function matchWidths(matchSelector) {
+    var maxWidth = 0;
+    $(matchSelector).each(function() {
+      var $this = $(this);
+      // Reset the width to its original state
+      $this.width('');
+
+      maxWidth = Math.max(maxWidth, $this.width());
+    });
+
+    $(matchSelector).each(function() {
+      var $this = $(this);
+
+      var widthDiff = maxWidth - $this.width();
+      if (widthDiff <= 0) {
+        // Don't adjust the largest
+        return;
+      }
+
+      $this.width(maxWidth);
     });
   }
 }

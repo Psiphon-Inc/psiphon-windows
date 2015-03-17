@@ -5648,7 +5648,7 @@ a .icon-flip-vertical:before {
 }
 .nav [class^="icon-"],
 .nav [class*=" icon-"] {
-  vertical-align: inherit;
+  vertical-align: middle;
   margin-top: -4px;
   padding-top: 3px;
   margin-bottom: -4px;
@@ -16720,6 +16720,7 @@ function resizeContent() {
   $('.main-height').trigger('resize');
 
   doMatchHeight();
+  doMatchWidth();
 }
 
 
@@ -17327,6 +17328,46 @@ function doMatchHeight() {
   }
 }
 
+// Support the `data-match-width` feature
+function doMatchWidth() {
+  var matchSelectors = [];
+  $('[data-match-width]').each(function() {
+    var $this = $(this);
+
+    var matchSelector = $this.data('match-width');
+    if (matchSelectors.indexOf(matchSelector) < 0) {
+      matchSelectors.push(matchSelector);
+    }
+  });
+
+  for (var i = 0; i < matchSelectors.length; i++) {
+    matchWidths(matchSelectors[i]);
+  }
+
+  function matchWidths(matchSelector) {
+    var maxWidth = 0;
+    $(matchSelector).each(function() {
+      var $this = $(this);
+      // Reset the width to its original state
+      $this.width('');
+
+      maxWidth = Math.max(maxWidth, $this.width());
+    });
+
+    $(matchSelector).each(function() {
+      var $this = $(this);
+
+      var widthDiff = maxWidth - $this.width();
+      if (widthDiff <= 0) {
+        // Don't adjust the largest
+        return;
+      }
+
+      $this.width(maxWidth);
+    });
+  }
+}
+
 function displayCornerAlert(elem) {
   // Show -- and then hide -- the alert
   $(elem).toggle('fold', {horizFirst: true}, function() {
@@ -17340,7 +17381,6 @@ function displayCornerAlert(elem) {
 // Return value is boolean.
 // Note that this isn't super flexible yet. It will need to be improved as it's used.
 function browserCheck(version) {
-  alert($('html')[0].className);
   return $('html').hasClass(version);
 }
 
@@ -17477,7 +17517,8 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
          data-i18n-ltr-classes="tabs-left" data-i18n-rtl-classes="tabs-right">
       <ul class="main-nav nav nav-tabs">
         <li id="connection-tab" class="active">
-          <a href="#connection-pane" data-toggle="tab">
+          <!-- data-match-width is necessary for IE7 -->
+          <a href="#connection-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-home"></i>
             <span data-i18n="nav#connection">Connection</span>
             <span class="label label-warning hidden" data-connect-state="starting">
@@ -17495,26 +17536,26 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
           </a>
         </li>
         <li id="settings-tab">
-          <a href="#settings-pane" data-toggle="tab">
+          <a href="#settings-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-cogs"></i>
             <span data-i18n="nav#settings">Settings</span>
           </a>
         </li>
         <li id="feedback-tab">
-          <a href="#feedback-pane" data-toggle="tab">
+          <a href="#feedback-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-comment-alt"></i>
             <span data-i18n="nav#feedback">Feedback</span>
           </a>
         </li>
         <li id="messages-tab">
-          <a href="#messages-pane" data-toggle="tab">
+          <a href="#messages-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-list"></i>
             <span data-i18n="nav#messages">Log Messages</span>
           </a>
         </li>
 
         <li id="language-tab">
-          <a href="#language-pane" data-toggle="tab">
+          <a href="#language-pane" data-toggle="tab" data-match-width=".main-nav a">
             <div class="multiline-tab-icon" style="">
               <i class="icon-fixed-width icon-globe"></i>
             </div>

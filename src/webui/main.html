@@ -84,7 +84,8 @@
          data-i18n-ltr-classes="tabs-left" data-i18n-rtl-classes="tabs-right">
       <ul class="main-nav nav nav-tabs">
         <li id="connection-tab" class="active">
-          <a href="#connection-pane" data-toggle="tab">
+          <!-- data-match-width is necessary for IE7 -->
+          <a href="#connection-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-home"></i>
             <span data-i18n="nav#connection">Connection</span>
             <span class="label label-warning hidden" data-connect-state="starting">
@@ -102,26 +103,26 @@
           </a>
         </li>
         <li id="settings-tab">
-          <a href="#settings-pane" data-toggle="tab">
+          <a href="#settings-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-cogs"></i>
             <span data-i18n="nav#settings">Settings</span>
           </a>
         </li>
         <li id="feedback-tab">
-          <a href="#feedback-pane" data-toggle="tab">
+          <a href="#feedback-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-comment-alt"></i>
             <span data-i18n="nav#feedback">Feedback</span>
           </a>
         </li>
         <li id="messages-tab">
-          <a href="#messages-pane" data-toggle="tab">
+          <a href="#messages-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-list"></i>
             <span data-i18n="nav#messages">Log Messages</span>
           </a>
         </li>
 
         <li id="language-tab">
-          <a href="#language-pane" data-toggle="tab">
+          <a href="#language-pane" data-toggle="tab" data-match-width=".main-nav a">
             <div class="multiline-tab-icon" style="">
               <i class="icon-fixed-width icon-globe"></i>
             </div>

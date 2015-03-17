@@ -33,7 +33,7 @@
 }
 .nav [class^="icon-"],
 .nav [class*=" icon-"] {
-  vertical-align: inherit;
+  vertical-align: middle;
   margin-top: -4px;
   padding-top: 3px;
   margin-bottom: -4px;
