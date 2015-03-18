@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "systemproxysettings.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "wininet.h"
 #include "config.h"

@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "shellapi.h"
 #include "config.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "server_request.h"

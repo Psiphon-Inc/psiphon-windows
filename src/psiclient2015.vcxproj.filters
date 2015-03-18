@@ -48,6 +48,7 @@
     <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="wininet_network_check.cpp" />
     <ClCompile Include="coretransport.cpp" />
+    <ClCompile Include="logging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -514,6 +515,7 @@
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="coretransport.h" />
+    <ClInclude Include="logging.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

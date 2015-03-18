@@ -22,17 +22,19 @@ $ node fake-translations.js
 
 ## TODO
 
-* BUG: Egress region combo is bad in RTL
-* Keep existing feedback page translations
+* Add banner click event. Add info-link and click event.
 * Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
+* Keep existing feedback page translations
 * Write descriptions for all i18n messages
 * More elaborate connection animation?
 * Need higher-res Psiphon logo
+* Need new logo app icon
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
+* Minimize to systray
 
 * UI feedback from user: 
   - put region selector in connect tab; people will feel like they're doing something

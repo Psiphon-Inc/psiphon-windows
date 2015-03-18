@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "usersettings.h"
 #include "utilities.h"

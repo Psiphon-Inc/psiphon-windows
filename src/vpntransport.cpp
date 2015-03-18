@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "transport.h"
 #include "vpntransport.h"
+#include "logging.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "ras.h"

@@ -22,6 +22,7 @@
 #pragma comment(lib,"shlwapi.lib")
 #include "shlobj.h"
 
+#include "logging.h"
 #include "coretransport.h"
 #include "sessioninfo.h"
 #include "psiclient.h"

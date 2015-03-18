@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include <WinSock2.h>
+#include "logging.h"
 #include "config.h"
 #include "psiclient.h"
 #include "utilities.h"

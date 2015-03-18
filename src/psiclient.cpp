@@ -21,15 +21,11 @@
 
 #include "stdafx.h"
 
-// This is for Windows XP/Vista+ style controls
-#include <Commctrl.h>
-#pragma comment (lib, "Comctl32.lib")
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
 // This is for COM functions
 # pragma comment(lib, "wbemuuid.lib")
 
 #include "psiclient.h"
+#include "logging.h"
 #include <mCtrl/html.h>
 #include "connectionmanager.h"
 #include "embeddedvalues.h"
@@ -104,97 +100,6 @@ void OnCreate(HWND hWndParent)
         NULL);
 }
 
-//==== my_print (logging) =====================================================
-
-vector<MessageHistoryEntry> g_messageHistory;
-HANDLE g_messageHistoryMutex = CreateMutex(NULL, FALSE, 0);
-
-void GetMessageHistory(vector<MessageHistoryEntry>& history)
-{
-    AutoMUTEX mutex(g_messageHistoryMutex);
-    history = g_messageHistory;
-}
-
-void AddMessageEntryToHistory(
-    LogSensitivity sensitivity,
-    bool bDebugMessage,
-    const TCHAR* formatString,
-    const TCHAR* finalString)
-{
-    AutoMUTEX mutex(g_messageHistoryMutex);
-
-    const TCHAR* historicalMessage = NULL;
-    if (sensitivity == NOT_SENSITIVE)
-    {
-        historicalMessage = finalString;
-    }
-    else if (sensitivity == SENSITIVE_FORMAT_ARGS)
-    {
-        historicalMessage = formatString;
-    }
-    else // SENSITIVE_LOG
-    {
-        historicalMessage = NULL;
-    }
-
-    if (historicalMessage != NULL)
-    {
-        MessageHistoryEntry entry;
-        entry.message = historicalMessage;
-        entry.timestamp = GetISO8601DatetimeString();
-        entry.debug = bDebugMessage;
-        g_messageHistory.push_back(entry);
-    }
-}
-
-#ifdef _DEBUG
-bool g_bShowDebugMessages = true;
-#else
-bool g_bShowDebugMessages = false;
-#endif
-
-void my_print(LogSensitivity sensitivity, bool bDebugMessage, const TCHAR* format, ...)
-{
-    TCHAR* debugPrefix = _T("DEBUG: ");
-    size_t debugPrefixLength = _tcsclen(debugPrefix);
-    TCHAR* buffer = NULL;
-    va_list args;
-    va_start(args, format);
-    int length = _vsctprintf(format, args) + 1;
-    if (bDebugMessage)
-    {
-        length += debugPrefixLength;
-    }
-    buffer = (TCHAR*)malloc(length * sizeof(TCHAR));
-    if (!buffer) return;
-    if (bDebugMessage)
-    {
-        _tcscpy_s(buffer, length, debugPrefix);
-        _vstprintf_s(buffer + debugPrefixLength, length - debugPrefixLength, format, args);
-    }
-    else
-    {
-        _vstprintf_s(buffer, length, format, args);
-    }
-    va_end(args);
-
-    AddMessageEntryToHistory(sensitivity, bDebugMessage, format, buffer);
-
-    if (!bDebugMessage || g_bShowDebugMessages)
-    {
-        // NOTE:
-        // Main window handles displaying the message. This avoids
-        // deadlocks with SendMessage. Main window will deallocate
-        // buffer.
-
-        PostMessage(g_hWnd, WM_PSIPHON_MY_PRINT, bDebugMessage ? 0 : 1, (LPARAM)buffer);
-    }
-}
-
-void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& message)
-{
-    my_print(sensitivity, bDebugMessage, NarrowToTString(message).c_str());
-}
 
 //==== HTML UI helpers ========================================================
 
@@ -439,7 +344,10 @@ int APIENTRY _tWinMain(
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
             // Bit of a dirty hack to prevent the HTML control code from crashing
-            // on exit. WM_APP+2 is the message used for MC_HN_STATUSTEXT.
+            // on exit. 
+            // WM_APP+2 is the message used for MC_HN_STATUSTEXT. Sometimes it
+            // arrives after the control is destroyed and will cause an app 
+            // crash if we let it through.
             if (msg.message == (WM_APP + 2) && g_htmlUiFinished)
                 continue;
 
@@ -638,44 +546,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_COMMAND:
         /*
-        wmId = LOWORD(wParam);
-        wmEvent = HIWORD(wParam);
-
-        // lParam == 0: menu or accelerator event
-
-        if (lParam == 0)
-        {
-            switch (wmId)
-            {
-            case IDM_SHOW_DEBUG_MESSAGES:
-                g_bShowDebugMessages = !g_bShowDebugMessages;
-                my_print(NOT_SENSITIVE, false, _T("Show debug messages: %s"), g_bShowDebugMessages ? _T("Yes") : _T("No"));
-                break;
-            // TODO: remove about, and exit?  The menu is currently hidden
-            case IDM_ABOUT:
-                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        // lParam != 0: control notifications
-
-        // Toggle button clicked
-
-        else if (lParam == (LPARAM)g_hToggleButton && wmEvent == BN_CLICKED)
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Toggle called"), __TFUNCTION__);
-
-            // See comment below about Stop() blocking the UI
-            SetCursor(LoadCursor(0, IDC_WAIT));
-
-            g_connectionManager.Toggle();
-        }
-
+       
         // Banner clicked
 
         else if (lParam == (LPARAM)g_hBannerStatic && wmEvent == STN_CLICKED)
@@ -704,57 +575,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             OpenBrowser(INFO_LINK_URL);
         }
 
-        // Settings button clicked
-
-        else if (lParam == (LPARAM)g_hSettingsButton && wmEvent == BN_CLICKED)
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Settings called"), __TFUNCTION__);
-            if (Settings::Show(g_hInst, hWnd))
-            {
-                // If the settings changed and we're connected, reconnect.
-                ConnectionManagerState state = g_connectionManager.GetState();
-                if (state == ConnectionManagerState::CONNECTION_MANAGER_STATE_CONNECTED
-                    || state == ConnectionManagerState::CONNECTION_MANAGER_STATE_STARTING)
-                {
-                    g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
-                    g_connectionManager.Start();
-                }
-            }
-        }
-
-        // Feedback button clicked
-
-        else if (lParam == (LPARAM)g_hFeedbackButton && wmEvent == BN_CLICKED)
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s: Button pressed, Feedback called"), __TFUNCTION__);
-
-            tstringstream feedbackArgs;
-            feedbackArgs << "{ \"newVersionURL\": \"" << GET_NEW_VERSION_URL << "\", ";
-            feedbackArgs << "\"newVersionEmail\": \"" << GET_NEW_VERSION_EMAIL << "\", ";
-            feedbackArgs << "\"faqURL\": \"" << FAQ_URL << "\", ";
-            feedbackArgs << "\"dataCollectionInfoURL\": \"" << DATA_COLLECTION_INFO_URL << "\" }";
-
-            tstring feedbackResult;
-            if (ShowHTMLDlg(
-                    hWnd,
-                    _T("FEEDBACK_HTML_RESOURCE"),
-                    GetLocaleName().c_str(),
-                    feedbackArgs.str().c_str(),
-                    feedbackResult) == 1)
-            {
-                my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
-
-                g_connectionManager.SendFeedback(feedbackResult.c_str());
-
-                SendMessage(
-                    g_hFeedbackButton,
-                    BM_SETIMAGE,
-                    IMAGE_ICON,
-                    (LPARAM)g_hFeedbackButtonIcons[1]);
-                EnableWindow(g_hFeedbackButton, FALSE);
-            }
-            // else error or user cancelled
-        }
         */
         break;
 
@@ -770,27 +590,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     case WM_PSIPHON_FEEDBACK_SUCCESS:
-        /*
-        SendMessage(
-            g_hFeedbackButton,
-            BM_SETIMAGE,
-            IMAGE_ICON,
-            (LPARAM)g_hFeedbackButtonIcons[0]);
-        EnableWindow(g_hFeedbackButton, TRUE);
         my_print(NOT_SENSITIVE, false, _T("Feedback sent. Thank you!"));
-        */
         break;
 
     case WM_PSIPHON_FEEDBACK_FAILED:
-        /*
-        SendMessage(
-            g_hFeedbackButton,
-            BM_SETIMAGE,
-            IMAGE_ICON,
-            (LPARAM)g_hFeedbackButtonIcons[0]);
-        EnableWindow(g_hFeedbackButton, TRUE);
         my_print(NOT_SENSITIVE, false, _T("Failed to send feedback."));
-        */
         break;
 
     case WM_ENDSESSION:

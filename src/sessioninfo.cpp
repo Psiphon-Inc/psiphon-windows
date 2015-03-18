@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "sessioninfo.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "config.h"
 #include "utilities.h"

@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "psiclient.h"
+#include "logging.h"
 #include "config.h"
 #include <Shlwapi.h>
 #include <WinSock2.h>
