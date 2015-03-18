@@ -5364,28 +5364,43 @@ body[dir="rtl"] .settings-reset a {
   float: left;
 }
 #EgressRegion {
-  width: 20em;
+  width: 25em;
 }
-.f16 .flag,
-.f32 .flag {
-  /* Restrict the height so the image file doesn't determine the dropdown size */
-  width: 100% !important;
-  margin: 2px 0 2px 2px !important;
+body[dir="rtl"] .dd.ddcommon .ddArrow {
+  left: 4px;
+  right: auto;
 }
-.f16 li.flag,
-.f32 li.flag {
-  border: 0 !important;
+body[dir="rtl"] .dd .divider {
+  border-right: 1px solid #c3c3c3;
+  border-left: 1px solid #fff;
+  left: 24px;
+  right: auto;
 }
-.f16 .flag {
-  padding: 0 20px 0 20px !important;
+.dd .ddChild li {
+  border-bottom: none;
 }
-.f16 .flag.flag-unknown {
+.dd .ddTitle .ddTitleText {
+  padding: 0 0 0 0;
+}
+.dd .f32 .ddlabel {
+  line-height: 32px;
+}
+.dd .f16 .flag,
+.dd .f32 .flag {
+  margin: 0 5px 0 5px;
+}
+body[dir="ltr"] .dd .f16 .flag,
+body[dir="ltr"] .dd .f32 .flag {
+  float: left;
+}
+body[dir="rtl"] .dd .f16 .flag,
+body[dir="rtl"] .dd .f32 .flag {
+  float: right;
+}
+.f16 .unknown {
   background: url(../flag_unknown_16.png) no-repeat;
 }
-.f32 .flag {
-  padding: 0 20px 0 40px !important;
-}
-.f32 .flag.flag-unknown {
+.f32 .unknown {
   background: url(../flag_unknown_32.png) no-repeat;
 }
 /* FEEDBACK */

@@ -42,13 +42,11 @@ var g_initObj = {};
 
   // For browser debugging
   if (IS_BROWSER) {
-    g_initObj = {
-      Config: {
-        Language: 'en',
-        Banner: 'banner.png',
-        Debug: true
-      }
-    };
+    g_initObj = g_initObj || {};
+    g_initObj.Config = g_initObj.Config || {};
+    g_initObj.Config.Language = g_initObj.Config.Language || 'en';
+    g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
+    g_initObj.Config.Debug = g_initObj.Config.Debug || true;
   }
 })();
 
@@ -329,14 +327,40 @@ function onSettingsReset(e) {
 function resetSettingsDropdowns() {
   if (browserCheck('lt-ie8')) {
     // For IE7 we don't use fancy dropdowns.
+    // ...Because I can't figure out how to get the control to scroll with the page.
     return;
   }
+
+  // msDropdown supports images, but it's totally broken in right-to-left layout.
+  // So we're going to hack in our own support using a separate sub-element.
 
   var dd = $('#EgressRegion').data('dd');
   if (dd) {
     dd.destroy();
   }
-  $('#EgressRegion').msDropDown();
+  $('#EgressRegion').msDropDown({rowHeight: 32, on: { create: egressRegionCreated, change: egressRegionChange }});
+
+  function egressRegionCreated() {
+    // Add our flags
+
+    $('#EgressRegion_msdd li').each(function() {
+      $(this).prepend(makeFlagElem(this));
+    });
+
+    var titleElem = $('#EgressRegion_msdd .ddTitleText');
+    titleElem.prepend(makeFlagElem(titleElem));
+  }
+
+  function egressRegionChange() {
+    var titleElem = $('#EgressRegion_msdd .ddTitleText');
+    titleElem.find('.flag').replaceWith(makeFlagElem(titleElem));
+  }
+
+  function makeFlagElem(elem) {
+    var region = $(elem)[0].className.match(/\bflag-([a-z-_@]+)\b/)[1];
+    var flagElem = $('<div>').addClass('flag ' + region);
+    return flagElem;
+  }
 }
 
 // Packages the current settings into JSON string. Returns if invalid value found.

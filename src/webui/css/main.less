@@ -246,37 +246,62 @@ body {
 
 #EgressRegion {
   // Hopefully the maximum width of any translations.
-  width: 20em;
+  width: 25em;
 }
 
-.f16, .f32 {
-  & .flag {
-    /* Restrict the height so the image file doesn't determine the dropdown size */
-    width: 100% !important;
-    margin: 2px 0 2px 2px !important;
+// msDropdown fixes
+
+.dd {
+  body[dir="rtl"] & {
+    &.ddcommon .ddArrow{
+      left: 4px;
+      right: auto;
+    }
+
+    .divider{
+      border-right: 1px solid #c3c3c3;
+      border-left: 1px solid #fff;
+      left: 24px;
+      right: auto;
+    }
   }
-  li.flag {
-    border: 0 !important;
+
+  .ddChild li {
+    border-bottom: none;
+  }
+
+  .ddTitle .ddTitleText {
+    padding: 0 0 0 0;
+  }
+
+  .f32 .ddlabel {
+    line-height: 32px;
+  }
+}
+
+.dd {
+  .f16, .f32 {
+    & .flag {
+      margin: 0 5px 0 5px;
+      body[dir="ltr"] & {
+        float: left;
+      }
+      body[dir="rtl"] & {
+        float: right;
+      }
+    }
   }
 }
 
 .f16 {
-  & .flag {
-    padding: 0 20px 0 20px !important;
-
-    &.flag-unknown{
-      background:url(../flag_unknown_16.png) no-repeat;
-    }
+  & .unknown{
+    background:url(../flag_unknown_16.png) no-repeat;
   }
 }
 
 .f32 {
-  & .flag {
-    padding: 0 20px 0 40px !important;
-
-    &.flag-unknown{
-      background:url(../flag_unknown_32.png) no-repeat;
-    }
+  & .unknown{
+    background:url(../flag_unknown_32.png) no-repeat;
   }
 }
 
