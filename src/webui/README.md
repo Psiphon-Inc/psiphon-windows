@@ -17,15 +17,13 @@ $ node fake-translations.js
 ## Notes and discussion points
 
 * Nothing is set in stone. For example, if consensus is against the left-side tabs, they can be changed. Et cetera.
-* I have done no custom styling (colours, etc.) at all yet. Everything is default Bootstrap. Some styling notes in the TODO section (probably — haven’t go there).
-  - This means that the UI looks quite web-y. Like, probably too web-y.
-* XP-with-IE7 will probably be a somewhat degraded visual experience, but it will work fine.
-* I realized yesterday that Bittorrent Sync also uses this IE-based web view thing. I attached screenshots of it. It mimics some chrome in its UI. And uses modals, which I’d like to avoid, but maybe blah.
 * It feels like there should be more icons or images — it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used. You can see a few of them in the nav tabs.
 
 
 ## TODO
 
+* BUG: Egress region combo is bad in RTL
+* Keep existing feedback page translations
 * Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
 * Write descriptions for all i18n messages
 * More elaborate connection animation?
@@ -35,6 +33,12 @@ $ node fake-translations.js
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
+
+* UI feedback from user: 
+  - put region selector in connect tab; people will feel like they're doing something
+  - too much text in Settings pane (looks like Chrome setting); maybe show help text on demand
+  - too much separation (legend for simple shit is too big)
+  - VPN Mode: on/off; remove extraneous "use vpn mode text"
 
 
 ## Longer-term TODO

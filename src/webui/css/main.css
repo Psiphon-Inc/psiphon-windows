@@ -5264,8 +5264,8 @@ body[dir="rtl"] .psiphon-header .logo {
   color: #ffffff;
   background-color: #d43f27;
 }
-.main-nav i.icon-fixed-width {
-  vertical-align: middle;
+.main-nav .label i[class^="icon-"] {
+  vertical-align: baseline;
 }
 body[dir="ltr"] .main-nav .multiline-tab-icon {
   float: left;
