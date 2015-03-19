@@ -46,11 +46,15 @@ var g_initObj = {};
     g_initObj.Config = g_initObj.Config || {};
     g_initObj.Config.Language = g_initObj.Config.Language || 'en';
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
+    g_initObj.Config.InfoLink = g_initObj.Config.InfoLink || 'http://example.com/psiphon3.html';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
   }
 })();
 
 $(function() {
+  // Set the logo "info" link
+  $('.logo a').attr('href', g_initObj.Config.InfoLink).attr('title', g_initObj.Config.InfoLink);
+
   // The banner image filename is parameterized.
   $('.banner img').attr('src', g_initObj.Config.Banner);
 

@@ -75,6 +75,7 @@ void OnCreate(HWND hWndParent)
     initJSON["Config"] = Json::Value();
     initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
     initJSON["Config"]["Banner"] = string("banner.") + BANNER_FILETYPE;
+    initJSON["Config"]["InfoLink"] = TStringToNarrow(INFO_LINK_URL);
 #ifdef _DEBUG
     initJSON["Config"]["Debug"] = true;
 #else
@@ -563,16 +564,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 OpenBrowser(INFO_LINK_URL);
             }
-        }
-
-        // Info link clicked
-
-        else if (lParam == (LPARAM)g_hInfoLinkStatic && wmEvent == STN_CLICKED)
-        {
-            // Info link static control was clicked, so open Psiphon 3 page
-            // NOTE: Info link may be opened when not tunneled
-
-            OpenBrowser(INFO_LINK_URL);
         }
 
         */

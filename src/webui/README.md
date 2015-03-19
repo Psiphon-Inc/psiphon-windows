@@ -22,9 +22,10 @@ $ node fake-translations.js
 
 ## TODO
 
-* Add banner click event. Add info-link and click event.
+* Add banner click event. 
 * Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
 * Keep existing feedback page translations
+* Add an "About" tab...?
 * Write descriptions for all i18n messages
 * More elaborate connection animation?
 * Need higher-res Psiphon logo
@@ -33,6 +34,7 @@ $ node fake-translations.js
 * Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
+  - Don't forget the new BANNER_FILETYPE embedded value
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 * Minimize to systray
 
@@ -45,6 +47,7 @@ $ node fake-translations.js
 
 ## Longer-term TODO
 
+* Update UI and website
 * Split HTML into logical parts and use templating engine
 * Split up JS in logical modules
 * Ditto CSS

@@ -348,6 +348,11 @@ bool Settings::SkipAutoConnect()
     return !!GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT);
 }
 
+/*
+For internal use only
+TODO: Probably shouldn't be in the "usersettings" file
+*/
+
 void Settings::SetCookies(const string& value)
 {
     RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
