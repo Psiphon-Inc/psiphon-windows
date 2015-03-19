@@ -22,7 +22,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
 * Keep existing feedback page translations
 * Add an "About" tab...?
 * Write descriptions for all i18n messages
@@ -34,6 +33,7 @@ $ node fake-translations.js
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
   - Don't forget the new BANNER_FILETYPE embedded value
+  - Banner file is moved to psiclient/webui
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 * Minimize to systray
 
