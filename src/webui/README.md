@@ -22,7 +22,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Add banner click event. 
 * Clean up psiclient code. Clean up unused files, like feedback.html and feedback.bmp.
 * Keep existing feedback page translations
 * Add an "About" tab...?
@@ -78,3 +77,14 @@ $ node fake-translations.js
 * Avoid using `opacity` on text -- for example, to de-emphasize or disable text. On IE<=9, text with reduced `opacity` looks jagged and bad.
 
 * IE7 has some horrible positioning and visibility bugs. If you can't figure out why something is invisible (or not) or is being positioned in weird way, read about [`hasLayout`](http://haslayout.net/haslayout) ([also](http://www.satzansatz.de/cssd/onhavinglayout.html)) and ["disappearing content"](http://www.positioniseverything.net/explorer/ienondisappearcontentbugPIE/index.htm).
+
+
+## Links to tools used
+
+* [grunt-inline](https://github.com/chyingp/grunt-inline) ([npm](https://www.npmjs.com/package/grunt-inline))
+* [Bootstrap v2](http://getbootstrap.com/2.3.2/index.html) (the last version that supports IE7)
+* [FontAwesome v3](https://fortawesome.github.io/Font-Awesome/3.2.1/) (the last version that supports IE7)
+* [Less CSS](http://lesscss.org/)
+* [jQuery](https://jquery.com/)
+* [jQueryUI](http://jqueryui.com/)
+* [i18next](http://i18next.com) ([github](https://github.com/i18next/i18next))

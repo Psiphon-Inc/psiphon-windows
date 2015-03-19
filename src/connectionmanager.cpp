@@ -65,11 +65,11 @@ ConnectionManager::~ConnectionManager(void)
     CloseHandle(m_mutex);
 }
 
-void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
+void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/, bool allowSkip/*=true*/)
 {
     AutoMUTEX lock(m_mutex);
     
-    if (!Settings::SkipBrowser())
+    if (!allowSkip || !Settings::SkipBrowser())
     {
         vector<tstring> urls = m_currentSessionInfo.GetHomepages();
         if (urls.size() == 0 && defaultHomePage)

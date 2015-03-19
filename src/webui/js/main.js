@@ -57,6 +57,11 @@ $(function() {
 
   // The banner image filename is parameterized.
   $('.banner img').attr('src', g_initObj.Config.Banner);
+  // Let the C-code decide what should be opened when the banner is clicked.
+  $('.banner a').on('click', function(e) {
+    e.preventDefault();
+    HtmlCtrlInterface_BannerClick();
+  });
 
   // Update the size of our tab content element when the window resizes...
   var lastWindowHeight = $window.height();
@@ -891,6 +896,18 @@ function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
 function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'setcookies?' + encodeURIComponent(cookiesJSON);
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
+  }, 1);
+}
+
+function HtmlCtrlInterface_BannerClick() {
+  setTimeout(function() {
+    var appURL = PSIPHON_LINK_PREFIX + 'bannerclick';
     if (IS_BROWSER) {
       console.log(appURL);
     }

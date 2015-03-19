@@ -49,7 +49,7 @@ public:
     void Start();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
-    void OpenHomePages(const TCHAR* defaultHomePage=0);
+    void OpenHomePages(const TCHAR* defaultHomePage=0, bool allowSkip=true);
 
     // IReconnectStateReceiver implementation
     virtual void SetReconnecting();

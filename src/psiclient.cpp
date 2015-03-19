@@ -203,6 +203,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const size_t appSendFeedbackLen = _tcslen(appSendFeedback);
     const LPCTSTR appSetCookies = PSIPHON_LINK_PREFIX _T("setcookies?");
     const size_t appSetCookiesLen = _tcslen(appSetCookies);
+    const LPCTSTR appBannerClick = PSIPHON_LINK_PREFIX _T("bannerclick");
 
     if (_tcscmp(url, appStart) == 0)
     {
@@ -246,6 +247,20 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         tstring uriEncoded(url + appSetCookiesLen);
         string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
         Settings::SetCookies(stringJSON);
+    }
+    else if (_tcscmp(url, appBannerClick) == 0)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Banner clicked"), __TFUNCTION__);
+        // If connected, open sponsor home pages, or info link if
+        // no sponsor pages. If not connected, open info link.
+        if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
+        {
+            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+        }
+        else
+        {
+            OpenBrowser(INFO_LINK_URL);
+        }
     }
     else {
         // Not one of our links. Open it in an external browser.
@@ -543,30 +558,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_NOTIFY:
         return HandleNotify(hWnd, (NMHDR*)lParam);
-        break;
-
-    case WM_COMMAND:
-        /*
-       
-        // Banner clicked
-
-        else if (lParam == (LPARAM)g_hBannerStatic && wmEvent == STN_CLICKED)
-        {
-            // If connected, sponsor open home pages, or info link if
-            // no sponsor pages. If not connected, open info link.
-
-            int state = g_connectionManager.GetState();
-            if (CONNECTION_MANAGER_STATE_CONNECTED == state)
-            {
-                g_connectionManager.OpenHomePages(INFO_LINK_URL);
-            }
-            else
-            {
-                OpenBrowser(INFO_LINK_URL);
-            }
-        }
-
-        */
         break;
 
     case WM_PSIPHON_MY_PRINT:
