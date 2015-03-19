@@ -22,7 +22,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Keep existing feedback page translations
 * Add an "About" tab...?
 * Write descriptions for all i18n messages
 * More elaborate connection animation?
@@ -34,6 +33,7 @@ $ node fake-translations.js
 * Automation: Switch to VS2013. Banner changes/support.
   - Don't forget the new BANNER_FILETYPE embedded value
   - Banner file is moved to psiclient/webui
+* Update Transifex and transifex_pull.py
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 * Minimize to systray
 

@@ -208,7 +208,7 @@
     "description": ""
   },
   "feedback#text_feedback_bottom_para": {
-    "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
+    "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
     "description": ""
   },
   "feedback#success-message": {

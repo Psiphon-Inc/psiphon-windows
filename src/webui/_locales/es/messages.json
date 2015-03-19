@@ -1,0 +1,46 @@
+{
+  "feedback#top_content_title": {
+    "message": "Envíenos sus comentarios",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "¡Por favor háganos saber cómo está funcionando Psiphon para usted para que podamos mejorar el sistema!\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "Muchos problemas pueden arreglarse descargando la última versión. Puede\n<a class=\"NewVersionURL\" href=\"#\">descargar la última versión haciendo clic aquí</a>,\no puede enviar un correo a <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "También puede encontrar soluciones a muchos problemas comunes en nuestras\n<a class=\"FaqURL\" href=\"#\">Preguntas frecuentes</a>.\n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "Suba datos de diagnóstico. Por favor observe que estos datos de\ndiagnóstico no le identifican, y nos ayudarán a mantener Psiphon\nfuncionando sin sobresaltos.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Haga clic aquí para ver que datos recogemos.</a>\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "Psiphon conecta y rinde de la forma que yo quiero.",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "Psiphon falla a menudo al conectar o no rinde suficientemente bien.",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "Enviar",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "Por favor introduzca sus comentarios aquí:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "Si quiere que nosotros le respondamos, por favor introduzca su dirección de correo electrónico\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "Si el formulario de arriba no le está funcionando, o si quisiese enviar capturas de pantalla, por favor envíenos un correo a <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n",
+    "description": ""
+  }
+}

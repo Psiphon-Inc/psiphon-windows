@@ -1,0 +1,26 @@
+{
+  "feedback#top_content_title": {
+    "message": "وافينا بردك",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "العديد من الأعطال يمكن معالجتها من خلال تحميل أحدث إصدار من برنامج سايفُن. بإمكانك تحميل أحدث إصدار للبرنامج عبر الرابط التالي:  <a class=\"NewVersionURL\" href=\"#\"> </a>,\nكما بإمكانك مراسلتنا على العنوان الإلكتروني التالي: <a class=\"NewVersionEmail\" href=\"#\"></a>\n\n\n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "تحميل البيانات التشخيصية. يرجى ملاحظة أن هذه البيانات التشخيصية لا تكشف شخصيتك ، وأنها سوف تساعدنا حتى يستمر سايفون العمل بسلاسة\n<a class=\"DataCollectionInfoURL\" href=\"#\">.اضغط هنا لمعرفة ما هي البيانات التي نجمعها.</a>\n",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "إرسال",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "إذا كنت ترغب منا أن نرد عليك، من فضلك ادخل عنوان البريد الإلكتروني الخاص بك:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "إذا كان النموذج أعلاه لا يعمل، أو كنت ترغب في إرسال لقطة شاشة صورية ، يرجى مراسلتنا على البريد الإلكتروني \n<a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n",
+    "description": ""
+  }
+}

@@ -1,4 +1,23 @@
 (window.PSIPHON || (window.PSIPHON={})).LOCALES = {
+  "ar": {
+    "name": "العربية",
+    "translation": {
+      "feedback#top_content_title": "وافينا بردك",
+      "feedback#top_para_2": "العديد من الأعطال يمكن معالجتها من خلال تحميل أحدث إصدار من برنامج سايفُن. بإمكانك تحميل أحدث إصدار للبرنامج عبر الرابط التالي:  <a class=\"NewVersionURL\" href=\"#\"> </a>,\nكما بإمكانك مراسلتنا على العنوان الإلكتروني التالي: <a class=\"NewVersionEmail\" href=\"#\"></a>\n\n\n",
+      "feedback#diagnostic_check": "تحميل البيانات التشخيصية. يرجى ملاحظة أن هذه البيانات التشخيصية لا تكشف شخصيتك ، وأنها سوف تساعدنا حتى يستمر سايفون العمل بسلاسة\n<a class=\"DataCollectionInfoURL\" href=\"#\">.اضغط هنا لمعرفة ما هي البيانات التي نجمعها.</a>\n",
+      "feedback#submit_button": "إرسال",
+      "feedback#text_feedback_email_prompt": "إذا كنت ترغب منا أن نرد عليك، من فضلك ادخل عنوان البريد الإلكتروني الخاص بك:\n",
+      "feedback#text_feedback_bottom_para": "إذا كان النموذج أعلاه لا يعمل، أو كنت ترغب في إرسال لقطة شاشة صورية ، يرجى مراسلتنا على البريد الإلكتروني \n<a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n"
+    }
+  },
+  "de": {
+    "name": "Deutsch",
+    "translation": {
+      "feedback#top_content_title": "Geben Sie uns Ihre Rückmeldung",
+      "feedback#submit_button": "Absenden",
+      "feedback#text_feedback_prompt": "Bitte geben Sie Ihre Kommentare hier ein:\n"
+    }
+  },
   "devltr": {
     "name": "[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]",
     "translation": {
@@ -15,7 +34,7 @@
       "feedback#smiley_sad": "[Ƥşīīƥħǿǿƞ ǿǿƒŧḗḗƞ ƒȧȧīīŀş ŧǿǿ ƈǿǿƞƞḗḗƈŧ ǿǿř ḓǿǿḗḗşƞ'ŧ ƥḗḗřƒǿǿřḿ ẇḗḗŀŀ ḗḗƞǿǿŭŭɠħ.]",
       "feedback#submit_button": "[Şŭŭƀḿīīŧ]",
       "feedback#success-message": "[<strong>Ŧħȧȧƞķ ẏǿǿŭŭ!</strong> Ẏǿǿŭŭř ƒḗḗḗḗḓƀȧȧƈķ ħȧȧş ƀḗḗḗḗƞ şḗḗƞŧ.]",
-      "feedback#text_feedback_bottom_para": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ẇīīƞḓǿǿẇş@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
+      "feedback#text_feedback_bottom_para": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ẇīīƞḓǿǿẇş@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
       "feedback#text_feedback_email_prompt": "[Īīƒ ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŭŭş ŧǿǿ řḗḗşƥǿǿƞḓ ŧǿǿ ẏǿǿŭŭ, ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ḗḗḿȧȧīīŀ ȧȧḓḓřḗḗşş:]",
       "feedback#text_feedback_prompt": "[Ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ƈǿǿḿḿḗḗƞŧş ħḗḗřḗḗ:]",
       "feedback#top_content_title": "[Ɠīīṽḗḗ Ŭŭş Ẏǿǿŭŭř Ƒḗḗḗḗḓƀȧȧƈķ]",
@@ -76,7 +95,7 @@
       "feedback#smiley_sad": "‮Ԁsıdɥou‬ ‮oɟʇǝu‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮oɹ‬ ‮poǝsu‬'‮ʇ‬ ‮dǝɹɟoɹɯ‬ ‮ʍǝʅʅ‬ ‮ǝuonƃɥ‬.",
       "feedback#submit_button": "‮Snqɯıʇ‬",
       "feedback#success-message": "<strong>‮⊥ɥɐuʞ‬ ‮ʎon‬!</strong> ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮sǝuʇ‬.",
-      "feedback#text_feedback_bottom_para": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬+‮ʍıupoʍs‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
+      "feedback#text_feedback_bottom_para": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬+‮ʍıupoʍs‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
       "feedback#text_feedback_email_prompt": "‮Iɟ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ns‬ ‮ʇo‬ ‮ɹǝsdoup‬ ‮ʇo‬ ‮ʎon‬, ‮dʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ǝɯɐıʅ‬ ‮ɐppɹǝss‬:",
       "feedback#text_feedback_prompt": "‮Ԁʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ɔoɯɯǝuʇs‬ ‮ɥǝɹǝ‬:",
       "feedback#top_content_title": "‮פıʌǝ‬ ‮∩s‬ ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬",
@@ -119,6 +138,19 @@
       "settings#vpn-mode#check-label": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
       "settings#vpn-mode#heading": "‮ɅԀN‬ ‮Wopǝ‬",
       "settings#vpn-mode#help-text": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬."
+    }
+  },
+  "el": {
+    "name": "Ελληνικά",
+    "translation": {
+      "feedback#top_content_title": "Στείλτε μας τα Σχόλιά σας",
+      "feedback#top_para_1": "Πείτε μας αν το Psiphon λειτουργεί καλά, ώστε να κάνουμε το σύστημα καλύτερο!\n",
+      "feedback#top_para_2": "Πολλά προβλήματα μπορούν να διορθωθούν με την λήψη της τελευταίας έκδοσης. Μπορείτε\n<a class=\"NewVersionURL\" href=\"#\">να κάνετε λήψη της τελευταίας έκδοσης πατώντας εδώ</a>,\nή μπορείτε να στείλετε email στο <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+      "feedback#top_para_3": "Μπορείτε ακόμα να βρείτε λύσεις σε πολλά συνήθη προβλήματα στις\n<a class=\"FaqURL\" href=\"#\">Συχνές Ερωτήσεις</a>.\n",
+      "feedback#smiley_happy": "Το Psiphon συνδέεται και αποδίδει όπως θα ηθελα.",
+      "feedback#smiley_sad": "Το Psiphon συχνά αδυνατεί να συνδεθεί ή δεν αποδίδει αρκετά καλά.",
+      "feedback#text_feedback_prompt": "Εισάγετε τα σχόλιά σας εδώ:\n",
+      "feedback#text_feedback_email_prompt": "Αν θέλετε να σας απαντήσουμε, εισάγετε το email σας: \n"
     }
   },
   "en": {
@@ -176,10 +208,154 @@
       "feedback#text_feedback_email_prompt": "If you would like us to respond to you, please enter your email address:",
       "feedback#diagnostic_check": "Upload diagnostic data. Please note that this diagnostic data does not identify you, and it will help us to keep Psiphon running smoothly. <a class=\"DataCollectionInfoURL\" href=\"#\">Click here to see what data we collect.</a>",
       "feedback#submit_button": "Submit",
-      "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">feedback+windows@psiphon.ca</a>.",
+      "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
       "feedback#success-message": "<strong>Thank you!</strong> Your feedback has been sent.",
       "messages#show-debug-label": "Show debug messages",
       "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon."
+    }
+  },
+  "es": {
+    "name": "Español",
+    "translation": {
+      "feedback#top_content_title": "Envíenos sus comentarios",
+      "feedback#top_para_1": "¡Por favor háganos saber cómo está funcionando Psiphon para usted para que podamos mejorar el sistema!\n",
+      "feedback#top_para_2": "Muchos problemas pueden arreglarse descargando la última versión. Puede\n<a class=\"NewVersionURL\" href=\"#\">descargar la última versión haciendo clic aquí</a>,\no puede enviar un correo a <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+      "feedback#top_para_3": "También puede encontrar soluciones a muchos problemas comunes en nuestras\n<a class=\"FaqURL\" href=\"#\">Preguntas frecuentes</a>.\n",
+      "feedback#diagnostic_check": "Suba datos de diagnóstico. Por favor observe que estos datos de\ndiagnóstico no le identifican, y nos ayudarán a mantener Psiphon\nfuncionando sin sobresaltos.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Haga clic aquí para ver que datos recogemos.</a>\n",
+      "feedback#smiley_happy": "Psiphon conecta y rinde de la forma que yo quiero.",
+      "feedback#smiley_sad": "Psiphon falla a menudo al conectar o no rinde suficientemente bien.",
+      "feedback#submit_button": "Enviar",
+      "feedback#text_feedback_prompt": "Por favor introduzca sus comentarios aquí:\n",
+      "feedback#text_feedback_email_prompt": "Si quiere que nosotros le respondamos, por favor introduzca su dirección de correo electrónico\n",
+      "feedback#text_feedback_bottom_para": "Si el formulario de arriba no le está funcionando, o si quisiese enviar capturas de pantalla, por favor envíenos un correo a <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n"
+    }
+  },
+  "fa": {
+    "name": "فارسی",
+    "translation": {
+      "feedback#top_content_title": "نظرات خود را با ما در میان بگذارید",
+      "feedback#top_para_1": "لطفا ما را در جریان کیفیت عملکرد سایفون بذارید تا بتوانیم این برنامه را بهتر کنیم.\n",
+      "feedback#top_para_2": "بسیاری از مشکلاتی که با سایفون تجربه می‌کنید با دانلود نسخه جدید برطرف می‌شوند. شما می‌توانید    \n<a class=\"NewVersionURL\" href=\"#\">اینجا کلیک کنید و آخرین نسخه سایفون را دریافت کنید</a>,\nیا به این آدرس ایمیل بفرستید <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+      "feedback#top_para_3": "همچنین، لطفا برای جواب به بسیاری ازمشکلاتی که با برنامه دارید به \n<a class=\"FaqURL\" href=\"#\">قسمت سوالات متداول</a> سایفون سر بزنید. \n",
+      "feedback#diagnostic_check": "آپلود و ارسال اطلاعات فنی/تشخیصی برنامه. لطفا به خاطر داشته باشید که این اطلاعات به هیچ عنوان \nهویت شما را آشکار نمی‌کند، و به ما کمک می‌کند که سایفون کارکرد بهتری داشته باشد. \n<a class=\"DataCollectionInfoURL\" href=\"#\"> اینجا کلیک کنید تا ببینید ما چه اطلاعاتی را جمع آوری می‌کنیم. </a>\n",
+      "feedback#smiley_happy": "سایفون به خوبی وصل میشود و کار میکند.   ",
+      "feedback#smiley_sad": "سایفون معمولا وصل نمیشود و خوب کار نمیکند. ",
+      "feedback#submit_button": "ارسال",
+      "feedback#text_feedback_prompt": "لطفا نظرهای خود را اینجا وارد کنید:\n",
+      "feedback#text_feedback_email_prompt": "اگر می‌خواهید که ما به شما جواب بدیم، لطفآ ایمیل خود را اینجا وارد کنید:\n",
+      "feedback#text_feedback_bottom_para": "اگر فرم بالا کار نمی‌کند و می‌خواهید برای ما عکس از صفحه‌ خودتون بفرستید. می‌توانید آن را به آدرس <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> ایمیل کنید.\n"
+    }
+  },
+  "fi": {
+    "name": "Suomi",
+    "translation": {
+      "feedback#top_content_title": "Anna meille palautettasi",
+      "feedback#top_para_1": "Kerro meille, kuinka Psiphon toimii, jotta voimme tehdä järjestelmä paremmaksi!\n",
+      "feedback#smiley_happy": "Psiphon yhdistää ja suorittaa sillä kuin haluan.",
+      "feedback#smiley_sad": "Psiphon usein epäonnisttuu yhdistämään tai ei suoriudu kyllin hyvin.",
+      "feedback#submit_button": "Lähetä",
+      "feedback#text_feedback_prompt": "Kirjoita kommenttisi tähän:\n"
+    }
+  },
+  "fr": {
+    "name": "Français",
+    "translation": {
+      "feedback#top_content_title": "Donnez-nous votre opinion",
+      "feedback#top_para_1": "Veuillez nous informer de votre expérience avec Psiphon afin que nous puissions encore améliorer le système !\n",
+      "feedback#top_para_2": "De nombreux problèmes peuvent être corrigés en téléchargeant la dernière version.\nVous pouvez <a class=\"NewVersionURL\" href=\"#\">télécharger la dernière version en cliquant ici</a>,\nou vous pouvez envoyer un courriel à <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+      "feedback#top_para_3": "Vous pouvez aussi trouver des solutions à de nombreux problèmes habituels dans notre\n<a class=\"FaqURL\" href=\"#\">Foire aux questions</a>.\n",
+      "feedback#diagnostic_check": "Téléverser des données de diagnostic. Veuillez prendre note que ces données de\ndiagnostic ne vous identifient pas, et elles nous aideront à offrir une exécution sans heurt de Psiphon.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Cliquez ici pour voir quelles données nous recueillons.</a>\n",
+      "feedback#smiley_happy": "Psiphon se connecte et fonctionne comme je le veux.",
+      "feedback#smiley_sad": "Psiphon n'arrive souvent pas à se connecter et ne fonctionne pas assez bien.",
+      "feedback#submit_button": "Envoyer",
+      "feedback#text_feedback_prompt": "Veuillez saisir vos commentaires ici :\n",
+      "feedback#text_feedback_email_prompt": "Si vous voulez que l'on vous réponde, veuillez saisir votre adresse courriel :\n",
+      "feedback#text_feedback_bottom_para": "Si le formulaire ne fonctionne pas, ou que vous voudriez envoyer des captures d'écran, veuillez le faire par courriel à <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n"
+    }
+  },
+  "nb": {
+    "name": "Norsk (bokmål)",
+    "translation": {
+      "feedback#top_content_title": "Gi oss din tilbakemelding",
+      "feedback#top_para_1": "La høre fra deg om hvordan Psiphon fungerer slik at vi kan gjøre systemet enda bedre!\n",
+      "feedback#top_para_2": "Mange problemer kan ordnes ved å laste ned siste versjon.\nDu kan\n<a class=\"NewVersionURL\" href=\"#\">laste ned siste versjon ved å trykke her</a>,\neller du kan sende en epost til <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+      "feedback#top_para_3": "Du kan finne svar på mange vanlige problemer i vår oversikt over\n<a class=\"FaqURL\" href=\"#\">Ofte Stilte Spørsmål</a>.\n",
+      "feedback#diagnostic_check": "Last opp diagnostisk data. Vennligst merk at denne diagnostikk-dataen ikke\nidentifiserer deg, og at du kan hjelpe oss å holde Psiphon-hjulene med å fungere knirkefritt.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Trykk her for å se hva vi samler inn.</a>\n",
+      "feedback#smiley_happy": "Psiphon kobler til og fungerer slik jeg ønsker det.",
+      "feedback#smiley_sad": "Psiphon klarer ikke og koble til eller fungerer ikke bra nok.",
+      "feedback#submit_button": "Send inn",
+      "feedback#text_feedback_prompt": "Kommenter her:\n",
+      "feedback#text_feedback_email_prompt": "Hvis du ønsker at vi svarer deg, vennligst legg ved din epost-adresse:\n",
+      "feedback#text_feedback_bottom_para": "Hvis overstående skjema ikke virker, eller du vil sende oss skjermbilder, vennligst send epost til <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n"
+    }
+  },
+  "pt_PT": {
+    "name": "Português(Pt)",
+    "translation": {
+      "feedback#top_content_title": "Deixe-nos o Seu Comentário",
+      "feedback#submit_button": "Submeter"
+    }
+  },
+  "ru": {
+    "name": "Русский",
+    "translation": {
+      "feedback#top_content_title": "Предоставьте нам ваши отзывы",
+      "feedback#top_para_1": "Пожалуйста, сообщите нам о том как вы используете Psiphon, чтобы мы могли улучшить его!\n",
+      "feedback#top_para_2": "Большинство проблем может быть решено путем загрузки последней версии. Вы можете \n<a class=\"NewVersionURL\" href=\"#\"> загрузить последнюю версию, нажав здесь </a> \nили вы можете отправить сообщение по адресу <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+      "feedback#top_para_3": "Вы также можете найти ответы на основные вопросы в наших \n<a class=\"FaqURL\" href=\"#\"> Часто Задаваемых Вопросах </a>.\n",
+      "feedback#diagnostic_check": "Отослать диагностические данные. Собранные данные не содержат \nидентифицирующей Вас информации и помогают нам сделать систему лучше и надежнее.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Кликните здесь, чтобы узнать какие данные мы собираем.</a>\n",
+      "feedback#smiley_happy": "Psiphon соединяется и работает так, как мне нужно.",
+      "feedback#smiley_sad": "Psiphon часто не может соединиться, или его производительность не достаточна.",
+      "feedback#submit_button": "Отправить",
+      "feedback#text_feedback_prompt": "Пожалуйста, оставьте свой комментарий:\n",
+      "feedback#text_feedback_email_prompt": "Если вы хотите, чтобы мы ответили Вам, введите адрес своей эл. почты:\n",
+      "feedback#text_feedback_bottom_para": "Если форма вверху не работает или вы хотите прислать нам скриншоты, пожалуйста, напишите на <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n"
+    }
+  },
+  "tk": {
+    "name": "Türkmençe",
+    "translation": {
+      "feedback#top_content_title": "Seslenme beriň",
+      "feedback#submit_button": "Tabşyr"
+    }
+  },
+  "tr": {
+    "name": "Türkçe",
+    "translation": {
+      "feedback#top_content_title": "Geri Bildirim Yapın",
+      "feedback#top_para_1": "Lütfen Psiphon'un nasıl çalıştığını öğrenmemiz için aşağıdaki formu tamamlayın böylece sistemi daha iyi yapalım!\n",
+      "feedback#top_para_2": "Çoğu sorun en son sürüm indirilerek çözülebilir. <a class=\"NewVersionURL\" href=\"#\">En son sürümü buraya tıklayarak</a>\nveya <a class=\"NewVersionEmail\" href=\"#\"></a> adresine\ne-posta göndererek indirebilirsiniz.\n",
+      "feedback#top_para_3": "Ayrıca çoğu ortak soruna çözümleri\n<a class=\"FaqURL\" href=\"#\">Sıkça Sorulan Sorular</a> sayfamızda bulabilirsiniz.\n",
+      "feedback#diagnostic_check": "Kullanım verisini yükle. Lütfen bu kullanım verisinin sizin kimliğinizin tanımlanması\niçin değil Psiphon'un akıcı şekilde tutulmasına yardımcı olması için kullanılacağını unutmayın.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Topladığımız bilgiler için buraya tıklayın.</a>\n",
+      "feedback#smiley_happy": "Psiphon istediğim gibi bağlanıyor ve çalışıyor.",
+      "feedback#smiley_sad": "Psiphon genellikle bağlanamıyor ve yeterince iyi çalışmıyor.",
+      "feedback#submit_button": "Gönder",
+      "feedback#text_feedback_prompt": "Lütfen yorumlarınızı buraya girin:\n",
+      "feedback#text_feedback_email_prompt": "Eğer size geri dönmememizi isterseniz, lütfen e-posta adresinizi girin:\n",
+      "feedback#text_feedback_bottom_para": "Eğer yukarıdaki form çalışmıyorsa veya ekran görüntüsü yollamak isterseniz, lütfen bize <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> adresinden e-posta gönderin.\n"
+    }
+  },
+  "vi": {
+    "name": "Tiếng Việt",
+    "translation": {
+      "feedback#top_content_title": "Cho Chúng Tôi Biết Thông Tin Phản Hồi của Bạn",
+      "feedback#submit_button": "Gửi"
+    }
+  },
+  "zh": {
+    "name": "中文",
+    "translation": {
+      "feedback#top_content_title": "向我们提供您的反馈",
+      "feedback#top_para_1": "请让我们知道Psiphon在您的设备上的工作情况以帮助我们改进！\n",
+      "feedback#top_para_2": "您可以通过下载最新版本解决很多问题 <a class=\"NewVersionURL\" href=\"#\">您可以单击这里下载最新版本</a>，或者发送电子邮件至 <a class=\"NewVersionEmail\" href=\"#\"></a>。\n",
+      "feedback#top_para_3": "您还可以找到许多共同问题的答案，在我们的 <a class=\"FaqURL\" href=\"#\">常见问题解答</a>。\n",
+      "feedback#diagnostic_check": "上载诊断数据。请注意此诊断数据不会泄露你的身份，它将帮助我们保持赛风平稳运行的。\n<a class=\"DataCollectionInfoURL\" href=\"#\">点击这里查看我们收集的数据。</a>\n",
+      "feedback#smiley_happy": "Psiphon就像我想的那样工作",
+      "feedback#smiley_sad": "Psiphon经常连接失败或表现不尽人意",
+      "feedback#submit_button": "提交",
+      "feedback#text_feedback_prompt": "请在这里输入您的评论：\n",
+      "feedback#text_feedback_email_prompt": "如果您想我们给你回复，请输入您的电子邮件地址：\n",
+      "feedback#text_feedback_bottom_para": "如果上面的表格无法使用，或者你想发送截图，请给我们发电子邮件至 <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n"
     }
   }
 };

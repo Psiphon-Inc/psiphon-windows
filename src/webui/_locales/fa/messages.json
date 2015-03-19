@@ -1,0 +1,46 @@
+{
+  "feedback#top_content_title": {
+    "message": "نظرات خود را با ما در میان بگذارید",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "لطفا ما را در جریان کیفیت عملکرد سایفون بذارید تا بتوانیم این برنامه را بهتر کنیم.\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "بسیاری از مشکلاتی که با سایفون تجربه می‌کنید با دانلود نسخه جدید برطرف می‌شوند. شما می‌توانید    \n<a class=\"NewVersionURL\" href=\"#\">اینجا کلیک کنید و آخرین نسخه سایفون را دریافت کنید</a>,\nیا به این آدرس ایمیل بفرستید <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "همچنین، لطفا برای جواب به بسیاری ازمشکلاتی که با برنامه دارید به \n<a class=\"FaqURL\" href=\"#\">قسمت سوالات متداول</a> سایفون سر بزنید. \n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "آپلود و ارسال اطلاعات فنی/تشخیصی برنامه. لطفا به خاطر داشته باشید که این اطلاعات به هیچ عنوان \nهویت شما را آشکار نمی‌کند، و به ما کمک می‌کند که سایفون کارکرد بهتری داشته باشد. \n<a class=\"DataCollectionInfoURL\" href=\"#\"> اینجا کلیک کنید تا ببینید ما چه اطلاعاتی را جمع آوری می‌کنیم. </a>\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "سایفون به خوبی وصل میشود و کار میکند.   ",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "سایفون معمولا وصل نمیشود و خوب کار نمیکند. ",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "ارسال",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "لطفا نظرهای خود را اینجا وارد کنید:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "اگر می‌خواهید که ما به شما جواب بدیم، لطفآ ایمیل خود را اینجا وارد کنید:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "اگر فرم بالا کار نمی‌کند و می‌خواهید برای ما عکس از صفحه‌ خودتون بفرستید. می‌توانید آن را به آدرس <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> ایمیل کنید.\n",
+    "description": ""
+  }
+}

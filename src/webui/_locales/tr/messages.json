@@ -1,0 +1,46 @@
+{
+  "feedback#top_content_title": {
+    "message": "Geri Bildirim Yapın",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "Lütfen Psiphon'un nasıl çalıştığını öğrenmemiz için aşağıdaki formu tamamlayın böylece sistemi daha iyi yapalım!\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "Çoğu sorun en son sürüm indirilerek çözülebilir. <a class=\"NewVersionURL\" href=\"#\">En son sürümü buraya tıklayarak</a>\nveya <a class=\"NewVersionEmail\" href=\"#\"></a> adresine\ne-posta göndererek indirebilirsiniz.\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "Ayrıca çoğu ortak soruna çözümleri\n<a class=\"FaqURL\" href=\"#\">Sıkça Sorulan Sorular</a> sayfamızda bulabilirsiniz.\n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "Kullanım verisini yükle. Lütfen bu kullanım verisinin sizin kimliğinizin tanımlanması\niçin değil Psiphon'un akıcı şekilde tutulmasına yardımcı olması için kullanılacağını unutmayın.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Topladığımız bilgiler için buraya tıklayın.</a>\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "Psiphon istediğim gibi bağlanıyor ve çalışıyor.",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "Psiphon genellikle bağlanamıyor ve yeterince iyi çalışmıyor.",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "Gönder",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "Lütfen yorumlarınızı buraya girin:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "Eğer size geri dönmememizi isterseniz, lütfen e-posta adresinizi girin:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "Eğer yukarıdaki form çalışmıyorsa veya ekran görüntüsü yollamak isterseniz, lütfen bize <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> adresinden e-posta gönderin.\n",
+    "description": ""
+  }
+}

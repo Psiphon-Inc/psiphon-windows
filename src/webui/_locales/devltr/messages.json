@@ -52,7 +52,7 @@
     "description": "Message shown to user after their feedback has been sent successufully"
   },
   "feedback#text_feedback_bottom_para": {
-    "message": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback+windows@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ẇīīƞḓǿǿẇş@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
+    "message": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ẇīīƞḓǿǿẇş@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
     "description": ""
   },
   "feedback#text_feedback_email_prompt": {

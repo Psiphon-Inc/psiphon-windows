@@ -1,0 +1,46 @@
+{
+  "feedback#top_content_title": {
+    "message": "Donnez-nous votre opinion",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "Veuillez nous informer de votre expérience avec Psiphon afin que nous puissions encore améliorer le système !\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "De nombreux problèmes peuvent être corrigés en téléchargeant la dernière version.\nVous pouvez <a class=\"NewVersionURL\" href=\"#\">télécharger la dernière version en cliquant ici</a>,\nou vous pouvez envoyer un courriel à <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "Vous pouvez aussi trouver des solutions à de nombreux problèmes habituels dans notre\n<a class=\"FaqURL\" href=\"#\">Foire aux questions</a>.\n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "Téléverser des données de diagnostic. Veuillez prendre note que ces données de\ndiagnostic ne vous identifient pas, et elles nous aideront à offrir une exécution sans heurt de Psiphon.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Cliquez ici pour voir quelles données nous recueillons.</a>\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "Psiphon se connecte et fonctionne comme je le veux.",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "Psiphon n'arrive souvent pas à se connecter et ne fonctionne pas assez bien.",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "Envoyer",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "Veuillez saisir vos commentaires ici :\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "Si vous voulez que l'on vous réponde, veuillez saisir votre adresse courriel :\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "Si le formulaire ne fonctionne pas, ou que vous voudriez envoyer des captures d'écran, veuillez le faire par courriel à <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n",
+    "description": ""
+  }
+}

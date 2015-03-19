@@ -1,0 +1,46 @@
+{
+  "feedback#top_content_title": {
+    "message": "向我们提供您的反馈",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "请让我们知道Psiphon在您的设备上的工作情况以帮助我们改进！\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "您可以通过下载最新版本解决很多问题 <a class=\"NewVersionURL\" href=\"#\">您可以单击这里下载最新版本</a>，或者发送电子邮件至 <a class=\"NewVersionEmail\" href=\"#\"></a>。\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "您还可以找到许多共同问题的答案，在我们的 <a class=\"FaqURL\" href=\"#\">常见问题解答</a>。\n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "上载诊断数据。请注意此诊断数据不会泄露你的身份，它将帮助我们保持赛风平稳运行的。\n<a class=\"DataCollectionInfoURL\" href=\"#\">点击这里查看我们收集的数据。</a>\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "Psiphon就像我想的那样工作",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "Psiphon经常连接失败或表现不尽人意",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "提交",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "请在这里输入您的评论：\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "如果您想我们给你回复，请输入您的电子邮件地址：\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "如果上面的表格无法使用，或者你想发送截图，请给我们发电子邮件至 <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n",
+    "description": ""
+  }
+}

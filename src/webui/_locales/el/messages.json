@@ -1,0 +1,34 @@
+{
+  "feedback#top_content_title": {
+    "message": "Στείλτε μας τα Σχόλιά σας",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "Πείτε μας αν το Psiphon λειτουργεί καλά, ώστε να κάνουμε το σύστημα καλύτερο!\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "Πολλά προβλήματα μπορούν να διορθωθούν με την λήψη της τελευταίας έκδοσης. Μπορείτε\n<a class=\"NewVersionURL\" href=\"#\">να κάνετε λήψη της τελευταίας έκδοσης πατώντας εδώ</a>,\nή μπορείτε να στείλετε email στο <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "Μπορείτε ακόμα να βρείτε λύσεις σε πολλά συνήθη προβλήματα στις\n<a class=\"FaqURL\" href=\"#\">Συχνές Ερωτήσεις</a>.\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "Το Psiphon συνδέεται και αποδίδει όπως θα ηθελα.",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "Το Psiphon συχνά αδυνατεί να συνδεθεί ή δεν αποδίδει αρκετά καλά.",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "Εισάγετε τα σχόλιά σας εδώ:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "Αν θέλετε να σας απαντήσουμε, εισάγετε το email σας: \n",
+    "description": ""
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "feedback#top_content_title": {
+    "message": "Gi oss din tilbakemelding",
+    "description": ""
+  },
+  "feedback#top_para_1": {
+    "message": "La høre fra deg om hvordan Psiphon fungerer slik at vi kan gjøre systemet enda bedre!\n",
+    "description": ""
+  },
+  "feedback#top_para_2": {
+    "message": "Mange problemer kan ordnes ved å laste ned siste versjon.\nDu kan\n<a class=\"NewVersionURL\" href=\"#\">laste ned siste versjon ved å trykke her</a>,\neller du kan sende en epost til <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
+    "description": ""
+  },
+  "feedback#top_para_3": {
+    "message": "Du kan finne svar på mange vanlige problemer i vår oversikt over\n<a class=\"FaqURL\" href=\"#\">Ofte Stilte Spørsmål</a>.\n",
+    "description": ""
+  },
+  "feedback#diagnostic_check": {
+    "message": "Last opp diagnostisk data. Vennligst merk at denne diagnostikk-dataen ikke\nidentifiserer deg, og at du kan hjelpe oss å holde Psiphon-hjulene med å fungere knirkefritt.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Trykk her for å se hva vi samler inn.</a>\n",
+    "description": ""
+  },
+  "feedback#smiley_happy": {
+    "message": "Psiphon kobler til og fungerer slik jeg ønsker det.",
+    "description": ""
+  },
+  "feedback#smiley_sad": {
+    "message": "Psiphon klarer ikke og koble til eller fungerer ikke bra nok.",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "Send inn",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "Kommenter her:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_email_prompt": {
+    "message": "Hvis du ønsker at vi svarer deg, vennligst legg ved din epost-adresse:\n",
+    "description": ""
+  },
+  "feedback#text_feedback_bottom_para": {
+    "message": "Hvis overstående skjema ikke virker, eller du vil sende oss skjermbilder, vennligst send epost til <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n",
+    "description": ""
+  }
+}
