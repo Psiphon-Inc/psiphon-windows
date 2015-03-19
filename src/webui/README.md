@@ -23,7 +23,7 @@ $ node fake-translations.js
 ## TODO
 
 * Add an "About" tab...?
-* Write descriptions for all i18n messages
+* Write descriptions for all i18n messages -- Settings stuff
 * More elaborate connection animation?
 * Need higher-res Psiphon logo
 * Need new logo app icon

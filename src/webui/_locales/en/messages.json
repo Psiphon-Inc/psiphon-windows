@@ -1,55 +1,55 @@
 {
   "nav#connection": {
     "message": "Connection",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
   },
   "nav#settings": {
     "message": "Settings",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
   "nav#feedback": {
     "message": "Feedback",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
   },
   "nav#messages": {
     "message": "Log Messages",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
   },
   "connection#starting-msg": {
     "message": "Psiphon is connecting...",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
   },
   "connection#stop-btn": {
     "message": "Stop",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
   },
   "connection#connected-msg": {
     "message": "Psiphon is connected",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
   },
   "connection#disconnect-btn": {
     "message": "Disconnect",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
   "connection#stopping-msg": {
     "message": "Psiphon is disconnecting...",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {
     "message": "Please wait...",
-    "description": ""
+    "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
   },
   "connection#stopped-msg": {
     "message": "Psiphon is disconnected",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
   },
   "connection#connect-btn": {
     "message": "Connect",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
   },
   "settings#error-alert": {
     "message": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
-    "description": ""
+    "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
   },
   "settings#reset-button": {
     "message": "Reset to Default",
@@ -169,47 +169,47 @@
   },
   "feedback#top_content_title": {
     "message": "Give Us Your Feedback",
-    "description": ""
+    "description": "Title for the Feedback page"
   },
   "feedback#top_para_1": {
     "message": "Please let us know how Psiphon is working for you so we can make the system better!",
-    "description": ""
+    "description": "Text motivating the user to send Psiphon Inc. feedback."
   },
   "feedback#top_para_2": {
     "message": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
-    "description": ""
+    "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
   },
   "feedback#top_para_3": {
     "message": "You can also find solutions to many common problems in our <a class=\"FaqURL\" href=\"#\">Frequently Asked Questions</a>.",
-    "description": ""
+    "description": "Text telling the user how to get to the Psiphon FAQ."
   },
   "feedback#smiley_happy": {
     "message": "Psiphon connects and performs the way I want it to.",
-    "description": ""
+    "description": "The text below the 'happy face' feedback choice."
   },
   "feedback#smiley_sad": {
     "message": "Psiphon often fails to connect or doesn't perform well enough.",
-    "description": ""
+    "description": "The text below the 'sad face' feedback choice."
   },
   "feedback#text_feedback_prompt": {
     "message": "Please enter your comments here:",
-    "description": ""
+    "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
   },
   "feedback#text_feedback_email_prompt": {
     "message": "If you would like us to respond to you, please enter your email address:",
-    "description": ""
+    "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
   },
   "feedback#diagnostic_check": {
     "message": "Upload diagnostic data. Please note that this diagnostic data does not identify you, and it will help us to keep Psiphon running smoothly. <a class=\"DataCollectionInfoURL\" href=\"#\">Click here to see what data we collect.</a>",
-    "description": ""
+    "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
   },
   "feedback#submit_button": {
     "message": "Submit",
-    "description": ""
+    "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
   },
   "feedback#text_feedback_bottom_para": {
     "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
-    "description": ""
+    "description": "Message showing the user an email they can use to contact Psiphon Inc."
   },
   "feedback#success-message": {
     "message": "<strong>Thank you!</strong> Your feedback has been sent.",
@@ -217,7 +217,7 @@
   },
   "messages#show-debug-label": {
     "message": "Show debug messages",
-    "description": ""
+    "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
   },
   "language#success-message": {
     "message": "<strong>Hello!</strong> Welcome to Psiphon.",
