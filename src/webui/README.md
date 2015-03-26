@@ -22,8 +22,6 @@ $ node fake-translations.js
 
 ## TODO
 
-- don't use separate psi: links, just one with command in json
-- Remove unused Notify cases
 - banner link in browser/debug
 
 * Add an "About" tab...?

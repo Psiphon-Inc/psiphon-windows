@@ -420,10 +420,6 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
             HtmlUI_BeforeNavigate(nmHtmlUrl);
             return -1; // Prevent navigation
         }
-        else if (hdr->code == MC_HN_APPLINK) {
-            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
-            // We won't get this one because we're handling MC_HN_BEFORENAVIGATE
-        }
         else if (hdr->code == MC_HN_DOCUMENTCOMPLETE)
         {
             // Note that this message may be received more than once.
@@ -437,22 +433,6 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
                 PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
             }
         }
-        else if (hdr->code == MC_HN_PROGRESS)
-        {
-            MC_NMHTMLPROGRESS* nmHtmlProgress = (MC_NMHTMLPROGRESS*)hdr;
-        }
-        else if (hdr->code == MC_HN_STATUSTEXT)
-        {
-            MC_NMHTMLTEXT* nmHtmlText = (MC_NMHTMLTEXT*)hdr;
-        }
-        else if (hdr->code == MC_HN_TITLETEXT)
-        {
-            MC_NMHTMLTEXT* nmHtmlText = (MC_NMHTMLTEXT*)hdr;
-        }
-        else if (hdr->code == MC_HN_HISTORY)
-        {
-            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
-        }
         else if (hdr->code == MC_HN_NEWWINDOW)
         {
             MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
@@ -465,10 +445,6 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
             assert(false);
             // Prevent HTTP error from being shown.
             return 0;
-        }
-        else
-        {
-            assert(false);
         }
     }
 
