@@ -89,6 +89,7 @@
     <div class="tabbable tabs-left"
          data-i18n-ltr-classes="tabs-left" data-i18n-rtl-classes="tabs-right">
       <ul class="main-nav nav nav-tabs">
+
         <li id="connection-tab" class="active">
           <!-- data-match-width is necessary for IE7 -->
           <a href="#connection-pane" data-toggle="tab" data-match-width=".main-nav a">
@@ -108,18 +109,21 @@
             </span>
           </a>
         </li>
+
         <li id="settings-tab">
           <a href="#settings-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-cogs"></i>
             <span data-i18n="nav#settings">Settings</span>
           </a>
         </li>
+
         <li id="feedback-tab">
           <a href="#feedback-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-comment-alt"></i>
             <span data-i18n="nav#feedback">Feedback</span>
           </a>
         </li>
+
         <li id="messages-tab">
           <a href="#messages-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-list"></i>
@@ -139,6 +143,14 @@
             </div>
           </a>
         </li>
+
+        <li id="about-tab">
+          <a href="#about-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-rocket"></i>
+            <span data-i18n="nav#about">About</span>
+          </a>
+        </li>
+
       </ul>
       <div class="tab-content main-height">
 
@@ -529,6 +541,35 @@
             </li>
           </script>
         </div><!-- /language-pane -->
+
+        <!-- ABOUT ======================================================-->
+        <div class="tab-pane fade" id="about-pane">
+          <h1 data-i18n="[html]about#head">
+            PSIPHON: <i>BEYOND BORDERS</i>
+          </h1>
+          <p data-i18n="[html]about#description">
+            Psiphon is a <strong>censorship circumvention tool</strong> — it is
+            designed to give access to the open Internet, past censors and
+            firewalls. It is <strong>open source</strong> and developed with
+            love in Toronto, Canada.
+          </p>
+          <p data-i18n="[html]about#visit-download-site">
+            To <strong>download a new version</strong> of Psiphon, or to
+            <strong>get help and more information</strong>, please
+            <a href="#" id="about-info-url">visit the website</a>.
+          </p>
+          <p>
+            <span data-i18n="[html]about#get-by-email">
+              <strong>If the website is inaccessible</strong>, you can get a new
+              version of Psiphon by sending an email to:
+            </span>
+            <a href="mailto:get@example.com" id="about-email">get@example.com</a>
+          </p>
+          <p data-i18n="[html]about#visit-company-site">
+            To find out more about Psiphon Inc. please visit our
+            <a href="https://psiphon.ca">company website</a>.
+          </p>
+        </div><!-- /about-pane -->
 
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->

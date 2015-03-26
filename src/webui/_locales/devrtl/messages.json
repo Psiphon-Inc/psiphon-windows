@@ -1,83 +1,103 @@
 {
+  "about#description": {
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐ‬ <strong>‮ɔǝusoɹsɥıd‬ ‮ɔıɹɔnɯʌǝuʇıou‬ ‮ʇooʅ‬</strong> — ‮ıʇ‬ ‮ıs‬ ‮pǝsıƃuǝp‬ ‮ʇo‬ ‮ƃıʌǝ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮odǝu‬ ‮Iuʇǝɹuǝʇ‬, ‮dɐsʇ‬ ‮ɔǝusoɹs‬ ‮ɐup‬ ‮ɟıɹǝʍɐʅʅs‬. ‮Iʇ‬ ‮ıs‬ <strong>‮odǝu‬ ‮sonɹɔǝ‬</strong> ‮ɐup‬ ‮pǝʌǝʅodǝp‬ ‮ʍıʇɥ‬ ‮ʅoʌǝ‬ ‮ıu‬ ‮⊥oɹouʇo‬, ‮Ↄɐuɐpɐ‬.",
+    "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+  },
+  "about#get-by-email": {
+    "message": "<strong>‮Iɟ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ıs‬ ‮ıuɐɔɔǝssıqʅǝ‬</strong>, ‮ʎon‬ ‮ɔɐu‬ ‮ƃǝʇ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬:",
+    "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+  },
+  "about#head": {
+    "message": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
+    "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+  },
+  "about#visit-company-site": {
+    "message": "‮⊥o‬ ‮ɟıup‬ ‮onʇ‬ ‮ɯoɹǝ‬ ‮ɐqonʇ‬ ‮Ԁsıdɥou‬ ‮Iuɔ‬. ‮dʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮onɹ‬ <a href=\"https://psiphon.ca\">‮ɔoɯdɐuʎ‬ ‮ʍǝqsıʇǝ‬</a>.",
+    "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
+  },
+  "about#visit-download-site": {
+    "message": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+    "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+  },
   "connection#connect-btn": {
     "message": "‮Ↄouuǝɔʇ‬",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
   },
   "connection#connected-msg": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
   },
   "connection#disconnect-btn": {
     "message": "‮pısɔouuǝɔʇ‬",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
   "connection#starting-msg": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇıuƃ‬...",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
   },
   "connection#stop-btn": {
     "message": "‮Sʇod‬",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
   },
   "connection#stopped-msg": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇǝp‬",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
   },
   "connection#stopping-msg": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇıuƃ‬...",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {
     "message": "‮Ԁʅǝɐsǝ‬ ‮ʍɐıʇ‬...",
-    "description": ""
+    "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
   },
   "feedback#diagnostic_check": {
     "message": "‮∩dʅoɐp‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬. ‮Ԁʅǝɐsǝ‬ ‮uoʇǝ‬ ‮ʇɥɐʇ‬ ‮ʇɥıs‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬ ‮poǝs‬ ‮uoʇ‬ ‮ıpǝuʇıɟʎ‬ ‮ʎon‬, ‮ɐup‬ ‮ıʇ‬ ‮ʍıʅʅ‬ ‮ɥǝʅd‬ ‮ns‬ ‮ʇo‬ ‮ʞǝǝd‬ ‮Ԁsıdɥou‬ ‮ɹnuuıuƃ‬ ‮sɯooʇɥʅʎ‬. <a class=\"DataCollectionInfoURL\" href=\"#\">‮Ↄʅıɔʞ‬ ‮ɥǝɹǝ‬ ‮ʇo‬ ‮sǝǝ‬ ‮ʍɥɐʇ‬ ‮pɐʇɐ‬ ‮ʍǝ‬ ‮ɔoʅʅǝɔʇ‬.</a>",
-    "description": ""
+    "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
   },
   "feedback#smiley_happy": {
     "message": "‮Ԁsıdɥou‬ ‮ɔouuǝɔʇs‬ ‮ɐup‬ ‮dǝɹɟoɹɯs‬ ‮ʇɥǝ‬ ‮ʍɐʎ‬ ‮I‬ ‮ʍɐuʇ‬ ‮ıʇ‬ ‮ʇo‬.",
-    "description": ""
+    "description": "The text below the 'happy face' feedback choice."
   },
   "feedback#smiley_sad": {
     "message": "‮Ԁsıdɥou‬ ‮oɟʇǝu‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮oɹ‬ ‮poǝsu‬'‮ʇ‬ ‮dǝɹɟoɹɯ‬ ‮ʍǝʅʅ‬ ‮ǝuonƃɥ‬.",
-    "description": ""
+    "description": "The text below the 'sad face' feedback choice."
   },
   "feedback#submit_button": {
     "message": "‮Snqɯıʇ‬",
-    "description": ""
+    "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
   },
   "feedback#success-message": {
     "message": "<strong>‮⊥ɥɐuʞ‬ ‮ʎon‬!</strong> ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮sǝuʇ‬.",
     "description": "Message shown to user after their feedback has been sent successufully"
   },
   "feedback#text_feedback_bottom_para": {
-    "message": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬+‮ʍıupoʍs‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
-    "description": ""
+    "message": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
+    "description": "Message showing the user an email they can use to contact Psiphon Inc."
   },
   "feedback#text_feedback_email_prompt": {
     "message": "‮Iɟ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ns‬ ‮ʇo‬ ‮ɹǝsdoup‬ ‮ʇo‬ ‮ʎon‬, ‮dʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ǝɯɐıʅ‬ ‮ɐppɹǝss‬:",
-    "description": ""
+    "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
   },
   "feedback#text_feedback_prompt": {
     "message": "‮Ԁʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ɔoɯɯǝuʇs‬ ‮ɥǝɹǝ‬:",
-    "description": ""
+    "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
   },
   "feedback#top_content_title": {
     "message": "‮פıʌǝ‬ ‮∩s‬ ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬",
-    "description": ""
+    "description": "Title for the Feedback page"
   },
   "feedback#top_para_1": {
     "message": "‮Ԁʅǝɐsǝ‬ ‮ʅǝʇ‬ ‮ns‬ ‮ʞuoʍ‬ ‮ɥoʍ‬ ‮Ԁsıdɥou‬ ‮ıs‬ ‮ʍoɹʞıuƃ‬ ‮ɟoɹ‬ ‮ʎon‬ ‮so‬ ‮ʍǝ‬ ‮ɔɐu‬ ‮ɯɐʞǝ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬ ‮qǝʇʇǝɹ‬!",
-    "description": ""
+    "description": "Text motivating the user to send Psiphon Inc. feedback."
   },
   "feedback#top_para_2": {
     "message": "‮Wɐuʎ‬ ‮dɹoqʅǝɯs‬ ‮ɔɐu‬ ‮qǝ‬ ‮ɟıxǝp‬ ‮qʎ‬ ‮poʍuʅoɐpıuƃ‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬. ‮ʎon‬ ‮ɔɐu‬ <a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬ ‮qʎ‬ ‮ɔʅıɔʞıuƃ‬ ‮ɥǝɹǝ‬</a>, ‮oɹ‬ ‮ʎon‬ ‮ɔɐu‬ ‮sǝup‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬ <a class=\"NewVersionEmail\" href=\"#\"></a>.",
-    "description": ""
+    "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
   },
   "feedback#top_para_3": {
     "message": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
-    "description": ""
+    "description": "Text telling the user how to get to the Psiphon FAQ."
   },
   "language#success-message": {
     "message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
@@ -85,23 +105,27 @@
   },
   "messages#show-debug-label": {
     "message": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
-    "description": ""
+    "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+  },
+  "nav#about": {
+    "message": "‮∀qonʇ‬",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
   },
   "nav#connection": {
     "message": "‮Ↄouuǝɔʇıou‬",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
   },
   "nav#feedback": {
     "message": "‮ɟǝǝpqɐɔʞ‬",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
   },
   "nav#messages": {
     "message": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
   },
   "nav#settings": {
     "message": "‮Sǝʇʇıuƃs‬",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
   "settings#egress-region#heading": {
     "message": "‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬",
@@ -145,7 +169,7 @@
   },
   "settings#error-alert": {
     "message": "<strong>‮Ǝɹɹoɹ‬!</strong> ‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ıuɔoɹɹǝɔʇ‬ ‮ʌɐʅnǝs‬ ‮qǝɟoɹǝ‬ ‮dɹoɔǝǝpıuƃ‬.",
-    "description": ""
+    "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
   },
   "settings#local-proxy-ports#heading": {
     "message": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇs‬",

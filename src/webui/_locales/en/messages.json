@@ -15,6 +15,10 @@
     "message": "Log Messages",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
   },
+  "nav#about": {
+    "message": "About",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+  },
   "connection#starting-msg": {
     "message": "Psiphon is connecting...",
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
@@ -222,5 +226,25 @@
   "language#success-message": {
     "message": "<strong>Hello!</strong> Welcome to Psiphon.",
     "description": "A welcome message shown to the user when they first switch to the correct UI language"
+  },
+  "about#head": {
+    "message": "PSIPHON: <i>BEYOND BORDERS</i>",
+    "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+  },
+  "about#description": {
+    "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+    "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+  },
+  "about#visit-download-site": {
+    "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" id=\"about-info-url\">visit the website</a>.",
+    "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+  },
+  "about#get-by-email": {
+    "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+    "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+  },
+  "about#visit-company-site": {
+    "message": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>.",
+    "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
   }
 }

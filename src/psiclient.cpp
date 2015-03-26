@@ -75,7 +75,8 @@ void OnCreate(HWND hWndParent)
     initJSON["Config"] = Json::Value();
     initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
     initJSON["Config"]["Banner"] = string("banner.") + BANNER_FILETYPE;
-    initJSON["Config"]["InfoLink"] = TStringToNarrow(INFO_LINK_URL);
+    initJSON["Config"]["Version"] = CLIENT_VERSION;
+    initJSON["Config"]["InfoURL"] = TStringToNarrow(INFO_LINK_URL);
 #ifdef _DEBUG
     initJSON["Config"]["Debug"] = true;
 #else

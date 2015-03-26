@@ -1,83 +1,103 @@
 {
+  "about#description": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ȧȧ <strong>ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ŧǿǿǿǿŀ</strong> — īīŧ īīş ḓḗḗşīīɠƞḗḗḓ ŧǿǿ ɠīīṽḗḗ ȧȧƈƈḗḗşş ŧǿǿ ŧħḗḗ ǿǿƥḗḗƞ Īīƞŧḗḗřƞḗḗŧ, ƥȧȧşŧ ƈḗḗƞşǿǿřş ȧȧƞḓ ƒīīřḗḗẇȧȧŀŀş. Īīŧ īīş <strong>ǿǿƥḗḗƞ şǿǿŭŭřƈḗḗ</strong> ȧȧƞḓ ḓḗḗṽḗḗŀǿǿƥḗḗḓ ẇīīŧħ ŀǿǿṽḗḗ īīƞ Ŧǿǿřǿǿƞŧǿǿ, Ƈȧȧƞȧȧḓȧȧ.]",
+    "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+  },
+  "about#get-by-email": {
+    "message": "[<strong>Īīƒ ŧħḗḗ ẇḗḗƀşīīŧḗḗ īīş īīƞȧȧƈƈḗḗşşīīƀŀḗḗ</strong>, ẏǿǿŭŭ ƈȧȧƞ ɠḗḗŧ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ:]",
+    "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+  },
+  "about#head": {
+    "message": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
+    "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+  },
+  "about#visit-company-site": {
+    "message": "[Ŧǿǿ ƒīīƞḓ ǿǿŭŭŧ ḿǿǿřḗḗ ȧȧƀǿǿŭŭŧ Ƥşīīƥħǿǿƞ Īīƞƈ. ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř <a href=\"https://psiphon.ca\">ƈǿǿḿƥȧȧƞẏ ẇḗḗƀşīīŧḗḗ</a>.]",
+    "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
+  },
+  "about#visit-download-site": {
+    "message": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
+    "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+  },
   "connection#connect-btn": {
     "message": "[Ƈǿǿƞƞḗḗƈŧ]",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
   },
   "connection#connected-msg": {
     "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
   },
   "connection#disconnect-btn": {
     "message": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
   "connection#starting-msg": {
     "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧīīƞɠ...]",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
   },
   "connection#stop-btn": {
     "message": "[Şŧǿǿƥ]",
-    "description": ""
+    "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
   },
   "connection#stopped-msg": {
     "message": "[Ƥşīīƥħǿǿƞ īīş ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ]",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
   },
   "connection#stopping-msg": {
     "message": "[Ƥşīīƥħǿǿƞ īīş ḓīīşƈǿǿƞƞḗḗƈŧīīƞɠ...]",
-    "description": ""
+    "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {
     "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ...]",
-    "description": ""
+    "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
   },
   "feedback#diagnostic_check": {
     "message": "[Ŭŭƥŀǿǿȧȧḓ ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ. Ƥŀḗḗȧȧşḗḗ ƞǿǿŧḗḗ ŧħȧȧŧ ŧħīīş ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ ḓǿǿḗḗş ƞǿǿŧ īīḓḗḗƞŧīīƒẏ ẏǿǿŭŭ, ȧȧƞḓ īīŧ ẇīīŀŀ ħḗḗŀƥ ŭŭş ŧǿǿ ķḗḗḗḗƥ Ƥşīīƥħǿǿƞ řŭŭƞƞīīƞɠ şḿǿǿǿǿŧħŀẏ. <a class=\"DataCollectionInfoURL\" href=\"#\">Ƈŀīīƈķ ħḗḗřḗḗ ŧǿǿ şḗḗḗḗ ẇħȧȧŧ ḓȧȧŧȧȧ ẇḗḗ ƈǿǿŀŀḗḗƈŧ.</a>]",
-    "description": ""
+    "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
   },
   "feedback#smiley_happy": {
     "message": "[Ƥşīīƥħǿǿƞ ƈǿǿƞƞḗḗƈŧş ȧȧƞḓ ƥḗḗřƒǿǿřḿş ŧħḗḗ ẇȧȧẏ Īī ẇȧȧƞŧ īīŧ ŧǿǿ.]",
-    "description": ""
+    "description": "The text below the 'happy face' feedback choice."
   },
   "feedback#smiley_sad": {
     "message": "[Ƥşīīƥħǿǿƞ ǿǿƒŧḗḗƞ ƒȧȧīīŀş ŧǿǿ ƈǿǿƞƞḗḗƈŧ ǿǿř ḓǿǿḗḗşƞ'ŧ ƥḗḗřƒǿǿřḿ ẇḗḗŀŀ ḗḗƞǿǿŭŭɠħ.]",
-    "description": ""
+    "description": "The text below the 'sad face' feedback choice."
   },
   "feedback#submit_button": {
     "message": "[Şŭŭƀḿīīŧ]",
-    "description": ""
+    "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
   },
   "feedback#success-message": {
     "message": "[<strong>Ŧħȧȧƞķ ẏǿǿŭŭ!</strong> Ẏǿǿŭŭř ƒḗḗḗḗḓƀȧȧƈķ ħȧȧş ƀḗḗḗḗƞ şḗḗƞŧ.]",
     "description": "Message shown to user after their feedback has been sent successufully"
   },
   "feedback#text_feedback_bottom_para": {
-    "message": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ẇīīƞḓǿǿẇş@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
-    "description": ""
+    "message": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
+    "description": "Message showing the user an email they can use to contact Psiphon Inc."
   },
   "feedback#text_feedback_email_prompt": {
     "message": "[Īīƒ ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŭŭş ŧǿǿ řḗḗşƥǿǿƞḓ ŧǿǿ ẏǿǿŭŭ, ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ḗḗḿȧȧīīŀ ȧȧḓḓřḗḗşş:]",
-    "description": ""
+    "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
   },
   "feedback#text_feedback_prompt": {
     "message": "[Ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ƈǿǿḿḿḗḗƞŧş ħḗḗřḗḗ:]",
-    "description": ""
+    "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
   },
   "feedback#top_content_title": {
     "message": "[Ɠīīṽḗḗ Ŭŭş Ẏǿǿŭŭř Ƒḗḗḗḗḓƀȧȧƈķ]",
-    "description": ""
+    "description": "Title for the Feedback page"
   },
   "feedback#top_para_1": {
     "message": "[Ƥŀḗḗȧȧşḗḗ ŀḗḗŧ ŭŭş ķƞǿǿẇ ħǿǿẇ Ƥşīīƥħǿǿƞ īīş ẇǿǿřķīīƞɠ ƒǿǿř ẏǿǿŭŭ şǿǿ ẇḗḗ ƈȧȧƞ ḿȧȧķḗḗ ŧħḗḗ şẏşŧḗḗḿ ƀḗḗŧŧḗḗř!]",
-    "description": ""
+    "description": "Text motivating the user to send Psiphon Inc. feedback."
   },
   "feedback#top_para_2": {
     "message": "[Ḿȧȧƞẏ ƥřǿǿƀŀḗḗḿş ƈȧȧƞ ƀḗḗ ƒīīẋḗḗḓ ƀẏ ḓǿǿẇƞŀǿǿȧȧḓīīƞɠ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ. Ẏǿǿŭŭ ƈȧȧƞ <a class=\"NewVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ƀẏ ƈŀīīƈķīīƞɠ ħḗḗřḗḗ</a>, ǿǿř ẏǿǿŭŭ ƈȧȧƞ şḗḗƞḓ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"NewVersionEmail\" href=\"#\"></a>.]",
-    "description": ""
+    "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
   },
   "feedback#top_para_3": {
     "message": "[Ẏǿǿŭŭ ƈȧȧƞ ȧȧŀşǿǿ ƒīīƞḓ şǿǿŀŭŭŧīīǿǿƞş ŧǿǿ ḿȧȧƞẏ ƈǿǿḿḿǿǿƞ ƥřǿǿƀŀḗḗḿş īīƞ ǿǿŭŭř <a class=\"FaqURL\" href=\"#\">Ƒřḗḗɋŭŭḗḗƞŧŀẏ Ȧȧşķḗḗḓ Ɋŭŭḗḗşŧīīǿǿƞş</a>.]",
-    "description": ""
+    "description": "Text telling the user how to get to the Psiphon FAQ."
   },
   "language#success-message": {
     "message": "[<strong>Ħḗḗŀŀǿǿ!</strong> Ẇḗḗŀƈǿǿḿḗḗ ŧǿǿ Ƥşīīƥħǿǿƞ.]",
@@ -85,23 +105,27 @@
   },
   "messages#show-debug-label": {
     "message": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
-    "description": ""
+    "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+  },
+  "nav#about": {
+    "message": "[Ȧȧƀǿǿŭŭŧ]",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
   },
   "nav#connection": {
     "message": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
   },
   "nav#feedback": {
     "message": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
   },
   "nav#messages": {
     "message": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
   },
   "nav#settings": {
     "message": "[Şḗḗŧŧīīƞɠş]",
-    "description": ""
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
   "settings#egress-region#heading": {
     "message": "[Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ]",
@@ -145,7 +169,7 @@
   },
   "settings#error-alert": {
     "message": "[<strong>Ḗḗřřǿǿř!</strong> Ƥŀḗḗȧȧşḗḗ ƒīīẋ īīƞƈǿǿřřḗḗƈŧ ṽȧȧŀŭŭḗḗş ƀḗḗƒǿǿřḗḗ ƥřǿǿƈḗḗḗḗḓīīƞɠ.]",
-    "description": ""
+    "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
   },
   "settings#local-proxy-ports#heading": {
     "message": "[Ŀǿǿƈȧȧŀ Ƥřǿǿẋẏ Ƥǿǿřŧş]",

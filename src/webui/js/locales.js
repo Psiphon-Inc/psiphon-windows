@@ -21,6 +21,11 @@
   "devltr": {
     "name": "[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]",
     "translation": {
+      "about#description": "[Ƥşīīƥħǿǿƞ īīş ȧȧ <strong>ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ŧǿǿǿǿŀ</strong> — īīŧ īīş ḓḗḗşīīɠƞḗḗḓ ŧǿǿ ɠīīṽḗḗ ȧȧƈƈḗḗşş ŧǿǿ ŧħḗḗ ǿǿƥḗḗƞ Īīƞŧḗḗřƞḗḗŧ, ƥȧȧşŧ ƈḗḗƞşǿǿřş ȧȧƞḓ ƒīīřḗḗẇȧȧŀŀş. Īīŧ īīş <strong>ǿǿƥḗḗƞ şǿǿŭŭřƈḗḗ</strong> ȧȧƞḓ ḓḗḗṽḗḗŀǿǿƥḗḗḓ ẇīīŧħ ŀǿǿṽḗḗ īīƞ Ŧǿǿřǿǿƞŧǿǿ, Ƈȧȧƞȧȧḓȧȧ.]",
+      "about#get-by-email": "[<strong>Īīƒ ŧħḗḗ ẇḗḗƀşīīŧḗḗ īīş īīƞȧȧƈƈḗḗşşīīƀŀḗḗ</strong>, ẏǿǿŭŭ ƈȧȧƞ ɠḗḗŧ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ:]",
+      "about#head": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
+      "about#visit-company-site": "[Ŧǿǿ ƒīīƞḓ ǿǿŭŭŧ ḿǿǿřḗḗ ȧȧƀǿǿŭŭŧ Ƥşīīƥħǿǿƞ Īīƞƈ. ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř <a href=\"https://psiphon.ca\">ƈǿǿḿƥȧȧƞẏ ẇḗḗƀşīīŧḗḗ</a>.]",
+      "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
       "connection#disconnect-btn": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
@@ -34,7 +39,7 @@
       "feedback#smiley_sad": "[Ƥşīīƥħǿǿƞ ǿǿƒŧḗḗƞ ƒȧȧīīŀş ŧǿǿ ƈǿǿƞƞḗḗƈŧ ǿǿř ḓǿǿḗḗşƞ'ŧ ƥḗḗřƒǿǿřḿ ẇḗḗŀŀ ḗḗƞǿǿŭŭɠħ.]",
       "feedback#submit_button": "[Şŭŭƀḿīīŧ]",
       "feedback#success-message": "[<strong>Ŧħȧȧƞķ ẏǿǿŭŭ!</strong> Ẏǿǿŭŭř ƒḗḗḗḗḓƀȧȧƈķ ħȧȧş ƀḗḗḗḗƞ şḗḗƞŧ.]",
-      "feedback#text_feedback_bottom_para": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ+ẇīīƞḓǿǿẇş@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
+      "feedback#text_feedback_bottom_para": "[Īīƒ ŧħḗḗ ȧȧƀǿǿṽḗḗ ƒǿǿřḿ īīş ƞǿǿŧ ẇǿǿřķīīƞɠ, ǿǿř ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŧǿǿ şḗḗƞḓ şƈřḗḗḗḗƞşħǿǿŧş, ƥŀḗḗȧȧşḗḗ ḗḗḿȧȧīīŀ ŭŭş ȧȧŧ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">ƒḗḗḗḗḓƀȧȧƈķ@ƥşīīƥħǿǿƞ.ƈȧȧ</a>.]",
       "feedback#text_feedback_email_prompt": "[Īīƒ ẏǿǿŭŭ ẇǿǿŭŭŀḓ ŀīīķḗḗ ŭŭş ŧǿǿ řḗḗşƥǿǿƞḓ ŧǿǿ ẏǿǿŭŭ, ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ḗḗḿȧȧīīŀ ȧȧḓḓřḗḗşş:]",
       "feedback#text_feedback_prompt": "[Ƥŀḗḗȧȧşḗḗ ḗḗƞŧḗḗř ẏǿǿŭŭř ƈǿǿḿḿḗḗƞŧş ħḗḗřḗḗ:]",
       "feedback#top_content_title": "[Ɠīīṽḗḗ Ŭŭş Ẏǿǿŭŭř Ƒḗḗḗḗḓƀȧȧƈķ]",
@@ -43,6 +48,7 @@
       "feedback#top_para_3": "[Ẏǿǿŭŭ ƈȧȧƞ ȧȧŀşǿǿ ƒīīƞḓ şǿǿŀŭŭŧīīǿǿƞş ŧǿǿ ḿȧȧƞẏ ƈǿǿḿḿǿǿƞ ƥřǿǿƀŀḗḗḿş īīƞ ǿǿŭŭř <a class=\"FaqURL\" href=\"#\">Ƒřḗḗɋŭŭḗḗƞŧŀẏ Ȧȧşķḗḗḓ Ɋŭŭḗḗşŧīīǿǿƞş</a>.]",
       "language#success-message": "[<strong>Ħḗḗŀŀǿǿ!</strong> Ẇḗḗŀƈǿǿḿḗḗ ŧǿǿ Ƥşīīƥħǿǿƞ.]",
       "messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
+      "nav#about": "[Ȧȧƀǿǿŭŭŧ]",
       "nav#connection": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
       "nav#messages": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
@@ -82,6 +88,11 @@
   "devrtl": {
     "name": "Ԁɐɔʞɐƃǝp‬ ‮Wıɹɹoɹǝp",
     "translation": {
+      "about#description": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐ‬ <strong>‮ɔǝusoɹsɥıd‬ ‮ɔıɹɔnɯʌǝuʇıou‬ ‮ʇooʅ‬</strong> — ‮ıʇ‬ ‮ıs‬ ‮pǝsıƃuǝp‬ ‮ʇo‬ ‮ƃıʌǝ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮odǝu‬ ‮Iuʇǝɹuǝʇ‬, ‮dɐsʇ‬ ‮ɔǝusoɹs‬ ‮ɐup‬ ‮ɟıɹǝʍɐʅʅs‬. ‮Iʇ‬ ‮ıs‬ <strong>‮odǝu‬ ‮sonɹɔǝ‬</strong> ‮ɐup‬ ‮pǝʌǝʅodǝp‬ ‮ʍıʇɥ‬ ‮ʅoʌǝ‬ ‮ıu‬ ‮⊥oɹouʇo‬, ‮Ↄɐuɐpɐ‬.",
+      "about#get-by-email": "<strong>‮Iɟ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ıs‬ ‮ıuɐɔɔǝssıqʅǝ‬</strong>, ‮ʎon‬ ‮ɔɐu‬ ‮ƃǝʇ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬:",
+      "about#head": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
+      "about#visit-company-site": "‮⊥o‬ ‮ɟıup‬ ‮onʇ‬ ‮ɯoɹǝ‬ ‮ɐqonʇ‬ ‮Ԁsıdɥou‬ ‮Iuɔ‬. ‮dʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮onɹ‬ <a href=\"https://psiphon.ca\">‮ɔoɯdɐuʎ‬ ‮ʍǝqsıʇǝ‬</a>.",
+      "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
       "connection#disconnect-btn": "‮pısɔouuǝɔʇ‬",
@@ -95,7 +106,7 @@
       "feedback#smiley_sad": "‮Ԁsıdɥou‬ ‮oɟʇǝu‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮oɹ‬ ‮poǝsu‬'‮ʇ‬ ‮dǝɹɟoɹɯ‬ ‮ʍǝʅʅ‬ ‮ǝuonƃɥ‬.",
       "feedback#submit_button": "‮Snqɯıʇ‬",
       "feedback#success-message": "<strong>‮⊥ɥɐuʞ‬ ‮ʎon‬!</strong> ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮sǝuʇ‬.",
-      "feedback#text_feedback_bottom_para": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬+‮ʍıupoʍs‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
+      "feedback#text_feedback_bottom_para": "‮Iɟ‬ ‮ʇɥǝ‬ ‮ɐqoʌǝ‬ ‮ɟoɹɯ‬ ‮ıs‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬, ‮oɹ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮sǝup‬ ‮sɔɹǝǝusɥoʇs‬, ‮dʅǝɐsǝ‬ ‮ǝɯɐıʅ‬ ‮ns‬ ‮ɐʇ‬ <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">‮ɟǝǝpqɐɔʞ‬@‮dsıdɥou‬.‮ɔɐ‬</a>.",
       "feedback#text_feedback_email_prompt": "‮Iɟ‬ ‮ʎon‬ ‮ʍonʅp‬ ‮ʅıʞǝ‬ ‮ns‬ ‮ʇo‬ ‮ɹǝsdoup‬ ‮ʇo‬ ‮ʎon‬, ‮dʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ǝɯɐıʅ‬ ‮ɐppɹǝss‬:",
       "feedback#text_feedback_prompt": "‮Ԁʅǝɐsǝ‬ ‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ɔoɯɯǝuʇs‬ ‮ɥǝɹǝ‬:",
       "feedback#top_content_title": "‮פıʌǝ‬ ‮∩s‬ ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬",
@@ -104,6 +115,7 @@
       "feedback#top_para_3": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
       "language#success-message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
       "messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
+      "nav#about": "‮∀qonʇ‬",
       "nav#connection": "‮Ↄouuǝɔʇıou‬",
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
       "nav#messages": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
@@ -160,6 +172,7 @@
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",
       "nav#messages": "Log Messages",
+      "nav#about": "About",
       "connection#starting-msg": "Psiphon is connecting...",
       "connection#stop-btn": "Stop",
       "connection#connected-msg": "Psiphon is connected",
@@ -211,7 +224,12 @@
       "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
       "feedback#success-message": "<strong>Thank you!</strong> Your feedback has been sent.",
       "messages#show-debug-label": "Show debug messages",
-      "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon."
+      "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon.",
+      "about#head": "PSIPHON: <i>BEYOND BORDERS</i>",
+      "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+      "about#visit-download-site": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" id=\"about-info-url\">visit the website</a>.",
+      "about#get-by-email": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+      "about#visit-company-site": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>."
     }
   },
   "es": {

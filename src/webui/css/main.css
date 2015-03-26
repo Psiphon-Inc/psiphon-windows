@@ -5281,14 +5281,18 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   /* IE7 inline-block hack */
   *zoom: 1;
 }
-.tab-content > .tab-pane {
+.tab-content {
+  overflow: hidden;
+}
+.tab-content .tab-pane {
   height: 100%;
   overflow: auto;
+  padding-top: 1em;
 }
-body[dir="ltr"] .tab-content > .tab-pane {
+body[dir="ltr"] .tab-content .tab-pane {
   padding-right: 1em;
 }
-body[dir="rtl"] .tab-content > .tab-pane {
+body[dir="rtl"] .tab-content .tab-pane {
   padding-left: 1em;
 }
 .tab-pane.fade {
@@ -5448,15 +5452,17 @@ body[dir="rtl"] .dd .f32 .flag {
   background-color: #d9edf7;
 }
 /* LANGUAGES */
-#language-pane ul {
-  margin: 1em;
-}
 #language-pane ul li {
   list-style-type: none;
   margin-top: 0.5em;
 }
 #language-pane ul li i {
   margin-right: 0.5em;
+}
+/* ABOUT */
+#about-pane {
+  font-size: 1.5em;
+  line-height: 1.3em;
 }
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {

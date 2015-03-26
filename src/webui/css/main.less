@@ -47,8 +47,8 @@ body {
 
 // The element focus outlines spoils the illusion of being an app vs. a webpage.
 // Note that this doesn't seem to have an effect with IE<=9.
-// Note also that this is a bad usuability and accessibility trick for real webpages,
-// but keyboard (tab) navigation doesn't seem to work with our UI anyway.
+// Note also that this is a bad usuability and accessibility trick for real webpages.
+// We should think about *not* doing this.
 * {
   outline: 0 !important;
 }
@@ -150,16 +150,21 @@ body {
   }
 }
 
-.tab-content > .tab-pane {
-  height: 100%;
-  overflow: auto;
+.tab-content {
+  overflow: hidden;
 
-  body[dir="ltr"] & {
-    padding-right: 1em;
-  }
+  .tab-pane {
+    height: 100%;
+    overflow: auto;
+    padding-top: 1em;
 
-  body[dir="rtl"] & {
-    padding-left: 1em;
+    body[dir="ltr"] & {
+      padding-right: 1em;
+    }
+
+    body[dir="rtl"] & {
+      padding-left: 1em;
+    }
   }
 }
 
@@ -365,8 +370,6 @@ body {
 
 #language-pane {
   ul {
-    margin: 1em;
-
     li {
       list-style-type: none;
       margin-top: 0.5em;
@@ -377,6 +380,16 @@ body {
     }
   }
 }
+
+
+/* ABOUT */
+
+#about-pane {
+  // There's not much text, so let's bump it up a bit.
+  font-size: 1.5em;
+  line-height: 1.3em;
+}
+
 
 /* MISCELLANEOUS AND HELPERS */
 
