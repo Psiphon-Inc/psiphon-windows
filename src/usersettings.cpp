@@ -240,9 +240,7 @@ bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
 
 bool Settings::SplitTunnel()
 {
-    // Not yet supported!
-    //return !!GetUserSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
-    return false;
+    return !!GetSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
 }
 
 tstring Settings::Transport()
