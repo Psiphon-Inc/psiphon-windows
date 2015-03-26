@@ -22,6 +22,10 @@ $ node fake-translations.js
 
 ## TODO
 
+- don't use separate psi: links, just one with command in json
+- Remove unused Notify cases
+- banner link in browser/debug
+
 * Add an "About" tab...?
 * Re-work settings tab (in response to user feedback)
 * Write descriptions for all i18n messages -- Settings stuff
