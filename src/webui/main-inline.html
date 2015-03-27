@@ -18737,6 +18737,7 @@ var g_initObj = {};
     g_initObj.Config.Language = g_initObj.Config.Language || 'en';
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
     g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/psiphon3/index.html';
+    g_initObj.Config.GetNewVersionEmail = g_initObj.Config.GetNewVersionEmail || 'psiget@example.com';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
   }
 })();
@@ -19375,6 +19376,18 @@ function populateLocales() {
     switchLocale($(this).attr('value'));
   });
 }
+
+
+/* ABOUT *********************************************************************/
+
+// Note that this is called before the DOM is fully loaded.
+(function() {
+  $window.on(LANGUAGE_CHANGE_EVENT, function() {
+    $('#about-info-url').attr('href', g_initObj.Config.InfoURL);
+    $('#about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
+                     .text(g_initObj.Config.GetNewVersionEmail);
+  });
+})();
 
 
 /* HELPERS *******************************************************************/
@@ -20093,6 +20106,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
           </script>
         </div><!-- /language-pane -->
 
+
         <!-- ABOUT ======================================================-->
         <div class="tab-pane fade" id="about-pane">
           <h1 data-i18n="[html]about#head">
@@ -20107,14 +20121,14 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
           <p data-i18n="[html]about#visit-download-site">
             To <strong>download a new version</strong> of Psiphon, or to
             <strong>get help and more information</strong>, please
-            <a href="#" id="about-info-url">visit the website</a>.
+            <a id="about-info-url" href="#">visit the website</a>.
           </p>
           <p>
             <span data-i18n="[html]about#get-by-email">
               <strong>If the website is inaccessible</strong>, you can get a new
               version of Psiphon by sending an email to:
             </span>
-            <a href="mailto:get@example.com" id="about-email">get@example.com</a>
+            <a id="about-email" href="#"></a>
           </p>
           <p data-i18n="[html]about#visit-company-site">
             To find out more about Psiphon Inc. please visit our

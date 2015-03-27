@@ -47,6 +47,7 @@ var g_initObj = {};
     g_initObj.Config.Language = g_initObj.Config.Language || 'en';
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
     g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/psiphon3/index.html';
+    g_initObj.Config.GetNewVersionEmail = g_initObj.Config.GetNewVersionEmail || 'psiget@example.com';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
   }
 })();
@@ -685,6 +686,18 @@ function populateLocales() {
     switchLocale($(this).attr('value'));
   });
 }
+
+
+/* ABOUT *********************************************************************/
+
+// Note that this is called before the DOM is fully loaded.
+(function() {
+  $window.on(LANGUAGE_CHANGE_EVENT, function() {
+    $('#about-info-url').attr('href', g_initObj.Config.InfoURL);
+    $('#about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
+                     .text(g_initObj.Config.GetNewVersionEmail);
+  });
+})();
 
 
 /* HELPERS *******************************************************************/
