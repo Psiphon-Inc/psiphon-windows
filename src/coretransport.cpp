@@ -306,6 +306,13 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
     config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
 
+    if (Settings::SplitTunnel())
+    {
+        config["SplitTunnelRoutesUrlFormat"] = SPLIT_TUNNEL_ROUTES_URL_FORMAT;
+        config["SplitTunnelRoutesSignaturePublicKey"] = SPLIT_TUNNEL_ROUTES_SIGNATURE_PUBLIC_KEY;
+        config["SplitTunnelDnsServer"] = SPLIT_TUNNEL_DNS_SERVER;
+    }
+
     // In temporary tunnel mode, only the specific server should be connected to,
     // and a handshake is not performed.
     // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
@@ -537,10 +544,9 @@ void CoreTransport::ConsumeCoreProcessOutput()
 
 void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 {
-    // Log output
-
-    my_print(NOT_SENSITIVE, true, _T("core notice: %S"), line);
-    AddDiagnosticInfoYaml("CoreNotice", line);
+    // Notices are logged to diagnostics. Some notices are excluded from
+    // diagnostics if they may contain private user data.
+    bool logOutputToDiagnostics = true;
 
     // Parse output to extract data
 
@@ -550,8 +556,12 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         Json::Reader reader;
         if (!reader.parse(line, notice))
         {
-            string fail = reader.getFormattedErrorMessages();
             my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+            
+            // This line was not JSON. It may be a core panic, and if so it would
+            // be useful to include in diagnostics; but it's not included in diagnostics
+            // as we can't be sure it doesn't include user private data.
+
             return;
         }
 
@@ -622,11 +632,29 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             // Don't try to reconnect with the same configuration
             throw TransportFailed(false);
         }
+        else if (noticeType == "Untunneled")
+        {
+            string address = data["address"].asString();
+            my_print(NOT_SENSITIVE, false, _T("Untunneled: %S"), address.c_str());
+
+            // Don't include in diagnostics as "address" is private user data
+            logOutputToDiagnostics = false;
+        }
     }
     catch (exception& e)
     {
         my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse exception: %S"), __TFUNCTION__, e.what());
-        return;
+    }
+
+    // Debug output
+
+    my_print(NOT_SENSITIVE, true, _T("core notice: %S"), line);
+
+    // Add to diagnostics
+
+    if (logOutputToDiagnostics)
+    {
+        AddDiagnosticInfoYaml("CoreNotice", line);
     }
 }
 
