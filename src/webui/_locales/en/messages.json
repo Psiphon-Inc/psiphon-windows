@@ -1,4 +1,8 @@
 {
+  "banner#sponsored-by": {
+    "message": "Sponsored by",
+    "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+  },
   "nav#connection": {
     "message": "Connection",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"

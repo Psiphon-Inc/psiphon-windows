@@ -24,6 +24,8 @@
 @psiPrimary: #3A2319;
 @psiHightlight: #D43F27;
 @psiSecondary: #9E8E5F;
+@psiTextOnPrimary: lighten(@psiPrimary, 70%);
+
 
 html {
   height: 100%;
@@ -58,11 +60,12 @@ body {
 
 @headerHeight: 70px;
 @headerPad: 10px;
-@headerBannerHeight: @headerHeight;
+@headerBannerHeight: 48px; // Determined by our banner spec.
 @headerLogoHeight: 100px;
 // By default the nav top is at @headerHeight, but we want it to be below the
 // bottom of the logo image (with pad).
 @navTopPad: @headerLogoHeight - @headerHeight;
+@headerBannerTopMargin: (@headerHeight - @headerBannerHeight) / 2;
 
 .psiphon-header {
   height: @headerHeight;
@@ -77,11 +80,26 @@ body {
 
   background-color: @psiPrimary;
 
-  & .banner img {
-    height: @headerBannerHeight;
+  .banner {
+    height: 100%;
+
+    > div {
+      color: @psiTextOnPrimary;
+    }
+
+    > a {
+      display: inline-block;
+      .ie7-inline-block();
+      background: #FFFFFF;  // Our banner spec indicates image will be on white or light background.
+      border: thin darken(@psiPrimary, 10%) solid;
+
+      img {
+        height: @headerBannerHeight;
+      }
+    }
   }
 
-  & .logo {
+  .logo {
     position: absolute;
 
     body[dir="ltr"] & {
@@ -92,7 +110,7 @@ body {
       right: 20px
     }
 
-    & img {
+    img {
       height: 100px;
     }
   }

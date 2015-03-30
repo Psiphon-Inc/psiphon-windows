@@ -5225,8 +5225,22 @@ body[dir="ltr"] .psiphon-header {
 body[dir="rtl"] .psiphon-header {
   padding: 10px 120px 10px 10px;
 }
-.psiphon-header .banner img {
-  height: 70px;
+.psiphon-header .banner {
+  height: 100%;
+}
+.psiphon-header .banner > div {
+  color: #ead7ce;
+}
+.psiphon-header .banner > a {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  background: #FFFFFF;
+  border: thin #160d0a solid;
+}
+.psiphon-header .banner > a img {
+  height: 48px;
 }
 .psiphon-header .logo {
   position: absolute;

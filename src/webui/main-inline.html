@@ -12387,8 +12387,22 @@ body[dir="ltr"] .psiphon-header {
 body[dir="rtl"] .psiphon-header {
   padding: 10px 120px 10px 10px;
 }
-.psiphon-header .banner img {
-  height: 70px;
+.psiphon-header .banner {
+  height: 100%;
+}
+.psiphon-header .banner > div {
+  color: #ead7ce;
+}
+.psiphon-header .banner > a {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  background: #FFFFFF;
+  border: thin #160d0a solid;
+}
+.psiphon-header .banner > a img {
+  height: 48px;
 }
 .psiphon-header .logo {
   position: absolute;
@@ -18335,6 +18349,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "about#head": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
       "about#visit-company-site": "[Ŧǿǿ ƒīīƞḓ ǿǿŭŭŧ ḿǿǿřḗḗ ȧȧƀǿǿŭŭŧ Ƥşīīƥħǿǿƞ Īīƞƈ. ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř <a href=\"https://psiphon.ca\">ƈǿǿḿƥȧȧƞẏ ẇḗḗƀşīīŧḗḗ</a>.]",
       "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
+      "banner#sponsored-by": "[Şƥǿǿƞşǿǿřḗḗḓ ƀẏ]",
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
       "connection#disconnect-btn": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
@@ -18402,6 +18417,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "about#head": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
       "about#visit-company-site": "‮⊥o‬ ‮ɟıup‬ ‮onʇ‬ ‮ɯoɹǝ‬ ‮ɐqonʇ‬ ‮Ԁsıdɥou‬ ‮Iuɔ‬. ‮dʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮onɹ‬ <a href=\"https://psiphon.ca\">‮ɔoɯdɐuʎ‬ ‮ʍǝqsıʇǝ‬</a>.",
       "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+      "banner#sponsored-by": "‮Sdousoɹǝp‬ ‮qʎ‬",
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
       "connection#disconnect-btn": "‮pısɔouuǝɔʇ‬",
@@ -18477,6 +18493,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
   "en": {
     "name": "English",
     "translation": {
+      "banner#sponsored-by": "Sponsored by",
       "nav#connection": "Connection",
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",
@@ -19643,6 +19660,9 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
       </a>
     </div>
     <div class="text-center banner">
+      <div data-i18n="banner#sponsored-by">
+        Sponsored by
+      </div>
       <a href="#">
         <img src="">
       </a>

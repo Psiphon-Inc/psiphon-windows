@@ -19,6 +19,10 @@
     "message": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
   },
+  "banner#sponsored-by": {
+    "message": "‮Sdousoɹǝp‬ ‮qʎ‬",
+    "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+  },
   "connection#connect-btn": {
     "message": "‮Ↄouuǝɔʇ‬",
     "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."

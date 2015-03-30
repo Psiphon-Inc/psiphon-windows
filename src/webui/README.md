@@ -1,6 +1,6 @@
 ## Design
 
-Send messages from HTML to C via either "app:" (like, window.location="app:blah") or via page title (like, document.title="blah".
+Send messages from HTML to C via either "psi:" (like, window.location="psi:blah") or via page title (like, document.title="blah".
 Send messages from C to HTML via new JS thing.
 
 
@@ -16,7 +16,6 @@ $ node fake-translations.js
 
 ## Notes and discussion points
 
-* Nothing is set in stone. For example, if consensus is against the left-side tabs, they can be changed. Et cetera.
 * It feels like there should be more icons or images — it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used. You can see a few of them in the nav tabs.
 
 
@@ -28,7 +27,6 @@ $ node fake-translations.js
 * Need higher-res Psiphon logo
 * Need new logo app icon
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
-* Bug? Psiphon doesn't consistently launch on Win7+IE9? Only in VM?
 * Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
   - Don't forget the new BANNER_FILETYPE embedded value
@@ -42,6 +40,9 @@ $ node fake-translations.js
   - too much text in Settings pane (looks like Chrome setting); maybe show help text on demand
   - too much separation (legend for simple shit is too big)
   - VPN Mode: on/off; remove extraneous "use vpn mode text"
+
+* Automation notes:
+  - One-time BMP-to-PNG conversion?
 
 
 ## Longer-term TODO

@@ -26,6 +26,7 @@
       "about#head": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
       "about#visit-company-site": "[Ŧǿǿ ƒīīƞḓ ǿǿŭŭŧ ḿǿǿřḗḗ ȧȧƀǿǿŭŭŧ Ƥşīīƥħǿǿƞ Īīƞƈ. ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř <a href=\"https://psiphon.ca\">ƈǿǿḿƥȧȧƞẏ ẇḗḗƀşīīŧḗḗ</a>.]",
       "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
+      "banner#sponsored-by": "[Şƥǿǿƞşǿǿřḗḗḓ ƀẏ]",
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
       "connection#disconnect-btn": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
@@ -93,6 +94,7 @@
       "about#head": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
       "about#visit-company-site": "‮⊥o‬ ‮ɟıup‬ ‮onʇ‬ ‮ɯoɹǝ‬ ‮ɐqonʇ‬ ‮Ԁsıdɥou‬ ‮Iuɔ‬. ‮dʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮onɹ‬ <a href=\"https://psiphon.ca\">‮ɔoɯdɐuʎ‬ ‮ʍǝqsıʇǝ‬</a>.",
       "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+      "banner#sponsored-by": "‮Sdousoɹǝp‬ ‮qʎ‬",
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
       "connection#disconnect-btn": "‮pısɔouuǝɔʇ‬",
@@ -168,6 +170,7 @@
   "en": {
     "name": "English",
     "translation": {
+      "banner#sponsored-by": "Sponsored by",
       "nav#connection": "Connection",
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",
