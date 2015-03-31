@@ -144,7 +144,7 @@ void Settings::Initialize()
 void Settings::ToJson(Json::Value& o_json)
 {
     o_json.clear();
-    o_json["SplitTunnel"] = Settings::SplitTunnel();
+    o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
     o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
     o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
     o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();

@@ -288,7 +288,7 @@ $(function() {
 
 function fillSettingsValues(obj) {
   if (typeof(obj.SplitTunnel) !== 'undefined') {
-    $('#SplitTunnel').prop('checked', obj.SplitTunnel);
+    $('#SplitTunnel').prop('checked', !!obj.SplitTunnel);
   }
 
   if (typeof(obj.VPN) !== 'undefined') {
@@ -886,7 +886,7 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'updatesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -898,7 +898,7 @@ function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'sendfeedback?' + encodeURIComponent(feedbackJSON);
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -910,7 +910,7 @@ function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'setcookies?' + encodeURIComponent(cookiesJSON);
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -922,7 +922,7 @@ function HtmlCtrlInterface_BannerClick() {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'bannerclick';
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;

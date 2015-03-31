@@ -246,7 +246,9 @@
           <form class="vpn-incompatible">
             <fieldset>
               <legend>
-                <span data-i18n="settings#egress-region#heading">Psiphon server region</span>
+                <span data-i18n="settings#egress-region#heading">
+                  Psiphon server region
+                </span>
               </legend>
               <label class="control-label" for="EgressRegion" data-i18n="settings#egress-region#select-label">
                 Select desired Psiphon server region:
@@ -388,14 +390,11 @@
             </fieldset>
           </form>
 
-          <form class="perma-disabled disabled-text">
+          <form class="vpn-incompatible">
             <fieldset>
               <legend>
                 <span data-i18n="settings#split-tunnel#heading">
                   Split Tunnel
-                </span>
-                <span data-i18n="settings#split-tunnel#not-yet-supported">
-                  (Not yet supported!)
                 </span>
               </legend>
               <p data-i18n="settings#split-tunnel#help-text">
@@ -403,11 +402,16 @@
                 tunneled through Psiphon.
               </p>
               <label for="SplitTunnel" class="checkbox">
-                <input type="checkbox" id="SplitTunnel" disabled/>
+                <input type="checkbox" id="SplitTunnel"/>
                 <span data-i18n="settings#split-tunnel#enable-label">
                   Don't proxy domestic websites
                 </span>
               </label>
+              <span class="help-block">
+                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                  (Doesn't work with VPN mode.)
+                </small>
+              </span>
             </fieldset>
           </form>
         </div><!-- /settings-pane -->

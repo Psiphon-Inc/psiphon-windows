@@ -18534,7 +18534,6 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#upstream-proxy#port-label": "Port",
       "settings#upstream-proxy#skip-label": "Don't use upstream proxy",
       "settings#split-tunnel#heading": "Split Tunnel",
-      "settings#split-tunnel#not-yet-supported": "(Not yet supported!)",
       "settings#split-tunnel#help-text": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
       "settings#split-tunnel#enable-label": "Don't proxy domestic websites",
       "feedback#top_content_title": "Give Us Your Feedback",
@@ -18995,7 +18994,7 @@ $(function() {
 
 function fillSettingsValues(obj) {
   if (typeof(obj.SplitTunnel) !== 'undefined') {
-    $('#SplitTunnel').prop('checked', obj.SplitTunnel);
+    $('#SplitTunnel').prop('checked', !!obj.SplitTunnel);
   }
 
   if (typeof(obj.VPN) !== 'undefined') {
@@ -19593,7 +19592,7 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'updatesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -19605,7 +19604,7 @@ function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'sendfeedback?' + encodeURIComponent(feedbackJSON);
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -19617,7 +19616,7 @@ function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'setcookies?' + encodeURIComponent(cookiesJSON);
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -19629,7 +19628,7 @@ function HtmlCtrlInterface_BannerClick() {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'bannerclick';
     if (IS_BROWSER) {
-      console.log(appURL);
+      console.log(decodeURIComponent(appURL));
     }
     else {
       window.location = appURL;
@@ -19827,7 +19826,9 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
           <form class="vpn-incompatible">
             <fieldset>
               <legend>
-                <span data-i18n="settings#egress-region#heading">Psiphon server region</span>
+                <span data-i18n="settings#egress-region#heading">
+                  Psiphon server region
+                </span>
               </legend>
               <label class="control-label" for="EgressRegion" data-i18n="settings#egress-region#select-label">
                 Select desired Psiphon server region:
@@ -19969,14 +19970,11 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
             </fieldset>
           </form>
 
-          <form class="perma-disabled disabled-text">
+          <form class="vpn-incompatible">
             <fieldset>
               <legend>
                 <span data-i18n="settings#split-tunnel#heading">
                   Split Tunnel
-                </span>
-                <span data-i18n="settings#split-tunnel#not-yet-supported">
-                  (Not yet supported!)
                 </span>
               </legend>
               <p data-i18n="settings#split-tunnel#help-text">
@@ -19984,11 +19982,16 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                 tunneled through Psiphon.
               </p>
               <label for="SplitTunnel" class="checkbox">
-                <input type="checkbox" id="SplitTunnel" disabled/>
+                <input type="checkbox" id="SplitTunnel"/>
                 <span data-i18n="settings#split-tunnel#enable-label">
                   Don't proxy domestic websites
                 </span>
               </label>
+              <span class="help-block">
+                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                  (Doesn't work with VPN mode.)
+                </small>
+              </span>
             </fieldset>
           </form>
         </div><!-- /settings-pane -->

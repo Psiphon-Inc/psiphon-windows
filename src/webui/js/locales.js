@@ -211,7 +211,6 @@
       "settings#upstream-proxy#port-label": "Port",
       "settings#upstream-proxy#skip-label": "Don't use upstream proxy",
       "settings#split-tunnel#heading": "Split Tunnel",
-      "settings#split-tunnel#not-yet-supported": "(Not yet supported!)",
       "settings#split-tunnel#help-text": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
       "settings#split-tunnel#enable-label": "Don't proxy domestic websites",
       "feedback#top_content_title": "Give Us Your Feedback",

@@ -74,7 +74,7 @@ void OnCreate(HWND hWndParent)
     initJSON["Cookies"] = Settings::GetCookies();
     initJSON["Config"] = Json::Value();
     initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
-    initJSON["Config"]["Banner"] = string("banner.") + BANNER_FILETYPE;
+    initJSON["Config"]["Banner"] = "banner.png";
     initJSON["Config"]["Version"] = CLIENT_VERSION;
     initJSON["Config"]["InfoURL"] = TStringToNarrow(INFO_LINK_URL);
 #ifdef _DEBUG

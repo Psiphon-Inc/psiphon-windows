@@ -163,10 +163,6 @@
     "message": "Split Tunnel",
     "description": ""
   },
-  "settings#split-tunnel#not-yet-supported": {
-    "message": "(Not yet supported!)",
-    "description": ""
-  },
   "settings#split-tunnel#help-text": {
     "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
     "description": ""
