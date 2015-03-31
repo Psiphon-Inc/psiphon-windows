@@ -568,7 +568,8 @@ void SSHTransportBase::TransportConnectHelper()
     bool abortServerAffinity = false;
     DWORD start = GetTickCount();
 
-    DWORD lastProgressTime = GetTickCount();
+    DWORD startTime = GetTickCount();
+    DWORD lastProgressTime = startTime;
     const DWORD PROGRESS_INTERVAL_MS = 10000;
 
     while (m_currentPlonk.get() == NULL 
@@ -577,7 +578,7 @@ void SSHTransportBase::TransportConnectHelper()
     {
         if (!tentativeConnection.plonkConnection.get())
         {
-            if (GetTickCountDiff(lastProgressTime, GetTickCount()) > TARGET_PROTOCOL_ROTATION_PERIOD_MS)
+            if (GetTickCountDiff(startTime, GetTickCount()) > TARGET_PROTOCOL_ROTATION_PERIOD_MS)
             {
                 // Note: HandleRotatePeriodElapsed throws TransportFailed unconditionally
                 HandleRotatePeriodElapsed();
