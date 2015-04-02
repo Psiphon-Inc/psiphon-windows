@@ -24,15 +24,9 @@ $ node fake-translations.js
 * Re-work settings tab (in response to user feedback)
 * Write descriptions for all i18n messages -- Settings stuff
 * More elaborate connection animation?
-* Need higher-res Psiphon logo
-* Need new logo app icon
-* Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
-* Come up with new spec for banner ads. Larger, PNG, maybe with transparency.
 * Automation: Switch to VS2013. Banner changes/support.
   - Don't forget the new BANNER_FILETYPE embedded value
   - Banner file is moved to psiclient/webui
-* Update Transifex and transifex_pull.py
-* Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 * Minimize to systray
 * Add message that shows when slow to connect providing download email and URL.
 
@@ -51,6 +45,8 @@ $ node fake-translations.js
 * Split up JS in logical modules
 * Ditto CSS
 * Unit tests
+* Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
+* Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 
 
 ## Technical and compatibility notes
