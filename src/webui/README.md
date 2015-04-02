@@ -42,9 +42,6 @@ $ node fake-translations.js
   - too much separation (legend for simple shit is too big)
   - VPN Mode: on/off; remove extraneous "use vpn mode text"
 
-* Automation notes:
-  - Make a new stock banner.png -- window and android
-  - One-time BMP-to-PNG conversion?
 
 
 ## Longer-term TODO

@@ -1,26 +1,250 @@
 {
-  "feedback#top_content_title": {
-    "message": "Anna meille palautettasi",
-    "description": ""
-  },
-  "feedback#top_para_1": {
-    "message": "Kerro meille, kuinka Psiphon toimii, jotta voimme tehdä järjestelmä paremmaksi!\n",
-    "description": ""
-  },
-  "feedback#smiley_happy": {
-    "message": "Psiphon yhdistää ja suorittaa sillä kuin haluan.",
-    "description": ""
-  },
-  "feedback#smiley_sad": {
-    "message": "Psiphon usein epäonnisttuu yhdistämään tai ei suoriudu kyllin hyvin.",
-    "description": ""
-  },
-  "feedback#submit_button": {
-    "message": "Lähetä",
-    "description": ""
-  },
-  "feedback#text_feedback_prompt": {
-    "message": "Kirjoita kommenttisi tähän:\n",
-    "description": ""
-  }
+    "feedback#top_para_1": {
+        "message": "Please let us know how Psiphon is working for you so we can make the system better!",
+        "description": "Text motivating the user to send Psiphon Inc. feedback."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "Japani",
+        "description": ""
+    },
+    "settings#vpn-mode#check-label": {
+        "message": "Use VPN Mode",
+        "description": ""
+    },
+    "settings#error-alert": {
+        "message": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
+        "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
+    },
+    "messages#show-debug-label": {
+        "message": "Show debug messages",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "banner#sponsored-by": {
+        "message": "Sponsoroija:",
+        "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+    },
+    "connection#connected-msg": {
+        "message": "Psiphon is connected",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "nav#settings": {
+        "message": "Settings",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "connection#stopping-msg": {
+        "message": "Psiphon is disconnecting...",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "feedback#success-message": {
+        "message": "<strong>Thank you!</strong> Your feedback has been sent.",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "description": ""
+    },
+    "about#visit-download-site": {
+        "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" id=\"about-info-url\">visit the website</a>.",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "Don't use upstream proxy",
+        "description": ""
+    },
+    "settings#vpn-mode#heading": {
+        "message": "VPN Mode",
+        "description": ""
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "Portti",
+        "description": ""
+    },
+    "settings#port-value-error-msg": {
+        "message": "Must be between 1 and 65535.",
+        "description": ""
+    },
+    "settings#vpn-mode#help-text": {
+        "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> unless VPN-like behavior is required.",
+        "description": ""
+    },
+    "nav#feedback": {
+        "message": "Palaute",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
+    },
+    "connection#starting-msg": {
+        "message": "Psiphon is connecting...",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#egress-region#select-us": {
+        "message": "Yhdysvallat",
+        "description": ""
+    },
+    "feedback#top_para_2": {
+        "message": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "feedback#submit_button": {
+        "message": "Lähetä",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": ""
+    },
+    "feedback#top_para_3": {
+        "message": "You can also find solutions to many common problems in our <a class=\"FaqURL\" href=\"#\">Frequently Asked Questions</a>.",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "about#get-by-email": {
+        "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "settings#egress-region#select-label": {
+        "message": "Select desired Psiphon server region:",
+        "description": ""
+    },
+    "settings#egress-region#select-nl": {
+        "message": "Hollanti",
+        "description": ""
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": ""
+    },
+    "settings#reset-button": {
+        "message": "Reset to Default",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "about#head": {
+        "message": "PSIPHON: <i>BEYOND BORDERS</i>",
+        "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "Upstream Proxy",
+        "description": ""
+    },
+    "settings#egress-region#help-text": {
+        "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose \"Best Performance\", but you may instead prefer to use a server in a specific country.",
+        "description": ""
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "(Doesn't work with VPN mode.)",
+        "description": ""
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "Local Proxy Ports",
+        "description": ""
+    },
+    "settings#egress-region#select-de": {
+        "message": "Saksa",
+        "description": ""
+    },
+    "nav#connection": {
+        "message": "Connection",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
+    },
+    "connection#stop-btn": {
+        "message": "Loppu",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "connection#disconnect-btn": {
+        "message": "Disconnect",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "feedback#top_content_title": {
+        "message": "Anna meille palautettasi",
+        "description": "Title for the Feedback page"
+    },
+    "connection#stopped-msg": {
+        "message": "Psiphon is disconnected",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "nav#about": {
+        "message": "Ohjelmasta",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "Leave blank for automatic port selection (recommended).",
+        "description": ""
+    },
+    "language#success-message": {
+        "message": "<strong>Hello!</strong> Welcome to Psiphon.",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "settings#egress-region#select-sg": {
+        "message": "Singapore",
+        "description": ""
+    },
+    "feedback#diagnostic_check": {
+        "message": "Upload diagnostic data. Please note that this diagnostic data does not identify you, and it will help us to keep Psiphon running smoothly. <a class=\"DataCollectionInfoURL\" href=\"#\">Click here to see what data we collect.</a>",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "about#description": {
+        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "Split Tunnel",
+        "description": ""
+    },
+    "nav#messages": {
+        "message": "Log Messages",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "Yhdistynyt kuningaskunta",
+        "description": ""
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "Hostname",
+        "description": ""
+    },
+    "feedback#smiley_sad": {
+        "message": "Psiphon usein epäonnisttuu yhdistämään tai ei suoriudu kyllin hyvin.",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "settings#egress-region#heading": {
+        "message": "Psiphon server region",
+        "description": ""
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that by specifying a proxy to use, or by specifying that no such \"upstream proxy\" should be used.<br> Only HTTP proxies that support HTTPS are allowed.",
+        "description": ""
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "Don't proxy domestic websites",
+        "description": ""
+    },
+    "about#visit-company-site": {
+        "message": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>.",
+        "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "If you would like us to respond to you, please enter your email address:",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "Please enter your comments here:",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#smiley_happy": {
+        "message": "Psiphon yhdistää ja suorittaa sillä kuin haluan.",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "connection#wait-btn": {
+        "message": "Please wait...",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "Best Performance",
+        "description": ""
+    },
+    "connection#connect-btn": {
+        "message": "Connect",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    }
 }

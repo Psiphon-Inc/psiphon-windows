@@ -1,46 +1,250 @@
 {
-  "feedback#top_content_title": {
-    "message": "Envíenos sus comentarios",
-    "description": ""
-  },
-  "feedback#top_para_1": {
-    "message": "¡Por favor háganos saber cómo está funcionando Psiphon para usted para que podamos mejorar el sistema!\n",
-    "description": ""
-  },
-  "feedback#top_para_2": {
-    "message": "Muchos problemas pueden arreglarse descargando la última versión. Puede\n<a class=\"NewVersionURL\" href=\"#\">descargar la última versión haciendo clic aquí</a>,\no puede enviar un correo a <a class=\"NewVersionEmail\" href=\"#\"></a>.\n",
-    "description": ""
-  },
-  "feedback#top_para_3": {
-    "message": "También puede encontrar soluciones a muchos problemas comunes en nuestras\n<a class=\"FaqURL\" href=\"#\">Preguntas frecuentes</a>.\n",
-    "description": ""
-  },
-  "feedback#diagnostic_check": {
-    "message": "Suba datos de diagnóstico. Por favor observe que estos datos de\ndiagnóstico no le identifican, y nos ayudarán a mantener Psiphon\nfuncionando sin sobresaltos.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Haga clic aquí para ver que datos recogemos.</a>\n",
-    "description": ""
-  },
-  "feedback#smiley_happy": {
-    "message": "Psiphon conecta y rinde de la forma que yo quiero.",
-    "description": ""
-  },
-  "feedback#smiley_sad": {
-    "message": "Psiphon falla a menudo al conectar o no rinde suficientemente bien.",
-    "description": ""
-  },
-  "feedback#submit_button": {
-    "message": "Enviar",
-    "description": ""
-  },
-  "feedback#text_feedback_prompt": {
-    "message": "Por favor introduzca sus comentarios aquí:\n",
-    "description": ""
-  },
-  "feedback#text_feedback_email_prompt": {
-    "message": "Si quiere que nosotros le respondamos, por favor introduzca su dirección de correo electrónico\n",
-    "description": ""
-  },
-  "feedback#text_feedback_bottom_para": {
-    "message": "Si el formulario de arriba no le está funcionando, o si quisiese enviar capturas de pantalla, por favor envíenos un correo a <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>\n",
-    "description": ""
-  }
+    "feedback#top_para_1": {
+        "message": "Please let us know how Psiphon is working for you so we can make the system better!",
+        "description": "Text motivating the user to send Psiphon Inc. feedback."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "Japón",
+        "description": ""
+    },
+    "settings#vpn-mode#check-label": {
+        "message": "Usar modo VPN",
+        "description": ""
+    },
+    "settings#error-alert": {
+        "message": "<strong>¡Error!</strong> Por favor, repare los valores incorrectos antes de proseguir.",
+        "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
+    },
+    "messages#show-debug-label": {
+        "message": "Show debug messages",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "banner#sponsored-by": {
+        "message": "Patrocinado por",
+        "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+    },
+    "connection#connected-msg": {
+        "message": "Psiphon está conectado",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "nav#settings": {
+        "message": "Configuración",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "connection#stopping-msg": {
+        "message": "Psiphon está desconectando...",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "feedback#success-message": {
+        "message": "<strong>Thank you!</strong> Your feedback has been sent.",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "description": ""
+    },
+    "about#visit-download-site": {
+        "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" id=\"about-info-url\">visit the website</a>.",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "Don't use upstream proxy",
+        "description": ""
+    },
+    "settings#vpn-mode#heading": {
+        "message": "Modo VPN",
+        "description": ""
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "Puerto",
+        "description": ""
+    },
+    "settings#port-value-error-msg": {
+        "message": "Must be between 1 and 65535.",
+        "description": ""
+    },
+    "settings#vpn-mode#help-text": {
+        "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> unless VPN-like behavior is required.",
+        "description": ""
+    },
+    "nav#feedback": {
+        "message": "Comentarios",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
+    },
+    "connection#starting-msg": {
+        "message": "Psiphon está conectando...",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#egress-region#select-us": {
+        "message": "Estados Unidos",
+        "description": ""
+    },
+    "feedback#top_para_2": {
+        "message": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "feedback#submit_button": {
+        "message": "Enviar",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": ""
+    },
+    "feedback#top_para_3": {
+        "message": "You can also find solutions to many common problems in our <a class=\"FaqURL\" href=\"#\">Frequently Asked Questions</a>.",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "about#get-by-email": {
+        "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "settings#egress-region#select-label": {
+        "message": "Seleccione la región de servidor Psiphon deseada:",
+        "description": ""
+    },
+    "settings#egress-region#select-nl": {
+        "message": "Países Bajos",
+        "description": ""
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": ""
+    },
+    "settings#reset-button": {
+        "message": "Restablecer predeterminada",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "about#head": {
+        "message": "PSIPHON: <i>BEYOND BORDERS</i>",
+        "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "Upstream Proxy",
+        "description": ""
+    },
+    "settings#egress-region#help-text": {
+        "message": "Psiphon tiene servidores en muchos países distintos. Para obtener la conexión más rápida debe elegir \"El mejor rendimiento\", pero en lugar de esto puede preferir usar un servidor en un país específico.",
+        "description": ""
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "(No funciona en modo VPN.)",
+        "description": ""
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "Local Proxy Ports",
+        "description": ""
+    },
+    "settings#egress-region#select-de": {
+        "message": "Alemania",
+        "description": ""
+    },
+    "nav#connection": {
+        "message": "Conexión",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
+    },
+    "connection#stop-btn": {
+        "message": "Detener",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "connection#disconnect-btn": {
+        "message": "Desconectar",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "feedback#top_content_title": {
+        "message": "Envíenos sus comentarios",
+        "description": "Title for the Feedback page"
+    },
+    "connection#stopped-msg": {
+        "message": "Psiphon está desconectado",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "nav#about": {
+        "message": "Acerca de",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "Leave blank for automatic port selection (recommended).",
+        "description": ""
+    },
+    "language#success-message": {
+        "message": "<strong>Hello!</strong> Welcome to Psiphon.",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "settings#egress-region#select-sg": {
+        "message": "Singapur",
+        "description": ""
+    },
+    "feedback#diagnostic_check": {
+        "message": "Upload diagnostic data. Please note that this diagnostic data does not identify you, and it will help us to keep Psiphon running smoothly. <a class=\"DataCollectionInfoURL\" href=\"#\">Click here to see what data we collect.</a>",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "about#description": {
+        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "Split Tunnel",
+        "description": ""
+    },
+    "nav#messages": {
+        "message": "Mensajes de registro (log)",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "Reino Unido",
+        "description": ""
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "Hostname",
+        "description": ""
+    },
+    "feedback#smiley_sad": {
+        "message": "Psiphon falla a menudo al conectar o no rinde suficientemente bien.",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "settings#egress-region#heading": {
+        "message": "Región del servidor Psiphon",
+        "description": ""
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that by specifying a proxy to use, or by specifying that no such \"upstream proxy\" should be used.<br> Only HTTP proxies that support HTTPS are allowed.",
+        "description": ""
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "Don't proxy domestic websites",
+        "description": ""
+    },
+    "about#visit-company-site": {
+        "message": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>.",
+        "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "If you would like us to respond to you, please enter your email address:",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "Please enter your comments here:",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#smiley_happy": {
+        "message": "Psiphon conecta y rinde de la forma que yo quiero.",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "connection#wait-btn": {
+        "message": "Por favor, espere...",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "El mejor rendimiento",
+        "description": ""
+    },
+    "connection#connect-btn": {
+        "message": "Conectar",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    }
 }
