@@ -29,20 +29,14 @@ NOTES
 #include "sessioninfo.h"
 
 
-class ITransport;
 class SystemProxySettings;
 
 
-// This should be implemented by something like ConnectionManager to provide a 
-// way for Transports to (optionally) trigger remote server list fetches 
-// during connection sequences.
-// In concrete terms, SSHTransport can take a long time to try connecting to
-// all available servers, so we want to be able to trigger a remote server list
-// fetch after a certain amount of time.
-class IRemoteServerListFetcher
+class IReconnectStateReceiver
 {
 public:
-    virtual void FetchRemoteServerList() = 0;
+    virtual void SetReconnecting() = 0;
+    virtual void SetReconnected() = 0;
 };
 
 
@@ -73,10 +67,10 @@ public:
     // Only valid when connected
     virtual tstring GetSessionID(const SessionInfo& sessionInfo) = 0;
 
-    // Find out what port, if any, the local proxy should connect to in order 
-    // to use this transport.
-    // Returns zero if the local proxy should not connect directly to the transport.
-    virtual int GetLocalProxyParentPort() const = 0;
+    // Returns true if:
+    // - needs a local HTTP proxy to be run (used to proxy Psiphon API web requests, etc.)
+    // - needs assistance in calling /connected and /status requests
+    virtual bool RequiresStatsSupport() const = 0;
 
     virtual tstring GetLastTransportError() const = 0;
 
@@ -106,9 +100,13 @@ public:
     void Connect(
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
+            IReconnectStateReceiver* reconnectStateReceiver,
             WorkerThreadSynch* workerThreadSynch,
-            IRemoteServerListFetcher* remoteServerListFetcher,
             ServerEntry* tempConnectServerEntry=NULL);
+
+    // Returns true if it's okay to retry the connection using the same transport
+    // and connection parameters. If it returns false, then the failure is permanent.
+    bool IsConnectRetryOkay() const;
 
     // Do any necessary final cleanup. 
     // Must be safe to call even if a connection was never established.
@@ -121,12 +119,6 @@ public:
     // Must be called after connecting, if there has been a handshake that 
     // added more data to sessionInfo.
     SessionInfo GetSessionInfo() const;
-
-    // Must be called after the local proxy is running and the system proxy
-    // settings are in place. 
-    // Subclasses may use this opportunity to make a handshake.
-    // May throw StopSignal::StopException
-    virtual void ProxySetupComplete() = 0;
 
     static size_t AddServerEntries(
             LPCTSTR transportProtocolName,
@@ -144,8 +136,18 @@ public:
     // IWorkerThread::Error may be thrown at any time. 
     // (Except in const members?)
     //
-    // Indicates that this transport was not successful
-    class TransportFailed { };
+    // Indicates that this transport was not successful.
+    // If connectRetryOkay is not true, then there should not be another connection
+    // attempt made with the transport using the same parameters.
+    class TransportFailed 
+    { 
+        friend class ITransport;
+    public:
+        TransportFailed() : m_connectRetryOkay(true) {}
+        TransportFailed(bool connectRetryOkay) : m_connectRetryOkay(connectRetryOkay) {}
+    protected:
+        bool m_connectRetryOkay;
+    };
 
 protected:
     // May throw TransportFailed or IWorkerThread::Abort
@@ -170,6 +172,7 @@ protected:
     SystemProxySettings* m_systemProxySettings;
     ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
-    IRemoteServerListFetcher* m_remoteServerListFetcher;
     bool m_firstConnectionAttempt;
+    IReconnectStateReceiver* m_reconnectStateReceiver;
+    bool m_connectRetryOkay;
 };

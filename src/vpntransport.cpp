@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,13 +33,9 @@
 #define VPN_CONNECTION_NAME             _T("Psiphon3")
 
 
-
 void TweakVPN();
 void TweakDNS();
 
-
-static const TCHAR* TRANSPORT_PROTOCOL_NAME = _T("VPN");
-static const TCHAR* TRANSPORT_DISPLAY_NAME = _T("VPN");
 
 // Support the registration of this transport type
 static ITransport* New()
@@ -55,8 +51,8 @@ void VPNTransport::GetFactory(
                     AddServerEntriesFn& o_addServerEntriesFn)
 {
     o_transportFactory = New;
-    o_transportDisplayName = TRANSPORT_DISPLAY_NAME;
-    o_transportProtocolName = TRANSPORT_PROTOCOL_NAME;
+    o_transportDisplayName = VPN_TRANSPORT_DISPLAY_NAME;
+    o_transportProtocolName = VPN_TRANSPORT_PROTOCOL_NAME;
     o_addServerEntriesFn = ITransport::AddServerEntries;
 }
 
@@ -88,12 +84,12 @@ VPNTransport::~VPNTransport()
 
 tstring VPNTransport::GetTransportProtocolName() const 
 { 
-    return TRANSPORT_PROTOCOL_NAME;
+    return VPN_TRANSPORT_PROTOCOL_NAME;
 }
 
 tstring VPNTransport::GetTransportDisplayName() const 
 { 
-    return TRANSPORT_DISPLAY_NAME;
+    return VPN_TRANSPORT_DISPLAY_NAME;
 }
 
 tstring VPNTransport::GetTransportRequestName() const
@@ -110,9 +106,9 @@ tstring VPNTransport::GetSessionID(const SessionInfo& sessionInfo)
     return m_pppIPAddress;
 }
 
-int VPNTransport::GetLocalProxyParentPort() const
+bool VPNTransport::RequiresStatsSupport() const
 {
-    return 0;
+    return true;
 }
 
 tstring VPNTransport::GetLastTransportError() const
@@ -144,12 +140,6 @@ bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
     bool canHandshake = ServerRequest::ServerHasRequestCapabilities(entry);
 
     return canHandshake && entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
-}
-
-void VPNTransport::ProxySetupComplete()
-{
-    // VPN doesn't do post-handshake
-    return;
 }
 
 bool VPNTransport::Cleanup()
@@ -662,7 +652,7 @@ HRASCONN VPNTransport::GetActiveRasConnection()
  
         // The first RASCONN structure in the array must contain the RASCONN structure size
         rasConnections[0].dwSize = sizeof(RASCONN);
-		
+        
         // Call RasEnumConnections to enumerate active connections
         returnCode = RasEnumConnections(rasConnections, &bufferSize, &connections);
 
@@ -681,7 +671,7 @@ HRASCONN VPNTransport::GetActiveRasConnection()
                     rasConnection = rasConnections[i].hrasconn;
                     break;
                 }
-		    }
+            }
         }
 
         //Deallocate memory for the connection buffer
@@ -1260,33 +1250,33 @@ static bool FlushDNS()
     // Adapted code from: http://www.codeproject.com/KB/cpp/Setting_DNS.aspx
 
     bool result = false;
-	HINSTANCE hDnsDll;
-	DNSFLUSHPROC pDnsFlushProc;
+    HINSTANCE hDnsDll;
+    DNSFLUSHPROC pDnsFlushProc;
 
-	if ((hDnsDll = LoadLibrary(_T("dnsapi"))) == NULL)
+    if ((hDnsDll = LoadLibrary(_T("dnsapi"))) == NULL)
     {
         my_print(NOT_SENSITIVE, false, _T("LoadLibrary DNSAPI failed"));
         return result;
     }
 
-	if ((pDnsFlushProc = (DNSFLUSHPROC)GetProcAddress(hDnsDll, "DnsFlushResolverCache")) != NULL)
-	{
-		if (FALSE == (pDnsFlushProc)())
-		{
+    if ((pDnsFlushProc = (DNSFLUSHPROC)GetProcAddress(hDnsDll, "DnsFlushResolverCache")) != NULL)
+    {
+        if (FALSE == (pDnsFlushProc)())
+        {
             my_print(NOT_SENSITIVE, false, _T("DnsFlushResolverCache failed: %d"), GetLastError());
         }
         else
         {
             result = true;
         }
-	}
+    }
     else
     {
         my_print(NOT_SENSITIVE, false, _T("GetProcAddress DnsFlushResolverCache failed"));
     }
 
-	FreeLibrary(hDnsDll);
-	return result;
+    FreeLibrary(hDnsDll);
+    return result;
 }
 
 void TweakDNS()

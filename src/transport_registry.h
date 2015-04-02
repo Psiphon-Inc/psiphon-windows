@@ -48,7 +48,7 @@ public:
     static int Register();
 
     // Create new instance of a particular transport
-    static ITransport* New(tstring transportDisplayName);
+    static ITransport* New(tstring transportProtocolName);
     
     // Create new instances of all available transports.
     static void NewAll(vector<ITransport*>& all_transports);

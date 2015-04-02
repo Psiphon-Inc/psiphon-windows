@@ -209,9 +209,8 @@ bool ServerRequest::MakeRequest(
             connection.Connect(
                 stopInfo,
                 (*transport_iter).get(),
+                NULL, // not receiving reconnection notifications
                 NULL, // not collecting stats
-                NULL, // don't want to trigger a remote server list pull
-                tstring(),  // splitTunnelingFilePath -- not providing it
                 &sessionInfo.GetServerEntry());  // force use of this server
 
             HTTPSRequest httpsRequest;

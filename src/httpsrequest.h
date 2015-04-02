@@ -49,7 +49,7 @@ public:
 private:
     void SetClosedEvent() {SetEvent(m_closedEvent);}
     void SetRequestSuccess() {m_requestSuccess = true;}
-  	bool ValidateServerCert(PCCERT_CONTEXT pCert);
+      bool ValidateServerCert(PCCERT_CONTEXT pCert);
     void AppendResponse(const string& responseData);
 
     friend void CALLBACK WinHttpStatusCallback(

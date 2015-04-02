@@ -28,7 +28,14 @@ It doesn't seem possible to just add this as a dependency project, so we'll have
 
 3. You'll need [CMake](http://www.cmake.org/). Run it, point to the yaml-cpp source, configure the desired MSVC version. Change options so that it's not shared or single-threaded (so, static and multi-threaded). Generate. Open the resulting solution in MSVC.
 
-4. The project we need is `yaml-cpp static mt`. Check its properties (and fix the XP setting, above) -- maybe optimize for size. Build it for Debug and Release.
+   The commands are something like this:
+   ```
+   mkdir build
+   cd build
+   cmake -DBUILD_SHARED_LIBS=OFF -DMSVC_SHARED_RT=OFF -G "Visual Studio 14 2015" ..
+   ```  
+
+4. The project we need is `yaml-cpp static mt`. Check its project properties (and **fix the XP setting**, as above) -- maybe optimize for size. Build it for Debug and Release.
 
 5. Copy the resulting `.lib` (and `.pdb`) files to new directories (see existing ones).
    * The `.pdb` is probably located in `build/yaml-cpp.dir/Debug`.

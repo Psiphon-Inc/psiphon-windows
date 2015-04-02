@@ -45,6 +45,7 @@ Complications to remember:
 #include "stdafx.h"
 #include "stopsignal.h"
 #include "psiclient.h"
+#include "utilities.h"
 
 
 /***********************************************************************

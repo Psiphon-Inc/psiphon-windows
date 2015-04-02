@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,8 @@
 
 class SessionInfo;
 
+#define VPN_TRANSPORT_PROTOCOL_NAME     _T("VPN")
+#define VPN_TRANSPORT_DISPLAY_NAME      _T("VPN")
 
 class VPNTransport: public ITransport
 {
@@ -51,14 +53,12 @@ public:
     virtual tstring GetTransportDisplayName() const;
     virtual tstring GetTransportRequestName() const;
     virtual tstring GetSessionID(const SessionInfo& sessionInfo);
-    virtual int GetLocalProxyParentPort() const;
+    virtual bool RequiresStatsSupport() const;
     virtual tstring GetLastTransportError() const;
     virtual bool IsHandshakeRequired() const;
     virtual bool IsWholeSystemTunneled() const;
     virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
-
-    virtual void ProxySetupComplete();
 
     virtual bool Cleanup();
 

@@ -73,6 +73,7 @@ protected:
     void ParsePolipoStatsBuffer(const char* page_view_buffer);
 
 private:
+    HANDLE m_mutex;
     ILocalProxyStatsCollector* m_statsCollector;
     int m_parentPort;
     tstring m_polipoPath;

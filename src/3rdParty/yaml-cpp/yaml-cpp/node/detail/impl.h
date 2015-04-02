@@ -22,7 +22,7 @@ namespace YAML
 		};
 
 		template<typename Key>
-		struct get_idx<Key, typename boost::enable_if<boost::is_unsigned<Key> >::type> {
+		struct get_idx<Key, typename boost::enable_if_c<boost::is_unsigned<Key>::value && !boost::is_same<Key, bool>::value>::type> {
 			static node *get(const std::vector<node *>& sequence, const Key& key, shared_memory_holder /* pMemory */) {
 				return key < sequence.size() ? sequence[key] : 0;
 			}
@@ -149,7 +149,12 @@ namespace YAML
 			return false;
 		}
 		
-		template<typename T>
+		inline bool node_data::equals(node& node, const char *rhs, shared_memory_holder pMemory)
+		{
+            return equals<std::string>(node, rhs, pMemory);
+		}
+
+        template<typename T>
 		inline node& node_data::convert_to_node(const T& rhs, shared_memory_holder pMemory)
 		{
 			Node value = convert<T>::encode(rhs);
