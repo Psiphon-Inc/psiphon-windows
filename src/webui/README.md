@@ -47,6 +47,7 @@ $ node fake-translations.js
 * Unit tests
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
+* Is logo jagged on some displays? Need dpp media queries to choose image rather than resize?
 
 
 ## Technical and compatibility notes
