@@ -34,6 +34,7 @@ $ node fake-translations.js
 * Update Transifex and transifex_pull.py
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 * Minimize to systray
+* Add message that shows when slow to connect providing download email and URL.
 
 * UI feedback from user: 
   - put region selector in connect tab; people will feel like they're doing something
@@ -42,6 +43,7 @@ $ node fake-translations.js
   - VPN Mode: on/off; remove extraneous "use vpn mode text"
 
 * Automation notes:
+  - Make a new stock banner.png -- window and android
   - One-time BMP-to-PNG conversion?
 
 
