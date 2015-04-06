@@ -24,9 +24,7 @@ $ node fake-translations.js
 * Re-work settings tab (in response to user feedback)
 * Write descriptions for all i18n messages -- Settings stuff
 * More elaborate connection animation?
-* Automation: Switch to VS2013. Banner changes/support.
-  - Don't forget the new BANNER_FILETYPE embedded value
-  - Banner file is moved to psiclient/webui
+* Automation: Switch to VS2013.
 * Minimize to systray
 * Add message that shows when slow to connect providing download email and URL.
 
