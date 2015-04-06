@@ -1,4 +1,40 @@
 /* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
+body[dir="rtl"] .radio,
+body[dir="rtl"] .checkbox {
+  padding-right: 20px;
+}
+body[dir="rtl"] .radio input[type="radio"],
+body[dir="rtl"] .checkbox input[type="checkbox"] {
+  float: right;
+  margin-left: 0;
+  margin-right: -20px;
+}
+body[dir="rtl"] .form-horizontal .control-label {
+  float: right;
+  text-align: left;
+}
+body[dir="rtl"] .form-horizontal .controls {
+  *padding-left: 0;
+  *padding-right: 20px;
+  margin-left: 0;
+  *margin-left: 0;
+  margin-right: 180px;
+  *margin-right: 0;
+}
+body[dir="rtl"] .form-horizontal .controls:first-child {
+  *padding-left: 0;
+  *padding-right: 180px;
+}
+body[dir="rtl"] .form-horizontal .form-actions {
+  padding-left: 0;
+  padding-right: 180px;
+}
+@media (min-width: 768px) and (max-width: 979px) {
+  body[dir="rtl"] .row {
+    margin-left: 0;
+    margin-right: -20px;
+  }
+}
 /*!
  * Bootstrap v2.3.2
  *
@@ -202,19 +238,19 @@ textarea {
 }
 body {
   margin: 0;
-  font-family: "Titillium Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Titillium Web", sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #333333;
   background-color: #ffffff;
 }
 a {
-  color: #0088cc;
+  color: #d43f27;
   text-decoration: none;
 }
 a:hover,
 a:focus {
-  color: #005580;
+  color: #932c1b;
   text-decoration: underline;
 }
 .img-rounded {
@@ -888,7 +924,7 @@ input,
 button,
 select,
 textarea {
-  font-family: "Titillium Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Titillium Web", sans-serif;
 }
 label {
   display: block;
@@ -2009,14 +2045,14 @@ table th[class*="span"],
 .dropdown-submenu:focus > a {
   text-decoration: none;
   color: #ffffff;
-  background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
-  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-color: #cb3c25;
+  background-image: -moz-linear-gradient(top, #d43f27, #be3923);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d43f27), to(#be3923));
+  background-image: -webkit-linear-gradient(top, #d43f27, #be3923);
+  background-image: -o-linear-gradient(top, #d43f27, #be3923);
+  background-image: linear-gradient(to bottom, #d43f27, #be3923);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd43f27', endColorstr='#ffbe3923', GradientType=0);
 }
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
@@ -2024,14 +2060,14 @@ table th[class*="span"],
   color: #ffffff;
   text-decoration: none;
   outline: 0;
-  background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
-  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-color: #cb3c25;
+  background-image: -moz-linear-gradient(top, #d43f27, #be3923);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d43f27), to(#be3923));
+  background-image: -webkit-linear-gradient(top, #d43f27, #be3923);
+  background-image: -o-linear-gradient(top, #d43f27, #be3923);
+  background-image: linear-gradient(to bottom, #d43f27, #be3923);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd43f27', endColorstr='#ffbe3923', GradientType=0);
 }
 .dropdown-menu > .disabled > a,
 .dropdown-menu > .disabled > a:hover,
@@ -2362,17 +2398,17 @@ input[type="button"].btn-block {
 .btn-primary {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #006dcc;
-  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-  background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+  background-color: #d45627;
+  background-image: -moz-linear-gradient(top, #d43f27, #d47927);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d43f27), to(#d47927));
+  background-image: -webkit-linear-gradient(top, #d43f27, #d47927);
+  background-image: -o-linear-gradient(top, #d43f27, #d47927);
+  background-image: linear-gradient(to bottom, #d43f27, #d47927);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
-  border-color: #0044cc #0044cc #002a80;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd43f27', endColorstr='#ffd47927', GradientType=0);
+  border-color: #d47927 #d47927 #93541b;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #0044cc;
+  *background-color: #d47927;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -2383,12 +2419,12 @@ input[type="button"].btn-block {
 .btn-primary.disabled,
 .btn-primary[disabled] {
   color: #ffffff;
-  background-color: #0044cc;
-  *background-color: #003bb3;
+  background-color: #d47927;
+  *background-color: #be6c23;
 }
 .btn-primary:active,
 .btn-primary.active {
-  background-color: #003399 \9;
+  background-color: #a9601f \9;
 }
 .btn-warning {
   color: #ffffff;
@@ -2582,14 +2618,14 @@ input[type="submit"].btn.btn-mini {
 .btn-link {
   border-color: transparent;
   cursor: pointer;
-  color: #0088cc;
+  color: #d43f27;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
 }
 .btn-link:hover,
 .btn-link:focus {
-  color: #005580;
+  color: #932c1b;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -2729,7 +2765,7 @@ input[type="submit"].btn.btn-mini {
   background-color: #e6e6e6;
 }
 .btn-group.open .btn-primary.dropdown-toggle {
-  background-color: #0044cc;
+  background-color: #d47927;
 }
 .btn-group.open .btn-warning.dropdown-toggle {
   background-color: #f89406;
@@ -2923,7 +2959,7 @@ input[type="submit"].btn.btn-mini {
 .nav-list > .active > a:focus {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-  background-color: #0088cc;
+  background-color: #d43f27;
 }
 .nav-list [class^="icon-"],
 .nav-list [class*=" icon-"] {
@@ -3006,7 +3042,7 @@ input[type="submit"].btn.btn-mini {
 .nav-pills > .active > a:hover,
 .nav-pills > .active > a:focus {
   color: #ffffff;
-  background-color: #0088cc;
+  background-color: #d43f27;
 }
 .nav-stacked > li {
   float: none;
@@ -3061,14 +3097,14 @@ input[type="submit"].btn.btn-mini {
   border-radius: 6px;
 }
 .nav .dropdown-toggle .caret {
-  border-top-color: #0088cc;
-  border-bottom-color: #0088cc;
+  border-top-color: #d43f27;
+  border-bottom-color: #d43f27;
   margin-top: 6px;
 }
 .nav .dropdown-toggle:hover .caret,
 .nav .dropdown-toggle:focus .caret {
-  border-top-color: #005580;
-  border-bottom-color: #005580;
+  border-top-color: #932c1b;
+  border-bottom-color: #932c1b;
 }
 /* move down carets for tabs */
 .nav-tabs .dropdown-toggle .caret {
@@ -3352,7 +3388,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-search .search-query {
   margin-bottom: 0;
   padding: 4px 14px;
-  font-family: "Titillium Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Titillium Web", sans-serif;
   font-size: 13px;
   font-weight: normal;
   line-height: 1;
@@ -5160,42 +5196,6 @@ a.badge:focus {
     overflow: visible !important;
   }
 }
-body[dir="rtl"] .radio,
-body[dir="rtl"] .checkbox {
-  padding-right: 20px;
-}
-body[dir="rtl"] .radio input[type="radio"],
-body[dir="rtl"] .checkbox input[type="checkbox"] {
-  float: right;
-  margin-left: 0;
-  margin-right: -20px;
-}
-body[dir="rtl"] .form-horizontal .control-label {
-  float: right;
-  text-align: left;
-}
-body[dir="rtl"] .form-horizontal .controls {
-  *padding-left: 0;
-  *padding-right: 20px;
-  margin-left: 0;
-  *margin-left: 0;
-  margin-right: 180px;
-  *margin-right: 0;
-}
-body[dir="rtl"] .form-horizontal .controls:first-child {
-  *padding-left: 0;
-  *padding-right: 180px;
-}
-body[dir="rtl"] .form-horizontal .form-actions {
-  padding-left: 0;
-  padding-right: 180px;
-}
-@media (min-width: 768px) and (max-width: 979px) {
-  body[dir="rtl"] .row {
-    margin-left: 0;
-    margin-right: -20px;
-  }
-}
 html {
   height: 100%;
   margin: 0;
@@ -5353,18 +5353,23 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content {
   height: 1em;
 }
 /* SETTINGS */
-.vpn-incompatible-msg {
-  color: #c09853;
+#settings-accordion .accordion-heading {
+  font-size: 1.4em;
 }
-.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
-  color: #999999;
+body[dir="ltr"] #settings-accordion .accordion-heading .accordion-expand-icon {
+  float: right;
+  margin-left: 0.5em;
 }
-.port-entry {
-  width: 5em;
+body[dir="rtl"] #settings-accordion .accordion-heading .accordion-expand-icon {
+  float: left;
+  margin-right: 0.5em;
+}
+#settings-accordion form {
+  margin: 0;
 }
 .settings-reset {
   *zoom: 1;
-  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .settings-reset:before,
 .settings-reset:after {
@@ -5380,6 +5385,21 @@ body[dir="ltr"] .settings-reset a {
 }
 body[dir="rtl"] .settings-reset a {
   float: left;
+}
+.help-block .vpn-incompatible-msg {
+  color: #c09853;
+}
+body[dir="ltr"] .vpn-incompatible-msg.label {
+  float: right;
+}
+body[dir="rtl"] .vpn-incompatible-msg.label {
+  float: left;
+}
+.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
+  color: #999999;
+}
+.port-entry {
+  width: 5em;
 }
 #EgressRegion {
   width: 25em;

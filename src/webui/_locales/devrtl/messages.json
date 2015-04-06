@@ -132,11 +132,11 @@
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
   "settings#egress-region#heading": {
-    "message": "‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬",
+    "message": "‮Ԁsıdɥou‬ ‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬",
     "description": ""
   },
   "settings#egress-region#help-text": {
-    "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ \"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\", ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
+    "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ <strong>\"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\"</strong>, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
     "description": ""
   },
   "settings#egress-region#select-best-performance": {
@@ -153,10 +153,6 @@
   },
   "settings#egress-region#select-jp": {
     "message": "‮ſɐdɐu‬",
-    "description": ""
-  },
-  "settings#egress-region#select-label": {
-    "message": "‮Sǝʅǝɔʇ‬ ‮pǝsıɹǝp‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬:",
     "description": ""
   },
   "settings#egress-region#select-nl": {
@@ -201,14 +197,26 @@
   },
   "settings#split-tunnel#enable-label": {
     "message": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮poɯǝsʇıɔ‬ ‮ʍǝqsıʇǝs‬",
-    "description": ""
+    "description": "The label on the checkbox that enables 'Split Tunnel'."
   },
   "settings#split-tunnel#heading": {
     "message": "‮Sdʅıʇ‬ ‮⊥nuuǝʅ‬",
-    "description": ""
+    "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
   },
   "settings#split-tunnel#help-text": {
     "message": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
+    "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+  },
+  "settings#transport-mode#check-label": {
+    "message": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
+    "description": ""
+  },
+  "settings#transport-mode#heading": {
+    "message": "‮⊥ɹɐusdoɹʇ‬ ‮Wopǝ‬",
+    "description": ""
+  },
+  "settings#transport-mode#help-text": {
+    "message": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬.",
     "description": ""
   },
   "settings#upstream-proxy#by-default": {
@@ -231,20 +239,12 @@
     "message": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
     "description": ""
   },
+  "settings#vpn-incompatible-label": {
+    "message": "‮ɅԀN‬",
+    "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+  },
   "settings#vpn-incompatible-msg": {
     "message": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮ɅԀN‬ ‮ɯopǝ‬.)",
-    "description": ""
-  },
-  "settings#vpn-mode#check-label": {
-    "message": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
-    "description": ""
-  },
-  "settings#vpn-mode#heading": {
-    "message": "‮ɅԀN‬ ‮Wopǝ‬",
-    "description": ""
-  },
-  "settings#vpn-mode#help-text": {
-    "message": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬.",
-    "description": ""
+    "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
   }
 }

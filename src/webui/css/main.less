@@ -16,15 +16,17 @@
 
 /* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
 
-@import "vendor/bootstrap-2.3.2/less/bootstrap.less";
-@import "vendor/bootstrap-2.3.2/less/responsive.less";
 @import "_rtl-support.less";
 
 
 @psiPrimary: #3A2319;
-@psiHightlight: #D43F27;
+@psiHighlight: #D43F27;
 @psiSecondary: #9E8E5F;
 @psiTextOnPrimary: lighten(@psiPrimary, 70%);
+
+
+@import "vendor/bootstrap-2.3.2/less/bootstrap.less";
+@import "vendor/bootstrap-2.3.2/less/responsive.less";
 
 
 html {
@@ -140,7 +142,7 @@ body {
   & > .active > a:focus {
     outline: none;
     color: @white;
-    background-color: @psiHightlight;
+    background-color: @psiHighlight;
   }
 }
 
@@ -239,21 +241,32 @@ body {
 }
 /* SETTINGS */
 
-.vpn-incompatible-msg {
-  .text-warning;
-}
+#settings-accordion {
+  .accordion-heading {
+    font-size: 1.4em;
 
-.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
-  .muted;
-}
+    .accordion-expand-icon {
+      body[dir="ltr"] & {
+        .pull-right;
+        margin-left: 0.5em;
+      }
 
-.port-entry {
-  width: 5em;
+      body[dir="rtl"] & {
+        .pull-left;
+        margin-right: 0.5em;
+      }
+    }
+  }
+
+  form {
+    // Get rid of the big bottom margin that Bootstrap gives forms.
+    margin: 0;
+  }
 }
 
 .settings-reset {
   .clearfix;
-  margin-top: 5px;
+  margin-bottom: 5px;
 
   a {
     body[dir="ltr"] & {
@@ -266,6 +279,29 @@ body {
   }
 }
 
+.vpn-incompatible-msg {
+  .help-block & {
+    .text-warning;
+  }
+
+  &.label {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+  }
+}
+
+.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
+  .muted;
+}
+
+.port-entry {
+  width: 5em;
+}
 
 #EgressRegion {
   // Hopefully the maximum width of any translations.

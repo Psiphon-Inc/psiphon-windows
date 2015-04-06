@@ -63,12 +63,28 @@
     "message": "Reset to Default",
     "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
   },
-  "settings#egress-region#heading": {
-    "message": "Psiphon server region",
-    "description": ""
+  "settings#vpn-incompatible-msg": {
+    "message": "(Doesn't work with VPN mode.)",
+    "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
   },
-  "settings#egress-region#select-label": {
-    "message": "Select desired Psiphon server region:",
+  "settings#vpn-incompatible-label": {
+    "message": "VPN",
+    "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+  },
+  "settings#split-tunnel#heading": {
+    "message": "Split Tunnel",
+    "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+  },
+  "settings#split-tunnel#help-text": {
+    "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+    "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+  },
+  "settings#split-tunnel#enable-label": {
+    "message": "Don't proxy domestic websites",
+    "description": "The label on the checkbox that enables 'Split Tunnel'."
+  },
+  "settings#egress-region#heading": {
+    "message": "Psiphon Server Region",
     "description": ""
   },
   "settings#egress-region#select-best-performance": {
@@ -100,22 +116,18 @@
     "description": ""
   },
   "settings#egress-region#help-text": {
-    "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose \"Best Performance\", but you may instead prefer to use a server in a specific country.",
+    "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>\"Best Performance\"</strong>, but you may instead prefer to use a server in a specific country.",
     "description": ""
   },
-  "settings#vpn-incompatible-msg": {
-    "message": "(Doesn't work with VPN mode.)",
+  "settings#transport-mode#heading": {
+    "message": "Transport Mode",
     "description": ""
   },
-  "settings#vpn-mode#heading": {
-    "message": "VPN Mode",
-    "description": ""
-  },
-  "settings#vpn-mode#check-label": {
+  "settings#transport-mode#check-label": {
     "message": "Use VPN Mode",
     "description": ""
   },
-  "settings#vpn-mode#help-text": {
+  "settings#transport-mode#help-text": {
     "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> unless VPN-like behavior is required.",
     "description": ""
   },
@@ -157,18 +169,6 @@
   },
   "settings#upstream-proxy#skip-label": {
     "message": "Don't use upstream proxy",
-    "description": ""
-  },
-  "settings#split-tunnel#heading": {
-    "message": "Split Tunnel",
-    "description": ""
-  },
-  "settings#split-tunnel#help-text": {
-    "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
-    "description": ""
-  },
-  "settings#split-tunnel#enable-label": {
-    "message": "Don't proxy domestic websites",
     "description": ""
   },
   "feedback#top_content_title": {

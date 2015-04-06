@@ -9,7 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
 
-  <link href="vendor/bootstrap-2.3.2/css/bootstrap.css?__inline=true" rel="stylesheet">
   <!-- This is bootstrap-responsive.css broken into 4000-byte chunks and spread across data URIs.
        It's a dirty hack to make respond.js work with IE7 data URIs. -->
   <link href="data:text/css;base64,LmNsZWFyZml4IHsKICAqem9vbTogMTsKfQouY2xlYXJmaXg6YmVmb3JlLAouY2xlYXJmaXg6YWZ0ZXIgewogIGRpc3BsYXk6IHRhYmxlOwogIGNvbnRlbnQ6ICIiOwogIGxpbmUtaGVpZ2h0OiAwOwp9Ci5jbGVhcmZpeDphZnRlciB7CiAgY2xlYXI6IGJvdGg7Cn0KLmhpZGUtdGV4dCB7CiAgZm9udDogMC8wIGE7CiAgY29sb3I6IHRyYW5zcGFyZW50OwogIHRleHQtc2hhZG93OiBub25lOwogIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50OwogIGJvcmRlcjogMDsKfQouaW5wdXQtYmxvY2stbGV2ZWwgewogIGRpc3BsYXk6IGJsb2NrOwogIHdpZHRoOiAxMDAlOwogIG1pbi1oZWlnaHQ6IDMwcHg7CiAgLXdlYmtpdC1ib3gtc2l6aW5nOiBib3JkZXItYm94OwogIC1tb3otYm94LXNpemluZzogYm9yZGVyLWJveDsKICBib3gtc2l6aW5nOiBib3JkZXItYm94Owp9CkAtbXMtdmlld3BvcnQgewogIHdpZHRoOiBkZXZpY2Utd2lkdGg7Cn0KLmhpZGRlbiB7CiAgZGlzcGxheTogbm9uZTsKICB2aXNpYmlsaXR5OiBoaWRkZW47Cn0KLnZpc2libGUtcGhvbmUgewogIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKfQoudmlzaWJsZS10YWJsZXQgewogIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKfQouaGlkZGVuLWRlc2t0b3AgewogIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKfQoudmlzaWJsZS1kZXNrdG9wIHsKICBkaXNwbGF5OiBpbmhlcml0ICFpbXBvcnRhbnQ7Cn0KQG1lZGlhIChtaW4td2lkdGg6IDc2OHB4KSBhbmQgKG1heC13aWR0aDogOTc5cHgpIHsKICAuaGlkZGVuLWRlc2t0b3AgewogICAgZGlzcGxheTogaW5oZXJpdCAhaW1wb3J0YW50OwogIH0KICAudmlzaWJsZS1kZXNrdG9wIHsKICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudCA7CiAgfQogIC52aXNpYmxlLXRhYmxldCB7CiAgICBkaXNwbGF5OiBpbmhlcml0ICFpbXBvcnRhbnQ7CiAgfQogIC5oaWRkZW4tdGFibGV0IHsKICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKICB9Cn0KQG1lZGlhIChtYXgtd2lkdGg6IDc2N3B4KSB7CiAgLmhpZGRlbi1kZXNrdG9wIHsKICAgIGRpc3BsYXk6IGluaGVyaXQgIWltcG9ydGFudDsKICB9CiAgLnZpc2libGUtZGVza3RvcCB7CiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7CiAgfQogIC52aXNpYmxlLXBob25lIHsKICAgIGRpc3BsYXk6IGluaGVyaXQgIWltcG9ydGFudDsKICB9CiAgLmhpZGRlbi1waG9uZSB7CiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7CiAgfQp9Ci52aXNpYmxlLXByaW50IHsKICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7Cn0KQG1lZGlhIHByaW50IHsKICAudmlzaWJsZS1wcmludCB7CiAgICBkaXNwbGF5OiBpbmhlcml0ICFpbXBvcnRhbnQ7CiAgfQogIC5oaWRkZW4tcHJpbnQgewogICAgZGlzcGxheTogbm9uZSAhaW1wb3J0YW50OwogIH0KfQo=" rel="stylesheet">
@@ -243,177 +242,260 @@
             </a>
           </div>
 
-          <form class="vpn-incompatible">
-            <fieldset>
-              <legend>
-                <span data-i18n="settings#egress-region#heading">
-                  Psiphon server region
-                </span>
-              </legend>
-              <label class="control-label" for="EgressRegion" data-i18n="settings#egress-region#select-label">
-                Select desired Psiphon server region:
-              </label>
-              <div class="controls">
-                <select id="EgressRegion" data-usesprite="f32" data-roundedcorner=no>
-                  <option class="flag-unknown" value="" selected
-                          data-i18n="settings#egress-region#select-best-performance">
-                    Best Performance
-                  </option>
-                  <option class="flag-us" value="US"
-                          data-i18n="settings#egress-region#select-us">United States</option>
-                  <option class="flag-gb" value="GB"
-                          data-i18n="settings#egress-region#select-gb">United Kingdom</option>
-                  <option class="flag-jp" value="JP"
-                          data-i18n="settings#egress-region#select-jp">Japan</option>
-                  <option class="flag-sg" value="SG"
-                          data-i18n="settings#egress-region#select-sg">Singapore</option>
-                  <option class="flag-nl" value="NL"
-                          data-i18n="settings#egress-region#select-nl">Netherlands</option>
-                  <option class="flag-de" value="DE"
-                          data-i18n="settings#egress-region#select-de">Germany</option>
-                </select>
-              </div>
-              <span class="help-block" data-i18n="settings#egress-region#help-text">
-                Psiphon has servers in many different countries. For the fastest connection
-                speed you should choose "Best Performance", but you may instead prefer to
-                use a server in a specific country.
-              </span>
-              <span class="help-block">
-                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
-                  (Doesn't work with VPN mode.)
-                </small>
-              </span>
-            </fieldset>
-          </form>
+          <div class="accordion" id="settings-accordion">
 
-          <form>
-            <fieldset>
-              <legend data-i18n="settings#vpn-mode#heading">VPN Mode</legend>
-                <label class="checkbox" for="VPN">
-                    <input type="checkbox" id="VPN"/>
-                    <span data-i18n="settings#vpn-mode#check-label">
-                      Use VPN Mode
-                    </span>
-                </label>
-                <span class="help-block" data-i18n="[html]settings#vpn-mode#help-text">
-                  Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it
-                  doesn't provide obfuscation. It is <strong>not recommended</strong>
-                  unless VPN-like behavior is required.
-                </span>
-            </fieldset>
-          </form>
-
-          <form class="form-horizontal">
-            <fieldset>
-              <legend data-i18n="settings#local-proxy-ports#heading">
-                Local Proxy Ports
-              </legend>
-              <p data-i18n="settings#local-proxy-ports#leave-blank">
-                Leave blank for automatic port selection (recommended).
-              </p>
-              <div class="control-group">
-                <label for="LocalHttpProxyPort" class="control-label"
-                       data-i18n="settings#local-proxy-ports#http-label">
-                  HTTP/HTTPS
-                </label>
-                <div class="controls">
-                  <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
-                  <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
-                    Must be between 1 and 65535.
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-split-tunnel"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <span data-i18n="settings#split-tunnel#heading">
+                    Split Tunnel
                   </span>
-                </div>
-              </div>
-
-              <div class="control-group vpn-incompatible">
-                <label for="LocalSocksProxyPort" class="control-label"
-                        data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
-                <div class="controls">
-                  <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
-                  <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
-                    Must be between 1 and 65535.
+                  <i class="accordion-expand-icon icon-collapse"
+                     data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-ban-circle"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">VPN</span>
                   </span>
-                </div>
-                <span class="help-block">
-                  <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
-                    (Doesn't work with VPN mode.)
-                  </small>
-                </span>
+                </a>
               </div>
-            </fieldset>
-          </form>
+              <div id="settings-accordion-split-tunnel" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <p data-i18n="settings#split-tunnel#help-text">
+                        If enabled, requests made to servers within your home country will not be
+                        tunneled through Psiphon.
+                      </p>
+                      <label for="SplitTunnel" class="checkbox">
+                        <input type="checkbox" id="SplitTunnel"/>
+                        <span data-i18n="settings#split-tunnel#enable-label">
+                          Don't proxy domestic websites
+                        </span>
+                      </label>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with VPN mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
 
-          <form class="form-horizontal vpn-incompatible">
-            <fieldset>
-              <legend data-i18n="settings#upstream-proxy#heading">Upstream Proxy</legend>
-              <p data-i18n="[html]settings#upstream-proxy#by-default">
-                If your computer already has a proxy configured, by default Psiphon will
-                use that proxy when establishing a tunnel. You can override that by specifying
-                a proxy to use, or by specifying that no such "upstream proxy" should be used.<br>
-                Only HTTP proxies that support HTTPS are allowed.
-              </p>
-              <div class="control-group skip-upstream-proxy-incompatible">
-                <label for="UpstreamProxyHostname" class="control-label"
-                        data-i18n="settings#upstream-proxy#hostname-label">
-                  Hostname
-                </label>
-                <div class="controls">
-                  <input type="text" id="UpstreamProxyHostname"/>
-                </div>
-              </div>
-              <div class="control-group skip-upstream-proxy-incompatible">
-                <label for="UpstreamProxyPort" class="control-label"
-                        data-i18n="settings#upstream-proxy#port-label">
-                  Port
-                </label>
-                <div class="controls">
-                  <input type="text" id="UpstreamProxyPort" class="port-entry"/>
-                  <span class="help-inline UpstreamProxyPort" data-i18n="settings#port-value-error-msg">
-                    Must be between 1 and 65535.
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-egress-region"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <span data-i18n="settings#egress-region#heading">
+                    Psiphon Server Region
                   </span>
+                  <i class="accordion-expand-icon icon-collapse"
+                     data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-ban-circle"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">VPN</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-egress-region" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <div class="controls">
+                        <select id="EgressRegion" data-usesprite="f32" data-roundedcorner=no>
+                          <option class="flag-unknown" value="" selected
+                                  data-i18n="settings#egress-region#select-best-performance">
+                            Best Performance
+                          </option>
+                          <option class="flag-us" value="US"
+                                  data-i18n="settings#egress-region#select-us">United States</option>
+                          <option class="flag-gb" value="GB"
+                                  data-i18n="settings#egress-region#select-gb">United Kingdom</option>
+                          <option class="flag-jp" value="JP"
+                                  data-i18n="settings#egress-region#select-jp">Japan</option>
+                          <option class="flag-sg" value="SG"
+                                  data-i18n="settings#egress-region#select-sg">Singapore</option>
+                          <option class="flag-nl" value="NL"
+                                  data-i18n="settings#egress-region#select-nl">Netherlands</option>
+                          <option class="flag-de" value="DE"
+                                  data-i18n="settings#egress-region#select-de">Germany</option>
+                        </select>
+                      </div>
+                      <span class="help-block" data-i18n="[html]settings#egress-region#help-text">
+                        Psiphon has servers in many different countries. For the fastest connection
+                        speed you should choose <strong>"Best Performance"</strong>,
+                        but you may instead prefer to use a server in a specific country.
+                      </span>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with VPN mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
                 </div>
               </div>
-              <div class="control-group">
-                <div class="controls">
-                  <label class="checkbox" for="SkipUpstreamProxy">
-                    <input type="checkbox" id="SkipUpstreamProxy"/>
-                    <span data-i18n="settings#upstream-proxy#skip-label">
-                      Don't use upstream proxy
-                    </span>
-                  </label>
-                </div>
-              </div>
-              <span class="help-block">
-                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
-                  (Doesn't work with VPN mode.)
-                </small>
-              </span>
-            </fieldset>
-          </form>
+            </div>
 
-          <form class="vpn-incompatible">
-            <fieldset>
-              <legend>
-                <span data-i18n="settings#split-tunnel#heading">
-                  Split Tunnel
-                </span>
-              </legend>
-              <p data-i18n="settings#split-tunnel#help-text">
-                If enabled, requests made to servers within your home country will not be
-                tunneled through Psiphon.
-              </p>
-              <label for="SplitTunnel" class="checkbox">
-                <input type="checkbox" id="SplitTunnel"/>
-                <span data-i18n="settings#split-tunnel#enable-label">
-                  Don't proxy domestic websites
-                </span>
-              </label>
-              <span class="help-block">
-                <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
-                  (Doesn't work with VPN mode.)
-                </small>
-              </span>
-            </fieldset>
-          </form>
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-local-proxy-ports"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <span data-i18n="settings#local-proxy-ports#heading">
+                    Local Proxy Ports
+                  </span>
+                  <i class="accordion-expand-icon icon-collapse"
+                     data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-ban-circle"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">VPN</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-local-proxy-ports" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="form-horizontal">
+                    <fieldset>
+                      <p data-i18n="settings#local-proxy-ports#leave-blank">
+                        Leave blank for automatic port selection (recommended).
+                      </p>
+                      <div class="control-group">
+                        <label for="LocalHttpProxyPort" class="control-label"
+                               data-i18n="settings#local-proxy-ports#http-label">
+                          HTTP/HTTPS
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
+                          <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
+                            Must be between 1 and 65535.
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="control-group vpn-incompatible">
+                        <label for="LocalSocksProxyPort" class="control-label"
+                                data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
+                        <div class="controls">
+                          <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
+                          <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
+                            Must be between 1 and 65535.
+                          </span>
+                        </div>
+                        <span class="help-block">
+                          <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                            (Doesn't work with VPN mode.)
+                          </small>
+                        </span>
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-upstream-proxy"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <span data-i18n="settings#upstream-proxy#heading">
+                    Upstream Proxy
+                  </span>
+                  <i class="accordion-expand-icon icon-collapse"
+                     data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-ban-circle"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">VPN</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-upstream-proxy" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="form-horizontal vpn-incompatible">
+                    <fieldset>
+                      <p data-i18n="[html]settings#upstream-proxy#by-default">
+                        If your computer already has a proxy configured, by default Psiphon will
+                        use that proxy when establishing a tunnel. You can override that by specifying
+                        a proxy to use, or by specifying that no such "upstream proxy" should be used.<br>
+                        Only HTTP proxies that support HTTPS are allowed.
+                      </p>
+                      <div class="control-group skip-upstream-proxy-incompatible">
+                        <label for="UpstreamProxyHostname" class="control-label"
+                                data-i18n="settings#upstream-proxy#hostname-label">
+                          Hostname
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyHostname"/>
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible">
+                        <label for="UpstreamProxyPort" class="control-label"
+                                data-i18n="settings#upstream-proxy#port-label">
+                          Port
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyPort" class="port-entry"/>
+                          <span class="help-inline UpstreamProxyPort" data-i18n="settings#port-value-error-msg">
+                            Must be between 1 and 65535.
+                          </span>
+                        </div>
+                      </div>
+                      <div class="control-group">
+                        <div class="controls">
+                          <label class="checkbox" for="SkipUpstreamProxy">
+                            <input type="checkbox" id="SkipUpstreamProxy"/>
+                            <span data-i18n="settings#upstream-proxy#skip-label">
+                              Don't use upstream proxy
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with VPN mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-transport-mode"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <span data-i18n="settings#transport-mode#heading">
+                    Transport Mode
+                  </span>
+                  <i class="accordion-expand-icon icon-collapse"
+                     data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
+                </a>
+              </div>
+              <div id="settings-accordion-transport-mode" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form>
+                    <fieldset>
+                      <label class="checkbox" for="VPN">
+                          <input type="checkbox" id="VPN"/>
+                          <span data-i18n="settings#transport-mode#check-label">
+                            Use VPN Mode
+                          </span>
+                      </label>
+                      <span class="help-block" data-i18n="[html]settings#transport-mode#help-text">
+                        Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it
+                        doesn't provide obfuscation. It is <strong>not recommended</strong>
+                        unless VPN-like behavior is required.
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /#settings-accordion -->
+
         </div><!-- /settings-pane -->
 
         <!-- FEEDBACK ==================================================-->

@@ -21,24 +21,24 @@ $ node fake-translations.js
 
 ## TODO
 
-* Re-work settings tab (in response to user feedback)
 * Write descriptions for all i18n messages -- Settings stuff
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
-* Minimize to systray
 * Add message that shows when slow to connect providing download email and URL.
 
 * UI feedback from user: 
+  - Make checkboxes in settings bigger and more colourful.
   - put region selector in connect tab; people will feel like they're doing something
-  - too much text in Settings pane (looks like Chrome setting); maybe show help text on demand
-  - too much separation (legend for simple shit is too big)
-  - VPN Mode: on/off; remove extraneous "use vpn mode text"
 
 
 
 ## Longer-term TODO
 
-* Update UI and website
+* Minimize to systray
+* Create tool to extract English strings from HTML and re-populate messages.json
+  - This will help to make sure all strings are in string table, and no defunct strings remain.
+  - However: Remember that strings might be loaded from JS, not just HTML.
+  - At the same time, maybe add `[html]` to all strings keys?
 * Split HTML into logical parts and use templating engine
 * Split up JS in logical modules
 * Ditto CSS

@@ -243,6 +243,27 @@ $(function() {
 
   $('.settings-reset a').click(onSettingsReset);
 
+  // Change the accordion heading icon on expand/collapse
+  $('.accordion-body')
+    .on('show', function() {
+      var headingSelector = '.accordion-toggle[href="#' + this.id + '"]';
+      var $expandIcon = $(headingSelector).find('.accordion-expand-icon');
+      $expandIcon.removeClass($expandIcon.data('icon-closed'))
+                 .addClass($expandIcon.data('icon-opened'));
+
+      // Remove focus from the heading to clear the text-decoration. (It's too ham-fisted to do it in CSS.)
+      $(headingSelector).blur();
+    })
+    .on('hide', function() {
+      var headingSelector = '.accordion-toggle[href="#' + this.id + '"]';
+      var $expandIcon = $(headingSelector).find('.accordion-expand-icon');
+      $expandIcon.removeClass($expandIcon.data('icon-opened'))
+                 .addClass($expandIcon.data('icon-closed'));
+
+      // Remove focus from the heading to clear the text-decoration. (It's too ham-fisted to do it in CSS.)
+      $(headingSelector).blur();
+    });
+
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
@@ -440,7 +461,7 @@ function vpnModeUpdate() {
   $('input.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) input, '+
     'select.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) select')
       .prop('disabled', vpn).toggleClass('disabled', vpn);
-  $('.vpn-incompatible-msg').toggleClass('invisible', !vpn);
+  $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
   $('.vpn-incompatible').toggleClass('disabled-text', vpn);
 
   // The fancy msDropDown controls require more work to disable.
