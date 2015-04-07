@@ -34,6 +34,8 @@
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
+#define MAX_LEGACY_SERVER_ENTRIES            30
+#define LEGACY_SERVER_ENTRY_LIST_NAME        (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + "OSSH").c_str()
 
 
 /******************************************************************************
@@ -353,7 +355,22 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     }
     serverListFilename = path;
 
-    if (!WriteFile(serverListFilename, EMBEDDED_SERVER_LIST))
+    string serverList = EMBEDDED_SERVER_LIST;
+
+    // Retain some existing server entries that were useed by the legacy client
+    ServerEntries legacyEntries = ServerList::GetListFromSystem(LEGACY_SERVER_ENTRY_LIST_NAME);
+    if (legacyEntries.size() > MAX_LEGACY_SERVER_ENTRIES)
+    {
+        legacyEntries.resize(MAX_LEGACY_SERVER_ENTRIES);
+    }
+    if (legacyEntries.size() > 0 && serverList.length() > 0)
+    {
+        // EMBEDDED_SERVER_LIST may be LF-delimited, not LF-terminated
+        serverList += "\n";
+    }
+    serverList += ServerList::EncodeServerEntries(legacyEntries);
+
+    if (!WriteFile(serverListFilename, serverList))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
