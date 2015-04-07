@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Write descriptions for all i18n messages -- Settings stuff
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
 * Add message that shows when slow to connect providing download email and URL.
