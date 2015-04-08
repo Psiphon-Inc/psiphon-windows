@@ -651,7 +651,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         else if (noticeType == "Untunneled")
         {
             string address = data["address"].asString();
-            my_print(NOT_SENSITIVE, false, _T("Untunneled: %S"), address.c_str());
+            my_print(SENSITIVE_LOG, false, _T("Untunneled: %S"), address.c_str());
 
             // Don't include in diagnostics as "address" is private user data
             logOutputToDiagnostics = false;
