@@ -53,6 +53,8 @@ var g_initObj = {};
 })();
 
 $(function() {
+  setTimeout(HtmlCtrlInterface_AppReady, 100);
+
   // Set the logo "info" link
   $('.logo a').attr('href', g_initObj.Config.InfoURL).attr('title', g_initObj.Config.InfoURL);
 
@@ -269,8 +271,8 @@ $(function() {
   // Handle changes to the Egress Region
   $('#EgressRegion a').click(function(e) {
     e.preventDefault();
-    $('#EgressRegion a').parent().removeClass('active');
-    $(this).parent().addClass('active');
+    $('#EgressRegion [data-region]').removeClass('active');
+    $(this).parents('[data-region]').addClass('active');
   });
 
   // Some fields are disabled in VPN mode
@@ -354,6 +356,7 @@ function fillSettingsValues(obj) {
 
   if (typeof(obj.EgressRegion) !== 'undefined') {
     var region = obj.EgressRegion || BEST_REGION_VALUE;
+    $('#EgressRegion [data-region]').removeClass('active');
     $('#EgressRegion').find('[data-region="' + region + '"]').addClass('active');
   }
 }
@@ -842,6 +845,18 @@ function HtmlCtrlInterface_SetState(jsonArgs) {
     var args = JSON.parse(jsonArgs);
     g_lastState = args.state;
     updateConnectToggle();
+  }, 1);
+}
+
+function HtmlCtrlInterface_AppReady() {
+  setTimeout(function() {
+    var appURL = PSIPHON_LINK_PREFIX + 'ready';
+    if (IS_BROWSER) {
+      console.log(appURL);
+    }
+    else {
+      window.location = appURL;
+    }
   }, 1);
 }
 

@@ -196,6 +196,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 {
     // NOTE: Incoming query parameters will be URI-encoded
 
+    const LPCTSTR appReady = PSIPHON_LINK_PREFIX _T("ready");
     const LPCTSTR appStart = PSIPHON_LINK_PREFIX _T("start");
     const LPCTSTR appStop = PSIPHON_LINK_PREFIX _T("stop");
     const LPCTSTR appUpdateSettings = PSIPHON_LINK_PREFIX _T("updatesettings?");
@@ -206,7 +207,13 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const size_t appSetCookiesLen = _tcslen(appSetCookies);
     const LPCTSTR appBannerClick = PSIPHON_LINK_PREFIX _T("bannerclick");
 
-    if (_tcscmp(url, appStart) == 0)
+    if (_tcscmp(url, appReady) == 0)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Ready requested"), __TFUNCTION__);
+        g_htmlUiReady = true;
+        PostMessage(g_hWnd, WM_PSIPHON_CREATED, 0, 0);
+    }
+    else if (_tcscmp(url, appStart) == 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Start requested"), __TFUNCTION__);
         g_connectionManager.Start();
@@ -402,8 +409,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 //==== Main window functions ==================================================
 
-static bool g_documentCompleted = false;
-
 static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 {
     if (hdr->idFrom == IDC_HTML_CTRL)
@@ -420,19 +425,6 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 
             HtmlUI_BeforeNavigate(nmHtmlUrl);
             return -1; // Prevent navigation
-        }
-        else if (hdr->code == MC_HN_DOCUMENTCOMPLETE)
-        {
-            // Note that this message may be received more than once.
-            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
-
-            // The UI is ready to function now.
-            if (!g_documentCompleted)
-            {
-                g_documentCompleted = true;
-                g_htmlUiReady = true;
-                PostMessage(hWnd, WM_PSIPHON_CREATED, 0, 0);
-            }
         }
         else if (hdr->code == MC_HN_NEWWINDOW)
         {
