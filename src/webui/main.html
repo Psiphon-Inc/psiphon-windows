@@ -23,7 +23,6 @@
   <link href="vendor/jqueryui/jquery-ui.structure.min.css?__inline=true" rel="stylesheet">
   <link href="vendor/font-awesome/css/font-awesome.css?__inline=true" rel="stylesheet">
   <link href="vendor/font-awesome/css/font-awesome-ie7.css?__inline=true" rel="stylesheet">
-  <link href="vendor/msdropdown/msdropdown.css?__inline=true" rel="stylesheet">
   <link href="vendor/slabtext/slabtext.css?__inline=true" rel="stylesheet">
   <link href="vendor/flags32.css?__inline=true" rel="stylesheet">
   <link href="css/main.css?__inline=true" rel="stylesheet">
@@ -59,7 +58,6 @@
   <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
   <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
   <script src="vendor/spin.js?__inline=true"></script>
-  <script src="vendor/msdropdown/jquery.msdropdown.js?__inline=true"></script>
   <script src="vendor/slabtext/slabtext.js?__inline=true"></script>
   <script src="vendor/raphael.min.js?__inline=true"></script>
   <script src="vendor/i18next.min.js?__inline=true"></script>
@@ -303,26 +301,6 @@
                 <div class="accordion-inner">
                   <form class="vpn-incompatible">
                     <fieldset>
-                      <div class="controls">
-                        <select id="EgressRegion" data-usesprite="f32" data-roundedcorner=no>
-                          <option class="flag-unknown" value="" selected
-                                  data-i18n="settings#egress-region#select-best-performance">
-                            Best Performance
-                          </option>
-                          <option class="flag-us" value="US"
-                                  data-i18n="settings#egress-region#select-us">United States</option>
-                          <option class="flag-gb" value="GB"
-                                  data-i18n="settings#egress-region#select-gb">United Kingdom</option>
-                          <option class="flag-jp" value="JP"
-                                  data-i18n="settings#egress-region#select-jp">Japan</option>
-                          <option class="flag-sg" value="SG"
-                                  data-i18n="settings#egress-region#select-sg">Singapore</option>
-                          <option class="flag-nl" value="NL"
-                                  data-i18n="settings#egress-region#select-nl">Netherlands</option>
-                          <option class="flag-de" value="DE"
-                                  data-i18n="settings#egress-region#select-de">Germany</option>
-                        </select>
-                      </div>
                       <span class="help-block" data-i18n="[html]settings#egress-region#help-text">
                         Psiphon has servers in many different countries. For the fastest connection
                         speed you should choose <strong>"Best Performance"</strong>,
@@ -333,6 +311,55 @@
                           (Doesn't work with VPN mode.)
                         </small>
                       </span>
+                      <div class="controls">
+                        <div class="dropdown clearfix">
+                          <ul id="EgressRegion" class="dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">
+                            <li data-region="BEST">
+                              <a tabindex="-1" href="#" class="flag unknown"
+                                 data-i18n="settings#egress-region#select-best-performance">
+                                Best Performance
+                              </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li data-region="US">
+                              <a href="#" tabindex="-1" class="flag us"
+                                 data-i18n="settings#egress-region#select-us">
+                                United States
+                              </a>
+                            </li>
+                            <li data-region="GB">
+                              <a href="#" tabindex="-1" class="flag gb"
+                                 data-i18n="settings#egress-region#select-gb">
+                                United Kingdom
+                              </a>
+                            </li>
+                            <li data-region="JP">
+                              <a href="#" tabindex="-1" class="flag jp"
+                                 data-i18n="settings#egress-region#select-jp">
+                                Japan
+                              </a>
+                            </li>
+                            <li data-region="SG">
+                              <a href="#" tabindex="-1" class="flag sg"
+                                 data-i18n="settings#egress-region#select-sg">
+                                Singapore
+                              </a>
+                            </li>
+                            <li data-region="NL">
+                              <a href="#" tabindex="-1" class="flag nl"
+                                 data-i18n="settings#egress-region#select-nl">
+                                Netherlands
+                              </a>
+                            </li>
+                            <li data-region="DE">
+                              <a href="#" tabindex="-1" class="flag de"
+                                 data-i18n="settings#egress-region#select-de">
+                                Germany
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                     </fieldset>
                   </form>
                 </div>

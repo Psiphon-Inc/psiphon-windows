@@ -178,6 +178,9 @@ body {
     overflow: auto;
     padding-top: 1em;
 
+    // Needed to fix IE7 position:relative+overflow bug
+    position: relative;
+
     body[dir="ltr"] & {
       padding-right: 1em;
     }
@@ -239,6 +242,8 @@ body {
     height: 1em;
   }
 }
+
+
 /* SETTINGS */
 
 #settings-accordion {
@@ -304,10 +309,47 @@ body {
 }
 
 #EgressRegion {
-  // Hopefully the maximum width of any translations.
-  width: 25em;
+  @egressRegionWidth: 300px;
+  width: @egressRegionWidth;
+
+  display: block;
+  position: static;
+
+  .flag {
+    display: block;
+    width: auto;
+
+    body[dir="ltr"] & {
+      padding: 0 0 0 40px;
+      background-position-x: 5px;
+    }
+    body[dir="rtl"] & {
+      padding: 0 40px 0 0;
+      background-position-x: (@egressRegionWidth - 5px - 32px);
+    }
+
+    // Force our flag image to show even when the item is active.
+    background-image: url(../flags32.png);
+    background-repeat: no-repeat;
+    filter: none;
+  }
 }
 
+.f16 {
+  & .unknown{
+    background-image: url(../flag_unknown_16.png) !important;
+    background-repeat: no-repeat;
+  }
+}
+
+.f32 {
+  & .unknown{
+    background-image: url(../flag_unknown_32.png) !important;
+    background-repeat: no-repeat;
+  }
+}
+
+/*
 // msDropdown fixes
 
 .dd {
@@ -363,7 +405,7 @@ body {
     background:url(../flag_unknown_32.png) no-repeat;
   }
 }
-
+*/
 
 /* FEEDBACK */
 

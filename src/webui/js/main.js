@@ -35,7 +35,7 @@ var IS_BROWSER = true;
 var g_initObj = {};
 (function() {
   var uriHash = location.hash;
-  if (uriHash) {
+  if (uriHash && uriHash.length > 1) {
     g_initObj = JSON.parse(decodeURIComponent(uriHash.slice(1)));
     IS_BROWSER = false;
   }
@@ -232,6 +232,8 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
 // We will use this later to check if any settings have changed.
 var g_initialSettingsJSON;
 
+var BEST_REGION_VALUE = 'BEST';
+
 $(function() {
   // This is merely to help with testing
   if (!g_initObj.Settings)
@@ -263,6 +265,13 @@ $(function() {
       // Remove focus from the heading to clear the text-decoration. (It's too ham-fisted to do it in CSS.)
       $(headingSelector).blur();
     });
+
+  // Handle changes to the Egress Region
+  $('#EgressRegion a').click(function(e) {
+    e.preventDefault();
+    $('#EgressRegion a').parent().removeClass('active');
+    $(this).parent().addClass('active');
+  });
 
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
@@ -344,54 +353,14 @@ function fillSettingsValues(obj) {
   skipUpstreamProxyUpdate();
 
   if (typeof(obj.EgressRegion) !== 'undefined') {
-    $('#EgressRegion').val(obj.EgressRegion);
+    var region = obj.EgressRegion || BEST_REGION_VALUE;
+    $('#EgressRegion').find('[data-region="' + region + '"]').addClass('active');
   }
-  resetSettingsDropdowns();
-  $window.on(LANGUAGE_CHANGE_EVENT, resetSettingsDropdowns);
 }
 
 function onSettingsReset(e) {
   e.preventDefault();
   fillSettingsValues(g_initObj.Settings.defaults);
-}
-
-function resetSettingsDropdowns() {
-  if (browserCheck('lt-ie8')) {
-    // For IE7 we don't use fancy dropdowns.
-    // ...Because I can't figure out how to get the control to scroll with the page.
-    return;
-  }
-
-  // msDropdown supports images, but it's totally broken in right-to-left layout.
-  // So we're going to hack in our own support using a separate sub-element.
-
-  var dd = $('#EgressRegion').data('dd');
-  if (dd) {
-    dd.destroy();
-  }
-  $('#EgressRegion').msDropDown({rowHeight: 32, on: { create: egressRegionCreated, change: egressRegionChange }});
-
-  function egressRegionCreated() {
-    // Add our flags
-
-    $('#EgressRegion_msdd li').each(function() {
-      $(this).prepend(makeFlagElem(this));
-    });
-
-    var titleElem = $('#EgressRegion_msdd .ddTitleText');
-    titleElem.prepend(makeFlagElem(titleElem));
-  }
-
-  function egressRegionChange() {
-    var titleElem = $('#EgressRegion_msdd .ddTitleText');
-    titleElem.find('.flag').replaceWith(makeFlagElem(titleElem));
-  }
-
-  function makeFlagElem(elem) {
-    var region = $(elem)[0].className.match(/\bflag-([a-z-_@]+)\b/)[1];
-    var flagElem = $('<div>').addClass('flag ' + region);
-    return flagElem;
-  }
 }
 
 // Packages the current settings into JSON string. Returns if invalid value found.
@@ -408,6 +377,11 @@ function settingsToJSON() {
     return false;
   }
 
+  var egressRegion = $('#EgressRegion li.active').data('region');
+  if (!egressRegion || egressRegion === BEST_REGION_VALUE) {
+    egressRegion = '';
+  }
+
   var returnValue = {
     VPN: $('#VPN').prop('checked') ? 1 : 0,
     SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
@@ -416,7 +390,7 @@ function settingsToJSON() {
     UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
     UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
     SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
-    EgressRegion: $('#EgressRegion').val()
+    EgressRegion: egressRegion
   };
 
   return JSON.stringify(returnValue);

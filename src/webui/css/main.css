@@ -5302,6 +5302,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   height: 100%;
   overflow: auto;
   padding-top: 1em;
+  position: relative;
 }
 body[dir="ltr"] .tab-content .tab-pane {
   padding-right: 1em;
@@ -5402,45 +5403,90 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   width: 5em;
 }
 #EgressRegion {
-  width: 25em;
+  width: 300px;
+  display: block;
+  position: static;
 }
-body[dir="rtl"] .dd.ddcommon .ddArrow {
-  left: 4px;
-  right: auto;
+#EgressRegion .flag {
+  display: block;
+  width: auto;
+  background-image: url(../flags32.png);
+  background-repeat: no-repeat;
+  filter: none;
 }
-body[dir="rtl"] .dd .divider {
-  border-right: 1px solid #c3c3c3;
-  border-left: 1px solid #fff;
-  left: 24px;
-  right: auto;
+body[dir="ltr"] #EgressRegion .flag {
+  padding: 0 0 0 40px;
+  background-position-x: 5px;
 }
-.dd .ddChild li {
-  border-bottom: none;
-}
-.dd .ddTitle .ddTitleText {
-  padding: 0 0 0 0;
-}
-.dd .f32 .ddlabel {
-  line-height: 32px;
-}
-.dd .f16 .flag,
-.dd .f32 .flag {
-  margin: 0 5px 0 5px;
-}
-body[dir="ltr"] .dd .f16 .flag,
-body[dir="ltr"] .dd .f32 .flag {
-  float: left;
-}
-body[dir="rtl"] .dd .f16 .flag,
-body[dir="rtl"] .dd .f32 .flag {
-  float: right;
+body[dir="rtl"] #EgressRegion .flag {
+  padding: 0 40px 0 0;
+  background-position-x: 263px;
 }
 .f16 .unknown {
-  background: url(../flag_unknown_16.png) no-repeat;
+  background-image: url(../flag_unknown_16.png) !important;
+  background-repeat: no-repeat;
 }
 .f32 .unknown {
-  background: url(../flag_unknown_32.png) no-repeat;
+  background-image: url(../flag_unknown_32.png) !important;
+  background-repeat: no-repeat;
 }
+/*
+// msDropdown fixes
+
+.dd {
+  body[dir="rtl"] & {
+    &.ddcommon .ddArrow{
+      left: 4px;
+      right: auto;
+    }
+
+    .divider{
+      border-right: 1px solid #c3c3c3;
+      border-left: 1px solid #fff;
+      left: 24px;
+      right: auto;
+    }
+  }
+
+  .ddChild li {
+    border-bottom: none;
+  }
+
+  .ddTitle .ddTitleText {
+    padding: 0 0 0 0;
+  }
+
+  .f32 .ddlabel {
+    line-height: 32px;
+  }
+}
+
+.dd {
+  .f16, .f32 {
+    & .flag {
+      margin: 0 5px 0 5px;
+      body[dir="ltr"] & {
+        float: left;
+      }
+      body[dir="rtl"] & {
+        float: right;
+      }
+    }
+  }
+}
+
+.f16 {
+  & .unknown{
+    background:url(../flag_unknown_16.png) no-repeat;
+  }
+}
+
+.f32 {
+  & .unknown{
+    background:url(../flag_unknown_32.png) no-repeat;
+  }
+}
+*/
 /* FEEDBACK */
 .feedback-smiley-container {
   margin-left: 5px;
