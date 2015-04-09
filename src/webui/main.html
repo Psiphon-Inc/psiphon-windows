@@ -131,6 +131,13 @@
           </a>
         </li>
 
+        <li id="about-tab">
+          <a href="#about-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-rocket"></i>
+            <span data-i18n="nav#about">About</span>
+          </a>
+        </li>
+
         <li id="language-tab">
           <a href="#language-pane" data-toggle="tab" data-match-width=".main-nav a">
             <div class="multiline-tab-icon" style="">
@@ -141,13 +148,6 @@
               زبان<br>
               语言
             </div>
-          </a>
-        </li>
-
-        <li id="about-tab">
-          <a href="#about-pane" data-toggle="tab" data-match-width=".main-nav a">
-            <i class="icon-fixed-width icon-rocket"></i>
-            <span data-i18n="nav#about">About</span>
           </a>
         </li>
 
@@ -642,23 +642,6 @@
         </div><!-- /messages-pane -->
 
 
-        <!-- LANGUAGE ======================================================-->
-        <div class="tab-pane fade" id="language-pane">
-          <ul>
-            <!-- Supported locales will be filled in here -->
-          </ul>
-
-          <!-- Locale template -->
-          <script type="text/html" id="locale-template">
-            <li>
-              <i class="icon-li icon-globe"></i>
-              <a href="#" class="language-choice"
-                 data-value="localeCode" data-content="localeName"></a>
-            </li>
-          </script>
-        </div><!-- /language-pane -->
-
-
         <!-- ABOUT ======================================================-->
         <div class="tab-pane fade" id="about-pane">
           <h1 data-i18n="[html]about#head">
@@ -687,6 +670,23 @@
             <a href="https://psiphon.ca">company website</a>.
           </p>
         </div><!-- /about-pane -->
+
+
+        <!-- LANGUAGE ======================================================-->
+        <div class="tab-pane fade" id="language-pane">
+          <ul>
+            <!-- Supported locales will be filled in here -->
+          </ul>
+
+          <!-- Locale template -->
+          <script type="text/html" id="locale-template">
+            <li>
+              <i class="icon-li icon-globe"></i>
+              <a href="#" class="language-choice"
+                 data-value="localeCode" data-content="localeName"></a>
+            </li>
+          </script>
+        </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->
