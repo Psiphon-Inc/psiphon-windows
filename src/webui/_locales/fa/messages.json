@@ -1,6 +1,6 @@
 {
     "feedback#top_para_1": {
-        "message": "Please let us know how Psiphon is working for you so we can make the system better!",
+        "message": "لطفا ما را در جریان کیفیت عملکرد سایفون بذارید تا بتوانیم این برنامه را بهتر کنیم.",
         "description": "Text motivating the user to send Psiphon Inc. feedback."
     },
     "settings#egress-region#select-jp": {
@@ -36,11 +36,11 @@
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "settings#split-tunnel#help-text": {
-        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "message": "اگر فعال باشد٬ درخواست به سرورهای داخل کشورشما از طریق سرورهای سایفون تونل نمی‌شوند.  ",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" id=\"about-info-url\">visit the website</a>.",
+        "message": "برای دانلود نسخه جدید یا دریافت پشتیبانی و اطلاعات بیشتر به وبسایت <a href=\"#\" id=\"about-info-url\">سایفون</a> سر بزنید. \n ",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -68,7 +68,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
     },
     "feedback#top_para_2": {
-        "message": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
+        "message": "بیشتر مشکلات سایفون با دانلود جدیدترین نسخه برطرف می‌شوند. جدیدترین نسخه سایفون را با کلیک روی این <a class=\"NewVersionURL\" href=\"#\">لینک</a> دانلود کنید. جدیدترین نسخه را با فرستادن ایمیل به آدرس <a class=\"NewVersionEmail\" href=\"#\"></a> نیز میتوانید دریافت کنید. ",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
     "feedback#submit_button": {
@@ -80,11 +80,11 @@
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
     },
     "feedback#top_para_3": {
-        "message": "You can also find solutions to many common problems in our <a class=\"FaqURL\" href=\"#\">Frequently Asked Questions</a>.",
+        "message": "شما می‌توانید جواب بیشتر مشکلات رایج را در قسمت <a class=\"FaqURL\" href=\"#\">سوال و جواب متداول</a> پیدا کنید.  ",
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "about#get-by-email": {
-        "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+        "message": "اگر وبسایت در دسترس شما نیست٬ نسخه جدید سایفون را میتوانید با فرستادن ایمیل به این آدرس دریافت کنید: ",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
     },
     "settings#egress-region#select-nl": {
@@ -108,7 +108,7 @@
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#egress-region#help-text": {
-        "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>\"Best Performance\"</strong>, but you may instead prefer to use a server in a specific country.",
+        "message": "سایفون در کشورهای مختلفی سرور دارد. برای سریعترین سرعت اتصال گزینه «بهترین سرور» را انتخاب کنید. شما میتوانید سروری در کشور مورد نظر خود را نیز انتخاب کنید. ",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
     },
     "settings#vpn-incompatible-msg": {
@@ -116,7 +116,7 @@
         "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
     "settings#vpn-incompatible-label": {
-        "message": "VPN",
+        "message": "وی پی ان",
         "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#local-proxy-ports#heading": {
@@ -136,7 +136,7 @@
         "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
     },
     "feedback#text_feedback_bottom_para": {
-        "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
+        "message": "اگر فرم بالا کار نمی‌کند و می‌خواهید برای ما عکس از صفحه‌ خودتون بفرستید. می‌توانید آن را به آدرس <a id=\"emailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> ایمیل کنید.",
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "connection#disconnect-btn": {
@@ -168,7 +168,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
     "feedback#diagnostic_check": {
-        "message": "Upload diagnostic data. Please note that this diagnostic data does not identify you, and it will help us to keep Psiphon running smoothly. <a class=\"DataCollectionInfoURL\" href=\"#\">Click here to see what data we collect.</a>",
+        "message": "آپلود و ارسال اطلاعات فنی/تشخیصی برنامه. لطفا به خاطر داشته باشید که این اطلاعات به هیچ عنوان \nهویت شما را آشکار نمی‌کند، و به ما کمک می‌کند که سایفون کارکرد بهتری داشته باشد. \n<a class=\"dataCollectionInfoURL\" href=\"#\"> اینجا کلیک کنید تا ببینید ما چه اطلاعاتی را جمع آوری می‌کنیم. </a>",
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {
@@ -176,7 +176,7 @@
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+        "message": "سایفون یک نرم افزار عبور از فیلترینگ «فیلترشکن» است. سایفون برای ایجاد دسترسی به اینترنت باز٬ برای عبور از سانسور و فایروال ها ساخته شده است. در ضمن سایفون یک پروژه «اپن سورس» است و با عشق در تورنتو نوشته شده است.  ",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "settings#split-tunnel#heading": {
@@ -184,11 +184,11 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#transport-mode#check-label": {
-        "message": "Use VPN Mode",
+        "message": "حالت استفاده از VPN",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended."
     },
     "nav#messages": {
-        "message": "Log Messages",
+        "message": "لاگ برنامه ",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "settings#egress-region#select-gb": {
@@ -204,15 +204,15 @@
         "description": "The text below the 'sad face' feedback choice."
     },
     "settings#egress-region#heading": {
-        "message": "Psiphon Server Region",
+        "message": "کشور سرور خروجی سایفون ",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#upstream-proxy#by-default": {
-        "message": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that by specifying a proxy to use, or by specifying that no such \"upstream proxy\" should be used.<br> Only HTTP proxies that support HTTPS are allowed.",
+        "message": "اگر پیش از این در کامپیوترخود پراکسی تنظیم کرده‌اید٬ سایفون به طور پیش فرض آن تنظیمات را برای ایجاد تونل استفاده می‌کند. با وارد کردن یک پراکسی مشخص یا انتخاب گزینه که هیچ «upstream proxy» استفاده نشود٬ شما می‌توانید تنظیمات قبلی را باطل کنید. <br> فقط پراکسی های HTTP که HTTPS را پشتیبانی میکنند قابل استفاده هستند.  ",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
     },
     "settings#split-tunnel#enable-label": {
-        "message": "Don't proxy websites within your country",
+        "message": "وبسایت های داخل کشور من را پراکسی نکن. ",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "about#visit-company-site": {
@@ -220,7 +220,7 @@
         "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
     },
     "feedback#text_feedback_email_prompt": {
-        "message": "If you would like us to respond to you, please enter your email address:",
+        "message": "اگر دوست دارید که ما به شما جواب دهیم٬ لطفا ایمیل خود را وارد کنید. ",
         "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
     },
     "feedback#text_feedback_prompt": {
@@ -236,7 +236,7 @@
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
-        "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> unless VPN-like behavior is required.",
+        "message": "از وی پی ان IPSec/L2TP ویندوز استفاده می‌کند. این تنظیم تمام ترافیک برنامه های شما را تونل می‌کند ولی ترافیک شما را مبهم نمی‌کند. این تنظیم برای عبور از فایروال ها و فیلترینگ پیشنهاد نمی‌شود.     ",
         "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {
