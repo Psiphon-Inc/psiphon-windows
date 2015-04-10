@@ -21,14 +21,13 @@ $ node fake-translations.js
 
 ## TODO
 
+* Should be error if upstream hostname set but not port (and vice versa)?
+* put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
+* Make checkboxes in settings bigger and more colourful.
+
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
 * Add message that shows when slow to connect providing download email and URL.
-
-* UI feedback from user: 
-  - Make checkboxes in settings bigger and more colourful.
-  - put region selector in connect tab; people will feel like they're doing something
-
 
 
 ## Longer-term TODO

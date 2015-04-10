@@ -394,22 +394,26 @@
                           HTTP/HTTPS
                         </label>
                         <div class="controls">
-                          <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
+                          <input type="text" id="LocalHttpProxyPort" class="port-entry local-port"/>
                           <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
                         </div>
                       </div>
-
                       <div class="control-group vpn-incompatible">
                         <label for="LocalSocksProxyPort" class="control-label"
                                 data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
                         <div class="controls">
-                          <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
+                          <input type="text" id="LocalSocksProxyPort" class="port-entry local-port"/>
                           <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
                         </div>
+                        <span class="help-block">
+                          <span class="local-port-unique" data-i18n="settings#local-port-unique-error-msg">
+                            Local ports must be distinct from each other.
+                          </span>
+                        </span>
                         <span class="help-block">
                           <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
                             (Doesn't work with VPN mode.)

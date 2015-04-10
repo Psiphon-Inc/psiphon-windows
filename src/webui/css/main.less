@@ -269,6 +269,11 @@ body {
   }
 }
 
+.value-error-alert {
+  // For some reason the error alert is not showing over the body text.
+  z-index: @zindexPopover;
+}
+
 .settings-reset {
   .clearfix;
   margin-bottom: 5px;
@@ -306,6 +311,10 @@ body {
 
 .port-entry {
   width: 5em;
+}
+
+.local-port-unique {
+  .text-error;
 }
 
 #EgressRegion {

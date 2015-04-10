@@ -5368,6 +5368,9 @@ body[dir="rtl"] #settings-accordion .accordion-heading .accordion-expand-icon {
 #settings-accordion form {
   margin: 0;
 }
+.value-error-alert {
+  z-index: 1010;
+}
 .settings-reset {
   *zoom: 1;
   margin-bottom: 5px;
@@ -5401,6 +5404,9 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
 }
 .port-entry {
   width: 5em;
+}
+.local-port-unique {
+  color: #b94a48;
 }
 #EgressRegion {
   width: 300px;

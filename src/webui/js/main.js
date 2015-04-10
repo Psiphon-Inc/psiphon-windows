@@ -283,6 +283,10 @@ $(function() {
   $('.port-entry').on('keyup change blur', function(event) {checkPortField(event.target);});
   $('.port-entry').each(function() {checkPortField(this);});
 
+  // Check for uniqueness between local ports
+  $('.local-port').on('keyup change blur', function(event) {checkLocalPorts();});
+  $('.local-port').each(function() {checkLocalPorts();});
+
   // Disable the other upstream proxy settings if skipping
   $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
   skipUpstreamProxyUpdate();
@@ -301,13 +305,25 @@ $(function() {
         !$(this).parent().is($('#settings-tab'))) { // we won't be active
       var settingsJSON = settingsToJSON();
       if (settingsJSON === false) {
-        // Settings are invalid. Scroll to the (first) offender and prevent switching tabs.
-        $('.tab-content').scrollTo(
-          $('#settings-pane .error').eq(0),
-          500,            // animation time
-          {offset: -50}); // leave some space for the alert
-        $('#settings-pane .error input').eq(0).focus();
         e.preventDefault();
+
+        // Settings are invalid. Expand the error sections and prevent switching tabs.
+        $('#settings-accordion .collapse .error').parents('.collapse').eq(0).collapse('show');
+        // The rest of the sections will collapse automatically.
+
+        // Scroll to the section, after allowing the section to expand
+        setTimeout(function() {
+          $('#settings-pane').scrollTo(
+            $('#settings-pane .error').parents('.accordion-group').eq(0),
+            {
+              duration: 500, // animation time
+              offset: -100,   // leave some space for the alert
+              onAfter: function() {
+                $('#settings-pane .error input').eq(0).focus();
+              }
+            });
+        }, 200);
+
         return;
       }
       else if (settingsJSON !== g_initialSettingsJSON) {
@@ -376,6 +392,8 @@ function settingsToJSON() {
     }
   });
 
+  valid = valid && checkLocalPorts();
+
   if (!valid) {
     return false;
   }
@@ -429,6 +447,30 @@ function checkPortField(target) {
     'hidden', $('#settings-pane .control-group.error').length === 0);
 
   return port;
+}
+
+// Returns true if the local parts are valid (i.e., unique), otherwise false.
+// Shows/hides an error message as appropriate.
+function checkLocalPorts() {
+  var ports = [];
+  var duplicate = false;
+  $('.local-port').each(function() {
+    var port = $(this).val();
+    if (port && ports.indexOf(port) >= 0) {
+      duplicate = true;
+    }
+    ports.push(port);
+  });
+
+  // Show/hide the error text depending on whether we have a duplicate
+  $('.local-port').parents('.control-group').toggleClass('error', duplicate);
+  $('.local-port-unique').toggleClass('hidden', !duplicate);
+
+  // Show/hide the error alert depending on whether we have an erroneous field
+  $('#settings-pane .value-error-alert').toggleClass(
+    'hidden', $('#settings-pane .control-group.error').length === 0);
+
+  return !duplicate;
 }
 
 // Some of the settings are incompatible with VPN mode. We'll modify the display
