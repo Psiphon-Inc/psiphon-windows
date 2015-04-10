@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Should be error if upstream hostname set but not port (and vice versa)?
 * put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
 * Make checkboxes in settings bigger and more colourful.
 

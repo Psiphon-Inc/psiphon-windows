@@ -376,7 +376,9 @@ string CoreTransport::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (Settings::UpstreamProxyHostname().length() > 0 && Settings::UpstreamProxyType() == "https")
+    if (Settings::UpstreamProxyHostname().length() > 0 && 
+        Settings::UpstreamProxyPort() &&
+        Settings::UpstreamProxyType() == "https")
     {
         // Use a custom, user-set upstream proxy
         upstreamProxyAddress << Settings::UpstreamProxyHostname() << ":" << Settings::UpstreamProxyPort();

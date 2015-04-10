@@ -133,39 +133,39 @@
   },
   "settings#egress-region#heading": {
     "message": "‮Ԁsıdɥou‬ ‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬",
-    "description": ""
+    "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
   },
   "settings#egress-region#help-text": {
     "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ <strong>\"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\"</strong>, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
-    "description": ""
+    "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
   },
   "settings#egress-region#select-best-performance": {
     "message": "‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
   },
   "settings#egress-region#select-de": {
     "message": "‮פǝɹɯɐuʎ‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
   },
   "settings#egress-region#select-gb": {
     "message": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
   },
   "settings#egress-region#select-jp": {
     "message": "‮ſɐdɐu‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
   },
   "settings#egress-region#select-nl": {
     "message": "‮Nǝʇɥǝɹʅɐups‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
   },
   "settings#egress-region#select-sg": {
     "message": "‮Sıuƃɐdoɹǝ‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
   },
   "settings#egress-region#select-us": {
     "message": "‮∩uıʇǝp‬ ‮Sʇɐʇǝs‬",
-    "description": ""
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
   },
   "settings#error-alert": {
     "message": "<strong>‮Ǝɹɹoɹ‬!</strong> ‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ıuɔoɹɹǝɔʇ‬ ‮ʌɐʅnǝs‬ ‮qǝɟoɹǝ‬ ‮dɹoɔǝǝpıuƃ‬.",
@@ -173,30 +173,34 @@
   },
   "settings#local-proxy-ports#heading": {
     "message": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇs‬",
-    "description": ""
+    "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
   },
   "settings#local-proxy-ports#http-label": {
     "message": "‮H⊥⊥Ԁ‬/‮H⊥⊥ԀS‬",
-    "description": ""
+    "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
   },
   "settings#local-proxy-ports#leave-blank": {
     "message": "‮˥ǝɐʌǝ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮doɹʇ‬ ‮sǝʅǝɔʇıou‬ (‮ɹǝɔoɯɯǝupǝp‬).",
-    "description": ""
+    "description": "Help text that appears above the 'Local Proxy Ports' settings. It indicates what the default/best option is (blank, automatic)."
   },
   "settings#local-proxy-ports#socks-label": {
     "message": "‮SOↃӼS‬",
-    "description": ""
+    "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
+  },
+  "settings#local-proxy-ports#unique-error-msg": {
+    "message": "‮˥oɔɐʅ‬ ‮doɹʇs‬ ‮ɯnsʇ‬ ‮qǝ‬ ‮pısʇıuɔʇ‬ ‮ɟɹoɯ‬ ‮ǝɐɔɥ‬ ‮oʇɥǝɹ‬.",
+    "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
   },
   "settings#port-value-error-msg": {
     "message": "‮Wnsʇ‬ ‮qǝ‬ ‮qǝʇʍǝǝu‬ 1 ‮ɐup‬ 65535.",
-    "description": ""
+    "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
   },
   "settings#reset-button": {
     "message": "‮ᴚǝsǝʇ‬ ‮ʇo‬ ‮pǝɟɐnʅʇ‬",
     "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
   },
   "settings#split-tunnel#enable-label": {
-    "message": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮poɯǝsʇıɔ‬ ‮ʍǝqsıʇǝs‬",
+    "message": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮ʍǝqsıʇǝs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɔonuʇɹʎ‬",
     "description": "The label on the checkbox that enables 'Split Tunnel'."
   },
   "settings#split-tunnel#heading": {
@@ -209,35 +213,39 @@
   },
   "settings#transport-mode#check-label": {
     "message": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
-    "description": ""
+    "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended."
   },
   "settings#transport-mode#heading": {
     "message": "‮⊥ɹɐusdoɹʇ‬ ‮Wopǝ‬",
-    "description": ""
+    "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
   },
   "settings#transport-mode#help-text": {
-    "message": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬.",
-    "description": ""
+    "message": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮ɟoɹ‬ ‮qʎdɐssıuƃ‬ ‮ɯosʇ‬ ‮ɟıɹǝʍɐʅʅs‬.",
+    "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
   },
   "settings#upstream-proxy#by-default": {
     "message": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
-    "description": ""
+    "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
   },
   "settings#upstream-proxy#heading": {
     "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬",
-    "description": ""
+    "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
   },
   "settings#upstream-proxy#hostname-label": {
     "message": "‮Hosʇuɐɯǝ‬",
-    "description": ""
+    "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
   },
   "settings#upstream-proxy#port-label": {
     "message": "‮Ԁoɹʇ‬",
-    "description": ""
+    "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+  },
+  "settings#upstream-proxy#set-both-error-msg": {
+    "message": "‮ʎon‬ ‮ɯnsʇ‬ ‮sǝʇ‬ ‮qoʇɥ‬ ‮Hosʇuɐɯǝ‬ ‮ɐup‬ ‮Ԁoɹʇ‬, ‮oɹ‬ ‮ʅǝɐʌǝ‬ ‮qoʇɥ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮sǝʅǝɔʇıou‬.",
+    "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
   },
   "settings#upstream-proxy#skip-label": {
     "message": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
-    "description": ""
+    "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
   },
   "settings#vpn-incompatible-label": {
     "message": "‮ɅԀN‬",

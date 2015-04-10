@@ -5405,7 +5405,8 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
 .port-entry {
   width: 5em;
 }
-.local-port-unique {
+.local-port-unique,
+.upstream-proxy-set-match {
   color: #b94a48;
 }
 #EgressRegion {

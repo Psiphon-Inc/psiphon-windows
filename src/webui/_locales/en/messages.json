@@ -139,6 +139,10 @@
     "message": "SOCKS",
     "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
   },
+  "settings#local-proxy-ports#unique-error-msg": {
+    "message": "Local ports must be distinct from each other.",
+    "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+  },
   "settings#upstream-proxy#heading": {
     "message": "Upstream Proxy",
     "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
@@ -158,6 +162,10 @@
   "settings#upstream-proxy#skip-label": {
     "message": "Don't use upstream proxy",
     "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+  },
+  "settings#upstream-proxy#set-both-error-msg": {
+    "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+    "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
   },
   "settings#transport-mode#heading": {
     "message": "Transport Mode",

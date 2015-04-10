@@ -8396,7 +8396,8 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
 .port-entry {
   width: 5em;
 }
-.local-port-unique {
+.local-port-unique,
+.upstream-proxy-set-match {
   color: #b94a48;
 }
 #EgressRegion {
@@ -12743,18 +12744,20 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#local-proxy-ports#http-label": "[ĦŦŦƤ/ĦŦŦƤŞ]",
       "settings#local-proxy-ports#leave-blank": "[Ŀḗḗȧȧṽḗḗ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ ƥǿǿřŧ şḗḗŀḗḗƈŧīīǿǿƞ (řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ).]",
       "settings#local-proxy-ports#socks-label": "[ŞǾǿƇĶŞ]",
+      "settings#local-proxy-ports#unique-error-msg": "[Ŀǿǿƈȧȧŀ ƥǿǿřŧş ḿŭŭşŧ ƀḗḗ ḓīīşŧīīƞƈŧ ƒřǿǿḿ ḗḗȧȧƈħ ǿǿŧħḗḗř.]",
       "settings#port-value-error-msg": "[Ḿŭŭşŧ ƀḗḗ ƀḗḗŧẇḗḗḗḗƞ 1 ȧȧƞḓ 65535.]",
       "settings#reset-button": "[Řḗḗşḗḗŧ ŧǿǿ Ḓḗḗƒȧȧŭŭŀŧ]",
-      "settings#split-tunnel#enable-label": "[Ḓǿǿƞ'ŧ ƥřǿǿẋẏ ḓǿǿḿḗḗşŧīīƈ ẇḗḗƀşīīŧḗḗş]",
+      "settings#split-tunnel#enable-label": "[Ḓǿǿƞ'ŧ ƥřǿǿẋẏ ẇḗḗƀşīīŧḗḗş ẇīīŧħīīƞ ẏǿǿŭŭř ƈǿǿŭŭƞŧřẏ]",
       "settings#split-tunnel#heading": "[Şƥŀīīŧ Ŧŭŭƞƞḗḗŀ]",
       "settings#split-tunnel#help-text": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, řḗḗɋŭŭḗḗşŧş ḿȧȧḓḗḗ ŧǿǿ şḗḗřṽḗḗřş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŧŭŭƞƞḗḗŀḗḗḓ ŧħřǿǿŭŭɠħ Ƥşīīƥħǿǿƞ.]",
       "settings#transport-mode#check-label": "[Ŭŭşḗḗ ṼƤȠ Ḿǿǿḓḗḗ]",
       "settings#transport-mode#heading": "[Ŧřȧȧƞşƥǿǿřŧ Ḿǿǿḓḗḗ]",
-      "settings#transport-mode#help-text": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş ĪīƤŞḗḗƈ/Ŀ2ŦƤ ṼƤȠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ŭŭƞŀḗḗşş ṼƤȠ-ŀīīķḗḗ ƀḗḗħȧȧṽīīǿǿř īīş řḗḗɋŭŭīīřḗḗḓ.]",
+      "settings#transport-mode#help-text": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş ĪīƤŞḗḗƈ/Ŀ2ŦƤ ṼƤȠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
       "settings#upstream-proxy#by-default": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.<br> Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
       "settings#upstream-proxy#heading": "[Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ]",
       "settings#upstream-proxy#hostname-label": "[Ħǿǿşŧƞȧȧḿḗḗ]",
       "settings#upstream-proxy#port-label": "[Ƥǿǿřŧ]",
+      "settings#upstream-proxy#set-both-error-msg": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
       "settings#upstream-proxy#skip-label": "[Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ]",
       "settings#vpn-incompatible-label": "[ṼƤȠ]",
       "settings#vpn-incompatible-msg": "[(Ḓǿǿḗḗşƞ'ŧ ẇǿǿřķ ẇīīŧħ ṼƤȠ ḿǿǿḓḗḗ.)]"
@@ -12810,18 +12813,20 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#local-proxy-ports#http-label": "‮H⊥⊥Ԁ‬/‮H⊥⊥ԀS‬",
       "settings#local-proxy-ports#leave-blank": "‮˥ǝɐʌǝ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮doɹʇ‬ ‮sǝʅǝɔʇıou‬ (‮ɹǝɔoɯɯǝupǝp‬).",
       "settings#local-proxy-ports#socks-label": "‮SOↃӼS‬",
+      "settings#local-proxy-ports#unique-error-msg": "‮˥oɔɐʅ‬ ‮doɹʇs‬ ‮ɯnsʇ‬ ‮qǝ‬ ‮pısʇıuɔʇ‬ ‮ɟɹoɯ‬ ‮ǝɐɔɥ‬ ‮oʇɥǝɹ‬.",
       "settings#port-value-error-msg": "‮Wnsʇ‬ ‮qǝ‬ ‮qǝʇʍǝǝu‬ 1 ‮ɐup‬ 65535.",
       "settings#reset-button": "‮ᴚǝsǝʇ‬ ‮ʇo‬ ‮pǝɟɐnʅʇ‬",
-      "settings#split-tunnel#enable-label": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮poɯǝsʇıɔ‬ ‮ʍǝqsıʇǝs‬",
+      "settings#split-tunnel#enable-label": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮ʍǝqsıʇǝs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɔonuʇɹʎ‬",
       "settings#split-tunnel#heading": "‮Sdʅıʇ‬ ‮⊥nuuǝʅ‬",
       "settings#split-tunnel#help-text": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
       "settings#transport-mode#check-label": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
       "settings#transport-mode#heading": "‮⊥ɹɐusdoɹʇ‬ ‮Wopǝ‬",
-      "settings#transport-mode#help-text": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮nuʅǝss‬ ‮ɅԀN‬-‮ʅıʞǝ‬ ‮qǝɥɐʌıoɹ‬ ‮ıs‬ ‮ɹǝbnıɹǝp‬.",
+      "settings#transport-mode#help-text": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮ɟoɹ‬ ‮qʎdɐssıuƃ‬ ‮ɯosʇ‬ ‮ɟıɹǝʍɐʅʅs‬.",
       "settings#upstream-proxy#by-default": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
       "settings#upstream-proxy#heading": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬",
       "settings#upstream-proxy#hostname-label": "‮Hosʇuɐɯǝ‬",
       "settings#upstream-proxy#port-label": "‮Ԁoɹʇ‬",
+      "settings#upstream-proxy#set-both-error-msg": "‮ʎon‬ ‮ɯnsʇ‬ ‮sǝʇ‬ ‮qoʇɥ‬ ‮Hosʇuɐɯǝ‬ ‮ɐup‬ ‮Ԁoɹʇ‬, ‮oɹ‬ ‮ʅǝɐʌǝ‬ ‮qoʇɥ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮sǝʅǝɔʇıou‬.",
       "settings#upstream-proxy#skip-label": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
       "settings#vpn-incompatible-label": "‮ɅԀN‬",
       "settings#vpn-incompatible-msg": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮ɅԀN‬ ‮ɯopǝ‬.)"
@@ -12878,11 +12883,13 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#local-proxy-ports#http-label": "HTTP/HTTPS",
       "settings#port-value-error-msg": "Must be between 1 and 65535.",
       "settings#local-proxy-ports#socks-label": "SOCKS",
+      "settings#local-proxy-ports#unique-error-msg": "Local ports must be distinct from each other.",
       "settings#upstream-proxy#heading": "Upstream Proxy",
       "settings#upstream-proxy#by-default": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that by specifying a proxy to use, or by specifying that no such \"upstream proxy\" should be used.<br> Only HTTP proxies that support HTTPS are allowed.",
       "settings#upstream-proxy#hostname-label": "Hostname",
       "settings#upstream-proxy#port-label": "Port",
       "settings#upstream-proxy#skip-label": "Don't use upstream proxy",
+      "settings#upstream-proxy#set-both-error-msg": "You must set both Hostname and Port, or leave both blank for automatic selection.",
       "settings#transport-mode#heading": "Transport Mode",
       "settings#transport-mode#check-label": "Use VPN Mode",
       "settings#transport-mode#help-text": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
@@ -13868,17 +13875,8 @@ $(function() {
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
 
-  // Check for valid input in port number fields
-  $('.port-entry').on('keyup change blur', function(event) {checkPortField(event.target);});
-  $('.port-entry').each(function() {checkPortField(this);});
-
-  // Check for uniqueness between local ports
-  $('.local-port').on('keyup change blur', function(event) {checkLocalPorts();});
-  $('.local-port').each(function() {checkLocalPorts();});
-
-  // Disable the other upstream proxy settings if skipping
-  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
-  skipUpstreamProxyUpdate();
+  localProxySetup();
+  upstreamProxySetup();
 
   // Capture the settings as the tab is entered, to check for changes later.
   $('a[href="#settings-pane"][data-toggle="tab"]').on('shown', function(e) {
@@ -13906,7 +13904,7 @@ $(function() {
             $('#settings-pane .error').parents('.accordion-group').eq(0),
             {
               duration: 500, // animation time
-              offset: -100,   // leave some space for the alert
+              offset: -50,   // leave some space for the alert
               onAfter: function() {
                 $('#settings-pane .error input').eq(0).focus();
               }
@@ -13975,13 +13973,8 @@ function onSettingsReset(e) {
 function settingsToJSON() {
   var valid = true;
 
-  $('.port-entry').each(function() {
-    if (checkPortField(this) === false) {
-      valid = false;
-    }
-  });
-
-  valid = valid && checkLocalPorts();
+  valid = valid && localProxyValid(true);
+  valid = valid && upstreamProxyValid(true);
 
   if (!valid) {
     return false;
@@ -14006,6 +13999,12 @@ function settingsToJSON() {
   return JSON.stringify(returnValue);
 }
 
+function updateErrorAlert() {
+  // Show/hide the error alert depending on whether we have an erroneous field
+  $('#settings-pane .value-error-alert').toggleClass(
+    'hidden', $('#settings-pane .control-group.error').length === 0);
+}
+
 // Returns the numeric port if valid, otherwise false. Note that 0 is a valid
 // return value, and falsy, so use `=== false`.
 function validatePort(val) {
@@ -14021,45 +14020,144 @@ function validatePort(val) {
   return val;
 }
 
-// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
-// return value, and falsy, so use `=== false`.
-function checkPortField(target) {
-  var val = $(target).val();
-  var port = validatePort(val);
-  var portOK = (port !== false);
-  $('.help-inline.'+target.id)
-    .toggleClass('hidden', portOK)
-    .parents('.control-group').eq(0).toggleClass('error', !portOK);
+// Will be called exactly once. Set up event listeners, etc.
+function localProxySetup() {
+  $('#LocalHttpProxyPort, #LocalSocksProxyPort').on(
+      'keyup change blur',
+      function(event) {
+        localProxyValid(false);
+      });
 
-  // Show/hide the error alert depending on whether we have an erroneous field
-  $('#settings-pane .value-error-alert').toggleClass(
-    'hidden', $('#settings-pane .control-group.error').length === 0);
-
-  return port;
+  $('#LocalHttpProxyPort, #LocalSocksProxyPort').each(function() {
+    localProxyValid(false);
+  });
 }
 
-// Returns true if the local parts are valid (i.e., unique), otherwise false.
+// Returns true if the local proxy values are valid, otherwise false.
 // Shows/hides an error message as appropriate.
-function checkLocalPorts() {
-  var ports = [];
-  var duplicate = false;
-  $('.local-port').each(function() {
-    var port = $(this).val();
-    if (port && ports.indexOf(port) >= 0) {
-      duplicate = true;
-    }
-    ports.push(port);
+function localProxyValid(finalCheck) {
+  // This check always shows an error while the user is typing, so finalCheck is ignored.
+
+  var httpPort = validatePort($('#LocalHttpProxyPort').val());
+  var socksPort = validatePort($('#LocalSocksProxyPort').val());
+  var unique = (httpPort !== socksPort) || (httpPort === 0) || (socksPort === 0);
+
+  if (httpPort !== false && unique) {
+    // Remove HTTP port error state
+    $('#LocalHttpProxyPort').parents('.control-group').removeClass('error');
+  }
+
+  if (socksPort !== false && unique) {
+    // Remove SOCKS port error state
+    $('#LocalSocksProxyPort').parents('.control-group').removeClass('error');
+  }
+
+  if (httpPort !== false) {
+    // Remove port value error message
+    $('.help-inline.LocalHttpProxyPort').addClass('hidden');
+  }
+
+  if (socksPort !== false) {
+    // Remove port value error message
+    $('.help-inline.LocalSocksProxyPort').addClass('hidden');
+  }
+
+  if (unique) {
+    // Remove uniqueness error message
+    $('.help-block.local-port-unique').addClass('hidden');
+  }
+
+  if (httpPort === false) {
+    // Add HTTP port error state
+    $('#LocalHttpProxyPort').parents('.control-group').addClass('error');
+    $('.help-inline.LocalHttpProxyPort').removeClass('hidden');
+  }
+
+  if (socksPort === false) {
+    // Add SOCKS port error state
+    $('#LocalSocksProxyPort').parents('.control-group').addClass('error');
+    $('.help-inline.LocalSocksProxyPort').removeClass('hidden');
+  }
+
+  if (!unique) {
+    // Add error state on both ports
+    $('#LocalHttpProxyPort, #LocalSocksProxyPort')
+      .parents('.control-group').addClass('error');
+    // Show error message
+    $('.help-block.local-port-unique').removeClass('hidden');
+  }
+
+  updateErrorAlert();
+
+  return httpPort !== false && socksPort !== false && unique;
+}
+
+// Will be called exactly once. Set up event listeners, etc.
+function upstreamProxySetup() {
+  // Check for upstream proxy validity
+  $('#UpstreamProxyHostname, #UpstreamProxyPort').on(
+    'keyup change blur',
+    function(event) {
+      upstreamProxyValid(false);
+    });
+
+  $('#UpstreamProxyHostname, #UpstreamProxyPort').each(
+    function() {upstreamProxyValid(false);
   });
 
-  // Show/hide the error text depending on whether we have a duplicate
-  $('.local-port').parents('.control-group').toggleClass('error', duplicate);
-  $('.local-port-unique').toggleClass('hidden', !duplicate);
+  // Disable the other upstream proxy settings if skipping
+  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
+  skipUpstreamProxyUpdate();
+}
 
-  // Show/hide the error alert depending on whether we have an erroneous field
-  $('#settings-pane .value-error-alert').toggleClass(
-    'hidden', $('#settings-pane .control-group.error').length === 0);
+// Returns true if the upstream proxy values are valid, otherwise false.
+// Shows/hides an error message as appropriate.
+function upstreamProxyValid(finalCheck) {
+  // Either the hostname and port have to both be set, or neither.
+  // Unless 'skip' is checked.
+  var setMatch =
+      $('#SkipUpstreamProxy').prop('checked') ||
+      Boolean($('#UpstreamProxyHostname').val()) === Boolean($('#UpstreamProxyPort').val());
 
-  return !duplicate;
+  var portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
+
+  if (portOK) {
+    // Hide the port-specific message
+    $('.help-inline.UpstreamProxyPort').addClass('hidden');
+  }
+
+  if (setMatch) {
+    // Hide the set-match-specific message
+    $('.upstream-proxy-set-match').addClass('hidden');
+    // And remove error state from hostname (but not from the port value... yet)
+    $('#UpstreamProxyHostname')
+      .parents('.control-group').removeClass('error');
+  }
+
+  if (portOK && setMatch) {
+    // No error at all, remove error state
+    $('#UpstreamProxyHostname, #UpstreamProxyPort')
+      .parents('.control-group').removeClass('error');
+  }
+
+  if (!portOK) {
+    // Port value bad. Show error while typing
+    $('.help-inline.UpstreamProxyPort')
+      .removeClass('hidden')
+      .parents('.control-group').addClass('error');
+  }
+
+  if (!setMatch && finalCheck) {
+    // Value mismatch. Only show error on final check (so as to not prematurely
+    // show the error while the user is typing).
+    $('#UpstreamProxyHostname, #UpstreamProxyPort')
+      .parents('.control-group').addClass('error');
+    $('.upstream-proxy-set-match').removeClass('hidden');
+  }
+
+  updateErrorAlert();
+
+  return setMatch && portOK;
 }
 
 // Some of the settings are incompatible with VPN mode. We'll modify the display
@@ -14912,7 +15010,7 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                           HTTP/HTTPS
                         </label>
                         <div class="controls">
-                          <input type="text" id="LocalHttpProxyPort" class="port-entry local-port"/>
+                          <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
                           <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
@@ -14922,13 +15020,13 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                         <label for="LocalSocksProxyPort" class="control-label"
                                 data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
                         <div class="controls">
-                          <input type="text" id="LocalSocksProxyPort" class="port-entry local-port"/>
+                          <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
                           <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
                         </div>
-                        <span class="help-block">
-                          <span class="local-port-unique" data-i18n="settings#local-port-unique-error-msg">
+                        <span class="help-block local-port-unique">
+                          <span data-i18n="settings#local-proxy-ports#unique-error-msg">
                             Local ports must be distinct from each other.
                           </span>
                         </span>
@@ -15000,6 +15098,11 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                           </label>
                         </div>
                       </div>
+                      <span class="help-block upstream-proxy-set-match">
+                        <span data-i18n="settings#upstream-proxy#set-both-error-msg">
+                          You must set both Hostname and Port, or leave both blank for automatic selection.
+                        </span>
+                      </span>
                       <span class="help-block">
                         <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
                           (Doesn't work with VPN mode.)

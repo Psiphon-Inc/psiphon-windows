@@ -279,17 +279,8 @@ $(function() {
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
 
-  // Check for valid input in port number fields
-  $('.port-entry').on('keyup change blur', function(event) {checkPortField(event.target);});
-  $('.port-entry').each(function() {checkPortField(this);});
-
-  // Check for uniqueness between local ports
-  $('.local-port').on('keyup change blur', function(event) {checkLocalPorts();});
-  $('.local-port').each(function() {checkLocalPorts();});
-
-  // Disable the other upstream proxy settings if skipping
-  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
-  skipUpstreamProxyUpdate();
+  localProxySetup();
+  upstreamProxySetup();
 
   // Capture the settings as the tab is entered, to check for changes later.
   $('a[href="#settings-pane"][data-toggle="tab"]').on('shown', function(e) {
@@ -317,7 +308,7 @@ $(function() {
             $('#settings-pane .error').parents('.accordion-group').eq(0),
             {
               duration: 500, // animation time
-              offset: -100,   // leave some space for the alert
+              offset: -50,   // leave some space for the alert
               onAfter: function() {
                 $('#settings-pane .error input').eq(0).focus();
               }
@@ -386,13 +377,8 @@ function onSettingsReset(e) {
 function settingsToJSON() {
   var valid = true;
 
-  $('.port-entry').each(function() {
-    if (checkPortField(this) === false) {
-      valid = false;
-    }
-  });
-
-  valid = valid && checkLocalPorts();
+  valid = valid && localProxyValid(true);
+  valid = valid && upstreamProxyValid(true);
 
   if (!valid) {
     return false;
@@ -417,6 +403,12 @@ function settingsToJSON() {
   return JSON.stringify(returnValue);
 }
 
+function updateErrorAlert() {
+  // Show/hide the error alert depending on whether we have an erroneous field
+  $('#settings-pane .value-error-alert').toggleClass(
+    'hidden', $('#settings-pane .control-group.error').length === 0);
+}
+
 // Returns the numeric port if valid, otherwise false. Note that 0 is a valid
 // return value, and falsy, so use `=== false`.
 function validatePort(val) {
@@ -432,45 +424,144 @@ function validatePort(val) {
   return val;
 }
 
-// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
-// return value, and falsy, so use `=== false`.
-function checkPortField(target) {
-  var val = $(target).val();
-  var port = validatePort(val);
-  var portOK = (port !== false);
-  $('.help-inline.'+target.id)
-    .toggleClass('hidden', portOK)
-    .parents('.control-group').eq(0).toggleClass('error', !portOK);
+// Will be called exactly once. Set up event listeners, etc.
+function localProxySetup() {
+  $('#LocalHttpProxyPort, #LocalSocksProxyPort').on(
+      'keyup change blur',
+      function(event) {
+        localProxyValid(false);
+      });
 
-  // Show/hide the error alert depending on whether we have an erroneous field
-  $('#settings-pane .value-error-alert').toggleClass(
-    'hidden', $('#settings-pane .control-group.error').length === 0);
-
-  return port;
+  $('#LocalHttpProxyPort, #LocalSocksProxyPort').each(function() {
+    localProxyValid(false);
+  });
 }
 
-// Returns true if the local parts are valid (i.e., unique), otherwise false.
+// Returns true if the local proxy values are valid, otherwise false.
 // Shows/hides an error message as appropriate.
-function checkLocalPorts() {
-  var ports = [];
-  var duplicate = false;
-  $('.local-port').each(function() {
-    var port = $(this).val();
-    if (port && ports.indexOf(port) >= 0) {
-      duplicate = true;
-    }
-    ports.push(port);
+function localProxyValid(finalCheck) {
+  // This check always shows an error while the user is typing, so finalCheck is ignored.
+
+  var httpPort = validatePort($('#LocalHttpProxyPort').val());
+  var socksPort = validatePort($('#LocalSocksProxyPort').val());
+  var unique = (httpPort !== socksPort) || (httpPort === 0) || (socksPort === 0);
+
+  if (httpPort !== false && unique) {
+    // Remove HTTP port error state
+    $('#LocalHttpProxyPort').parents('.control-group').removeClass('error');
+  }
+
+  if (socksPort !== false && unique) {
+    // Remove SOCKS port error state
+    $('#LocalSocksProxyPort').parents('.control-group').removeClass('error');
+  }
+
+  if (httpPort !== false) {
+    // Remove port value error message
+    $('.help-inline.LocalHttpProxyPort').addClass('hidden');
+  }
+
+  if (socksPort !== false) {
+    // Remove port value error message
+    $('.help-inline.LocalSocksProxyPort').addClass('hidden');
+  }
+
+  if (unique) {
+    // Remove uniqueness error message
+    $('.help-block.local-port-unique').addClass('hidden');
+  }
+
+  if (httpPort === false) {
+    // Add HTTP port error state
+    $('#LocalHttpProxyPort').parents('.control-group').addClass('error');
+    $('.help-inline.LocalHttpProxyPort').removeClass('hidden');
+  }
+
+  if (socksPort === false) {
+    // Add SOCKS port error state
+    $('#LocalSocksProxyPort').parents('.control-group').addClass('error');
+    $('.help-inline.LocalSocksProxyPort').removeClass('hidden');
+  }
+
+  if (!unique) {
+    // Add error state on both ports
+    $('#LocalHttpProxyPort, #LocalSocksProxyPort')
+      .parents('.control-group').addClass('error');
+    // Show error message
+    $('.help-block.local-port-unique').removeClass('hidden');
+  }
+
+  updateErrorAlert();
+
+  return httpPort !== false && socksPort !== false && unique;
+}
+
+// Will be called exactly once. Set up event listeners, etc.
+function upstreamProxySetup() {
+  // Check for upstream proxy validity
+  $('#UpstreamProxyHostname, #UpstreamProxyPort').on(
+    'keyup change blur',
+    function(event) {
+      upstreamProxyValid(false);
+    });
+
+  $('#UpstreamProxyHostname, #UpstreamProxyPort').each(
+    function() {upstreamProxyValid(false);
   });
 
-  // Show/hide the error text depending on whether we have a duplicate
-  $('.local-port').parents('.control-group').toggleClass('error', duplicate);
-  $('.local-port-unique').toggleClass('hidden', !duplicate);
+  // Disable the other upstream proxy settings if skipping
+  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
+  skipUpstreamProxyUpdate();
+}
 
-  // Show/hide the error alert depending on whether we have an erroneous field
-  $('#settings-pane .value-error-alert').toggleClass(
-    'hidden', $('#settings-pane .control-group.error').length === 0);
+// Returns true if the upstream proxy values are valid, otherwise false.
+// Shows/hides an error message as appropriate.
+function upstreamProxyValid(finalCheck) {
+  // Either the hostname and port have to both be set, or neither.
+  // Unless 'skip' is checked.
+  var setMatch =
+      $('#SkipUpstreamProxy').prop('checked') ||
+      Boolean($('#UpstreamProxyHostname').val()) === Boolean($('#UpstreamProxyPort').val());
 
-  return !duplicate;
+  var portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
+
+  if (portOK) {
+    // Hide the port-specific message
+    $('.help-inline.UpstreamProxyPort').addClass('hidden');
+  }
+
+  if (setMatch) {
+    // Hide the set-match-specific message
+    $('.upstream-proxy-set-match').addClass('hidden');
+    // And remove error state from hostname (but not from the port value... yet)
+    $('#UpstreamProxyHostname')
+      .parents('.control-group').removeClass('error');
+  }
+
+  if (portOK && setMatch) {
+    // No error at all, remove error state
+    $('#UpstreamProxyHostname, #UpstreamProxyPort')
+      .parents('.control-group').removeClass('error');
+  }
+
+  if (!portOK) {
+    // Port value bad. Show error while typing
+    $('.help-inline.UpstreamProxyPort')
+      .removeClass('hidden')
+      .parents('.control-group').addClass('error');
+  }
+
+  if (!setMatch && finalCheck) {
+    // Value mismatch. Only show error on final check (so as to not prematurely
+    // show the error while the user is typing).
+    $('#UpstreamProxyHostname, #UpstreamProxyPort')
+      .parents('.control-group').addClass('error');
+    $('.upstream-proxy-set-match').removeClass('hidden');
+  }
+
+  updateErrorAlert();
+
+  return setMatch && portOK;
 }
 
 // Some of the settings are incompatible with VPN mode. We'll modify the display

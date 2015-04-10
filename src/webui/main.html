@@ -394,7 +394,7 @@
                           HTTP/HTTPS
                         </label>
                         <div class="controls">
-                          <input type="text" id="LocalHttpProxyPort" class="port-entry local-port"/>
+                          <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
                           <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
@@ -404,13 +404,13 @@
                         <label for="LocalSocksProxyPort" class="control-label"
                                 data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
                         <div class="controls">
-                          <input type="text" id="LocalSocksProxyPort" class="port-entry local-port"/>
+                          <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
                           <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
                         </div>
-                        <span class="help-block">
-                          <span class="local-port-unique" data-i18n="settings#local-port-unique-error-msg">
+                        <span class="help-block local-port-unique">
+                          <span data-i18n="settings#local-proxy-ports#unique-error-msg">
                             Local ports must be distinct from each other.
                           </span>
                         </span>
@@ -482,6 +482,11 @@
                           </label>
                         </div>
                       </div>
+                      <span class="help-block upstream-proxy-set-match">
+                        <span data-i18n="settings#upstream-proxy#set-both-error-msg">
+                          You must set both Hostname and Port, or leave both blank for automatic selection.
+                        </span>
+                      </span>
                       <span class="help-block">
                         <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
                           (Doesn't work with VPN mode.)
