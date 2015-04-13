@@ -16,13 +16,13 @@ $ node fake-translations.js
 
 ## Notes and discussion points
 
-* It feels like there should be more icons or images — it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used. You can see a few of them in the nav tabs.
+* It feels like there should be more icons or images -- it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used -- you can see a few of them in the nav tabs. But custom images would probably be good/better.
 
 
 ## TODO
 
 * put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
-* Make checkboxes in settings bigger and more colourful.
+* Make checkboxes in settings bigger and more colourful. Maybe make settings more colourful? Background shades?
 
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
