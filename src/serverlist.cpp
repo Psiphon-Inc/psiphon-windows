@@ -343,10 +343,15 @@ ServerEntries ServerList::GetListFromEmbeddedValues()
 
 ServerEntries ServerList::GetListFromSystem()
 {
+    return GetListFromSystem(GetListName().c_str());
+}
+
+ServerEntries ServerList::GetListFromSystem(const char* listName)
+{
     string serverEntryListString;
 
     if (!ReadRegistryStringValue(
-            GetListName().c_str(), 
+            listName, 
             serverEntryListString))
     {
         // If we're migrating from an old version, there's no m_name qualifier.

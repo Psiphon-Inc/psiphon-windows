@@ -92,14 +92,16 @@ public:
     void MoveEntriesToFront(const ServerEntries& entries, bool veryFront=false);
     void MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront=false);
 
+    static ServerEntries GetListFromSystem(const char* listName);
+    static string EncodeServerEntries(const ServerEntries& serverEntryList);
+
 private:
     string GetListName() const;
     ServerEntries GetListFromEmbeddedValues();
     ServerEntries GetListFromSystem();
-    ServerEntries ParseServerEntries(const char* serverEntryListString);
-    ServerEntry ParseServerEntry(const string& serverEntry);
+    static ServerEntries ParseServerEntries(const char* serverEntryListString);
+    static ServerEntry ParseServerEntry(const string& serverEntry);
     void WriteListToSystem(const ServerEntries& serverEntryList);
-    string EncodeServerEntries(const ServerEntries& serverEntryList);
 
     HANDLE m_mutex;
     string m_name;

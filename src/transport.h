@@ -125,6 +125,10 @@ public:
             const vector<string>& newServerEntryList, 
             const ServerEntry* serverEntry);
 
+    virtual bool RetryOnProtocolNotSupported() {return false;}
+
+    virtual void RotateTargetProtocols() {};
+
     //
     // Exception classes
     //
