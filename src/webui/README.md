@@ -36,6 +36,7 @@ $ node fake-translations.js
   - This will help to make sure all strings are in string table, and no defunct strings remain.
   - However: Remember that strings might be loaded from JS, not just HTML.
   - At the same time, maybe add `[html]` to all strings keys?
+* Add upstream proxy verification at settings time. Prevent user from navigating away from settings page until verification is done. Verification will probably/certainly need to be done in C code -- so some async back-and-forth will be necessary.
 * Split HTML into logical parts and use templating engine
 * Split up JS in logical modules
 * Ditto CSS
