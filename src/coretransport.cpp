@@ -573,11 +573,8 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         if (!reader.parse(line, notice))
         {
             my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
-            
-            // This line was not JSON. It may be a core panic, and if so it would
-            // be useful to include in diagnostics; but it's not included in diagnostics
+            // This line was not JSON. It's not included in diagnostics
             // as we can't be sure it doesn't include user private data.
-
             return;
         }
 
@@ -651,10 +648,30 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         else if (noticeType == "Untunneled")
         {
             string address = data["address"].asString();
+            // SENSITIVE_LOG: "address" is site user is browsing
             my_print(SENSITIVE_LOG, false, _T("Untunneled: %S"), address.c_str());
 
             // Don't include in diagnostics as "address" is private user data
             logOutputToDiagnostics = false;
+        }
+        else if (noticeType == "SplitTunnelRegion")
+        {
+            string region = data["region"].asString();
+            my_print(NOT_SENSITIVE, false, _T("Split Tunnel Region: %S"), region.c_str());
+        }
+        else if (noticeType == "UpstreamProxyError")
+        {
+            string message = data["message"].asString();
+            // SENSITIVE_FORMAT_ARGS: "message" may contain address info that identifies user
+            my_print(SENSITIVE_FORMAT_ARGS, false, _T("Upstream Proxy Error: %S"), message.c_str());
+
+            // Don't include in diagnostics as "message" may contain private user data
+            logOutputToDiagnostics = false;
+
+            // In this case, the user most likely input an incorrect upstream proxy
+            // address or credential. So stop attempting to connect and let the user
+            // handle the error message.
+            throw TransportFailed(false);
         }
     }
     catch (exception& e)
