@@ -22,6 +22,7 @@
 #pragma comment(lib,"shlwapi.lib")
 #include "shlobj.h"
 
+#include "logging.h"
 #include "coretransport.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
@@ -392,7 +393,9 @@ string CoreTransport::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (Settings::UpstreamProxyHostname().length() > 0 && Settings::UpstreamProxyType() == "https")
+    if (Settings::UpstreamProxyHostname().length() > 0 && 
+        Settings::UpstreamProxyPort() &&
+        Settings::UpstreamProxyType() == "https")
     {
         // Use a custom, user-set upstream proxy
         upstreamProxyAddress << Settings::UpstreamProxyHostname() << ":" << Settings::UpstreamProxyPort();

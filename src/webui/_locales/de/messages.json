@@ -1,0 +1,14 @@
+{
+  "feedback#top_content_title": {
+    "message": "Geben Sie uns Ihre Rückmeldung",
+    "description": ""
+  },
+  "feedback#submit_button": {
+    "message": "Absenden",
+    "description": ""
+  },
+  "feedback#text_feedback_prompt": {
+    "message": "Bitte geben Sie Ihre Kommentare hier ein:\n",
+    "description": ""
+  }
+}

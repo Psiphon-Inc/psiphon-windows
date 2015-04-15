@@ -33,7 +33,10 @@ public:
     SystemProxySettings();
     virtual ~SystemProxySettings();
 
-    //
+    int GetHttpProxyPort() const;
+    int GetHttpsProxyPort() const;
+    int GetSocksProxyPort() const;
+
     // The Set*ProxyPort functions do *not* apply the setting -- they only set
     // a member variable that will be used when Apply is called to actually
     // make the settings take effect.
@@ -46,8 +49,6 @@ public:
     bool IsApplied() const;
 
 private:
-    bool SetConnectionsProxy(const vector<ConnectionProxy>& connectionsProxies, 
-                               const tstring& proxyAddress);
     tstring MakeProxySettingString() const;
 
     bool m_settingsApplied;

@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "worker_thread.h"
+#include "logging.h"
 #include "utilities.h"
 #include "psiclient.h"
 #include "stopsignal.h"

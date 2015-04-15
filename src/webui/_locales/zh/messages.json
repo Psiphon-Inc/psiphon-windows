@@ -1,0 +1,250 @@
+{
+    "feedback#top_para_1": {
+        "message": "请让我们知道 Psiphon 在您的设备上的工作情况以便我们改进系统！",
+        "description": "Text motivating the user to send Psiphon Inc. feedback."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "日本",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#error-alert": {
+        "message": "<strong>出错！</strong> 请在继续前修正错误的值。",
+        "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
+    },
+    "messages#show-debug-label": {
+        "message": "显示调试信息",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "banner#sponsored-by": {
+        "message": "赞助者： ",
+        "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+    },
+    "connection#connected-msg": {
+        "message": "Psiphon 已连接",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "nav#settings": {
+        "message": "设置",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "connection#stopping-msg": {
+        "message": "Psiphon 正在断开...",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "feedback#success-message": {
+        "message": "<strong>谢谢您！</strong>您的反馈已经发出。",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "如果启用，发往您所在国家服务器的请求将不会经过 Psiphon 隧道。",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+    },
+    "about#visit-download-site": {
+        "message": "要<strong>下载 Psiphon 的新版本</strong>，或者<strong>获取相关的帮助或信息</strong>，请<a href=\"#\" id=\"about-info-url\">访问网站</a>。",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "不使用上层代理",
+        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "端口",
+        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+    },
+    "settings#port-value-error-msg": {
+        "message": "必须在 1 至 65535 之间。",
+        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
+    },
+    "nav#feedback": {
+        "message": "反馈",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
+    },
+    "connection#starting-msg": {
+        "message": "Psiphon 正在连接...",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#egress-region#select-us": {
+        "message": "美国",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
+    },
+    "feedback#top_para_2": {
+        "message": "许多问题可以通过下载最新版本解决。您可以<a class=\"NewVersionURL\" href=\"#\">点击这里下载最新版本</a>，或者您也可以发送一封电子邮件至 <a class=\"NewVersionEmail\" href=\"#\"></a>。",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "feedback#submit_button": {
+        "message": "提交",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
+    },
+    "feedback#top_para_3": {
+        "message": "您也可以在我们的<a class=\"FaqURL\" href=\"#\">常见问题</a>那里找到许多常见问题的解决方案。",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "about#get-by-email": {
+        "message": "<strong>如果网站无法访问</strong>，您可以获取一个新版本的 Psiphon，通过发送邮件至:",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "settings#egress-region#select-nl": {
+        "message": "荷兰",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
+    },
+    "settings#reset-button": {
+        "message": "重置到默认",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "about#head": {
+        "message": "Psiphon：<i>超越国界</i>",
+        "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "上层代理",
+        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
+    },
+    "settings#egress-region#help-text": {
+        "message": "Psiphon 在多个国家部署了服务器。为了最快的连接速度，您应该选择 <strong>“最佳性能” </strong>。您也可以在特定的国家选择一个偏爱使用的服务器。",
+        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "(不能用于 VPN 模式)",
+        "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    },
+    "settings#vpn-incompatible-label": {
+        "message": "VPN",
+        "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "本地代理端口",
+        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
+    },
+    "settings#egress-region#select-de": {
+        "message": "德国",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "nav#connection": {
+        "message": "连接",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
+    },
+    "connection#stop-btn": {
+        "message": "停止",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "如果上面的表格无法使用，或者你想发送截图，请给我们发电子邮件至 <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "connection#disconnect-btn": {
+        "message": "断开连接",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "feedback#top_content_title": {
+        "message": "向我们提供您的反馈",
+        "description": "Title for the Feedback page"
+    },
+    "connection#stopped-msg": {
+        "message": "Psiphon 已断开连接",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "nav#about": {
+        "message": "关于",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "留空时自动选择端口（推荐）。",
+        "description": "Help text that appears above the 'Local Proxy Ports' settings. It indicates what the default/best option is (blank, automatic)."
+    },
+    "language#success-message": {
+        "message": "<strong>你好！</strong> 欢迎使用 Psiphon。",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "settings#egress-region#select-sg": {
+        "message": "新加坡",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
+    },
+    "feedback#diagnostic_check": {
+        "message": "上载诊断数据。请注意此诊断数据不会泄露你的身份，它将帮助我们保持赛风平稳运行的。\n<a class=\"DataCollectionInfoURL\" href=\"#\">点击这里查看我们收集的数据。</a>\n",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "settings#transport-mode#heading": {
+        "message": "传输模式",
+        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
+    },
+    "about#description": {
+        "message": "Psiphon 是一个<strong>规避审查的工具</strong> — 它的设计目的是访问开放的互联网，绕过审核和防火墙。它是<strong>开源</strong>的，开发于加拿大多伦多。",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "拆分隧道",
+        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#transport-mode#check-label": {
+        "message": "使用 VPN 模式",
+        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended."
+    },
+    "nav#messages": {
+        "message": "日志信息",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "英国",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "主机名称",
+        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
+    },
+    "feedback#smiley_sad": {
+        "message": "Psiphon经常连接失败或表现不尽人意",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "settings#egress-region#heading": {
+        "message": "Psiphon 服务器区域",
+        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "如果您的计算机已经配置了一个代理，默认情况下 Psiphon 将在建立隧道时使用该代理。您可以指定要使用的代理来覆盖此行为，或者指定应该不使用“上层代理”。<br> 只允许支持 HTTPS 的 HTTP 代理。",
+        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "不代理在您的国家内的网站",
+        "description": "The label on the checkbox that enables 'Split Tunnel'."
+    },
+    "about#visit-company-site": {
+        "message": "要找到更多有关 Psiphon 公司的信息，请访问我们的<a href=\"https://psiphon.ca\">公司网站</a>。",
+        "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "如果您期望我们向您回应，请输入您的电子邮件地址：",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "请在这里输入您的评论：",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#smiley_happy": {
+        "message": "Psiphon就像我想的那样工作",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "connection#wait-btn": {
+        "message": "请稍候...",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#transport-mode#help-text": {
+        "message": "使用 Windows IPSec/L2TP VPN。此模式将转接您的所有应用程序，但并不提供混淆效果。我们<strong>不推荐</strong>它用于绕过大多数防火墙。",
+        "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "最佳性能",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
+    },
+    "connection#connect-btn": {
+        "message": "连接",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    }
+}

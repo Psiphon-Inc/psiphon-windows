@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "authenticated_data_package.h"
 #include "cryptlib.h"

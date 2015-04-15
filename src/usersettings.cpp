@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "usersettings.h"
 #include "utilities.h"
@@ -52,6 +53,9 @@
 #define SKIP_PROXY_SETTINGS_NAME        "SkipProxySettings"
 #define SKIP_PROXY_SETTINGS_DEFAULT     FALSE
 
+#define SKIP_AUTO_CONNECT_NAME          "SkipAutoConnect"
+#define SKIP_AUTO_CONNECT_DEFAULT       FALSE
+
 #define SKIP_UPSTREAM_PROXY_NAME        "SSHParentProxySkip"
 #define SKIP_UPSTREAM_PROXY_DEFAULT     FALSE
 
@@ -63,6 +67,9 @@
 
 #define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
+
+#define COOKIES_NAME                    "UICookies"
+#define COOKIES_DEFAULT                 ""
 
 static HANDLE g_registryMutex = CreateMutex(NULL, FALSE, 0);
 
@@ -131,100 +138,88 @@ void Settings::Initialize()
     // This is to help users find and modify them.
     (void)GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT, true);
     (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
+    (void)GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT, true);
 }
 
-bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+void Settings::ToJson(Json::Value& o_json)
 {
-    Json::Value config;
-    config["SplitTunnel"] = Settings::SplitTunnel();
-    config["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
-    config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-    config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-    config["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
-    config["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
-    config["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
-    config["EgressRegion"] = Settings::EgressRegion();
-    config["defaults"] = Json::Value();
-    config["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
-    config["defaults"]["VPN"] = FALSE;
-    config["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
-    config["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
-    config["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
-    config["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
-    config["defaults"]["UpstreamProxyPort"] = NULL_PORT;
-    config["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+    o_json.clear();
+    o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
+    o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
+    o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+    o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+    o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
+    o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
+    o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
+    o_json["EgressRegion"] = Settings::EgressRegion();
+    o_json["defaults"] = Json::Value();
+    o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
+    o_json["defaults"]["VPN"] = FALSE;
+    o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+    o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+    o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
+    o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
+    o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+    o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+}
 
-    stringstream configDataStream;
-    Json::FastWriter jsonWriter;
-    configDataStream << jsonWriter.write(config);
-
-    tstring result;
-    if (ShowHTMLDlg(
-        hParentWnd,
-        _T("SETTINGS_HTML_RESOURCE"),
-        GetLocaleName().c_str(),
-        NarrowToTString(configDataStream.str()).c_str(),
-        result) != 1)
-    {
-        // error or user cancelled
-        return false;
-    }
+bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
+{
+    o_settingsChanged = false;
 
     Json::Value json;
     Json::Reader reader;
-    bool parsingSuccessful = reader.parse(WStringToUTF8(result.c_str()), json);
+    bool parsingSuccessful = reader.parse(utf8JSON, json);
     if (!parsingSuccessful)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to save settings!"));
         return false;
     }
 
-    bool settingsChanged = false;
-
     try
     {
         AutoMUTEX lock(g_registryMutex);
 
-        // Note: We're not purposely not bothering to check registry write return values.
+        // Note: We're purposely not bothering to check registry write return values.
 
         RegistryFailureReason failReason;
 
         BOOL splitTunnel = json.get("SplitTunnel", 0).asUInt();
-        settingsChanged = settingsChanged || !!splitTunnel != Settings::SplitTunnel();
+        o_settingsChanged = o_settingsChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
         wstring transport = json.get("VPN", 0).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
-        settingsChanged = settingsChanged || transport != Settings::Transport();
+        o_settingsChanged = o_settingsChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
             TRANSPORT_NAME,
             transport,
             failReason);
 
         DWORD httpPort = json.get("LocalHttpProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || httpPort != Settings::LocalHttpProxyPort();
+        o_settingsChanged = o_settingsChanged || httpPort != Settings::LocalHttpProxyPort();
         WriteRegistryDwordValue(HTTP_PROXY_PORT_NAME, httpPort);
 
         DWORD socksPort = json.get("LocalSocksProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || socksPort != Settings::LocalSocksProxyPort();
+        o_settingsChanged = o_settingsChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", "").asString();
-        settingsChanged = settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
+        o_settingsChanged = o_settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
             upstreamProxyHostname,
             failReason);
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
+        o_settingsChanged = o_settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
 
         BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", 0).asUInt();
-        settingsChanged = settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
+        o_settingsChanged = o_settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
         WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
 
         string egressRegion = json.get("EgressRegion", "").asString();
-        settingsChanged = settingsChanged || egressRegion != Settings::EgressRegion();
+        o_settingsChanged = o_settingsChanged || egressRegion != Settings::EgressRegion();
         WriteRegistryStringValue(
             EGRESS_REGION_NAME,
             egressRegion,
@@ -233,6 +228,33 @@ bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
     catch (exception& e)
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        return false;
+    }
+
+    return true;
+}
+
+bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+{
+    Json::Value config;
+    Settings::ToJson(config);
+
+    tstring result;
+    if (ShowHTMLDlg(
+        hParentWnd,
+        _T("SETTINGS_HTML_RESOURCE"),
+        GetLocaleName().c_str(),
+        NarrowToTString(Json::FastWriter().write(config)).c_str(),
+        result) != 1)
+    {
+        // error or user cancelled
+        return false;
+    }
+
+    bool settingsChanged = false;
+    if (!FromJson(WStringToUTF8(result.c_str()), settingsChanged))
+    {
+        return false;
     }
 
     return settingsChanged;
@@ -317,4 +339,26 @@ bool Settings::SkipBrowser()
 bool Settings::SkipProxySettings()
 {
     return !!GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
+}
+
+bool Settings::SkipAutoConnect()
+{
+    return !!GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT);
+}
+
+/*
+For internal use only
+TODO: Probably shouldn't be in the "usersettings" file
+*/
+
+void Settings::SetCookies(const string& value)
+{
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+    (void)WriteRegistryStringValue(COOKIES_NAME, value, reason);
+    // ignoring failures
+}
+
+string Settings::GetCookies()
+{
+    return GetSettingString(COOKIES_NAME, COOKIES_DEFAULT);
 }
