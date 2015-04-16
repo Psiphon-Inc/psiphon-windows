@@ -136,12 +136,11 @@ tstring SystemProxySettings::MakeProxySettingString() const
 
 bool SystemProxySettings::Revert()
 {
-    ClearRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO);
-
     // Revert Windows Internet Settings back to user's original configuration
 
     if (!m_settingsApplied)
     {
+        ClearRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO);
         return true;
     }
 
@@ -153,6 +152,10 @@ bool SystemProxySettings::Revert()
     if (success)
     {
         m_settingsApplied = false;
+        // Only clear this if we successfully restored the original System Proxy Settings,
+        // since this is used to determine on subsequent runs whether to restore original System
+        // Proxy Settings first.
+        ClearRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO);
     }
 
     return success;
@@ -687,7 +690,13 @@ void DoStartupSystemProxyWork()
     {
         if (!SetCurrentSystemConnectionsProxy(nativeProxyInfo))
         {
+            // If we could not restore the original System Proxy Settings, don't clear
+            // PSIPHON_PROXY_INFO since it is used as a signal on subsequent runs to
+            // restore the original System Proxy Settings.
+            // Also, don't write the current System Proxy Settings to
+            // NATIVE_PROXY_INFO since we don't know what state the system is in.
             my_print(NOT_SENSITIVE, false, _T("%s:%d: SetConnectionProxy: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            return;
         }
 
         ClearRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO);
