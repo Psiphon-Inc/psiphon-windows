@@ -337,12 +337,12 @@ function fillSettingsValues(obj) {
   vpnModeUpdate();
 
   if (typeof(obj.LocalHttpProxyPort) !== 'undefined') {
-    $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : "");
+    $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : '');
   }
   $('#LocalHttpProxyPort').trigger('keyup');
 
   if (typeof(obj.LocalSocksProxyPort) !== 'undefined') {
-    $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : "");
+    $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : '');
   }
   $('#LocalSocksProxyPort').trigger('keyup');
 
@@ -351,7 +351,7 @@ function fillSettingsValues(obj) {
   }
 
   if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
-    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : "");
+    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : '');
   }
   $('#UpstreamProxyPort').trigger('keyup');
 
@@ -588,6 +588,62 @@ function skipUpstreamProxyUpdate() {
   $('.skip-upstream-proxy-incompatible input').prop('disabled', skipUpstreamProxy);
   $('.skip-upstream-proxy-incompatible').toggleClass('disabled-text', skipUpstreamProxy);
 }
+
+function upstreamProxyErrorNotice(errorMessage) {
+  // Show/hide the appropriate message depending on the state of the settings
+  alert('g_initObj.Settings.UpstreamProxyHostname:' + g_initObj.Settings.UpstreamProxyHostname + !!g_initObj.Settings.UpstreamProxyHostname);
+  $('#UpstreamProxyErrorModal .upstream-proxy-default')
+    .toggleClass('hidden', !!g_initObj.Settings.UpstreamProxyHostname);
+  $('#UpstreamProxyErrorModal .upstream-proxy-configured')
+    .toggleClass('hidden', !g_initObj.Settings.UpstreamProxyHostname);
+
+  // Show the "technical error message" if we have one
+  if (!errorMessage) {
+    $('#UpstreamProxyErrorModal')
+      .find('.notice-error-pre-message, .notice-error-message')
+      .addClass('hidden');
+  }
+  else {
+    $('#UpstreamProxyErrorModal')
+      .find('.notice-error-pre-message, .notice-error-message')
+      .removeClass('hidden');
+
+    $('#UpstreamProxyErrorModal .notice-error-message')
+      .text(errorMessage);
+  }
+
+  // Put up the modal
+  $('#UpstreamProxyErrorModal').modal({
+    show: true,
+    backdrop: 'static'
+  });
+
+  //
+  // Switch to the appropriate settings section
+  //
+
+  // We can only expand the section after the tab is shown
+  function onTabShown() {
+    // Hack: The collapse-show doesn't seem to work unless we wait a bit
+    setTimeout(function() {
+      $('#settings-accordion-upstream-proxy').collapse('show');
+
+      // Scroll to the section, after allowing the section to expand
+      setTimeout(function() {
+        $('#settings-pane').scrollTo(
+          $('#settings-accordion-upstream-proxy').parents('.accordion-group').eq(0),
+          {
+            duration: 500, // animation time
+            offset: 0
+          });
+      }, 200);
+    }, 500);
+  }
+
+  $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
+  $('.main-nav a[href="#settings-pane"]').tab('show');
+}
+
 
 /* FEEDBACK ******************************************************************/
 
@@ -973,6 +1029,15 @@ function HtmlCtrlInterface_AddMessage(jsonArgs) {
   }, 1);
 }
 
+function HtmlCtrlInterface_AddNotice(jsonArgs) {
+  setTimeout(function() {
+    var args = JSON.parse(jsonArgs);
+    if (args.noticeType === "UpstreamProxyError") {
+      upstreamProxyErrorNotice(args.data.message);
+    }
+  }, 1);
+}
+
 function HtmlCtrlInterface_SetState(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
@@ -1030,6 +1095,10 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
     var appURL = PSIPHON_LINK_PREFIX + 'updatesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
+      var settingsObj = JSON.parse(settingsJSON);
+      for (var k in settingsObj) {
+        g_initObj.Settings[k] = settingsObj[k];
+      }
     }
     else {
       window.location = appURL;
@@ -1081,5 +1150,6 @@ function HtmlCtrlInterface_BannerClick() {
 
 window.HtmlCtrlInterface_AddMessage = HtmlCtrlInterface_AddMessage;
 window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
+window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
 
 })(window);

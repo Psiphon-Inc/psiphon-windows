@@ -593,6 +593,12 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         string timestamp = notice["timestamp"].asString();
         Json::Value data = notice["data"];
 
+        // Let the UI know about it and decide if something needs to be shown to the user.
+        if (noticeType != "Info")
+        {
+            UI_Notice(line);
+        }
+
         if (noticeType == "Tunnels")
         {
             int count = data["count"].asInt();

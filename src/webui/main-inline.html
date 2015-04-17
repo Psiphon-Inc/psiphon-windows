@@ -6775,6 +6775,287 @@ input[type="submit"].btn.btn-mini {
 .breadcrumb > .active {
   color: #999999;
 }
+.pagination {
+  margin: 20px 0;
+}
+.pagination ul {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  margin-left: 0;
+  margin-bottom: 0;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.pagination ul > li {
+  display: inline;
+}
+.pagination ul > li > a,
+.pagination ul > li > span {
+  float: left;
+  padding: 4px 12px;
+  line-height: 20px;
+  text-decoration: none;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-left-width: 0;
+}
+.pagination ul > li > a:hover,
+.pagination ul > li > a:focus,
+.pagination ul > .active > a,
+.pagination ul > .active > span {
+  background-color: #f5f5f5;
+}
+.pagination ul > .active > a,
+.pagination ul > .active > span {
+  color: #999999;
+  cursor: default;
+}
+.pagination ul > .disabled > span,
+.pagination ul > .disabled > a,
+.pagination ul > .disabled > a:hover,
+.pagination ul > .disabled > a:focus {
+  color: #999999;
+  background-color: transparent;
+  cursor: default;
+}
+.pagination ul > li:first-child > a,
+.pagination ul > li:first-child > span {
+  border-left-width: 1px;
+  -webkit-border-top-left-radius: 1px;
+  -moz-border-radius-topleft: 1px;
+  border-top-left-radius: 1px;
+  -webkit-border-bottom-left-radius: 1px;
+  -moz-border-radius-bottomleft: 1px;
+  border-bottom-left-radius: 1px;
+}
+.pagination ul > li:last-child > a,
+.pagination ul > li:last-child > span {
+  -webkit-border-top-right-radius: 1px;
+  -moz-border-radius-topright: 1px;
+  border-top-right-radius: 1px;
+  -webkit-border-bottom-right-radius: 1px;
+  -moz-border-radius-bottomright: 1px;
+  border-bottom-right-radius: 1px;
+}
+.pagination-centered {
+  text-align: center;
+}
+.pagination-right {
+  text-align: right;
+}
+.pagination-large ul > li > a,
+.pagination-large ul > li > span {
+  padding: 11px 19px;
+  font-size: 17.5px;
+}
+.pagination-large ul > li:first-child > a,
+.pagination-large ul > li:first-child > span {
+  -webkit-border-top-left-radius: 1px;
+  -moz-border-radius-topleft: 1px;
+  border-top-left-radius: 1px;
+  -webkit-border-bottom-left-radius: 1px;
+  -moz-border-radius-bottomleft: 1px;
+  border-bottom-left-radius: 1px;
+}
+.pagination-large ul > li:last-child > a,
+.pagination-large ul > li:last-child > span {
+  -webkit-border-top-right-radius: 1px;
+  -moz-border-radius-topright: 1px;
+  border-top-right-radius: 1px;
+  -webkit-border-bottom-right-radius: 1px;
+  -moz-border-radius-bottomright: 1px;
+  border-bottom-right-radius: 1px;
+}
+.pagination-mini ul > li:first-child > a,
+.pagination-small ul > li:first-child > a,
+.pagination-mini ul > li:first-child > span,
+.pagination-small ul > li:first-child > span {
+  -webkit-border-top-left-radius: 0px;
+  -moz-border-radius-topleft: 0px;
+  border-top-left-radius: 0px;
+  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-radius-bottomleft: 0px;
+  border-bottom-left-radius: 0px;
+}
+.pagination-mini ul > li:last-child > a,
+.pagination-small ul > li:last-child > a,
+.pagination-mini ul > li:last-child > span,
+.pagination-small ul > li:last-child > span {
+  -webkit-border-top-right-radius: 0px;
+  -moz-border-radius-topright: 0px;
+  border-top-right-radius: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+  -moz-border-radius-bottomright: 0px;
+  border-bottom-right-radius: 0px;
+}
+.pagination-small ul > li > a,
+.pagination-small ul > li > span {
+  padding: 2px 10px;
+  font-size: 11.9px;
+}
+.pagination-mini ul > li > a,
+.pagination-mini ul > li > span {
+  padding: 0 6px;
+  font-size: 10.5px;
+}
+.pager {
+  margin: 20px 0;
+  list-style: none;
+  text-align: center;
+  *zoom: 1;
+}
+.pager:before,
+.pager:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.pager:after {
+  clear: both;
+}
+.pager li {
+  display: inline;
+}
+.pager li > a,
+.pager li > span {
+  display: inline-block;
+  padding: 5px 14px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+}
+.pager li > a:hover,
+.pager li > a:focus {
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+.pager .next > a,
+.pager .next > span {
+  float: right;
+}
+.pager .previous > a,
+.pager .previous > span {
+  float: left;
+}
+.pager .disabled > a,
+.pager .disabled > a:hover,
+.pager .disabled > a:focus,
+.pager .disabled > span {
+  color: #999999;
+  background-color: #fff;
+  cursor: default;
+}
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000000;
+}
+.modal-backdrop.fade {
+  opacity: 0;
+}
+.modal-backdrop,
+.modal-backdrop.fade.in {
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+}
+.modal {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  z-index: 1050;
+  width: 560px;
+  margin-left: -280px;
+  background-color: #ffffff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  *border: 1px solid #999;
+  /* IE6-7 */
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+  outline: none;
+}
+.modal.fade {
+  -webkit-transition: opacity .1s linear, top .1s ease-out;
+  -moz-transition: opacity .1s linear, top .1s ease-out;
+  -o-transition: opacity .1s linear, top .1s ease-out;
+  transition: opacity .1s linear, top .1s ease-out;
+  top: -25%;
+}
+.modal.fade.in {
+  top: 10%;
+}
+.modal-header {
+  padding: 9px 15px;
+  border-bottom: 1px solid #eee;
+}
+.modal-header .close {
+  margin-top: 2px;
+}
+.modal-header h3 {
+  margin: 0;
+  line-height: 30px;
+}
+.modal-body {
+  position: relative;
+  overflow-y: auto;
+  max-height: 400px;
+  padding: 15px;
+}
+.modal-form {
+  margin-bottom: 0;
+}
+.modal-footer {
+  padding: 14px 15px 15px;
+  margin-bottom: 0;
+  text-align: right;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  -webkit-border-radius: 0 0 6px 6px;
+  -moz-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
+  -webkit-box-shadow: inset 0 1px 0 #ffffff;
+  -moz-box-shadow: inset 0 1px 0 #ffffff;
+  box-shadow: inset 0 1px 0 #ffffff;
+  *zoom: 1;
+}
+.modal-footer:before,
+.modal-footer:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.modal-footer:after {
+  clear: both;
+}
+.modal-footer .btn + .btn {
+  margin-left: 5px;
+  margin-bottom: 0;
+}
+.modal-footer .btn-group .btn + .btn {
+  margin-left: -1px;
+}
+.modal-footer .btn-block + .btn-block {
+  margin-left: 0;
+}
 .tooltip {
   position: absolute;
   z-index: 1030;
@@ -6976,6 +7257,90 @@ input[type="submit"].btn.btn-mini {
   border-left-color: #ffffff;
   bottom: -10px;
 }
+.thumbnails {
+  margin-left: -20px;
+  list-style: none;
+  *zoom: 1;
+}
+.thumbnails:before,
+.thumbnails:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.thumbnails:after {
+  clear: both;
+}
+.row-fluid .thumbnails {
+  margin-left: 0;
+}
+.thumbnails > li {
+  float: left;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+.thumbnail {
+  display: block;
+  padding: 4px;
+  line-height: 20px;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+a.thumbnail:hover,
+a.thumbnail:focus {
+  border-color: #d43f27;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+}
+.thumbnail > img {
+  display: block;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.thumbnail .caption {
+  padding: 9px;
+  color: #555555;
+}
+.media,
+.media-body {
+  overflow: hidden;
+  *overflow: visible;
+  zoom: 1;
+}
+.media,
+.media .media {
+  margin-top: 15px;
+}
+.media:first-child {
+  margin-top: 0;
+}
+.media-object {
+  display: block;
+}
+.media-heading {
+  margin: 0 0 5px;
+}
+.media > .pull-left {
+  margin-right: 10px;
+}
+.media > .pull-right {
+  margin-left: 10px;
+}
+.media-list {
+  margin-left: 0;
+  list-style: none;
+}
 .label,
 .badge {
   display: inline-block;
@@ -7062,6 +7427,196 @@ a.badge:focus {
 .btn-mini .badge {
   top: 0;
 }
+@-webkit-keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@-moz-keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@-ms-keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@-o-keyframes progress-bar-stripes {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 0;
+  }
+}
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+.progress {
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 20px;
+  background-color: #f7f7f7;
+  background-image: -moz-linear-gradient(top, #f5f5f5, #f9f9f9);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#f9f9f9));
+  background-image: -webkit-linear-gradient(top, #f5f5f5, #f9f9f9);
+  background-image: -o-linear-gradient(top, #f5f5f5, #f9f9f9);
+  background-image: linear-gradient(to bottom, #f5f5f5, #f9f9f9);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#fff9f9f9', GradientType=0);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+}
+.progress .bar {
+  width: 0%;
+  height: 100%;
+  color: #ffffff;
+  float: left;
+  font-size: 12px;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #0e90d2;
+  background-image: -moz-linear-gradient(top, #149bdf, #0480be);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#149bdf), to(#0480be));
+  background-image: -webkit-linear-gradient(top, #149bdf, #0480be);
+  background-image: -o-linear-gradient(top, #149bdf, #0480be);
+  background-image: linear-gradient(to bottom, #149bdf, #0480be);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff149bdf', endColorstr='#ff0480be', GradientType=0);
+  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: width 0.6s ease;
+  -moz-transition: width 0.6s ease;
+  -o-transition: width 0.6s ease;
+  transition: width 0.6s ease;
+}
+.progress .bar + .bar {
+  -webkit-box-shadow: inset 1px 0 0 rgba(0,0,0,.15), inset 0 -1px 0 rgba(0,0,0,.15);
+  -moz-box-shadow: inset 1px 0 0 rgba(0,0,0,.15), inset 0 -1px 0 rgba(0,0,0,.15);
+  box-shadow: inset 1px 0 0 rgba(0,0,0,.15), inset 0 -1px 0 rgba(0,0,0,.15);
+}
+.progress-striped .bar {
+  background-color: #149bdf;
+  background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  -webkit-background-size: 40px 40px;
+  -moz-background-size: 40px 40px;
+  -o-background-size: 40px 40px;
+  background-size: 40px 40px;
+}
+.progress.active .bar {
+  -webkit-animation: progress-bar-stripes 2s linear infinite;
+  -moz-animation: progress-bar-stripes 2s linear infinite;
+  -ms-animation: progress-bar-stripes 2s linear infinite;
+  -o-animation: progress-bar-stripes 2s linear infinite;
+  animation: progress-bar-stripes 2s linear infinite;
+}
+.progress-danger .bar,
+.progress .bar-danger {
+  background-color: #dd514c;
+  background-image: -moz-linear-gradient(top, #ee5f5b, #c43c35);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#c43c35));
+  background-image: -webkit-linear-gradient(top, #ee5f5b, #c43c35);
+  background-image: -o-linear-gradient(top, #ee5f5b, #c43c35);
+  background-image: linear-gradient(to bottom, #ee5f5b, #c43c35);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffee5f5b', endColorstr='#ffc43c35', GradientType=0);
+}
+.progress-danger.progress-striped .bar,
+.progress-striped .bar-danger {
+  background-color: #ee5f5b;
+  background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+}
+.progress-success .bar,
+.progress .bar-success {
+  background-color: #5eb95e;
+  background-image: -moz-linear-gradient(top, #62c462, #57a957);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#57a957));
+  background-image: -webkit-linear-gradient(top, #62c462, #57a957);
+  background-image: -o-linear-gradient(top, #62c462, #57a957);
+  background-image: linear-gradient(to bottom, #62c462, #57a957);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff62c462', endColorstr='#ff57a957', GradientType=0);
+}
+.progress-success.progress-striped .bar,
+.progress-striped .bar-success {
+  background-color: #62c462;
+  background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+}
+.progress-info .bar,
+.progress .bar-info {
+  background-color: #4bb1cf;
+  background-image: -moz-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#5bc0de), to(#339bb9));
+  background-image: -webkit-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: -o-linear-gradient(top, #5bc0de, #339bb9);
+  background-image: linear-gradient(to bottom, #5bc0de, #339bb9);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff339bb9', GradientType=0);
+}
+.progress-info.progress-striped .bar,
+.progress-striped .bar-info {
+  background-color: #5bc0de;
+  background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+}
+.progress-warning .bar,
+.progress .bar-warning {
+  background-color: #faa732;
+  background-image: -moz-linear-gradient(top, #fbb450, #f89406);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
+  background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
+  background-image: -o-linear-gradient(top, #fbb450, #f89406);
+  background-image: linear-gradient(to bottom, #fbb450, #f89406);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffbb450', endColorstr='#fff89406', GradientType=0);
+}
+.progress-warning.progress-striped .bar,
+.progress-striped .bar-warning {
+  background-color: #fbb450;
+  background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+}
 .accordion {
   margin-bottom: 20px;
 }
@@ -7085,6 +7640,132 @@ a.badge:focus {
 .accordion-inner {
   padding: 9px 15px;
   border-top: 1px solid #e5e5e5;
+}
+.carousel {
+  position: relative;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+.carousel-inner {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+.carousel-inner > .item {
+  display: none;
+  position: relative;
+  -webkit-transition: 0.6s ease-in-out left;
+  -moz-transition: 0.6s ease-in-out left;
+  -o-transition: 0.6s ease-in-out left;
+  transition: 0.6s ease-in-out left;
+}
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+  display: block;
+  line-height: 1;
+}
+.carousel-inner > .active,
+.carousel-inner > .next,
+.carousel-inner > .prev {
+  display: block;
+}
+.carousel-inner > .active {
+  left: 0;
+}
+.carousel-inner > .next,
+.carousel-inner > .prev {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.carousel-inner > .next {
+  left: 100%;
+}
+.carousel-inner > .prev {
+  left: -100%;
+}
+.carousel-inner > .next.left,
+.carousel-inner > .prev.right {
+  left: 0;
+}
+.carousel-inner > .active.left {
+  left: -100%;
+}
+.carousel-inner > .active.right {
+  left: 100%;
+}
+.carousel-control {
+  position: absolute;
+  top: 40%;
+  left: 15px;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  font-size: 60px;
+  font-weight: 100;
+  line-height: 30px;
+  color: #ffffff;
+  text-align: center;
+  background: #222222;
+  border: 3px solid #ffffff;
+  -webkit-border-radius: 23px;
+  -moz-border-radius: 23px;
+  border-radius: 23px;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
+.carousel-control.right {
+  left: auto;
+  right: 15px;
+}
+.carousel-control:hover,
+.carousel-control:focus {
+  color: #ffffff;
+  text-decoration: none;
+  opacity: 0.9;
+  filter: alpha(opacity=90);
+}
+.carousel-indicators {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 5;
+  margin: 0;
+  list-style: none;
+}
+.carousel-indicators li {
+  display: block;
+  float: left;
+  width: 10px;
+  height: 10px;
+  margin-left: 5px;
+  text-indent: -999px;
+  background-color: #ccc;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 5px;
+}
+.carousel-indicators .active {
+  background-color: #fff;
+}
+.carousel-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 15px;
+  background: #333333;
+  background: rgba(0, 0, 0, 0.75);
+}
+.carousel-caption h4,
+.carousel-caption p {
+  color: #ffffff;
+  line-height: 20px;
+}
+.carousel-caption h4 {
+  margin: 0 0 5px;
+}
+.carousel-caption p {
+  margin-bottom: 0;
 }
 .hero-unit {
   padding: 60px;
@@ -12754,6 +13435,11 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#transport-mode#heading": "[Ŧřȧȧƞşƥǿǿřŧ Ḿǿǿḓḗḗ]",
       "settings#transport-mode#help-text": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş ĪīƤŞḗḗƈ/Ŀ2ŦƤ ṼƤȠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
       "settings#upstream-proxy#by-default": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.<br> Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
+      "settings#upstream-proxy#error-modal-body-configured": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧƞ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\".<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ƒīīẋ ŧħḗḗ şḗḗŧŧīīƞɠş ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
+      "settings#upstream-proxy#error-modal-body-default": "[Ƥşīīƥħǿǿƞ īīş ƈŭŭřřḗḗƞŧŀẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŧǿǿ ŭŭşḗḗ ẏǿǿŭŭř şẏşŧḗḗḿ ƥřǿǿẋẏ ȧȧş īīŧş \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\".<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ḗḗƞȧȧƀŀḗḗ \"Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
+      "settings#upstream-proxy#error-modal-body-pre-message": "[Ħḗḗřḗḗ īīş ŧħḗḗ ŧḗḗƈħƞīīƈȧȧŀ ḗḗřřǿǿř īīƞƒǿǿ:]",
+      "settings#upstream-proxy#error-modal-close-button": "[Ƈŀǿǿşḗḗ]",
+      "settings#upstream-proxy#error-modal-title": "[Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ Ḗḗřřǿǿř]",
       "settings#upstream-proxy#heading": "[Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ]",
       "settings#upstream-proxy#hostname-label": "[Ħǿǿşŧƞȧȧḿḗḗ]",
       "settings#upstream-proxy#port-label": "[Ƥǿǿřŧ]",
@@ -12823,6 +13509,11 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#transport-mode#heading": "‮⊥ɹɐusdoɹʇ‬ ‮Wopǝ‬",
       "settings#transport-mode#help-text": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮ɟoɹ‬ ‮qʎdɐssıuƃ‬ ‮ɯosʇ‬ ‮ɟıɹǝʍɐʅʅs‬.",
       "settings#upstream-proxy#by-default": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
+      "settings#upstream-proxy#error-modal-body-configured": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐu‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\".<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ʇɥǝ‬ ‮sǝʇʇıuƃs‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
+      "settings#upstream-proxy#error-modal-body-default": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔnɹɹǝuʇʅʎ‬ ‮ɔouɟıƃnɹǝp‬ ‮ʇo‬ ‮nsǝ‬ ‮ʎonɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮ɐs‬ ‮ıʇs‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\".<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ǝuɐqʅǝ‬ \"‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
+      "settings#upstream-proxy#error-modal-body-pre-message": "‮Hǝɹǝ‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʇǝɔɥuıɔɐʅ‬ ‮ǝɹɹoɹ‬ ‮ıuɟo‬:",
+      "settings#upstream-proxy#error-modal-close-button": "‮Ↄʅosǝ‬",
+      "settings#upstream-proxy#error-modal-title": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
       "settings#upstream-proxy#heading": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬",
       "settings#upstream-proxy#hostname-label": "‮Hosʇuɐɯǝ‬",
       "settings#upstream-proxy#port-label": "‮Ԁoɹʇ‬",
@@ -12890,6 +13581,11 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#upstream-proxy#port-label": "Port",
       "settings#upstream-proxy#skip-label": "Don't use upstream proxy",
       "settings#upstream-proxy#set-both-error-msg": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+      "settings#upstream-proxy#error-modal-title": "Upstream Proxy Error",
+      "settings#upstream-proxy#error-modal-body-default": "Psiphon is currently configured to use your system proxy as its \"upstream proxy\".<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease enable \"Don't use upstream proxy\" and try again.",
+      "settings#upstream-proxy#error-modal-body-configured": "You have configured Psiphon to use an \"upstream proxy\".<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease fix the settings and try again.",
+      "settings#upstream-proxy#error-modal-body-pre-message": "Here is the technical error info:",
+      "settings#upstream-proxy#error-modal-close-button": "Close",
       "settings#transport-mode#heading": "Transport Mode",
       "settings#transport-mode#check-label": "Use VPN Mode",
       "settings#transport-mode#help-text": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
@@ -13933,12 +14629,12 @@ function fillSettingsValues(obj) {
   vpnModeUpdate();
 
   if (typeof(obj.LocalHttpProxyPort) !== 'undefined') {
-    $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : "");
+    $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : '');
   }
   $('#LocalHttpProxyPort').trigger('keyup');
 
   if (typeof(obj.LocalSocksProxyPort) !== 'undefined') {
-    $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : "");
+    $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : '');
   }
   $('#LocalSocksProxyPort').trigger('keyup');
 
@@ -13947,7 +14643,7 @@ function fillSettingsValues(obj) {
   }
 
   if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
-    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : "");
+    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : '');
   }
   $('#UpstreamProxyPort').trigger('keyup');
 
@@ -14184,6 +14880,62 @@ function skipUpstreamProxyUpdate() {
   $('.skip-upstream-proxy-incompatible input').prop('disabled', skipUpstreamProxy);
   $('.skip-upstream-proxy-incompatible').toggleClass('disabled-text', skipUpstreamProxy);
 }
+
+function upstreamProxyErrorNotice(errorMessage) {
+  // Show/hide the appropriate message depending on the state of the settings
+  alert('g_initObj.Settings.UpstreamProxyHostname:' + g_initObj.Settings.UpstreamProxyHostname + !!g_initObj.Settings.UpstreamProxyHostname);
+  $('#UpstreamProxyErrorModal .upstream-proxy-default')
+    .toggleClass('hidden', !!g_initObj.Settings.UpstreamProxyHostname);
+  $('#UpstreamProxyErrorModal .upstream-proxy-configured')
+    .toggleClass('hidden', !g_initObj.Settings.UpstreamProxyHostname);
+
+  // Show the "technical error message" if we have one
+  if (!errorMessage) {
+    $('#UpstreamProxyErrorModal')
+      .find('.notice-error-pre-message, .notice-error-message')
+      .addClass('hidden');
+  }
+  else {
+    $('#UpstreamProxyErrorModal')
+      .find('.notice-error-pre-message, .notice-error-message')
+      .removeClass('hidden');
+
+    $('#UpstreamProxyErrorModal .notice-error-message')
+      .text(errorMessage);
+  }
+
+  // Put up the modal
+  $('#UpstreamProxyErrorModal').modal({
+    show: true,
+    backdrop: 'static'
+  });
+
+  //
+  // Switch to the appropriate settings section
+  //
+
+  // We can only expand the section after the tab is shown
+  function onTabShown() {
+    // Hack: The collapse-show doesn't seem to work unless we wait a bit
+    setTimeout(function() {
+      $('#settings-accordion-upstream-proxy').collapse('show');
+
+      // Scroll to the section, after allowing the section to expand
+      setTimeout(function() {
+        $('#settings-pane').scrollTo(
+          $('#settings-accordion-upstream-proxy').parents('.accordion-group').eq(0),
+          {
+            duration: 500, // animation time
+            offset: 0
+          });
+      }, 200);
+    }, 500);
+  }
+
+  $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
+  $('.main-nav a[href="#settings-pane"]').tab('show');
+}
+
 
 /* FEEDBACK ******************************************************************/
 
@@ -14569,6 +15321,15 @@ function HtmlCtrlInterface_AddMessage(jsonArgs) {
   }, 1);
 }
 
+function HtmlCtrlInterface_AddNotice(jsonArgs) {
+  setTimeout(function() {
+    var args = JSON.parse(jsonArgs);
+    if (args.noticeType === "UpstreamProxyError") {
+      upstreamProxyErrorNotice(args.data.message);
+    }
+  }, 1);
+}
+
 function HtmlCtrlInterface_SetState(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
@@ -14626,6 +15387,10 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
     var appURL = PSIPHON_LINK_PREFIX + 'updatesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
+      var settingsObj = JSON.parse(settingsJSON);
+      for (var k in settingsObj) {
+        g_initObj.Settings[k] = settingsObj[k];
+      }
     }
     else {
       window.location = appURL;
@@ -14677,6 +15442,7 @@ function HtmlCtrlInterface_BannerClick() {
 
 window.HtmlCtrlInterface_AddMessage = HtmlCtrlInterface_AddMessage;
 window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
+window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
 
 })(window);
 
@@ -15311,6 +16077,8 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
                  data-value="localeCode" data-content="localeName"></a>
             </li>
           </script>
+    <button type="button" class="btn btn-primary btn-large" data-toggle="modal" data-target="#UpstreamProxyErrorModal" data-backdrop="static">Launch demo modal</button>
+
         </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->
@@ -15328,6 +16096,54 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
        data-i18n="[html]language#success-message">
     <strong>Hello!</strong> Welcome to Psiphon.
   </div>
+
+  <!-- Modal dialog shown to users when there's an upstream proxy error -->
+  <div class="modal fade" id="UpstreamProxyErrorModal" tabindex="-1" role="dialog"
+       aria-labelledby="UpstreamProxyErrorTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="UpstreamProxyErrorTitle">
+            <span data-i18n="settings#upstream-proxy#error-modal-title">
+              Upstream Proxy Error
+            </span>
+          </h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            <span class="upstream-proxy-default"
+                  data-i18n="[html]settings#upstream-proxy#error-modal-body-default">
+              Psiphon is currently configured to use your system proxy as its "upstream proxy".<br>
+              However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
+              Please enable "Don't use upstream proxy" and try again.
+            </span>
+            <span class="upstream-proxy-configured"
+                  data-i18n="[html]settings#upstream-proxy#error-modal-body-configured">
+              You have configured Psiphon to use an "upstream proxy".<br>
+              However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
+              Please fix the settings and try again.
+            </span>
+          </p>
+          <p>
+            <span class="notice-error-pre-message"
+                  data-i18n="settings#upstream-proxy#error-modal-body-pre-message">
+              Here is the technical error info:
+            </span>
+          </p>
+          <p>
+            <code class="notice-error-message">error message will go here</code>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="settings#upstream-proxy#error-modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /UpstreamProxyErrorModal -->
 
 </body>
 </html>

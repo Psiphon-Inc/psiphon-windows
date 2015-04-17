@@ -121,6 +121,7 @@ void OnCreate(HWND hWndParent)
 #define WM_PSIPHON_HTMLUI_BEFORENAVIGATE    WM_USER + 200
 #define WM_PSIPHON_HTMLUI_SETSTATE          WM_USER + 201
 #define WM_PSIPHON_HTMLUI_ADDMESSAGE        WM_USER + 202
+#define WM_PSIPHON_HTMLUI_ADDNOTICE         WM_USER + 203
 
 static void HtmlUI_AddMessage(int priority, LPCTSTR message)
 {
@@ -179,6 +180,35 @@ static void HtmlUI_SetStateHandler(LPCWSTR json)
     (void)SendMessage(
         g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
         (WPARAM)_T("HtmlCtrlInterface_SetState"), (LPARAM)&argStruct);
+    delete[] json;
+}
+
+static void HtmlUI_AddNotice(const string& noticeJSON)
+{
+    wstring wJson = UTF8ToWString(noticeJSON.c_str());
+
+    size_t bufLen = wJson.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, wJson.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_ADDNOTICE, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_AddNoticeHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    (void)SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
+        (WPARAM)_T("HtmlCtrlInterface_AddNotice"), (LPARAM)&argStruct);
     delete[] json;
 }
 
@@ -320,6 +350,11 @@ void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, i
     Json::FastWriter jsonWriter;
     wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
     HtmlUI_SetState(wJson);
+}
+
+void UI_Notice(const string& noticeJSON)
+{
+    HtmlUI_AddNotice(noticeJSON);
 }
 
 //==== Win32 boilerplate ======================================================
@@ -504,6 +539,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PSIPHON_HTMLUI_ADDMESSAGE:
         HtmlUI_AddMessageHandler((LPCWSTR)wParam);
+        break;
+    case WM_PSIPHON_HTMLUI_ADDNOTICE:
+        HtmlUI_AddNoticeHandler((LPCWSTR)wParam);
         break;
 
     case WM_SIZE:

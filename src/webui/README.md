@@ -21,6 +21,8 @@ $ node fake-translations.js
 
 ## TODO
 
+* FIX: Settings object in UI is not getting updated when settings are updated. Add a new C-to-UI method called something like RefreshSettings -- have the C code call it after a successful (and unsuccessful) settings save. 
+  - Also maybe rename "UpdateSettings" to "PutSettings" or "SaveSettings".
 * put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
 * Make checkboxes in settings bigger and more colourful. Maybe make settings more colourful? Background shades?
 

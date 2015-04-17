@@ -227,6 +227,26 @@
     "message": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
     "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
   },
+  "settings#upstream-proxy#error-modal-body-configured": {
+    "message": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐu‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\".<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ʇɥǝ‬ ‮sǝʇʇıuƃs‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
+    "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+  },
+  "settings#upstream-proxy#error-modal-body-default": {
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔnɹɹǝuʇʅʎ‬ ‮ɔouɟıƃnɹǝp‬ ‮ʇo‬ ‮nsǝ‬ ‮ʎonɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮ɐs‬ ‮ıʇs‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\".<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ǝuɐqʅǝ‬ \"‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
+    "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
+  },
+  "settings#upstream-proxy#error-modal-body-pre-message": {
+    "message": "‮Hǝɹǝ‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʇǝɔɥuıɔɐʅ‬ ‮ǝɹɹoɹ‬ ‮ıuɟo‬:",
+    "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+  },
+  "settings#upstream-proxy#error-modal-close-button": {
+    "message": "‮Ↄʅosǝ‬",
+    "description": "Text in the button that dismisses the 'Upstream Proxy Error' dialog. It's the only button."
+  },
+  "settings#upstream-proxy#error-modal-title": {
+    "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
+    "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+  },
   "settings#upstream-proxy#heading": {
     "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬",
     "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."

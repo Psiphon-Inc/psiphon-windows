@@ -695,6 +695,8 @@
                  data-value="localeCode" data-content="localeName"></a>
             </li>
           </script>
+    <button type="button" class="btn btn-primary btn-large" data-toggle="modal" data-target="#UpstreamProxyErrorModal" data-backdrop="static">Launch demo modal</button>
+
         </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->
@@ -712,6 +714,54 @@
        data-i18n="[html]language#success-message">
     <strong>Hello!</strong> Welcome to Psiphon.
   </div>
+
+  <!-- Modal dialog shown to users when there's an upstream proxy error -->
+  <div class="modal fade" id="UpstreamProxyErrorModal" tabindex="-1" role="dialog"
+       aria-labelledby="UpstreamProxyErrorTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="UpstreamProxyErrorTitle">
+            <span data-i18n="settings#upstream-proxy#error-modal-title">
+              Upstream Proxy Error
+            </span>
+          </h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            <span class="upstream-proxy-default"
+                  data-i18n="[html]settings#upstream-proxy#error-modal-body-default">
+              Psiphon is currently configured to use your system proxy as its "upstream proxy".<br>
+              However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
+              Please enable "Don't use upstream proxy" and try again.
+            </span>
+            <span class="upstream-proxy-configured"
+                  data-i18n="[html]settings#upstream-proxy#error-modal-body-configured">
+              You have configured Psiphon to use an "upstream proxy".<br>
+              However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
+              Please fix the settings and try again.
+            </span>
+          </p>
+          <p>
+            <span class="notice-error-pre-message"
+                  data-i18n="settings#upstream-proxy#error-modal-body-pre-message">
+              Here is the technical error info:
+            </span>
+          </p>
+          <p>
+            <code class="notice-error-message">error message will go here</code>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="settings#upstream-proxy#error-modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /UpstreamProxyErrorModal -->
 
 </body>
 </html>
