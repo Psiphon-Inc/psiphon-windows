@@ -103,6 +103,10 @@
     "message": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
     "description": "Text telling the user how to get to the Psiphon FAQ."
   },
+  "general#modal-close-button": {
+    "message": "‮Ↄʅosǝ‬",
+    "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+  },
   "language#success-message": {
     "message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
     "description": "A welcome message shown to the user when they first switch to the correct UI language"
@@ -171,6 +175,18 @@
     "message": "<strong>‮Ǝɹɹoɹ‬!</strong> ‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ıuɔoɹɹǝɔʇ‬ ‮ʌɐʅnǝs‬ ‮qǝɟoɹǝ‬ ‮dɹoɔǝǝpıuƃ‬.",
     "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
   },
+  "settings#local-proxy-ports#error-modal-body-http": {
+    "message": "<p>‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.</p>\n<p>‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.</p>",
+    "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+  },
+  "settings#local-proxy-ports#error-modal-body-socks": {
+    "message": "<p>‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮SOↃӼS‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.</p>\n<p>‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮SOↃӼS‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.</p>",
+    "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+  },
+  "settings#local-proxy-ports#error-modal-title": {
+    "message": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇ‬ ‮Ↄouɟʅıɔʇ‬",
+    "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
+  },
   "settings#local-proxy-ports#heading": {
     "message": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇs‬",
     "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
@@ -238,10 +254,6 @@
   "settings#upstream-proxy#error-modal-body-pre-message": {
     "message": "‮Hǝɹǝ‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʇǝɔɥuıɔɐʅ‬ ‮ǝɹɹoɹ‬ ‮ıuɟo‬:",
     "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
-  },
-  "settings#upstream-proxy#error-modal-close-button": {
-    "message": "‮Ↄʅosǝ‬",
-    "description": "Text in the button that dismisses the 'Upstream Proxy Error' dialog. It's the only button."
   },
   "settings#upstream-proxy#error-modal-title": {
     "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",

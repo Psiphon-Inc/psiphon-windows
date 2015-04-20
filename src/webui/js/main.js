@@ -589,6 +589,36 @@ function skipUpstreamProxyUpdate() {
   $('.skip-upstream-proxy-incompatible').toggleClass('disabled-text', skipUpstreamProxy);
 }
 
+// Show the Settings tab and expand the target section.
+// If focusElem is optional; if set, focus will be put in that element.
+function showSettingsSection(section, focusElem) {
+  // We can only expand the section after the tab is shown
+  function onTabShown() {
+    // Hack: The collapse-show doesn't seem to work unless we wait a bit
+    setTimeout(function() {
+      $(section).collapse('show');
+
+      // Scroll to the section, after allowing the section to expand
+      setTimeout(function() {
+        $('#settings-pane').scrollTo(
+          $(section).parents('.accordion-group').eq(0),
+          {
+            duration: 500, // animation time
+            offset: 0,
+            onAfter: function() {
+              if (focusElem) {
+                $(focusElem).eq(0).focus();
+              }
+            }
+          });
+      }, 200);
+    }, 500);
+  }
+
+  $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
+  $('.main-nav a[href="#settings-pane"]').tab('show');
+}
+
 function upstreamProxyErrorNotice(errorMessage) {
   // Show/hide the appropriate message depending on the state of the settings
   $('#UpstreamProxyErrorModal .upstream-proxy-default')
@@ -615,32 +645,38 @@ function upstreamProxyErrorNotice(errorMessage) {
   $('#UpstreamProxyErrorModal').modal({
     show: true,
     backdrop: 'static'
+  }).on('hidden', function() {
+    $('#UpstreamProxyHostname').focus();
   });
 
-  //
   // Switch to the appropriate settings section
-  //
+  showSettingsSection('#settings-accordion-upstream-proxy');
+}
 
-  // We can only expand the section after the tab is shown
-  function onTabShown() {
-    // Hack: The collapse-show doesn't seem to work unless we wait a bit
-    setTimeout(function() {
-      $('#settings-accordion-upstream-proxy').collapse('show');
+function localProxyPortConflictNotice(noticetype) {
+  // Show/hide the appropriate message depending on the error
+  $('#LocalProxyPortErrorModal .local-proxy-port-http')
+    .toggleClass('hidden', noticetype !== 'HttpProxyPortInUse');
+  $('#LocalProxyPortErrorModal .local-proxy-port-socks')
+    .toggleClass('hidden', noticetype !== 'SocksProxyPortInUse');
 
-      // Scroll to the section, after allowing the section to expand
-      setTimeout(function() {
-        $('#settings-pane').scrollTo(
-          $('#settings-accordion-upstream-proxy').parents('.accordion-group').eq(0),
-          {
-            duration: 500, // animation time
-            offset: 0
-          });
-      }, 200);
-    }, 500);
-  }
+  // Put up the modal
+  $('#LocalProxyPortErrorModal').modal({
+    show: true,
+    backdrop: 'static'
+  }).on('hidden', function() {
+    if (noticetype === 'HttpProxyPortInUse') {
+      $('#LocalHttpProxyPort').focus();
+    }
+    else {
+      $('#LocalSocksProxyPort').focus();
+    }
+  });
 
-  $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
-  $('.main-nav a[href="#settings-pane"]').tab('show');
+  // Switch to the appropriate settings section
+  showSettingsSection(
+    '#settings-accordion-local-proxy-ports',
+    noticetype === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
 }
 
 
@@ -1037,6 +1073,10 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
     var args = JSON.parse(jsonArgs);
     if (args.noticeType === "UpstreamProxyError") {
       upstreamProxyErrorNotice(args.data.message);
+    }
+    else if (args.noticeType === "HttpProxyPortInUse" ||
+             args.noticeType === "SocksProxyPortInUse") {
+      localProxyPortConflictNotice(args.noticeType);
     }
   }, 1);
 }

@@ -721,11 +721,11 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title" id="UpstreamProxyErrorTitle">
+          <h3 class="modal-title" id="UpstreamProxyErrorTitle">
             <span data-i18n="settings#upstream-proxy#error-modal-title">
               Upstream Proxy Error
             </span>
-          </h4>
+          </h3>
         </div>
         <div class="modal-body">
           <p>
@@ -754,7 +754,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">
-            <span data-i18n="settings#upstream-proxy#error-modal-close-button">
+            <span data-i18n="general#modal-close-button">
               Close
             </span>
           </button>
@@ -762,6 +762,55 @@
       </div>
     </div>
   </div><!-- /UpstreamProxyErrorModal -->
+
+  <!-- Modal dialog shown to users when there's a local proxy port conflict -->
+  <div class="modal fade" id="LocalProxyPortErrorModal" tabindex="-1" role="dialog"
+       aria-labelledby="LocalProxyPortErrorTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="LocalProxyPortErrorTitle">
+            <span data-i18n="settings#local-proxy-ports#error-modal-title">
+              Local Proxy Port Conflict
+            </span>
+          </h3>
+        </div>
+        <div class="modal-body">
+          <p>
+            <div class="local-proxy-port-http"
+                 data-i18n="[html]settings#local-proxy-ports#error-modal-body-http">
+                <p>
+                  You have configured Psiphon to use a specific local port for its HTTP proxy.<br>
+                  However, that port appears to be already in use and so Psiphon cannot use it.
+                </p>
+                <p>
+                  Please change the configured HTTP proxy port value and try again. We recommended
+                  that you clear the value so that Psiphon can automatically pick an available port.
+                </p>
+            </div>
+            <span class="local-proxy-port-socks"
+                  data-i18n="[html]settings#local-proxy-ports#error-modal-body-socks">
+              <p>
+                You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>
+                However, that port appears to be already in use and so Psiphon cannot use it.
+              </p>
+              <p>
+                Please change the configured SOCKS proxy port value and try again. We recommended
+                that you clear the value so that Psiphon can automatically pick an available port.
+              </p>
+            </span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="general#modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /LocalProxyPortErrorModal -->
 
 </body>
 </html>
