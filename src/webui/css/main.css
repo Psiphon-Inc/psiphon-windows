@@ -35,6 +35,9 @@ body[dir="rtl"] .form-horizontal .form-actions {
     margin-right: -20px;
   }
 }
+body[dir="rtl"] .modal-footer {
+  text-align: left;
+}
 /*!
  * Bootstrap v2.3.2
  *

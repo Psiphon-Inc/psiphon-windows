@@ -37,3 +37,4 @@ void UI_SetStateStopping();
 void UI_SetStateStarting(const tstring& transportProtocolName);
 void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort);
 void UI_Notice(const string& noticeJSON);
+void UI_RefreshSettings(const string& settingsJSON);

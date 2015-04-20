@@ -122,6 +122,7 @@ void OnCreate(HWND hWndParent)
 #define WM_PSIPHON_HTMLUI_SETSTATE          WM_USER + 201
 #define WM_PSIPHON_HTMLUI_ADDMESSAGE        WM_USER + 202
 #define WM_PSIPHON_HTMLUI_ADDNOTICE         WM_USER + 203
+#define WM_PSIPHON_HTMLUI_REFRESHSETTINGS   WM_USER + 204
 
 static void HtmlUI_AddMessage(int priority, LPCTSTR message)
 {
@@ -150,9 +151,12 @@ static void HtmlUI_AddMessageHandler(LPCWSTR json)
     argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
     argStruct.cArgs = 1;
     argStruct.pszArg1 = json;
-    (void)SendMessage(
+    if (!SendMessage(
         g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
-        (WPARAM)_T("HtmlCtrlInterface_AddMessage"), (LPARAM)&argStruct);
+        (WPARAM)_T("HtmlCtrlInterface_AddMessage"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlCtrlInterface_AddMessage not found");
+    }
     delete[] json;
 }
 
@@ -177,9 +181,12 @@ static void HtmlUI_SetStateHandler(LPCWSTR json)
     argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
     argStruct.cArgs = 1;
     argStruct.pszArg1 = json;
-    (void)SendMessage(
+    if (!SendMessage(
         g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
-        (WPARAM)_T("HtmlCtrlInterface_SetState"), (LPARAM)&argStruct);
+        (WPARAM)_T("HtmlCtrlInterface_SetState"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlCtrlInterface_SetState not found");
+    }
     delete[] json;
 }
 
@@ -206,9 +213,44 @@ static void HtmlUI_AddNoticeHandler(LPCWSTR json)
     argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
     argStruct.cArgs = 1;
     argStruct.pszArg1 = json;
-    (void)SendMessage(
+    if (!SendMessage(
         g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
-        (WPARAM)_T("HtmlCtrlInterface_AddNotice"), (LPARAM)&argStruct);
+        (WPARAM)_T("HtmlCtrlInterface_AddNotice"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlCtrlInterface_AddNotice not found");
+    }
+    delete[] json;
+}
+
+static void HtmlUI_RefreshSettings(const string& settingsJSON)
+{
+    wstring wJson = UTF8ToWString(settingsJSON.c_str());
+
+    size_t bufLen = wJson.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, wJson.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_REFRESHSETTINGS, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_RefreshSettingsHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    if (!SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
+        (WPARAM)_T("HtmlCtrlInterface_RefreshSettings"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlCtrlInterface_RefreshSettings not found");
+    }
     delete[] json;
 }
 
@@ -229,8 +271,8 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const LPCTSTR appReady = PSIPHON_LINK_PREFIX _T("ready");
     const LPCTSTR appStart = PSIPHON_LINK_PREFIX _T("start");
     const LPCTSTR appStop = PSIPHON_LINK_PREFIX _T("stop");
-    const LPCTSTR appUpdateSettings = PSIPHON_LINK_PREFIX _T("updatesettings?");
-    const size_t appUpdateSettingsLen = _tcslen(appUpdateSettings);
+    const LPCTSTR appSaveSettings = PSIPHON_LINK_PREFIX _T("savesettings?");
+    const size_t appSaveSettingsLen = _tcslen(appSaveSettings);
     const LPCTSTR appSendFeedback = PSIPHON_LINK_PREFIX _T("sendfeedback?");
     const size_t appSendFeedbackLen = _tcslen(appSendFeedback);
     const LPCTSTR appSetCookies = PSIPHON_LINK_PREFIX _T("setcookies?");
@@ -253,20 +295,29 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         my_print(NOT_SENSITIVE, true, _T("%s: Stop requested"), __TFUNCTION__);
         g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
     }
-    else if (_tcsncmp(url, appUpdateSettings, appUpdateSettingsLen) == 0
-        && _tcslen(url) > appUpdateSettingsLen)
+    else if (_tcsncmp(url, appSaveSettings, appSaveSettingsLen) == 0
+        && _tcslen(url) > appSaveSettingsLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Update settings requested"), __TFUNCTION__);
-        tstring uriEncoded(url + appUpdateSettingsLen);
+        tstring uriEncoded(url + appSaveSettingsLen);
         string stringJSON = UriDecode(TStringToNarrow(uriEncoded));
         bool settingsChanged = false;
-        if (Settings::FromJson(stringJSON, settingsChanged) && settingsChanged
-            && (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
-            || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING))
+        if (Settings::FromJson(stringJSON, settingsChanged) && settingsChanged)
         {
-            my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
-            g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
-            g_connectionManager.Start();
+            // Refresh settings in UI
+            Json::Value settingsJSON;
+            Settings::ToJson(settingsJSON);
+            Json::FastWriter jsonWriter;
+            UI_RefreshSettings(jsonWriter.write(settingsJSON));
+
+            if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
+                || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING)
+            {
+                // Reconnect.
+                my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
+                g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+                g_connectionManager.Start();
+            }
         }
     }
     else if (_tcsncmp(url, appSendFeedback, appSendFeedbackLen) == 0
@@ -355,6 +406,11 @@ void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, i
 void UI_Notice(const string& noticeJSON)
 {
     HtmlUI_AddNotice(noticeJSON);
+}
+
+void UI_RefreshSettings(const string& settingsJSON)
+{
+    HtmlUI_RefreshSettings(settingsJSON);
 }
 
 //==== Win32 boilerplate ======================================================
@@ -542,6 +598,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PSIPHON_HTMLUI_ADDNOTICE:
         HtmlUI_AddNoticeHandler((LPCWSTR)wParam);
+        break;
+    case WM_PSIPHON_HTMLUI_REFRESHSETTINGS:
+        HtmlUI_RefreshSettingsHandler((LPCWSTR)wParam);
         break;
 
     case WM_SIZE:

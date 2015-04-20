@@ -319,7 +319,7 @@ $(function() {
       }
       else if (settingsJSON !== g_initialSettingsJSON) {
         // Settings have changed -- update them in the application (and trigger a reconnect).
-        HtmlCtrlInterface_UpdateSettings(settingsJSON);
+        HtmlCtrlInterface_SaveSettings(settingsJSON);
       }
     }
   });
@@ -591,7 +591,6 @@ function skipUpstreamProxyUpdate() {
 
 function upstreamProxyErrorNotice(errorMessage) {
   // Show/hide the appropriate message depending on the state of the settings
-  alert('g_initObj.Settings.UpstreamProxyHostname:' + g_initObj.Settings.UpstreamProxyHostname + !!g_initObj.Settings.UpstreamProxyHostname);
   $('#UpstreamProxyErrorModal .upstream-proxy-default')
     .toggleClass('hidden', !!g_initObj.Settings.UpstreamProxyHostname);
   $('#UpstreamProxyErrorModal .upstream-proxy-configured')
@@ -1023,12 +1022,16 @@ function setCookie(name, value) {
 
 var PSIPHON_LINK_PREFIX = 'psi:';
 
+/* Calls from C code to JS code. */
+
+// Add new status message.
 function HtmlCtrlInterface_AddMessage(jsonArgs) {
   setTimeout(function() {
     addLogMessage(JSON.parse(jsonArgs));
   }, 1);
 }
 
+// Add new notice. This may be interpreted and acted upon.
 function HtmlCtrlInterface_AddNotice(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
@@ -1038,6 +1041,7 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
   }, 1);
 }
 
+// Set the connected state.
 function HtmlCtrlInterface_SetState(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
@@ -1046,6 +1050,18 @@ function HtmlCtrlInterface_SetState(jsonArgs) {
   }, 1);
 }
 
+// Refresh the current settings values.
+function HtmlCtrlInterface_RefreshSettings(jsonArgs) {
+  setTimeout(function() {
+    var args = JSON.parse(jsonArgs);
+    g_initObj.Settings = args;
+    fillSettingsValues(args);
+  }, 1);
+}
+
+/* Calls from JS code to C code. */
+
+// Let the C code know that the UI is ready.
 function HtmlCtrlInterface_AppReady() {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'ready';
@@ -1058,6 +1074,7 @@ function HtmlCtrlInterface_AppReady() {
   }, 1);
 }
 
+// Connection should start.
 function HtmlCtrlInterface_Start() {
   // Prevent duplicate state change attempts
   if (g_lastState === 'starting' || g_lastState === 'connected') {
@@ -1074,6 +1091,7 @@ function HtmlCtrlInterface_Start() {
   }, 1);
 }
 
+// Connection should stop.
 function HtmlCtrlInterface_Stop() {
   // Prevent duplicate state change attempts
   if (g_lastState === 'stopping' || g_lastState === 'disconnected') {
@@ -1090,15 +1108,13 @@ function HtmlCtrlInterface_Stop() {
   }, 1);
 }
 
-function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
+// Settings should be saved.
+function HtmlCtrlInterface_SaveSettings(settingsJSON) {
   setTimeout(function() {
-    var appURL = PSIPHON_LINK_PREFIX + 'updatesettings?' + encodeURIComponent(settingsJSON);
+    var appURL = PSIPHON_LINK_PREFIX + 'savesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
-      var settingsObj = JSON.parse(settingsJSON);
-      for (var k in settingsObj) {
-        g_initObj.Settings[k] = settingsObj[k];
-      }
+      HtmlCtrlInterface_RefreshSettings(settingsJSON);
     }
     else {
       window.location = appURL;
@@ -1106,6 +1122,7 @@ function HtmlCtrlInterface_UpdateSettings(settingsJSON) {
   }, 1);
 }
 
+// Feedback should be sent.
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'sendfeedback?' + encodeURIComponent(feedbackJSON);
@@ -1118,6 +1135,7 @@ function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
   }, 1);
 }
 
+// Cookies (i.e., UI settings) should be saved.
 function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'setcookies?' + encodeURIComponent(cookiesJSON);
@@ -1130,6 +1148,7 @@ function HtmlCtrlInterface_SetCookies(cookiesJSON) {
   }, 1);
 }
 
+// Banner was clicked.
 function HtmlCtrlInterface_BannerClick() {
   setTimeout(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'bannerclick';
@@ -1151,5 +1170,6 @@ function HtmlCtrlInterface_BannerClick() {
 window.HtmlCtrlInterface_AddMessage = HtmlCtrlInterface_AddMessage;
 window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
 window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
+window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
 
 })(window);
