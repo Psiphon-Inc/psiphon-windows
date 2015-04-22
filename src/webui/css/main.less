@@ -358,63 +358,6 @@ body {
   }
 }
 
-/*
-// msDropdown fixes
-
-.dd {
-  body[dir="rtl"] & {
-    &.ddcommon .ddArrow{
-      left: 4px;
-      right: auto;
-    }
-
-    .divider{
-      border-right: 1px solid #c3c3c3;
-      border-left: 1px solid #fff;
-      left: 24px;
-      right: auto;
-    }
-  }
-
-  .ddChild li {
-    border-bottom: none;
-  }
-
-  .ddTitle .ddTitleText {
-    padding: 0 0 0 0;
-  }
-
-  .f32 .ddlabel {
-    line-height: 32px;
-  }
-}
-
-.dd {
-  .f16, .f32 {
-    & .flag {
-      margin: 0 5px 0 5px;
-      body[dir="ltr"] & {
-        float: left;
-      }
-      body[dir="rtl"] & {
-        float: right;
-      }
-    }
-  }
-}
-
-.f16 {
-  & .unknown{
-    background:url(../flag_unknown_16.png) no-repeat;
-  }
-}
-
-.f32 {
-  & .unknown{
-    background:url(../flag_unknown_32.png) no-repeat;
-  }
-}
-*/
 
 /* FEEDBACK */
 
@@ -530,6 +473,12 @@ body {
 // https://css-tricks.com/ie-fix-bicubic-scaling-for-images/
 img {
   -ms-interpolation-mode: bicubic;
+}
+
+// Give our egress region selector an error state
+.control-group.dropdown-menu.error {
+  border-color: darken(@errorBorder, 20%);
+  .box-shadow(0 5px 10px darken(@errorBorder, 20%));
 }
 
 

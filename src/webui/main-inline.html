@@ -9112,63 +9112,6 @@ body[dir="rtl"] #EgressRegion .flag {
   background-image: url(flag_unknown_32.png) !important;
   background-repeat: no-repeat;
 }
-/*
-// msDropdown fixes
-
-.dd {
-  body[dir="rtl"] & {
-    &.ddcommon .ddArrow{
-      left: 4px;
-      right: auto;
-    }
-
-    .divider{
-      border-right: 1px solid #c3c3c3;
-      border-left: 1px solid #fff;
-      left: 24px;
-      right: auto;
-    }
-  }
-
-  .ddChild li {
-    border-bottom: none;
-  }
-
-  .ddTitle .ddTitleText {
-    padding: 0 0 0 0;
-  }
-
-  .f32 .ddlabel {
-    line-height: 32px;
-  }
-}
-
-.dd {
-  .f16, .f32 {
-    & .flag {
-      margin: 0 5px 0 5px;
-      body[dir="ltr"] & {
-        float: left;
-      }
-      body[dir="rtl"] & {
-        float: right;
-      }
-    }
-  }
-}
-
-.f16 {
-  & .unknown{
-    background:url(flag_unknown_16.png) no-repeat;
-  }
-}
-
-.f32 {
-  & .unknown{
-    background:url(flag_unknown_32.png) no-repeat;
-  }
-}
-*/
 /* FEEDBACK */
 .feedback-smiley-container {
   margin-left: 5px;
@@ -9254,6 +9197,12 @@ body[dir="rtl"] .global-alert {
 }
 img {
   -ms-interpolation-mode: bicubic;
+}
+.control-group.dropdown-menu.error {
+  border-color: #d18a96;
+  -webkit-box-shadow: 0 5px 10px #d18a96;
+  -moz-box-shadow: 0 5px 10px #d18a96;
+  box-shadow: 0 5px 10px #d18a96;
 }
 /*
  * FONTS
@@ -13415,8 +13364,11 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
       "nav#messages": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
       "nav#settings": "[Şḗḗŧŧīīƞɠş]",
+      "settings#egress-region#error-modal-body-http": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ \"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\" ƈħǿǿīīƈḗḗ.]",
+      "settings#egress-region#error-modal-title": "[Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ Ŭŭƞȧȧṽȧȧīīŀȧȧƀŀḗḗ]",
       "settings#egress-region#heading": "[Ƥşīīƥħǿǿƞ Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ]",
       "settings#egress-region#help-text": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ƒǿǿř ŧħḗḗ ƒȧȧşŧḗḗşŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ şƥḗḗḗḗḓ ẏǿǿŭŭ şħǿǿŭŭŀḓ ƈħǿǿǿǿşḗḗ <strong>\"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\"</strong>, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ īīƞşŧḗḗȧȧḓ ƥřḗḗƒḗḗř ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
+      "settings#egress-region#invalid-error-msg": "[Ƈħǿǿǿǿşḗḗ ȧȧ ṽȧȧŀīīḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ.]",
       "settings#egress-region#select-best-performance": "[Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ]",
       "settings#egress-region#select-de": "[Ɠḗḗřḿȧȧƞẏ]",
       "settings#egress-region#select-gb": "[Ŭŭƞīīŧḗḗḓ Ķīīƞɠḓǿǿḿ]",
@@ -13425,8 +13377,8 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#egress-region#select-sg": "[Şīīƞɠȧȧƥǿǿřḗḗ]",
       "settings#egress-region#select-us": "[Ŭŭƞīīŧḗḗḓ Şŧȧȧŧḗḗş]",
       "settings#error-alert": "[<strong>Ḗḗřřǿǿř!</strong> Ƥŀḗḗȧȧşḗḗ ƒīīẋ īīƞƈǿǿřřḗḗƈŧ ṽȧȧŀŭŭḗḗş ƀḗḗƒǿǿřḗḗ ƥřǿǿƈḗḗḗḗḓīīƞɠ.]",
-      "settings#local-proxy-ports#error-modal-body-http": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ĦŦŦƤ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.<br>\nƤŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ĦŦŦƤ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.]",
-      "settings#local-proxy-ports#error-modal-body-socks": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ŞǾǿƇĶŞ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.<br>\nƤŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŞǾǿƇĶŞ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.]",
+      "settings#local-proxy-ports#error-modal-body-http": "[<p>\nẎǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ĦŦŦƤ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.\n</p>\n<p>\nƤŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ĦŦŦƤ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.\n</p>]",
+      "settings#local-proxy-ports#error-modal-body-socks": "[<p>\nẎǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ŞǾǿƇĶŞ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.\n</p>\n<p>\nƤŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŞǾǿƇĶŞ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.\n</p>]",
       "settings#local-proxy-ports#error-modal-title": "[Ŀǿǿƈȧȧŀ Ƥřǿǿẋẏ Ƥǿǿřŧ Ƈǿǿƞƒŀīīƈŧ]",
       "settings#local-proxy-ports#heading": "[Ŀǿǿƈȧȧŀ Ƥřǿǿẋẏ Ƥǿǿřŧş]",
       "settings#local-proxy-ports#http-label": "[ĦŦŦƤ/ĦŦŦƤŞ]",
@@ -13492,8 +13444,11 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
       "nav#messages": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
       "nav#settings": "‮Sǝʇʇıuƃs‬",
+      "settings#egress-region#error-modal-body-http": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɹǝƃıou‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮ɹǝƃıou‬ ‮ıs‬ ‮uo‬ ‮ʅouƃǝɹ‬ ‮ɐʌɐıʅɐqʅǝ‬.<br>\n‮ʎon‬ ‮ɯnsʇ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ɹǝƃıou‬ ‮oɹ‬ ‮ɔɥɐuƃǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ \"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\" ‮ɔɥoıɔǝ‬.",
+      "settings#egress-region#error-modal-title": "‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬ ‮∩uɐʌɐıʅɐqʅǝ‬",
       "settings#egress-region#heading": "‮Ԁsıdɥou‬ ‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬",
       "settings#egress-region#help-text": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ <strong>\"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\"</strong>, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
+      "settings#egress-region#invalid-error-msg": "‮Ↄɥoosǝ‬ ‮ɐ‬ ‮ʌɐʅıp‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬.",
       "settings#egress-region#select-best-performance": "‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬",
       "settings#egress-region#select-de": "‮פǝɹɯɐuʎ‬",
       "settings#egress-region#select-gb": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
@@ -13502,8 +13457,8 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#egress-region#select-sg": "‮Sıuƃɐdoɹǝ‬",
       "settings#egress-region#select-us": "‮∩uıʇǝp‬ ‮Sʇɐʇǝs‬",
       "settings#error-alert": "<strong>‮Ǝɹɹoɹ‬!</strong> ‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ıuɔoɹɹǝɔʇ‬ ‮ʌɐʅnǝs‬ ‮qǝɟoɹǝ‬ ‮dɹoɔǝǝpıuƃ‬.",
-      "settings#local-proxy-ports#error-modal-body-http": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.",
-      "settings#local-proxy-ports#error-modal-body-socks": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮SOↃӼS‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮SOↃӼS‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.",
+      "settings#local-proxy-ports#error-modal-body-http": "<p>\n‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.\n</p>\n<p>\n‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.\n</p>",
+      "settings#local-proxy-ports#error-modal-body-socks": "<p>\n‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮SOↃӼS‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.\n</p>\n<p>\n‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮SOↃӼS‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.\n</p>",
       "settings#local-proxy-ports#error-modal-title": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇ‬ ‮Ↄouɟʅıɔʇ‬",
       "settings#local-proxy-ports#heading": "‮˥oɔɐʅ‬ ‮Ԁɹoxʎ‬ ‮Ԁoɹʇs‬",
       "settings#local-proxy-ports#http-label": "‮H⊥⊥Ԁ‬/‮H⊥⊥ԀS‬",
@@ -13578,6 +13533,9 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#egress-region#select-nl": "Netherlands",
       "settings#egress-region#select-de": "Germany",
       "settings#egress-region#help-text": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>\"Best Performance\"</strong>, but you may instead prefer to use a server in a specific country.",
+      "settings#egress-region#invalid-error-msg": "Choose a valid Psiphon server region.",
+      "settings#egress-region#error-modal-title": "Server Region Unavailable",
+      "settings#egress-region#error-modal-body-http": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default \"Best Performance\" choice.",
       "settings#local-proxy-ports#heading": "Local Proxy Ports",
       "settings#local-proxy-ports#leave-blank": "Leave blank for automatic port selection (recommended).",
       "settings#local-proxy-ports#http-label": "HTTP/HTTPS",
@@ -13585,8 +13543,8 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#local-proxy-ports#socks-label": "SOCKS",
       "settings#local-proxy-ports#unique-error-msg": "Local ports must be distinct from each other.",
       "settings#local-proxy-ports#error-modal-title": "Local Proxy Port Conflict",
-      "settings#local-proxy-ports#error-modal-body-http": "<p>You have configured Psiphon to use a specific local port for its HTTP proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.</p>\n<p>Please change the configured HTTP proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.</p>",
-      "settings#local-proxy-ports#error-modal-body-socks": "<p>You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.</p>\n<p>Please change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.</p>",
+      "settings#local-proxy-ports#error-modal-body-http": "<p>\nYou have configured Psiphon to use a specific local port for its HTTP proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured HTTP proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
+      "settings#local-proxy-ports#error-modal-body-socks": "<p>\nYou have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
       "settings#upstream-proxy#heading": "Upstream Proxy",
       "settings#upstream-proxy#by-default": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that by specifying a proxy to use, or by specifying that no such \"upstream proxy\" should be used.<br> Only HTTP proxies that support HTTPS are allowed.",
       "settings#upstream-proxy#hostname-label": "Hostname",
@@ -14353,6 +14311,10 @@ var g_initObj = {};
     g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/psiphon3/index.html';
     g_initObj.Config.GetNewVersionEmail = g_initObj.Config.GetNewVersionEmail || 'psiget@example.com';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
+
+    g_initObj.Cookies = JSON.stringify({
+      AvailableEgressRegions: ["US", "GB", "JP", "NL", "DE"]
+    });
   }
 })();
 
@@ -14544,10 +14506,27 @@ $(function() {
   // This is merely to help with testing
   if (!g_initObj.Settings)
   {
-    g_initObj.Settings = { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": 7771, "LocalSocksProxyPort": 7770, "SkipUpstreamProxy": 1, "UpstreamProxyHostname": "upstreamhost", "UpstreamProxyPort": 234, "EgressRegion": "GB", "defaults": { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": "", "LocalSocksProxyPort": "", "SkipUpstreamProxy": 0, "UpstreamProxyHostname": "", "UpstreamProxyPort": "", "EgressRegion": ""  } };
+    g_initObj.Settings = { 
+      SplitTunnel: 0, 
+      VPN: 0, 
+      LocalHttpProxyPort: 7771, 
+      LocalSocksProxyPort: 7770, 
+      SkipUpstreamProxy: 1, 
+      UpstreamProxyHostname: 'upstreamhost', 
+      UpstreamProxyPort: 234, 
+      EgressRegion: 'GB', 
+      defaults: { 
+        SplitTunnel: 0, 
+        VPN: 0, 
+        LocalHttpProxyPort: '', 
+        LocalSocksProxyPort: '', 
+        SkipUpstreamProxy: 0, 
+        UpstreamProxyHostname: '', 
+        UpstreamProxyPort: '', 
+        EgressRegion: ''  
+      } 
+    };
   }
-
-  fillSettingsValues(g_initObj.Settings);
 
   $('.settings-reset a').click(onSettingsReset);
 
@@ -14572,17 +14551,11 @@ $(function() {
       $(headingSelector).blur();
     });
 
-  // Handle changes to the Egress Region
-  $('#EgressRegion a').click(function(e) {
-    e.preventDefault();
-    $('#EgressRegion [data-region]').removeClass('active');
-    $(this).parents('[data-region]').addClass('active');
-  });
-
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
 
+  egressRegionSetup();
   localProxySetup();
   upstreamProxySetup();
 
@@ -14600,25 +14573,11 @@ $(function() {
         !$(this).parent().is($('#settings-tab'))) { // we won't be active
       var settingsJSON = settingsToJSON();
       if (settingsJSON === false) {
-        e.preventDefault();
-
         // Settings are invalid. Expand the error sections and prevent switching tabs.
-        $('#settings-accordion .collapse .error').parents('.collapse').eq(0).collapse('show');
-        // The rest of the sections will collapse automatically.
-
-        // Scroll to the section, after allowing the section to expand
-        setTimeout(function() {
-          $('#settings-pane').scrollTo(
-            $('#settings-pane .error').parents('.accordion-group').eq(0),
-            {
-              duration: 500, // animation time
-              offset: -50,   // leave some space for the alert
-              onAfter: function() {
-                $('#settings-pane .error input').eq(0).focus();
-              }
-            });
-        }, 200);
-
+        e.preventDefault();
+        showSettingsSection(
+          $('#settings-accordion .collapse .error').parents('.collapse').eq(0),
+          $('#settings-pane .error input').eq(0).focus());
         return;
       }
       else if (settingsJSON !== g_initialSettingsJSON) {
@@ -14627,7 +14586,28 @@ $(function() {
       }
     }
   });
+
+  updateAvailableEgressRegions();
+  refreshSettings();
 });
+
+// Refresh the current settings. If newSettings is truthy, it will become the 
+// the new current settings, otherwise the existing current settings will be 
+// refreshed in the UI.
+function refreshSettings(newSettings) {
+  newSettings = newSettings || g_initObj.Settings;
+  var oldDefaults = g_initObj.Settings.defaults;
+  g_initObj.Settings = newSettings;
+  if (!g_initObj.Settings.defaults) {
+    g_initObj.Settings.defaults = oldDefaults;
+  }
+  fillSettingsValues(g_initObj.Settings);
+
+  // When the settings change, we need to check the current egress region choice.
+  forceEgressRegionValid();
+  // NOTE: If more checks like this are added, we'll need to chain them (somehow),
+  // otherwise we'll have a mess of modals.
+}
 
 function fillSettingsValues(obj) {
   if (typeof(obj.SplitTunnel) !== 'undefined') {
@@ -14674,13 +14654,14 @@ function fillSettingsValues(obj) {
 
 function onSettingsReset(e) {
   e.preventDefault();
-  fillSettingsValues(g_initObj.Settings.defaults);
+  refreshSettings(g_initObj.Settings.defaults);
 }
 
 // Packages the current settings into JSON string. Returns if invalid value found.
 function settingsToJSON() {
   var valid = true;
 
+  valid = valid && egressRegionValid(true);
   valid = valid && localProxyValid(true);
   valid = valid && upstreamProxyValid(true);
 
@@ -14726,6 +14707,85 @@ function validatePort(val) {
   }
 
   return val;
+}
+
+// Will be called exactly once. Set up event listeners, etc.
+function egressRegionSetup() {
+  // Handle changes to the Egress Region
+  $('#EgressRegion a').click(function(e) {
+    e.preventDefault();
+    $('#EgressRegion [data-region]').removeClass('active');
+    $(this).parents('[data-region]').addClass('active');
+    egressRegionValid(false);
+  });
+}
+
+// Returns true if the egress region value is valid, otherwise false.
+// Shows/hides an error message as appropriate.
+function egressRegionValid(finalCheck) {
+  var $currRegionElem = $('#EgressRegion li.active');
+
+  // If there's no selected region yet, select BEST.
+  // Note that this condition shouldn't actually happen.
+  if ($currRegionElem.length === 0) {
+    $('#EgressRegion li[data-region="'+BEST_REGION_VALUE+'"]').addClass('active');
+  }
+
+  // Check to make sure the currently selected egress region is one of the 
+  // available regions.
+  var valid = !$currRegionElem.hasClass('hidden');
+
+  $('#EgressRegion').toggleClass('error', !valid);
+  $('#settings-accordion-egress-region .egress-region-invalid').toggleClass('hidden', valid);
+
+  updateErrorAlert();
+  return valid;
+}
+
+// Check to make sure the currently selected egress region is one of the available
+// regions. If not, inform the user and get them to pick another.
+// A mismatch may occur either as a result of a change in the available egress
+// regions, or a change in the current selection (i.e., a settings change).
+function forceEgressRegionValid() {
+  if (egressRegionValid()) {
+    // Valid, nothing to do
+    return;
+  }
+
+  // Put up the modal
+  $('#EgressRegionUnavailableModal').modal({
+    show: true,
+    backdrop: 'static'
+  });
+
+  showSettingsSection('#settings-accordion-egress-region');
+}
+
+// // Update the egress region options we show in the UI.
+// If currently selected region is no longer available, the user will be prompted
+// to pick a new one.
+function updateAvailableEgressRegions() {
+  var regions = getCookie('AvailableEgressRegions');
+  // On first run there will be no such cookie.
+  regions = regions || [];
+
+  $('#EgressRegion li').each(function() {
+    var elemRegion = $(this).data('region');
+
+    // If no region, this is a divider
+    if (!elemRegion) {
+      return;
+    }
+
+    if (regions.indexOf(elemRegion) >= 0 || elemRegion === BEST_REGION_VALUE) {
+      $(this).removeClass('hidden');
+    }
+    else {
+      $(this).addClass('hidden');
+    }
+  });
+
+  forceEgressRegionValid();
 }
 
 // Will be called exactly once. Set up event listeners, etc.
@@ -14908,7 +14968,7 @@ function showSettingsSection(section, focusElem) {
           $(section).parents('.accordion-group').eq(0),
           {
             duration: 500, // animation time
-            offset: 0,
+            offset: -50,   // leave some space for the alert
             onAfter: function() {
               if (focusElem) {
                 $(focusElem).eq(0).focus();
@@ -14919,8 +14979,15 @@ function showSettingsSection(section, focusElem) {
     }, 500);
   }
 
-  $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
-  $('.main-nav a[href="#settings-pane"]').tab('show');
+  if ($('#settings-tab').hasClass('active')) {
+    // Settings tab already showing. Just expand and scroll.
+    onTabShown();
+  }
+  else {
+    // Settings tab not already showing. Switch to it before expanding and scrolling.
+    $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
+    $('.main-nav a[href="#settings-pane"]').tab('show');
+  }
 }
 
 function upstreamProxyErrorNotice(errorMessage) {
@@ -14957,19 +15024,19 @@ function upstreamProxyErrorNotice(errorMessage) {
   showSettingsSection('#settings-accordion-upstream-proxy');
 }
 
-function localProxyPortConflictNotice(noticetype) {
+function localProxyPortConflictNotice(noticeType) {
   // Show/hide the appropriate message depending on the error
   $('#LocalProxyPortErrorModal .local-proxy-port-http')
-    .toggleClass('hidden', noticetype !== 'HttpProxyPortInUse');
+    .toggleClass('hidden', noticeType !== 'HttpProxyPortInUse');
   $('#LocalProxyPortErrorModal .local-proxy-port-socks')
-    .toggleClass('hidden', noticetype !== 'SocksProxyPortInUse');
+    .toggleClass('hidden', noticeType !== 'SocksProxyPortInUse');
 
   // Put up the modal
   $('#LocalProxyPortErrorModal').modal({
     show: true,
     backdrop: 'static'
   }).on('hidden', function() {
-    if (noticetype === 'HttpProxyPortInUse') {
+    if (noticeType === 'HttpProxyPortInUse') {
       $('#LocalHttpProxyPort').focus();
     }
     else {
@@ -14980,7 +15047,7 @@ function localProxyPortConflictNotice(noticetype) {
   // Switch to the appropriate settings section
   showSettingsSection(
     '#settings-accordion-local-proxy-ports',
-    noticetype === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
+    noticeType === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
 }
 
 
@@ -15375,12 +15442,18 @@ function HtmlCtrlInterface_AddMessage(jsonArgs) {
 function HtmlCtrlInterface_AddNotice(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
-    if (args.noticeType === "UpstreamProxyError") {
+    if (args.noticeType === 'UpstreamProxyError') {
       upstreamProxyErrorNotice(args.data.message);
     }
-    else if (args.noticeType === "HttpProxyPortInUse" ||
-             args.noticeType === "SocksProxyPortInUse") {
+    else if (args.noticeType === 'HttpProxyPortInUse' ||
+             args.noticeType === 'SocksProxyPortInUse') {
       localProxyPortConflictNotice(args.noticeType);
+    }
+    else if (args.noticeType === 'AvailableEgressRegions') {
+      // Store the value in a cookie so that it's available at the next startup.
+      setCookie('AvailableEgressRegions', args.data.regions);
+      // Update the UI.
+      updateAvailableEgressRegions();
     }
   }, 1);
 }
@@ -15398,8 +15471,7 @@ function HtmlCtrlInterface_SetState(jsonArgs) {
 function HtmlCtrlInterface_RefreshSettings(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
-    g_initObj.Settings = args;
-    fillSettingsValues(args);
+    refreshSettings(args);
   }, 1);
 }
 
@@ -15765,9 +15837,16 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                           (Doesn't work with VPN mode.)
                         </small>
                       </span>
+                      <span class="help-block egress-region-invalid">
+                        <span class="text-error"
+                              data-i18n="settings#egress-region#invalid-error-msg">
+                          Choose a valid Psiphon server region.
+                        </span>
+                      </span>
                       <div class="controls">
                         <div class="dropdown clearfix">
-                          <ul id="EgressRegion" class="dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">
+                          <!-- Giving this the `control-group` class is a bit of a hack to get its error state working right. -->
+                          <ul id="EgressRegion" class="control-group dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">
                             <li data-region="BEST">
                               <a tabindex="-1" href="#" class="flag unknown"
                                  data-i18n="settings#egress-region#select-best-performance">
@@ -16169,7 +16248,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
     <strong>Hello!</strong> Welcome to Psiphon.
   </div>
 
-  <!-- Modal dialog shown to users when there's an upstream proxy error -->
+  <!-- Modal dialog shown to user when there's an upstream proxy error -->
   <div class="modal fade" id="UpstreamProxyErrorModal" tabindex="-1" role="dialog"
        aria-labelledby="UpstreamProxyErrorTitle" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -16217,7 +16296,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
     </div>
   </div><!-- /UpstreamProxyErrorModal -->
 
-  <!-- Modal dialog shown to users when there's a local proxy port conflict -->
+  <!-- Modal dialog shown to user when there's a local proxy port conflict -->
   <div class="modal fade" id="LocalProxyPortErrorModal" tabindex="-1" role="dialog"
        aria-labelledby="LocalProxyPortErrorTitle" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -16230,28 +16309,59 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
           </h3>
         </div>
         <div class="modal-body">
-          <p>
-            <div class="local-proxy-port-http"
-                 data-i18n="[html]settings#local-proxy-ports#error-modal-body-http">
-                <p>
-                  You have configured Psiphon to use a specific local port for its HTTP proxy.<br>
-                  However, that port appears to be already in use and so Psiphon cannot use it.
-                </p>
-                <p>
-                  Please change the configured HTTP proxy port value and try again. We recommended
-                  that you clear the value so that Psiphon can automatically pick an available port.
-                </p>
-            </div>
-            <span class="local-proxy-port-socks"
-                  data-i18n="[html]settings#local-proxy-ports#error-modal-body-socks">
+          <div class="local-proxy-port-http"
+               data-i18n="[html]settings#local-proxy-ports#error-modal-body-http">
               <p>
-                You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>
+                You have configured Psiphon to use a specific local port for its HTTP proxy.<br>
                 However, that port appears to be already in use and so Psiphon cannot use it.
               </p>
               <p>
-                Please change the configured SOCKS proxy port value and try again. We recommended
+                Please change the configured HTTP proxy port value and try again. We recommended
                 that you clear the value so that Psiphon can automatically pick an available port.
               </p>
+          </div>
+          <div class="local-proxy-port-socks"
+                data-i18n="[html]settings#local-proxy-ports#error-modal-body-socks">
+            <p>
+              You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>
+              However, that port appears to be already in use and so Psiphon cannot use it.
+            </p>
+            <p>
+              Please change the configured SOCKS proxy port value and try again. We recommended
+              that you clear the value so that Psiphon can automatically pick an available port.
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="general#modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /LocalProxyPortErrorModal -->
+
+  <!-- Modal dialog shown to user when it is detected that their selected
+       egress region is not among the available egress regions. -->
+  <div class="modal fade" id="EgressRegionUnavailableModal" tabindex="-1" role="dialog"
+       aria-labelledby="EgressRegionUnavailableTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="EgressRegionUnavailableTitle">
+            <span data-i18n="settings#egress-region#error-modal-title">
+              Server Region Unavailable
+            </span>
+          </h3>
+        </div>
+        <div class="modal-body">
+          <p>
+            <span data-i18n="[html]settings#egress-region#error-modal-body-http">
+              You have configured Psiphon to use a server in a specific region.<br>
+              However, that region is no longer available.<br>
+              You must choose a new region or change to the default "Best Performance" choice.
             </span>
           </p>
         </div>
@@ -16264,7 +16374,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
         </div>
       </div>
     </div>
-  </div><!-- /LocalProxyPortErrorModal -->
+  </div><!-- /EgressRegionUnavailableModal -->
 
 </body>
 </html>

@@ -119,6 +119,18 @@
     "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>\"Best Performance\"</strong>, but you may instead prefer to use a server in a specific country.",
     "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
   },
+  "settings#egress-region#invalid-error-msg": {
+    "message": "Choose a valid Psiphon server region.",
+    "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+  },
+  "settings#egress-region#error-modal-title": {
+    "message": "Server Region Unavailable",
+    "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+  },
+  "settings#egress-region#error-modal-body-http": {
+    "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default \"Best Performance\" choice.",
+    "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+  },
   "settings#local-proxy-ports#heading": {
     "message": "Local Proxy Ports",
     "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
@@ -148,11 +160,11 @@
     "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
   },
   "settings#local-proxy-ports#error-modal-body-http": {
-    "message": "<p>You have configured Psiphon to use a specific local port for its HTTP proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.</p>\n<p>Please change the configured HTTP proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.</p>",
+    "message": "<p>\nYou have configured Psiphon to use a specific local port for its HTTP proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured HTTP proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
     "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
   },
   "settings#local-proxy-ports#error-modal-body-socks": {
-    "message": "<p>You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.</p>\n<p>Please change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.</p>",
+    "message": "<p>\nYou have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
     "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
   },
   "settings#upstream-proxy#heading": {

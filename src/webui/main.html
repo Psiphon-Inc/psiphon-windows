@@ -311,9 +311,16 @@
                           (Doesn't work with VPN mode.)
                         </small>
                       </span>
+                      <span class="help-block egress-region-invalid">
+                        <span class="text-error"
+                              data-i18n="settings#egress-region#invalid-error-msg">
+                          Choose a valid Psiphon server region.
+                        </span>
+                      </span>
                       <div class="controls">
                         <div class="dropdown clearfix">
-                          <ul id="EgressRegion" class="dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">
+                          <!-- Giving this the `control-group` class is a bit of a hack to get its error state working right. -->
+                          <ul id="EgressRegion" class="control-group dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">
                             <li data-region="BEST">
                               <a tabindex="-1" href="#" class="flag unknown"
                                  data-i18n="settings#egress-region#select-best-performance">
@@ -715,7 +722,7 @@
     <strong>Hello!</strong> Welcome to Psiphon.
   </div>
 
-  <!-- Modal dialog shown to users when there's an upstream proxy error -->
+  <!-- Modal dialog shown to user when there's an upstream proxy error -->
   <div class="modal fade" id="UpstreamProxyErrorModal" tabindex="-1" role="dialog"
        aria-labelledby="UpstreamProxyErrorTitle" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -763,7 +770,7 @@
     </div>
   </div><!-- /UpstreamProxyErrorModal -->
 
-  <!-- Modal dialog shown to users when there's a local proxy port conflict -->
+  <!-- Modal dialog shown to user when there's a local proxy port conflict -->
   <div class="modal fade" id="LocalProxyPortErrorModal" tabindex="-1" role="dialog"
        aria-labelledby="LocalProxyPortErrorTitle" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -776,28 +783,59 @@
           </h3>
         </div>
         <div class="modal-body">
-          <p>
-            <div class="local-proxy-port-http"
-                 data-i18n="[html]settings#local-proxy-ports#error-modal-body-http">
-                <p>
-                  You have configured Psiphon to use a specific local port for its HTTP proxy.<br>
-                  However, that port appears to be already in use and so Psiphon cannot use it.
-                </p>
-                <p>
-                  Please change the configured HTTP proxy port value and try again. We recommended
-                  that you clear the value so that Psiphon can automatically pick an available port.
-                </p>
-            </div>
-            <span class="local-proxy-port-socks"
-                  data-i18n="[html]settings#local-proxy-ports#error-modal-body-socks">
+          <div class="local-proxy-port-http"
+               data-i18n="[html]settings#local-proxy-ports#error-modal-body-http">
               <p>
-                You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>
+                You have configured Psiphon to use a specific local port for its HTTP proxy.<br>
                 However, that port appears to be already in use and so Psiphon cannot use it.
               </p>
               <p>
-                Please change the configured SOCKS proxy port value and try again. We recommended
+                Please change the configured HTTP proxy port value and try again. We recommended
                 that you clear the value so that Psiphon can automatically pick an available port.
               </p>
+          </div>
+          <div class="local-proxy-port-socks"
+                data-i18n="[html]settings#local-proxy-ports#error-modal-body-socks">
+            <p>
+              You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>
+              However, that port appears to be already in use and so Psiphon cannot use it.
+            </p>
+            <p>
+              Please change the configured SOCKS proxy port value and try again. We recommended
+              that you clear the value so that Psiphon can automatically pick an available port.
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="general#modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /LocalProxyPortErrorModal -->
+
+  <!-- Modal dialog shown to user when it is detected that their selected
+       egress region is not among the available egress regions. -->
+  <div class="modal fade" id="EgressRegionUnavailableModal" tabindex="-1" role="dialog"
+       aria-labelledby="EgressRegionUnavailableTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="EgressRegionUnavailableTitle">
+            <span data-i18n="settings#egress-region#error-modal-title">
+              Server Region Unavailable
+            </span>
+          </h3>
+        </div>
+        <div class="modal-body">
+          <p>
+            <span data-i18n="[html]settings#egress-region#error-modal-body-http">
+              You have configured Psiphon to use a server in a specific region.<br>
+              However, that region is no longer available.<br>
+              You must choose a new region or change to the default "Best Performance" choice.
             </span>
           </p>
         </div>
@@ -810,7 +848,7 @@
         </div>
       </div>
     </div>
-  </div><!-- /LocalProxyPortErrorModal -->
+  </div><!-- /EgressRegionUnavailableModal -->
 
 </body>
 </html>

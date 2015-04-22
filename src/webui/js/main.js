@@ -49,6 +49,10 @@ var g_initObj = {};
     g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/psiphon3/index.html';
     g_initObj.Config.GetNewVersionEmail = g_initObj.Config.GetNewVersionEmail || 'psiget@example.com';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
+
+    g_initObj.Cookies = JSON.stringify({
+      AvailableEgressRegions: ["US", "GB", "JP", "NL", "DE"]
+    });
   }
 })();
 
@@ -240,10 +244,27 @@ $(function() {
   // This is merely to help with testing
   if (!g_initObj.Settings)
   {
-    g_initObj.Settings = { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": 7771, "LocalSocksProxyPort": 7770, "SkipUpstreamProxy": 1, "UpstreamProxyHostname": "upstreamhost", "UpstreamProxyPort": 234, "EgressRegion": "GB", "defaults": { "SplitTunnel": 0, "VPN": 0, "LocalHttpProxyPort": "", "LocalSocksProxyPort": "", "SkipUpstreamProxy": 0, "UpstreamProxyHostname": "", "UpstreamProxyPort": "", "EgressRegion": ""  } };
+    g_initObj.Settings = { 
+      SplitTunnel: 0, 
+      VPN: 0, 
+      LocalHttpProxyPort: 7771, 
+      LocalSocksProxyPort: 7770, 
+      SkipUpstreamProxy: 1, 
+      UpstreamProxyHostname: 'upstreamhost', 
+      UpstreamProxyPort: 234, 
+      EgressRegion: 'GB', 
+      defaults: { 
+        SplitTunnel: 0, 
+        VPN: 0, 
+        LocalHttpProxyPort: '', 
+        LocalSocksProxyPort: '', 
+        SkipUpstreamProxy: 0, 
+        UpstreamProxyHostname: '', 
+        UpstreamProxyPort: '', 
+        EgressRegion: ''  
+      } 
+    };
   }
-
-  fillSettingsValues(g_initObj.Settings);
 
   $('.settings-reset a').click(onSettingsReset);
 
@@ -268,17 +289,11 @@ $(function() {
       $(headingSelector).blur();
     });
 
-  // Handle changes to the Egress Region
-  $('#EgressRegion a').click(function(e) {
-    e.preventDefault();
-    $('#EgressRegion [data-region]').removeClass('active');
-    $(this).parents('[data-region]').addClass('active');
-  });
-
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
 
+  egressRegionSetup();
   localProxySetup();
   upstreamProxySetup();
 
@@ -296,25 +311,11 @@ $(function() {
         !$(this).parent().is($('#settings-tab'))) { // we won't be active
       var settingsJSON = settingsToJSON();
       if (settingsJSON === false) {
-        e.preventDefault();
-
         // Settings are invalid. Expand the error sections and prevent switching tabs.
-        $('#settings-accordion .collapse .error').parents('.collapse').eq(0).collapse('show');
-        // The rest of the sections will collapse automatically.
-
-        // Scroll to the section, after allowing the section to expand
-        setTimeout(function() {
-          $('#settings-pane').scrollTo(
-            $('#settings-pane .error').parents('.accordion-group').eq(0),
-            {
-              duration: 500, // animation time
-              offset: -50,   // leave some space for the alert
-              onAfter: function() {
-                $('#settings-pane .error input').eq(0).focus();
-              }
-            });
-        }, 200);
-
+        e.preventDefault();
+        showSettingsSection(
+          $('#settings-accordion .collapse .error').parents('.collapse').eq(0),
+          $('#settings-pane .error input').eq(0).focus());
         return;
       }
       else if (settingsJSON !== g_initialSettingsJSON) {
@@ -323,7 +324,28 @@ $(function() {
       }
     }
   });
+
+  updateAvailableEgressRegions();
+  refreshSettings();
 });
+
+// Refresh the current settings. If newSettings is truthy, it will become the 
+// the new current settings, otherwise the existing current settings will be 
+// refreshed in the UI.
+function refreshSettings(newSettings) {
+  newSettings = newSettings || g_initObj.Settings;
+  var oldDefaults = g_initObj.Settings.defaults;
+  g_initObj.Settings = newSettings;
+  if (!g_initObj.Settings.defaults) {
+    g_initObj.Settings.defaults = oldDefaults;
+  }
+  fillSettingsValues(g_initObj.Settings);
+
+  // When the settings change, we need to check the current egress region choice.
+  forceEgressRegionValid();
+  // NOTE: If more checks like this are added, we'll need to chain them (somehow),
+  // otherwise we'll have a mess of modals.
+}
 
 function fillSettingsValues(obj) {
   if (typeof(obj.SplitTunnel) !== 'undefined') {
@@ -370,13 +392,14 @@ function fillSettingsValues(obj) {
 
 function onSettingsReset(e) {
   e.preventDefault();
-  fillSettingsValues(g_initObj.Settings.defaults);
+  refreshSettings(g_initObj.Settings.defaults);
 }
 
 // Packages the current settings into JSON string. Returns if invalid value found.
 function settingsToJSON() {
   var valid = true;
 
+  valid = valid && egressRegionValid(true);
   valid = valid && localProxyValid(true);
   valid = valid && upstreamProxyValid(true);
 
@@ -422,6 +445,85 @@ function validatePort(val) {
   }
 
   return val;
+}
+
+// Will be called exactly once. Set up event listeners, etc.
+function egressRegionSetup() {
+  // Handle changes to the Egress Region
+  $('#EgressRegion a').click(function(e) {
+    e.preventDefault();
+    $('#EgressRegion [data-region]').removeClass('active');
+    $(this).parents('[data-region]').addClass('active');
+    egressRegionValid(false);
+  });
+}
+
+// Returns true if the egress region value is valid, otherwise false.
+// Shows/hides an error message as appropriate.
+function egressRegionValid(finalCheck) {
+  var $currRegionElem = $('#EgressRegion li.active');
+
+  // If there's no selected region yet, select BEST.
+  // Note that this condition shouldn't actually happen.
+  if ($currRegionElem.length === 0) {
+    $('#EgressRegion li[data-region="'+BEST_REGION_VALUE+'"]').addClass('active');
+  }
+
+  // Check to make sure the currently selected egress region is one of the 
+  // available regions.
+  var valid = !$currRegionElem.hasClass('hidden');
+
+  $('#EgressRegion').toggleClass('error', !valid);
+  $('#settings-accordion-egress-region .egress-region-invalid').toggleClass('hidden', valid);
+
+  updateErrorAlert();
+  return valid;
+}
+
+// Check to make sure the currently selected egress region is one of the available
+// regions. If not, inform the user and get them to pick another.
+// A mismatch may occur either as a result of a change in the available egress
+// regions, or a change in the current selection (i.e., a settings change).
+function forceEgressRegionValid() {
+  if (egressRegionValid()) {
+    // Valid, nothing to do
+    return;
+  }
+
+  // Put up the modal
+  $('#EgressRegionUnavailableModal').modal({
+    show: true,
+    backdrop: 'static'
+  });
+
+  showSettingsSection('#settings-accordion-egress-region');
+}
+
+// // Update the egress region options we show in the UI.
+// If currently selected region is no longer available, the user will be prompted
+// to pick a new one.
+function updateAvailableEgressRegions() {
+  var regions = getCookie('AvailableEgressRegions');
+  // On first run there will be no such cookie.
+  regions = regions || [];
+
+  $('#EgressRegion li').each(function() {
+    var elemRegion = $(this).data('region');
+
+    // If no region, this is a divider
+    if (!elemRegion) {
+      return;
+    }
+
+    if (regions.indexOf(elemRegion) >= 0 || elemRegion === BEST_REGION_VALUE) {
+      $(this).removeClass('hidden');
+    }
+    else {
+      $(this).addClass('hidden');
+    }
+  });
+
+  forceEgressRegionValid();
 }
 
 // Will be called exactly once. Set up event listeners, etc.
@@ -604,7 +706,7 @@ function showSettingsSection(section, focusElem) {
           $(section).parents('.accordion-group').eq(0),
           {
             duration: 500, // animation time
-            offset: 0,
+            offset: -50,   // leave some space for the alert
             onAfter: function() {
               if (focusElem) {
                 $(focusElem).eq(0).focus();
@@ -615,8 +717,15 @@ function showSettingsSection(section, focusElem) {
     }, 500);
   }
 
-  $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
-  $('.main-nav a[href="#settings-pane"]').tab('show');
+  if ($('#settings-tab').hasClass('active')) {
+    // Settings tab already showing. Just expand and scroll.
+    onTabShown();
+  }
+  else {
+    // Settings tab not already showing. Switch to it before expanding and scrolling.
+    $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
+    $('.main-nav a[href="#settings-pane"]').tab('show');
+  }
 }
 
 function upstreamProxyErrorNotice(errorMessage) {
@@ -653,19 +762,19 @@ function upstreamProxyErrorNotice(errorMessage) {
   showSettingsSection('#settings-accordion-upstream-proxy');
 }
 
-function localProxyPortConflictNotice(noticetype) {
+function localProxyPortConflictNotice(noticeType) {
   // Show/hide the appropriate message depending on the error
   $('#LocalProxyPortErrorModal .local-proxy-port-http')
-    .toggleClass('hidden', noticetype !== 'HttpProxyPortInUse');
+    .toggleClass('hidden', noticeType !== 'HttpProxyPortInUse');
   $('#LocalProxyPortErrorModal .local-proxy-port-socks')
-    .toggleClass('hidden', noticetype !== 'SocksProxyPortInUse');
+    .toggleClass('hidden', noticeType !== 'SocksProxyPortInUse');
 
   // Put up the modal
   $('#LocalProxyPortErrorModal').modal({
     show: true,
     backdrop: 'static'
   }).on('hidden', function() {
-    if (noticetype === 'HttpProxyPortInUse') {
+    if (noticeType === 'HttpProxyPortInUse') {
       $('#LocalHttpProxyPort').focus();
     }
     else {
@@ -676,7 +785,7 @@ function localProxyPortConflictNotice(noticetype) {
   // Switch to the appropriate settings section
   showSettingsSection(
     '#settings-accordion-local-proxy-ports',
-    noticetype === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
+    noticeType === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
 }
 
 
@@ -1071,12 +1180,18 @@ function HtmlCtrlInterface_AddMessage(jsonArgs) {
 function HtmlCtrlInterface_AddNotice(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
-    if (args.noticeType === "UpstreamProxyError") {
+    if (args.noticeType === 'UpstreamProxyError') {
       upstreamProxyErrorNotice(args.data.message);
     }
-    else if (args.noticeType === "HttpProxyPortInUse" ||
-             args.noticeType === "SocksProxyPortInUse") {
+    else if (args.noticeType === 'HttpProxyPortInUse' ||
+             args.noticeType === 'SocksProxyPortInUse') {
       localProxyPortConflictNotice(args.noticeType);
+    }
+    else if (args.noticeType === 'AvailableEgressRegions') {
+      // Store the value in a cookie so that it's available at the next startup.
+      setCookie('AvailableEgressRegions', args.data.regions);
+      // Update the UI.
+      updateAvailableEgressRegions();
     }
   }, 1);
 }
@@ -1094,8 +1209,7 @@ function HtmlCtrlInterface_SetState(jsonArgs) {
 function HtmlCtrlInterface_RefreshSettings(jsonArgs) {
   setTimeout(function() {
     var args = JSON.parse(jsonArgs);
-    g_initObj.Settings = args;
-    fillSettingsValues(args);
+    refreshSettings(args);
   }, 1);
 }
 

@@ -21,6 +21,7 @@ $ node fake-translations.js
 
 ## TODO
 
+* FIX: If the egress region in registry has no servers, connection will silently fail. In JS, need to check for CandidateServers notice with data.count of 0 and prompt for region change.
 * put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
 * Make checkboxes in settings bigger and more colourful. Maybe make settings more colourful? Background shades?
 

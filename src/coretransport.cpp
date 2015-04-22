@@ -601,6 +601,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 
         if (noticeType == "Tunnels")
         {
+            // This notice is received when tunnels are connected and disconnected.
             int count = data["count"].asInt();
             if (count == 0)
             {
@@ -681,6 +682,11 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             // address or credential. So stop attempting to connect and let the user
             // handle the error message.
             throw TransportFailed(false);
+        }
+        else if (noticeType == "AvailableEgressRegions")
+        {
+            string regions = data["regions"].toStyledString();
+            my_print(NOT_SENSITIVE, false, _T("Available egress regions: %S"), regions.c_str());
         }
     }
     catch (exception& e)

@@ -135,6 +135,14 @@
     "message": "[Şḗḗŧŧīīƞɠş]",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
+  "settings#egress-region#error-modal-body-http": {
+    "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ \"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\" ƈħǿǿīīƈḗḗ.]",
+    "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+  },
+  "settings#egress-region#error-modal-title": {
+    "message": "[Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ Ŭŭƞȧȧṽȧȧīīŀȧȧƀŀḗḗ]",
+    "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+  },
   "settings#egress-region#heading": {
     "message": "[Ƥşīīƥħǿǿƞ Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ]",
     "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
@@ -142,6 +150,10 @@
   "settings#egress-region#help-text": {
     "message": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ƒǿǿř ŧħḗḗ ƒȧȧşŧḗḗşŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ şƥḗḗḗḗḓ ẏǿǿŭŭ şħǿǿŭŭŀḓ ƈħǿǿǿǿşḗḗ <strong>\"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\"</strong>, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ īīƞşŧḗḗȧȧḓ ƥřḗḗƒḗḗř ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
     "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
+  },
+  "settings#egress-region#invalid-error-msg": {
+    "message": "[Ƈħǿǿǿǿşḗḗ ȧȧ ṽȧȧŀīīḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ.]",
+    "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
   },
   "settings#egress-region#select-best-performance": {
     "message": "[Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ]",
@@ -176,11 +188,11 @@
     "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
   },
   "settings#local-proxy-ports#error-modal-body-http": {
-    "message": "[<p>Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ĦŦŦƤ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.</p>\n<p>Ƥŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ĦŦŦƤ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.</p>]",
+    "message": "[<p>\nẎǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ĦŦŦƤ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.\n</p>\n<p>\nƤŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ĦŦŦƤ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.\n</p>]",
     "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
   },
   "settings#local-proxy-ports#error-modal-body-socks": {
-    "message": "[<p>Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ŞǾǿƇĶŞ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.</p>\n<p>Ƥŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŞǾǿƇĶŞ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.</p>]",
+    "message": "[<p>\nẎǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şƥḗḗƈīīƒīīƈ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƒǿǿř īīŧş ŞǾǿƇĶŞ ƥřǿǿẋẏ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ ƥǿǿřŧ ȧȧƥƥḗḗȧȧřş ŧǿǿ ƀḗḗ ȧȧŀřḗḗȧȧḓẏ īīƞ ŭŭşḗḗ ȧȧƞḓ şǿǿ Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ŭŭşḗḗ īīŧ.\n</p>\n<p>\nƤŀḗḗȧȧşḗḗ ƈħȧȧƞɠḗḗ ŧħḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŞǾǿƇĶŞ ƥřǿǿẋẏ ƥǿǿřŧ ṽȧȧŀŭŭḗḗ ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ. Ẇḗḗ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ ŧħȧȧŧ ẏǿǿŭŭ ƈŀḗḗȧȧř ŧħḗḗ ṽȧȧŀŭŭḗḗ şǿǿ ŧħȧȧŧ Ƥşīīƥħǿǿƞ ƈȧȧƞ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƥīīƈķ ȧȧƞ ȧȧṽȧȧīīŀȧȧƀŀḗḗ ƥǿǿřŧ.\n</p>]",
     "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
   },
   "settings#local-proxy-ports#error-modal-title": {
