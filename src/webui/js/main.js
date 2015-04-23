@@ -51,8 +51,10 @@ var g_initObj = {};
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
 
     g_initObj.Cookies = JSON.stringify({
-      AvailableEgressRegions: ["US", "GB", "JP", "NL", "DE"]
+      AvailableEgressRegions: ['US', 'GB', 'JP', 'NL', 'DE']
     });
+
+    console.log(g_initObj);
   }
 })();
 
@@ -325,7 +327,7 @@ $(function settingsInit() {
     }
   });
 
-  updateAvailableEgressRegions();
+  updateAvailableEgressRegions(false); // don't force valid -- haven't filled in settings yet
   refreshSettings();
 });
 
@@ -493,10 +495,10 @@ function forceEgressRegionValid() {
   showSettingsSection('#settings-accordion-egress-region');
 }
 
-// // Update the egress region options we show in the UI.
-// If currently selected region is no longer available, the user will be prompted
-// to pick a new one.
-function updateAvailableEgressRegions() {
+// Update the egress region options we show in the UI.
+// If `forceValid` is true, then if the currently selected region is no longer 
+// available, the user will be prompted to pick a new one.
+function updateAvailableEgressRegions(forceValid) {
   var regions = getCookie('AvailableEgressRegions');
   // On first run there will be no such cookie.
   regions = regions || [];
@@ -517,7 +519,9 @@ function updateAvailableEgressRegions() {
     }
   });
 
-  forceEgressRegionValid();
+  if (forceValid) {
+    forceEgressRegionValid();
+  }
 }
 
 // Will be called exactly once. Set up event listeners, etc.
@@ -1185,7 +1189,7 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
       // Store the value in a cookie so that it's available at the next startup.
       setCookie('AvailableEgressRegions', args.data.regions);
       // Update the UI.
-      updateAvailableEgressRegions();
+      updateAvailableEgressRegions(true);
     }
   }, 1);
 }
