@@ -14502,7 +14502,7 @@ var g_initialSettingsJSON;
 
 var BEST_REGION_VALUE = 'BEST';
 
-$(function() {
+$(function settingsInit() {
   // This is merely to help with testing
   if (!g_initObj.Settings)
   {
@@ -14725,15 +14725,9 @@ function egressRegionSetup() {
 function egressRegionValid(finalCheck) {
   var $currRegionElem = $('#EgressRegion li.active');
 
-  // If there's no selected region yet, select BEST.
-  // Note that this condition shouldn't actually happen.
-  if ($currRegionElem.length === 0) {
-    $('#EgressRegion li[data-region="'+BEST_REGION_VALUE+'"]').addClass('active');
-  }
-
   // Check to make sure the currently selected egress region is one of the 
   // available regions.
-  var valid = !$currRegionElem.hasClass('hidden');
+  var valid = $currRegionElem.length > 0 && !$currRegionElem.hasClass('hidden');
 
   $('#EgressRegion').toggleClass('error', !valid);
   $('#settings-accordion-egress-region .egress-region-invalid').toggleClass('hidden', valid);
