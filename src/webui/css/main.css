@@ -6412,11 +6412,8 @@ body[dir="rtl"] #EgressRegion .flag {
   cursor: hand;
 }
 /* LOG MESSAGES */
-.log-messages .priority-0 {
+.hiding-priority-0.log-messages .priority-0 {
   display: none;
-}
-.showing-priority-0.log-messages .priority-0 {
-  display: table-row;
 }
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;

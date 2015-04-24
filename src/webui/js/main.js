@@ -875,12 +875,21 @@ function sendFeedback() {
 
 $(function() {
   $('#show-debug-messages').click(showDebugMessagesClicked);
+
+  // Set the initial show-debug state
+  var show = $('#show-debug-messages').prop('checked');
+  $('.log-messages')
+    .toggleClass('showing-priority-0', show)
+    .toggleClass('hiding-priority-0', !show);
 });
 
 function showDebugMessagesClicked(e) {
   /*jshint validthis:true */
   var show = $(this).prop('checked');
-  $('.log-messages').toggleClass('showing-priority-0', show);
+  // We use both a showing and a hiding class to try to deal with IE7's CSS insanity.
+  $('.log-messages')
+    .toggleClass('showing-priority-0', show)
+    .toggleClass('hiding-priority-0', !show);
 }
 
 function addLogMessage(obj) {
@@ -899,7 +908,7 @@ function addLogMessage(obj) {
   // The "Show Debug Messages" checkbox is hidden until we actually get a debug
   // message.
   if (obj.priority < 1) {
-    $('label[for="show-debug-messages"]').removeClass('invisible');
+    $('#messages-pane .invisible').removeClass('invisible');
   }
 }
 

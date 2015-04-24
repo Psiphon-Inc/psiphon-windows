@@ -9403,11 +9403,8 @@ body[dir="rtl"] #EgressRegion .flag {
   cursor: hand;
 }
 /* LOG MESSAGES */
-.log-messages .priority-0 {
+.hiding-priority-0.log-messages .priority-0 {
   display: none;
-}
-.showing-priority-0.log-messages .priority-0 {
-  display: table-row;
 }
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
@@ -15397,12 +15394,20 @@ function sendFeedback() {
 
 $(function() {
   $('#show-debug-messages').click(showDebugMessagesClicked);
+
+  // Set the initial show-debug state
+  var show = $('#show-debug-messages').prop('checked');
+  $('.log-messages')
+    .toggleClass('showing-priority-0', show)
+    .toggleClass('hiding-priority-0', !show);
 });
 
 function showDebugMessagesClicked(e) {
   /*jshint validthis:true */
   var show = $(this).prop('checked');
-  $('.log-messages').toggleClass('showing-priority-0', show);
+  $('.log-messages')
+    .toggleClass('showing-priority-0', show)
+    .toggleClass('hiding-priority-0', !show);
 }
 
 function addLogMessage(obj) {
@@ -15421,7 +15426,7 @@ function addLogMessage(obj) {
   // The "Show Debug Messages" checkbox is hidden until we actually get a debug
   // message.
   if (obj.priority < 1) {
-    $('label[for="show-debug-messages"]').removeClass('invisible');
+    $('#messages-pane .invisible').removeClass('invisible');
   }
 }
 
@@ -16439,9 +16444,9 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
         <!-- LOG MESSAGES ==================================================-->
         <div class="tab-pane fade" id="messages-pane">
           <div>
-            <div class="controls checkbox checkbox-primary">
+            <div class="controls checkbox checkbox-primary invisible">
               <input type="checkbox" id="show-debug-messages"/>
-              <label class="invisible" for="show-debug-messages">
+              <label for="show-debug-messages">
                 <span data-i18n="messages#show-debug-label">
                   Show debug messages
                 </span>
@@ -16462,11 +16467,6 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 <td data-content="message">
                 </td>
               </tr>
-              <li>
-                <i class="icon-li icon-globe"></i>
-                <a href="#" class="language-choice"
-                   data-value="localeCode" data-content="localeName"></a>
-              </li>
             </script>
 
           </div>
