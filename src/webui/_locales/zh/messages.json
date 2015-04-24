@@ -3,9 +3,21 @@
         "message": "请让我们知道 Psiphon 在您的设备上的工作情况以便我们改进系统！",
         "description": "Text motivating the user to send Psiphon Inc. feedback."
     },
+    "settings#local-proxy-ports#error-modal-body-http": {
+        "message": "<p>\n您已配置 Psiphon 使用指定的本地端口作为 HTTP 代理的端口。<br>\n然而，此端口似乎已被占用，因而 Psiphon 无法使用它。\n</p>\n<p>请更改配置的 HTTP 代理端口值然后再试。我们建议您清除该值，使 Psiphon 自动挑选可用端口。\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    },
+    "settings#upstream-proxy#set-both-error-msg": {
+        "message": "您必须同时设置主机名和端口，或者留空两项表示自动选择。",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+    },
     "settings#egress-region#select-jp": {
         "message": "日本",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#upstream-proxy#error-modal-body-configured": {
+        "message": "您已配置 Psiphon 使用一个“上层代理”。<br>\n然而，我们似乎无法通过该代理连接到 Psiphon 服务器。<br>\n请修正设置后再试。",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
     "settings#error-alert": {
         "message": "<strong>出错！</strong> 请在继续前修正错误的值。",
@@ -27,9 +39,21 @@
         "message": "设置",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
+    "settings#egress-region#error-modal-title": {
+        "message": "服务器区域不可用",
+        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#upstream-proxy#error-modal-title": {
+        "message": "上层代理错误",
+        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+    },
     "connection#stopping-msg": {
         "message": "Psiphon 正在断开...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "settings#upstream-proxy#error-modal-body-default": {
+        "message": "Psiphon 目前配置为使用您的系统代理作为“上层代理”。<br>\n然而，我们似乎无法通过该代理连接到 Psiphon 服务器。<br>\n请启用“不使用上层代理”然后再试。",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
     },
     "feedback#success-message": {
         "message": "<strong>谢谢您！</strong>您的反馈已经发出。",
@@ -71,6 +95,10 @@
         "message": "许多问题可以通过下载最新版本解决。您可以<a class=\"NewVersionURL\" href=\"#\">点击这里下载最新版本</a>，或者您也可以发送一封电子邮件至 <a class=\"NewVersionEmail\" href=\"#\"></a>。",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
+    "settings#local-proxy-ports#error-modal-body-socks": {
+        "message": "<p>\n您已配置 Psiphon 使用指定的本地端口作为 SOCKS 代理的端口。<br>\n然而，此端口似乎已被占用，因而 Psiphon 无法使用它。\n</p>\n<p>请更改配置的 SOCKS 代理端口值然后再试。我们建议您清除该值，使 Psiphon 自动挑选可用端口。\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+    },
     "feedback#submit_button": {
         "message": "提交",
         "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
@@ -90,6 +118,14 @@
     "settings#egress-region#select-nl": {
         "message": "荷兰",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "general#modal-close-button": {
+        "message": "近",
+        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+    },
+    "settings#upstream-proxy#error-modal-body-pre-message": {
+        "message": "错误信息：",
+        "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
     },
     "settings#local-proxy-ports#http-label": {
         "message": "HTTP/HTTPS",
@@ -115,6 +151,10 @@
         "message": "(不能用于 VPN 模式)",
         "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
+    "settings#local-proxy-ports#unique-error-msg": {
+        "message": "本地端口必须彼此不同。",
+        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+    },
     "settings#vpn-incompatible-label": {
         "message": "VPN",
         "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
@@ -135,9 +175,17 @@
         "message": "停止",
         "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
     },
+    "settings#egress-region#error-modal-body-http": {
+        "message": "您曾经配置 Psiphon 使用一个特定的服务器区域。<br>\n然而，该区域已经不再可用。<br>\n您必须选择一个新的区域，或者更改为默认的“最佳性能”选项。",
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
     "feedback#text_feedback_bottom_para": {
         "message": "如果上面的表格无法使用，或者你想发送截图，请给我们发电子邮件至 <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">",
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "settings#local-proxy-ports#error-modal-title": {
+        "message": "本地代理端口冲突",
+        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "connection#disconnect-btn": {
         "message": "断开连接",
@@ -182,6 +230,10 @@
     "settings#split-tunnel#heading": {
         "message": "拆分隧道",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#egress-region#invalid-error-msg": {
+        "message": "请选择一个有效的 Psiphon 服务器区域。",
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "settings#transport-mode#check-label": {
         "message": "使用 VPN 模式",

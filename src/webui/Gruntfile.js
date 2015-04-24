@@ -84,16 +84,23 @@ module.exports = function(grunt) {
       var locales = {};
       grunt.file.recurse(this.data.src, function localesDirRecurse(abspath, rootdir, subdir, filename) {
         if (!subdir) {
-          // Not a subdirectory.
+          grunt.log.debug('Not a directory, skipping: ' + abspath);
+          return;
+        }
+        else if (!abspath.endsWith('.json')) {
+          // This helps us skip .orig files.
+          grunt.log.debug('Not JSON, skipping: ' + abspath);
           return;
         }
 
         var localeCode = subdir;
+        grunt.log.debug('Starting: ' + localeCode);
 
         if (!localeNames[localeCode]) {
           grunt.fail.fatal('Missing locale name for "' + localeCode + '"');
         }
 
+        grunt.log.debug('Reading: ' + abspath);
         var translation = grunt.file.readJSON(abspath);
         for (var key in translation) {
           translation[key] = translation[key].message;

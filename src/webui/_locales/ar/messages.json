@@ -3,9 +3,21 @@
         "message": "Please let us know how Psiphon is working for you so we can make the system better!",
         "description": "Text motivating the user to send Psiphon Inc. feedback."
     },
+    "settings#local-proxy-ports#error-modal-body-http": {
+        "message": "<p>\nYou have configured Psiphon to use a specific local port for its HTTP proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured HTTP proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    },
+    "settings#upstream-proxy#set-both-error-msg": {
+        "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+    },
     "settings#egress-region#select-jp": {
         "message": "اليابان",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#upstream-proxy#error-modal-body-configured": {
+        "message": "You have configured Psiphon to use an \"upstream proxy\".<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease fix the settings and try again.",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
     "settings#error-alert": {
         "message": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
@@ -27,9 +39,21 @@
         "message": "Settings",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
+    "settings#egress-region#error-modal-title": {
+        "message": "Server Region Unavailable",
+        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#upstream-proxy#error-modal-title": {
+        "message": "Upstream Proxy Error",
+        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+    },
     "connection#stopping-msg": {
         "message": "Psiphon is disconnecting...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "settings#upstream-proxy#error-modal-body-default": {
+        "message": "Psiphon is currently configured to use your system proxy as its \"upstream proxy\".<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease enable \"Don't use upstream proxy\" and try again.",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
     },
     "feedback#success-message": {
         "message": "<strong>Thank you!</strong> Your feedback has been sent.",
@@ -71,6 +95,10 @@
         "message": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
+    "settings#local-proxy-ports#error-modal-body-socks": {
+        "message": "<p>\nYou have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+    },
     "feedback#submit_button": {
         "message": "أرسل",
         "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
@@ -90,6 +118,14 @@
     "settings#egress-region#select-nl": {
         "message": "هولندا",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "general#modal-close-button": {
+        "message": "قريب",
+        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+    },
+    "settings#upstream-proxy#error-modal-body-pre-message": {
+        "message": "Here is the technical error info:",
+        "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
     },
     "settings#local-proxy-ports#http-label": {
         "message": "HTTP/HTTPS",
@@ -115,6 +151,10 @@
         "message": "(Doesn't work with VPN mode.)",
         "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
+    "settings#local-proxy-ports#unique-error-msg": {
+        "message": "Local ports must be distinct from each other.",
+        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+    },
     "settings#vpn-incompatible-label": {
         "message": "VPN",
         "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
@@ -135,9 +175,17 @@
         "message": "توقف",
         "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
     },
+    "settings#egress-region#error-modal-body-http": {
+        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default \"Best Performance\" choice.",
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
     "feedback#text_feedback_bottom_para": {
         "message": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "settings#local-proxy-ports#error-modal-title": {
+        "message": "Local Proxy Port Conflict",
+        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "connection#disconnect-btn": {
         "message": "Disconnect",
@@ -182,6 +230,10 @@
     "settings#split-tunnel#heading": {
         "message": "Split Tunnel",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#egress-region#invalid-error-msg": {
+        "message": "Choose a valid Psiphon server region.",
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "settings#transport-mode#check-label": {
         "message": "Use VPN Mode",
