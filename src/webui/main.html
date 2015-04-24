@@ -265,12 +265,14 @@
                         If enabled, requests made to servers within your home country will not be
                         tunneled through Psiphon.
                       </p>
-                      <label for="SplitTunnel" class="checkbox">
+                      <div class="controls checkbox checkbox-primary">
                         <input type="checkbox" id="SplitTunnel"/>
-                        <span data-i18n="settings#split-tunnel#enable-label">
-                          Don't proxy domestic websites
-                        </span>
-                      </label>
+                        <label for="SplitTunnel">
+                          <span data-i18n="settings#split-tunnel#enable-label">
+                            Don't proxy domestic websites
+                          </span>
+                        </label>
+                      </div>
                       <span class="help-block">
                         <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
                           (Doesn't work with VPN mode.)
@@ -480,9 +482,9 @@
                         </div>
                       </div>
                       <div class="control-group">
-                        <div class="controls">
-                          <label class="checkbox" for="SkipUpstreamProxy">
-                            <input type="checkbox" id="SkipUpstreamProxy"/>
+                        <div class="controls checkbox checkbox-primary">
+                          <input type="checkbox" id="SkipUpstreamProxy"/>
+                          <label for="SkipUpstreamProxy">
                             <span data-i18n="settings#upstream-proxy#skip-label">
                               Don't use upstream proxy
                             </span>
@@ -520,12 +522,14 @@
                 <div class="accordion-inner">
                   <form>
                     <fieldset>
-                      <label class="checkbox" for="VPN">
-                          <input type="checkbox" id="VPN"/>
+                      <div class="controls checkbox checkbox-primary">
+                        <input type="checkbox" id="VPN"/>
+                        <label for="VPN">
                           <span data-i18n="settings#transport-mode#check-label">
                             Use VPN Mode
                           </span>
-                      </label>
+                        </label>
+                      </div>
                       <span class="help-block" data-i18n="[html]settings#transport-mode#help-text">
                         Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it
                         doesn't provide obfuscation. It is <strong>not recommended</strong>
@@ -615,14 +619,16 @@
               </div>
 
               <div>
-                <label for="feedback-send-diagnostic" class="checkbox">
-                  <input type="checkbox" checked="" id="feedback-send-diagnostic">
-                  <span data-i18n="[html]feedback#diagnostic_check">
-                    Upload diagnostic data. Please note that this diagnostic data does not
-                    identify you, and it will help us to keep Psiphon running smoothly.
-                    <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
-                  </span>
-                </label>
+                <div class="controls checkbox checkbox-primary">
+                  <input type="checkbox" checked="true" id="feedback-send-diagnostic">
+                  <label for="feedback-send-diagnostic">
+                    <span data-i18n="[html]feedback#diagnostic_check">
+                      Upload diagnostic data. Please note that this diagnostic data does not
+                      identify you, and it will help us to keep Psiphon running smoothly.
+                      <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
+                    </span>
+                  </label>
+                </div>
               </div>
 
               <div class="form-actions">
@@ -645,15 +651,36 @@
         <!-- LOG MESSAGES ==================================================-->
         <div class="tab-pane fade" id="messages-pane">
           <div>
-            <label class="checkbox invisible" for="show-debug-messages">
-                <input type="checkbox" id="show-debug-messages"/>
+            <div class="controls checkbox checkbox-primary">
+              <input type="checkbox" id="show-debug-messages"/>
+              <label class="invisible" for="show-debug-messages">
                 <span data-i18n="messages#show-debug-label">
                   Show debug messages
                 </span>
-            </label>
+              </label>
+            </div>
 
             <table class="log-messages table">
+              <tr class="placeholder">
+                <td data-i18n="messages#placeholder">
+                  No messages yet
+                </td>
+              </tr>
             </table>
+
+            <!-- Message template -->
+            <script type="text/html" id="message-template">
+              <tr data-class="priority">
+                <td data-content="message">
+                </td>
+              </tr>
+              <li>
+                <i class="icon-li icon-globe"></i>
+                <a href="#" class="language-choice"
+                   data-value="localeCode" data-content="localeName"></a>
+              </li>
+            </script>
+
           </div>
         </div><!-- /messages-pane -->
 
@@ -702,8 +729,6 @@
                  data-value="localeCode" data-content="localeName"></a>
             </li>
           </script>
-    <button type="button" class="btn btn-primary btn-large" data-toggle="modal" data-target="#UpstreamProxyErrorModal" data-backdrop="static">Launch demo modal</button>
-
         </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->

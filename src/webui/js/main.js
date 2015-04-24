@@ -879,18 +879,22 @@ $(function() {
 
 function showDebugMessagesClicked(e) {
   /*jshint validthis:true */
-  e.preventDefault();
   var show = $(this).prop('checked');
   $('.log-messages').toggleClass('showing-priority-0', show);
 }
 
 function addLogMessage(obj) {
-  var row = $('<tr>');
-  var msgCell = $('<td>');
-  msgCell.text(obj.message);
-  row.addClass('priority-' + obj.priority);
-  row.append(msgCell);
-  $('.log-messages').prepend(row);
+  $('.log-messages .placeholder').remove();
+
+  $('.log-messages').loadTemplate(
+    $("#message-template"),
+    { 
+      message: obj.message,
+      priority: 'priority-' + obj.priority 
+    },
+    { 
+      prepend:true 
+    });
 
   // The "Show Debug Messages" checkbox is hidden until we actually get a debug
   // message.
@@ -901,7 +905,7 @@ function addLogMessage(obj) {
 
 /* LANGUAGE ******************************************************************/
 
-var RTL_LOCALES = ['devrtl', 'fa', 'ar' ];
+var RTL_LOCALES = ['devrtl', 'fa', 'ar'];
 
 $(function() {
   var fallbackLanguage = 'en';

@@ -3029,6 +3029,11 @@ body[dir="rtl"] .form-horizontal .form-actions {
 body[dir="rtl"] .modal-footer {
   text-align: left;
 }
+body[dir="rtl"] .dropdown-menu {
+  left: auto;
+  right: 0;
+  float: right;
+}
 /*!
  * Bootstrap v2.3.2
  *
@@ -3982,8 +3987,8 @@ input[type="color"],
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition: border linear .2s, box-shadow linear .2s;
   -moz-transition: border linear .2s, box-shadow linear .2s;
+  -webkit-transition: border linear .2s, box-shadow linear .2s;
   -o-transition: border linear .2s, box-shadow linear .2s;
   transition: border linear .2s, box-shadow linear .2s;
 }
@@ -5198,8 +5203,8 @@ table th[class*="span"],
 }
 .fade {
   opacity: 0;
-  -webkit-transition: opacity 0.15s linear;
   -moz-transition: opacity 0.15s linear;
+  -webkit-transition: opacity 0.15s linear;
   -o-transition: opacity 0.15s linear;
   transition: opacity 0.15s linear;
 }
@@ -5210,8 +5215,8 @@ table th[class*="span"],
   position: relative;
   height: 0;
   overflow: hidden;
-  -webkit-transition: height 0.35s ease;
   -moz-transition: height 0.35s ease;
+  -webkit-transition: height 0.35s ease;
   -o-transition: height 0.35s ease;
   transition: height 0.35s ease;
 }
@@ -5303,8 +5308,8 @@ button.close {
   color: #333333;
   text-decoration: none;
   background-position: 0 -15px;
-  -webkit-transition: background-position 0.1s linear;
   -moz-transition: background-position 0.1s linear;
+  -webkit-transition: background-position 0.1s linear;
   -o-transition: background-position 0.1s linear;
   transition: background-position 0.1s linear;
 }
@@ -5392,17 +5397,17 @@ input[type="button"].btn-block {
 .btn-primary {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #d45627;
-  background-image: -moz-linear-gradient(top, #d43f27, #d47927);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d43f27), to(#d47927));
-  background-image: -webkit-linear-gradient(top, #d43f27, #d47927);
-  background-image: -o-linear-gradient(top, #d43f27, #d47927);
-  background-image: linear-gradient(to bottom, #d43f27, #d47927);
+  background-color: #d43f27;
+  background-image: -moz-linear-gradient(top, #d43f27, #d43f27);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d43f27), to(#d43f27));
+  background-image: -webkit-linear-gradient(top, #d43f27, #d43f27);
+  background-image: -o-linear-gradient(top, #d43f27, #d43f27);
+  background-image: linear-gradient(to bottom, #d43f27, #d43f27);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd43f27', endColorstr='#ffd47927', GradientType=0);
-  border-color: #d47927 #d47927 #93541b;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd43f27', endColorstr='#ffd43f27', GradientType=0);
+  border-color: #d43f27 #d43f27 #932c1b;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #d47927;
+  *background-color: #d43f27;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -5413,27 +5418,27 @@ input[type="button"].btn-block {
 .btn-primary.disabled,
 .btn-primary[disabled] {
   color: #ffffff;
-  background-color: #d47927;
-  *background-color: #be6c23;
+  background-color: #d43f27;
+  *background-color: #be3923;
 }
 .btn-primary:active,
 .btn-primary.active {
-  background-color: #a9601f \9;
+  background-color: #a9321f \9;
 }
 .btn-warning {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #faa732;
-  background-image: -moz-linear-gradient(top, #fbb450, #f89406);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
-  background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
-  background-image: -o-linear-gradient(top, #fbb450, #f89406);
-  background-image: linear-gradient(to bottom, #fbb450, #f89406);
+  background-color: #f0ad4e;
+  background-image: -moz-linear-gradient(top, #f0ad4e, #f0ad4e);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f0ad4e), to(#f0ad4e));
+  background-image: -webkit-linear-gradient(top, #f0ad4e, #f0ad4e);
+  background-image: -o-linear-gradient(top, #f0ad4e, #f0ad4e);
+  background-image: linear-gradient(to bottom, #f0ad4e, #f0ad4e);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fffbb450', endColorstr='#fff89406', GradientType=0);
-  border-color: #f89406 #f89406 #ad6704;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff0ad4e', endColorstr='#fff0ad4e', GradientType=0);
+  border-color: #f0ad4e #f0ad4e #df8a13;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #f89406;
+  *background-color: #f0ad4e;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -5444,27 +5449,27 @@ input[type="button"].btn-block {
 .btn-warning.disabled,
 .btn-warning[disabled] {
   color: #ffffff;
-  background-color: #f89406;
-  *background-color: #df8505;
+  background-color: #f0ad4e;
+  *background-color: #eea236;
 }
 .btn-warning:active,
 .btn-warning.active {
-  background-color: #c67605 \9;
+  background-color: #ec971f \9;
 }
 .btn-danger {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #da4f49;
-  background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
-  background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
-  background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
-  background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
+  background-color: #d9534f;
+  background-image: -moz-linear-gradient(top, #d9534f, #d9534f);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d9534f), to(#d9534f));
+  background-image: -webkit-linear-gradient(top, #d9534f, #d9534f);
+  background-image: -o-linear-gradient(top, #d9534f, #d9534f);
+  background-image: linear-gradient(to bottom, #d9534f, #d9534f);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffee5f5b', endColorstr='#ffbd362f', GradientType=0);
-  border-color: #bd362f #bd362f #802420;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9534f', endColorstr='#ffd9534f', GradientType=0);
+  border-color: #d9534f #d9534f #b52b27;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #bd362f;
+  *background-color: #d9534f;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -5475,27 +5480,27 @@ input[type="button"].btn-block {
 .btn-danger.disabled,
 .btn-danger[disabled] {
   color: #ffffff;
-  background-color: #bd362f;
-  *background-color: #a9302a;
+  background-color: #d9534f;
+  *background-color: #d43f3a;
 }
 .btn-danger:active,
 .btn-danger.active {
-  background-color: #942a25 \9;
+  background-color: #c9302c \9;
 }
 .btn-success {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #5bb75b;
-  background-image: -moz-linear-gradient(top, #62c462, #51a351);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
-  background-image: -webkit-linear-gradient(top, #62c462, #51a351);
-  background-image: -o-linear-gradient(top, #62c462, #51a351);
-  background-image: linear-gradient(to bottom, #62c462, #51a351);
+  background-color: #5cb85c;
+  background-image: -moz-linear-gradient(top, #5cb85c, #5cb85c);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#5cb85c), to(#5cb85c));
+  background-image: -webkit-linear-gradient(top, #5cb85c, #5cb85c);
+  background-image: -o-linear-gradient(top, #5cb85c, #5cb85c);
+  background-image: linear-gradient(to bottom, #5cb85c, #5cb85c);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff62c462', endColorstr='#ff51a351', GradientType=0);
-  border-color: #51a351 #51a351 #387038;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5cb85c', endColorstr='#ff5cb85c', GradientType=0);
+  border-color: #5cb85c #5cb85c #3d8b3d;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #51a351;
+  *background-color: #5cb85c;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -5506,27 +5511,27 @@ input[type="button"].btn-block {
 .btn-success.disabled,
 .btn-success[disabled] {
   color: #ffffff;
-  background-color: #51a351;
-  *background-color: #499249;
+  background-color: #5cb85c;
+  *background-color: #4cae4c;
 }
 .btn-success:active,
 .btn-success.active {
-  background-color: #408140 \9;
+  background-color: #449d44 \9;
 }
 .btn-info {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #49afcd;
-  background-image: -moz-linear-gradient(top, #5bc0de, #2f96b4);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#5bc0de), to(#2f96b4));
-  background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
-  background-image: -o-linear-gradient(top, #5bc0de, #2f96b4);
-  background-image: linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-color: #5bc0de;
+  background-image: -moz-linear-gradient(top, #5bc0de, #5bc0de);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#5bc0de), to(#5bc0de));
+  background-image: -webkit-linear-gradient(top, #5bc0de, #5bc0de);
+  background-image: -o-linear-gradient(top, #5bc0de, #5bc0de);
+  background-image: linear-gradient(to bottom, #5bc0de, #5bc0de);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff2f96b4', GradientType=0);
-  border-color: #2f96b4 #2f96b4 #1f6377;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff5bc0de', GradientType=0);
+  border-color: #5bc0de #5bc0de #28a1c5;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #2f96b4;
+  *background-color: #5bc0de;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -5537,12 +5542,12 @@ input[type="button"].btn-block {
 .btn-info.disabled,
 .btn-info[disabled] {
   color: #ffffff;
-  background-color: #2f96b4;
-  *background-color: #2a85a0;
+  background-color: #5bc0de;
+  *background-color: #46b8da;
 }
 .btn-info:active,
 .btn-info.active {
-  background-color: #24748c \9;
+  background-color: #31b0d5 \9;
 }
 .btn-inverse {
   color: #ffffff;
@@ -5759,19 +5764,19 @@ input[type="submit"].btn.btn-mini {
   background-color: #e6e6e6;
 }
 .btn-group.open .btn-primary.dropdown-toggle {
-  background-color: #d47927;
+  background-color: #d43f27;
 }
 .btn-group.open .btn-warning.dropdown-toggle {
-  background-color: #f89406;
+  background-color: #f0ad4e;
 }
 .btn-group.open .btn-danger.dropdown-toggle {
-  background-color: #bd362f;
+  background-color: #d9534f;
 }
 .btn-group.open .btn-success.dropdown-toggle {
-  background-color: #51a351;
+  background-color: #5cb85c;
 }
 .btn-group.open .btn-info.dropdown-toggle {
-  background-color: #2f96b4;
+  background-color: #5bc0de;
 }
 .btn-group.open .btn-inverse.dropdown-toggle {
   background-color: #222222;
@@ -6698,8 +6703,8 @@ input[type="submit"].btn.btn-mini {
   -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15);
   -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15);
   box-shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15);
-  -webkit-transition: none;
   -moz-transition: none;
+  -webkit-transition: none;
   -o-transition: none;
   transition: none;
 }
@@ -6997,8 +7002,8 @@ input[type="submit"].btn.btn-mini {
   outline: none;
 }
 .modal.fade {
-  -webkit-transition: opacity .1s linear, top .1s ease-out;
   -moz-transition: opacity .1s linear, top .1s ease-out;
+  -webkit-transition: opacity .1s linear, top .1s ease-out;
   -o-transition: opacity .1s linear, top .1s ease-out;
   transition: opacity .1s linear, top .1s ease-out;
   top: -25%;
@@ -7293,8 +7298,8 @@ input[type="submit"].btn.btn-mini {
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
-  -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
@@ -7511,8 +7516,8 @@ a.badge:focus {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-transition: width 0.6s ease;
   -moz-transition: width 0.6s ease;
+  -webkit-transition: width 0.6s ease;
   -o-transition: width 0.6s ease;
   transition: width 0.6s ease;
 }
@@ -7657,8 +7662,8 @@ a.badge:focus {
 .carousel-inner > .item {
   display: none;
   position: relative;
-  -webkit-transition: 0.6s ease-in-out left;
   -moz-transition: 0.6s ease-in-out left;
+  -webkit-transition: 0.6s ease-in-out left;
   -o-transition: 0.6s ease-in-out left;
   transition: 0.6s ease-in-out left;
 }
@@ -8871,6 +8876,257 @@ a.badge:focus {
     overflow: visible !important;
   }
 }
+body[dir="ltr"] .checkbox {
+  padding-left: 20px;
+}
+body[dir="rtl"] .checkbox {
+  padding-right: 20px;
+}
+.checkbox label {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+}
+body[dir="ltr"] .checkbox label {
+  padding-left: 5px;
+}
+body[dir="rtl"] .checkbox label {
+  padding-right: 5px;
+}
+.checkbox label::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background-color: #fff;
+  -moz-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+  -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+  -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+  transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+body[dir="ltr"] .checkbox label::before {
+  left: 0;
+  margin-left: -20px;
+}
+body[dir="rtl"] .checkbox label::before {
+  right: 0;
+  margin-right: -20px;
+}
+.checkbox label::after {
+  display: inline-block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 0;
+  padding-top: 1px;
+  font-size: 11px;
+  color: #555555;
+}
+body[dir="ltr"] .checkbox label::after {
+  left: 0;
+  margin-left: -20px;
+  padding-left: 3px;
+}
+body[dir="rtl"] .checkbox label::after {
+  right: 0;
+  margin-right: -20px;
+  padding-right: 3px;
+}
+.checkbox input[type="checkbox"] {
+  opacity: 0;
+  z-index: 1;
+}
+.checkbox input[type="checkbox"]:focus + label::before {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.checkbox input[type="checkbox"]:checked + label::after {
+  font-family: 'FontAwesome';
+  content: "\f00c";
+}
+body[dir="rtl"] .checkbox input[type="checkbox"]:checked + label::after {
+  -webkit-transform: scale(-1, 1);
+  -moz-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
+.checkbox input[type="checkbox"]:disabled + label {
+  opacity: 0.65;
+}
+.checkbox input[type="checkbox"]:disabled + label::before {
+  background-color: #eeeeee;
+  cursor: not-allowed;
+}
+.checkbox.checkbox-circle label::before {
+  border-radius: 50%;
+}
+.checkbox.checkbox-inline {
+  margin-top: 0;
+}
+.checkbox-primary input[type="checkbox"]:checked + label::before {
+  background-color: #d43f27;
+  border-color: #d43f27;
+}
+.checkbox-primary input[type="checkbox"]:checked + label::after {
+  color: #fff;
+}
+.checkbox-danger input[type="checkbox"]:checked + label::before {
+  background-color: #d9534f;
+  border-color: #d9534f;
+}
+.checkbox-danger input[type="checkbox"]:checked + label::after {
+  color: #fff;
+}
+.checkbox-info input[type="checkbox"]:checked + label::before {
+  background-color: #5bc0de;
+  border-color: #5bc0de;
+}
+.checkbox-info input[type="checkbox"]:checked + label::after {
+  color: #fff;
+}
+.checkbox-warning input[type="checkbox"]:checked + label::before {
+  background-color: #f0ad4e;
+  border-color: #f0ad4e;
+}
+.checkbox-warning input[type="checkbox"]:checked + label::after {
+  color: #fff;
+}
+.checkbox-success input[type="checkbox"]:checked + label::before {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+}
+.checkbox-success input[type="checkbox"]:checked + label::after {
+  color: #fff;
+}
+.radio {
+  padding-left: 20px;
+}
+.radio label {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  padding-left: 5px;
+}
+.radio label::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  left: 0;
+  margin-left: -20px;
+  border: 1px solid #cccccc;
+  border-radius: 50%;
+  background-color: #fff;
+  -moz-transition: border 0.15s ease-in-out;
+  -webkit-transition: border 0.15s ease-in-out;
+  -o-transition: border 0.15s ease-in-out;
+  transition: border 0.15s ease-in-out;
+}
+.radio label::after {
+  display: inline-block;
+  position: absolute;
+  content: " ";
+  width: 11px;
+  height: 11px;
+  left: 3px;
+  top: 3px;
+  margin-left: -20px;
+  border-radius: 50%;
+  background-color: #555555;
+  -webkit-transform: scale(0, 0);
+  -ms-transform: scale(0, 0);
+  -o-transform: scale(0, 0);
+  transform: scale(0, 0);
+  -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+  -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+  -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+  transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+}
+.radio input[type="radio"] {
+  opacity: 0;
+  z-index: 1;
+}
+.radio input[type="radio"]:focus + label::before {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.radio input[type="radio"]:checked + label::after {
+  -webkit-transform: scale(1, 1);
+  -ms-transform: scale(1, 1);
+  -o-transform: scale(1, 1);
+  transform: scale(1, 1);
+}
+.radio input[type="radio"]:disabled + label {
+  opacity: 0.65;
+}
+.radio input[type="radio"]:disabled + label::before {
+  cursor: not-allowed;
+}
+.radio.radio-inline {
+  margin-top: 0;
+}
+.radio-primary input[type="radio"] + label::after {
+  background-color: #d43f27;
+}
+.radio-primary input[type="radio"]:checked + label::before {
+  border-color: #d43f27;
+}
+.radio-primary input[type="radio"]:checked + label::after {
+  background-color: #d43f27;
+}
+.radio-danger input[type="radio"] + label::after {
+  background-color: #d9534f;
+}
+.radio-danger input[type="radio"]:checked + label::before {
+  border-color: #d9534f;
+}
+.radio-danger input[type="radio"]:checked + label::after {
+  background-color: #d9534f;
+}
+.radio-info input[type="radio"] + label::after {
+  background-color: #5bc0de;
+}
+.radio-info input[type="radio"]:checked + label::before {
+  border-color: #5bc0de;
+}
+.radio-info input[type="radio"]:checked + label::after {
+  background-color: #5bc0de;
+}
+.radio-warning input[type="radio"] + label::after {
+  background-color: #f0ad4e;
+}
+.radio-warning input[type="radio"]:checked + label::before {
+  border-color: #f0ad4e;
+}
+.radio-warning input[type="radio"]:checked + label::after {
+  background-color: #f0ad4e;
+}
+.radio-success input[type="radio"] + label::after {
+  background-color: #5cb85c;
+}
+.radio-success input[type="radio"]:checked + label::before {
+  border-color: #5cb85c;
+}
+.radio-success input[type="radio"]:checked + label::after {
+  background-color: #5cb85c;
+}
+input[type="checkbox"].styled:checked + label:after {
+  font-family: 'FontAwesome';
+  content: "\f00c";
+}
+input[type="checkbox"] .styled:checked + label::before {
+  color: #fff;
+}
+input[type="checkbox"] .styled:checked + label::after {
+  color: #fff;
+}
 html {
   height: 100%;
   margin: 0;
@@ -8972,11 +9228,11 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
 }
 .tab-content {
   overflow: hidden;
+  padding-top: 1em;
 }
 .tab-content .tab-pane {
   height: 100%;
   overflow: auto;
-  padding-top: 1em;
   position: relative;
 }
 body[dir="ltr"] .tab-content .tab-pane {
@@ -8986,8 +9242,8 @@ body[dir="rtl"] .tab-content .tab-pane {
   padding-left: 1em;
 }
 .tab-pane.fade {
-  -webkit-transition: opacity 0.1s linear;
   -moz-transition: opacity 0.1s linear;
+  -webkit-transition: opacity 0.1s linear;
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
 }
@@ -12535,6 +12791,7 @@ return this._isOpen?(this._moveToTop()&&this._focusTabbable(),void 0):(this._isO
 return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===i||e.contains(t[0],i))&&e(i).focus()),t},setTransition:function(t,i,s,n){return n=n||{},e.each(i,function(e,i){var a=t.cssUnit(i);a[0]>0&&(n[i]=a[0]*s+a[1])}),n}}),e.fn.extend({effect:function(){function i(t){function i(){e.isFunction(a)&&a.call(n[0]),e.isFunction(t)&&t()}var n=e(this),a=s.complete,r=s.mode;(n.is(":hidden")?"hide"===r:"show"===r)?(n[r](),i()):o.call(n[0],s,i)}var s=t.apply(this,arguments),n=s.mode,a=s.queue,o=e.effects.effect[s.effect];return e.fx.off||!o?n?this[n](s.duration,s.complete):this.each(function(){s.complete&&s.complete.call(this)}):a===!1?this.each(i):this.queue(a||"fx",i)},show:function(e){return function(s){if(i(s))return e.apply(this,arguments);var n=t.apply(this,arguments);return n.mode="show",this.effect.call(this,n)}}(e.fn.show),hide:function(e){return function(s){if(i(s))return e.apply(this,arguments);var n=t.apply(this,arguments);return n.mode="hide",this.effect.call(this,n)}}(e.fn.hide),toggle:function(e){return function(s){if(i(s)||"boolean"==typeof s)return e.apply(this,arguments);var n=t.apply(this,arguments);return n.mode="toggle",this.effect.call(this,n)}}(e.fn.toggle),cssUnit:function(t){var i=this.css(t),s=[];return e.each(["em","px","%","pt"],function(e,t){i.indexOf(t)>0&&(s=[parseFloat(i),t])}),s}})}(),function(){var t={};e.each(["Quad","Cubic","Quart","Quint","Expo"],function(e,i){t[i]=function(t){return Math.pow(t,e+2)}}),e.extend(t,{Sine:function(e){return 1-Math.cos(e*Math.PI/2)},Circ:function(e){return 1-Math.sqrt(1-e*e)},Elastic:function(e){return 0===e||1===e?e:-Math.pow(2,8*(e-1))*Math.sin((80*(e-1)-7.5)*Math.PI/15)},Back:function(e){return e*e*(3*e-2)},Bounce:function(e){for(var t,i=4;((t=Math.pow(2,--i))-1)/11>e;);return 1/Math.pow(4,3-i)-7.5625*Math.pow((3*t-2)/22-e,2)}}),e.each(t,function(t,i){e.easing["easeIn"+t]=i,e.easing["easeOut"+t]=function(e){return 1-i(1-e)},e.easing["easeInOut"+t]=function(e){return.5>e?i(2*e)/2:1-i(-2*e+2)/2}})}(),e.effects,e.effects.effect.blind=function(t,i){var s,n,a,o=e(this),r=/up|down|vertical/,h=/up|left|vertical|horizontal/,l=["position","top","bottom","left","right","height","width"],u=e.effects.setMode(o,t.mode||"hide"),d=t.direction||"up",c=r.test(d),p=c?"height":"width",f=c?"top":"left",m=h.test(d),g={},v="show"===u;o.parent().is(".ui-effects-wrapper")?e.effects.save(o.parent(),l):e.effects.save(o,l),o.show(),s=e.effects.createWrapper(o).css({overflow:"hidden"}),n=s[p](),a=parseFloat(s.css(f))||0,g[p]=v?n:0,m||(o.css(c?"bottom":"right",0).css(c?"top":"left","auto").css({position:"absolute"}),g[f]=v?a:n+a),v&&(s.css(p,0),m||s.css(f,a+n)),s.animate(g,{duration:t.duration,easing:t.easing,queue:!1,complete:function(){"hide"===u&&o.hide(),e.effects.restore(o,l),e.effects.removeWrapper(o),i()}})},e.effects.effect.bounce=function(t,i){var s,n,a,o=e(this),r=["position","top","bottom","left","right","height","width"],h=e.effects.setMode(o,t.mode||"effect"),l="hide"===h,u="show"===h,d=t.direction||"up",c=t.distance,p=t.times||5,f=2*p+(u||l?1:0),m=t.duration/f,g=t.easing,v="up"===d||"down"===d?"top":"left",y="up"===d||"left"===d,b=o.queue(),_=b.length;for((u||l)&&r.push("opacity"),e.effects.save(o,r),o.show(),e.effects.createWrapper(o),c||(c=o["top"===v?"outerHeight":"outerWidth"]()/3),u&&(a={opacity:1},a[v]=0,o.css("opacity",0).css(v,y?2*-c:2*c).animate(a,m,g)),l&&(c/=Math.pow(2,p-1)),a={},a[v]=0,s=0;p>s;s++)n={},n[v]=(y?"-=":"+=")+c,o.animate(n,m,g).animate(a,m,g),c=l?2*c:c/2;l&&(n={opacity:0},n[v]=(y?"-=":"+=")+c,o.animate(n,m,g)),o.queue(function(){l&&o.hide(),e.effects.restore(o,r),e.effects.removeWrapper(o),i()}),_>1&&b.splice.apply(b,[1,0].concat(b.splice(_,f+1))),o.dequeue()},e.effects.effect.clip=function(t,i){var s,n,a,o=e(this),r=["position","top","bottom","left","right","height","width"],h=e.effects.setMode(o,t.mode||"hide"),l="show"===h,u=t.direction||"vertical",d="vertical"===u,c=d?"height":"width",p=d?"top":"left",f={};e.effects.save(o,r),o.show(),s=e.effects.createWrapper(o).css({overflow:"hidden"}),n="IMG"===o[0].tagName?s:o,a=n[c](),l&&(n.css(c,0),n.css(p,a/2)),f[c]=l?a:0,f[p]=l?0:a/2,n.animate(f,{queue:!1,duration:t.duration,easing:t.easing,complete:function(){l||o.hide(),e.effects.restore(o,r),e.effects.removeWrapper(o),i()}})},e.effects.effect.drop=function(t,i){var s,n=e(this),a=["position","top","bottom","left","right","opacity","height","width"],o=e.effects.setMode(n,t.mode||"hide"),r="show"===o,h=t.direction||"left",l="up"===h||"down"===h?"top":"left",u="up"===h||"left"===h?"pos":"neg",d={opacity:r?1:0};e.effects.save(n,a),n.show(),e.effects.createWrapper(n),s=t.distance||n["top"===l?"outerHeight":"outerWidth"](!0)/2,r&&n.css("opacity",0).css(l,"pos"===u?-s:s),d[l]=(r?"pos"===u?"+=":"-=":"pos"===u?"-=":"+=")+s,n.animate(d,{queue:!1,duration:t.duration,easing:t.easing,complete:function(){"hide"===o&&n.hide(),e.effects.restore(n,a),e.effects.removeWrapper(n),i()}})},e.effects.effect.explode=function(t,i){function s(){b.push(this),b.length===d*c&&n()}function n(){p.css({visibility:"visible"}),e(b).remove(),m||p.hide(),i()}var a,o,r,h,l,u,d=t.pieces?Math.round(Math.sqrt(t.pieces)):3,c=d,p=e(this),f=e.effects.setMode(p,t.mode||"hide"),m="show"===f,g=p.show().css("visibility","hidden").offset(),v=Math.ceil(p.outerWidth()/c),y=Math.ceil(p.outerHeight()/d),b=[];for(a=0;d>a;a++)for(h=g.top+a*y,u=a-(d-1)/2,o=0;c>o;o++)r=g.left+o*v,l=o-(c-1)/2,p.clone().appendTo("body").wrap("<div></div>").css({position:"absolute",visibility:"visible",left:-o*v,top:-a*y}).parent().addClass("ui-effects-explode").css({position:"absolute",overflow:"hidden",width:v,height:y,left:r+(m?l*v:0),top:h+(m?u*y:0),opacity:m?0:1}).animate({left:r+(m?0:l*v),top:h+(m?0:u*y),opacity:m?1:0},t.duration||500,t.easing,s)},e.effects.effect.fade=function(t,i){var s=e(this),n=e.effects.setMode(s,t.mode||"toggle");s.animate({opacity:n},{queue:!1,duration:t.duration,easing:t.easing,complete:i})},e.effects.effect.fold=function(t,i){var s,n,a=e(this),o=["position","top","bottom","left","right","height","width"],r=e.effects.setMode(a,t.mode||"hide"),h="show"===r,l="hide"===r,u=t.size||15,d=/([0-9]+)%/.exec(u),c=!!t.horizFirst,p=h!==c,f=p?["width","height"]:["height","width"],m=t.duration/2,g={},v={};e.effects.save(a,o),a.show(),s=e.effects.createWrapper(a).css({overflow:"hidden"}),n=p?[s.width(),s.height()]:[s.height(),s.width()],d&&(u=parseInt(d[1],10)/100*n[l?0:1]),h&&s.css(c?{height:0,width:u}:{height:u,width:0}),g[f[0]]=h?n[0]:u,v[f[1]]=h?n[1]:0,s.animate(g,m,t.easing).animate(v,m,t.easing,function(){l&&a.hide(),e.effects.restore(a,o),e.effects.removeWrapper(a),i()})},e.effects.effect.highlight=function(t,i){var s=e(this),n=["backgroundImage","backgroundColor","opacity"],a=e.effects.setMode(s,t.mode||"show"),o={backgroundColor:s.css("backgroundColor")};"hide"===a&&(o.opacity=0),e.effects.save(s,n),s.show().css({backgroundImage:"none",backgroundColor:t.color||"#ffff99"}).animate(o,{queue:!1,duration:t.duration,easing:t.easing,complete:function(){"hide"===a&&s.hide(),e.effects.restore(s,n),i()}})},e.effects.effect.size=function(t,i){var s,n,a,o=e(this),r=["position","top","bottom","left","right","width","height","overflow","opacity"],h=["position","top","bottom","left","right","overflow","opacity"],l=["width","height","overflow"],u=["fontSize"],d=["borderTopWidth","borderBottomWidth","paddingTop","paddingBottom"],c=["borderLeftWidth","borderRightWidth","paddingLeft","paddingRight"],p=e.effects.setMode(o,t.mode||"effect"),f=t.restore||"effect"!==p,m=t.scale||"both",g=t.origin||["middle","center"],v=o.css("position"),y=f?r:h,b={height:0,width:0,outerHeight:0,outerWidth:0};"show"===p&&o.show(),s={height:o.height(),width:o.width(),outerHeight:o.outerHeight(),outerWidth:o.outerWidth()},"toggle"===t.mode&&"show"===p?(o.from=t.to||b,o.to=t.from||s):(o.from=t.from||("show"===p?b:s),o.to=t.to||("hide"===p?b:s)),a={from:{y:o.from.height/s.height,x:o.from.width/s.width},to:{y:o.to.height/s.height,x:o.to.width/s.width}},("box"===m||"both"===m)&&(a.from.y!==a.to.y&&(y=y.concat(d),o.from=e.effects.setTransition(o,d,a.from.y,o.from),o.to=e.effects.setTransition(o,d,a.to.y,o.to)),a.from.x!==a.to.x&&(y=y.concat(c),o.from=e.effects.setTransition(o,c,a.from.x,o.from),o.to=e.effects.setTransition(o,c,a.to.x,o.to))),("content"===m||"both"===m)&&a.from.y!==a.to.y&&(y=y.concat(u).concat(l),o.from=e.effects.setTransition(o,u,a.from.y,o.from),o.to=e.effects.setTransition(o,u,a.to.y,o.to)),e.effects.save(o,y),o.show(),e.effects.createWrapper(o),o.css("overflow","hidden").css(o.from),g&&(n=e.effects.getBaseline(g,s),o.from.top=(s.outerHeight-o.outerHeight())*n.y,o.from.left=(s.outerWidth-o.outerWidth())*n.x,o.to.top=(s.outerHeight-o.to.outerHeight)*n.y,o.to.left=(s.outerWidth-o.to.outerWidth)*n.x),o.css(o.from),("content"===m||"both"===m)&&(d=d.concat(["marginTop","marginBottom"]).concat(u),c=c.concat(["marginLeft","marginRight"]),l=r.concat(d).concat(c),o.find("*[width]").each(function(){var i=e(this),s={height:i.height(),width:i.width(),outerHeight:i.outerHeight(),outerWidth:i.outerWidth()};f&&e.effects.save(i,l),i.from={height:s.height*a.from.y,width:s.width*a.from.x,outerHeight:s.outerHeight*a.from.y,outerWidth:s.outerWidth*a.from.x},i.to={height:s.height*a.to.y,width:s.width*a.to.x,outerHeight:s.height*a.to.y,outerWidth:s.width*a.to.x},a.from.y!==a.to.y&&(i.from=e.effects.setTransition(i,d,a.from.y,i.from),i.to=e.effects.setTransition(i,d,a.to.y,i.to)),a.from.x!==a.to.x&&(i.from=e.effects.setTransition(i,c,a.from.x,i.from),i.to=e.effects.setTransition(i,c,a.to.x,i.to)),i.css(i.from),i.animate(i.to,t.duration,t.easing,function(){f&&e.effects.restore(i,l)})})),o.animate(o.to,{queue:!1,duration:t.duration,easing:t.easing,complete:function(){0===o.to.opacity&&o.css("opacity",o.from.opacity),"hide"===p&&o.hide(),e.effects.restore(o,y),f||("static"===v?o.css({position:"relative",top:o.to.top,left:o.to.left}):e.each(["top","left"],function(e,t){o.css(t,function(t,i){var s=parseInt(i,10),n=e?o.to.left:o.to.top;return"auto"===i?n+"px":s+n+"px"})})),e.effects.removeWrapper(o),i()}})},e.effects.effect.scale=function(t,i){var s=e(this),n=e.extend(!0,{},t),a=e.effects.setMode(s,t.mode||"effect"),o=parseInt(t.percent,10)||(0===parseInt(t.percent,10)?0:"hide"===a?0:100),r=t.direction||"both",h=t.origin,l={height:s.height(),width:s.width(),outerHeight:s.outerHeight(),outerWidth:s.outerWidth()},u={y:"horizontal"!==r?o/100:1,x:"vertical"!==r?o/100:1};n.effect="size",n.queue=!1,n.complete=i,"effect"!==a&&(n.origin=h||["middle","center"],n.restore=!0),n.from=t.from||("show"===a?{height:0,width:0,outerHeight:0,outerWidth:0}:l),n.to={height:l.height*u.y,width:l.width*u.x,outerHeight:l.outerHeight*u.y,outerWidth:l.outerWidth*u.x},n.fade&&("show"===a&&(n.from.opacity=0,n.to.opacity=1),"hide"===a&&(n.from.opacity=1,n.to.opacity=0)),s.effect(n)},e.effects.effect.puff=function(t,i){var s=e(this),n=e.effects.setMode(s,t.mode||"hide"),a="hide"===n,o=parseInt(t.percent,10)||150,r=o/100,h={height:s.height(),width:s.width(),outerHeight:s.outerHeight(),outerWidth:s.outerWidth()};e.extend(t,{effect:"scale",queue:!1,fade:!0,mode:n,complete:i,percent:a?o:100,from:a?h:{height:h.height*r,width:h.width*r,outerHeight:h.outerHeight*r,outerWidth:h.outerWidth*r}}),s.effect(t)},e.effects.effect.pulsate=function(t,i){var s,n=e(this),a=e.effects.setMode(n,t.mode||"show"),o="show"===a,r="hide"===a,h=o||"hide"===a,l=2*(t.times||5)+(h?1:0),u=t.duration/l,d=0,c=n.queue(),p=c.length;for((o||!n.is(":visible"))&&(n.css("opacity",0).show(),d=1),s=1;l>s;s++)n.animate({opacity:d},u,t.easing),d=1-d;n.animate({opacity:d},u,t.easing),n.queue(function(){r&&n.hide(),i()}),p>1&&c.splice.apply(c,[1,0].concat(c.splice(p,l+1))),n.dequeue()},e.effects.effect.shake=function(t,i){var s,n=e(this),a=["position","top","bottom","left","right","height","width"],o=e.effects.setMode(n,t.mode||"effect"),r=t.direction||"left",h=t.distance||20,l=t.times||3,u=2*l+1,d=Math.round(t.duration/u),c="up"===r||"down"===r?"top":"left",p="up"===r||"left"===r,f={},m={},g={},v=n.queue(),y=v.length;for(e.effects.save(n,a),n.show(),e.effects.createWrapper(n),f[c]=(p?"-=":"+=")+h,m[c]=(p?"+=":"-=")+2*h,g[c]=(p?"-=":"+=")+2*h,n.animate(f,d,t.easing),s=1;l>s;s++)n.animate(m,d,t.easing).animate(g,d,t.easing);n.animate(m,d,t.easing).animate(f,d/2,t.easing).queue(function(){"hide"===o&&n.hide(),e.effects.restore(n,a),e.effects.removeWrapper(n),i()}),y>1&&v.splice.apply(v,[1,0].concat(v.splice(y,u+1))),n.dequeue()},e.effects.effect.slide=function(t,i){var s,n=e(this),a=["position","top","bottom","left","right","width","height"],o=e.effects.setMode(n,t.mode||"show"),r="show"===o,h=t.direction||"left",l="up"===h||"down"===h?"top":"left",u="up"===h||"left"===h,d={};e.effects.save(n,a),n.show(),s=t.distance||n["top"===l?"outerHeight":"outerWidth"](!0),e.effects.createWrapper(n).css({overflow:"hidden"}),r&&n.css(l,u?isNaN(s)?"-"+s:-s:s),d[l]=(r?u?"+=":"-=":u?"-=":"+=")+s,n.animate(d,{queue:!1,duration:t.duration,easing:t.easing,complete:function(){"hide"===o&&n.hide(),e.effects.restore(n,a),e.effects.removeWrapper(n),i()}})},e.effects.effect.transfer=function(t,i){var s=e(this),n=e(t.to),a="fixed"===n.css("position"),o=e("body"),r=a?o.scrollTop():0,h=a?o.scrollLeft():0,l=n.offset(),u={top:l.top-r,left:l.left-h,height:n.innerHeight(),width:n.innerWidth()},d=s.offset(),c=e("<div class='ui-effects-transfer'></div>").appendTo(document.body).addClass(t.className).css({top:d.top-r,left:d.left-h,height:s.innerHeight(),width:s.innerWidth(),position:a?"fixed":"absolute"}).animate(u,t.duration,t.easing,function(){c.remove(),i()})}});
 </script>
   <script>
+/*https://github.com/codepb/jquery-template*/
 (function(a){var v={},u={},h={};function n(F,B,D){var A=this,z,C,E;B=B||{};E=a.extend(true,{async:true,overwriteCache:false,complete:null,success:null,error:function(){a(this).each(function(){a(this).html(E.errorMessage)})},errorMessage:"There was an error loading the template.",paged:false,pageNo:1,elemPerPage:10,append:false,prepend:false,beforeInsert:null,afterInsert:null,bindingOptions:{ignoreUndefined:false,ignoreNull:false,ignoreEmptyString:false}},D);if(a.type(B)==="array"){return s.call(this,F,B,E)}if(!g(F)){z=a(F);if(typeof F==="string"&&F.indexOf("#")===0){E.isFile=false}}C=E.isFile||(typeof E.isFile==="undefined"&&(typeof z==="undefined"||z.length===0));if(C&&!E.overwriteCache&&v[F]){q(F,A,B,E)}else{if(C&&!E.overwriteCache&&v.hasOwnProperty(F)){c(F,A,B,E)}else{if(C){m(F,A,B,E)}else{o(z,A,B,E)}}}return this}function b(A,z){if(z){h[A]=z}else{h=a.extend(h,A)}}function g(z){return typeof z==="string"&&z.indexOf("/")>-1}function s(I,A,F){F=F||{};var z=this,J=A.length,C=F.prepend&&!F.append,B=0,H=0,D=false,E;if(F.paged){var G=(F.pageNo-1)*F.elemPerPage;A=A.slice(G,G+F.elemPerPage);J=A.length}E=a.extend({},F,{complete:function(){if(this.html){if(C){z.prepend(this.html())}else{z.append(this.html())}}B++;if(B===J||D){if(D&&F&&typeof F.error==="function"){F.error.call(z)}if(F&&typeof F.complete==="function"){F.complete()}}},success:function(){H++;if(H===J){if(F&&typeof F.success==="function"){F.success()}}},error:function(){D=true}});if(!F.append&&!F.prepend){z.html("")}if(C){A.reverse()}a(A).each(function(){var K=a("<div/>");n.call(K,I,this,E);if(D){return false}});return this}function c(C,A,z,B){if(u[C]){u[C].push({data:z,selection:A,settings:B})}else{u[C]=[{data:z,selection:A,settings:B}]}}function q(D,B,A,C){var z=v[D].clone();p.call(B,z,A,C);if(typeof C.success==="function"){C.success()}}function w(){return new Date().getTime()}function x(z){if(z.indexOf("?")!==-1){return z+"&_="+w()}else{return z+"?_="+w()}}function m(D,B,A,C){var z=a("<div/>");v[D]=null;var E=D;if(C.overwriteCache){E=x(E)}a.ajax({url:E,async:C.async,success:function(F){z.html(F);l(z,D,B,A,C)},error:function(){k(D,B,A,C)}})}function o(z,C,B,D){var A=a("<div/>");if(z.is("script")||z.is("template")){z=a.parseHTML(a.trim(z.html()))}A.html(z);p.call(C,A,B,D);if(typeof D.success==="function"){D.success()}}function p(B,z,A){f(B,z,A);a(this).each(function(){var C=a(B.html());if(A.beforeInsert){A.beforeInsert(C)}if(A.append){a(this).append(C)}else{if(A.prepend){a(this).prepend(C)}else{a(this).html(C)}}if(A.afterInsert){A.afterInsert(C)}});if(typeof A.complete==="function"){A.complete.call(a(this))}}function k(C,A,z,B){var D;if(typeof B.error==="function"){B.error.call(A)}a(u[C]).each(function(E,F){if(typeof F.settings.error==="function"){F.settings.error.call(F.selection)}});if(typeof B.complete==="function"){B.complete.call(A)}while(u[C]&&(D=u[C].shift())){if(typeof D.settings.complete==="function"){D.settings.complete.call(D.selection)}}if(typeof u[C]!=="undefined"&&u[C].length>0){u[C]=[]}}function l(z,D,B,A,C){var E;v[D]=z.clone();p.call(B,z,A,C);if(typeof C.success==="function"){C.success.call(B)}while(u[D]&&(E=u[D].shift())){p.call(E.selection,v[D].clone(),E.data,E.settings);if(typeof E.settings.success==="function"){E.settings.success.call(E.selection)}}}function f(B,z,A){z=z||{};t("data-content",B,z,A,function(C,D){C.html(e(C,D,"content",A))});t("data-content-append",B,z,A,function(C,D){C.append(e(C,D,"content",A))});t("data-content-prepend",B,z,A,function(C,D){C.prepend(e(C,D,"content",A))});t("data-content-text",B,z,A,function(C,D){C.text(e(C,D,"content",A))});t("data-innerHTML",B,z,A,function(C,D){C.html(e(C,D,"content",A))});t("data-src",B,z,A,function(C,D){C.attr("src",e(C,D,"src",A))},function(C){C.remove()});t("data-href",B,z,A,function(C,D){C.attr("href",e(C,D,"href",A))},function(C){C.remove()});t("data-alt",B,z,A,function(C,D){C.attr("alt",e(C,D,"alt",A))});t("data-id",B,z,A,function(C,D){C.attr("id",e(C,D,"id",A))});t("data-value",B,z,A,function(C,D){C.attr("value",e(C,D,"value",A))});t("data-class",B,z,A,function(C,D){C.addClass(e(C,D,"class",A))});t("data-link",B,z,A,function(C,E){var D=a("<a/>");D.attr("href",e(C,E,"link",A));D.html(C.html());C.html(D)});t("data-link-wrap",B,z,A,function(C,E){var D=a("<a/>");D.attr("href",e(C,E,"link-wrap",A));C.wrap(D)});t("data-options",B,z,A,function(C,D){a(D).each(function(){var E=a("<option/>");E.attr("value",this).text(this).appendTo(C)})});r(B,z,A)}function t(z,E,A,D,B,C){a("["+z+"]",E).each(function(){var F=a(this),G=F.attr(z),H=j(A,G);if(!y(F,H,D)){F.remove();return}F.removeAttr(z);if(typeof H!=="undefined"&&B){B(F,H)}else{if(C){C(F)}}});return}function y(A,C,B){var z=i(A,B);if(z.ignoreUndefined&&typeof C==="undefined"){return false}else{if(z.ignoreNull&&C===null){return false}else{if(z.ignoreEmptyString&&C===""){return false}else{return true}}}}function i(A,B){var z={};if(A instanceof jQuery&&A.attr("data-binding-options")){z=a.parseJSON(A.attr("data-binding-options"));A.removeAttr("data-binding-options")}else{if(typeof A==="object"&&A.hasOwnProperty("bindingOptions")){z=A.bindingOptions}}return a.extend({},B.bindingOptions,z)}function r(B,z,A){a("[data-template-bind]",B).each(function(){var C=a(this),D=a.parseJSON(C.attr("data-template-bind"));C.removeAttr("data-template-bind");a(D).each(function(){var F;if(typeof(this.value)==="object"){F=j(z,this.value.data)}else{F=j(z,this.value)}if(this.attribute){if(!y(this,F,A)){C.remove();return}switch(this.attribute){case"content":case"innerHTML":C.html(d(C,F,this));break;case"contentAppend":C.append(d(C,F,this));break;case"contentPrepend":C.prepend(d(C,F,this));break;case"contentText":C.text(d(C,F,this));break;case"options":var E=this;a(F).each(function(){var G=a("<option/>");G.attr("value",this[E.value.value]).text(d(C,this[E.value.content],E)).attr("selected",typeof this[E.value.selected]==undefined?false:this[E.value.selected]).appendTo(C)});break;default:C.attr(this.attribute,d(C,F,this))}}})})}function d(z,C,A,B){if(A.formatter&&h[A.formatter]){return(function(D){return h[A.formatter].call(z,C,A.formatOptions,D)})(B)}return C}function j(z,A){if(A==="this"){return z}var B=A.split("."),C,D=z;while((C=B.shift())&&typeof D!=="undefined"&&D!=null){D=D[C]}return D}function e(z,F,A,E){var D=z.attr("data-format-target"),C;if(D===A||(!D&&A==="content")){C=z.attr("data-format");if(C&&typeof h[C]==="function"){var B=z.attr("data-format-options");return(function(G){return h[C].call(z[0],F,B,a.extend({},G))})(E)}}return F}b("nestedTemplateFormatter",function(D,A,z){if(!A){return}if(typeof A==="string"&&A[0]==="{"){A=a.parseJSON(A)}var B=A.parentElement||"div";var C=A.template||A;if(A.parentElement){return a("<"+B+"/>").loadTemplate(C,D,z)}else{return a("<"+B+"/>").loadTemplate(C,D,z).children()}});a.fn.loadTemplate=n;a.addTemplateFormatter=b})(jQuery);
 </script>
   <script>
@@ -13358,6 +13615,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "feedback#top_para_3": "[Ẏǿǿŭŭ ƈȧȧƞ ȧȧŀşǿǿ ƒīīƞḓ şǿǿŀŭŭŧīīǿǿƞş ŧǿǿ ḿȧȧƞẏ ƈǿǿḿḿǿǿƞ ƥřǿǿƀŀḗḗḿş īīƞ ǿǿŭŭř <a class=\"FaqURL\" href=\"#\">Ƒřḗḗɋŭŭḗḗƞŧŀẏ Ȧȧşķḗḗḓ Ɋŭŭḗḗşŧīīǿǿƞş</a>.]",
       "general#modal-close-button": "[Ƈŀǿǿşḗḗ]",
       "language#success-message": "[<strong>Ħḗḗŀŀǿǿ!</strong> Ẇḗḗŀƈǿǿḿḗḗ ŧǿǿ Ƥşīīƥħǿǿƞ.]",
+      "messages#placeholder": "[Ƞǿǿ ḿḗḗşşȧȧɠḗḗş ẏḗḗŧ]",
       "messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
       "nav#about": "[Ȧȧƀǿǿŭŭŧ]",
       "nav#connection": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
@@ -13438,6 +13696,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "feedback#top_para_3": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
       "general#modal-close-button": "‮Ↄʅosǝ‬",
       "language#success-message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
+      "messages#placeholder": "‮No‬ ‮ɯǝssɐƃǝs‬ ‮ʎǝʇ‬",
       "messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
       "nav#about": "‮∀qonʇ‬",
       "nav#connection": "‮Ↄouuǝɔʇıou‬",
@@ -13571,6 +13830,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
       "feedback#success-message": "<strong>Thank you!</strong> Your feedback has been sent.",
       "messages#show-debug-label": "Show debug messages",
+      "messages#placeholder": "No messages yet",
       "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon.",
       "about#head": "PSIPHON: <i>BEYOND BORDERS</i>",
       "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
@@ -15141,18 +15401,22 @@ $(function() {
 
 function showDebugMessagesClicked(e) {
   /*jshint validthis:true */
-  e.preventDefault();
   var show = $(this).prop('checked');
   $('.log-messages').toggleClass('showing-priority-0', show);
 }
 
 function addLogMessage(obj) {
-  var row = $('<tr>');
-  var msgCell = $('<td>');
-  msgCell.text(obj.message);
-  row.addClass('priority-' + obj.priority);
-  row.append(msgCell);
-  $('.log-messages').prepend(row);
+  $('.log-messages .placeholder').remove();
+
+  $('.log-messages').loadTemplate(
+    $("#message-template"),
+    { 
+      message: obj.message,
+      priority: 'priority-' + obj.priority 
+    },
+    { 
+      prepend:true 
+    });
 
   // The "Show Debug Messages" checkbox is hidden until we actually get a debug
   // message.
@@ -15163,7 +15427,7 @@ function addLogMessage(obj) {
 
 /* LANGUAGE ******************************************************************/
 
-var RTL_LOCALES = ['devrtl', 'fa', 'ar' ];
+var RTL_LOCALES = ['devrtl', 'fa', 'ar'];
 
 $(function() {
   var fallbackLanguage = 'en';
@@ -15789,12 +16053,14 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                         If enabled, requests made to servers within your home country will not be
                         tunneled through Psiphon.
                       </p>
-                      <label for="SplitTunnel" class="checkbox">
+                      <div class="controls checkbox checkbox-primary">
                         <input type="checkbox" id="SplitTunnel"/>
-                        <span data-i18n="settings#split-tunnel#enable-label">
-                          Don't proxy domestic websites
-                        </span>
-                      </label>
+                        <label for="SplitTunnel">
+                          <span data-i18n="settings#split-tunnel#enable-label">
+                            Don't proxy domestic websites
+                          </span>
+                        </label>
+                      </div>
                       <span class="help-block">
                         <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
                           (Doesn't work with VPN mode.)
@@ -16004,9 +16270,9 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                         </div>
                       </div>
                       <div class="control-group">
-                        <div class="controls">
-                          <label class="checkbox" for="SkipUpstreamProxy">
-                            <input type="checkbox" id="SkipUpstreamProxy"/>
+                        <div class="controls checkbox checkbox-primary">
+                          <input type="checkbox" id="SkipUpstreamProxy"/>
+                          <label for="SkipUpstreamProxy">
                             <span data-i18n="settings#upstream-proxy#skip-label">
                               Don't use upstream proxy
                             </span>
@@ -16044,12 +16310,14 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 <div class="accordion-inner">
                   <form>
                     <fieldset>
-                      <label class="checkbox" for="VPN">
-                          <input type="checkbox" id="VPN"/>
+                      <div class="controls checkbox checkbox-primary">
+                        <input type="checkbox" id="VPN"/>
+                        <label for="VPN">
                           <span data-i18n="settings#transport-mode#check-label">
                             Use VPN Mode
                           </span>
-                      </label>
+                        </label>
+                      </div>
                       <span class="help-block" data-i18n="[html]settings#transport-mode#help-text">
                         Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it
                         doesn't provide obfuscation. It is <strong>not recommended</strong>
@@ -16139,14 +16407,16 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
               </div>
 
               <div>
-                <label for="feedback-send-diagnostic" class="checkbox">
-                  <input type="checkbox" checked="" id="feedback-send-diagnostic">
-                  <span data-i18n="[html]feedback#diagnostic_check">
-                    Upload diagnostic data. Please note that this diagnostic data does not
-                    identify you, and it will help us to keep Psiphon running smoothly.
-                    <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
-                  </span>
-                </label>
+                <div class="controls checkbox checkbox-primary">
+                  <input type="checkbox" checked="true" id="feedback-send-diagnostic">
+                  <label for="feedback-send-diagnostic">
+                    <span data-i18n="[html]feedback#diagnostic_check">
+                      Upload diagnostic data. Please note that this diagnostic data does not
+                      identify you, and it will help us to keep Psiphon running smoothly.
+                      <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
+                    </span>
+                  </label>
+                </div>
               </div>
 
               <div class="form-actions">
@@ -16169,15 +16439,36 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
         <!-- LOG MESSAGES ==================================================-->
         <div class="tab-pane fade" id="messages-pane">
           <div>
-            <label class="checkbox invisible" for="show-debug-messages">
-                <input type="checkbox" id="show-debug-messages"/>
+            <div class="controls checkbox checkbox-primary">
+              <input type="checkbox" id="show-debug-messages"/>
+              <label class="invisible" for="show-debug-messages">
                 <span data-i18n="messages#show-debug-label">
                   Show debug messages
                 </span>
-            </label>
+              </label>
+            </div>
 
             <table class="log-messages table">
+              <tr class="placeholder">
+                <td data-i18n="messages#placeholder">
+                  No messages yet
+                </td>
+              </tr>
             </table>
+
+            <!-- Message template -->
+            <script type="text/html" id="message-template">
+              <tr data-class="priority">
+                <td data-content="message">
+                </td>
+              </tr>
+              <li>
+                <i class="icon-li icon-globe"></i>
+                <a href="#" class="language-choice"
+                   data-value="localeCode" data-content="localeName"></a>
+              </li>
+            </script>
+
           </div>
         </div><!-- /messages-pane -->
 
@@ -16226,8 +16517,6 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                  data-value="localeCode" data-content="localeName"></a>
             </li>
           </script>
-    <button type="button" class="btn btn-primary btn-large" data-toggle="modal" data-target="#UpstreamProxyErrorModal" data-backdrop="static">Launch demo modal</button>
-
         </div><!-- /language-pane -->
 
       </div><!-- /tab-content -->

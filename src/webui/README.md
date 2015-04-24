@@ -21,8 +21,9 @@ $ node fake-translations.js
 
 ## TODO
 
+* Hide accordion expand icons on IE7
 * put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
-* Make checkboxes in settings bigger and more colourful. Maybe make settings more colourful? Background shades?
+* Maybe make settings more colourful? Background shades?
 
 * More elaborate connection animation?
 * Automation: Switch to VS2013.

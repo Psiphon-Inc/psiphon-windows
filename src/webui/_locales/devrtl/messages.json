@@ -111,6 +111,10 @@
     "message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
     "description": "A welcome message shown to the user when they first switch to the correct UI language"
   },
+  "messages#placeholder": {
+    "message": "‮No‬ ‮ɯǝssɐƃǝs‬ ‮ʎǝʇ‬",
+    "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+  },
   "messages#show-debug-label": {
     "message": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
     "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
