@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Hide accordion expand icons on IE7
 * put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
 * Maybe make settings more colourful? Background shades?
 

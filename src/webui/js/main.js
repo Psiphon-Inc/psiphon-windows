@@ -291,6 +291,11 @@ $(function settingsInit() {
       $(headingSelector).blur();
     });
 
+  // ...But the expand/collapse icon doesn't display properly on IE7, so just delete it.
+  if (browserCheck('lt-ie8')) {
+    $('.accordion-expand-icon').remove();
+  }
+
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
