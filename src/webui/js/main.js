@@ -59,7 +59,10 @@ var g_initObj = {};
 })();
 
 $(function() {
-  setTimeout(HtmlCtrlInterface_AppReady, 100);
+  // Do some browser-version-dependent DOM pruning
+  if (browserCheck('lt-ie8')) {
+    $('.ie7Remove').remove();
+  }
 
   // Set the logo "info" link
   $('.logo a').attr('href', g_initObj.Config.InfoURL).attr('title', g_initObj.Config.InfoURL);
@@ -95,6 +98,8 @@ $(function() {
   });
   // ...and now.
   resizeContent();
+
+  setTimeout(HtmlCtrlInterface_AppReady, 100);
 });
 
 function resizeContent() {
@@ -134,7 +139,8 @@ $(function() {
     HtmlCtrlInterface_Stop();
   });
 
-  setupConnectToggle();
+  connectToggleSetup();
+  egressRegionComboSetup();
 
   // Update the size of our elements when the tab content element resizes...
   $('.main-height').on('resize', function() {
@@ -161,11 +167,11 @@ function resizeConnectContent() {
     }
   }
 
-  // Set the outer box to the correct height
-  //$('#connect-toggle').height($('#connect-toggle > *').outerHeight());
+  // Set the outer connect button div to the correct height
+  $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
 }
 
-function setupConnectToggle() {
+function connectToggleSetup() {
   var opts = {
     lines: 10, // The number of lines to draw
     length: 6, // The length of each line
@@ -234,6 +240,56 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
   });
 }
 
+function egressRegionComboSetup() {
+  // Rather than duplicating the markup of the settings' egress region list, 
+  // we're going to copy it now.
+  $('#EgressRegionCombo ul').append($('ul#EgressRegion > *').clone());
+
+  // When an item in the combo is clicked, make the settings code do the work.
+  $('#EgressRegionCombo a').click(function(e) {
+    e.preventDefault();
+    var region = $(this).parents('[data-region]').data('region');
+    if (!region) {
+      return;
+    }
+
+    refreshSettings({
+      EgressRegion: region
+    });
+
+    applySettings();
+  });
+
+  // Have the combo track the state of the control in the settings pane.
+  $('#EgressRegion').on('change', function() {
+    var $activeItem;
+    // Copy the relevant classes to the combo items from the settings items.
+    var $regionItems = $('#EgressRegion li');
+    for (var i = 0; i < $regionItems.length; i++) {
+      var $regionItem = $regionItems.eq(i);
+      var region = $regionItem.data('region');
+      var hidden = $regionItem.hasClass('hidden');
+      var active = $regionItem.hasClass('active');
+
+      $('#EgressRegionCombo li[data-region="' + region + '"]')
+        .toggleClass('hidden', hidden)
+        .toggleClass('active', active);
+
+      if (active) {
+        $activeItem = $regionItem;
+      }
+    }
+
+    // Update the button
+    if ($activeItem) {
+      $('#EgressRegionCombo .btn span.flag')
+        .attr('data-i18n', $activeItem.find('a').data('i18n'))
+        .attr('class', $activeItem.find('a').attr('class'))
+        .text($activeItem.find('a').text());
+    }
+  });
+}
+
 
 /* SETTINGS ******************************************************************/
 
@@ -291,11 +347,6 @@ $(function settingsInit() {
       $(headingSelector).blur();
     });
 
-  // ...But the expand/collapse icon doesn't display properly on IE7, so just delete it.
-  if (browserCheck('lt-ie8')) {
-    $('.accordion-expand-icon').remove();
-  }
-
   // Some fields are disabled in VPN mode
   $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
@@ -316,36 +367,43 @@ $(function settingsInit() {
     // (if changed).
     if ($('#settings-tab').hasClass('active') &&    // we were active
         !$(this).parent().is($('#settings-tab'))) { // we won't be active
-      var settingsJSON = settingsToJSON();
-      if (settingsJSON === false) {
-        // Settings are invalid. Expand the error sections and prevent switching tabs.
+      if (!applySettings()) {
+        // Something wrong with the settings.
         e.preventDefault();
-        showSettingsSection(
-          $('#settings-accordion .collapse .error').parents('.collapse').eq(0),
-          $('#settings-pane .error input').eq(0).focus());
-        return;
-      }
-      else if (settingsJSON !== g_initialSettingsJSON) {
-        // Settings have changed -- update them in the application (and trigger a reconnect).
-        HtmlCtrlInterface_SaveSettings(settingsJSON);
       }
     }
   });
 
   updateAvailableEgressRegions(false); // don't force valid -- haven't filled in settings yet
+
+  // Fill in the settings.
   refreshSettings();
 });
+
+// Save the current settings (and possible reconnect).
+function applySettings() {
+  var settingsJSON = settingsToJSON();
+  if (settingsJSON === false) {
+    // Settings are invalid. Expand the error sections and prevent switching tabs.
+    showSettingsSection(
+      $('#settings-accordion .collapse .error').parents('.collapse').eq(0),
+      $('#settings-pane .error input').eq(0).focus());
+    return false;
+  }
+  else if (settingsJSON !== g_initialSettingsJSON) {
+    // Settings have changed -- update them in the application (and trigger a reconnect).
+    HtmlCtrlInterface_SaveSettings(settingsJSON);
+  }
+
+  return true;
+}
 
 // Refresh the current settings. If newSettings is truthy, it will become the 
 // the new current settings, otherwise the existing current settings will be 
 // refreshed in the UI.
+// newSettings can be a partial settings object (like, just {egressRegion: "US"} or whatever).
 function refreshSettings(newSettings) {
-  newSettings = newSettings || g_initObj.Settings;
-  var oldDefaults = g_initObj.Settings.defaults;
-  g_initObj.Settings = newSettings;
-  if (!g_initObj.Settings.defaults) {
-    g_initObj.Settings.defaults = oldDefaults;
-  }
+  g_initObj.Settings = $.extend(g_initObj.Settings, newSettings || {});
   fillSettingsValues(g_initObj.Settings);
 
   // When the settings change, we need to check the current egress region choice.
@@ -393,7 +451,7 @@ function fillSettingsValues(obj) {
   if (typeof(obj.EgressRegion) !== 'undefined') {
     var region = obj.EgressRegion || BEST_REGION_VALUE;
     $('#EgressRegion [data-region]').removeClass('active');
-    $('#EgressRegion').find('[data-region="' + region + '"]').addClass('active');
+    $('#EgressRegion').find('[data-region="' + region + '"] a').click();
   }
 }
 
@@ -414,11 +472,6 @@ function settingsToJSON() {
     return false;
   }
 
-  var egressRegion = $('#EgressRegion li.active').data('region');
-  if (!egressRegion || egressRegion === BEST_REGION_VALUE) {
-    egressRegion = '';
-  }
-
   var returnValue = {
     VPN: $('#VPN').prop('checked') ? 1 : 0,
     SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
@@ -427,7 +480,7 @@ function settingsToJSON() {
     UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
     UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
     SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
-    EgressRegion: egressRegion
+    EgressRegion: $('#EgressRegion li.active').data('region')
   };
 
   return JSON.stringify(returnValue);
@@ -462,6 +515,7 @@ function egressRegionSetup() {
     $('#EgressRegion [data-region]').removeClass('active');
     $(this).parents('[data-region]').addClass('active');
     egressRegionValid(false);
+    $('#EgressRegion').trigger('change');
   });
 }
 
@@ -527,6 +581,8 @@ function updateAvailableEgressRegions(forceValid) {
   if (forceValid) {
     forceEgressRegionValid();
   }
+
+  $('#EgressRegion').trigger('change');
 }
 
 // Will be called exactly once. Set up event listeners, etc.

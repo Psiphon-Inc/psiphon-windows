@@ -33,6 +33,16 @@
     .gainLayout { zoom: 1; }
     div { display: inline-block; }
     div { display: block; }
+
+    .ie7Hidden {
+      display: none;
+      visibility: hidden;
+      zoom: 1;
+    };
+
+    .ie7Remove {
+      /* Elements with this class get removed from DOM */
+    }
   </style>
   <![endif]-->
 
@@ -223,6 +233,23 @@
             </div><!-- /disconnected -->
 
           </div><!-- /connect-toggle -->
+
+          <div>
+            <div class="btn-group dropup" id="EgressRegionCombo">
+              <a class="btn btn-large dropdown-toggle f32" data-toggle="dropdown" href="#">
+                <span data-i18n-ltr-classes="pull-left" data-i18n-rtl-classes="pull-right">
+                  <span class="flag us">
+                    Action
+                  </span>
+                </span>
+                <i class="icon-caret-up"
+                   data-i18n-ltr-classes="pull-right" data-i18n-rtl-classes="pull-left"></i>
+              </a>
+              <ul class="control-group dropdown-menu f32" role="menu">
+                <!-- filled in dynamically -->
+             </ul>
+            </div>
+          </div>
         </div><!-- /connection-pane -->
 
 
@@ -249,7 +276,7 @@
                   <span data-i18n="settings#split-tunnel#heading">
                     Split Tunnel
                   </span>
-                  <i class="accordion-expand-icon icon-collapse"
+                  <i class="accordion-expand-icon icon-collapse ie7Remove"
                      data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
                   <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-ban-circle"></i>
@@ -291,7 +318,7 @@
                   <span data-i18n="settings#egress-region#heading">
                     Psiphon Server Region
                   </span>
-                  <i class="accordion-expand-icon icon-collapse"
+                  <i class="accordion-expand-icon icon-collapse ie7Remove"
                      data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
                   <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-ban-circle"></i>
@@ -329,7 +356,7 @@
                                 Best Performance
                               </a>
                             </li>
-                            <li class="divider"></li>
+                            <li class="divider ie7Remove"></li>
                             <li data-region="US">
                               <a href="#" tabindex="-1" class="flag us"
                                  data-i18n="settings#egress-region#select-us">
@@ -367,7 +394,7 @@
                               </a>
                             </li>
                           </ul>
-                        </div>
+                        </div><!--/.dropdown-->
                       </div>
                     </fieldset>
                   </form>
@@ -382,7 +409,7 @@
                   <span data-i18n="settings#local-proxy-ports#heading">
                     Local Proxy Ports
                   </span>
-                  <i class="accordion-expand-icon icon-collapse"
+                  <i class="accordion-expand-icon icon-collapse ie7Remove"
                      data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
                   <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-ban-circle"></i>
@@ -442,7 +469,7 @@
                   <span data-i18n="settings#upstream-proxy#heading">
                     Upstream Proxy
                   </span>
-                  <i class="accordion-expand-icon icon-collapse"
+                  <i class="accordion-expand-icon icon-collapse ie7Remove"
                      data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
                   <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-ban-circle"></i>
@@ -514,7 +541,7 @@
                   <span data-i18n="settings#transport-mode#heading">
                     Transport Mode
                   </span>
-                  <i class="accordion-expand-icon icon-collapse"
+                  <i class="accordion-expand-icon icon-collapse ie7Remove"
                      data-icon-closed="icon-collapse" data-icon-opened="icon-collapse-top"></i>
                 </a>
               </div>

@@ -6350,22 +6350,47 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   color: #b94a48;
 }
 #EgressRegion {
-  width: 300px;
   display: block;
   position: static;
 }
-#EgressRegion .flag {
+#EgressRegionCombo {
+  position: absolute;
+  bottom: 0;
+}
+#EgressRegionCombo a {
+  padding-left: 0;
+  padding-right: 0;
+}
+#EgressRegionCombo ul {
+  height: 200px;
+  overflow-y: scroll;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+#EgressRegion,
+#EgressRegionCombo ul,
+#EgressRegionCombo .btn {
+  width: 300px;
+}
+#EgressRegion .flag,
+#EgressRegionCombo ul .flag,
+#EgressRegionCombo .btn .flag {
   display: block;
   width: auto;
   background-image: url(../flags32.png);
   background-repeat: no-repeat;
   filter: none;
 }
-body[dir="ltr"] #EgressRegion .flag {
+body[dir="ltr"] #EgressRegion .flag,
+body[dir="ltr"] #EgressRegionCombo ul .flag,
+body[dir="ltr"] #EgressRegionCombo .btn .flag {
   padding: 0 0 0 40px;
   background-position-x: 5px;
 }
-body[dir="rtl"] #EgressRegion .flag {
+body[dir="rtl"] #EgressRegion .flag,
+body[dir="rtl"] #EgressRegionCombo ul .flag,
+body[dir="rtl"] #EgressRegionCombo .btn .flag {
   padding: 0 40px 0 0;
   background-position-x: 263px;
 }

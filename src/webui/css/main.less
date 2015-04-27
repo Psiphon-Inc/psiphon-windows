@@ -327,11 +327,34 @@ body {
 }
 
 #EgressRegion {
-  @egressRegionWidth: 300px;
-  width: @egressRegionWidth;
-
   display: block;
   position: static;
+}
+
+#EgressRegionCombo {
+  // Stick it to the bottom.
+  position: absolute;
+  bottom: 0;
+
+  a {
+    // Let the flag stuff take care of the padding
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  ul {
+    // We want to fix the size of the combo list, so it doesn't go off the view.
+    height: 200px;
+    overflow-y: scroll;
+
+    // No border radius
+    .border-radius(0);
+  }
+}
+
+#EgressRegion, #EgressRegionCombo ul, #EgressRegionCombo .btn {
+  @egressRegionWidth: 300px;
+  width: @egressRegionWidth;
 
   .flag {
     display: block;
