@@ -212,7 +212,8 @@ body {
   max-width: 600px;
   position: relative;
   padding: 0;
-  margin: 60px auto auto auto;
+  margin: auto;
+  top: 10%;
 
   > .connect-toggle-content {
     position: absolute;
@@ -326,20 +327,44 @@ body {
   .text-error;
 }
 
+// NOTE: #EgressRegionCombo is actually on the connect tab. #EgressRegion is in the settings tab.
+
 #EgressRegion {
   display: block;
   position: static;
 }
 
-#EgressRegionCombo {
+.egress-region-combo-container {
   // Stick it to the bottom.
   position: absolute;
-  bottom: 0;
+  bottom: 1em;
 
-  a {
+  // And center it.
+  left: 50%;
+  #EgressRegionCombo {
+    position: relative;
+    left: -50%;
+  }
+}
+
+// But that method of scrolling makes the container element too wide, so don't
+// allow the connect pane to scroll horizontally.
+#connection-pane  {
+  overflow-x: hidden;
+}
+
+#EgressRegionCombo {
+  > a {
     // Let the flag stuff take care of the padding
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0;
+
+    // Make the combo button background transparent
+    background: none;
+
+    i {
+      // Make the caret more vertically centered.
+      padding: 0.5em;
+    }
   }
 
   ul {

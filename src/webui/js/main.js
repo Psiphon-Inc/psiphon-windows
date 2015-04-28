@@ -243,10 +243,11 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
 function egressRegionComboSetup() {
   // Rather than duplicating the markup of the settings' egress region list, 
   // we're going to copy it now.
-  $('#EgressRegionCombo ul').append($('ul#EgressRegion > *').clone());
+  // IE7: Don't use $().clone().
+  $('#EgressRegionCombo ul').html($('ul#EgressRegion').html());
 
   // When an item in the combo is clicked, make the settings code do the work.
-  $('#EgressRegionCombo a').click(function(e) {
+  $('#EgressRegionCombo a').click(function egressRegionComboSetup_EgressRegionCombo_click(e) {
     e.preventDefault();
     var region = $(this).parents('[data-region]').data('region');
     if (!region) {
@@ -261,7 +262,7 @@ function egressRegionComboSetup() {
   });
 
   // Have the combo track the state of the control in the settings pane.
-  $('#EgressRegion').on('change', function() {
+  $('#EgressRegion').on('change', function egressRegionComboSetup_EgressRegion_change() {
     var $activeItem;
     // Copy the relevant classes to the combo items from the settings items.
     var $regionItems = $('#EgressRegion li');
@@ -512,6 +513,12 @@ function egressRegionSetup() {
   // Handle changes to the Egress Region
   $('#EgressRegion a').click(function(e) {
     e.preventDefault();
+
+    // Check if this target item is already active. Return if so.
+    if ($(this).parents('[data-region]').hasClass('active')) {
+      return;
+    }
+
     $('#EgressRegion [data-region]').removeClass('active');
     $(this).parents('[data-region]').addClass('active');
     egressRegionValid(false);

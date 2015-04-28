@@ -43,6 +43,10 @@
     .ie7Remove {
       /* Elements with this class get removed from DOM */
     }
+
+    .ie7Border {
+      border-width: 1px;
+    }
   </style>
   <![endif]-->
 
@@ -235,8 +239,9 @@
           </div><!-- /connect-toggle -->
 
           <div>
+          <div class="egress-region-combo-container">
             <div class="btn-group dropup" id="EgressRegionCombo">
-              <a class="btn btn-large dropdown-toggle f32" data-toggle="dropdown" href="#">
+              <a class="btn btn-large dropdown-toggle f32 ie7Border" data-toggle="dropdown" href="#">
                 <span data-i18n-ltr-classes="pull-left" data-i18n-rtl-classes="pull-right">
                   <span class="flag us">
                     Action
@@ -249,6 +254,7 @@
                 <!-- filled in dynamically -->
              </ul>
             </div>
+          </div>
           </div>
         </div><!-- /connection-pane -->
 
