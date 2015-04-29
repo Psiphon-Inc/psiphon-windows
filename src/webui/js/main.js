@@ -253,7 +253,7 @@ function updateConnectAttemptTooLong() {
   else {
     // Start the too-long timeout
     if (g_connectingTooLongTimeout === null) {
-      g_connectingTooLongTimeout = setTimeout(connectAttemptTooLong, 30000);
+      g_connectingTooLongTimeout = setTimeout(connectAttemptTooLong, 60000);
     }
   }
 
