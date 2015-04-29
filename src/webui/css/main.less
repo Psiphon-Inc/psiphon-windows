@@ -387,11 +387,11 @@ body {
 
     body[dir="ltr"] & {
       padding: 0 0 0 40px;
-      background-position-x: 5px;
+      background-position-x: 1%;
     }
     body[dir="rtl"] & {
       padding: 0 40px 0 0;
-      background-position-x: (@egressRegionWidth - 5px - 32px);
+      background-position-x: 99%; // Handy way of getting the flag on the right side
     }
 
     // Force our flag image to show even when the item is active.

@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* put region selector in connect tab -- use msDropdown as a drop-up, resurrect previous code
 * Maybe make settings more colourful? Background shades?
 
 * More elaborate connection animation?
