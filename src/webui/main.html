@@ -89,13 +89,23 @@
         <img src="logo.png">
       </a>
     </div>
-    <div class="text-center banner">
+
+    <div class="text-center banner long-connecting-hide">
       <div data-i18n="banner#sponsored-by">
         Sponsored by
       </div>
       <a href="#">
         <img src="">
       </a>
+    </div>
+
+    <div class="text-center banner hidden long-connecting-show">
+      <div data-i18n="[html]banner#long-connecting">
+        <strong>Oh no!</strong> You seem to be having trouble connecting!<br>
+        Download the latest version of Psiphon from the
+        <a class="about-info-url" href="#">download site</a>
+        or by sending an email to <a class="about-email" href="#"></a>
+      </div>
     </div>
   </div>
 
@@ -727,14 +737,14 @@
           <p data-i18n="[html]about#visit-download-site">
             To <strong>download a new version</strong> of Psiphon, or to
             <strong>get help and more information</strong>, please
-            <a id="about-info-url" href="#">visit the website</a>.
+            <a class="about-info-url" href="#">visit the website</a>.
           </p>
           <p>
             <span data-i18n="[html]about#get-by-email">
               <strong>If the website is inaccessible</strong>, you can get a new
               version of Psiphon by sending an email to:
             </span>
-            <a id="about-email" href="#"></a>
+            <a class="about-email" href="#"></a>
           </p>
           <p data-i18n="[html]about#visit-company-site">
             To find out more about Psiphon Inc. please visit our

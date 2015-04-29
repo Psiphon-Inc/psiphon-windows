@@ -9173,6 +9173,11 @@ body[dir="rtl"] .psiphon-header {
 .psiphon-header .banner > a img {
   height: 48px;
 }
+.psiphon-header .banner.long-connecting-show {
+  max-width: 400px;
+  margin: auto;
+  font-size: 0.9em;
+}
 .psiphon-header .logo {
   position: absolute;
 }
@@ -13726,6 +13731,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "about#head": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
       "about#visit-company-site": "[Ŧǿǿ ƒīīƞḓ ǿǿŭŭŧ ḿǿǿřḗḗ ȧȧƀǿǿŭŭŧ Ƥşīīƥħǿǿƞ Īīƞƈ. ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř <a href=\"https://psiphon.ca\">ƈǿǿḿƥȧȧƞẏ ẇḗḗƀşīīŧḗḗ</a>.]",
       "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
+      "banner#long-connecting": "[<strong>Ǿǿħ ƞǿǿ!</strong> Ẏǿǿŭŭ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ħȧȧṽīīƞɠ ŧřǿǿŭŭƀŀḗḗ ƈǿǿƞƞḗḗƈŧīīƞɠ!<br>\nḒǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƒřǿǿḿ ŧħḗḗ <a class=\"about-info-url\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ şīīŧḗḗ</a>\nǿǿř ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"about-email\" href=\"#\"></a>]",
       "banner#sponsored-by": "[Şƥǿǿƞşǿǿřḗḗḓ ƀẏ]",
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
@@ -13809,6 +13815,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "about#head": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
       "about#visit-company-site": "‮⊥o‬ ‮ɟıup‬ ‮onʇ‬ ‮ɯoɹǝ‬ ‮ɐqonʇ‬ ‮Ԁsıdɥou‬ ‮Iuɔ‬. ‮dʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮onɹ‬ <a href=\"https://psiphon.ca\">‮ɔoɯdɐuʎ‬ ‮ʍǝqsıʇǝ‬</a>.",
       "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+      "banner#long-connecting": "<strong>‮Oɥ‬ ‮uo‬!</strong> ‮ʎon‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮ɥɐʌıuƃ‬ ‮ʇɹonqʅǝ‬ ‮ɔouuǝɔʇıuƃ‬!<br>\n‮poʍuʅoɐp‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ <a class=\"about-info-url\" href=\"#\">‮poʍuʅoɐp‬ ‮sıʇǝ‬</a>\n‮oɹ‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬ <a class=\"about-email\" href=\"#\"></a>",
       "banner#sponsored-by": "‮Sdousoɹǝp‬ ‮qʎ‬",
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
@@ -13968,6 +13975,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
     "name": "English",
     "translation": {
       "banner#sponsored-by": "Sponsored by",
+      "banner#long-connecting": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"about-info-url\" href=\"#\">download site</a>\nor by sending an email to <a class=\"about-email\" href=\"#\"></a>",
       "nav#connection": "Connection",
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",
@@ -14907,7 +14915,12 @@ function resizeContent() {
 
 /* CONNECTION ****************************************************************/
 
+// The current connected actual state of the application
 var g_lastState = 'stopped';
+
+// Used to monitor whether the current connection attempt is taking too long and
+// so if a "download new version" message should be shown.
+var g_connectingTooLongTimeout = null;
 
 $(function() {
   $('#start').click(function(e) {
@@ -15006,6 +15019,8 @@ function updateConnectToggle() {
 
   if (g_lastState === 'starting') {
     cycleToggleClass($('.connect-toggle-content[data-connect-state="starting"]'), 'alert-success', g_lastState);
+
+    g_connectingTooLongTimeout
   }
   else if (g_lastState === 'connected') {
   }
@@ -15013,6 +15028,37 @@ function updateConnectToggle() {
     cycleToggleClass($('.connect-toggle-content[data-connect-state="stopping"]'), 'alert-danger', g_lastState);
   }
   else if (g_lastState === 'stopped') {
+  }
+
+  updateConnectAttemptTooLong();
+}
+
+// Keeps track of how long the current connection attempt is taking and whether
+// a message should be shown to the user indicating how to get a new version.
+function updateConnectAttemptTooLong() {
+  if (g_lastState === 'connected' || g_lastState === 'stopped') {
+    // Clear the too-long timeout
+    if (g_connectingTooLongTimeout !== null) {
+      clearTimeout(g_connectingTooLongTimeout);
+      g_connectingTooLongTimeout = null;
+      connectAttemptTooLongReset();
+    }
+  }
+  else {
+    // Start the too-long timeout
+    if (g_connectingTooLongTimeout === null) {
+      g_connectingTooLongTimeout = setTimeout(connectAttemptTooLong, 30000);
+    }
+  }
+
+  function connectAttemptTooLong() {
+    $('.long-connecting-hide').addClass('hidden');
+    $('.long-connecting-show').removeClass('hidden');
+  }
+
+  function connectAttemptTooLongReset() {
+    $('.long-connecting-hide').removeClass('hidden');
+    $('.long-connecting-show').addClass('hidden');
   }
 }
 
@@ -15898,8 +15944,8 @@ function populateLocales() {
 // Note that this is called before the DOM is fully loaded.
 (function() {
   $window.on(LANGUAGE_CHANGE_EVENT, function() {
-    $('#about-info-url').attr('href', g_initObj.Config.InfoURL);
-    $('#about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
+    $('.about-info-url').attr('href', g_initObj.Config.InfoURL);
+    $('.about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
                      .text(g_initObj.Config.GetNewVersionEmail);
   });
 })();
@@ -16216,13 +16262,23 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
         <img src="logo.png">
       </a>
     </div>
-    <div class="text-center banner">
+
+    <div class="text-center banner long-connecting-hide">
       <div data-i18n="banner#sponsored-by">
         Sponsored by
       </div>
       <a href="#">
         <img src="">
       </a>
+    </div>
+
+    <div class="text-center banner hidden long-connecting-show">
+      <div data-i18n="[html]banner#long-connecting">
+        <strong>Oh no!</strong> You seem to be having trouble connecting!<br>
+        Download the latest version of Psiphon from the
+        <a class="about-info-url" href="#">download site</a>
+        or by sending an email to <a class="about-email" href="#"></a>
+      </div>
     </div>
   </div>
 
@@ -16854,14 +16910,14 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
           <p data-i18n="[html]about#visit-download-site">
             To <strong>download a new version</strong> of Psiphon, or to
             <strong>get help and more information</strong>, please
-            <a id="about-info-url" href="#">visit the website</a>.
+            <a class="about-info-url" href="#">visit the website</a>.
           </p>
           <p>
             <span data-i18n="[html]about#get-by-email">
               <strong>If the website is inaccessible</strong>, you can get a new
               version of Psiphon by sending an email to:
             </span>
-            <a id="about-email" href="#"></a>
+            <a class="about-email" href="#"></a>
           </p>
           <p data-i18n="[html]about#visit-company-site">
             To find out more about Psiphon Inc. please visit our

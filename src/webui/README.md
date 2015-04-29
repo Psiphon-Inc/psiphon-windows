@@ -21,11 +21,10 @@ $ node fake-translations.js
 
 ## TODO
 
-* Maybe make settings more colourful? Background shades?
+* Figure out why .exe jumped from 3.5MB to 5.2MB (after upxing).
 
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
-* Add message that shows when slow to connect providing download email and URL.
 
 
 ## Longer-term TODO

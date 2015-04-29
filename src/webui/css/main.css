@@ -6182,6 +6182,11 @@ body[dir="rtl"] .psiphon-header {
 .psiphon-header .banner > a img {
   height: 48px;
 }
+.psiphon-header .banner.long-connecting-show {
+  max-width: 400px;
+  margin: auto;
+  font-size: 0.9em;
+}
 .psiphon-header .logo {
   position: absolute;
 }

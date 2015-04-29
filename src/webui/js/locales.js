@@ -167,6 +167,7 @@
       "about#head": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
       "about#visit-company-site": "[Ŧǿǿ ƒīīƞḓ ǿǿŭŭŧ ḿǿǿřḗḗ ȧȧƀǿǿŭŭŧ Ƥşīīƥħǿǿƞ Īīƞƈ. ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř <a href=\"https://psiphon.ca\">ƈǿǿḿƥȧȧƞẏ ẇḗḗƀşīīŧḗḗ</a>.]",
       "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
+      "banner#long-connecting": "[<strong>Ǿǿħ ƞǿǿ!</strong> Ẏǿǿŭŭ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ħȧȧṽīīƞɠ ŧřǿǿŭŭƀŀḗḗ ƈǿǿƞƞḗḗƈŧīīƞɠ!<br>\nḒǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƒřǿǿḿ ŧħḗḗ <a class=\"about-info-url\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ şīīŧḗḗ</a>\nǿǿř ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"about-email\" href=\"#\"></a>]",
       "banner#sponsored-by": "[Şƥǿǿƞşǿǿřḗḗḓ ƀẏ]",
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
@@ -250,6 +251,7 @@
       "about#head": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
       "about#visit-company-site": "‮⊥o‬ ‮ɟıup‬ ‮onʇ‬ ‮ɯoɹǝ‬ ‮ɐqonʇ‬ ‮Ԁsıdɥou‬ ‮Iuɔ‬. ‮dʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮onɹ‬ <a href=\"https://psiphon.ca\">‮ɔoɯdɐuʎ‬ ‮ʍǝqsıʇǝ‬</a>.",
       "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" id=\"about-info-url\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+      "banner#long-connecting": "<strong>‮Oɥ‬ ‮uo‬!</strong> ‮ʎon‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮ɥɐʌıuƃ‬ ‮ʇɹonqʅǝ‬ ‮ɔouuǝɔʇıuƃ‬!<br>\n‮poʍuʅoɐp‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ <a class=\"about-info-url\" href=\"#\">‮poʍuʅoɐp‬ ‮sıʇǝ‬</a>\n‮oɹ‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬ <a class=\"about-email\" href=\"#\"></a>",
       "banner#sponsored-by": "‮Sdousoɹǝp‬ ‮qʎ‬",
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
@@ -409,6 +411,7 @@
     "name": "English",
     "translation": {
       "banner#sponsored-by": "Sponsored by",
+      "banner#long-connecting": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"about-info-url\" href=\"#\">download site</a>\nor by sending an email to <a class=\"about-email\" href=\"#\"></a>",
       "nav#connection": "Connection",
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",

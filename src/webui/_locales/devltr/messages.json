@@ -19,6 +19,10 @@
     "message": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" id=\"about-info-url\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
   },
+  "banner#long-connecting": {
+    "message": "[<strong>Ǿǿħ ƞǿǿ!</strong> Ẏǿǿŭŭ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ħȧȧṽīīƞɠ ŧřǿǿŭŭƀŀḗḗ ƈǿǿƞƞḗḗƈŧīīƞɠ!<br>\nḒǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƒřǿǿḿ ŧħḗḗ <a class=\"about-info-url\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ şīīŧḗḗ</a>\nǿǿř ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"about-email\" href=\"#\"></a>]",
+    "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+  },
   "banner#sponsored-by": {
     "message": "[Şƥǿǿƞşǿǿřḗḗḓ ƀẏ]",
     "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."

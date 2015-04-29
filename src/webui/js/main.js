@@ -121,7 +121,12 @@ function resizeContent() {
 
 /* CONNECTION ****************************************************************/
 
+// The current connected actual state of the application
 var g_lastState = 'stopped';
+
+// Used to monitor whether the current connection attempt is taking too long and
+// so if a "download new version" message should be shown.
+var g_connectingTooLongTimeout = null;
 
 $(function() {
   $('#start').click(function(e) {
@@ -220,6 +225,8 @@ function updateConnectToggle() {
 
   if (g_lastState === 'starting') {
     cycleToggleClass($('.connect-toggle-content[data-connect-state="starting"]'), 'alert-success', g_lastState);
+
+    g_connectingTooLongTimeout
   }
   else if (g_lastState === 'connected') {
   }
@@ -227,6 +234,37 @@ function updateConnectToggle() {
     cycleToggleClass($('.connect-toggle-content[data-connect-state="stopping"]'), 'alert-danger', g_lastState);
   }
   else if (g_lastState === 'stopped') {
+  }
+
+  updateConnectAttemptTooLong();
+}
+
+// Keeps track of how long the current connection attempt is taking and whether
+// a message should be shown to the user indicating how to get a new version.
+function updateConnectAttemptTooLong() {
+  if (g_lastState === 'connected' || g_lastState === 'stopped') {
+    // Clear the too-long timeout
+    if (g_connectingTooLongTimeout !== null) {
+      clearTimeout(g_connectingTooLongTimeout);
+      g_connectingTooLongTimeout = null;
+      connectAttemptTooLongReset();
+    }
+  }
+  else {
+    // Start the too-long timeout
+    if (g_connectingTooLongTimeout === null) {
+      g_connectingTooLongTimeout = setTimeout(connectAttemptTooLong, 30000);
+    }
+  }
+
+  function connectAttemptTooLong() {
+    $('.long-connecting-hide').addClass('hidden');
+    $('.long-connecting-show').removeClass('hidden');
+  }
+
+  function connectAttemptTooLongReset() {
+    $('.long-connecting-hide').removeClass('hidden');
+    $('.long-connecting-show').addClass('hidden');
   }
 }
 
@@ -1112,8 +1150,8 @@ function populateLocales() {
 // Note that this is called before the DOM is fully loaded.
 (function() {
   $window.on(LANGUAGE_CHANGE_EVENT, function() {
-    $('#about-info-url').attr('href', g_initObj.Config.InfoURL);
-    $('#about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
+    $('.about-info-url').attr('href', g_initObj.Config.InfoURL);
+    $('.about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
                      .text(g_initObj.Config.GetNewVersionEmail);
   });
 })();
