@@ -139,6 +139,10 @@
     "message": "[Şḗḗŧŧīīƞɠş]",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
+  "settings#applying-message": {
+    "message": "[Řḗḗƈǿǿƞƞḗḗƈŧīīƞɠ ŧǿǿ ȧȧƥƥŀẏ ẏǿǿŭŭř şḗḗŧŧīīƞɠş.]",
+    "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+  },
   "settings#egress-region#error-modal-body-http": {
     "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ \"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\" ƈħǿǿīīƈḗḗ.]",
     "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
@@ -230,6 +234,10 @@
   "settings#reset-button": {
     "message": "[Řḗḗşḗḗŧ ŧǿǿ Ḓḗḗƒȧȧŭŭŀŧ]",
     "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+  },
+  "settings#saved-message": {
+    "message": "[Şḗḗŧŧīīƞɠş şȧȧṽḗḗḓ.]",
+    "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
   },
   "settings#split-tunnel#enable-label": {
     "message": "[Ḓǿǿƞ'ŧ ƥřǿǿẋẏ ẇḗḗƀşīīŧḗḗş ẇīīŧħīīƞ ẏǿǿŭŭř ƈǿǿŭŭƞŧřẏ]",

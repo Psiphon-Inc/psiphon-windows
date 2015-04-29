@@ -9389,13 +9389,13 @@ body[dir="ltr"] #EgressRegion .flag,
 body[dir="ltr"] #EgressRegionCombo ul .flag,
 body[dir="ltr"] #EgressRegionCombo .btn .flag {
   padding: 0 0 0 40px;
-  background-position-x: 1%;
+  background-position-x: 2%;
 }
 body[dir="rtl"] #EgressRegion .flag,
 body[dir="rtl"] #EgressRegionCombo ul .flag,
 body[dir="rtl"] #EgressRegionCombo .btn .flag {
   padding: 0 40px 0 0;
-  background-position-x: 99%;
+  background-position-x: 98%;
 }
 .f16 .unknown {
   background-image: url(flag_unknown_16.png) !important;
@@ -9468,6 +9468,7 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  z-index: 1010;
 }
 body[dir="ltr"] .global-alert {
   right: 0;
@@ -13755,6 +13756,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
       "nav#messages": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
       "nav#settings": "[Şḗḗŧŧīīƞɠş]",
+      "settings#applying-message": "[Řḗḗƈǿǿƞƞḗḗƈŧīīƞɠ ŧǿǿ ȧȧƥƥŀẏ ẏǿǿŭŭř şḗḗŧŧīīƞɠş.]",
       "settings#egress-region#error-modal-body-http": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ \"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\" ƈħǿǿīīƈḗḗ.]",
       "settings#egress-region#error-modal-title": "[Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ Ŭŭƞȧȧṽȧȧīīŀȧȧƀŀḗḗ]",
       "settings#egress-region#heading": "[Ƥşīīƥħǿǿƞ Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ]",
@@ -13778,6 +13780,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#local-proxy-ports#unique-error-msg": "[Ŀǿǿƈȧȧŀ ƥǿǿřŧş ḿŭŭşŧ ƀḗḗ ḓīīşŧīīƞƈŧ ƒřǿǿḿ ḗḗȧȧƈħ ǿǿŧħḗḗř.]",
       "settings#port-value-error-msg": "[Ḿŭŭşŧ ƀḗḗ ƀḗḗŧẇḗḗḗḗƞ 1 ȧȧƞḓ 65535.]",
       "settings#reset-button": "[Řḗḗşḗḗŧ ŧǿǿ Ḓḗḗƒȧȧŭŭŀŧ]",
+      "settings#saved-message": "[Şḗḗŧŧīīƞɠş şȧȧṽḗḗḓ.]",
       "settings#split-tunnel#enable-label": "[Ḓǿǿƞ'ŧ ƥřǿǿẋẏ ẇḗḗƀşīīŧḗḗş ẇīīŧħīīƞ ẏǿǿŭŭř ƈǿǿŭŭƞŧřẏ]",
       "settings#split-tunnel#heading": "[Şƥŀīīŧ Ŧŭŭƞƞḗḗŀ]",
       "settings#split-tunnel#help-text": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, řḗḗɋŭŭḗḗşŧş ḿȧȧḓḗḗ ŧǿǿ şḗḗřṽḗḗřş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŧŭŭƞƞḗḗŀḗḗḓ ŧħřǿǿŭŭɠħ Ƥşīīƥħǿǿƞ.]",
@@ -13836,6 +13839,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
       "nav#messages": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
       "nav#settings": "‮Sǝʇʇıuƃs‬",
+      "settings#applying-message": "‮ᴚǝɔouuǝɔʇıuƃ‬ ‮ʇo‬ ‮ɐddʅʎ‬ ‮ʎonɹ‬ ‮sǝʇʇıuƃs‬.",
       "settings#egress-region#error-modal-body-http": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɹǝƃıou‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮ɹǝƃıou‬ ‮ıs‬ ‮uo‬ ‮ʅouƃǝɹ‬ ‮ɐʌɐıʅɐqʅǝ‬.<br>\n‮ʎon‬ ‮ɯnsʇ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ɹǝƃıou‬ ‮oɹ‬ ‮ɔɥɐuƃǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ \"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\" ‮ɔɥoıɔǝ‬.",
       "settings#egress-region#error-modal-title": "‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬ ‮∩uɐʌɐıʅɐqʅǝ‬",
       "settings#egress-region#heading": "‮Ԁsıdɥou‬ ‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬",
@@ -13859,6 +13863,7 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#local-proxy-ports#unique-error-msg": "‮˥oɔɐʅ‬ ‮doɹʇs‬ ‮ɯnsʇ‬ ‮qǝ‬ ‮pısʇıuɔʇ‬ ‮ɟɹoɯ‬ ‮ǝɐɔɥ‬ ‮oʇɥǝɹ‬.",
       "settings#port-value-error-msg": "‮Wnsʇ‬ ‮qǝ‬ ‮qǝʇʍǝǝu‬ 1 ‮ɐup‬ 65535.",
       "settings#reset-button": "‮ᴚǝsǝʇ‬ ‮ʇo‬ ‮pǝɟɐnʅʇ‬",
+      "settings#saved-message": "‮Sǝʇʇıuƃs‬ ‮sɐʌǝp‬.",
       "settings#split-tunnel#enable-label": "‮pou‬'‮ʇ‬ ‮dɹoxʎ‬ ‮ʍǝqsıʇǝs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɔonuʇɹʎ‬",
       "settings#split-tunnel#heading": "‮Sdʅıʇ‬ ‮⊥nuuǝʅ‬",
       "settings#split-tunnel#help-text": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
@@ -14017,6 +14022,8 @@ case"opacity":k.gradient&&!k[a]("stroke-opacity")&&q(i,{"stroke-opacity":p>1?p/1
       "settings#transport-mode#heading": "Transport Mode",
       "settings#transport-mode#check-label": "Use VPN Mode",
       "settings#transport-mode#help-text": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
+      "settings#applying-message": "Reconnecting to apply your settings.",
+      "settings#saved-message": "Settings saved.",
       "feedback#top_content_title": "Give Us Your Feedback",
       "feedback#top_para_1": "Please let us know how Psiphon is working for you so we can make the system better!",
       "feedback#top_para_2": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
@@ -15173,6 +15180,15 @@ function applySettings() {
   else if (settingsJSON !== g_initialSettingsJSON) {
     // Settings have changed -- update them in the application (and trigger a reconnect).
     HtmlCtrlInterface_SaveSettings(settingsJSON);
+
+    if (g_lastState === 'starting' || g_lastState === 'connected') {
+      // We're going to reconnect to apply the settings
+      displayCornerAlert($('#settings-apply-alert'));
+    }
+    else {
+      // We're saving the settings, but not reconnecting/applying.
+      displayCornerAlert($('#settings-save-alert'));
+    }
   }
 
   return true;
@@ -15990,10 +16006,13 @@ function doMatchWidth() {
 
 function displayCornerAlert(elem) {
   // Show -- and then hide -- the alert
-  $(elem).toggle('fold', {horizFirst: true}, function() {
+  var appearAnimationTime = 300;
+  var showingTime = 4000;
+  var disappearAnimationTime = 1000;
+  $(elem).toggle('fold', {horizFirst: true}, appearAnimationTime, function() {
     setTimeout(function() {
-      $(elem).toggle('fold', {horizFirst: true}, 1000);
-    }, 5000);
+      $(elem).toggle('fold', {horizFirst: true}, disappearAnimationTime);
+    }, showingTime);
   });
 }
 
@@ -16881,6 +16900,18 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
   <div id="language-success-alert" class="alert alert-success global-alert" style="display:none"
        data-i18n="[html]language#success-message">
     <strong>Hello!</strong> Welcome to Psiphon.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="settings-apply-alert" class="alert alert-warning global-alert" style="display:none"
+       data-i18n="settings#applying-message">
+    Reconnecting to apply your settings.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="settings-save-alert" class="alert alert-success global-alert" style="display:none"
+       data-i18n="settings#saved-message">
+    Settings saved.
   </div>
 
   <!-- Modal dialog shown to user when there's an upstream proxy error -->

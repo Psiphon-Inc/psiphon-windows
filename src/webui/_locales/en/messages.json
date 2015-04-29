@@ -219,6 +219,14 @@
     "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
     "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
   },
+  "settings#applying-message": {
+    "message": "Reconnecting to apply your settings.",
+    "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+  },
+  "settings#saved-message": {
+    "message": "Settings saved.",
+    "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
+  },
   "feedback#top_content_title": {
     "message": "Give Us Your Feedback",
     "description": "Title for the Feedback page"

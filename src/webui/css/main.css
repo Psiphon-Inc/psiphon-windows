@@ -6398,13 +6398,13 @@ body[dir="ltr"] #EgressRegion .flag,
 body[dir="ltr"] #EgressRegionCombo ul .flag,
 body[dir="ltr"] #EgressRegionCombo .btn .flag {
   padding: 0 0 0 40px;
-  background-position-x: 1%;
+  background-position-x: 2%;
 }
 body[dir="rtl"] #EgressRegion .flag,
 body[dir="rtl"] #EgressRegionCombo ul .flag,
 body[dir="rtl"] #EgressRegionCombo .btn .flag {
   padding: 0 40px 0 0;
-  background-position-x: 99%;
+  background-position-x: 98%;
 }
 .f16 .unknown {
   background-image: url(../flag_unknown_16.png) !important;
@@ -6477,6 +6477,7 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
   -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
   box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+  z-index: 1010;
 }
 body[dir="ltr"] .global-alert {
   right: 0;

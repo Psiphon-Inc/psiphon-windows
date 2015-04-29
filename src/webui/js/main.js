@@ -394,6 +394,15 @@ function applySettings() {
   else if (settingsJSON !== g_initialSettingsJSON) {
     // Settings have changed -- update them in the application (and trigger a reconnect).
     HtmlCtrlInterface_SaveSettings(settingsJSON);
+
+    if (g_lastState === 'starting' || g_lastState === 'connected') {
+      // We're going to reconnect to apply the settings
+      displayCornerAlert($('#settings-apply-alert'));
+    }
+    else {
+      // We're saving the settings, but not reconnecting/applying.
+      displayCornerAlert($('#settings-save-alert'));
+    }
   }
 
   return true;
@@ -1211,10 +1220,13 @@ function doMatchWidth() {
 
 function displayCornerAlert(elem) {
   // Show -- and then hide -- the alert
-  $(elem).toggle('fold', {horizFirst: true}, function() {
+  var appearAnimationTime = 300;
+  var showingTime = 4000;
+  var disappearAnimationTime = 1000;
+  $(elem).toggle('fold', {horizFirst: true}, appearAnimationTime, function() {
     setTimeout(function() {
-      $(elem).toggle('fold', {horizFirst: true}, 1000);
-    }, 5000);
+      $(elem).toggle('fold', {horizFirst: true}, disappearAnimationTime);
+    }, showingTime);
   });
 }
 

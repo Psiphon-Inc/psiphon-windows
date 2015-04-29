@@ -775,6 +775,18 @@
     <strong>Hello!</strong> Welcome to Psiphon.
   </div>
 
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="settings-apply-alert" class="alert alert-warning global-alert" style="display:none"
+       data-i18n="settings#applying-message">
+    Reconnecting to apply your settings.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="settings-save-alert" class="alert alert-success global-alert" style="display:none"
+       data-i18n="settings#saved-message">
+    Settings saved.
+  </div>
+
   <!-- Modal dialog shown to user when there's an upstream proxy error -->
   <div class="modal fade" id="UpstreamProxyErrorModal" tabindex="-1" role="dialog"
        aria-labelledby="UpstreamProxyErrorTitle" aria-hidden="true" style="display: none;">

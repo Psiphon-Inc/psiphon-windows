@@ -387,11 +387,11 @@ body {
 
     body[dir="ltr"] & {
       padding: 0 0 0 40px;
-      background-position-x: 1%;
+      background-position-x: 2%;
     }
     body[dir="rtl"] & {
       padding: 0 40px 0 0;
-      background-position-x: 99%; // Handy way of getting the flag on the right side
+      background-position-x: 98%; // Handy way of getting the flag on the right side
     }
 
     // Force our flag image to show even when the item is active.
@@ -503,6 +503,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+  z-index: @zindexPopover;
 
   body[dir="ltr"] & {
     right: 0;
