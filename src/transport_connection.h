@@ -59,7 +59,8 @@ public:
             ITransport* transport,
             IReconnectStateReceiver* reconnectStateReceiver,
             ILocalProxyStatsCollector* statsCollector,
-            ServerEntry* tempConnectServerEntry=NULL);
+            ServerEntry* tempConnectServerEntry=NULL,
+            bool skipApplySystemProxySettings=false);
 
     // Blocks until the transport disconnects.
     void WaitForDisconnect();
@@ -67,6 +68,10 @@ public:
     // When a connection is made, a handshake is done to get extra information
     // from the server. That info can be retrieved with this function.
     SessionInfo GetUpdatedSessionInfo() const;
+
+    // The local http proxy port that the transport provides.
+    // NOTE that this might not always be set (such as in the case of vpntransport).
+    int GetTransportLocalHttpProxy() { return m_systemProxySettings.GetHttpProxyPort(); }
 
     // Exception class
     class TryNextServer : public std::exception { };
@@ -81,5 +86,6 @@ private:
     SessionInfo m_sessionInfo;
     SystemProxySettings m_systemProxySettings;
     WorkerThreadSynch m_workerThreadSynch;
+    bool m_skipApplySystemProxySettings;
 };
 

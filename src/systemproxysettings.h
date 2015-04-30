@@ -41,6 +41,8 @@ public:
     void SetHttpsProxyPort(int port);
     void SetSocksProxyPort(int port);
 
+    int GetHttpProxyPort() { return m_httpProxyPort; }
+
     bool Apply(bool allowedToSkipProxySettings);
     bool Revert();
     bool IsApplied() const;

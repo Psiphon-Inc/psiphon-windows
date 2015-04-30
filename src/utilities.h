@@ -91,6 +91,8 @@ DWORD GetTickCountDiff(DWORD start, DWORD end);
 
 wstring EscapeSOCKSArg(const char* input);
 
+tstring UrlEncode(const tstring& input);
+
 /*
 String Utilities
 */

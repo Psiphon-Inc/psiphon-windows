@@ -25,6 +25,7 @@
 #include <WinSock2.h>
 #include <TlHelp32.h>
 #include <WinCrypt.h>
+#include <WinInet.h>
 #include "utilities.h"
 #include "stopsignal.h"
 #include "cryptlib.h"
@@ -925,6 +926,39 @@ wstring EscapeSOCKSArg(const char* input)
         output.push_back(c);
     }
     return NarrowToTString(output).c_str();
+}
+
+// Adapted from:
+// http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+tstring UrlEncode(const tstring& input)
+{
+    tstring encodedURL = _T("");
+    LPTSTR outputBuffer = 0;
+    DWORD outputBufferSize = 0;
+    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    DWORD error = ::GetLastError();
+    if (!result && error == ERROR_INSUFFICIENT_BUFFER)
+    {
+        outputBuffer = new TCHAR[outputBufferSize];
+        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+        if (result)
+        {
+            encodedURL = outputBuffer;
+        }
+    }
+
+    if (!result)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: InternetCanonicalizeUrl failed for %s with code %ld"), __TFUNCTION__, input.c_str(), GetLastError());
+    }
+    
+    if (outputBuffer != 0)
+    {
+        delete[] outputBuffer;
+        outputBuffer = 0;
+    }
+
+    return encodedURL;
 }
 
 tstring GetLocaleName()

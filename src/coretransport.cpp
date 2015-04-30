@@ -327,7 +327,13 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             Hexlify((const unsigned char*)(serverEntry.c_str()), serverEntry.length());
         // Use whichever region the server entry is located in
         config["EgressRegion"] = "";
-        config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
+        // SPECIAL HACK: for a URL proxy, we pass an empty server entry.
+        // In this case, we don't want to establish any tunnels at all. And we don't want to timeout.
+        // Instead we want to allow the caller to complete the (direct) url proxied request.
+        if (!m_tempConnectServerEntry->serverAddress.empty())
+        {
+            config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
+        }
     }
 
     ostringstream configDataStream;

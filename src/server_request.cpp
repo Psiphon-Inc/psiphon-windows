@@ -132,6 +132,7 @@ bool ServerRequest::MakeRequest(
                 response,
                 stopInfo,
                 true, // use tunnel?
+                false, // don't fail over to URL proxy
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
@@ -167,6 +168,7 @@ bool ServerRequest::MakeRequest(
                     response,
                     stopInfo,
                     false, // don't try to tunnel -- there's no transport
+                    false, // don't fail over to URL proxy
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
@@ -222,6 +224,7 @@ bool ServerRequest::MakeRequest(
                     response,
                     stopInfo,
                     true, // tunnel request
+                    false, // don't fail over to URL proxy
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))

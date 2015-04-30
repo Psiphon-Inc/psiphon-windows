@@ -1298,6 +1298,7 @@ bool SendFeedbackAndDiagnosticInfo(
             response,
             stopInfo,
             false, // don't use local proxy
+            true,  // fail over to URL proxy
             NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
             (LPVOID)encryptedPayload.c_str(),
             encryptedPayload.length(),
