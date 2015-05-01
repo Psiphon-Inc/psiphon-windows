@@ -313,11 +313,10 @@ bool HTTPSRequest::MakeRequest(
     {
         // This is the broken SSL WinHTTP client case.
         // Use a URL proxy to make the HTTPS request for us instead.
-
-        TransportConnection connection;
-
         try
         {
+            TransportConnection connection;
+
             // Throws on failure
             connection.Connect(
                 stopInfo,
@@ -340,7 +339,7 @@ bool HTTPSRequest::MakeRequest(
             serverAddress = _T("127.0.0.1");
             serverWebPort = connection.GetTransportLocalHttpProxy();
 
-            my_print(NOT_SENSITIVE, true, _T("Using URL proxy port %d"), __TFUNCTION__, serverWebPort);
+            my_print(NOT_SENSITIVE, true, _T("Using URL proxy port %d"), serverWebPort);
 
             success = MakeRequestWithURLProxyOption(serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
                 response, stopInfo, usePsiphonLocalProxy,

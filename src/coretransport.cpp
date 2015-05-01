@@ -224,6 +224,17 @@ void CoreTransport::TransportConnect()
 }
 
 
+bool CoreTransport::RequestingUrlProxyWithoutTunnel()
+{
+    // If the transport is invoked with a temp tunnel
+    // server entry having a blank address, this is a special
+    // case where the core is being used for direct connections
+    // through its url proxy. No tunnel will be established.
+    return m_tempConnectServerEntry != 0 &&
+        m_tempConnectServerEntry->serverAddress.empty();
+}
+
+    
 void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
@@ -318,7 +329,12 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // and a handshake is not performed.
     // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
     // perform its own handshake request to get a PSK.
-    if (m_tempConnectServerEntry != 0)
+    //
+    // This same minimal setup is used in the RequireUrlProxyWithoutTunnel mode,
+    // although in this case we don't set a deadline to connect since we don't
+    // expect to ever connect to a tunnel and we we want to allow the caller to
+    // complete the (direct) url proxied request
+    if (m_tempConnectServerEntry != 0 || RequestingUrlProxyWithoutTunnel())
     {
         config["DisableApi"] = true;
         config["DisableRemoteServerListFetcher"] = true;
@@ -327,10 +343,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             Hexlify((const unsigned char*)(serverEntry.c_str()), serverEntry.length());
         // Use whichever region the server entry is located in
         config["EgressRegion"] = "";
-        // SPECIAL HACK: for a URL proxy, we pass an empty server entry.
-        // In this case, we don't want to establish any tunnels at all. And we don't want to timeout.
-        // Instead we want to allow the caller to complete the (direct) url proxied request.
-        if (!m_tempConnectServerEntry->serverAddress.empty())
+
+        if (!RequestingUrlProxyWithoutTunnel())
         {
             config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
         }
@@ -636,6 +650,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         {
             int port = data["port"].asInt();
             m_localHttpProxyPort = port;
+
+            // In this special case, we're running the core solely to
+            // use its url proxy and we do not expect to connect to a
+            // tunnel. So ensure that TransportConnectHelper() returns
+            // once the url proxy is running.
+            if (RequestingUrlProxyWithoutTunnel())
+            {
+                m_isConnected = true;
+            }
         }
         else if (noticeType == "SocksProxyPortInUse")
         {

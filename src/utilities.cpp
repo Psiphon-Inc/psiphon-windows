@@ -933,21 +933,22 @@ wstring EscapeSOCKSArg(const char* input)
 tstring UrlEncode(const tstring& input)
 {
     tstring encodedURL = _T("");
-    LPTSTR outputBuffer = 0;
-    DWORD outputBufferSize = 0;
+    DWORD outputBufferSize = input.size() * 2;
+    LPTSTR outputBuffer = new TCHAR[outputBufferSize];
     BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
     DWORD error = ::GetLastError();
     if (!result && error == ERROR_INSUFFICIENT_BUFFER)
     {
+        delete[] outputBuffer;
         outputBuffer = new TCHAR[outputBufferSize];
         result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
-        if (result)
-        {
-            encodedURL = outputBuffer;
-        }
     }
 
-    if (!result)
+    if (result)
+    {
+        encodedURL = outputBuffer;
+    }
+    else
     {
         my_print(NOT_SENSITIVE, true, _T("%s: InternetCanonicalizeUrl failed for %s with code %ld"), __TFUNCTION__, input.c_str(), GetLastError());
     }
