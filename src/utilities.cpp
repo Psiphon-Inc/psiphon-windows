@@ -69,7 +69,11 @@ void TerminateProcessByName(const TCHAR* executableName)
 }
 
 
-bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
+bool ExtractExecutable(
+    DWORD resourceID,
+    const TCHAR* exeFilename,
+    tstring& path,
+    bool succeedIfExists/*=false*/)
 {
     // Extract executable from resources and write to temporary file
 
@@ -111,6 +115,21 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     {
         my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
+    }
+
+    if (succeedIfExists)
+    {
+        // TODO: should check that file size (or contents) is the same. If the file size
+        // is different, it would be better to proceed with attempting to extract the
+        // executable and even terminating any locking process -- for example, the locking
+        // process may be a dangling child process left over from before a client upgrade.
+        DWORD fileAttributes = GetFileAttributes(filePath);
+        if (fileAttributes != INVALID_FILE_ATTRIBUTES &&
+            !(fileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+        {
+            path = filePath;
+            return true;
+        }
     }
 
     HANDLE tempFile = INVALID_HANDLE_VALUE;

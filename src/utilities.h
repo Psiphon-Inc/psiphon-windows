@@ -22,7 +22,11 @@
 struct StopInfo;
 
 
-bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
+bool ExtractExecutable(
+    DWORD resourceID,
+    const TCHAR* exeFilename,
+    tstring& path,
+    bool succeedIfExists=false);
 
 bool WriteFile(const tstring& filename, const string& data);
 
