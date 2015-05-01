@@ -117,21 +117,6 @@ bool ExtractExecutable(
         return false;
     }
 
-    if (succeedIfExists)
-    {
-        // TODO: should check that file size (or contents) is the same. If the file size
-        // is different, it would be better to proceed with attempting to extract the
-        // executable and even terminating any locking process -- for example, the locking
-        // process may be a dangling child process left over from before a client upgrade.
-        DWORD fileAttributes = GetFileAttributes(filePath);
-        if (fileAttributes != INVALID_FILE_ATTRIBUTES &&
-            !(fileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        {
-            path = filePath;
-            return true;
-        }
-    }
-
     HANDLE tempFile = INVALID_HANDLE_VALUE;
     bool attemptedTerminate = false;
     while (true)
@@ -143,6 +128,19 @@ bool ExtractExecutable(
             if (!attemptedTerminate &&
                 ERROR_SHARING_VIOLATION == lastError)
             {
+                if (succeedIfExists)
+                {
+                    // The file must exist, and we can't write to it, most likely because it is
+                    // locked by a currently executing process. We can go ahead and consider the
+                    // file extracted.
+                    // TODO: We should check that the file size and contents are the same. If the file
+                    // is different, it would be better to proceed with attempting to extract the
+                    // executable and even terminating any locking process -- for example, the locking
+                    // process may be a dangling child process left over from before a client upgrade.
+                    path = filePath;
+                    return true;
+                }
+
                 TerminateProcessByName(exeFilename);
                 attemptedTerminate = true;
             }
