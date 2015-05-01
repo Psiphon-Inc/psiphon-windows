@@ -25,6 +25,7 @@
 #include <WinSock2.h>
 #include <TlHelp32.h>
 #include <WinCrypt.h>
+#include <WinInet.h>
 #include "utilities.h"
 #include "stopsignal.h"
 #include "cryptlib.h"
@@ -68,7 +69,11 @@ void TerminateProcessByName(const TCHAR* executableName)
 }
 
 
-bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
+bool ExtractExecutable(
+    DWORD resourceID,
+    const TCHAR* exeFilename,
+    tstring& path,
+    bool succeedIfExists/*=false*/)
 {
     // Extract executable from resources and write to temporary file
 
@@ -123,6 +128,19 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
             if (!attemptedTerminate &&
                 ERROR_SHARING_VIOLATION == lastError)
             {
+                if (succeedIfExists)
+                {
+                    // The file must exist, and we can't write to it, most likely because it is
+                    // locked by a currently executing process. We can go ahead and consider the
+                    // file extracted.
+                    // TODO: We should check that the file size and contents are the same. If the file
+                    // is different, it would be better to proceed with attempting to extract the
+                    // executable and even terminating any locking process -- for example, the locking
+                    // process may be a dangling child process left over from before a client upgrade.
+                    path = filePath;
+                    return true;
+                }
+
                 TerminateProcessByName(exeFilename);
                 attemptedTerminate = true;
             }
@@ -925,6 +943,40 @@ wstring EscapeSOCKSArg(const char* input)
         output.push_back(c);
     }
     return NarrowToTString(output).c_str();
+}
+
+// Adapted from:
+// http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+tstring UrlEncode(const tstring& input)
+{
+    tstring encodedURL = _T("");
+    DWORD outputBufferSize = input.size() * 2;
+    LPTSTR outputBuffer = new TCHAR[outputBufferSize];
+    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    DWORD error = ::GetLastError();
+    if (!result && error == ERROR_INSUFFICIENT_BUFFER)
+    {
+        delete[] outputBuffer;
+        outputBuffer = new TCHAR[outputBufferSize];
+        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    }
+
+    if (result)
+    {
+        encodedURL = outputBuffer;
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: InternetCanonicalizeUrl failed for %s with code %ld"), __TFUNCTION__, input.c_str(), GetLastError());
+    }
+    
+    if (outputBuffer != 0)
+    {
+        delete[] outputBuffer;
+        outputBuffer = 0;
+    }
+
+    return encodedURL;
 }
 
 tstring GetLocaleName()

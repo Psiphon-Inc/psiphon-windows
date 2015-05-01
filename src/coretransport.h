@@ -60,6 +60,7 @@ protected:
     virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
 
+    bool RequestingUrlProxyWithoutTunnel();
     void TransportConnectHelper();
     bool WriteParameterFiles(tstring& configFilename, tstring& serverListFilename);
     string GetUpstreamProxyAddress();

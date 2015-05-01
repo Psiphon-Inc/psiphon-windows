@@ -27,7 +27,8 @@
 
 TransportConnection::TransportConnection()
     : m_transport(0),
-      m_localProxy(0)
+      m_localProxy(0),
+      m_skipApplySystemProxySettings(false)
 {
 }
 
@@ -52,13 +53,16 @@ void TransportConnection::Connect(
                             ITransport* transport,
                             IReconnectStateReceiver* reconnectStateReceiver,
                             ILocalProxyStatsCollector* statsCollector, 
-                            ServerEntry* tempConnectServerEntry/*=NULL*/)
+                            ServerEntry* tempConnectServerEntry/*=NULL*/,
+                            bool skipApplySystemProxySettings/* = false*/)
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0);
 
     assert(transport);
     assert(!tempConnectServerEntry || !transport->IsHandshakeRequired());
+
+    m_skipApplySystemProxySettings = skipApplySystemProxySettings;
 
     m_transport = transport;
 
@@ -96,17 +100,23 @@ void TransportConnection::Connect(
             }
         }
 
-        // If the whole system is tunneled (i.e., VPN), then we can't leave the
-        // original system proxy settings intact -- because that proxy would 
-        // (probably) not be reachable in VPN mode and the user would 
-        // effectively have no connectivity.
-        bool allowedToSkipProxySettings = !m_transport->IsWholeSystemTunneled();
-
-        // Apply the system proxy settings that have been collected by the transport
-        // and the local proxy.
-        if (!m_systemProxySettings.Apply(allowedToSkipProxySettings))
+        // In the case of the URL proxy, which might be created while another transport
+        // is running, we don't want to change the system proxy settings or change the registry
+        // keys that hold any information about proxy settings.
+        if (!m_skipApplySystemProxySettings)
         {
-            throw IWorkerThread::Error("SystemProxySettings::Apply failed");
+            // If the whole system is tunneled (i.e., VPN), then we can't leave the
+            // original system proxy settings intact -- because that proxy would 
+            // (probably) not be reachable in VPN mode and the user would 
+            // effectively have no connectivity.
+            bool allowedToSkipProxySettings = !m_transport->IsWholeSystemTunneled();
+
+            // Apply the system proxy settings that have been collected by the transport
+            // and the local proxy.
+            if (!m_systemProxySettings.Apply(allowedToSkipProxySettings))
+            {
+                throw IWorkerThread::Error("SystemProxySettings::Apply failed");
+            }
         }
 
         // If the transport did a handshake, there may be updated session info.
@@ -169,11 +179,14 @@ void TransportConnection::WaitForDisconnect()
 
 void TransportConnection::Cleanup()
 {
-    // NOTE: It is important that the system proxy settings get torn down
-    // before the transport and local proxy do. Otherwise, all web connections
-    // will have a window of being guaranteed to fail (including and especially
-    // our own -- like final /status requests).
-    m_systemProxySettings.Revert();
+    if (!m_skipApplySystemProxySettings)
+    {
+        // NOTE: It is important that the system proxy settings get torn down
+        // before the transport and local proxy do. Otherwise, all web connections
+        // will have a window of being guaranteed to fail (including and especially
+        // our own -- like final /status requests).
+        m_systemProxySettings.Revert();
+    }
 
     if (m_localProxy) 
     {
