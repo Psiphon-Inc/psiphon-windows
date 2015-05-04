@@ -25,8 +25,11 @@
 
 var $window = $(window);
 
-// Fired when the UI language changes
+// Fired on the window when the UI language changes
 var LANGUAGE_CHANGE_EVENT = 'language-change';
+
+// Fired on the window when the connected state changes
+var CONNECTED_STATE_CHANGE_EVENT = 'connected-state-change';
 
 // We often test in-browser and need to behave a bit differently
 var IS_BROWSER = true;
@@ -129,21 +132,6 @@ var g_lastState = 'stopped';
 var g_connectingTooLongTimeout = null;
 
 $(function() {
-  $('#start').click(function(e) {
-    e.preventDefault();
-    if ($(this).hasClass('disabled')) {
-      return;
-    }
-    HtmlCtrlInterface_Start();
-  });
-  $('#stop').click(function(e) {
-    e.preventDefault();
-    if ($(this).hasClass('disabled')) {
-      return;
-    }
-    HtmlCtrlInterface_Stop();
-  });
-
   connectToggleSetup();
   egressRegionComboSetup();
 
@@ -185,7 +173,7 @@ function connectToggleSetup() {
     corners: 1, // Corner roundness (0..1)
     rotate: 50, // The rotation offset
     direction: 1, // 1: clockwise, -1: counterclockwise
-    color: ['#000', '#888', '#FFF'], // #rgb or #rrggbb or array of colors
+    color: ['#000', '#888', '#FFF'], // #rgb or #rrggbb or array of colors // TODO: Pick better colours
     speed: 0.8, // Rounds per second
     trail: 100, // Afterglow percentage
     shadow: false, // Whether to render a shadow
@@ -211,6 +199,9 @@ function connectToggleSetup() {
   updateConnectToggle();
 
   $('.slabtext-container').slabText({noResizeEvent: true});
+
+  // Update the button when the back-end tells us the state has changed.
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, updateConnectToggle);
 }
 
 // Update the main connect button, as well as the connection indicator on the tab.
@@ -1279,7 +1270,6 @@ function browserCheck(version) {
 // We don't have the ability to use real cookies or DOM storage, so we'll store
 // persistent stuff in the registry via the win32 code.
 //
-
 var g_cookies = g_initObj.Cookies ? JSON.parse(g_initObj.Cookies) : {};
 
 function getCookie(name) {
@@ -1292,6 +1282,94 @@ function setCookie(name, value) {
 }
 
 
+/* DEBUGGING *****************************************************************/
+
+// Some functionality to help us debug (and demo) in browser.
+
+$(function() {
+  if (!g_initObj.Config.Debug) {
+    $('#debug-tab, #debug-pane').remove();
+    return;
+  }
+
+  // Make the connect button "work"
+  $('#connect-toggle a').click(function(e) {
+    e.preventDefault();
+    var buttonConnectState = $(this).parents('.connect-toggle-content').data('connect-state');
+    if (buttonConnectState === 'stopped') {
+      console.log('DEBUG: connection starting');
+      HtmlCtrlInterface_SetState({state: 'starting'});
+      setTimeout(function() {
+        HtmlCtrlInterface_SetState({state: 'connected'});
+      }, 5000);
+    }
+    else if (buttonConnectState === 'starting' || buttonConnectState === 'connected') {
+      console.log('DEBUG: connection stopping');
+      HtmlCtrlInterface_SetState({state: 'stopping'});
+      setTimeout(function() {
+        HtmlCtrlInterface_SetState({state: 'stopped'});
+      }, 5000);
+    }
+    // the stopping button is disabled
+  });
+
+  // Keep state combo up-to-date
+  function updateStateCombo() {
+    $('#debug-state').val(g_lastState);    
+  }
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, updateStateCombo);
+  updateStateCombo();
+  // Change state when combo changes
+  $('#debug-state').on('change', function() {
+    HtmlCtrlInterface_SetState({state: $('#debug-state').val()});
+  });
+
+  // Wire up add-message
+  $('#debug-message a').on('click', function() {
+    HtmlCtrlInterface_AddMessage({
+      message: $('#debug-message input').val(),
+      priority: parseInt($('#debug-message select').val())
+    });    
+  });
+
+  // Wire up the UpstreamProxyError notice
+  $('#debug-UpstreamProxyError a').on('click', function() {
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'UpstreamProxyError',
+      data: { message: $('#debug-UpstreamProxyError input').val() }
+    });        
+  });
+
+  // Wire up the HttpProxyPortInUse notice
+  $('#debug-HttpProxyPortInUse a').on('click', function() {
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'HttpProxyPortInUse'
+    });        
+  });
+
+  // Wire up the SocksProxyPortInUse notice
+  $('#debug-SocksProxyPortInUse a').on('click', function() {
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'SocksProxyPortInUse'
+    });        
+  });
+
+  // Wire up the AvailableEgressRegions notice
+  $('#debug-AvailableEgressRegions a').on('click', function() {
+    var regions = [], regionCheckboxes = $('#debug-AvailableEgressRegions input');
+    for (var i = 0; i < regionCheckboxes.length; i++) {
+      if (regionCheckboxes.eq(i).prop('checked')) {
+        regions.push(regionCheckboxes.eq(i).val());
+      }
+    }
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'AvailableEgressRegions',
+      data: { regions: regions }
+    });
+  });
+});
+
+
 /* INTERFACE METHODS *********************************************************/
 
 var PSIPHON_LINK_PREFIX = 'psi:';
@@ -1301,14 +1379,17 @@ var PSIPHON_LINK_PREFIX = 'psi:';
 // Add new status message.
 function HtmlCtrlInterface_AddMessage(jsonArgs) {
   setTimeout(function() {
-    addLogMessage(JSON.parse(jsonArgs));
+    // Allow object as input to assist with debugging
+    var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
+    addLogMessage(args);
   }, 1);
 }
 
 // Add new notice. This may be interpreted and acted upon.
 function HtmlCtrlInterface_AddNotice(jsonArgs) {
   setTimeout(function() {
-    var args = JSON.parse(jsonArgs);
+    // Allow object as input to assist with debugging
+    var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
     if (args.noticeType === 'UpstreamProxyError') {
       upstreamProxyErrorNotice(args.data.message);
     }
@@ -1328,9 +1409,10 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
 // Set the connected state.
 function HtmlCtrlInterface_SetState(jsonArgs) {
   setTimeout(function() {
-    var args = JSON.parse(jsonArgs);
+    // Allow object as input to assist with debugging
+    var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
     g_lastState = args.state;
-    updateConnectToggle();
+    $window.trigger(CONNECTED_STATE_CHANGE_EVENT);
   }, 1);
 }
 

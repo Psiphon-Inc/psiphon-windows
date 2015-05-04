@@ -175,6 +175,13 @@
           </a>
         </li>
 
+        <li id="debug-tab">
+          <a href="#debug-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-bug"></i>
+            <span>Debug</span>
+          </a>
+        </li>
+
       </ul>
       <div class="tab-content main-height">
 
@@ -759,6 +766,90 @@
             </li>
           </script>
         </div><!-- /language-pane -->
+
+
+        <!-- DEBUG =========================================================-->
+        <div class="tab-pane fade" id="debug-pane">
+          <form class="form-inline">
+            <label>Change connection state</label>
+            <select id="debug-state">
+              <option value="starting">starting</option>
+              <option value="connected">connected</option>
+              <option value="stopping">stopping</option>
+              <option value="stopped">stopped</option>
+            </select>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-message">
+            <label>Add message</label>
+            <select style="width:7em">
+              <option value="1" selected>normal</option>
+              <option value="0">debug</option>
+            </select>
+            <input type="text">
+            <a class="btn btn-primary"><i class="icon-plus"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-UpstreamProxyError">
+            <label>Notice:UpstreamProxyError</label>
+            <input type="text" placeholder="optional message">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-HttpProxyPortInUse">
+            <label>Notice:HttpProxyPortInUse</label>
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-SocksProxyPortInUse">
+            <label>Notice:SocksProxyPortInUse</label>
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-AvailableEgressRegions">
+            <label>Notice:AvailableEgressRegions</label>
+
+            <div class="controls checkbox inline">
+              <input type="checkbox" id="debug-AvailableEgressRegions-US" value="US">
+              <label class="checkbox inline" for="debug-AvailableEgressRegions-US">US</label>
+            </div>
+            <div class="controls checkbox inline">
+              <input type="checkbox" id="debug-AvailableEgressRegions-GB" value="GB">
+              <label class="checkbox inline" for="debug-AvailableEgressRegions-GB">UK</label>
+            </div>
+            <div class="controls checkbox inline">
+              <input type="checkbox" id="debug-AvailableEgressRegions-JP" value="JP">
+              <label class="checkbox inline" for="debug-AvailableEgressRegions-JP">JP</label>
+            </div>
+            <div class="controls checkbox inline">
+              <input type="checkbox" id="debug-AvailableEgressRegions-SG" value="SG">
+              <label class="checkbox inline" for="debug-AvailableEgressRegions-SG">SG</label>
+            </div>
+            <div class="controls checkbox inline">
+              <input type="checkbox" id="debug-AvailableEgressRegions-NL" value="NL">
+              <label class="checkbox inline" for="debug-AvailableEgressRegions-NL">NL</label>
+            </div>
+            <div class="controls checkbox inline">
+              <input type="checkbox" id="debug-AvailableEgressRegions-DE" value="DE">
+              <label class="checkbox inline" for="debug-AvailableEgressRegions-DE">DE</label>
+            </div>
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+        </div><!-- /about-pane -->
+
 
       </div><!-- /tab-content -->
     </div><!-- /tabbable -->
