@@ -24,6 +24,8 @@ struct StopInfo;
 
 bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path);
 
+bool WriteFile(const tstring& filename, const string& data);
+
 // Possible return values:
 //  ERROR_SUCCESS on success
 //  WAIT_TIMEOUT if timeout exceeded
@@ -57,6 +59,7 @@ enum RegistryFailureReason
 bool WriteRegistryDwordValue(const string& name, DWORD value);
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
 bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason);
+bool WriteRegistryStringValue(const string& name, const wstring& value, RegistryFailureReason& reason);
 bool ReadRegistryStringValue(LPCSTR name, string& value);
 bool ReadRegistryStringValue(LPCSTR name, wstring& value);
 
@@ -115,3 +118,28 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 #define __STRINGIZEX(x) #x
 #define STRINGIZE(x) __STRINGIZEX(x)
 #endif
+
+/*
+AutoHANDLE and AutoMUTEX
+*/
+class AutoHANDLE
+{
+public:
+    AutoHANDLE(HANDLE handle) { m_handle = handle; }
+    ~AutoHANDLE() { CloseHandle(m_handle); }
+    operator HANDLE() { return m_handle; }
+private:
+    HANDLE m_handle;
+};
+
+class AutoMUTEX
+{
+public:
+    AutoMUTEX(HANDLE mutex, TCHAR* logInfo = 0);
+    ~AutoMUTEX();
+private:
+    HANDLE m_mutex;
+    tstring m_logInfo;
+};
+
+#define AUTOMUTEX(mutex) 
