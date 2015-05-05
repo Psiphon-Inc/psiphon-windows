@@ -21,8 +21,7 @@ $ node fake-translations.js
 
 ## TODO
 
-* Figure out why .exe jumped from 3.5MB to 5.2MB (after upxing).
-
+* Nicer looking, most usable connect button/state?
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
 
