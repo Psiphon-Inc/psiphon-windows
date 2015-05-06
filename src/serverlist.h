@@ -28,7 +28,7 @@ struct ServerEntry
     ServerEntry() : webServerPort(0), sshPort(0), sshObfuscatedPort(0) {}
     ServerEntry(const ServerEntry& src) { Copy(src); }
     ServerEntry(
-        const string& serverAddress, int webServerPort, 
+        const string& serverAddress, const string& region, int webServerPort,
         const string& webServerSecret, const string& webServerCertificate, 
         int sshPort, const string& sshUsername, const string& sshPassword, 
         const string& sshHostKey, int sshObfuscatedPort, 
@@ -48,6 +48,7 @@ struct ServerEntry
     int GetPreferredReachablityTestPort() const;
 
     string serverAddress;
+    string region;
     int webServerPort;
     string webServerSecret;
     string webServerCertificate;
@@ -91,14 +92,16 @@ public:
     void MoveEntriesToFront(const ServerEntries& entries, bool veryFront=false);
     void MoveEntryToFront(const ServerEntry& serverEntry, bool veryFront=false);
 
+    static ServerEntries GetListFromSystem(const char* listName);
+    static string EncodeServerEntries(const ServerEntries& serverEntryList);
+
 private:
     string GetListName() const;
     ServerEntries GetListFromEmbeddedValues();
     ServerEntries GetListFromSystem();
-    ServerEntries ParseServerEntries(const char* serverEntryListString);
-    ServerEntry ParseServerEntry(const string& serverEntry);
+    static ServerEntries ParseServerEntries(const char* serverEntryListString);
+    static ServerEntry ParseServerEntry(const string& serverEntry);
     void WriteListToSystem(const ServerEntries& serverEntryList);
-    string EncodeServerEntries(const ServerEntries& serverEntryList);
 
     HANDLE m_mutex;
     string m_name;

@@ -57,3 +57,7 @@ static const char* GET_NEW_VERSION_URL = "https://s3.amazonaws.com/invalid_bucke
 static const char* GET_NEW_VERSION_EMAIL = "get@example.com";
 static const char* FAQ_URL = "https://s3.amazonaws.com/invalid_bucket_name/en.html#other_frequently_asked_questions";
 static const char* DATA_COLLECTION_INFO_URL = "https://s3.amazonaws.com/invalid_bucket_name/en/index.html#what_user_information_does_psiphon_3_collect";
+
+static const char* SPLIT_TUNNEL_ROUTES_URL_FORMAT = "https://s3.amazonaws.com/invalid_bucket_name/%s.route.zlib.json";
+static const char* SPLIT_TUNNEL_ROUTES_SIGNATURE_PUBLIC_KEY = "";
+static const char* SPLIT_TUNNEL_DNS_SERVER = "";

@@ -56,7 +56,7 @@ ConnectionManager::ConnectionManager(void) :
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
-    InitializeUserSettings();
+    Settings::Initialize();
 }
 
 ConnectionManager::~ConnectionManager(void)
@@ -69,7 +69,7 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
 {
     AutoMUTEX lock(m_mutex);
     
-    if (!UserSkipBrowser())
+    if (!Settings::SkipBrowser())
     {
         vector<tstring> urls = m_currentSessionInfo.GetHomepages();
         if (urls.size() == 0 && defaultHomePage)
@@ -80,13 +80,13 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
     }
 }
 
-void ConnectionManager::Toggle(const tstring& transport, bool startSplitTunnel)
+void ConnectionManager::Toggle()
 {
     // NOTE: no lock, to allow thread to access object
 
     if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
     {
-        Start(transport,startSplitTunnel);
+        Start();
     }
     else
     {
@@ -129,6 +129,24 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
 ConnectionManagerState ConnectionManager::GetState()
 {
     return m_state;
+}
+
+// Note: these IReconnectStateReceiver functions allow e.g., a Transport, to
+// indirectly update the connection state. In the core case, this is used
+// when the core process automatically reconnects when all tunnels are
+// disconnected -- without ending the Transport lifetime.
+// These m_state changes are currently safe to make... unlike changing
+// m_state to CONNECTION_MANAGER_STATE_STOPPED, which would break Toggle.
+// 
+
+void ConnectionManager::SetReconnecting()
+{
+    SetState(CONNECTION_MANAGER_STATE_STARTING);
+}
+
+void ConnectionManager::SetReconnected()
+{
+    SetState(CONNECTION_MANAGER_STATE_CONNECTED);
 }
 
 void ConnectionManager::Stop(DWORD reason)
@@ -179,6 +197,8 @@ void ConnectionManager::Stop(DWORD reason)
 
 void ConnectionManager::FetchRemoteServerList(void)
 {
+    // Note: not used by CoreTransport
+
     AutoMUTEX lock(m_mutex);
 
     if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
@@ -262,7 +282,7 @@ void ConnectionManager::FetchRemoteServerList(void)
     }
 }
 
-void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
+void ConnectionManager::Start()
 {
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
@@ -271,7 +291,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
 
     AutoMUTEX lock(m_mutex);
 
-    m_transport = TransportRegistry::New(transport);
+    m_transport = TransportRegistry::New(Settings::Transport());
 
     if (!m_transport->ServerWithCapabilitiesExists())
     {
@@ -279,7 +299,7 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
         return;
     }
 
-    m_startSplitTunnel = startSplitTunnel;
+    m_startSplitTunnel = Settings::SplitTunnel();
 
     GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
 
@@ -299,59 +319,6 @@ void ConnectionManager::Start(const tstring& transport, bool startSplitTunnel)
     }
 
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
-}
-
-void ConnectionManager::StartSplitTunnel()
-{
-    AutoMUTEX lock(m_mutex);
-
-    if (m_splitTunnelRoutes.length() == 0)
-    {
-        try
-        {
-            tstring routesRequestPath = GetRoutesRequestPath(m_transport);
-
-            SessionInfo sessionInfo;
-            CopyCurrentSessionInfo(sessionInfo);
-                
-            string response;
-            if (ServerRequest::MakeRequest(
-                        ServerRequest::ONLY_IF_TRANSPORT,
-                        m_transport,
-                        sessionInfo,
-                        routesRequestPath.c_str(),
-                        response,
-                        StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
-            {
-                // Process split tunnel response
-                ProcessSplitTunnelResponse(response);
-            }
-        }
-        catch (StopSignal::StopException&)
-        {
-            return;
-        }
-    }
-
-    // Polipo is watching for changes to this file.
-    // Note: there's some delay before the file change takes effect.
-    WriteSplitTunnelRoutes(m_splitTunnelRoutes.c_str());
-}
-
-void ConnectionManager::StopSplitTunnel()
-{
-    AutoMUTEX lock(m_mutex);
-    
-    // See comment in StartSplitTunnel.
-    DeleteSplitTunnelRoutes();
-}
-
-void ConnectionManager::ResetSplitTunnel()
-{
-    AutoMUTEX lock(m_mutex);
-    
-    m_splitTunnelRoutes = "";
-    StopSplitTunnel();
 }
 
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
@@ -404,9 +371,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-            // Ensure split tunnel routes are reset before new session
-            manager->ResetSplitTunnel();
-
             // Do we have any usable servers?
             if (!manager->m_transport->ServerWithCapabilitiesExists())
             {
@@ -438,9 +402,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
                     manager,    // ILocalProxyStatsCollector
-                    manager,    // IRemoteServerListFetcher
-                    manager->GetSplitTunnelingFilePath(),
-                    false);  // don't disallow handshake
+                    manager);   // IReconnectStateReceiver
             }
             catch (TransportConnection::TryNextServer&)
             {
@@ -502,6 +464,13 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: caught TryNextServer"), __TFUNCTION__);
             // Fall through
+        }
+        catch (TransportConnection::PermanentFailure&)
+        {
+            // Unrecoverable error. Cleanup and exit.
+            my_print(NOT_SENSITIVE, true, _T("%s: caught TransportConnection::PermanentFailure"), __TFUNCTION__);
+            manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+            break;
         }
         catch (StopSignal::UnexpectedDisconnectStopException& ex)
         {
@@ -587,80 +556,53 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
 
     SetState(CONNECTION_MANAGER_STATE_CONNECTED);
 
-    //
-    // "Connected" HTTPS request for server stats and split tunnel routing info.
-    // It's not critical if this request fails so failure is ignored.
-    //
-    
-    tstring connectedRequestPath = GetConnectRequestPath(m_transport);
-        
-    DWORD start = GetTickCount();
-    string response;
-    if (ServerRequest::MakeRequest(
-                        ServerRequest::ONLY_IF_TRANSPORT,
-                        m_transport,
-                        sessionInfo,
-                        connectedRequestPath.c_str(),
-                        response,
-                        StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+    if (m_transport->RequiresStatsSupport())
     {
-        // Get the server time from response json and record it
-        // connected_timestamp 
-        Json::Value json_entry;
-        Json::Reader reader;
-        string connected_timestamp;
-
-        bool parsingSuccessful = reader.parse(response, json_entry);
-        if(parsingSuccessful)
-        {
-            try
-            {
-                connected_timestamp = json_entry.get("connected_timestamp", 0).asString();
-                RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
-                (void)WriteRegistryStringValue(
-                        LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
-                        connected_timestamp,
-                        reason);
-            }
-            catch (exception& e)
-            {
-                my_print(NOT_SENSITIVE, false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
-            }
-        }
-        else
-        {
-            string fail = reader.getFormattedErrorMessages();
-            my_print(NOT_SENSITIVE, false, _T("%s:%d: 'connected' response parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
-        }
-
-
-#ifdef SPEEDTEST
-        // Speed feedback
-        // Note: the /connected request *is* tunneled
-
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
-        {
-            string speedResponse;
-            (void)ServerRequest::MakeRequest(
+        //
+        // "Connected" HTTPS request for server stats.
+        // It's not critical if this request fails so failure is ignored.
+        //
+    
+        tstring connectedRequestPath = GetConnectRequestPath(m_transport);
+        
+        DWORD start = GetTickCount();
+        string response;
+        if (ServerRequest::MakeRequest(
                             ServerRequest::ONLY_IF_TRANSPORT,
                             m_transport,
                             sessionInfo,
-                            GetSpeedRequestPath(
-                                m_transport->GetTransportRequestName(),
-                                _T("connected"),
-                                _T(""),
-                                now-start,
-                                response.length()).c_str(),
-                            speedResponse,
-                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
-        }
-#endif //SPEEDTEST
-
-        // Process flag to start split tunnel after initial connection
-        if (m_transport->IsSplitTunnelSupported() && m_startSplitTunnel)
+                            connectedRequestPath.c_str(),
+                            response,
+                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
         {
-            StartSplitTunnel();
+            // Get the server time from response json and record it
+            // connected_timestamp 
+            Json::Value json_entry;
+            Json::Reader reader;
+            string connected_timestamp;
+
+            bool parsingSuccessful = reader.parse(response, json_entry);
+            if(parsingSuccessful)
+            {
+                try
+                {
+                    connected_timestamp = json_entry.get("connected_timestamp", 0).asString();
+                    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+                    (void)WriteRegistryStringValue(
+                            LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
+                            connected_timestamp,
+                            reason);
+                }
+                catch (exception& e)
+                {
+                    my_print(NOT_SENSITIVE, false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
+                }
+            }
+            else
+            {
+                string fail = reader.getFormattedErrorMessages();
+                my_print(NOT_SENSITIVE, false, _T("%s:%d: 'connected' response parse failed: %S"), __TFUNCTION__, __LINE__, reader.getFormattedErrorMessages().c_str());
+            }
         }
     }
 
@@ -672,59 +614,6 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
     {
         OpenHomePages();
     }
-
-#ifdef SPEEDTEST
-    // Perform non-tunneled speed test when requested
-    // Note that in VPN mode, the WinHttp request is implicitly tunneled.
-
-    tstring speedTestServerAddress, speedTestRequestPath;
-    int speedTestServerPort = 0;
-    GetSpeedTestURL(speedTestServerAddress, speedTestServerPort, speedTestRequestPath);
-    // HTTPSRequest is always https
-    tstringstream speedTestURL;
-    speedTestURL << _T("https://") << speedTestServerAddress << _T(":") << speedTestServerPort << speedTestRequestPath;
-
-    if (speedTestServerAddress.length() > 0)
-    {
-        DWORD start = GetTickCount();
-        string response;
-        HTTPSRequest httpsRequest;
-        bool success = false;
-        if (httpsRequest.MakeRequest(
-                            speedTestServerAddress.c_str(),
-                            speedTestServerPort,
-                            "",
-                            speedTestRequestPath.c_str(),
-                            response,
-                            // Because it's not tunneled, in theory this doesn't 
-                            // need to be STOP_REASON_ALL -- it could instead be 
-                            // _EXIT. But we spawn a new speed test on each 
-                            // connection, so we'd better clean this up each time
-                            // the connection comes down (before the next comes up).
-                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                            false)) // don't proxy
-        {
-            success = true;
-        }
-        DWORD now = GetTickCount();
-        if (now >= start) // GetTickCount can wrap
-        {
-            string speedResponse;
-            (void)ServerRequest::MakeRequest(
-                            ServerRequest::ONLY_IF_TRANSPORT,
-                            m_transport,
-                            sessionInfo,
-                            GetSpeedRequestPath(
-                                m_transport->GetTransportRequestName(),
-                                success ? _T("speed_test") : _T("speed_test_failure"),
-                                speedTestURL.str().c_str(),
-                                now-start,
-                                response.length()).c_str(),
-                            speedResponse,
-                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
-        }
-    }
-#endif //SPEEDTEST
 }
 
 bool ConnectionManager::SendStatusMessage(
@@ -822,38 +711,6 @@ bool ConnectionManager::SendStatusMessage(
     return success;
 }
 
-tstring ConnectionManager::GetSpeedRequestPath(const tstring& relayProtocol, const tstring& operation, const tstring& info, DWORD milliseconds, DWORD size)
-{
-    AutoMUTEX lock(m_mutex);
-
-    std::stringstream strMilliseconds;
-    strMilliseconds << milliseconds;
-
-    std::stringstream strSize;
-    strSize << size;
-
-    return tstring(HTTP_SPEED_REQUEST_PATH) + 
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") + relayProtocol +
-           _T("&operation=") + operation +
-           _T("&info=") + info +
-           _T("&milliseconds=") + NarrowToTString(strMilliseconds.str()) +
-           _T("&size=") + NarrowToTString(strSize.str());
-}
-
-void ConnectionManager::GetSpeedTestURL(tstring& serverAddress, int& serverPort, tstring& requestPath)
-{
-    AutoMUTEX lock(m_mutex);
-
-    serverAddress = NarrowToTString(m_currentSessionInfo.GetSpeedTestServerAddress());
-    serverPort = m_currentSessionInfo.GetSpeedTestServerPort();
-    requestPath = NarrowToTString(m_currentSessionInfo.GetSpeedTestRequestPath());
-}
-
 tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
@@ -887,20 +744,6 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
            _T("&relay_protocol=") + transport->GetTransportRequestName() + 
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
            _T("&last_connected=") + NarrowToTString(lastConnected);
-}
-
-tstring ConnectionManager::GetRoutesRequestPath(ITransport* transport)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return tstring(HTTP_ROUTES_REQUEST_PATH) + 
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  (transport ? transport->GetTransportRequestName() : _T("")) + 
-           _T("&session_id=") + (transport ? transport->GetSessionID(m_currentSessionInfo) : _T(""));
 }
 
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
@@ -997,27 +840,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         else
         {
             my_print(NOT_SENSITIVE, false, _T("Download complete"));
-
-#ifdef SPEEDTEST
-            // Speed feedback
-            DWORD now = GetTickCount();
-            if (now >= start) // GetTickCount can wrap
-            {
-                string speedResponse;
-                (void)ServerRequest::MakeRequest( // Ignore failure
-                                ServerRequest::ONLY_IF_TRANSPORT,
-                                manager->m_transport,
-                                sessionInfo,
-                                manager->GetSpeedRequestPath(
-                                    manager->m_transport->GetTransportRequestName(),
-                                    _T("download"),
-                                    _T(""),
-                                    now-start,
-                                    downloadResponse.length()).c_str(),
-                                speedResponse,
-                                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL));
-            }
-#endif //SPEEDTEST
 
             // Perform upgrade.
 
@@ -1132,140 +954,6 @@ void ConnectionManager::PaveUpgrade(const string& download)
     m_upgradePending = true;
 }
 
-void ConnectionManager::ProcessSplitTunnelResponse(const string& compressedRoutes)
-{
-    AutoMUTEX lock(m_mutex);
-
-    // Decompress split tunnel route info
-    // Defaults to blank route list on any error --> no split tunneling
-
-    m_splitTunnelRoutes = "";
-
-    if (compressedRoutes.length() == 0)
-    {
-        return;
-    }
-
-    const int CHUNK_SIZE = 1024;
-    const int SANITY_CHECK_SIZE = 10*1024*1024;
-    int ret;
-    z_stream stream;
-    char out[CHUNK_SIZE+1];
-
-    stream.zalloc = Z_NULL;
-    stream.zfree = Z_NULL;
-    stream.opaque = Z_NULL;
-    stream.avail_in = compressedRoutes.length();
-    stream.next_in = (unsigned char*)compressedRoutes.c_str();
-
-    if (Z_OK != inflateInit(&stream))
-    {
-        return;
-    }
-
-    do
-    {
-        stream.avail_out = CHUNK_SIZE;
-        stream.next_out = (unsigned char*)out;
-        ret = inflate(&stream, Z_NO_FLUSH);
-        if (ret != Z_OK && ret != Z_STREAM_END)
-        {
-            my_print(NOT_SENSITIVE, true, _T("ProcessSplitTunnelResponse failed (%d)"), ret);
-            m_splitTunnelRoutes = "";
-            break;
-        }
-
-        out[CHUNK_SIZE - stream.avail_out] = '\0';
-
-        m_splitTunnelRoutes += out;
-
-        if (m_splitTunnelRoutes.length() > SANITY_CHECK_SIZE)
-        {
-            my_print(NOT_SENSITIVE, true, _T("ProcessSplitTunnelResponse overflow"));
-            m_splitTunnelRoutes = "";
-            break;
-        }
-
-    } while (ret != Z_STREAM_END);
-
-    inflateEnd(&stream);
-}
-
-tstring ConnectionManager::GetSplitTunnelingFilePath()
-{
-    TCHAR filePath[MAX_PATH];
-    TCHAR tempPath[MAX_PATH];
-    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
-    // tempPath can contain no more than MAX_PATH-14 characters
-    int ret = GetTempPath(MAX_PATH, tempPath);
-    if (ret > MAX_PATH-14 || ret == 0)
-    {
-        return _T("");
-    }
-
-    if(NULL != PathCombine(filePath, tempPath, SPLIT_TUNNELING_FILE_NAME))
-    {
-        return tstring(filePath);
-    }
-    return _T("");
-}
-
-bool ConnectionManager::WriteSplitTunnelRoutes(const char* routes)
-{
-    AutoMUTEX lock(m_mutex);
-
-    tstring filePath = GetSplitTunnelingFilePath();
-    if (filePath.length() == 0)
-    {
-        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
-        return false;
-    }
-
-    AutoHANDLE file = CreateFile(filePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (file == INVALID_HANDLE_VALUE)
-    {
-        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - CreateFile failed (%d)"), GetLastError());
-        return false;
-    }
-
-    DWORD length = strlen(routes);
-    DWORD written;
-    if (!WriteFile(
-            file,
-            (unsigned char*)routes,
-            length,
-            &written,
-            NULL)
-          || written != length)
-    {
-        my_print(NOT_SENSITIVE, false, _T("WriteSplitTunnelRoutes - WriteFile failed (%d)"), GetLastError());
-        return false;
-    }
-
-    return true;
-}
-
-bool ConnectionManager::DeleteSplitTunnelRoutes()
-{
-    AutoMUTEX lock(m_mutex);
-
-    tstring filePath = GetSplitTunnelingFilePath();
-    if (filePath.length() == 0)
-    {
-        my_print(NOT_SENSITIVE, false, _T("DeleteSplitTunnelRoutes - GetSplitTunnelingFilePath failed (%d)"), GetLastError());
-        return false;
-    }
-
-    if (!DeleteFile(filePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
-    {
-        my_print(NOT_SENSITIVE, false, _T("DeleteSplitTunnelRoutes - DeleteFile failed (%d)"), GetLastError());
-        return false;
-    }
-
-    return true;
-}
-
 // Makes a thread-safe copy of m_currentSessionInfo
 void ConnectionManager::CopyCurrentSessionInfo(SessionInfo& sessionInfo)
 {
@@ -1283,7 +971,8 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
     {
         TransportRegistry::AddServerEntries(
             m_currentSessionInfo.GetDiscoveredServerEntries(), 
-            &m_currentSessionInfo.GetServerEntry());
+            // CoreTransport does not provide a ServerEntry, but VPNTransport does.
+            m_currentSessionInfo.HasServerEntry() ? &m_currentSessionInfo.GetServerEntry() : 0);
     }
     catch (std::exception &ex)
     {

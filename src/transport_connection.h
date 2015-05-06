@@ -27,9 +27,8 @@
 
 class LocalProxy;
 class ILocalProxyStatsCollector;
+class IReconnectStateReceiver;
 class ITransport;
-class IRemoteServerListFetcher;
-class Meek;
 
 
 /*
@@ -58,9 +57,8 @@ public:
     void Connect(
             const StopInfo& stopInfo,
             ITransport* transport,
-            ILocalProxyStatsCollector* statsCollector, 
-            IRemoteServerListFetcher* remoteServerListFetcher,
-            const tstring& splitTunnelingFilePath,
+            IReconnectStateReceiver* reconnectStateReceiver,
+            ILocalProxyStatsCollector* statsCollector,
             ServerEntry* tempConnectServerEntry=NULL);
 
     // Blocks until the transport disconnects.
@@ -72,6 +70,7 @@ public:
 
     // Exception class
     class TryNextServer : public std::exception { };
+    class PermanentFailure : public std::exception { };
 
 private:
     void Cleanup();
