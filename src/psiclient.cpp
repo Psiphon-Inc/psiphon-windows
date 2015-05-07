@@ -77,6 +77,7 @@ void OnCreate(HWND hWndParent)
     initJSON["Config"]["Banner"] = "banner.png";
     initJSON["Config"]["Version"] = CLIENT_VERSION;
     initJSON["Config"]["InfoURL"] = TStringToNarrow(INFO_LINK_URL);
+    initJSON["Config"]["GetNewVersionEmail"] = GET_NEW_VERSION_EMAIL;
 #ifdef _DEBUG
     initJSON["Config"]["Debug"] = true;
 #else
