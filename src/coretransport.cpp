@@ -724,8 +724,16 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         else if (noticeType == "UpstreamProxyError")
         {
             string message = data["message"].asString();
-            // SENSITIVE_FORMAT_ARGS: "message" may contain address info that identifies user
-            my_print(SENSITIVE_FORMAT_ARGS, false, _T("Upstream Proxy Error: %S"), message.c_str());
+
+            if (message != m_lastUpstreamProxyErrorMessage)
+            {
+                // SENSITIVE_FORMAT_ARGS: "message" may contain address info that identifies user
+                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Upstream Proxy Error: %S"), message.c_str());
+
+                // Don't repeatedly display the same error message, which may be emitted
+                // many times as the core is making multiple attempts to establish tunnels.
+                m_lastUpstreamProxyErrorMessage = message;
+            }
 
             // Don't include in diagnostics as "message" may contain private user data
             logOutputToDiagnostics = false;

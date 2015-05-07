@@ -77,4 +77,5 @@ protected:
     string m_pipeBuffer;
     bool m_hasEverConnected;
     bool m_isConnected;
+    string m_lastUpstreamProxyErrorMessage;
 };
