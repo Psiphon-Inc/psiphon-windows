@@ -270,7 +270,7 @@ function cycleToggleClass(elem, cls, untilStateChangeFrom) {
 }
 
 function egressRegionComboSetup() {
-  // Rather than duplicating the markup of the settings' egress region list, 
+  // Rather than duplicating the markup of the settings' egress region list,
   // we're going to copy it now.
   // IE7: Don't use $().clone().
   $('#EgressRegionCombo ul').html($('ul#EgressRegion').html());
@@ -332,25 +332,25 @@ $(function settingsInit() {
   // This is merely to help with testing
   if (!g_initObj.Settings)
   {
-    g_initObj.Settings = { 
-      SplitTunnel: 0, 
-      VPN: 0, 
-      LocalHttpProxyPort: 7771, 
-      LocalSocksProxyPort: 7770, 
-      SkipUpstreamProxy: 1, 
-      UpstreamProxyHostname: 'upstreamhost', 
-      UpstreamProxyPort: 234, 
-      EgressRegion: 'GB', 
-      defaults: { 
-        SplitTunnel: 0, 
-        VPN: 0, 
-        LocalHttpProxyPort: '', 
-        LocalSocksProxyPort: '', 
-        SkipUpstreamProxy: 0, 
-        UpstreamProxyHostname: '', 
-        UpstreamProxyPort: '', 
-        EgressRegion: ''  
-      } 
+    g_initObj.Settings = {
+      SplitTunnel: 0,
+      VPN: 0,
+      LocalHttpProxyPort: 7771,
+      LocalSocksProxyPort: 7770,
+      SkipUpstreamProxy: 1,
+      UpstreamProxyHostname: 'upstreamhost',
+      UpstreamProxyPort: 234,
+      EgressRegion: 'GB',
+      defaults: {
+        SplitTunnel: 0,
+        VPN: 0,
+        LocalHttpProxyPort: '',
+        LocalSocksProxyPort: '',
+        SkipUpstreamProxy: 0,
+        UpstreamProxyHostname: '',
+        UpstreamProxyPort: '',
+        EgressRegion: ''
+      }
     };
   }
 
@@ -437,8 +437,8 @@ function applySettings() {
   return true;
 }
 
-// Refresh the current settings. If newSettings is truthy, it will become the 
-// the new current settings, otherwise the existing current settings will be 
+// Refresh the current settings. If newSettings is truthy, it will become the
+// the new current settings, otherwise the existing current settings will be
 // refreshed in the UI.
 // newSettings can be a partial settings object (like, just {egressRegion: "US"} or whatever).
 function refreshSettings(newSettings) {
@@ -569,7 +569,7 @@ function egressRegionSetup() {
 function egressRegionValid(finalCheck) {
   var $currRegionElem = $('#EgressRegion li.active');
 
-  // Check to make sure the currently selected egress region is one of the 
+  // Check to make sure the currently selected egress region is one of the
   // available regions.
   var valid = $currRegionElem.length > 0 && !$currRegionElem.hasClass('hidden');
 
@@ -600,7 +600,7 @@ function forceEgressRegionValid() {
 }
 
 // Update the egress region options we show in the UI.
-// If `forceValid` is true, then if the currently selected region is no longer 
+// If `forceValid` is true, then if the currently selected region is no longer
 // available, the user will be prompted to pick a new one.
 function updateAvailableEgressRegions(forceValid) {
   var regions = getCookie('AvailableEgressRegions');
@@ -832,38 +832,72 @@ function showSettingsSection(section, focusElem) {
   }
 }
 
+//
+// The occurrence of an upstream proxy error might mean that a tunnel cannot
+// ever be established, but not necessarily -- it might just be, for example,
+// that the upstream proxy doesn't allow the port needed for one of our
+// servers, but not all of them.
+// So instead of showing an error immediately, we'll remember that the upstream
+// proxy error occurred, wait a while to see if we connect successfully, and
+// show it if we haven't connected.
+// Potential enhancement: If the error modal is showing and the connection
+// succeeds, dismiss the modal. This would be good behaviour, but probably too
+// fringe to be worthwhile.
+var g_upstreamProxyErrorNoticeTimer = null;
+
+// When the connected state changes, we clear the timer.
+$window.on(CONNECTED_STATE_CHANGE_EVENT, function() {
+  if (g_upstreamProxyErrorNoticeTimer) {
+    clearTimeout(g_upstreamProxyErrorNoticeTimer);
+    g_upstreamProxyErrorNoticeTimer = null;
+  }
+});
+
 function upstreamProxyErrorNotice(errorMessage) {
-  // Show/hide the appropriate message depending on the state of the settings
-  $('#UpstreamProxyErrorModal .upstream-proxy-default')
-    .toggleClass('hidden', !!g_initObj.Settings.UpstreamProxyHostname);
-  $('#UpstreamProxyErrorModal .upstream-proxy-configured')
-    .toggleClass('hidden', !g_initObj.Settings.UpstreamProxyHostname);
-
-  // Show the "technical error message" if we have one
-  if (!errorMessage) {
-    $('#UpstreamProxyErrorModal')
-      .find('.notice-error-pre-message, .notice-error-message')
-      .addClass('hidden');
-  }
-  else {
-    $('#UpstreamProxyErrorModal')
-      .find('.notice-error-pre-message, .notice-error-message')
-      .removeClass('hidden');
-
-    $('#UpstreamProxyErrorModal .notice-error-message')
-      .text(errorMessage);
+  if (g_upstreamProxyErrorNoticeTimer) {
+    // We've already received an upstream proxy error and we're waiting to show it.
+    return;
   }
 
-  // Put up the modal
-  $('#UpstreamProxyErrorModal').modal({
-    show: true,
-    backdrop: 'static'
-  }).on('hidden', function() {
-    $('#UpstreamProxyHostname').focus();
-  });
+  // This is the first upstream proxy error we've received, so start waiting to
+  // show a message for it.
+  g_upstreamProxyErrorNoticeTimer = setTimeout(function() {
+    // Show/hide the appropriate message depending on the state of the settings
+    $('#UpstreamProxyErrorModal .upstream-proxy-default')
+      .toggleClass('hidden', !!g_initObj.Settings.UpstreamProxyHostname);
+    $('#UpstreamProxyErrorModal .upstream-proxy-configured')
+      .toggleClass('hidden', !g_initObj.Settings.UpstreamProxyHostname);
 
-  // Switch to the appropriate settings section
-  showSettingsSection('#settings-accordion-upstream-proxy');
+    // Show the "technical error message" if we have one
+    if (!errorMessage) {
+      $('#UpstreamProxyErrorModal')
+        .find('.notice-error-pre-message, .notice-error-message')
+        .addClass('hidden');
+    }
+    else {
+      $('#UpstreamProxyErrorModal')
+        .find('.notice-error-pre-message, .notice-error-message')
+        .removeClass('hidden');
+
+      $('#UpstreamProxyErrorModal .notice-error-message')
+        .text(errorMessage);
+    }
+
+    // Put up the modal
+    $('#UpstreamProxyErrorModal').modal({
+      show: true,
+      backdrop: 'static'
+    }).on('hidden', function() {
+      $('#UpstreamProxyHostname').focus();
+    });
+
+    // Switch to the appropriate settings section
+    showSettingsSection('#settings-accordion-upstream-proxy');
+
+    // We are not going to set the timer to null here. We only want the error
+    // to show once per connection attempt sequence. It will be cleared when
+    // the client transistions to 'stopped' or 'connected'.
+  }, 60000);
 }
 
 function localProxyPortConflictNotice(noticeType) {
@@ -1003,12 +1037,12 @@ function addLogMessage(obj) {
 
   $('.log-messages').loadTemplate(
     $("#message-template"),
-    { 
+    {
       message: obj.message,
-      priority: 'priority-' + obj.priority 
+      priority: 'priority-' + obj.priority
     },
-    { 
-      prepend:true 
+    {
+      prepend:true
     });
 
   // The "Show Debug Messages" checkbox is hidden until we actually get a debug
@@ -1315,7 +1349,7 @@ $(function() {
 
   // Keep state combo up-to-date
   function updateStateCombo() {
-    $('#debug-state').val(g_lastState);    
+    $('#debug-state').val(g_lastState);
   }
   $window.on(CONNECTED_STATE_CHANGE_EVENT, updateStateCombo);
   updateStateCombo();
@@ -1329,7 +1363,7 @@ $(function() {
     HtmlCtrlInterface_AddMessage({
       message: $('#debug-message input').val(),
       priority: parseInt($('#debug-message select').val())
-    });    
+    });
   });
 
   // Wire up the UpstreamProxyError notice
@@ -1337,21 +1371,21 @@ $(function() {
     HtmlCtrlInterface_AddNotice({
       noticeType: 'UpstreamProxyError',
       data: { message: $('#debug-UpstreamProxyError input').val() }
-    });        
+    });
   });
 
   // Wire up the HttpProxyPortInUse notice
   $('#debug-HttpProxyPortInUse a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
       noticeType: 'HttpProxyPortInUse'
-    });        
+    });
   });
 
   // Wire up the SocksProxyPortInUse notice
   $('#debug-SocksProxyPortInUse a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
       noticeType: 'SocksProxyPortInUse'
-    });        
+    });
   });
 
   // Wire up the AvailableEgressRegions notice

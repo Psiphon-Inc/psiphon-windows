@@ -798,6 +798,9 @@
             <label>Notice:UpstreamProxyError</label>
             <input type="text" placeholder="optional message">
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+            <span class="help-block">
+              Note: The error won't be shown until/unless the connection state hasn't changed in 60 seconds.
+            </span>
           </form>
 
           <hr>
@@ -847,6 +850,10 @@
           </form>
 
           <hr>
+
+          <span class="help-block">
+            The contents of this page are not shown to the user and so are not translated.
+          </span>
 
         </div><!-- /about-pane -->
 
@@ -913,7 +920,8 @@
             </span>
           </p>
           <p>
-            <code class="notice-error-message">error message will go here</code>
+            <!-- Don't try to newline+indent this HTML. The <pre> will interpret it literally. -->
+            <pre><code class="notice-error-message">error message will go here</code></pre>
           </p>
         </div>
         <div class="modal-footer">
