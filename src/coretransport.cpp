@@ -733,7 +733,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             // In this case, the user most likely input an incorrect upstream proxy
             // address or credential. So stop attempting to connect and let the user
             // handle the error message.
-            throw TransportFailed(false);
+            // UPDATE:
+            // Actually, there are many other conditions that might cause this case,
+            // such as attempting to connect to disallowed ports through the proxy,
+            // the proxy being temporarily overloaded, other temporary network conditions, etc.
+            // So don't throw here.
+            //throw TransportFailed(false);
+            // TODO: The client should keep track of these notices and if it has not connected
+            // within a certain amount of time and received many of these notices it should
+            // suggest to the user that there might be a problem with the Upstream Proxy Settings.
         }
     }
     catch (exception& e)
