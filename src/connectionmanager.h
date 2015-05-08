@@ -67,6 +67,13 @@ public:
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
     void SendFeedback(LPCWSTR feedbackJSON);
 
+    bool IsWholeSystemTunneled()
+    {
+        return m_transport
+            && m_transport->IsWholeSystemTunneled()
+            && m_transport->IsConnected(true);
+    }
+
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
     static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);

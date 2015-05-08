@@ -30,7 +30,6 @@
 # pragma comment(lib, "wbemuuid.lib")
 
 #include "psiclient.h"
-#include "connectionmanager.h"
 #include "embeddedvalues.h"
 #include "transport.h"
 #include "config.h"

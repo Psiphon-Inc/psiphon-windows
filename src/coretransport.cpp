@@ -314,7 +314,17 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
-    config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
+
+    // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
+    // we may not be able to route to it. If the proxy is on a public network we prefer not
+    // to use it for Psiphon requests (this assumes that this core transport has been created
+    // as a temp tunnel or url proxy facilitator, since some underlying transport is already
+    // providing whole system tunneling).
+    if (!g_connectionManager.IsWholeSystemTunneled())
+    {
+        config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
+    }
+
     config["EgressRegion"] = Settings::EgressRegion();
     config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
     config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
