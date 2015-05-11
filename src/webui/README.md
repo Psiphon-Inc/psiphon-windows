@@ -21,9 +21,11 @@ $ node fake-translations.js
 
 ## TODO
 
+* Better OOBE. Introductory screen. Basic help/info. Language.
 * Nicer looking, most usable connect button/state?
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
+* Update user guide on website.
 
 
 ## Longer-term TODO
