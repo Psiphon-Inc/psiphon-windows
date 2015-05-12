@@ -28,6 +28,10 @@ bool ExtractExecutable(
     tstring& path,
     bool succeedIfExists=false);
 
+bool GetTempPath(tstring& path);
+
+bool GetShortPathName(const tstring& path, tstring& shortPath);
+
 bool WriteFile(const tstring& filename, const string& data);
 
 // Possible return values:
