@@ -22,6 +22,7 @@
 #pragma comment(lib,"shlwapi.lib")
 #include "shlobj.h"
 
+#include "logging.h"
 #include "coretransport.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
@@ -436,7 +437,9 @@ string CoreTransport::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (Settings::UpstreamProxyHostname().length() > 0 && Settings::UpstreamProxyType() == "https")
+    if (Settings::UpstreamProxyHostname().length() > 0 && 
+        Settings::UpstreamProxyPort() &&
+        Settings::UpstreamProxyType() == "https")
     {
         // Use a custom, user-set upstream proxy
         upstreamProxyAddress << Settings::UpstreamProxyHostname() << ":" << Settings::UpstreamProxyPort();
@@ -653,8 +656,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         string timestamp = notice["timestamp"].asString();
         Json::Value data = notice["data"];
 
+        // Let the UI know about it and decide if something needs to be shown to the user.
+        if (noticeType != "Info")
+        {
+            UI_Notice(line);
+        }
+
         if (noticeType == "Tunnels")
         {
+            // This notice is received when tunnels are connected and disconnected.
             int count = data["count"].asInt();
             if (count == 0)
             {
@@ -760,6 +770,11 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             // TODO: The client should keep track of these notices and if it has not connected
             // within a certain amount of time and received many of these notices it should
             // suggest to the user that there might be a problem with the Upstream Proxy Settings.
+        }
+        else if (noticeType == "AvailableEgressRegions")
+        {
+            string regions = data["regions"].toStyledString();
+            my_print(NOT_SENSITIVE, false, _T("Available egress regions: %S"), regions.c_str());
         }
     }
     catch (exception& e)

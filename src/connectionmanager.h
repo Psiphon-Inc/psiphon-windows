@@ -33,7 +33,8 @@ enum ConnectionManagerState
 {
     CONNECTION_MANAGER_STATE_STOPPED = 0,
     CONNECTION_MANAGER_STATE_STARTING,
-    CONNECTION_MANAGER_STATE_CONNECTED
+    CONNECTION_MANAGER_STATE_CONNECTED,
+    CONNECTION_MANAGER_STATE_STOPPING
 };
 
 
@@ -46,10 +47,9 @@ public:
     void Toggle();
     void Stop(DWORD reason);
     void Start();
-    time_t GetStartingTime();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
-    void OpenHomePages(const TCHAR* defaultHomePage=0);
+    void OpenHomePages(const TCHAR* defaultHomePage=0, bool allowSkip=true);
 
     // IReconnectStateReceiver implementation
     virtual void SetReconnecting();
@@ -108,7 +108,6 @@ private:
     HANDLE m_thread;
     HANDLE m_upgradeThread;
     HANDLE m_feedbackThread;
-    time_t m_startingTime;
     ITransport* m_transport;
     bool m_upgradePending;
     bool m_startSplitTunnel;

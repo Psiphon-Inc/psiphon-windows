@@ -69,6 +69,10 @@ public:
     
     // A value of zero means disabled.
     DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
+
+    int GetLocalHttpProxyPort() const { return m_localHttpProxyPort; }
+    int GetLocalHttpsProxyPort() const { return m_localHttpsProxyPort; }
+    int GetLocalSocksProxyPort() const { return m_localSocksProxyPort; }
     
     // Will be false if Set() never called with a valid ServerEntry.
     bool HasServerEntry() const;
@@ -80,6 +84,8 @@ public:
 
     void SetHomepage(const char* homepage);
     void SetUpgradeVersion(const char* upgradeVersion);
+
+    void SetLocalProxyPorts(int http, int https, int socks);
 
 protected:
     void Clear();
@@ -107,4 +113,7 @@ private:
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
     DWORD m_preemptiveReconnectLifetimeMilliseconds;
+    int m_localHttpProxyPort;
+    int m_localHttpsProxyPort;
+    int m_localSocksProxyPort;
 };

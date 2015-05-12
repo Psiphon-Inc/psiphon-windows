@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "psiclient.h"
+#include "logging.h"
 #include "config.h"
 #include <Shlwapi.h>
 #include <WinSock2.h>
@@ -945,20 +946,22 @@ wstring EscapeSOCKSArg(const char* input)
     return NarrowToTString(output).c_str();
 }
 
+
 // Adapted from:
 // http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
-tstring UrlEncode(const tstring& input)
+tstring UrlCodec(const tstring& input, bool encode)
 {
+    DWORD flags = encode ? 0 : ICU_DECODE;
     tstring encodedURL = _T("");
     DWORD outputBufferSize = input.size() * 2;
     LPTSTR outputBuffer = new TCHAR[outputBufferSize];
-    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, flags);
     DWORD error = ::GetLastError();
     if (!result && error == ERROR_INSUFFICIENT_BUFFER)
     {
         delete[] outputBuffer;
         outputBuffer = new TCHAR[outputBufferSize];
-        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, flags);
     }
 
     if (result)
@@ -978,6 +981,17 @@ tstring UrlEncode(const tstring& input)
 
     return encodedURL;
 }
+
+tstring UrlEncode(const tstring& input)
+{
+    return UrlCodec(input, true);
+}
+
+tstring UrlDecode(const tstring& input)
+{
+    return UrlCodec(input, false);
+}
+
 
 tstring GetLocaleName()
 {

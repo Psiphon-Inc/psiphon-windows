@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "embeddedvalues.h"
 #include "httpsrequest.h"

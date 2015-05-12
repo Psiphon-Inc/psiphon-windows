@@ -1,0 +1,629 @@
+// Copyright (c) 2015, Psiphon Inc.
+// All rights reserved.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+/* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
+
+@import "_rtl-support.less";
+
+
+@psiPrimary: #3A2319;
+@psiHighlight: #D43F27;
+@psiSecondary: #9E8E5F;
+@psiTextOnPrimary: lighten(@psiPrimary, 70%);
+
+@brand-primary: @psiHighlight;
+@brand-success: #5cb85c;
+@brand-info: #5bc0de;
+@brand-warning: #f0ad4e;
+@brand-danger: #d9534f;
+
+
+@import "vendor/bootstrap-2.3.2/less/bootstrap.less";
+@import "vendor/bootstrap-2.3.2/less/responsive.less";
+
+@fa-var-check: "\f00c";
+@import "vendor/awesome-bootstrap-checkbox.less";
+
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  // Without this, there will always be a scrollbar on the window.
+  overflow: hidden;
+}
+
+body {
+  /*position:absolute; top:0; bottom:0; right:0; left:0;*/
+  // Try to prevent a vertical scroll bar.
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: hidden;
+
+  /* Background pattern from subtlepatterns.com */
+  background-image: url(../background.png);
+}
+
+// The element focus outlines spoils the illusion of being an app vs. a webpage.
+// Note that this doesn't seem to have an effect with IE<=9.
+// Note also that this is a bad usuability and accessibility trick for real webpages.
+// We should think about *not* doing this.
+* {
+  outline: 0 !important;
+}
+
+
+/* HEADER AND NAV */
+
+@headerHeight: 70px;
+@headerPad: 10px;
+@headerBannerHeight: 48px; // Determined by our banner spec.
+@headerLogoHeight: 100px;
+// By default the nav top is at @headerHeight, but we want it to be below the
+// bottom of the logo image (with pad).
+@navTopPad: @headerLogoHeight - @headerHeight;
+@headerBannerTopMargin: (@headerHeight - @headerBannerHeight) / 2;
+
+.psiphon-header {
+  height: @headerHeight;
+
+  body[dir="ltr"] & {
+    padding: @headerPad @headerPad @headerPad (@headerLogoHeight + 2*@headerPad);
+  }
+
+  body[dir="rtl"] & {
+    padding: @headerPad (@headerLogoHeight + 2*@headerPad) @headerPad @headerPad;
+  }
+
+  background-color: @psiPrimary;
+
+  .banner {
+    height: 100%;
+
+    > div {
+      color: @psiTextOnPrimary;
+    }
+
+    > a {
+      display: inline-block;
+      .ie7-inline-block();
+      background: #FFFFFF;  // Our banner spec indicates image will be on white or light background.
+      border: thin darken(@psiPrimary, 10%) solid;
+
+      img {
+        height: @headerBannerHeight;
+      }
+    }
+
+    &.long-connecting-show {
+      max-width: 400px;
+      margin: auto;
+      font-size: 0.9em;
+    }
+  }
+
+  .logo {
+    position: absolute;
+
+    body[dir="ltr"] & {
+      left: 20px
+    }
+
+    body[dir="rtl"] & {
+      right: 20px
+    }
+
+    img {
+      height: 100px;
+    }
+  }
+}
+
+.nav, .nav ul {
+  padding-top: @navTopPad;
+  margin-bottom: 0;
+}
+
+.nav-tabs {
+  background-color: @psiPrimary;
+
+  & > li > a {
+    outline: none;
+    color: @white;
+  }
+
+  & > li > a:hover,
+  & > li > a:focus {
+    color: @psiPrimary;
+    background-color: lighten(@psiSecondary, 30%);
+  }
+
+  & > .active > a,
+  & > .active > a:hover,
+  & > .active > a:focus {
+    outline: none;
+    color: @white;
+    background-color: @psiHighlight;
+  }
+}
+
+.main-nav {
+  .label i[class^="icon-"] {
+    vertical-align: baseline;
+  }
+
+  .multiline-tab-icon {
+    body[dir="ltr"] & {
+      .pull-left();
+      // pull-left causes us to lose the icon's padding-right. This rule is copied from FontAwesome's core.less.
+      padding-right: 4/14em;
+    }
+
+    body[dir="rtl"] & {
+      .pull-right();
+      padding-left: 4/14em;
+    }
+  }
+
+  .multiline-tab-text {
+    display: inline-block;
+    .ie7-inline-block();
+  }
+}
+
+.tab-content {
+  overflow: hidden;
+  padding-top: 1em;
+
+  .tab-pane {
+    height: 100%;
+    overflow: auto;
+
+    // Needed to fix IE7 position:relative+overflow bug
+    position: relative;
+
+    body[dir="ltr"] & {
+      padding-right: 1em;
+    }
+
+    body[dir="rtl"] & {
+      padding-left: 1em;
+    }
+  }
+}
+
+.tab-pane.fade {
+  // Shorten the default fade animation time.
+  .transition(opacity .10s linear);
+}
+
+
+/* CONNECT */
+
+#connect-toggle {
+  max-width: 600px;
+  position: relative;
+  padding: 0;
+  margin: auto;
+  top: 10%;
+
+  > .connect-toggle-content {
+    position: absolute;
+    top: 0;
+    width: 70%;
+    padding: 20px;
+    margin: auto;
+    overflow: hidden;
+
+    body[dir="ltr"] & {
+      left: 10%;
+    }
+
+    body[dir="rtl"] & {
+      right: 10%;
+    }
+  }
+
+  .slabtext-container {
+    height: 50px;
+  }
+
+  a {
+    min-width: 10em;
+
+    h3 {
+      white-space: nowrap;
+      overflow-x: hidden;
+    }
+  }
+
+  .wait-spinner {
+    position: relative;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+  }
+}
+
+
+/* SETTINGS */
+
+#settings-accordion {
+  .accordion-heading {
+    font-size: 1.4em;
+
+    .accordion-expand-icon {
+      body[dir="ltr"] & {
+        .pull-right;
+        margin-left: 0.5em;
+      }
+
+      body[dir="rtl"] & {
+        .pull-left;
+        margin-right: 0.5em;
+      }
+    }
+  }
+
+  form {
+    // Get rid of the big bottom margin that Bootstrap gives forms.
+    margin: 0;
+  }
+}
+
+.value-error-alert {
+  // For some reason the error alert is not showing over the body text.
+  z-index: @zindexPopover;
+}
+
+.settings-reset {
+  .clearfix;
+  margin-bottom: 5px;
+
+  a {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+  }
+}
+
+.vpn-incompatible-msg {
+  .help-block & {
+    .text-warning;
+  }
+
+  &.label {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+  }
+}
+
+.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
+  .muted;
+}
+
+.port-entry {
+  width: 5em;
+}
+
+.local-port-unique, .upstream-proxy-set-match {
+  .text-error;
+}
+
+// NOTE: #EgressRegionCombo is actually on the connect tab. #EgressRegion is in the settings tab.
+
+#EgressRegion {
+  display: block;
+  position: static;
+}
+
+.egress-region-combo-container {
+  // Stick it to the bottom.
+  position: absolute;
+  bottom: 1em;
+
+  // And center it.
+  left: 50%;
+  #EgressRegionCombo {
+    position: relative;
+    left: -50%;
+  }
+}
+
+// But that method of scrolling makes the container element too wide, so don't
+// allow the connect pane to scroll horizontally.
+#connection-pane  {
+  overflow-x: hidden;
+}
+
+#EgressRegionCombo {
+  > a {
+    // Let the flag stuff take care of the padding
+    padding: 0;
+
+    // Make the combo button background transparent
+    background: none;
+
+    i {
+      // Make the caret more vertically centered.
+      padding: 0.5em;
+    }
+  }
+
+  ul {
+    // We want to fix the size of the combo list, so it doesn't go off the view.
+    height: 200px;
+    overflow-y: scroll;
+
+    // No border radius
+    .border-radius(0);
+  }
+}
+
+#EgressRegion, #EgressRegionCombo ul, #EgressRegionCombo .btn {
+  @egressRegionWidth: 300px;
+  width: @egressRegionWidth;
+
+  .flag {
+    display: block;
+    width: auto;
+
+    body[dir="ltr"] & {
+      padding: 0 0 0 40px;
+      background-position-x: 2%;
+    }
+    body[dir="rtl"] & {
+      padding: 0 40px 0 0;
+      background-position-x: 98%; // Handy way of getting the flag on the right side
+    }
+
+    // Force our flag image to show even when the item is active.
+    background-image: url(../flags32.png);
+    background-repeat: no-repeat;
+    filter: none;
+  }
+}
+
+.f16 {
+  & .unknown{
+    background-image: url(../flag_unknown_16.png) !important;
+    background-repeat: no-repeat;
+  }
+}
+
+.f32 {
+  & .unknown{
+    background-image: url(../flag_unknown_32.png) !important;
+    background-repeat: no-repeat;
+  }
+}
+
+
+/* FEEDBACK */
+
+.feedback-smiley-container {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.feedback-smiley {
+  padding: 0px;
+  width: 100%;
+
+  & td {
+    width: 50%;
+  }
+
+  & .feedback-choice {
+    .text-center;
+    .muted; // will get trumped when selected
+    .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+    margin: 10px;
+    padding: 1em;
+    border: thin #ccc solid;
+
+    i {
+      font-size: 50px;
+    }
+
+    &.selected {
+      .alert-info;
+    }
+
+    &:hover {
+      cursor: pointer;
+      cursor: hand;
+    }
+  }
+}
+
+
+/* LOG MESSAGES */
+
+.log-messages .priority-0 {
+  .hiding-priority-0& {
+    display: none;
+  }
+}
+
+.log-messages .priority-1 {
+  .showing-priority-0& {
+    background-color: @infoBackground;
+  }
+}
+
+
+/* LANGUAGES */
+
+#language-pane {
+  ul {
+    li {
+      list-style-type: none;
+      margin-top: 0.5em;
+
+      i {
+        margin-right: 0.5em;
+      }
+    }
+  }
+}
+
+
+/* ABOUT */
+
+#about-pane {
+  // There's not much text, so let's bump it up a bit.
+  font-size: 1.5em;
+  line-height: 1.3em;
+}
+
+
+/* MISCELLANEOUS AND HELPERS */
+
+.global-alert {
+  position: fixed;
+  bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+  z-index: @zindexPopover;
+
+  body[dir="ltr"] & {
+    right: 0;
+  }
+
+  body[dir="rtl"] & {
+    left: 0;
+  }
+}
+
+// IE7 behaves poorly when .invisible is used for hiding and showing elements.
+// In some cases we can instead use the z-index to achieve the desired effect.
+.z-behind {
+  z-index: -2;
+  .opacity(0);
+}
+
+.z-infront {
+  z-index: 2;
+  .opacity(100);
+}
+
+// IE7's image scaling is poor. This style helps.
+// https://css-tricks.com/ie-fix-bicubic-scaling-for-images/
+img {
+  -ms-interpolation-mode: bicubic;
+}
+
+// Give our egress region selector an error state
+.control-group.dropdown-menu.error {
+  border-color: darken(@errorBorder, 20%);
+  .box-shadow(0 5px 10px darken(@errorBorder, 20%));
+}
+
+
+/*
+ * FONTS
+ */
+
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 200;
+  src: url('../TitilliumWeb-Thin.eot');
+  src: url('../TitilliumWeb-Thin.eot') format('embedded-opentype'), url('../TitilliumWeb-Thin.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../TitilliumWeb-Light.eot');
+  src: url('../TitilliumWeb-Light.eot') format('embedded-opentype'), url('../TitilliumWeb-Light.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../TitilliumWeb-Regular.eot');
+  src: url('../TitilliumWeb-Regular.eot') format('embedded-opentype'), url('../TitilliumWeb-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../TitilliumWeb-SemiBold.eot');
+  src: url('../TitilliumWeb-SemiBold.eot') format('embedded-opentype'), url('../TitilliumWeb-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../TitilliumWeb-Bold.eot');
+  src: url('../TitilliumWeb-Bold.eot') format('embedded-opentype'), url('../TitilliumWeb-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 900;
+  src: url('../TitilliumWeb-Black.eot');
+  src: url('../TitilliumWeb-Black.eot') format('embedded-opentype'), url('../TitilliumWeb-Black.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 200;
+  src: url('../TitilliumWeb-ThinItalic.eot');
+  src: url('../TitilliumWeb-ThinItalic.eot') format('embedded-opentype'), url('../TitilliumWeb-ThinItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 300;
+  src: url('../TitilliumWeb-LightItalic.eot');
+  src: url('../TitilliumWeb-LightItalic.eot') format('embedded-opentype'), url('../TitilliumWeb-LightItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../TitilliumWeb-Italic.eot');
+  src: url('../TitilliumWeb-Italic.eot') format('embedded-opentype'), url('../TitilliumWeb-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 600;
+  src: url('../TitilliumWeb-SemiBoldItalic.eot');
+  src: url('../TitilliumWeb-SemiBoldItalic.eot') format('embedded-opentype'), url('../TitilliumWeb-SemiBoldItalic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 700;
+  src: url('../TitilliumWeb-BoldItalic.eot');
+  src: url('../TitilliumWeb-BoldItalic.eot') format('embedded-opentype'), url('../TitilliumWeb-BoldItalic.ttf') format('truetype');
+}
+
