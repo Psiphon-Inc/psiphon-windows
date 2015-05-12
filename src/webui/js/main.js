@@ -511,6 +511,8 @@ function settingsToJSON() {
     return false;
   }
 
+  var egressRegion = $('#EgressRegion li.active').data('region');
+
   var returnValue = {
     VPN: $('#VPN').prop('checked') ? 1 : 0,
     SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
@@ -519,7 +521,7 @@ function settingsToJSON() {
     UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
     UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
     SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
-    EgressRegion: $('#EgressRegion li.active').data('region')
+    EgressRegion: egressRegion === BEST_REGION_VALUE ? '' : egressRegion
   };
 
   return JSON.stringify(returnValue);
