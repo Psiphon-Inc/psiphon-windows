@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Better OOBE. Introductory screen. Basic help/info. Language.
 * Nicer looking, most usable connect button/state?
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
@@ -31,6 +30,7 @@ $ node fake-translations.js
 ## Longer-term TODO
 
 * Minimize to systray
+* Better OOBE. Introductory screen. Basic help/info. Language.
 * Create tool to extract English strings from HTML and re-populate messages.json
   - This will help to make sure all strings are in string table, and no defunct strings remain.
   - However: Remember that strings might be loaded from JS, not just HTML.
