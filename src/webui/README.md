@@ -21,6 +21,7 @@ $ node fake-translations.js
 
 ## TODO
 
+* Fix: Egress Region combo on main connect tab isn't disabled when VPN mode selected.
 * Nicer looking, most usable connect button/state?
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
@@ -30,6 +31,7 @@ $ node fake-translations.js
 ## Longer-term TODO
 
 * Minimize to systray
+* Links should show target on hover. (Tooltip? `title` attr?)
 * Better OOBE. Introductory screen. Basic help/info. Language.
 * Create tool to extract English strings from HTML and re-populate messages.json
   - This will help to make sure all strings are in string table, and no defunct strings remain.
