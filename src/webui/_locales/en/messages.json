@@ -307,10 +307,6 @@
     "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
     "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
   },
-  "about#visit-company-site": {
-    "message": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>.",
-    "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
-  },
   "general#modal-close-button": {
     "message": "Close",
     "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."

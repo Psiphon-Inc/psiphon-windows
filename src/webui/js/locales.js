@@ -487,7 +487,6 @@
       "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
       "about#visit-download-site": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"about-info-url\">visit the website</a>.",
       "about#get-by-email": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
-      "about#visit-company-site": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>.",
       "general#modal-close-button": "Close"
     }
   },
