@@ -30,6 +30,7 @@ $ node fake-translations.js
 ## Longer-term TODO
 
 * Minimize to systray
+* Make the spinner on the "stopping" button less ugly
 * Links should show target on hover. (Tooltip? `title` attr?)
 * Better OOBE. Introductory screen. Basic help/info. Language.
 * Create tool to extract English strings from HTML and re-populate messages.json
@@ -70,6 +71,8 @@ $ node fake-translations.js
 * Avoid using `opacity` on text -- for example, to de-emphasize or disable text. On IE<=9, text with reduced `opacity` looks jagged and bad.
 
 * IE7 has some horrible positioning and visibility bugs. If you can't figure out why something is invisible (or not) or is being positioned in weird way, read about [`hasLayout`](http://haslayout.net/haslayout) ([also](http://www.satzansatz.de/cssd/onhavinglayout.html)) and ["disappearing content"](http://www.positioniseverything.net/explorer/ienondisappearcontentbugPIE/index.htm).
+
+* IE7: jQuery's `$().clone()` doesn't seem to work.
 
 
 ## Links to tools used

@@ -14872,6 +14872,20 @@ $(function() {
     HtmlCtrlInterface_BannerClick();
   });
 
+  // Links to the download site and email address are parameterized and need to
+  // be updated when the language changes.
+  var updateLinks = nextTickFn(function updateLinks() {
+    $('.InfoURL').attr('href', g_initObj.Config.InfoURL);
+    $('.NewVersionURL').attr('href', g_initObj.Config.NewVersionURL);
+    $('.NewVersionEmail').attr('href', 'mailto:' + g_initObj.Config.NewVersionEmail)
+                         .text(g_initObj.Config.NewVersionEmail);
+    $('.FaqURL').attr('href', g_initObj.Config.FaqURL);
+    $('.DataCollectionInfoURL').attr('href', g_initObj.Config.DataCollectionInfoURL);
+  });
+  $window.on(LANGUAGE_CHANGE_EVENT, updateLinks);
+  // ...and now.
+  updateLinks();
+
   // Update the size of our tab content element when the window resizes...
   var lastWindowHeight = $window.height();
   var lastWindowWidth = $window.width();
@@ -14882,23 +14896,16 @@ $(function() {
         lastWindowWidth !== $window.width()) {
       lastWindowHeight = $window.height();
       lastWindowWidth = $window.width();
-      setTimeout(resizeContent, 1);
+      nextTick(resizeContent);
     }
   });
   // ...and when a tab is activated...
   $('a[data-toggle="tab"]').on('shown', function() {
-    setTimeout(resizeContent, 1);
+    nextTick(resizeContent);
   });
   // ...and when the language changes...
   $window.on(LANGUAGE_CHANGE_EVENT, function() {
-    $('.InfoURL').attr('href', g_initObj.Config.InfoURL);
-    $('.NewVersionURL').attr('href', g_initObj.Config.NewVersionURL);
-    $('.NewVersionEmail').attr('href', 'mailto:' + g_initObj.Config.NewVersionEmail)
-                         .text(g_initObj.Config.NewVersionEmail);
-    $('.FaqURL').attr('href', g_initObj.Config.FaqURL);
-    $('.DataCollectionInfoURL').attr('href', g_initObj.Config.DataCollectionInfoURL);
-
-    setTimeout(resizeContent, 1);
+    nextTick(resizeContent);
   });
   // ...and now.
   resizeContent();
@@ -14940,12 +14947,12 @@ $(function() {
   $('.main-height').on('resize', function() {
     // Only if this tab is active
     if ($('#connection-pane').hasClass('active')) {
-      setTimeout(resizeConnectContent, 1);
+      nextTick(resizeConnectContent);
     }
   });
   // ...and when the tab is activated...
   $('a[href="#connection-pane"][data-toggle="tab"]').on('shown', function() {
-    setTimeout(resizeConnectContent, 1);
+    nextTick(resizeConnectContent);
   });
   // ...and now.
   resizeConnectContent();
@@ -15061,9 +15068,9 @@ function updateConnectAttemptTooLong() {
 function cycleToggleClass(elem, cls, untilStateChangeFrom) {
   $(elem).toggleClass(cls, 1000, function() {
     if (g_lastState === untilStateChangeFrom) {
-      setTimeout(function() {
+      nextTick(function cycleToggleClass_inner() {
         cycleToggleClass(elem, cls, untilStateChangeFrom);
-      }, 1);
+      });
     }
   });
 }
@@ -15089,7 +15096,7 @@ function egressRegionComboSetup() {
     applySettings();
   });
 
-  // Have the combo track the state of the control in the settings pane.
+  // Have the combobox track the state of the control in the settings pane.
   $('#EgressRegion').on('change', function egressRegionComboSetup_EgressRegion_change() {
     var $activeItem;
     // Copy the relevant classes to the combo items from the settings items.
@@ -15209,7 +15216,7 @@ $(function settingsInit() {
   refreshSettings();
 });
 
-// Save the current settings (and possible reconnect).
+// Save the current settings (and possibly reconnect).
 function applySettings() {
   var settingsJSON = settingsToJSON();
   if (settingsJSON === false) {
@@ -15250,6 +15257,7 @@ function refreshSettings(newSettings) {
   // otherwise we'll have a mess of modals.
 }
 
+// Fill in the settings controls with the values in `obj`.
 function fillSettingsValues(obj) {
   if (typeof(obj.SplitTunnel) !== 'undefined') {
     $('#SplitTunnel').prop('checked', !!obj.SplitTunnel);
@@ -15295,12 +15303,13 @@ function fillSettingsValues(obj) {
   }
 }
 
+// Handler for the Reset Settings button
 function onSettingsReset(e) {
   e.preventDefault();
   refreshSettings(g_initObj.Settings.defaults);
 }
 
-// Packages the current settings into JSON string. Returns if invalid value found.
+// Packages the current settings into JSON string. Returns false if invalid value found.
 function settingsToJSON() {
   var valid = true;
 
@@ -15328,8 +15337,8 @@ function settingsToJSON() {
   return JSON.stringify(returnValue);
 }
 
+// Show/hide the error alert depending on whether we have an erroneous field
 function updateErrorAlert() {
-  // Show/hide the error alert depending on whether we have an erroneous field
   $('#settings-pane .value-error-alert').toggleClass(
     'hidden', $('#settings-pane .control-group.error').length === 0);
 }
@@ -15711,6 +15720,7 @@ function upstreamProxyErrorNotice(errorMessage) {
   }, 60000);
 }
 
+// Show an error modal telling the user there is a local port conflict problem
 function localProxyPortConflictNotice(noticeType) {
   // Show/hide the appropriate message depending on the error
   $('#LocalProxyPortErrorModal .local-proxy-port-http')
@@ -16086,6 +16096,26 @@ function getCookie(name) {
 function setCookie(name, value) {
   g_cookies[name] = value;
   HtmlCtrlInterface_SetCookies(JSON.stringify(g_cookies));
+}
+
+
+// Sets a short timeout and then calls `callback`
+// `context` is optional. Will be `this` when `callback` is called.
+function nextTick(callback, context) {
+  nextTickFn(callback, context)();
+}
+
+// Creates a function that, when called, sets a short timeout and then calls `callback`
+// `context` is optional. Will be `this` when `callback` is called.
+function nextTickFn(callback, context) {
+  return function nextTickFnInner() {
+    var args = arguments;
+    var runner = function() {
+      callback.apply(context, args);
+    };
+
+    setTimeout(runner, 0);
+  };
 }
 
 
