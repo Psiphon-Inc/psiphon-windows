@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Fix: Egress Region combo on main connect tab isn't disabled when VPN mode selected.
 * Nicer looking, most usable connect button/state?
 * More elaborate connection animation?
 * Automation: Switch to VS2013.

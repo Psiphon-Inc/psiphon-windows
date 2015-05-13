@@ -15009,8 +15009,6 @@ function updateConnectToggle() {
 
   if (g_lastState === 'starting') {
     cycleToggleClass($('.connect-toggle-content[data-connect-state="starting"]'), 'alert-success', g_lastState);
-
-    g_connectingTooLongTimeout
   }
   else if (g_lastState === 'connected') {
   }
@@ -15347,6 +15345,12 @@ function egressRegionSetup() {
   $('#EgressRegion a').click(function(e) {
     e.preventDefault();
 
+    // Do nothing if we're disabled
+    if ($('#EgressRegion').hasClass('disabled')) {
+      $(this).blur();
+      return;
+    }
+
     // Check if this target item is already active. Return if so.
     if ($(this).parents('[data-region]').hasClass('active')) {
       return;
@@ -15570,7 +15574,7 @@ function upstreamProxyValid(finalCheck) {
 function vpnModeUpdate() {
   var vpn = $('#VPN').prop('checked');
   $('input.vpn-incompatible, .vpn-incompatible input, '+
-    'select.vpn-incompatible, .vpn-incompatible select')
+    'select.vpn-incompatible, .vpn-incompatible select, .vpn-incompatible .dropdown-menu')
       .prop('disabled', vpn).toggleClass('disabled', vpn);
   $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
   $('.vpn-incompatible').toggleClass('disabled-text', vpn);
