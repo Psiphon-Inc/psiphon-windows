@@ -488,7 +488,9 @@ function fillSettingsValues(obj) {
   if (typeof(obj.EgressRegion) !== 'undefined') {
     var region = obj.EgressRegion || BEST_REGION_VALUE;
     $('#EgressRegion [data-region]').removeClass('active');
-    $('#EgressRegion').find('[data-region="' + region + '"] a').click();
+    $('#EgressRegion').find('[data-region="' + region + '"] a').trigger(
+      'click',
+      { ignoreDisabled: true });
   }
 }
 
@@ -549,11 +551,12 @@ function validatePort(val) {
 // Will be called exactly once. Set up event listeners, etc.
 function egressRegionSetup() {
   // Handle changes to the Egress Region
-  $('#EgressRegion a').click(function(e) {
+  $('#EgressRegion a').click(function(e, extraArgs) {
     e.preventDefault();
 
-    // Do nothing if we're disabled
-    if ($('#EgressRegion').hasClass('disabled')) {
+    // Do nothing if we're disabled, unless we're forcing a disabled bypass
+    if ($('#EgressRegion').hasClass('disabled') &&
+        (!extraArgs || !extraArgs.ignoreDisabled)) {
       $(this).blur();
       return;
     }
