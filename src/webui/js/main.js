@@ -776,11 +776,12 @@ function upstreamProxyValid(finalCheck) {
 // depending on the choice of VPN mode.
 function vpnModeUpdate() {
   var vpn = $('#VPN').prop('checked');
-  $('input.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) input, '+
-    'select.vpn-incompatible:not(.perma-disabled), .vpn-incompatible:not(.perma-disabled) select')
+  $('input.vpn-incompatible, .vpn-incompatible input, '+
+    'select.vpn-incompatible, .vpn-incompatible select')
       .prop('disabled', vpn).toggleClass('disabled', vpn);
   $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
   $('.vpn-incompatible').toggleClass('disabled-text', vpn);
+  $('.vpn-incompatible-hide').toggleClass('hidden', vpn);
 
   // The fancy msDropDown controls require more work to disable.
   $('body select').each(function() {
