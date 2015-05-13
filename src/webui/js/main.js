@@ -49,8 +49,11 @@ var g_initObj = {};
     g_initObj.Config = g_initObj.Config || {};
     g_initObj.Config.Language = g_initObj.Config.Language || 'en';
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
-    g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/psiphon3/index.html';
-    g_initObj.Config.GetNewVersionEmail = g_initObj.Config.GetNewVersionEmail || 'psiget@example.com';
+    g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/browser-InfoURL/index.html';
+    g_initObj.Config.NewVersionEmail = g_initObj.Config.NewVersionEmail || 'browser-NewVersionEmail@example.com';
+    g_initObj.Config.NewVersionURL = g_initObj.Config.NewVersionURL || 'http://example.com/browser-NewVersionURL/index.html';
+    g_initObj.Config.FaqURL = g_initObj.Config.FaqURL || 'http://example.com/browser-FaqURL/index.html';
+    g_initObj.Config.DataCollectionInfoURL = g_initObj.Config.DataCollectionInfoURL || 'http://example.com/browser-DataCollectionInfoURL/index.html';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
 
     g_initObj.Cookies = JSON.stringify({
@@ -97,6 +100,13 @@ $(function() {
   });
   // ...and when the language changes...
   $window.on(LANGUAGE_CHANGE_EVENT, function() {
+    $('.InfoURL').attr('href', g_initObj.Config.InfoURL);
+    $('.NewVersionURL').attr('href', g_initObj.Config.NewVersionURL);
+    $('.NewVersionEmail').attr('href', 'mailto:' + g_initObj.Config.NewVersionEmail)
+                         .text(g_initObj.Config.NewVersionEmail);
+    $('.FaqURL').attr('href', g_initObj.Config.FaqURL);
+    $('.DataCollectionInfoURL').attr('href', g_initObj.Config.DataCollectionInfoURL);
+
     setTimeout(resizeContent, 1);
   });
   // ...and now.
@@ -940,17 +950,6 @@ function localProxyPortConflictNotice(noticeType) {
 /* FEEDBACK ******************************************************************/
 
 $(function() {
-  // This is to help with testing
-  if (!g_initObj.Feedback)
-  {
-    g_initObj.Feedback = {
-      "NewVersionURL": "http://www.example.com/en/download.html",
-      "NewVersionEmail": "get@example.com",
-      "FaqURL": "http://www.example.com/en/faq.html",
-      "DataCollectionInfoURL": "http://example.com/en/faq.html#information-collected"
-    };
-  }
-
   // Add click listener to the happy/sad choices
   $('.feedback-smiley .feedback-choice').click(function(e) {
     e.preventDefault();
@@ -958,35 +957,13 @@ $(function() {
     $(this).addClass('selected');
   });
 
-  // Values in the feedback text need to be replaced when the text changes -- i.e., on language switch.
-  $window.on(LANGUAGE_CHANGE_EVENT, fillFeedbackValues);
-  fillFeedbackValues();
+  // The links in the text will be set correctly elsewhere.
 
   $('#feedback-submit').click(function(e) {
     e.preventDefault();
     sendFeedback();
   });
 });
-
-// Some of the text in the feedback form has values that need to be replaced at runtime.
-// They also need to be replaced when switching values.
-function fillFeedbackValues() {
-  if (g_initObj.Feedback.NewVersionURL && g_initObj.Feedback.NewVersionEmail) {
-    // Fill in the links and addresses that are specific to this client
-    $('.NewVersionURL').attr('href', g_initObj.Feedback.NewVersionURL);
-    $('.NewVersionEmail').attr('href', 'mailto:'+g_initObj.Feedback.NewVersionEmail)
-                         .text(g_initObj.Feedback.NewVersionEmail);
-    $('.NewVersionURL').parent().removeClass('hidden');
-  }
-
-  if (g_initObj.Feedback.FaqURL) {
-    $('.FaqURL').attr('href', g_initObj.Feedback.FaqURL);
-  }
-
-  if (g_initObj.Feedback.DataCollectionInfoURL) {
-    $('.DataCollectionInfoURL').attr('href', g_initObj.Feedback.DataCollectionInfoURL);
-  }
-}
 
 function sendFeedback() {
   var smileyResponses = [];
@@ -1184,11 +1161,6 @@ function populateLocales() {
 
 // Note that this is called before the DOM is fully loaded.
 (function() {
-  $window.on(LANGUAGE_CHANGE_EVENT, function() {
-    $('.about-info-url').attr('href', g_initObj.Config.InfoURL);
-    $('.about-email').attr('href', 'mailto:' + g_initObj.Config.GetNewVersionEmail)
-                     .text(g_initObj.Config.GetNewVersionEmail);
-  });
 })();
 
 

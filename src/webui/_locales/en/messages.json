@@ -4,7 +4,7 @@
     "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
   },
   "banner#long-connecting": {
-    "message": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"about-info-url\" href=\"#\">download site</a>\nor by sending an email to <a class=\"about-email\" href=\"#\"></a>",
+    "message": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"NewVersionURL\" href=\"#\">download site</a>\nor by sending an email to <a class=\"NewVersionEmail\" href=\"#\"></a>",
     "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
   },
   "nav#connection": {
@@ -300,7 +300,7 @@
     "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
   },
   "about#visit-download-site": {
-    "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"about-info-url\">visit the website</a>.",
+    "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"InfoURL\">visit the website</a>.",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
   },
   "about#get-by-email": {
