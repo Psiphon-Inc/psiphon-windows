@@ -311,7 +311,8 @@ DWORD WaitForConnectability(
 
         // Check if cancel is signalled
 
-        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+        if (stopInfo.stopSignal != 0 &&
+            stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
         {
             returnValue = ERROR_OPERATION_ABORTED;
             break;
