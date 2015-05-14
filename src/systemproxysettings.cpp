@@ -52,7 +52,15 @@ SystemProxySettings::SystemProxySettings()
 
 SystemProxySettings::~SystemProxySettings()
 {
-    Revert();
+    // This Revert() cannot be called unconditionally here,
+    // because URL Proxy TransportConnections should not result
+    // in reverting System Proxy Settings.
+    // See TransportConnection.m_skipApplySystemProxySettings
+    // SystemProxySettings::Revert() is explicitly called by
+    // TransportConnection::Cleanup()
+    // And nowhere else do we rely on SystemProxySettings' dtor
+    // for reverting.
+    //Revert();
 }
 
 void SystemProxySettings::SetHttpProxyPort(int port)
