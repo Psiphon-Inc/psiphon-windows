@@ -967,12 +967,12 @@ $(function() {
     $(this).addClass('selected');
   });
 
-  // The links in the text will be set correctly elsewhere.
-
   $('#feedback-submit').click(function(e) {
     e.preventDefault();
     sendFeedback();
   });
+
+  // The sponsor-specific links in the text will be set correctly elsewhere.
 });
 
 function sendFeedback() {
@@ -1007,6 +1007,7 @@ function sendFeedback() {
   // Show (and hide) the success alert
   displayCornerAlert($('#feedback-success-alert'));
 }
+
 
 /* LOG MESSAGES **************************************************************/
 
@@ -1049,6 +1050,7 @@ function addLogMessage(obj) {
   }
 }
 
+
 /* LANGUAGE ******************************************************************/
 
 var RTL_LOCALES = ['devrtl', 'fa', 'ar'];
@@ -1084,7 +1086,7 @@ function switchLocale(locale, initial) {
     // we're loading from an object and not a remote resource). But we want this
     // code to run after everything else is done, so we'll force it to be async.
 
-    setTimeout(function() {
+    nextTick(function() {
       $('body').i18n();
 
       // The content of elements will have changed, so trigger custom event that can
@@ -1099,7 +1101,7 @@ function switchLocale(locale, initial) {
 
       // Remember the user's choice
       setCookie('language', locale);
-    }, 1);
+    });
   });
 
   //
@@ -1156,7 +1158,7 @@ function populateLocales() {
       $("#locale-template"),
       { localeCode: locales[i],
         localeName: window.PSIPHON.LOCALES[locales[i]].name},
-      { append:true });
+      { append: true });
   }
 
   // Set up the click handlers
@@ -1169,9 +1171,7 @@ function populateLocales() {
 
 /* ABOUT *********************************************************************/
 
-// Note that this is called before the DOM is fully loaded.
-(function() {
-})();
+// No special code. Sponsor-specific links are set elsewhere.
 
 
 /* HELPERS *******************************************************************/
@@ -1285,11 +1285,12 @@ function displayCornerAlert(elem) {
   });
 }
 
-// Check the current browser version number. `version` must be something like "lt-ie8".
+// Check the current browser version number. `versionCompare` must be one of:
+// lt-ie9 lt-ie8 lt-ie7
 // Return value is boolean.
 // Note that this isn't super flexible yet. It will need to be improved as it's used.
-function browserCheck(version) {
-  return $('html').hasClass(version);
+function browserCheck(versionCompare) {
+  return $('html').hasClass(versionCompare);
 }
 
 //
