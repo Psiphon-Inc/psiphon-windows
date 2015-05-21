@@ -53,7 +53,15 @@ SystemProxySettings::SystemProxySettings()
 
 SystemProxySettings::~SystemProxySettings()
 {
-    Revert();
+    // This Revert() cannot be called unconditionally here,
+    // because URL Proxy TransportConnections should not result
+    // in reverting System Proxy Settings.
+    // See TransportConnection.m_skipApplySystemProxySettings
+    // SystemProxySettings::Revert() is explicitly called by
+    // TransportConnection::Cleanup()
+    // And nowhere else do we rely on SystemProxySettings' dtor
+    // for reverting.
+    //Revert();
 }
 
 int SystemProxySettings::GetHttpProxyPort() const
@@ -720,6 +728,35 @@ void DoStartupSystemProxyWork()
 
     GetCurrentSystemConnectionsProxyInfo(nativeProxyInfo);
     WriteRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, nativeProxyInfo);
+
+    // In an older version of Psiphon, the system proxy settings may have been left configured to
+    // 127.0.0.1:<port> where port could have been 8080-8090.
+    // Detect this condition, and check if there is actually anything running on the configured
+    // system https proxy port. If there is nothing responding, we assume this case and will
+    // ignore (and ultimately reset) the system proxy settings.
+    DecomposedProxyConfig decomposedNativeDefaultProxyConfig;
+    GetNativeDefaultProxyInfo(decomposedNativeDefaultProxyConfig);
+    if (decomposedNativeDefaultProxyConfig.httpsProxy == _T("127.0.0.1") &&
+        8080 <= decomposedNativeDefaultProxyConfig.httpsProxyPort &&
+        decomposedNativeDefaultProxyConfig.httpsProxyPort <= 8090)
+    {
+        StopInfo stopInfo;
+        if (ERROR_SUCCESS != WaitForConnectability(decomposedNativeDefaultProxyConfig.httpsProxyPort, 100, 0, stopInfo))
+        {
+            // There is nothing responding on the system https proxy port
+            GetCurrentSystemConnectionsProxyInfo(nativeProxyInfo);
+            for (vector<ConnectionProxy>::iterator ii = nativeProxyInfo.begin();
+                ii != nativeProxyInfo.end();
+                ++ii)
+            {
+                // These are the new proxy settings we want to use
+                ii->flags = 0;
+                ii->proxy = tstring();
+                ii->bypass = tstring();
+            }
+            WriteRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, nativeProxyInfo);
+        }
+    }
 }
 
 

@@ -100,19 +100,15 @@ bool ExtractExecutable(
     data = (BYTE*)LockResource(handle);
     size = SizeofResource(NULL, res);
 
-    DWORD ret;
-    TCHAR tempPath[MAX_PATH];
-    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
-    // tempPath can contain no more than MAX_PATH-14 characters
-    ret = GetTempPath(MAX_PATH, tempPath);
-    if (ret > MAX_PATH-14 || ret == 0)
+    tstring tempPath;
+    if (!GetTempPath(tempPath))
     {
         my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
         return false;
     }
 
     TCHAR filePath[MAX_PATH];
-    if (NULL == PathCombine(filePath, tempPath, exeFilename))
+    if (NULL == PathCombine(filePath, tempPath.c_str(), exeFilename))
     {
         my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
@@ -171,6 +167,45 @@ bool ExtractExecutable(
 
     path = filePath;
 
+    return true;
+}
+
+
+// Caller can check GetLastError() on failure
+bool GetTempPath(tstring& path)
+{
+    DWORD ret;
+    TCHAR tempPath[MAX_PATH];
+    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
+    // tempPath can contain no more than MAX_PATH-14 characters
+    ret = GetTempPath(MAX_PATH, tempPath);
+    if (ret > MAX_PATH-14 || ret == 0)
+    {
+        return false;
+    }
+
+    path = tempPath;
+    return true;
+}
+
+
+// Caller can check GetLastError() on failure
+bool GetShortPathName(const tstring& path, tstring& shortPath)
+{
+    DWORD ret = GetShortPathName(path.c_str(), NULL, 0);
+    if (ret == 0)
+    {
+        return false;
+    }
+    TCHAR* buffer = new TCHAR [ret];
+    ret = GetShortPathName(path.c_str(), buffer, ret);
+    if (ret == 0)
+    {
+        delete[] buffer;
+        return false;
+    }
+    shortPath = buffer;
+    delete[] buffer;
     return true;
 }
 
@@ -277,7 +312,8 @@ DWORD WaitForConnectability(
 
         // Check if cancel is signalled
 
-        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+        if (stopInfo.stopSignal != 0 &&
+            stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
         {
             returnValue = ERROR_OPERATION_ABORTED;
             break;

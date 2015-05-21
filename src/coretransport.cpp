@@ -31,6 +31,7 @@
 #include "config.h"
 #include "diagnostic_info.h"
 #include "embeddedvalues.h"
+#include "utilities.h"
 
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
@@ -307,6 +308,25 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
+    tstring tempPath;
+    if (!GetTempPath(tempPath))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetTempPath failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    // Passing short path names for data store directories due to sqlite3 incompatibility
+    // with exetended Unicode characters in paths (e.g., unicode user name in AppData or
+    // Temp path)
+    tstring shortDataStoreDirectory;
+    tstring shortTempPath;
+    if (!GetShortPathName(dataStoreDirectory, shortDataStoreDirectory) ||
+        !GetShortPathName(tempPath, shortTempPath))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetShortPathName failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
     Json::Value config;
     config["ClientPlatform"] = CLIENT_PLATFORM;
     config["ClientVersion"] = CLIENT_VERSION;
@@ -314,7 +334,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["SponsorId"] = SPONSOR_ID;
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
-    config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
+    config["DataStoreDirectory"] = TStringToNarrow(shortDataStoreDirectory);
+    config["DataStoreTempDirectory"] = TStringToNarrow(shortTempPath);
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
