@@ -35,6 +35,10 @@
         "message": "Το Psiphon συνδέθηκε",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
+    "messages#placeholder": {
+        "message": "No messages yet",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
     "nav#settings": {
         "message": "Ρυθμίσεις",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
@@ -64,7 +68,7 @@
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" id=\"about-info-url\">visit the website</a>.",
+        "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"InfoURL\">visit the website</a>.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -86,6 +90,10 @@
     "connection#starting-msg": {
         "message": "Το Pshiphon συνδέεται...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#applying-message": {
+        "message": "Reconnecting to apply your settings.",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "settings#egress-region#select-us": {
         "message": "Ηνωμένες Πολιτείες",
@@ -110,6 +118,10 @@
     "feedback#top_para_3": {
         "message": "Μπορείτε επίσης να βρείτε λύσεις σε πολλά κοινά προβλήματα στις<a class=\"FaqURL\" href=\"#\">Συχνές Ερωτήσεις</a>.",
         "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "settings#saved-message": {
+        "message": "Settings saved.",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
         "message": "<strong>Αν δεν έχετε πρόσβαση στην ιστοσελίδα</strong>, μπορείτε να λάβετε μια νέα έκδοση του Psiphon στέλνωντας ένα email στο:",
@@ -195,6 +207,10 @@
         "message": "Στείλτε μας τα Σχόλιά σας",
         "description": "Title for the Feedback page"
     },
+    "banner#long-connecting": {
+        "message": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"NewVersionURL\" href=\"#\">download site</a>\nor by sending an email to <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+    },
     "connection#stopped-msg": {
         "message": "Το Psiphon αποσυνδέθηκε",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
@@ -266,10 +282,6 @@
     "settings#split-tunnel#enable-label": {
         "message": "Don't proxy websites within your country",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
-    },
-    "about#visit-company-site": {
-        "message": "To find out more about Psiphon Inc. please visit our <a href=\"https://psiphon.ca\">company website</a>.",
-        "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
     },
     "feedback#text_feedback_email_prompt": {
         "message": "Αν θέλετε να λάβετε απάντηση, εισάγετε το email σας:",

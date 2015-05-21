@@ -35,12 +35,16 @@
         "message": "سایفون متصل است",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
+    "messages#placeholder": {
+        "message": "هیچ پیغامی موجود نمی باشد",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
     "nav#settings": {
         "message": "تنظیمات",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "Server Region Unavailable",
+        "message": "سرور منطقه در دسترس نیست",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#upstream-proxy#error-modal-title": {
@@ -64,7 +68,7 @@
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "برای دانلود نسخه جدید یا دریافت پشتیبانی و اطلاعات بیشتر به وبسایت <a href=\"#\" id=\"about-info-url\">سایفون</a> سر بزنید. \n ",
+        "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"InfoURL\">visit the website</a>.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -86,6 +90,10 @@
     "connection#starting-msg": {
         "message": "سایفون در حال اتصال است ...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#applying-message": {
+        "message": "اتصال مجدد برای درخواست تنظیمات شما .",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "settings#egress-region#select-us": {
         "message": "ایالات متحده آمریکا",
@@ -110,6 +118,10 @@
     "feedback#top_para_3": {
         "message": "شما می‌توانید جواب بیشتر مشکلات رایج را در قسمت <a class=\"FaqURL\" href=\"#\">سوال و جواب متداول</a> پیدا کنید.  ",
         "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "settings#saved-message": {
+        "message": "تنظیمات ذخیره شد.",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
         "message": "اگر وبسایت در دسترس شما نیست٬ نسخه جدید سایفون را میتوانید با فرستادن ایمیل به این آدرس دریافت کنید: ",
@@ -195,6 +207,10 @@
         "message": "نظرات خود را با ما در میان بگذارید",
         "description": "Title for the Feedback page"
     },
+    "banner#long-connecting": {
+        "message": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"NewVersionURL\" href=\"#\">download site</a>\nor by sending an email to <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+    },
     "connection#stopped-msg": {
         "message": "سایفون قطع شده است",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
@@ -232,7 +248,7 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#egress-region#invalid-error-msg": {
-        "message": "Choose a valid Psiphon server region.",
+        "message": "یک منطقه سرور معتبر سایفون را انتخاب کنید.",
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "settings#transport-mode#check-label": {
@@ -266,10 +282,6 @@
     "settings#split-tunnel#enable-label": {
         "message": "وبسایت های داخل کشور من را پراکسی نکن. ",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
-    },
-    "about#visit-company-site": {
-        "message": "برای اطلاعات بیشتر در مورد سایفون مراجعه کنید به <a href=\"https://psiphon.ca\">وب سایت شرکت</a>.",
-        "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
     },
     "feedback#text_feedback_email_prompt": {
         "message": "اگر دوست دارید که ما به شما جواب دهیم٬ لطفا ایمیل خود را وارد کنید. ",

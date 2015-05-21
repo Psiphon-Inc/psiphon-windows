@@ -35,6 +35,10 @@
         "message": "Psiphon est connecté...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
+    "messages#placeholder": {
+        "message": "Pas encore de message",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
     "nav#settings": {
         "message": "Paramètres",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
@@ -64,7 +68,7 @@
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "Pour <strong>télécharger une nouvelle version</strong> de Psiphon, ou pour <strong>obtenir de l'aide et plus d'informations</strong>, veuillez <a href=\"#\" id=\"about-info-url\">visiter notre site Web</a>.",
+        "message": "Pour <strong>télécharger une nouvelle version</strong> de Psiphon, ou pour <strong>obtenir de l'aide et plus d'informations</strong>, veuillez <a href=\"#\" class=\"InfoURL\">visiter notre site Web</a>.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -86,6 +90,10 @@
     "connection#starting-msg": {
         "message": "Psiphon se connecte...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#applying-message": {
+        "message": "Reconnexion pour mettre en place vos paramètres.",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "settings#egress-region#select-us": {
         "message": "États-Unis",
@@ -110,6 +118,10 @@
     "feedback#top_para_3": {
         "message": "Vous pouvez aussi trouver des solutions à de nombreux problèmes habituels dans notre <a class=\"FaqURL\" href=\"#\">foire aux questions</a>.",
         "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "settings#saved-message": {
+        "message": "Paramètres enregistrés.",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
         "message": "<strong>Si le site Web n'est pas accessible</strong>, vous pouvez obtenir une nouvelle version de Psiphon en envoyant un courriel à :",
@@ -195,6 +207,10 @@
         "message": "Laissez-nous vos commentaires",
         "description": "Title for the Feedback page"
     },
+    "banner#long-connecting": {
+        "message": "<strong>Oh non !</strong> Il semble que vous éprouviez des difficultés de connexion !<br>\nTéléchargez la version la plus récente de Psiphon sur le <a class=\"NewVersionURL\" href=\"#\">\nou en envoyant un courriel à <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+    },
     "connection#stopped-msg": {
         "message": "Psiphon est connecté",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
@@ -266,10 +282,6 @@
     "settings#split-tunnel#enable-label": {
         "message": "Ne pas relayer les sites Web de votre pays",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
-    },
-    "about#visit-company-site": {
-        "message": "Pour en apprendre davantage sur Psiphon Inc., veuillez visiter le site Web <a href=\"https://psiphon.ca\">de notre société</a>.",
-        "description": "Paragraph on the 'About' page telling users how get info about Psiphon the company (versus Psiphon the application). We have a separate company site."
     },
     "feedback#text_feedback_email_prompt": {
         "message": "Si vous souhaitez que nous vous répondions, veuillez saisir votre adresse courriel :",
