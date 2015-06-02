@@ -238,7 +238,11 @@ bool ServerRequest::MakeRequest(
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.
         }
-        catch (TransportConnection::TryNextServer&)
+        catch (StopSignal::StopException&)
+        {
+            throw;
+        }
+        catch (...)
         {
             // pass and continue
         }

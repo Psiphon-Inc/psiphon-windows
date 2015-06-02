@@ -349,7 +349,11 @@ bool HTTPSRequest::MakeRequest(
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.
         }
-        catch (TransportConnection::TryNextServer&)
+        catch (StopSignal::StopException&)
+        {
+            throw;
+        }
+        catch (...)
         {
             my_print(NOT_SENSITIVE, true, _T("Failed to start URL proxy"), __TFUNCTION__);
             success = false;
