@@ -28,7 +28,7 @@
     "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
   },
   "connection#starting-msg": {
-    "message": "Psiphon is connecting...",
+    "message": "Psiphon is <span class=\"state-word\">connecting</span>…",
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
   },
   "connection#stop-btn": {
@@ -36,7 +36,7 @@
     "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
   },
   "connection#connected-msg": {
-    "message": "Psiphon is connected",
+    "message": "Psiphon is <span class=\"state-word\">connected</span>",
     "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
   },
   "connection#disconnect-btn": {
@@ -44,7 +44,7 @@
     "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
   "connection#stopping-msg": {
-    "message": "Psiphon is disconnecting...",
+    "message": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {
@@ -52,7 +52,7 @@
     "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
   },
   "connection#stopped-msg": {
-    "message": "Psiphon is disconnected",
+    "message": "Psiphon is <span class=\"state-word\">disconnected</span>",
     "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
   },
   "connection#connect-btn": {

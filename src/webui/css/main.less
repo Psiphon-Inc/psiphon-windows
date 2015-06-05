@@ -19,10 +19,12 @@
 @import "_rtl-support.less";
 
 
-@psiPrimary: #3A2319;
+@psiPrimary: #FFFFFF;
 @psiHighlight: #D43F27;
 @psiSecondary: #9E8E5F;
-@psiTextOnPrimary: lighten(@psiPrimary, 70%);
+@psiTextOnPrimary: #3A3A3A;
+@psiTextOnHighlight: #FFFFFF;
+@psiNeutral: #F3F7FA;
 
 @brand-primary: @psiHighlight;
 @brand-success: #5cb85c;
@@ -54,8 +56,7 @@ body {
   padding: 0;
   overflow-y: hidden;
 
-  /* Background pattern from subtlepatterns.com */
-  background-image: url(../background.png);
+  background-color: @psiNeutral;
 }
 
 // The element focus outlines spoils the illusion of being an app vs. a webpage.
@@ -69,33 +70,31 @@ body {
 
 /* HEADER AND NAV */
 
-@headerHeight: 70px;
-@headerPad: 10px;
+@headerHeight: 90px;
+@headerPad: 0px;
 @headerBannerHeight: 48px; // Determined by our banner spec.
 @headerLogoHeight: 100px;
+@headerLogoMarginTop: 10px;
 // By default the nav top is at @headerHeight, but we want it to be below the
 // bottom of the logo image (with pad).
-@navTopPad: @headerLogoHeight - @headerHeight;
+@navTopPad: ((@headerLogoHeight + @headerLogoMarginTop) - @headerHeight + @headerLogoMarginTop);
 @headerBannerTopMargin: (@headerHeight - @headerBannerHeight) / 2;
+
+@navLeftBorderColor: darken(@psiNeutral, 20%);
+@navLeftBorderActiveColor: darken(@psiNeutral, 60%);
+@navLeftBorder: 5px solid darken(@psiNeutral, 20%);
 
 .psiphon-header {
   height: @headerHeight;
-
-  body[dir="ltr"] & {
-    padding: @headerPad @headerPad @headerPad (@headerLogoHeight + 2*@headerPad);
-  }
-
-  body[dir="rtl"] & {
-    padding: @headerPad (@headerLogoHeight + 2*@headerPad) @headerPad @headerPad;
-  }
-
-  background-color: @psiPrimary;
+  background-color: #DA4D30;
+  padding: 0;
 
   .banner {
     height: 100%;
+    padding: 0.5em;
 
     > div {
-      color: @psiTextOnPrimary;
+      color: @psiTextOnHighlight;
     }
 
     > a {
@@ -110,26 +109,46 @@ body {
     }
 
     &.long-connecting-show {
-      max-width: 400px;
-      margin: auto;
       font-size: 0.9em;
+
+      div {
+        max-width: 400px;
+        margin: auto;
+
+        a {
+          color: @psiTextOnHighlight;
+          font-weight: bold;
+          text-decoration: underline;
+        }
+      }
     }
   }
 
-  .logo {
-    position: absolute;
-
+  .header-nav-join {
     body[dir="ltr"] & {
-      left: 20px
+      .pull-left;
+      padding-left: 20px;
+      border-left: @navLeftBorder;
+      border-right: none;
+    }
+    body[dir="rtl"] & {
+      .pull-right;
+      padding-right: 20px;
+      border-right: @navLeftBorder;
+      border-left: none;
     }
 
-    body[dir="rtl"] & {
-      right: 20px
-    }
+    position: absolute;
+    padding-top: @headerLogoMarginTop;
+    margin: 0;
 
     img {
-      height: 100px;
+      height: @headerLogoHeight;
     }
+
+    height: (@headerHeight + @navTopPad - @headerLogoMarginTop);
+    // width: set dynamically to match tabs
+    background-color: @psiPrimary;
   }
 }
 
@@ -141,22 +160,62 @@ body {
 .nav-tabs {
   background-color: @psiPrimary;
 
+  // Override default styles. Over-specify in order to default default rule precedence.
+  &.main-nav.nav {
+    border-width: 0;
+    margin: 0;
+  }
+
+  #fill-tab {
+    height: 100%;
+  }
+
+  > li {
+    body[dir="ltr"] & {
+      border-right: none;
+      border-left: @navLeftBorder;
+    }
+    body[dir="rtl"] & {
+      border-left: none;
+      border-right: @navLeftBorder;
+    }
+
+    &.active {
+      body[dir="ltr"] & {
+        border-right: none;
+        border-left-color: @navLeftBorderActiveColor;
+      }
+      body[dir="rtl"] & {
+        border-left: none;
+        border-right-color: @navLeftBorderActiveColor;
+      }
+    }
+
+    margin: 0; // mostly to override default styles
+  }
+
   & > li > a {
     outline: none;
-    color: @white;
+    border: none;
+    margin: 0 !important; // override default
+    color: @psiTextOnPrimary;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 300ms, color 300ms;
   }
 
   & > li > a:hover,
   & > li > a:focus {
-    color: @psiPrimary;
-    background-color: lighten(@psiSecondary, 30%);
+    color: @psiTextOnHighlight;
+    background-color: @navLeftBorderActiveColor;
   }
 
   & > .active > a,
   & > .active > a:hover,
   & > .active > a:focus {
     outline: none;
-    color: @white;
+    border: none;
+    color: @psiTextOnHighlight;
     background-color: @psiHighlight;
   }
 }
@@ -172,7 +231,6 @@ body {
       // pull-left causes us to lose the icon's padding-right. This rule is copied from FontAwesome's core.less.
       padding-right: 4/14em;
     }
-
     body[dir="rtl"] & {
       .pull-right();
       padding-left: 4/14em;
@@ -192,17 +250,10 @@ body {
   .tab-pane {
     height: 100%;
     overflow: auto;
+    padding: 0 1em;
 
     // Needed to fix IE7 position:relative+overflow bug
     position: relative;
-
-    body[dir="ltr"] & {
-      padding-right: 1em;
-    }
-
-    body[dir="rtl"] & {
-      padding-left: 1em;
-    }
   }
 }
 
@@ -214,27 +265,89 @@ body {
 
 /* CONNECT */
 
+@connectBackgroundColor: #FFFFFF;
+
 #connect-toggle {
+  @startingColor1: @brand-warning;
+  @startingColor2: @brand-success;
+  @connectedColor: @brand-success;
+  @stoppingColor1: @brand-warning;
+  @stoppingColor2: @brand-danger;
+  @stoppedColor: @brand-danger;
+
   max-width: 600px;
   position: relative;
   padding: 0;
-  margin: auto;
   top: 10%;
 
   > .connect-toggle-content {
+
     position: absolute;
     top: 0;
-    width: 70%;
-    padding: 20px;
     margin: auto;
     overflow: hidden;
 
-    body[dir="ltr"] & {
-      left: 10%;
+    padding: 30px 15%;
+    width: 70%;
+
+    background-color: @connectBackgroundColor;
+    text-transform: uppercase;
+
+    .state-symbol {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+
+      .icon-state-symbol {
+        color: @connectBackgroundColor;
+      }
+
+      i {
+        // IE7 hacks to center icon
+        body[dir="ltr"] & {
+          *margin-left: -1em;
+        }
+        body[dir="rtl"] & {
+          *margin-right: -1em;
+        }
+      }
     }
 
-    body[dir="rtl"] & {
-      right: 10%;
+    .stateColors(@color, @oppositeColor) {
+      i, .state-word {
+        color: @color;
+      }
+
+      .btn {
+        color: @connectBackgroundColor;
+        background: @oppositeColor;
+      }
+    }
+
+    &[data-connect-state="starting"] {
+      .stateColors(@startingColor1, @stoppedColor);
+
+      .icon-stack-base.in-progress, .state-word.in-progress {
+        color: @startingColor2;
+      }
+    }
+    &[data-connect-state="connected"] {
+      .stateColors(@connectedColor, @stoppedColor);
+    }
+    &[data-connect-state="stopping"] {
+      .stateColors(@stoppingColor1, @stoppingColor1);
+
+      .icon-stack-base.in-progress, .state-word.in-progress {
+        color: @stoppingColor2;
+      }
+    }
+    &[data-connect-state="stopped"] {
+      .stateColors(@stoppedColor, @connectedColor);
+    }
+
+    hr {
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 
@@ -364,8 +477,8 @@ body {
     // Let the flag stuff take care of the padding
     padding: 0;
 
-    // Make the combo button background transparent
-    background: none;
+    // Match the background color to the connect box
+    background-color: @connectBackgroundColor;
 
     i {
       // Make the caret more vertically centered.
@@ -542,6 +655,23 @@ img {
 .control-group.dropdown-menu.error {
   border-color: darken(@errorBorder, 20%);
   .box-shadow(0 5px 10px darken(@errorBorder, 20%));
+}
+
+hr.dotted {
+  // Achieve a nice dotted effect.
+  // From: http://stackoverflow.com/a/18064496/729729
+  height: 3px;
+  background-image: linear-gradient(to right, #666 15%, rgba(255, 255, 255, 0) 0%);
+  background-position: top;
+  background-size: 14px 2px;
+  background-repeat: repeat-x;
+
+  // Get rid of the default border, but prep it for IE fall-back
+  border-top-style: none;
+  border-top-color: #333;
+  border-top-width: 2px;
+  border-bottom-style: none;
+  border-bottom-width: 0px;
 }
 
 

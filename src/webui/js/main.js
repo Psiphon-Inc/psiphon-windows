@@ -136,6 +136,10 @@ function resizeContent() {
 
   doMatchHeight();
   doMatchWidth();
+
+  // Adjust the banner to account for the logo space.
+  $('.banner').css(g_isRTL ? 'margin-right' : 'margin-left', $('.header-nav-join').outerWidth())
+              .css(!g_isRTL ? 'margin-right' : 'margin-left', 0);
 }
 
 
@@ -179,6 +183,14 @@ function resizeConnectContent() {
 
   // Set the outer connect button div to the correct height
   $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
+
+  // Center the connect button div
+  var parentWidth = $('#connect-toggle').parent().innerWidth() -
+                      (parseFloat($('#connect-toggle').parent().css('padding-left')) || 0) -
+                      (parseFloat($('#connect-toggle').parent().css('padding-right')) || 0);
+  $('#connect-toggle').css(
+    'left',
+    ((parentWidth - $('#connect-toggle').outerWidth()) / 2.0)+'px');
 }
 
 function connectToggleSetup() {
@@ -232,12 +244,18 @@ function updateConnectToggle() {
   });
 
   if (g_lastState === 'starting') {
-    cycleToggleClass($('.connect-toggle-content[data-connect-state="starting"]'), 'alert-success', g_lastState);
+    cycleToggleClass(
+      $('.connect-toggle-content[data-connect-state="starting"] .icon-stack-base, .connect-toggle-content[data-connect-state="starting"] .state-word'),
+      'in-progress',
+      g_lastState);
   }
   else if (g_lastState === 'connected') {
   }
   else if (g_lastState === 'stopping') {
-    cycleToggleClass($('.connect-toggle-content[data-connect-state="stopping"]'), 'alert-danger', g_lastState);
+    cycleToggleClass(
+      $('.connect-toggle-content[data-connect-state="stopping"] .icon-stack-base, .connect-toggle-content[data-connect-state="stopping"] .state-word'),
+      'in-progress',
+      g_lastState);
   }
   else if (g_lastState === 'stopped') {
   }
@@ -1080,6 +1098,9 @@ $(function() {
 // We only want to show the success/welcome message once.
 var g_languageSuccessAlertShown = false;
 
+// Other functions may need to know if we're currently using a RTL locale or not
+var g_isRTL = false;
+
 function switchLocale(locale, initial) {
   i18n.setLng(locale, function() {
     // This callback does not seem to called asynchronously (probably because
@@ -1109,6 +1130,7 @@ function switchLocale(locale, initial) {
   //
 
   var rtl = RTL_LOCALES.indexOf(locale) >= 0;
+  g_isRTL = rtl;
 
   $('body').attr('dir', rtl ? 'rtl' : 'ltr')
            .css('direction', rtl ? 'rtl' : 'ltr');
@@ -1116,8 +1138,16 @@ function switchLocale(locale, initial) {
   // We'll use a data attribute to store classes which should only be used
   // for RTL and not LTR, and vice-versa.
   $('[data-i18n-rtl-classes]').each(function() {
-      $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
-             .toggleClass($(this).data('i18n-rtl-classes'), rtl);
+    var ltrClasses = $(this).data('i18n-ltr-classes');
+    var rtlClasses = $(this).data('i18n-rtl-classes');
+
+    if (ltrClasses) {
+      $(this).toggleClass(ltrClasses, !rtl);
+    }
+
+    if (rtlClasses) {
+      $(this).toggleClass(rtlClasses, rtl);
+    }
   });
 }
 
@@ -1235,41 +1265,48 @@ function doMatchHeight() {
 
 // Support the `data-match-width` feature
 function doMatchWidth() {
-  var matchSelectors = [];
-  $('[data-match-width]').each(function() {
-    var $this = $(this);
+  var matchSelectors = {}, $dataMatchElems, $elem, matchSelector, $matchMaxElems,
+      matchSelectorMaxWidth, i, j;
 
-    var matchSelector = $this.data('match-width');
-    if (matchSelectors.indexOf(matchSelector) < 0) {
-      matchSelectors.push(matchSelector);
-    }
-  });
+  $dataMatchElems = $('[data-match-width]');
 
-  for (var i = 0; i < matchSelectors.length; i++) {
-    matchWidths(matchSelectors[i]);
+  // First reset the widths of all the elements we will be adjusting. Otherwise
+  // the find-max-width will be tainted if an element-to-adjust is also part of
+  // of the find-max-width selector.
+  for (i = 0; i < $dataMatchElems.length; i++) {
+    $elem = $dataMatchElems.eq(i);
+    $elem.css('width', '');
   }
 
-  function matchWidths(matchSelector) {
-    var maxWidth = 0;
-    $(matchSelector).each(function() {
-      var $this = $(this);
-      // Reset the width to its original state
-      $this.width('');
+  // Then collect the maximums for each of the selectors provided by data-match-width
+  for (i = 0; i < $dataMatchElems.length; i++) {
+    $elem = $dataMatchElems.eq(i);
+    matchSelector = $elem.data('match-width');
 
-      maxWidth = Math.max(maxWidth, $this.width());
-    });
-
-    $(matchSelector).each(function() {
-      var $this = $(this);
-
-      var widthDiff = maxWidth - $this.width();
-      if (widthDiff <= 0) {
-        // Don't adjust the largest
-        return;
+    // If we haven't already determined the max for this selector, find it.
+    if (typeof(matchSelectors[matchSelector]) === 'undefined') {
+      matchSelectorMaxWidth = 0.0;
+      $matchMaxElems = $(matchSelector);
+      for (j = 0; j < $matchMaxElems.length; j++) {
+        matchSelectorMaxWidth = Math.max(
+                                  matchSelectorMaxWidth,
+                                  $matchMaxElems.eq(j).outerWidth());
       }
+      matchSelectors[matchSelector] = matchSelectorMaxWidth;
+    }
 
-      $this.width(maxWidth);
-    });
+    // Apply the max width to the target element.
+    $elem.width(getNetWidth($elem, matchSelectors[matchSelector]));
+  }
+
+  function getNetWidth($elem, grossWidth) {
+    return grossWidth -
+            (parseFloat($elem.css('padding-right')) || 0) -
+            (parseFloat($elem.css('padding-left')) || 0) -
+            (parseFloat($elem.css('border-right-width')) || 0) -
+            (parseFloat($elem.css('border-left-width')) || 0) -
+            (parseFloat($elem.css('margin-right')) || 0) -
+            (parseFloat($elem.css('margin-left')) || 0);
   }
 }
 

@@ -40,12 +40,24 @@
       zoom: 1;
     };
 
+    .ie7Invisible {
+      visibility: hidden;
+      zoom: 1;
+    };
+
     .ie7Remove {
       /* Elements with this class get removed from DOM */
     }
 
     .ie7Border {
       border-width: 1px;
+    }
+  </style>
+  <![endif]-->
+  <!--[if lte IE 9]>
+  <style>
+    hr.dotted {
+      border-top-style: dotted;
     }
   </style>
   <![endif]-->
@@ -83,7 +95,7 @@
 <body dir="ltr">
 
   <div class="psiphon-header">
-    <div class="logo">
+    <div class="header-nav-join" data-match-width=".main-nav">
       <a href="#">
         <img src="logo.png">
       </a>
@@ -181,22 +193,32 @@
           </a>
         </li>
 
+        <li id="fill-tab"></li>
+
       </ul>
       <div class="tab-content main-height">
-
 
         <!-- CONNECTION ================================================-->
         <div class="tab-pane active fade in" id="connection-pane">
           <div id="connect-toggle">
 
-            <div class="connect-toggle-content z-behind well text-center alert"
+            <div class="connect-toggle-content z-behind well text-center"
                  data-connect-state="starting"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-refresh icon-spin icon-state-symbol"></i>
+                </span>
+              </div>
               <div>
                 <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#starting-msg">Psiphon is connecting...</span>
+                  <span class="slabtext" data-i18n="[html]connection#starting-msg">
+                    Psiphon is <span class="state-word">connecting</span>…
+                  </span>
                 </h2>
               </div>
+              <hr class="dotted">
               <div>
                 <a href="#" class="btn btn-danger">
                   <h3 data-i18n="connection#stop-btn">Stop</h3>
@@ -204,14 +226,23 @@
               </div>
             </div><!-- /starting -->
 
-            <div class="connect-toggle-content z-behind well text-center alert alert-success"
+            <div class="connect-toggle-content z-behind well text-center"
                  data-connect-state="connected"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-ok icon-state-symbol" data-i18n-rtl-classes="icon-flip-horizontal"></i>
+                </span>
+              </div>
               <div>
                 <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#connected-msg">Psiphon is connected</span>
+                  <span class="slabtext" data-i18n="[html]connection#connected-msg">
+                    Psiphon is <span class="state-word">connected</span>
+                  </span>
                 </h2>
               </div>
+              <hr class="dotted">
               <div>
                 <a href="#" class="btn btn-danger">
                   <h3 data-i18n="connection#disconnect-btn">Disconnect</h3>
@@ -219,38 +250,55 @@
               </div>
             </div><!-- /connected -->
 
-            <div class="connect-toggle-content z-behind well text-center alert"
+            <div class="connect-toggle-content z-behind well text-center"
                  data-connect-state="stopping"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-refresh icon-spin  icon-state-symbol"></i>
+                </span>
+              </div>
               <div>
                 <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
+                  <span class="slabtext" data-i18n="[html]connection#stopping-msg">
+                    Psiphon is <span class="state-word">disconnecting</span>…
+                  </span>
                 </h2>
               </div>
+              <hr class="dotted">
               <div>
                 <a href="#" class="btn btn-warning disabled" disabled>
                     <h3>
                       <span data-i18n="connection#wait-btn">Please wait...</span>
-                      <span class="wait-spinner"></span>
                     </h3>
                 </a>
               </div>
             </div><!-- /stopping -->
 
-            <div class="connect-toggle-content well text-center alert alert-danger"
+            <div class="connect-toggle-content well text-center"
                  data-connect-state="stopped"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
-              <div>
-                <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
-                </h2>
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-exclamation icon-state-symbol"></i>
+                </span>
               </div>
               <div>
-                <a href="#" class="btn btn-success">
+                <h2 class="slabtext-container">
+                  <span class="slabtext" data-i18n="[html]connection#stopped-msg">
+                    Psiphon is <span class="state-word">disconnected</span>
+                  </span>
+                </h2>
+              </div>
+              <hr class="dotted">
+              <div>
+                <a href="#" class="btn">
                   <h3 data-i18n="connection#connect-btn">Connect</h3>
                 </a>
               </div>
-            </div><!-- /disconnected -->
+            </div><!-- /stopped -->
 
           </div><!-- /connect-toggle -->
 

@@ -5278,9 +5278,9 @@ button.close {
   border: 1px solid #cccccc;
   *border: 0;
   border-bottom-color: #b3b3b3;
-  -webkit-border-radius: 1px;
-  -moz-border-radius: 1px;
-  border-radius: 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
   *margin-left: .3em;
   -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
   -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
@@ -9139,28 +9139,23 @@ body {
   margin: 0;
   padding: 0;
   overflow-y: hidden;
-  /* Background pattern from subtlepatterns.com */
-  background-image: url(background.png);
+  background-color: #f3f7fa;
 }
 * {
   outline: 0 !important;
 }
 /* HEADER AND NAV */
 .psiphon-header {
-  height: 70px;
-  background-color: #3a2319;
-}
-body[dir="ltr"] .psiphon-header {
-  padding: 10px 10px 10px 120px;
-}
-body[dir="rtl"] .psiphon-header {
-  padding: 10px 120px 10px 10px;
+  height: 90px;
+  background-color: #DA4D30;
+  padding: 0;
 }
 .psiphon-header .banner {
   height: 100%;
+  padding: 0.5em;
 }
 .psiphon-header .banner > div {
-  color: #ead7ce;
+  color: #ffffff;
 }
 .psiphon-header .banner > a {
   display: inline-block;
@@ -9168,26 +9163,43 @@ body[dir="rtl"] .psiphon-header {
   /* IE7 inline-block hack */
   *zoom: 1;
   background: #FFFFFF;
-  border: thin #160d0a solid;
+  border: thin #e6e6e6 solid;
 }
 .psiphon-header .banner > a img {
   height: 48px;
 }
 .psiphon-header .banner.long-connecting-show {
-  max-width: 400px;
-  margin: auto;
   font-size: 0.9em;
 }
-.psiphon-header .logo {
+.psiphon-header .banner.long-connecting-show div {
+  max-width: 400px;
+  margin: auto;
+}
+.psiphon-header .banner.long-connecting-show div a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.psiphon-header .header-nav-join {
   position: absolute;
+  padding-top: 10px;
+  margin: 0;
+  height: 110px;
+  background-color: #ffffff;
 }
-body[dir="ltr"] .psiphon-header .logo {
-  left: 20px;
+body[dir="ltr"] .psiphon-header .header-nav-join {
+  float: left;
+  padding-left: 20px;
+  border-left: 5px solid #abc7dc;
+  border-right: none;
 }
-body[dir="rtl"] .psiphon-header .logo {
-  right: 20px;
+body[dir="rtl"] .psiphon-header .header-nav-join {
+  float: right;
+  padding-right: 20px;
+  border-right: 5px solid #abc7dc;
+  border-left: none;
 }
-.psiphon-header .logo img {
+.psiphon-header .header-nav-join img {
   height: 100px;
 }
 .nav,
@@ -9196,21 +9208,53 @@ body[dir="rtl"] .psiphon-header .logo {
   margin-bottom: 0;
 }
 .nav-tabs {
-  background-color: #3a2319;
+  background-color: #ffffff;
+}
+.nav-tabs.main-nav.nav {
+  border-width: 0;
+  margin: 0;
+}
+.nav-tabs #fill-tab {
+  height: 100%;
+}
+.nav-tabs > li {
+  margin: 0;
+}
+body[dir="ltr"] .nav-tabs > li {
+  border-right: none;
+  border-left: 5px solid #abc7dc;
+}
+body[dir="rtl"] .nav-tabs > li {
+  border-left: none;
+  border-right: 5px solid #abc7dc;
+}
+body[dir="ltr"] .nav-tabs > li.active {
+  border-right: none;
+  border-left-color: #376384;
+}
+body[dir="rtl"] .nav-tabs > li.active {
+  border-left: none;
+  border-right-color: #376384;
 }
 .nav-tabs > li > a {
   outline: none;
-  color: #ffffff;
+  border: none;
+  margin: 0 !important;
+  color: #3a3a3a;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: background-color 300ms, color 300ms;
 }
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
-  color: #3a2319;
-  background-color: #d8d1be;
+  color: #ffffff;
+  background-color: #376384;
 }
 .nav-tabs > .active > a,
 .nav-tabs > .active > a:hover,
 .nav-tabs > .active > a:focus {
   outline: none;
+  border: none;
   color: #ffffff;
   background-color: #d43f27;
 }
@@ -9238,13 +9282,8 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
 .tab-content .tab-pane {
   height: 100%;
   overflow: auto;
+  padding: 0 1em;
   position: relative;
-}
-body[dir="ltr"] .tab-content .tab-pane {
-  padding-right: 1em;
-}
-body[dir="rtl"] .tab-content .tab-pane {
-  padding-left: 1em;
 }
 .tab-pane.fade {
   -moz-transition: opacity 0.1s linear;
@@ -9257,22 +9296,75 @@ body[dir="rtl"] .tab-content .tab-pane {
   max-width: 600px;
   position: relative;
   padding: 0;
-  margin: auto;
   top: 10%;
 }
 #connect-toggle > .connect-toggle-content {
   position: absolute;
   top: 0;
-  width: 70%;
-  padding: 20px;
   margin: auto;
   overflow: hidden;
+  padding: 30px 15%;
+  width: 70%;
+  background-color: #ffffff;
+  text-transform: uppercase;
 }
-body[dir="ltr"] #connect-toggle > .connect-toggle-content {
-  left: 10%;
+#connect-toggle > .connect-toggle-content .state-symbol {
+  font-size: 3em;
+  margin-bottom: 0.5em;
 }
-body[dir="rtl"] #connect-toggle > .connect-toggle-content {
-  right: 10%;
+#connect-toggle > .connect-toggle-content .state-symbol .icon-state-symbol {
+  color: #ffffff;
+}
+body[dir="ltr"] #connect-toggle > .connect-toggle-content .state-symbol i {
+  *margin-left: -1em;
+}
+body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
+  *margin-right: -1em;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .state-word {
+  color: #f0ad4e;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .btn {
+  color: #ffffff;
+  background: #d9534f;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .icon-stack-base.in-progress,
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .state-word.in-progress {
+  color: #5cb85c;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] .state-word {
+  color: #5cb85c;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] .btn {
+  color: #ffffff;
+  background: #d9534f;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .state-word {
+  color: #f0ad4e;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .btn {
+  color: #ffffff;
+  background: #f0ad4e;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .icon-stack-base.in-progress,
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .state-word.in-progress {
+  color: #d9534f;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .state-word {
+  color: #d9534f;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .btn {
+  color: #ffffff;
+  background: #5cb85c;
+}
+#connect-toggle > .connect-toggle-content hr {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
 }
 #connect-toggle .slabtext-container {
   height: 50px;
@@ -9364,7 +9456,7 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
 }
 #EgressRegionCombo > a {
   padding: 0;
-  background: none;
+  background-color: #ffffff;
 }
 #EgressRegionCombo > a i {
   padding: 0.5em;
@@ -9500,6 +9592,18 @@ img {
   -moz-box-shadow: 0 5px 10px #d18a96;
   box-shadow: 0 5px 10px #d18a96;
 }
+hr.dotted {
+  height: 3px;
+  background-image: linear-gradient(to right, #666666 15%, rgba(255, 255, 255, 0) 0%);
+  background-position: top;
+  background-size: 14px 2px;
+  background-repeat: repeat-x;
+  border-top-style: none;
+  border-top-color: #333;
+  border-top-width: 2px;
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+}
 /*
  * FONTS
  */
@@ -9596,12 +9700,24 @@ img {
       zoom: 1;
     };
 
+    .ie7Invisible {
+      visibility: hidden;
+      zoom: 1;
+    };
+
     .ie7Remove {
       /* Elements with this class get removed from DOM */
     }
 
     .ie7Border {
       border-width: 1px;
+    }
+  </style>
+  <![endif]-->
+  <!--[if lte IE 9]>
+  <style>
+    hr.dotted {
+      border-top-style: dotted;
     }
   </style>
   <![endif]-->
@@ -13975,13 +14091,13 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "nav#feedback": "Feedback",
       "nav#messages": "Log Messages",
       "nav#about": "About",
-      "connection#starting-msg": "Psiphon is connecting...",
+      "connection#starting-msg": "Psiphon is <span class=\"state-word\">connecting</span>…",
       "connection#stop-btn": "Stop",
-      "connection#connected-msg": "Psiphon is connected",
+      "connection#connected-msg": "Psiphon is <span class=\"state-word\">connected</span>",
       "connection#disconnect-btn": "Disconnect",
-      "connection#stopping-msg": "Psiphon is disconnecting...",
+      "connection#stopping-msg": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
       "connection#wait-btn": "Please wait...",
-      "connection#stopped-msg": "Psiphon is disconnected",
+      "connection#stopped-msg": "Psiphon is <span class=\"state-word\">disconnected</span>",
       "connection#connect-btn": "Connect",
       "settings#error-alert": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
       "settings#reset-button": "Reset to Default",
@@ -15116,6 +15232,10 @@ function resizeContent() {
 
   doMatchHeight();
   doMatchWidth();
+
+  // Adjust the banner to account for the logo space.
+  $('.banner').css(g_isRTL ? 'margin-right' : 'margin-left', $('.header-nav-join').outerWidth())
+              .css(!g_isRTL ? 'margin-right' : 'margin-left', 0);
 }
 
 
@@ -15159,6 +15279,14 @@ function resizeConnectContent() {
 
   // Set the outer connect button div to the correct height
   $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
+
+  // Center the connect button div
+  var parentWidth = $('#connect-toggle').parent().innerWidth() -
+                      (parseFloat($('#connect-toggle').parent().css('padding-left')) || 0) -
+                      (parseFloat($('#connect-toggle').parent().css('padding-right')) || 0);
+  $('#connect-toggle').css(
+    'left',
+    ((parentWidth - $('#connect-toggle').outerWidth()) / 2.0)+'px');
 }
 
 function connectToggleSetup() {
@@ -15212,12 +15340,18 @@ function updateConnectToggle() {
   });
 
   if (g_lastState === 'starting') {
-    cycleToggleClass($('.connect-toggle-content[data-connect-state="starting"]'), 'alert-success', g_lastState);
+    cycleToggleClass(
+      $('.connect-toggle-content[data-connect-state="starting"] .icon-stack-base, .connect-toggle-content[data-connect-state="starting"] .state-word'),
+      'in-progress',
+      g_lastState);
   }
   else if (g_lastState === 'connected') {
   }
   else if (g_lastState === 'stopping') {
-    cycleToggleClass($('.connect-toggle-content[data-connect-state="stopping"]'), 'alert-danger', g_lastState);
+    cycleToggleClass(
+      $('.connect-toggle-content[data-connect-state="stopping"] .icon-stack-base, .connect-toggle-content[data-connect-state="stopping"] .state-word'),
+      'in-progress',
+      g_lastState);
   }
   else if (g_lastState === 'stopped') {
   }
@@ -16060,6 +16194,9 @@ $(function() {
 // We only want to show the success/welcome message once.
 var g_languageSuccessAlertShown = false;
 
+// Other functions may need to know if we're currently using a RTL locale or not
+var g_isRTL = false;
+
 function switchLocale(locale, initial) {
   i18n.setLng(locale, function() {
     // This callback does not seem to called asynchronously (probably because
@@ -16089,6 +16226,7 @@ function switchLocale(locale, initial) {
   //
 
   var rtl = RTL_LOCALES.indexOf(locale) >= 0;
+  g_isRTL = rtl;
 
   $('body').attr('dir', rtl ? 'rtl' : 'ltr')
            .css('direction', rtl ? 'rtl' : 'ltr');
@@ -16096,8 +16234,16 @@ function switchLocale(locale, initial) {
   // We'll use a data attribute to store classes which should only be used
   // for RTL and not LTR, and vice-versa.
   $('[data-i18n-rtl-classes]').each(function() {
-      $(this).toggleClass($(this).data('i18n-ltr-classes'), !rtl)
-             .toggleClass($(this).data('i18n-rtl-classes'), rtl);
+    var ltrClasses = $(this).data('i18n-ltr-classes');
+    var rtlClasses = $(this).data('i18n-rtl-classes');
+
+    if (ltrClasses) {
+      $(this).toggleClass(ltrClasses, !rtl);
+    }
+
+    if (rtlClasses) {
+      $(this).toggleClass(rtlClasses, rtl);
+    }
   });
 }
 
@@ -16215,41 +16361,48 @@ function doMatchHeight() {
 
 // Support the `data-match-width` feature
 function doMatchWidth() {
-  var matchSelectors = [];
-  $('[data-match-width]').each(function() {
-    var $this = $(this);
+  var matchSelectors = {}, $dataMatchElems, $elem, matchSelector, $matchMaxElems,
+      matchSelectorMaxWidth, i, j;
 
-    var matchSelector = $this.data('match-width');
-    if (matchSelectors.indexOf(matchSelector) < 0) {
-      matchSelectors.push(matchSelector);
-    }
-  });
+  $dataMatchElems = $('[data-match-width]');
 
-  for (var i = 0; i < matchSelectors.length; i++) {
-    matchWidths(matchSelectors[i]);
+  // First reset the widths of all the elements we will be adjusting. Otherwise
+  // the find-max-width will be tainted if an element-to-adjust is also part of
+  // of the find-max-width selector.
+  for (i = 0; i < $dataMatchElems.length; i++) {
+    $elem = $dataMatchElems.eq(i);
+    $elem.css('width', '');
   }
 
-  function matchWidths(matchSelector) {
-    var maxWidth = 0;
-    $(matchSelector).each(function() {
-      var $this = $(this);
-      // Reset the width to its original state
-      $this.width('');
+  // Then collect the maximums for each of the selectors provided by data-match-width
+  for (i = 0; i < $dataMatchElems.length; i++) {
+    $elem = $dataMatchElems.eq(i);
+    matchSelector = $elem.data('match-width');
 
-      maxWidth = Math.max(maxWidth, $this.width());
-    });
-
-    $(matchSelector).each(function() {
-      var $this = $(this);
-
-      var widthDiff = maxWidth - $this.width();
-      if (widthDiff <= 0) {
-        // Don't adjust the largest
-        return;
+    // If we haven't already determined the max for this selector, find it.
+    if (typeof(matchSelectors[matchSelector]) === 'undefined') {
+      matchSelectorMaxWidth = 0.0;
+      $matchMaxElems = $(matchSelector);
+      for (j = 0; j < $matchMaxElems.length; j++) {
+        matchSelectorMaxWidth = Math.max(
+                                  matchSelectorMaxWidth,
+                                  $matchMaxElems.eq(j).outerWidth());
       }
+      matchSelectors[matchSelector] = matchSelectorMaxWidth;
+    }
 
-      $this.width(maxWidth);
-    });
+    // Apply the max width to the target element.
+    $elem.width(getNetWidth($elem, matchSelectors[matchSelector]));
+  }
+
+  function getNetWidth($elem, grossWidth) {
+    return grossWidth -
+            (parseFloat($elem.css('padding-right')) || 0) -
+            (parseFloat($elem.css('padding-left')) || 0) -
+            (parseFloat($elem.css('border-right-width')) || 0) -
+            (parseFloat($elem.css('border-left-width')) || 0) -
+            (parseFloat($elem.css('margin-right')) || 0) -
+            (parseFloat($elem.css('margin-left')) || 0);
   }
 }
 
@@ -16572,7 +16725,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
 <body dir="ltr">
 
   <div class="psiphon-header">
-    <div class="logo">
+    <div class="header-nav-join" data-match-width=".main-nav">
       <a href="#">
         <img src="logo.png">
       </a>
@@ -16670,22 +16823,32 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
           </a>
         </li>
 
+        <li id="fill-tab"></li>
+
       </ul>
       <div class="tab-content main-height">
-
 
         <!-- CONNECTION ================================================-->
         <div class="tab-pane active fade in" id="connection-pane">
           <div id="connect-toggle">
 
-            <div class="connect-toggle-content z-behind well text-center alert"
+            <div class="connect-toggle-content z-behind well text-center"
                  data-connect-state="starting"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-refresh icon-spin icon-state-symbol"></i>
+                </span>
+              </div>
               <div>
                 <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#starting-msg">Psiphon is connecting...</span>
+                  <span class="slabtext" data-i18n="[html]connection#starting-msg">
+                    Psiphon is <span class="state-word">connecting</span>…
+                  </span>
                 </h2>
               </div>
+              <hr class="dotted">
               <div>
                 <a href="#" class="btn btn-danger">
                   <h3 data-i18n="connection#stop-btn">Stop</h3>
@@ -16693,14 +16856,23 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
               </div>
             </div><!-- /starting -->
 
-            <div class="connect-toggle-content z-behind well text-center alert alert-success"
+            <div class="connect-toggle-content z-behind well text-center"
                  data-connect-state="connected"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-ok icon-state-symbol" data-i18n-rtl-classes="icon-flip-horizontal"></i>
+                </span>
+              </div>
               <div>
                 <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#connected-msg">Psiphon is connected</span>
+                  <span class="slabtext" data-i18n="[html]connection#connected-msg">
+                    Psiphon is <span class="state-word">connected</span>
+                  </span>
                 </h2>
               </div>
+              <hr class="dotted">
               <div>
                 <a href="#" class="btn btn-danger">
                   <h3 data-i18n="connection#disconnect-btn">Disconnect</h3>
@@ -16708,38 +16880,55 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
               </div>
             </div><!-- /connected -->
 
-            <div class="connect-toggle-content z-behind well text-center alert"
+            <div class="connect-toggle-content z-behind well text-center"
                  data-connect-state="stopping"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-refresh icon-spin  icon-state-symbol"></i>
+                </span>
+              </div>
               <div>
                 <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#stopping-msg">Psiphon is disconnecting...</span>
+                  <span class="slabtext" data-i18n="[html]connection#stopping-msg">
+                    Psiphon is <span class="state-word">disconnecting</span>…
+                  </span>
                 </h2>
               </div>
+              <hr class="dotted">
               <div>
                 <a href="#" class="btn btn-warning disabled" disabled>
                     <h3>
                       <span data-i18n="connection#wait-btn">Please wait...</span>
-                      <span class="wait-spinner"></span>
                     </h3>
                 </a>
               </div>
             </div><!-- /stopping -->
 
-            <div class="connect-toggle-content well text-center alert alert-danger"
+            <div class="connect-toggle-content well text-center"
                  data-connect-state="stopped"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
-              <div>
-                <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="connection#stopped-msg">Psiphon is disconnected</span>
-                </h2>
+              <div class="state-symbol">
+                <span class="icon-stack">
+                  <i class="icon-stack-base icon-circle"></i>
+                  <i class="icon-exclamation icon-state-symbol"></i>
+                </span>
               </div>
               <div>
-                <a href="#" class="btn btn-success">
+                <h2 class="slabtext-container">
+                  <span class="slabtext" data-i18n="[html]connection#stopped-msg">
+                    Psiphon is <span class="state-word">disconnected</span>
+                  </span>
+                </h2>
+              </div>
+              <hr class="dotted">
+              <div>
+                <a href="#" class="btn">
                   <h3 data-i18n="connection#connect-btn">Connect</h3>
                 </a>
               </div>
-            </div><!-- /disconnected -->
+            </div><!-- /stopped -->
 
           </div><!-- /connect-toggle -->
 
