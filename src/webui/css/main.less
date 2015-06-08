@@ -280,6 +280,16 @@ body {
 
 @connectBackgroundColor: #FFFFFF;
 
+#connection-pane  {
+  overflow: hidden;
+}
+
+#connection-pane .connect-animation {
+  .text-center;
+  position: absolute; 
+  width: 100%;
+}
+
 #connect-toggle {
   @startingColor1: @brand-warning;
   @startingColor2: @brand-success;
@@ -304,8 +314,9 @@ body {
     width: 70%;
 
     background-color: @connectBackgroundColor;
+    background-color: rgba(red(@connectBackgroundColor),green(@connectBackgroundColor),blue(@connectBackgroundColor), 0.9);
     text-transform: uppercase;
-
+    
     .state-symbol {
       font-size: 3em;
       margin-bottom: 0.5em;
@@ -476,12 +487,6 @@ body {
     position: relative;
     left: -50%;
   }
-}
-
-// But that method of scrolling makes the container element too wide, so don't
-// allow the connect pane to scroll horizontally.
-#connection-pane  {
-  overflow-x: hidden;
 }
 
 #EgressRegionCombo {

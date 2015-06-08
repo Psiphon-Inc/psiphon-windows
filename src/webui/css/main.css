@@ -6244,6 +6244,14 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   transition: opacity 0.1s linear;
 }
 /* CONNECT */
+#connection-pane {
+  overflow: hidden;
+}
+#connection-pane .connect-animation {
+  text-align: center;
+  position: absolute;
+  width: 100%;
+}
 #connect-toggle {
   max-width: 600px;
   position: relative;
@@ -6258,6 +6266,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   padding: 30px 15%;
   width: 70%;
   background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
 }
 #connect-toggle > .connect-toggle-content .state-symbol {
@@ -6482,9 +6491,6 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
 .egress-region-combo-container #EgressRegionCombo {
   position: relative;
   left: -50%;
-}
-#connection-pane {
-  overflow-x: hidden;
 }
 #EgressRegionCombo > a {
   padding: 0;
