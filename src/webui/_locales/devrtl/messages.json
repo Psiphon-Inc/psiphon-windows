@@ -28,7 +28,7 @@
     "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
   },
   "connection#connected-msg": {
-    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬",
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮ɔouuǝɔʇǝp‬</span>",
     "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
   },
   "connection#disconnect-btn": {
@@ -36,7 +36,7 @@
     "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
   "connection#starting-msg": {
-    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇıuƃ‬...",
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮ɔouuǝɔʇıuƃ‬</span>…",
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
   },
   "connection#stop-btn": {
@@ -44,11 +44,11 @@
     "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
   },
   "connection#stopped-msg": {
-    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇǝp‬",
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮pısɔouuǝɔʇǝp‬</span>",
     "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
   },
   "connection#stopping-msg": {
-    "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮pısɔouuǝɔʇıuƃ‬...",
+    "message": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮pısɔouuǝɔʇıuƃ‬</span>…",
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {

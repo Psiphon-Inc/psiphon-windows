@@ -1176,7 +1176,7 @@ function populateLocales() {
     return 0;
   });
 
-  var $localeListElem = $('#language-pane ul');
+  var $localeListElem = $('#language-pane');
 
   for (var i = 0; i < locales.length; i++) {
     // If we're not in debug mode, don't output the dev locales

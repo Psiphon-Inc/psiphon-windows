@@ -39,7 +39,7 @@
 // Links
 // -------------------------
 @linkColor:             @psiHighlight;
-@linkColorHover:        darken(@linkColor, 15%);
+@linkColorHover:        @psiLinkHoverColor;
 
 
 // Typography
@@ -78,6 +78,11 @@
 @borderRadiusLarge:     1px;
 @borderRadiusSmall:     0px;
 
+// Creating a different radius for buttons
+@buttonBorderRadiusBase: 3px;
+@buttonBorderRadiusLarge: 5px;
+@buttonBorderRadiusSmall: 1px;
+
 
 // Tables
 // -------------------------
@@ -90,26 +95,26 @@
 // -------------------------
 
 @btnBackground:                     @white;
-@btnBackgroundHighlight:            @white;
+@btnBackgroundHighlight:            darken(@white, 10%);
 @btnBorder:                         #ccc;
 
 @btnPrimaryBackground:              @brand-primary;
-@btnPrimaryBackgroundHighlight:     @brand-primary;
+@btnPrimaryBackgroundHighlight:     darken(@brand-primary, 10%);
 
 @btnInfoBackground:                 @brand-info;
-@btnInfoBackgroundHighlight:        @brand-info;
+@btnInfoBackgroundHighlight:        darken(@brand-info, 10%);
 
 @btnSuccessBackground:              @brand-success;
-@btnSuccessBackgroundHighlight:     @brand-success;
+@btnSuccessBackgroundHighlight:     darken(@brand-success, 10%);
 
 @btnWarningBackground:              @brand-warning;
-@btnWarningBackgroundHighlight:     @brand-warning;
+@btnWarningBackgroundHighlight:     darken(@brand-warning, 10%);
 
 @btnDangerBackground:               @brand-danger;
-@btnDangerBackgroundHighlight:      @brand-danger;
+@btnDangerBackgroundHighlight:      darken(@brand-danger, 10%);
 
 @btnInverseBackground:              #444;
-@btnInverseBackgroundHighlight:     #444;
+@btnInverseBackgroundHighlight:     darken(#444, 10%);
 
 
 // Forms
@@ -138,7 +143,7 @@
 @dropdownLinkColorActive:       @white;
 
 @dropdownLinkBackgroundActive:  @linkColor;
-@dropdownLinkBackgroundHover:   @dropdownLinkBackgroundActive;
+@dropdownLinkBackgroundHover:   @linkColorHover;
 
 
 

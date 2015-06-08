@@ -220,8 +220,9 @@
               </div>
               <hr class="dotted">
               <div>
-                <a href="#" class="btn btn-danger">
-                  <h3 data-i18n="connection#stop-btn">Stop</h3>
+                <a href="#" class="btn btn-large"
+                   data-i18n="connection#stop-btn">
+                    Stop
                 </a>
               </div>
             </div><!-- /starting -->
@@ -244,8 +245,9 @@
               </div>
               <hr class="dotted">
               <div>
-                <a href="#" class="btn btn-danger">
-                  <h3 data-i18n="connection#disconnect-btn">Disconnect</h3>
+                <a href="#" class="btn btn-large"
+                   data-i18n="connection#disconnect-btn">
+                    Disconnect
                 </a>
               </div>
             </div><!-- /connected -->
@@ -268,10 +270,9 @@
               </div>
               <hr class="dotted">
               <div>
-                <a href="#" class="btn btn-warning disabled" disabled>
-                    <h3>
-                      <span data-i18n="connection#wait-btn">Please wait...</span>
-                    </h3>
+                <a href="#" class="btn btn-large disabled" disabled
+                   data-i18n="connection#wait-btn">
+                      Please wait...
                 </a>
               </div>
             </div><!-- /stopping -->
@@ -294,8 +295,9 @@
               </div>
               <hr class="dotted">
               <div>
-                <a href="#" class="btn">
-                  <h3 data-i18n="connection#connect-btn">Connect</h3>
+                <a href="#" class="btn btn-large"
+                   data-i18n="connection#connect-btn">
+                    Connect
                 </a>
               </div>
             </div><!-- /stopped -->
@@ -794,17 +796,15 @@
 
         <!-- LANGUAGE ======================================================-->
         <div class="tab-pane fade" id="language-pane">
-          <ul>
-            <!-- Supported locales will be filled in here -->
-          </ul>
+          <!-- Supported locales will be filled in here -->
 
           <!-- Locale template -->
           <script type="text/html" id="locale-template">
-            <li>
+            <div class="language-item">
               <i class="icon-li icon-globe"></i>
               <a href="#" class="language-choice"
                  data-value="localeCode" data-content="localeName"></a>
-            </li>
+            </div>
           </script>
         </div><!-- /language-pane -->
 

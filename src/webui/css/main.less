@@ -24,7 +24,13 @@
 @psiSecondary: #9E8E5F;
 @psiTextOnPrimary: #3A3A3A;
 @psiTextOnHighlight: #FFFFFF;
+
 @psiNeutral: #F3F7FA;
+@psiDarkNeutral: darken(@psiNeutral, 60%);
+@psiLightNeutral: darken(@psiNeutral, 20%);
+
+@psiLinkHoverColor: @psiDarkNeutral;
+
 
 @brand-primary: @psiHighlight;
 @brand-success: #5cb85c;
@@ -80,9 +86,9 @@ body {
 @navTopPad: ((@headerLogoHeight + @headerLogoMarginTop) - @headerHeight + @headerLogoMarginTop + 30px);
 @headerBannerTopMargin: (@headerHeight - @headerBannerHeight) / 2;
 
-@navLeftBorderColor: darken(@psiNeutral, 20%);
-@navLeftBorderActiveColor: darken(@psiNeutral, 60%);
-@navLeftBorder: 5px solid darken(@psiNeutral, 20%);
+@navLeftBorderColor: @psiLightNeutral;
+@navLeftBorderActiveColor: @psiDarkNeutral;
+@navLeftBorder: 5px solid @psiLightNeutral;
 
 .psiphon-header {
   height: @headerHeight;
@@ -127,12 +133,14 @@ body {
   .header-nav-join {
     body[dir="ltr"] & {
       .pull-left;
+      left: 0;  // IE7 hack
       padding-left: 20px;
       border-left: @navLeftBorder;
       border-right: none;
     }
     body[dir="rtl"] & {
       .pull-right;
+      right: 0; // IE7 hack
       padding-right: 20px;
       border-right: @navLeftBorder;
       border-left: none;
@@ -189,6 +197,10 @@ body {
         border-left: none;
         border-right-color: @navLeftBorderActiveColor;
       }
+
+      .label {
+        visibility: hidden;
+      }
     }
 
     margin: 0; // mostly to override default styles
@@ -202,6 +214,7 @@ body {
     font-weight: bold;
     text-transform: uppercase;
     transition: background-color 300ms, color 300ms;
+    white-space: nowrap; // IE7 hack
   }
 
   & > li > a:hover,
@@ -318,8 +331,7 @@ body {
       }
 
       .btn {
-        color: @connectBackgroundColor;
-        background: @oppositeColor;
+        .buttonBackground(@oppositeColor, darken(@oppositeColor, 10%), @connectBackgroundColor);
       }
     }
 
@@ -356,12 +368,12 @@ body {
   }
 
   a {
+    // Set a min-width to help keep the button the same size regardless of the text.
     min-width: 10em;
-
-    h3 {
-      white-space: nowrap;
-      overflow-x: hidden;
-    }
+    font-size: 2em;
+    padding: 0.6em 1em;
+    white-space: nowrap;
+    overflow-x: hidden;
   }
 
   .wait-spinner {
@@ -566,9 +578,10 @@ body {
       .alert-info;
     }
 
-    &:hover {
+    &:hover:not(.selected) {
       cursor: pointer;
       cursor: hand;
+      background-color: @white;
     }
   }
 }
@@ -592,15 +605,27 @@ body {
 /* LANGUAGES */
 
 #language-pane {
-  ul {
-    li {
-      list-style-type: none;
-      margin-top: 0.5em;
-
-      i {
+  .language-item {
+    i {      
+      body[dir="ltr"] & {
         margin-right: 0.5em;
       }
+      body[dir="rtl"] & {
+        margin-left: 0.5em;
+      }
     }
+
+    body[dir="ltr"] & {
+      float: left;
+    }
+    body[dir="rtl"] & {
+      float: right;
+    }
+    
+    font-size: 1em;
+    width: 16em; // Chosen arbitrarily to help prevent wrapping
+    height: 2em;
+    font-weight: bold;
   }
 }
 
