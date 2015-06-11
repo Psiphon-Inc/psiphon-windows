@@ -19,22 +19,29 @@
 
 #pragma once
 
-#include <string>
 
-using namespace std;
+namespace Settings
+{
+    void Initialize();
 
-void InitializeUserSettings(void);
-int GetUserSettingDword(const string& settingName, int defaultValue = 0);
-string GetUserSettingString(const string& settingName, string defaultValue = string(""));
-bool UserSkipBrowser(void);
-bool UserSkipProxySettings(void);
-int UserLocalHTTPProxyPort(void);
-bool UserSkipSSHParentProxySettings(void);
-string UserSSHParentProxyHostname(void);
-int UserSSHParentProxyPort(void);
-string UserSSHParentProxyUsername(void);
-string UserSSHParentProxyPassword(void);
-string UserSSHParentProxyType(void);
+    // Returns true if settings changed.
+    bool Show(HINSTANCE hInst, HWND hParentWnd);
 
+    bool SplitTunnel();
+    tstring Transport();
+    
+    // Returns 0 if port should be chosen automatically.
+    unsigned int LocalHttpProxyPort();
+    // Returns 0 if port should be chosen automatically.
+    unsigned int LocalSocksProxyPort();
 
+    bool SkipUpstreamProxy();
+    string UpstreamProxyType();
+    string UpstreamProxyHostname();
+    unsigned int UpstreamProxyPort();
 
+    string EgressRegion();
+
+    bool SkipBrowser();
+    bool SkipProxySettings();
+}

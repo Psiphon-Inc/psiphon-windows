@@ -42,6 +42,7 @@ public:
     string GetClientSessionID() const {return m_clientSessionID;}
 
     string GetServerAddress() const;
+    string GetRegion() const;
     int GetWebPort() const;
     string GetWebServerSecret() const;
     string GetWebServerCertificate() const;
@@ -65,17 +66,20 @@ public:
     vector<string> GetDiscoveredServerEntries() const;
     vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
     vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
-    string GetSpeedTestServerAddress() const {return m_speedTestServerAddress;}
-    int GetSpeedTestServerPort() const {return m_speedTestServerPort;}
-    string GetSpeedTestRequestPath() const {return m_speedTestRequestPath;}
     
     // A value of zero means disabled.
     DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
     
+    // Will be false if Set() never called with a valid ServerEntry.
+    bool HasServerEntry() const;
+    // Will throw exception if this instance does not have a ServerEntry.
     ServerEntry GetServerEntry() const;
 
     bool ParseHandshakeResponse(const string& response);
     bool ProcessConfig(const string& config_json);
+
+    void SetHomepage(const char* homepage);
+    void SetUpgradeVersion(const char* upgradeVersion);
 
 protected:
     void Clear();
@@ -102,8 +106,5 @@ private:
     vector<string> m_servers;
     vector<RegexReplace> m_pageViewRegexes;
     vector<RegexReplace> m_httpsRequestRegexes;
-    string m_speedTestServerAddress;
-    int m_speedTestServerPort;
-    string m_speedTestRequestPath;
     DWORD m_preemptiveReconnectLifetimeMilliseconds;
 };

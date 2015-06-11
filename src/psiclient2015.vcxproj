@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CBFF3154-EF97-4580-B97D-C821754A3BF3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>psiclient</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>psiphon</TargetName>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>psiphon</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <EnablePREfast>false</EnablePREfast>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>3rdParty\cryptopp\Debug2013\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Debug2013\libyaml-cppmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>3rdParty\cryptopp\Release2013\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Release2013\libyaml-cppmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="3rdParty\polipo.exe" />
+    <None Include="3rdParty\psiphon-tunnel-core.exe" />
+    <None Include="feedback.html" />
+    <None Include="settings.html" />
+    <None Include="webui\settings.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="3rdParty\cryptopp\3way.h" />
+    <ClInclude Include="3rdParty\cryptopp\adler32.h" />
+    <ClInclude Include="3rdParty\cryptopp\aes.h" />
+    <ClInclude Include="3rdParty\cryptopp\algebra.h" />
+    <ClInclude Include="3rdParty\cryptopp\algparam.h" />
+    <ClInclude Include="3rdParty\cryptopp\arc4.h" />
+    <ClInclude Include="3rdParty\cryptopp\argnames.h" />
+    <ClInclude Include="3rdParty\cryptopp\asn.h" />
+    <ClInclude Include="3rdParty\cryptopp\authenc.h" />
+    <ClInclude Include="3rdParty\cryptopp\base32.h" />
+    <ClInclude Include="3rdParty\cryptopp\base64.h" />
+    <ClInclude Include="3rdParty\cryptopp\basecode.h" />
+    <ClInclude Include="3rdParty\cryptopp\bench.h" />
+    <ClInclude Include="3rdParty\cryptopp\blowfish.h" />
+    <ClInclude Include="3rdParty\cryptopp\blumshub.h" />
+    <ClInclude Include="3rdParty\cryptopp\camellia.h" />
+    <ClInclude Include="3rdParty\cryptopp\cast.h" />
+    <ClInclude Include="3rdParty\cryptopp\cbcmac.h" />
+    <ClInclude Include="3rdParty\cryptopp\ccm.h" />
+    <ClInclude Include="3rdParty\cryptopp\channels.h" />
+    <ClInclude Include="3rdParty\cryptopp\cmac.h" />
+    <ClInclude Include="3rdParty\cryptopp\config.h" />
+    <ClInclude Include="3rdParty\cryptopp\cpu.h" />
+    <ClInclude Include="3rdParty\cryptopp\crc.h" />
+    <ClInclude Include="3rdParty\cryptopp\cryptlib.h" />
+    <ClInclude Include="3rdParty\cryptopp\default.h" />
+    <ClInclude Include="3rdParty\cryptopp\des.h" />
+    <ClInclude Include="3rdParty\cryptopp\dh.h" />
+    <ClInclude Include="3rdParty\cryptopp\dh2.h" />
+    <ClInclude Include="3rdParty\cryptopp\dll.h" />
+    <ClInclude Include="3rdParty\cryptopp\dmac.h" />
+    <ClInclude Include="3rdParty\cryptopp\dsa.h" />
+    <ClInclude Include="3rdParty\cryptopp\eax.h" />
+    <ClInclude Include="3rdParty\cryptopp\ec2n.h" />
+    <ClInclude Include="3rdParty\cryptopp\eccrypto.h" />
+    <ClInclude Include="3rdParty\cryptopp\ecp.h" />
+    <ClInclude Include="3rdParty\cryptopp\elgamal.h" />
+    <ClInclude Include="3rdParty\cryptopp\emsa2.h" />
+    <ClInclude Include="3rdParty\cryptopp\eprecomp.h" />
+    <ClInclude Include="3rdParty\cryptopp\esign.h" />
+    <ClInclude Include="3rdParty\cryptopp\factory.h" />
+    <ClInclude Include="3rdParty\cryptopp\files.h" />
+    <ClInclude Include="3rdParty\cryptopp\filters.h" />
+    <ClInclude Include="3rdParty\cryptopp\fips140.h" />
+    <ClInclude Include="3rdParty\cryptopp\fltrimpl.h" />
+    <ClInclude Include="3rdParty\cryptopp\gcm.h" />
+    <ClInclude Include="3rdParty\cryptopp\gf256.h" />
+    <ClInclude Include="3rdParty\cryptopp\gf2n.h" />
+    <ClInclude Include="3rdParty\cryptopp\gf2_32.h" />
+    <ClInclude Include="3rdParty\cryptopp\gfpcrypt.h" />
+    <ClInclude Include="3rdParty\cryptopp\gost.h" />
+    <ClInclude Include="3rdParty\cryptopp\gzip.h" />
+    <ClInclude Include="3rdParty\cryptopp\hex.h" />
+    <ClInclude Include="3rdParty\cryptopp\hmac.h" />
+    <ClInclude Include="3rdParty\cryptopp\hrtimer.h" />
+    <ClInclude Include="3rdParty\cryptopp\ida.h" />
+    <ClInclude Include="3rdParty\cryptopp\idea.h" />
+    <ClInclude Include="3rdParty\cryptopp\integer.h" />
+    <ClInclude Include="3rdParty\cryptopp\iterhash.h" />
+    <ClInclude Include="3rdParty\cryptopp\lubyrack.h" />
+    <ClInclude Include="3rdParty\cryptopp\luc.h" />
+    <ClInclude Include="3rdParty\cryptopp\mars.h" />
+    <ClInclude Include="3rdParty\cryptopp\md2.h" />
+    <ClInclude Include="3rdParty\cryptopp\md4.h" />
+    <ClInclude Include="3rdParty\cryptopp\md5.h" />
+    <ClInclude Include="3rdParty\cryptopp\mdc.h" />
+    <ClInclude Include="3rdParty\cryptopp\misc.h" />
+    <ClInclude Include="3rdParty\cryptopp\modarith.h" />
+    <ClInclude Include="3rdParty\cryptopp\modes.h" />
+    <ClInclude Include="3rdParty\cryptopp\modexppc.h" />
+    <ClInclude Include="3rdParty\cryptopp\mqueue.h" />
+    <ClInclude Include="3rdParty\cryptopp\mqv.h" />
+    <ClInclude Include="3rdParty\cryptopp\nbtheory.h" />
+    <ClInclude Include="3rdParty\cryptopp\network.h" />
+    <ClInclude Include="3rdParty\cryptopp\nr.h" />
+    <ClInclude Include="3rdParty\cryptopp\oaep.h" />
+    <ClInclude Include="3rdParty\cryptopp\oids.h" />
+    <ClInclude Include="3rdParty\cryptopp\osrng.h" />
+    <ClInclude Include="3rdParty\cryptopp\panama.h" />
+    <ClInclude Include="3rdParty\cryptopp\pch.h" />
+    <ClInclude Include="3rdParty\cryptopp\pkcspad.h" />
+    <ClInclude Include="3rdParty\cryptopp\polynomi.h" />
+    <ClInclude Include="3rdParty\cryptopp\pssr.h" />
+    <ClInclude Include="3rdParty\cryptopp\pubkey.h" />
+    <ClInclude Include="3rdParty\cryptopp\pwdbased.h" />
+    <ClInclude Include="3rdParty\cryptopp\queue.h" />
+    <ClInclude Include="3rdParty\cryptopp\rabin.h" />
+    <ClInclude Include="3rdParty\cryptopp\randpool.h" />
+    <ClInclude Include="3rdParty\cryptopp\rc2.h" />
+    <ClInclude Include="3rdParty\cryptopp\rc5.h" />
+    <ClInclude Include="3rdParty\cryptopp\rc6.h" />
+    <ClInclude Include="3rdParty\cryptopp\resource.h" />
+    <ClInclude Include="3rdParty\cryptopp\rijndael.h" />
+    <ClInclude Include="3rdParty\cryptopp\ripemd.h" />
+    <ClInclude Include="3rdParty\cryptopp\rng.h" />
+    <ClInclude Include="3rdParty\cryptopp\rsa.h" />
+    <ClInclude Include="3rdParty\cryptopp\rw.h" />
+    <ClInclude Include="3rdParty\cryptopp\safer.h" />
+    <ClInclude Include="3rdParty\cryptopp\salsa.h" />
+    <ClInclude Include="3rdParty\cryptopp\seal.h" />
+    <ClInclude Include="3rdParty\cryptopp\secblock.h" />
+    <ClInclude Include="3rdParty\cryptopp\seckey.h" />
+    <ClInclude Include="3rdParty\cryptopp\seed.h" />
+    <ClInclude Include="3rdParty\cryptopp\serpent.h" />
+    <ClInclude Include="3rdParty\cryptopp\serpentp.h" />
+    <ClInclude Include="3rdParty\cryptopp\sha.h" />
+    <ClInclude Include="3rdParty\cryptopp\shacal2.h" />
+    <ClInclude Include="3rdParty\cryptopp\shark.h" />
+    <ClInclude Include="3rdParty\cryptopp\simple.h" />
+    <ClInclude Include="3rdParty\cryptopp\skipjack.h" />
+    <ClInclude Include="3rdParty\cryptopp\smartptr.h" />
+    <ClInclude Include="3rdParty\cryptopp\socketft.h" />
+    <ClInclude Include="3rdParty\cryptopp\sosemanuk.h" />
+    <ClInclude Include="3rdParty\cryptopp\square.h" />
+    <ClInclude Include="3rdParty\cryptopp\stdcpp.h" />
+    <ClInclude Include="3rdParty\cryptopp\strciphr.h" />
+    <ClInclude Include="3rdParty\cryptopp\tea.h" />
+    <ClInclude Include="3rdParty\cryptopp\tiger.h" />
+    <ClInclude Include="3rdParty\cryptopp\trdlocal.h" />
+    <ClInclude Include="3rdParty\cryptopp\trunhash.h" />
+    <ClInclude Include="3rdParty\cryptopp\ttmac.h" />
+    <ClInclude Include="3rdParty\cryptopp\twofish.h" />
+    <ClInclude Include="3rdParty\cryptopp\validate.h" />
+    <ClInclude Include="3rdParty\cryptopp\vmac.h" />
+    <ClInclude Include="3rdParty\cryptopp\wait.h" />
+    <ClInclude Include="3rdParty\cryptopp\wake.h" />
+    <ClInclude Include="3rdParty\cryptopp\whrlpool.h" />
+    <ClInclude Include="3rdParty\cryptopp\winpipes.h" />
+    <ClInclude Include="3rdParty\cryptopp\words.h" />
+    <ClInclude Include="3rdParty\cryptopp\xtr.h" />
+    <ClInclude Include="3rdParty\cryptopp\xtrcrypt.h" />
+    <ClInclude Include="3rdParty\cryptopp\zdeflate.h" />
+    <ClInclude Include="3rdParty\cryptopp\zinflate.h" />
+    <ClInclude Include="3rdParty\cryptopp\zlib.h" />
+    <ClInclude Include="3rdParty\json\forwards.h" />
+    <ClInclude Include="3rdParty\json\json.h" />
+    <ClInclude Include="3rdParty\zlib\crc32.h" />
+    <ClInclude Include="3rdParty\zlib\inffast.h" />
+    <ClInclude Include="3rdParty\zlib\inffixed.h" />
+    <ClInclude Include="3rdParty\zlib\inflate.h" />
+    <ClInclude Include="3rdParty\zlib\inftrees.h" />
+    <ClInclude Include="3rdParty\zlib\zconf.h" />
+    <ClInclude Include="3rdParty\zlib\zlib.h" />
+    <ClInclude Include="3rdParty\zlib\zutil.h" />
+    <ClInclude Include="authenticated_data_package.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="connectionmanager.h" />
+    <ClInclude Include="coretransport.h" />
+    <ClInclude Include="diagnostic_info.h" />
+    <ClInclude Include="embeddedvalues.h" />
+    <ClInclude Include="htmldlg.h" />
+    <ClInclude Include="httpsrequest.h" />
+    <ClInclude Include="limitsingleinstance.h" />
+    <ClInclude Include="local_proxy.h" />
+    <ClInclude Include="wininet_network_check.h" />
+    <ClInclude Include="psiclient.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="serverlist.h" />
+    <ClInclude Include="server_list_reordering.h" />
+    <ClInclude Include="server_request.h" />
+    <ClInclude Include="sessioninfo.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stopsignal.h" />
+    <ClInclude Include="systemproxysettings.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="transport.h" />
+    <ClInclude Include="transport_connection.h" />
+    <ClInclude Include="transport_registry.h" />
+    <ClInclude Include="tstring.h" />
+    <ClInclude Include="usersettings.h" />
+    <ClInclude Include="utilities.h" />
+    <ClInclude Include="vpntransport.h" />
+    <ClInclude Include="webbrowser.h" />
+    <ClInclude Include="worker_thread.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="3rdParty\json\jsoncpp.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\adler32.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\crc32.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\inffast.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\inflate.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\inftrees.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="3rdParty\zlib\zutil.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="authenticated_data_package.cpp" />
+    <ClCompile Include="connectionmanager.cpp" />
+    <ClCompile Include="coretransport.cpp" />
+    <ClCompile Include="diagnostic_info.cpp" />
+    <ClCompile Include="htmldlg.cpp" />
+    <ClCompile Include="httpsrequest.cpp" />
+    <ClCompile Include="local_proxy.cpp" />
+    <ClCompile Include="wininet_network_check.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="psiclient.cpp" />
+    <ClCompile Include="serverlist.cpp" />
+    <ClCompile Include="server_list_reordering.cpp" />
+    <ClCompile Include="server_request.cpp" />
+    <ClCompile Include="sessioninfo.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="stopsignal.cpp" />
+    <ClCompile Include="systemproxysettings.cpp" />
+    <ClCompile Include="transport.cpp" />
+    <ClCompile Include="transport_connection.cpp" />
+    <ClCompile Include="transport_registry.cpp" />
+    <ClCompile Include="usersettings.cpp" />
+    <ClCompile Include="utilities.cpp" />
+    <ClCompile Include="vpntransport.cpp" />
+    <ClCompile Include="webbrowser.cpp" />
+    <ClCompile Include="worker_thread.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="psiclient.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="psiclient.ico" />
+    <Image Include="small.ico" />
+    <Image Include="banner.bmp" />
+    <Image Include="email.bmp" />
+    <Image Include="feedback.bmp" />
+    <Image Include="settings.bmp" />
+    <Image Include="toggle_images.bmp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

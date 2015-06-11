@@ -23,12 +23,12 @@
 #include "local_proxy.h"
 #include "transport.h"
 #include "psiclient.h"
-#include "meek.h"
 
 
 TransportConnection::TransportConnection()
     : m_transport(0),
-      m_localProxy(0)
+      m_localProxy(0),
+      m_skipApplySystemProxySettings(false)
 {
 }
 
@@ -51,10 +51,10 @@ SessionInfo TransportConnection::GetUpdatedSessionInfo() const
 void TransportConnection::Connect(
                             const StopInfo& stopInfo,
                             ITransport* transport,
+                            IReconnectStateReceiver* reconnectStateReceiver,
                             ILocalProxyStatsCollector* statsCollector, 
-                            IRemoteServerListFetcher* remoteServerListFetcher,
-                            const tstring& splitTunnelingFilePath,
-                            ServerEntry* tempConnectServerEntry/*=NULL*/)
+                            ServerEntry* tempConnectServerEntry/*=NULL*/,
+                            bool skipApplySystemProxySettings/* = false*/)
 {
     assert(m_transport == 0);
     assert(m_localProxy == 0);
@@ -62,67 +62,72 @@ void TransportConnection::Connect(
     assert(transport);
     assert(!tempConnectServerEntry || !transport->IsHandshakeRequired());
 
+    m_skipApplySystemProxySettings = skipApplySystemProxySettings;
+
     m_transport = transport;
 
     try
     {
-        // Delete any leftover split tunnelling rules
-        if(splitTunnelingFilePath.length() > 0 && !DeleteFile(splitTunnelingFilePath.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
-        {
-            throw std::exception("TransportConnection::Connect - DeleteFile failed");
-        }
-
         m_workerThreadSynch.Reset();
 
         // Connect with the transport. Will throw on error.
-		m_transport->Connect(
+        m_transport->Connect(
                     &m_systemProxySettings,
                     stopInfo,
+                    reconnectStateReceiver,
                     &m_workerThreadSynch,
-                    remoteServerListFetcher,
                     tempConnectServerEntry);
 
         // Get initial SessionInfo. Note that this might be pre-handshake
         // and therefore not be totally filled in.
         m_sessionInfo = m_transport->GetSessionInfo();
 
-        // Set up and start the local proxy.
-        m_localProxy = new LocalProxy(
-                            statsCollector, 
-                            m_sessionInfo.GetServerAddress().c_str(), 
-                            &m_systemProxySettings,
-                            m_transport->GetLocalProxyParentPort(), 
-                            splitTunnelingFilePath);
-
-        // Launches the local proxy thread and doesn't return until it
-        // observes a successful (or not) connection.
-        if (!m_localProxy->Start(stopInfo, &m_workerThreadSynch))
+        if (m_transport->RequiresStatsSupport())
         {
-            throw IWorkerThread::Error("LocalProxy::Start failed");
+            // Set up and start the local proxy.
+            m_localProxy = new LocalProxy(
+                                statsCollector, 
+                                m_sessionInfo.GetServerAddress().c_str(), 
+                                &m_systemProxySettings,
+                                0, // no parent port
+                                tstring()); // no split tunnel file path
+
+            // Launches the local proxy thread and doesn't return until it
+            // observes a successful (or not) connection.
+            if (!m_localProxy->Start(stopInfo, &m_workerThreadSynch))
+            {
+                throw IWorkerThread::Error("LocalProxy::Start failed");
+            }
         }
 
-        // If the whole system is tunneled (i.e., VPN), then we can't leave the
-        // original system proxy settings intact -- because that proxy would 
-        // (probably) not be reachable in VPN mode and the user would 
-        // effectively have no connectivity.
-        bool allowedToSkipProxySettings = !m_transport->IsWholeSystemTunneled();
-
-        // Apply the system proxy settings that have been collected by the transport
-        // and the local proxy.
-        if (!m_systemProxySettings.Apply(allowedToSkipProxySettings))
+        // In the case of the URL proxy, which might be created while another transport
+        // is running, we don't want to change the system proxy settings or change the registry
+        // keys that hold any information about proxy settings.
+        if (!m_skipApplySystemProxySettings)
         {
-            throw IWorkerThread::Error("SystemProxySettings::Apply failed");
-        }
+            // If the whole system is tunneled (i.e., VPN), then we can't leave the
+            // original system proxy settings intact -- because that proxy would 
+            // (probably) not be reachable in VPN mode and the user would 
+            // effectively have no connectivity.
+            bool allowedToSkipProxySettings = !m_transport->IsWholeSystemTunneled();
 
-        // Let the transport do a handshake
-        m_transport->ProxySetupComplete();
+            // Apply the system proxy settings that have been collected by the transport
+            // and the local proxy.
+            if (!m_systemProxySettings.Apply(allowedToSkipProxySettings))
+            {
+                throw IWorkerThread::Error("SystemProxySettings::Apply failed");
+            }
+        }
 
         // If the transport did a handshake, there may be updated session info.
         m_sessionInfo = m_transport->GetSessionInfo();
 
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
-        m_localProxy->UpdateSessionInfo(m_sessionInfo);
+        if (m_localProxy)
+        {
+            m_localProxy->UpdateSessionInfo(m_sessionInfo);
+        }
     }
     catch (ITransport::TransportFailed&)
     {
@@ -131,8 +136,11 @@ void TransportConnection::Connect(
         // Check for stop signal and throw if it's set
         stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
 
-        // We don't fail over transports, so...
-        throw TransportConnection::TryNextServer();
+        if (m_transport->IsConnectRetryOkay())
+        {
+            throw TransportConnection::TryNextServer();
+        }
+        throw TransportConnection::PermanentFailure();
     }
     catch(...)
     {
@@ -145,9 +153,14 @@ void TransportConnection::Connect(
 
 void TransportConnection::WaitForDisconnect()
 {
-    HANDLE waitHandles[] = { m_transport->GetStoppedEvent(), 
-                             m_localProxy->GetStoppedEvent()};
-    size_t waitHandlesCount = sizeof(waitHandles)/sizeof(HANDLE);
+    HANDLE waitHandles[2];
+    size_t waitHandlesCount = 1;
+    waitHandles[0] = m_transport->GetStoppedEvent();
+    if (m_localProxy)
+    {
+        waitHandles[1] = m_localProxy->GetStoppedEvent();
+        waitHandlesCount += 1;
+    }
 
     DWORD result = WaitForMultipleObjects(
                     waitHandlesCount, 
@@ -166,11 +179,14 @@ void TransportConnection::WaitForDisconnect()
 
 void TransportConnection::Cleanup()
 {
-    // NOTE: It is important that the system proxy settings get torn down
-    // before the transport and local proxy do. Otherwise, all web connections
-    // will have a window of being guaranteed to fail (including and especially
-    // our own -- like final /status requests).
-    m_systemProxySettings.Revert();
+    if (!m_skipApplySystemProxySettings)
+    {
+        // NOTE: It is important that the system proxy settings get torn down
+        // before the transport and local proxy do. Otherwise, all web connections
+        // will have a window of being guaranteed to fail (including and especially
+        // our own -- like final /status requests).
+        m_systemProxySettings.Revert();
+    }
 
     if (m_localProxy) 
     {

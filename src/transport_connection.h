@@ -27,9 +27,8 @@
 
 class LocalProxy;
 class ILocalProxyStatsCollector;
+class IReconnectStateReceiver;
 class ITransport;
-class IRemoteServerListFetcher;
-class Meek;
 
 
 /*
@@ -58,10 +57,10 @@ public:
     void Connect(
             const StopInfo& stopInfo,
             ITransport* transport,
-            ILocalProxyStatsCollector* statsCollector, 
-            IRemoteServerListFetcher* remoteServerListFetcher,
-            const tstring& splitTunnelingFilePath,
-            ServerEntry* tempConnectServerEntry=NULL);
+            IReconnectStateReceiver* reconnectStateReceiver,
+            ILocalProxyStatsCollector* statsCollector,
+            ServerEntry* tempConnectServerEntry=NULL,
+            bool skipApplySystemProxySettings=false);
 
     // Blocks until the transport disconnects.
     void WaitForDisconnect();
@@ -70,8 +69,13 @@ public:
     // from the server. That info can be retrieved with this function.
     SessionInfo GetUpdatedSessionInfo() const;
 
+    // The local http proxy port that the transport provides.
+    // NOTE that this might not always be set (such as in the case of vpntransport).
+    int GetTransportLocalHttpProxy() { return m_systemProxySettings.GetHttpProxyPort(); }
+
     // Exception class
     class TryNextServer : public std::exception { };
+    class PermanentFailure : public std::exception { };
 
 private:
     void Cleanup();
@@ -82,5 +86,6 @@ private:
     SessionInfo m_sessionInfo;
     SystemProxySettings m_systemProxySettings;
     WorkerThreadSynch m_workerThreadSynch;
+    bool m_skipApplySystemProxySettings;
 };
 

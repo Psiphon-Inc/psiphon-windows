@@ -115,7 +115,6 @@ protected:
     HANDLE m_thread;
     HANDLE m_startedEvent;
     HANDLE m_stoppedEvent;
-    HANDLE m_mutex;
 
     bool m_internalSignalStopFlag;
     StopInfo m_stopInfo;

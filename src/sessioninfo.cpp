@@ -57,9 +57,6 @@ void SessionInfo::Clear()
     m_servers.clear();
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
-    m_speedTestServerAddress.clear();
-    m_speedTestServerPort = 0;
-    m_speedTestRequestPath.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 }
 
@@ -128,9 +125,6 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     m_servers.clear();
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
-    m_speedTestServerAddress.clear();
-    m_speedTestServerPort = 0;
-    m_speedTestRequestPath.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
 
     Json::Value config;
@@ -200,16 +194,6 @@ bool SessionInfo::ProcessConfig(const string& config_json)
             m_httpsRequestRegexes.push_back(rx_re);
         }
 
-        // Speed Test URL
-        Json::Value speedTestURL = config["speed_test_url"];
-        if (Json::Value::null != speedTestURL)
-        {
-            m_speedTestServerAddress = speedTestURL.get("server_address", "").asString();
-            string speedTestServerPort = speedTestURL.get("server_port", "").asString();
-            m_speedTestServerPort = (int)strtol(speedTestServerPort.c_str(), NULL, 10);
-            m_speedTestRequestPath = speedTestURL.get("request_path", "").asString();
-        }
-
         // Preemptive Reconnect Lifetime Milliseconds
         m_preemptiveReconnectLifetimeMilliseconds = (DWORD)config.get("preemptive_reconnect_lifetime_milliseconds", 0).asUInt();
         // A zero value indicates that it should be disabled.
@@ -223,12 +207,31 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     return true;
 }
 
+void SessionInfo::SetHomepage(const char* homepage)
+{
+    tstring newHomepage = NarrowToTString(homepage);
+    if (m_homepages.end() == std::find(m_homepages.begin(), m_homepages.end(), newHomepage))
+    {
+        m_homepages.push_back(newHomepage);
+    }
+}
+
+void SessionInfo::SetUpgradeVersion(const char* upgradeVersion)
+{
+    m_upgradeVersion = upgradeVersion;
+}
+
 string SessionInfo::GetServerAddress() const 
 {
     return m_serverEntry.serverAddress;
 }
 
-int SessionInfo::GetWebPort() const 
+string SessionInfo::GetRegion() const
+{
+    return m_serverEntry.region;
+}
+
+int SessionInfo::GetWebPort() const
 {
     return m_serverEntry.webServerPort;
 }
@@ -315,14 +318,24 @@ vector<string> SessionInfo::GetDiscoveredServerEntries() const
     return m_servers;
 }
 
+bool SessionInfo::HasServerEntry() const
+{
+    return m_serverEntry.serverAddress.length() > 0;
+}
+
 ServerEntry SessionInfo::GetServerEntry() const 
 {
+    if (!HasServerEntry()) {
+        assert(false);
+        throw std::exception("SessionInfo::GetServerEntry(): !HasServerEntry()");
+    }
+
     // It is sometimes the case that we know more about our current server than
     // is contained in m_serverEntry or in the ServerEntry in the registry. So
     // we'll construct a new ServerEntry with the best info we have.
 
     ServerEntry newServerEntry(
-        GetServerAddress(), GetWebPort(), 
+        GetServerAddress(), GetRegion(), GetWebPort(), 
         GetWebServerSecret(), GetWebServerCertificate(), 
         GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
         GetSSHHostKey(), GetSSHObfuscatedPort(), 

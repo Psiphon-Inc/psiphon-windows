@@ -132,6 +132,7 @@ bool ServerRequest::MakeRequest(
                 response,
                 stopInfo,
                 true, // use tunnel?
+                false, // don't fail over to URL proxy
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
@@ -167,6 +168,7 @@ bool ServerRequest::MakeRequest(
                     response,
                     stopInfo,
                     false, // don't try to tunnel -- there's no transport
+                    false, // don't fail over to URL proxy
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
@@ -209,9 +211,8 @@ bool ServerRequest::MakeRequest(
             connection.Connect(
                 stopInfo,
                 (*transport_iter).get(),
+                NULL, // not receiving reconnection notifications
                 NULL, // not collecting stats
-                NULL, // don't want to trigger a remote server list pull
-                tstring(),  // splitTunnelingFilePath -- not providing it
                 &sessionInfo.GetServerEntry());  // force use of this server
 
             HTTPSRequest httpsRequest;
@@ -223,6 +224,7 @@ bool ServerRequest::MakeRequest(
                     response,
                     stopInfo,
                     true, // tunnel request
+                    false, // don't fail over to URL proxy
                     additionalHeaders,
                     additionalData,
                     additionalDataLength))
@@ -236,7 +238,11 @@ bool ServerRequest::MakeRequest(
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.
         }
-        catch (TransportConnection::TryNextServer&)
+        catch (StopSignal::StopException&)
+        {
+            throw;
+        }
+        catch (...)
         {
             // pass and continue
         }
