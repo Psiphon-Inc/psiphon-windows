@@ -233,39 +233,6 @@ function connectToggleSetup() {
   $window.on(CONNECTED_STATE_CHANGE_EVENT, updateConnectToggle);
 }
 
-$.fn.animateRotate = function(angle, duration, easing, complete) {
-  var args = $.speed(duration, easing, complete);
-  var step = args.step;
-  return this.each(function(i, e) {
-    args.complete = $.proxy(args.complete, e);
-    args.step = function(now) {
-      $.style(e, 'transform', 'rotate(' + now + 'deg)');
-      if (step) return step.apply(e, arguments);
-    };
-
-    $({deg: 0}).animate({deg: angle}, args);
-  });
-};
-
-function connectAnimation(start, untilStateChangeFrom) {
-  function connectAnimate() {
-    $('#connection-pane .connect-animation').fadeIn().animateRotate(
-      360,
-      2000,
-      'swing',
-      function() {
-        if (g_lastState === untilStateChangeFrom) {
-          nextTick(connectAnimate);
-        }
-        else {
-          $(this).fadeOut(1000);
-        }
-      });
-  }
-
-  connectAnimate();
-}
-
 // Update the main connect button, as well as the connection indicator on the tab.
 function updateConnectToggle() {
   $('.connect-toggle-content').each(function() {
@@ -281,7 +248,6 @@ function updateConnectToggle() {
       $('.connect-toggle-content[data-connect-state="starting"] .icon-stack-base, .connect-toggle-content[data-connect-state="starting"] .state-word'),
       'in-progress',
       g_lastState);
-    connectAnimation(true, g_lastState);
   }
   else if (g_lastState === 'connected') {
   }

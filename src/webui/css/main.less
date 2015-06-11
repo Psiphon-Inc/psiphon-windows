@@ -284,12 +284,6 @@ body {
   overflow: hidden;
 }
 
-#connection-pane .connect-animation {
-  .text-center;
-  position: absolute; 
-  width: 100%;
-}
-
 #connect-toggle {
   @startingColor1: @brand-warning;
   @startingColor2: @brand-success;
@@ -314,7 +308,8 @@ body {
     width: 70%;
 
     background-color: @connectBackgroundColor;
-    background-color: rgba(red(@connectBackgroundColor),green(@connectBackgroundColor),blue(@connectBackgroundColor), 0.9);
+    // If some transparency is desired:
+    //background-color: rgba(red(@connectBackgroundColor),green(@connectBackgroundColor),blue(@connectBackgroundColor), 0.9);
     text-transform: uppercase;
     
     .state-symbol {
