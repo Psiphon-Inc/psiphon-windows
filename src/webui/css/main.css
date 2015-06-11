@@ -6258,8 +6258,8 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   top: 0;
   margin: auto;
   overflow: hidden;
-  padding: 30px 15%;
-  width: 70%;
+  padding: 30px 10%;
+  width: 78%;
   background-color: #ffffff;
   text-transform: uppercase;
 }
@@ -6406,7 +6406,7 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
 }
 #connect-toggle a {
   min-width: 10em;
-  font-size: 2em;
+  font-size: 1.5em;
   padding: 0.6em 1em;
   white-space: nowrap;
   overflow-x: hidden;
@@ -6510,9 +6510,9 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
 #EgressRegionCombo .btn .flag {
   display: block;
   width: auto;
-  background-image: url(../flags32.png);
   background-repeat: no-repeat;
   filter: none;
+  background-image: url(../flags32.png);
 }
 body[dir="ltr"] #EgressRegion .flag,
 body[dir="ltr"] #EgressRegionCombo ul .flag,
@@ -6526,13 +6526,12 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
   padding: 0 40px 0 0;
   background-position-x: 98%;
 }
-.f16 .unknown {
-  background-image: url(../flag_unknown_16.png) !important;
-  background-repeat: no-repeat;
-}
-.f32 .unknown {
-  background-image: url(../flag_unknown_32.png) !important;
-  background-repeat: no-repeat;
+#EgressRegion .flag.unknown,
+#EgressRegionCombo ul .flag.unknown,
+#EgressRegionCombo .btn .flag.unknown {
+  background-image: url(../flag_unknown_64.png);
+  background-size: contain;
+  background-image: url(../flag_unknown_32.png) \9;
 }
 /* FEEDBACK */
 .feedback-smiley-container {

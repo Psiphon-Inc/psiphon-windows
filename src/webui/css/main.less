@@ -304,8 +304,8 @@ body {
     margin: auto;
     overflow: hidden;
 
-    padding: 30px 15%;
-    width: 70%;
+    padding: 30px 10%;
+    width: 78%; // hand-tweaked to look right with width and padding
 
     background-color: @connectBackgroundColor;
     // If some transparency is desired:
@@ -376,7 +376,7 @@ body {
   a {
     // Set a min-width to help keep the button the same size regardless of the text.
     min-width: 10em;
-    font-size: 2em;
+    font-size: 1.5em;
     padding: 0.6em 1em;
     white-space: nowrap;
     overflow-x: hidden;
@@ -525,24 +525,18 @@ body {
       background-position-x: 98%; // Handy way of getting the flag on the right side
     }
 
-    // Force our flag image to show even when the item is active.
+    background-repeat: no-repeat;
+    filter: none; 
     background-image: url(../flags32.png);
-    background-repeat: no-repeat;
-    filter: none;
-  }
-}
 
-.f16 {
-  & .unknown{
-    background-image: url(../flag_unknown_16.png) !important;
-    background-repeat: no-repeat;
-  }
-}
-
-.f32 {
-  & .unknown{
-    background-image: url(../flag_unknown_32.png) !important;
-    background-repeat: no-repeat;
+    // Set the image we'll use for "best" region.
+    &.unknown{
+      // User a higher-res
+      background-image: url(../flag_unknown_64.png);
+      background-size: contain;
+      // Setting the background image size 
+      background-image: url(../flag_unknown_32.png) e("\9");
+    }
   }
 }
 

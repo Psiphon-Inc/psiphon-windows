@@ -188,9 +188,18 @@ function resizeConnectContent() {
   var parentWidth = $('#connect-toggle').parent().innerWidth() -
                       (parseFloat($('#connect-toggle').parent().css('padding-left')) || 0) -
                       (parseFloat($('#connect-toggle').parent().css('padding-right')) || 0);
-  $('#connect-toggle').css(
-    'left',
-    ((parentWidth - $('#connect-toggle').outerWidth()) / 2.0)+'px');
+  if (g_isRTL) {
+    $('#connect-toggle').css({
+      right: ((parentWidth - $('#connect-toggle').outerWidth()) / 2.0)+'px',
+      left: ''
+    });
+  }
+  else {
+    $('#connect-toggle').css({
+      left: ((parentWidth - $('#connect-toggle').outerWidth()) / 2.0)+'px',
+      right: ''
+    });
+  }
 }
 
 function connectToggleSetup() {
