@@ -21,6 +21,8 @@
 /* jshint strict:true, node:true */
 /* global grunt */
 
+var path = require('path');
+
 
 module.exports = function(grunt) {
   grunt.initConfig({
@@ -87,7 +89,7 @@ module.exports = function(grunt) {
           grunt.log.debug('Not a directory, skipping: ' + abspath);
           return;
         }
-        else if (!abspath.endsWith('.json')) {
+        else if (path.extname(abspath) !== '.json') {
           // This helps us skip .orig files.
           grunt.log.debug('Not JSON, skipping: ' + abspath);
           return;

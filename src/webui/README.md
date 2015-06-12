@@ -21,6 +21,7 @@ $ node fake-translations.js
 
 ## TODO
 
+* Try to emulate wordart using CSS on About tab?
 * Nicer looking, most usable connect button/state?
 * More elaborate connection animation?
 * Automation: Switch to VS2013.
@@ -30,7 +31,7 @@ $ node fake-translations.js
 ## Longer-term TODO
 
 * Minimize to systray
-* Make the spinner on the "stopping" button less ugly
+* Maybe use larger/sharper flag sprites. Hard to find 64px images. Maybe from: http://www.browniesblog.com/A55CBC/blog.nsf/dx/responsive-css-sprites.html
 * Links should show target on hover. (Tooltip? `title` attr?)
 * Better OOBE. Introductory screen. Basic help/info. Language.
 * Create tool to extract English strings from HTML and re-populate messages.json
