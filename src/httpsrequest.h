@@ -41,6 +41,7 @@ public:
         string& response,
         const StopInfo& stopInfo,
         bool usePsiphonLocalProxy,
+        bool failoverToURLProxy=false,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
         DWORD additionalDataLength=0,
@@ -51,6 +52,20 @@ private:
     void SetRequestSuccess() {m_requestSuccess = true;}
       bool ValidateServerCert(PCCERT_CONTEXT pCert);
     void AppendResponse(const string& responseData);
+
+    bool MakeRequestWithURLProxyOption(
+        const TCHAR* serverAddress,
+        int serverWebPort,
+        const string& webServerCertificate,
+        const TCHAR* requestPath,
+        string& response,
+        const StopInfo& stopInfo,
+        bool usePsiphonLocalProxy,
+        bool useURLProxy,
+        LPCWSTR additionalHeaders,
+        LPVOID additionalData,
+        DWORD additionalDataLength,
+        LPCWSTR httpVerb);
 
     friend void CALLBACK WinHttpStatusCallback(
                             HINTERNET hRequest,

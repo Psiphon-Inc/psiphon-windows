@@ -25,6 +25,9 @@
 #include "embeddedvalues.h"
 #include "stopsignal.h"
 #include "systemproxysettings.h"
+#include "transport_connection.h"
+#include "transport_registry.h"
+#include "coretransport.h"
 #include "utilities.h"
 
 
@@ -291,10 +294,88 @@ bool HTTPSRequest::MakeRequest(
         string& response,
         const StopInfo& stopInfo,
         bool usePsiphonLocalProxy,
+        bool failoverToURLProxy/*=false*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
         DWORD additionalDataLength/*=0*/,
         LPCWSTR httpVerb/*=NULL*/)
+{
+    // The WinHTTP client appears to be no longer capable of making HTTPS requests to Amazon S3:
+    // http://stackoverflow.com/questions/29801450/winhttp-doesnt-download-from-amazon-s3-on-winxp
+    // In this case, we can use the tunnel core URL proxy to make the request using a different http client stack.
+
+    bool success = MakeRequestWithURLProxyOption(serverAddress, serverWebPort, webServerCertificate, requestPath,
+        response, stopInfo, usePsiphonLocalProxy,
+        false, // useURLProxy
+        additionalHeaders, additionalData, additionalDataLength, httpVerb);
+
+    if (!success && failoverToURLProxy)
+    {
+        // This is the broken SSL WinHTTP client case.
+        // Use a URL proxy to make the HTTPS request for us instead.
+        try
+        {
+            TransportConnection connection;
+
+            // Throws on failure
+            connection.Connect(
+                stopInfo,
+                TransportRegistry::New(CORE_TRANSPORT_PROTOCOL_NAME),
+                NULL, // not receiving reconnection notifications
+                NULL, // not collecting stats
+                new ServerEntry(), // we don't need to connect to a specific server
+                true);// don't apply system proxy settings (or write to the Psiphon proxy settings registry key)
+                        // as another transport might currently be running
+
+            // This is the format of requests to the URL proxy
+            // http://localhost:URL_proxy_port/<direct|tunneled>/urlencode(https://destination:port/requestPath)
+            tstringstream URL;
+            URL << _T("https://") << serverAddress << _T(":") << serverWebPort << requestPath;
+            
+            // NOTE that we will always make "direct" requests since this URL proxy will not establish a tunnel
+            tstringstream urlProxyRequestPath;
+            urlProxyRequestPath << _T("/") << _T("direct") << _T("/") << UrlEncode(URL.str());
+            
+            serverAddress = _T("127.0.0.1");
+            serverWebPort = connection.GetTransportLocalHttpProxy();
+
+            my_print(NOT_SENSITIVE, true, _T("Using URL proxy port %d"), serverWebPort);
+
+            success = MakeRequestWithURLProxyOption(serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
+                response, stopInfo, usePsiphonLocalProxy,
+                true, // useURLProxy
+                additionalHeaders, additionalData, additionalDataLength, httpVerb);
+
+            // Note that when we leave this scope, the TransportConnection will
+            // clean up the transport connection.
+        }
+        catch (StopSignal::StopException&)
+        {
+            throw;
+        }
+        catch (...)
+        {
+            my_print(NOT_SENSITIVE, true, _T("Failed to start URL proxy"), __TFUNCTION__);
+            success = false;
+        }
+    }
+    
+    return success;
+}
+
+bool HTTPSRequest::MakeRequestWithURLProxyOption(
+        const TCHAR* serverAddress,
+        int serverWebPort,
+        const string& webServerCertificate,
+        const TCHAR* requestPath,
+        string& response,
+        const StopInfo& stopInfo,
+        bool usePsiphonLocalProxy,
+        bool useURLProxy,
+        LPCWSTR additionalHeaders,
+        LPVOID additionalData,
+        DWORD additionalDataLength,
+        LPCWSTR httpVerb)
 {
     // Throws if signaled
     stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
@@ -310,7 +391,12 @@ bool HTTPSRequest::MakeRequest(
     }
 
     tstring proxyHost;
-    if (usePsiphonLocalProxy)
+    if (useURLProxy)
+    {
+        // The URL proxy (tunnelcore) will pick up a system proxy setting and will use it if necessary.
+        // So leave proxyHost blank here.
+    }
+    else if (usePsiphonLocalProxy)
     {
         proxyHost = GetTunneledDefaultHttpsProxyHost();
     }
@@ -390,7 +476,7 @@ bool HTTPSRequest::MakeRequest(
                     NULL,
                     WINHTTP_NO_REFERER,
                     WINHTTP_DEFAULT_ACCEPT_TYPES,
-                    WINHTTP_FLAG_SECURE);
+                    useURLProxy ? 0 : WINHTTP_FLAG_SECURE); // disable SSL for URL proxy requests
 
     if (NULL == hRequest)
     {
