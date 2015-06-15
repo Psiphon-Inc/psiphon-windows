@@ -6599,6 +6599,31 @@ body[dir="rtl"] #language-pane .language-item {
   font-size: 1.5em;
   line-height: 1.3em;
 }
+.wordart {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  text-transform: uppercase;
+  transform: skew(-10deg) rotate(-7deg);
+  transform-origin: right;
+  display: table;
+  margin: 1em auto 3em auto;
+}
+.wordart .wordart-title {
+  font-size: 3em;
+  line-height: 1em;
+  font-weight: 700;
+  color: #D63F28;
+  border-color: #D63F28;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  text-shadow: 3px 3px #D9D2BE;
+}
+.wordart .wordart-tag {
+  font-size: 1.4em;
+  color: #381E15;
+}
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {
   position: fixed;

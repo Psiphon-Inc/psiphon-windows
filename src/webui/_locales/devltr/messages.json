@@ -7,13 +7,17 @@
     "message": "[<strong>Īīƒ ŧħḗḗ ẇḗḗƀşīīŧḗḗ īīş īīƞȧȧƈƈḗḗşşīīƀŀḗḗ</strong>, ẏǿǿŭŭ ƈȧȧƞ ɠḗḗŧ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ:]",
     "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
   },
-  "about#head": {
-    "message": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
-    "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
-  },
   "about#visit-download-site": {
     "message": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" class=\"InfoURL\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+  },
+  "about#wordart-tag": {
+    "message": "[Ɓḗḗẏǿǿƞḓ Ɓǿǿřḓḗḗřş]",
+    "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
+  },
+  "about#wordart-title": {
+    "message": "[Ƥşīīƥħǿǿƞ]",
+    "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
   },
   "banner#long-connecting": {
     "message": "[<strong>Ǿǿħ ƞǿǿ!</strong> Ẏǿǿŭŭ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ħȧȧṽīīƞɠ ŧřǿǿŭŭƀŀḗḗ ƈǿǿƞƞḗḗƈŧīīƞɠ!<br>\nḒǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƒřǿǿḿ ŧħḗḗ <a class=\"NewVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ şīīŧḗḗ</a>\nǿǿř ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"NewVersionEmail\" href=\"#\"></a>]",

@@ -311,7 +311,7 @@ body {
     // If some transparency is desired:
     //background-color: rgba(red(@connectBackgroundColor),green(@connectBackgroundColor),blue(@connectBackgroundColor), 0.9);
     text-transform: uppercase;
-    
+
     .state-symbol {
       font-size: 3em;
       margin-bottom: 0.5em;
@@ -526,7 +526,7 @@ body {
     }
 
     background-repeat: no-repeat;
-    filter: none; 
+    filter: none;
     background-image: url(../flags32.png);
 
     // Set the image we'll use for "best" region.
@@ -534,7 +534,7 @@ body {
       // User a higher-res
       background-image: url(../flag_unknown_64.png);
       background-size: contain;
-      // Setting the background image size 
+      // Setting the background image size
       background-image: url(../flag_unknown_32.png) e("\9");
     }
   }
@@ -600,7 +600,7 @@ body {
 
 #language-pane {
   .language-item {
-    i {      
+    i {
       body[dir="ltr"] & {
         margin-right: 0.5em;
       }
@@ -615,7 +615,7 @@ body {
     body[dir="rtl"] & {
       float: right;
     }
-    
+
     font-size: 1em;
     width: 16em; // Chosen arbitrarily to help prevent wrapping
     height: 2em;
@@ -630,6 +630,32 @@ body {
   // There's not much text, so let's bump it up a bit.
   font-size: 1.5em;
   line-height: 1.3em;
+}
+
+.wordart {
+  display: inline-block;
+  .ie7-inline-block();
+  text-transform: uppercase;
+  transform: skew(-10deg) rotate(-7deg);
+  transform-origin: right;
+  display: table;
+  margin: 1em auto 3em auto;
+
+  .wordart-title {
+    font-size: 3em;
+    line-height: 1em;
+    font-weight: 700;
+    color: #D63F28;
+    border-color: #D63F28;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+    text-shadow: 3px 3px #D9D2BE;
+  }
+
+  .wordart-tag {
+    font-size: 1.4em;
+    color: #381E15;
+  }
 }
 
 

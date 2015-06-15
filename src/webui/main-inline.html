@@ -9590,6 +9590,31 @@ body[dir="rtl"] #language-pane .language-item {
   font-size: 1.5em;
   line-height: 1.3em;
 }
+.wordart {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  text-transform: uppercase;
+  transform: skew(-10deg) rotate(-7deg);
+  transform-origin: right;
+  display: table;
+  margin: 1em auto 3em auto;
+}
+.wordart .wordart-title {
+  font-size: 3em;
+  line-height: 1em;
+  font-weight: 700;
+  color: #D63F28;
+  border-color: #D63F28;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  text-shadow: 3px 3px #D9D2BE;
+}
+.wordart .wordart-tag {
+  font-size: 1.4em;
+  color: #381E15;
+}
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {
   position: fixed;
@@ -13871,8 +13896,9 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
     "translation": {
       "about#description": "[Ƥşīīƥħǿǿƞ īīş ȧȧ <strong>ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ŧǿǿǿǿŀ</strong> — īīŧ īīş ḓḗḗşīīɠƞḗḗḓ ŧǿǿ ɠīīṽḗḗ ȧȧƈƈḗḗşş ŧǿǿ ŧħḗḗ ǿǿƥḗḗƞ Īīƞŧḗḗřƞḗḗŧ, ƥȧȧşŧ ƈḗḗƞşǿǿřş ȧȧƞḓ ƒīīřḗḗẇȧȧŀŀş. Īīŧ īīş <strong>ǿǿƥḗḗƞ şǿǿŭŭřƈḗḗ</strong> ȧȧƞḓ ḓḗḗṽḗḗŀǿǿƥḗḗḓ ẇīīŧħ ŀǿǿṽḗḗ īīƞ Ŧǿǿřǿǿƞŧǿǿ, Ƈȧȧƞȧȧḓȧȧ.]",
       "about#get-by-email": "[<strong>Īīƒ ŧħḗḗ ẇḗḗƀşīīŧḗḗ īīş īīƞȧȧƈƈḗḗşşīīƀŀḗḗ</strong>, ẏǿǿŭŭ ƈȧȧƞ ɠḗḗŧ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ:]",
-      "about#head": "[ƤŞĪīƤĦǾǿȠ: <i>ƁḖḗẎǾǿȠḒ ƁǾǿŘḒḖḗŘŞ</i>]",
       "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" class=\"InfoURL\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
+      "about#wordart-tag": "[Ɓḗḗẏǿǿƞḓ Ɓǿǿřḓḗḗřş]",
+      "about#wordart-title": "[Ƥşīīƥħǿǿƞ]",
       "banner#long-connecting": "[<strong>Ǿǿħ ƞǿǿ!</strong> Ẏǿǿŭŭ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ħȧȧṽīīƞɠ ŧřǿǿŭŭƀŀḗḗ ƈǿǿƞƞḗḗƈŧīīƞɠ!<br>\nḒǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƒřǿǿḿ ŧħḗḗ <a class=\"NewVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ şīīŧḗḗ</a>\nǿǿř ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"NewVersionEmail\" href=\"#\"></a>]",
       "banner#sponsored-by": "[Şƥǿǿƞşǿǿřḗḗḓ ƀẏ]",
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
@@ -13954,8 +13980,9 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
     "translation": {
       "about#description": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐ‬ <strong>‮ɔǝusoɹsɥıd‬ ‮ɔıɹɔnɯʌǝuʇıou‬ ‮ʇooʅ‬</strong> — ‮ıʇ‬ ‮ıs‬ ‮pǝsıƃuǝp‬ ‮ʇo‬ ‮ƃıʌǝ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮odǝu‬ ‮Iuʇǝɹuǝʇ‬, ‮dɐsʇ‬ ‮ɔǝusoɹs‬ ‮ɐup‬ ‮ɟıɹǝʍɐʅʅs‬. ‮Iʇ‬ ‮ıs‬ <strong>‮odǝu‬ ‮sonɹɔǝ‬</strong> ‮ɐup‬ ‮pǝʌǝʅodǝp‬ ‮ʍıʇɥ‬ ‮ʅoʌǝ‬ ‮ıu‬ ‮⊥oɹouʇo‬, ‮Ↄɐuɐpɐ‬.",
       "about#get-by-email": "<strong>‮Iɟ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ıs‬ ‮ıuɐɔɔǝssıqʅǝ‬</strong>, ‮ʎon‬ ‮ɔɐu‬ ‮ƃǝʇ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬:",
-      "about#head": "‮ԀSIԀHON‬: <i>‮ԐƎʎONp‬ ‮ԐOᴚpƎᴚS‬</i>",
       "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" class=\"InfoURL\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+      "about#wordart-tag": "‮Ԑǝʎoup‬ ‮Ԑoɹpǝɹs‬",
+      "about#wordart-title": "‮Ԁsıdɥou‬",
       "banner#long-connecting": "<strong>‮Oɥ‬ ‮uo‬!</strong> ‮ʎon‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮ɥɐʌıuƃ‬ ‮ʇɹonqʅǝ‬ ‮ɔouuǝɔʇıuƃ‬!<br>\n‮poʍuʅoɐp‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ <a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮sıʇǝ‬</a>\n‮oɹ‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬ <a class=\"NewVersionEmail\" href=\"#\"></a>",
       "banner#sponsored-by": "‮Sdousoɹǝp‬ ‮qʎ‬",
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
@@ -14191,7 +14218,8 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "messages#show-debug-label": "Show debug messages",
       "messages#placeholder": "No messages yet",
       "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon.",
-      "about#head": "PSIPHON: <i>BEYOND BORDERS</i>",
+      "about#wordart-title": "Psiphon",
+      "about#wordart-tag": "Beyond Borders",
       "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
       "about#visit-download-site": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"InfoURL\">visit the website</a>.",
       "about#get-by-email": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
@@ -17443,9 +17471,15 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
 
         <!-- ABOUT ======================================================-->
         <div class="tab-pane fade" id="about-pane">
-          <h1 data-i18n="[html]about#head">
-            PSIPHON: <i>BEYOND BORDERS</i>
-          </h1>
+          <div class="wordart">
+            <div class="wordart-title text-center" data-i18n="about#wordart-title">
+              Psiphon
+            </div>
+            <div class="wordart-tag text-center" data-i18n="about#wordart-tag">
+              Beyond Borders
+            </div>
+          </div>
+
           <p data-i18n="[html]about#description">
             Psiphon is a <strong>censorship circumvention tool</strong> — it is
             designed to give access to the open Internet, past censors and

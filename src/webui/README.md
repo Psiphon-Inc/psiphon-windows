@@ -21,11 +21,10 @@ $ node fake-translations.js
 
 ## TODO
 
-* Try to emulate wordart using CSS on About tab?
-* Nicer looking, most usable connect button/state?
-* More elaborate connection animation?
 * Automation: Switch to VS2013.
 * Update user guide on website.
+* Nicer looking, most usable connect button/state?
+* More elaborate connection animation?
 
 
 ## Longer-term TODO
