@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Fancy font in new UI is contributing 400KB to build. Consider not using all variants or not using at all.
 * Automation: Switch to VS2013.
 * Update user guide on website.
 * Nicer looking, most usable connect button/state?
