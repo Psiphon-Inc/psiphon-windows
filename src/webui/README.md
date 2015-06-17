@@ -21,6 +21,7 @@ $ node fake-translations.js
 
 ## TODO
 
+* Add timestamps to logs
 * Automation: Switch to VS2013.
 * Update user guide on website.
 * Nicer looking, most usable connect button/state?
