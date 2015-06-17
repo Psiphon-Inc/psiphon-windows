@@ -6528,6 +6528,9 @@ body[dir="ltr"] .vpn-incompatible-msg.label {
 body[dir="rtl"] .vpn-incompatible-msg.label {
   float: left;
 }
+.vpn-incompatible-msg.label i {
+  font-size: 0.8em;
+}
 .vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
   color: #999999;
 }
@@ -6556,7 +6559,7 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   background-color: #ffffff;
 }
 #EgressRegionCombo > a i {
-  padding: 0.2em 0.5em 0 0.5em;
+  padding: 0.4em 0.5em 0 0.5em;
 }
 .open#EgressRegionCombo > a i:before {
   content: "\e963";
