@@ -6158,6 +6158,7 @@ body[dir="rtl"] .psiphon-header .header-nav-join {
 }
 .nav-tabs {
   background-color: #ffffff;
+  min-width: 10em;
 }
 .nav-tabs.main-nav.nav {
   border-width: 0;
