@@ -31,6 +31,7 @@ $ node fake-translations.js
 ## Longer-term TODO
 
 * Minimize to systray
+* Allow copying selected text
 * Maybe use larger/sharper flag sprites. Hard to find 64px images. Maybe from: http://www.browniesblog.com/A55CBC/blog.nsf/dx/responsive-css-sprites.html
 * Links should show target on hover. (Tooltip? `title` attr?)
 * Better OOBE. Introductory screen. Basic help/info. Language.
