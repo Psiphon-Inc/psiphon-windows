@@ -254,7 +254,7 @@ function updateConnectToggle() {
 
   if (g_lastState === 'starting') {
     cycleToggleClass(
-      $('.connect-toggle-content[data-connect-state="starting"] .icon-stack-base, .connect-toggle-content[data-connect-state="starting"] .state-word'),
+      $('.connect-toggle-content[data-connect-state="starting"] .icon-spin, .connect-toggle-content[data-connect-state="starting"] .state-word'),
       'in-progress',
       g_lastState);
   }
@@ -262,7 +262,7 @@ function updateConnectToggle() {
   }
   else if (g_lastState === 'stopping') {
     cycleToggleClass(
-      $('.connect-toggle-content[data-connect-state="stopping"] .icon-stack-base, .connect-toggle-content[data-connect-state="stopping"] .state-word'),
+      $('.connect-toggle-content[data-connect-state="stopping"] .icon-spin, .connect-toggle-content[data-connect-state="stopping"] .state-word'),
       'in-progress',
       g_lastState);
   }

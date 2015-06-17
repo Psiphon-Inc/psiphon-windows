@@ -16,11 +16,12 @@ $ node fake-translations.js
 
 ## Notes and discussion points
 
-* It feels like there should be more icons or images -- it feels like it’s a lot of just text. I have added FontAwesome, so we have a lot of icons that can be easily used -- you can see a few of them in the nav tabs. But custom images would probably be good/better.
+* It feels like there should be more icons or images -- it feels like it’s a lot of just text. I have added a custom icon font, so we have a lot of icons that can be easily used -- you can see a few of them in the nav tabs. But custom images would probably be good/better.
 
 
 ## TODO
 
+* Fancy font in new UI is contributing 400KB to build. Consider not using all variants or not using at all.
 * Automation: Switch to VS2013.
 * Update user guide on website.
 * Nicer looking, most usable connect button/state?
@@ -79,7 +80,7 @@ $ node fake-translations.js
 
 * [grunt-inline](https://github.com/chyingp/grunt-inline) ([npm](https://www.npmjs.com/package/grunt-inline))
 * [Bootstrap v2](http://getbootstrap.com/2.3.2/index.html) (the last version that supports IE7)
-* [FontAwesome v3](https://fortawesome.github.io/Font-Awesome/3.2.1/) (the last version that supports IE7)
+* [IcoMoon](https://icomoon.io)
 * [Less CSS](http://lesscss.org/)
 * [jQuery](https://jquery.com/)
 * [jQueryUI](http://jqueryui.com/)

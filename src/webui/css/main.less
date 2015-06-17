@@ -42,7 +42,9 @@
 @import "vendor/bootstrap-2.3.2/less/bootstrap.less";
 @import "vendor/bootstrap-2.3.2/less/responsive.less";
 
-@fa-var-check: "\f00c";
+@import "vendor/icomoon/variables.less";
+
+@awesome-bootstrap-check: @icon-check;
 @import "vendor/awesome-bootstrap-checkbox.less";
 
 
@@ -315,51 +317,61 @@ body {
     .state-symbol {
       font-size: 3em;
       margin-bottom: 0.5em;
-
-      .icon-state-symbol {
-        color: @connectBackgroundColor;
-      }
-
-      i {
-        // IE7 hacks to center icon
-        body[dir="ltr"] & {
-          *margin-left: -1em;
-        }
-        body[dir="rtl"] & {
-          *margin-right: -1em;
-        }
-      }
     }
 
-    .stateColors(@color, @oppositeColor) {
-      i, .state-word {
+    .stateColors(@color, @oppositeColor, @iconColor, @circlePad: 0) {
+      .icon-state-symbol {
+        color: @iconColor;
+      }
+
+      .state-word {
         color: @color;
+      }
+      i {
+        color: @color;
+        font-size: 2em;
       }
 
       .btn {
         .buttonBackground(@oppositeColor, darken(@oppositeColor, 10%), @connectBackgroundColor);
       }
+
+      .circle {
+        height: 2.5em;
+        width: 2.5em;
+        border-radius: 50%;
+        background-color: @color;
+        margin: auto;
+
+        i {
+          padding: @circlePad;
+          display: block;
+          position: relative;
+        }
+      }
     }
 
     &[data-connect-state="starting"] {
-      .stateColors(@startingColor1, @stoppedColor);
+      .stateColors(@startingColor1, @stoppedColor, @startingColor1);
 
-      .icon-stack-base.in-progress, .state-word.in-progress {
+      // Used for color-cycling
+      .icon-spin.in-progress, .state-word.in-progress {
         color: @startingColor2;
       }
     }
     &[data-connect-state="connected"] {
-      .stateColors(@connectedColor, @stoppedColor);
+      .stateColors(@connectedColor, @stoppedColor, @connectedColor);
     }
     &[data-connect-state="stopping"] {
-      .stateColors(@stoppingColor1, @stoppingColor1);
+      .stateColors(@stoppingColor1, @stoppingColor1, @stoppingColor1);
 
-      .icon-stack-base.in-progress, .state-word.in-progress {
+      // Used for color-cycling
+      .icon-spin.in-progress, .state-word.in-progress {
         color: @stoppingColor2;
       }
     }
     &[data-connect-state="stopped"] {
-      .stateColors(@stoppedColor, @connectedColor);
+      .stateColors(@stoppedColor, @connectedColor, @connectBackgroundColor, 0 0 0 5px);
     }
 
     hr {
@@ -493,8 +505,13 @@ body {
     background-color: @connectBackgroundColor;
 
     i {
-      // Make the caret more vertically centered.
-      padding: 0.5em;
+      // Make the caret more vertically centered, with a bit of space on the side.
+      padding: 0.2em 0.5em 0 0.5em;
+
+      .open&:before {
+        // Change the icon when combo is open.
+        content: @icon-chevron-down-circle;
+      }
     }
   }
 

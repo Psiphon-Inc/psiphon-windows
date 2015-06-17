@@ -21,7 +21,9 @@
 // Checkboxes
 // --------------------------------------------------
 
-@font-family-icon: 'FontAwesome';
+@font-family-icon: 'icomoon';
+//@awesome-bootstrap-check: set in main.less
+@font-weight: bold;
 
 .checkbox-variant(@parent, @color) {
   .@{parent} input[type="checkbox"]:checked + label {
@@ -115,7 +117,8 @@
 
     &:checked + label::after{
       font-family: @font-family-icon;
-      content: @fa-var-check;
+      content: @awesome-bootstrap-check;
+      font-weight: @font-weight;
 
       // PSIPHON: RTL support
       // Mirror-flip the checkmark.
@@ -252,8 +255,8 @@
 
 input[type="checkbox"] {
   &.styled:checked + label:after {
-    font-family: 'FontAwesome';
-    content: "\f00c";
+    font-family: @font-family-icon;
+    content: @awesome-bootstrap-check;
   }
   & .styled:checked + label {
     &::before {

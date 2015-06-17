@@ -5891,8 +5891,9 @@ body[dir="rtl"] .checkbox label::after {
   outline-offset: -2px;
 }
 .checkbox input[type="checkbox"]:checked + label::after {
-  font-family: 'FontAwesome';
-  content: "\f00c";
+  font-family: 'icomoon';
+  content: "\e934";
+  font-weight: bold;
 }
 body[dir="rtl"] .checkbox input[type="checkbox"]:checked + label::after {
   -webkit-transform: scale(-1, 1);
@@ -6064,8 +6065,8 @@ body[dir="rtl"] .checkbox input[type="checkbox"]:checked + label::after {
   background-color: #5cb85c;
 }
 input[type="checkbox"].styled:checked + label:after {
-  font-family: 'FontAwesome';
-  content: "\f00c";
+  font-family: 'icomoon';
+  content: "\e934";
 }
 input[type="checkbox"] .styled:checked + label::before {
   color: #fff;
@@ -6267,18 +6268,15 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   font-size: 3em;
   margin-bottom: 0.5em;
 }
-#connect-toggle > .connect-toggle-content .state-symbol .icon-state-symbol {
-  color: #ffffff;
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .icon-state-symbol {
+  color: #f0ad4e;
 }
-body[dir="ltr"] #connect-toggle > .connect-toggle-content .state-symbol i {
-  *margin-left: -1em;
-}
-body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
-  *margin-right: -1em;
-}
-#connect-toggle > .connect-toggle-content[data-connect-state="starting"] i,
 #connect-toggle > .connect-toggle-content[data-connect-state="starting"] .state-word {
   color: #f0ad4e;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] i {
+  color: #f0ad4e;
+  font-size: 2em;
 }
 #connect-toggle > .connect-toggle-content[data-connect-state="starting"] .btn {
   color: #ffffff;
@@ -6304,13 +6302,31 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
 #connect-toggle > .connect-toggle-content[data-connect-state="starting"] .btn.active {
   background-color: #a02622 \9;
 }
-#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .icon-stack-base.in-progress,
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .circle {
+  height: 2.5em;
+  width: 2.5em;
+  border-radius: 50%;
+  background-color: #f0ad4e;
+  margin: auto;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .circle i {
+  padding: 0;
+  display: block;
+  position: relative;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="starting"] .icon-spin.in-progress,
 #connect-toggle > .connect-toggle-content[data-connect-state="starting"] .state-word.in-progress {
   color: #5cb85c;
 }
-#connect-toggle > .connect-toggle-content[data-connect-state="connected"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] .icon-state-symbol {
+  color: #5cb85c;
+}
 #connect-toggle > .connect-toggle-content[data-connect-state="connected"] .state-word {
   color: #5cb85c;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] i {
+  color: #5cb85c;
+  font-size: 2em;
 }
 #connect-toggle > .connect-toggle-content[data-connect-state="connected"] .btn {
   color: #ffffff;
@@ -6336,9 +6352,27 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
 #connect-toggle > .connect-toggle-content[data-connect-state="connected"] .btn.active {
   background-color: #a02622 \9;
 }
-#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] .circle {
+  height: 2.5em;
+  width: 2.5em;
+  border-radius: 50%;
+  background-color: #5cb85c;
+  margin: auto;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="connected"] .circle i {
+  padding: 0;
+  display: block;
+  position: relative;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .icon-state-symbol {
+  color: #f0ad4e;
+}
 #connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .state-word {
   color: #f0ad4e;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] i {
+  color: #f0ad4e;
+  font-size: 2em;
 }
 #connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .btn {
   color: #ffffff;
@@ -6364,13 +6398,31 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
 #connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .btn.active {
   background-color: #c77c11 \9;
 }
-#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .icon-stack-base.in-progress,
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .circle {
+  height: 2.5em;
+  width: 2.5em;
+  border-radius: 50%;
+  background-color: #f0ad4e;
+  margin: auto;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .circle i {
+  padding: 0;
+  display: block;
+  position: relative;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .icon-spin.in-progress,
 #connect-toggle > .connect-toggle-content[data-connect-state="stopping"] .state-word.in-progress {
   color: #d9534f;
 }
-#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] i,
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .icon-state-symbol {
+  color: #ffffff;
+}
 #connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .state-word {
   color: #d9534f;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] i {
+  color: #d9534f;
+  font-size: 2em;
 }
 #connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .btn {
   color: #ffffff;
@@ -6395,6 +6447,18 @@ body[dir="rtl"] #connect-toggle > .connect-toggle-content .state-symbol i {
 #connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .btn:active,
 #connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .btn.active {
   background-color: #357935 \9;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .circle {
+  height: 2.5em;
+  width: 2.5em;
+  border-radius: 50%;
+  background-color: #d9534f;
+  margin: auto;
+}
+#connect-toggle > .connect-toggle-content[data-connect-state="stopped"] .circle i {
+  padding: 0 0 0 5px;
+  display: block;
+  position: relative;
 }
 #connect-toggle > .connect-toggle-content hr {
   width: 70%;
@@ -6491,7 +6555,10 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   background-color: #ffffff;
 }
 #EgressRegionCombo > a i {
-  padding: 0.5em;
+  padding: 0.2em 0.5em 0 0.5em;
+}
+.open#EgressRegionCombo > a i:before {
+  content: "\e963";
 }
 #EgressRegionCombo ul {
   height: 200px;

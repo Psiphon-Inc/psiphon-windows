@@ -1,0 +1,28 @@
+/* Can be used to help with the IE7 "hasLayout" problem. http://www.satzansatz.de/cssd/onhavinglayout.html */
+.gainLayout { zoom: 1; }
+div { display: inline-block; }
+div { display: block; }
+
+.ie7Hidden {
+  display: none;
+  visibility: hidden;
+  zoom: 1;
+};
+
+.ie7Invisible {
+  visibility: hidden;
+  zoom: 1;
+};
+
+.ie7Remove {
+  /* Elements with this class get removed from DOM */
+}
+
+.ie7Border {
+  border-width: 1px;
+}
+
+/* Prevent tab icons from being cut off at the top */
+.icon-fixed-width {
+  padding-top: 0.1em;
+}
