@@ -48,6 +48,7 @@
     <ClCompile Include="diagnostic_info.cpp" />
     <ClCompile Include="wininet_network_check.cpp" />
     <ClCompile Include="coretransport.cpp" />
+    <ClCompile Include="logging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -514,16 +515,10 @@
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="coretransport.h" />
+    <ClInclude Include="logging.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="3rdParty\polipo.exe" />
-    <None Include="3rdParty\psiphon-tunnel-core.exe" />
-    <None Include="feedback.html" />
-    <None Include="settings.html" />
-    <None Include="webui\settings.html" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="json">
@@ -538,14 +533,14 @@
     <Filter Include="WebCtrl">
       <UniqueIdentifier>{9cab73d3-bc74-49ac-b02d-501929a49dd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{7d4a24ae-9f52-44b6-8849-5c893ad559b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="psiclient.ico" />
-    <Image Include="small.ico" />
-    <Image Include="settings.bmp" />
-    <Image Include="toggle_images.bmp" />
-    <Image Include="banner.bmp" />
-    <Image Include="email.bmp" />
-    <Image Include="feedback.bmp" />
+    <Image Include="webui\flag_unknown_16.png">
+      <Filter>UI</Filter>
+    </Image>
   </ItemGroup>
 </Project>

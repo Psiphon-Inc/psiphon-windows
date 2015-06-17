@@ -122,6 +122,12 @@ void TransportConnection::Connect(
         // If the transport did a handshake, there may be updated session info.
         m_sessionInfo = m_transport->GetSessionInfo();
 
+        // Update the session info with local proxy ports.
+        m_sessionInfo.SetLocalProxyPorts(
+            m_systemProxySettings.GetHttpProxyPort(), 
+            m_systemProxySettings.GetHttpsProxyPort(), 
+            m_systemProxySettings.GetSocksProxyPort());
+
         // Now that we have extra info from the server via the handshake 
         // (specifically page view regexes), we need to update the local proxy.
         if (m_localProxy)

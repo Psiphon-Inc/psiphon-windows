@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "shellapi.h"
 #include "config.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "connectionmanager.h"
 #include "server_request.h"
@@ -48,7 +49,6 @@ ConnectionManager::ConnectionManager(void) :
     m_thread(0),
     m_upgradeThread(0),
     m_feedbackThread(0),
-    m_startingTime(0),
     m_transport(0),
     m_upgradePending(false),
     m_startSplitTunnel(false),
@@ -65,11 +65,11 @@ ConnectionManager::~ConnectionManager(void)
     CloseHandle(m_mutex);
 }
 
-void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
+void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/, bool allowSkip/*=true*/)
 {
     AutoMUTEX lock(m_mutex);
-    
-    if (!Settings::SkipBrowser())
+
+    if (!allowSkip || !Settings::SkipBrowser())
     {
         vector<tstring> urls = m_currentSessionInfo.GetHomepages();
         if (urls.size() == 0 && defaultHomePage)
@@ -80,35 +80,6 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
     }
 }
 
-void ConnectionManager::Toggle()
-{
-    // NOTE: no lock, to allow thread to access object
-
-    if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
-    {
-        Start();
-    }
-    else
-    {
-        Stop(STOP_REASON_USER_DISCONNECT);
-    }
-}
-
-time_t ConnectionManager::GetStartingTime()
-{
-    // NOTE: no lock, to prevent blocking connection thread with UI polling
-    // Starting Time is informational only, consistency with state isn't critical
-
-    if (m_state != CONNECTION_MANAGER_STATE_STARTING)
-    {
-        return 0;
-    }
-    else
-    {
-        return time(0) - m_startingTime;
-    }
-}
-
 void ConnectionManager::SetState(ConnectionManagerState newState)
 {
     // NOTE: no lock, to prevent blocking connection thread with UI polling
@@ -116,11 +87,22 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
 
     if (newState == CONNECTION_MANAGER_STATE_STARTING)
     {
-        m_startingTime = time(0);
+        UI_SetStateStarting(m_transport->GetTransportProtocolName());
     }
-    else
+    else if (newState == CONNECTION_MANAGER_STATE_CONNECTED)
     {
-        m_startingTime = 0;
+        UI_SetStateConnected(
+            m_transport->GetTransportProtocolName(),
+            m_currentSessionInfo.GetLocalSocksProxyPort(),
+            m_currentSessionInfo.GetLocalHttpProxyPort());
+    }
+    else if (newState == CONNECTION_MANAGER_STATE_STOPPING)
+    {
+        UI_SetStateStopping();
+    }
+    else //if (newState == CONNECTION_MANAGER_STATE_STOPPED)
+    {
+        UI_SetStateStopped();
     }
 
     m_state = newState;
@@ -137,7 +119,7 @@ ConnectionManagerState ConnectionManager::GetState()
 // disconnected -- without ending the Transport lifetime.
 // These m_state changes are currently safe to make... unlike changing
 // m_state to CONNECTION_MANAGER_STATE_STOPPED, which would break Toggle.
-// 
+//
 
 void ConnectionManager::SetReconnecting()
 {
@@ -147,6 +129,20 @@ void ConnectionManager::SetReconnecting()
 void ConnectionManager::SetReconnected()
 {
     SetState(CONNECTION_MANAGER_STATE_CONNECTED);
+}
+
+void ConnectionManager::Toggle()
+{
+    // NOTE: no lock, to allow thread to access object
+
+    if (m_state == CONNECTION_MANAGER_STATE_STOPPED)
+    {
+        Start();
+    }
+    else
+    {
+        Stop(STOP_REASON_USER_DISCONNECT);
+    }
 }
 
 void ConnectionManager::Stop(DWORD reason)
@@ -163,6 +159,8 @@ void ConnectionManager::Stop(DWORD reason)
 
     // This will signal (some) running tasks to terminate.
     GlobalStopSignal::Instance().SignalStop(reason);
+
+    SetState(CONNECTION_MANAGER_STATE_STOPPING);
 
     // Wait for thread to exit (otherwise can get access violation when app terminates)
     if (m_thread)
@@ -192,95 +190,9 @@ void ConnectionManager::Stop(DWORD reason)
     delete m_transport;
     m_transport = 0;
 
+    SetState(CONNECTION_MANAGER_STATE_STOPPED);
+
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
-}
-
-void ConnectionManager::FetchRemoteServerList(void)
-{
-    // Note: not used by CoreTransport
-
-    AutoMUTEX lock(m_mutex);
-
-    if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
-    {
-        return;
-    }
-
-    // After at least one failed connection attempt, and no more than once
-    // per few hours (if successful), or not more than once per few minutes
-    // (if unsuccessful), check for a new remote server list.
-    if (m_nextFetchRemoteServerListAttempt != 0 &&
-        m_nextFetchRemoteServerListAttempt > time(0))
-    {
-        return;
-    }
-
-    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
-
-    string response;
-
-    try
-    {
-        HTTPSRequest httpsRequest;
-        // NOTE: Not using local proxy
-        if (!httpsRequest.MakeRequest(
-                NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
-                443,
-                "",
-                NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
-                response,
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
-                false, // don't use local proxy
-                true)  // fail over to URL proxy
-            || response.length() <= 0)
-        {
-            my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
-            return;
-        }
-    }
-    catch (StopSignal::StopException&)
-    {
-        // Application is exiting.
-        return;
-    }
-
-    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
-
-    string serverEntryList;
-    if (!verifySignedDataPackage(
-            REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
-            response.c_str(), 
-            response.length(), 
-            false, 
-            serverEntryList))
-    {
-        my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
-        return;
-    }
-
-    vector<string> newServerEntryVector;
-    istringstream serverEntryListStream(serverEntryList);
-    string line;
-    while (getline(serverEntryListStream, line))
-    {
-        if (!line.empty())
-        {
-            newServerEntryVector.push_back(line);
-        }
-    }
-
-    try
-    {
-        // This adds the new server entries to all transports' server lists.
-        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
-
-        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
-    }
-    catch (std::exception &ex)
-    {
-        my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
-        // This isn't fatal.
-    }
 }
 
 void ConnectionManager::Start()
@@ -413,7 +325,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             tunnelStartTime = GetTickCount();
 
             //
-            // The transport connection did a handshake, so its sessionInfo is 
+            // The transport connection did a handshake, so its sessionInfo is
             // fuller than ours. Update ours and then update the server entries.
             //
 
@@ -563,9 +475,9 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
         // "Connected" HTTPS request for server stats.
         // It's not critical if this request fails so failure is ignored.
         //
-    
+
         tstring connectedRequestPath = GetConnectRequestPath(m_transport);
-        
+
         DWORD start = GetTickCount();
         string response;
         if (ServerRequest::MakeRequest(
@@ -577,7 +489,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
                             StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
         {
             // Get the server time from response json and record it
-            // connected_timestamp 
+            // connected_timestamp
             Json::Value json_entry;
             Json::Reader reader;
             string connected_timestamp;
@@ -590,7 +502,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
                     connected_timestamp = json_entry.get("connected_timestamp", 0).asString();
                     RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
                     (void)WriteRegistryStringValue(
-                            LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, 
+                            LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED,
                             connected_timestamp,
                             reason);
                 }
@@ -610,7 +522,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
     //
     // Open home pages in browser
     //
-    
+
     if (openHomePages)
     {
         OpenHomePages();
@@ -632,7 +544,7 @@ bool ConnectionManager::SendStatusMessage(
         sessionInfo = m_currentSessionInfo;
     }
 
-    // Format stats data for consumption by the server. 
+    // Format stats data for consumption by the server.
 
     Json::Value stats;
 
@@ -675,9 +587,9 @@ bool ConnectionManager::SendStatusMessage(
     }
     stats["https_requests"] = https_requests;
 
-    ostringstream additionalData; 
+    ostringstream additionalData;
     Json::FastWriter jsonWriter;
-    additionalData << jsonWriter.write(stats); 
+    additionalData << jsonWriter.write(stats);
     string additionalDataString = additionalData.str();
 
     tstring requestPath = GetStatusRequestPath(m_transport, !final);
@@ -708,7 +620,7 @@ bool ConnectionManager::SendStatusMessage(
                                     L"Content-Type: application/json",
                                     (LPVOID)additionalDataString.c_str(),
                                     additionalDataString.length());
-    
+
     return success;
 }
 
@@ -716,13 +628,13 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
 {
     AutoMUTEX lock(m_mutex);
 
-    return tstring(HTTP_FAILED_REQUEST_PATH) + 
+    return tstring(HTTP_FAILED_REQUEST_PATH) +
            _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
            _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportRequestName() + 
+           _T("&relay_protocol=") +  transport->GetTransportRequestName() +
            _T("&error_code=") + transport->GetLastTransportError();
 }
 
@@ -736,13 +648,13 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
     (void)ReadRegistryStringValue(LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED, lastConnected);
     if (lastConnected.length() == 0) lastConnected = "None";
 
-    return tstring(HTTP_CONNECTED_REQUEST_PATH) + 
+    return tstring(HTTP_CONNECTED_REQUEST_PATH) +
            _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
            _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") + transport->GetTransportRequestName() + 
+           _T("&relay_protocol=") + transport->GetTransportRequestName() +
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
            _T("&last_connected=") + NarrowToTString(lastConnected);
 }
@@ -762,14 +674,14 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
 
     // TODO: get error code from SSH client?
 
-    return tstring(HTTP_STATUS_REQUEST_PATH) + 
+    return tstring(HTTP_STATUS_REQUEST_PATH) +
            _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
            _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
            _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
            _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
            _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
-           _T("&relay_protocol=") +  transport->GetTransportRequestName() + 
-           _T("&session_id=") + sessionID + 
+           _T("&relay_protocol=") +  transport->GetTransportRequestName() +
+           _T("&session_id=") + sessionID +
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
@@ -778,7 +690,7 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
     AutoMUTEX lock(m_mutex);
 
     sessionInfo = m_currentSessionInfo;
-    requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) + 
+    requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) +
                     _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
                     _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
                     _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
@@ -788,6 +700,94 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
 
 // ==== General Session Functions =============================================
+
+void ConnectionManager::FetchRemoteServerList(void)
+{
+    // Note: not used by CoreTransport
+
+    AutoMUTEX lock(m_mutex);
+
+    if (strlen(REMOTE_SERVER_LIST_ADDRESS) == 0)
+    {
+        return;
+    }
+
+    // After at least one failed connection attempt, and no more than once
+    // per few hours (if successful), or not more than once per few minutes
+    // (if unsuccessful), check for a new remote server list.
+    if (m_nextFetchRemoteServerListAttempt != 0 &&
+        m_nextFetchRemoteServerListAttempt > time(0))
+    {
+        return;
+    }
+
+    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_UNSUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
+
+    string response;
+
+    try
+    {
+        HTTPSRequest httpsRequest;
+        // NOTE: Not using local proxy
+        if (!httpsRequest.MakeRequest(
+                NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
+                443,
+                "",
+                NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
+                response,
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
+                false, // don't use local proxy
+                true)  // fail over to URL proxy
+            || response.length() <= 0)
+        {
+            my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
+            return;
+        }
+    }
+    catch (StopSignal::StopException&)
+    {
+        // Application is exiting.
+        return;
+    }
+
+    m_nextFetchRemoteServerListAttempt = time(0) + SECONDS_BETWEEN_SUCCESSFUL_REMOTE_SERVER_LIST_FETCH;
+
+    string serverEntryList;
+    if (!verifySignedDataPackage(
+            REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
+            response.c_str(),
+            response.length(),
+            false,
+            serverEntryList))
+    {
+        my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
+        return;
+    }
+
+    vector<string> newServerEntryVector;
+    istringstream serverEntryListStream(serverEntryList);
+    string line;
+    while (getline(serverEntryListStream, line))
+    {
+        if (!line.empty())
+        {
+            newServerEntryVector.push_back(line);
+        }
+    }
+
+    try
+    {
+        // This adds the new server entries to all transports' server lists.
+        TransportRegistry::AddServerEntries(newServerEntryVector, 0);
+
+        my_print(NOT_SENSITIVE, true, _T("%s: %d server entries"), __TFUNCTION__, newServerEntryVector.size());
+    }
+    catch (std::exception &ex)
+    {
+        my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
+        // This isn't fatal.
+    }
+}
 
 bool ConnectionManager::RequireUpgrade(void)
 {
@@ -849,7 +849,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
             if (verifySignedDataPackage(
                     UPGRADE_SIGNATURE_PUBLIC_KEY,
-                    downloadResponse.c_str(), 
+                    downloadResponse.c_str(),
                     downloadResponse.length(),
                     true, // compressed
                     upgradeData))
@@ -942,7 +942,7 @@ void ConnectionManager::PaveUpgrade(const string& download)
         std::stringstream s;
         s << ex.what() << " (" << GetLastError() << ")";
         my_print(NOT_SENSITIVE, false, s.str().c_str());
-        
+
         // Try to restore the original version
         if (bArchiveCreated)
         {
@@ -972,7 +972,7 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
     try
     {
         TransportRegistry::AddServerEntries(
-            m_currentSessionInfo.GetDiscoveredServerEntries(), 
+            m_currentSessionInfo.GetDiscoveredServerEntries(),
             // CoreTransport does not provide a ServerEntry, but VPNTransport does.
             m_currentSessionInfo.HasServerEntry() ? &m_currentSessionInfo.GetServerEntry() : 0);
     }
@@ -998,9 +998,9 @@ void ConnectionManager::SendFeedback(LPCWSTR feedbackJSON)
         WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
     {
         if (!(m_feedbackThread = CreateThread(
-                                    0, 
-                                    0, 
-                                    ConnectionManager::ConnectionManagerFeedbackThread, 
+                                    0,
+                                    0,
+                                    ConnectionManager::ConnectionManagerFeedbackThread,
                                     (void*)&g_feedbackThreadData, 0, 0)))
         {
             my_print(NOT_SENSITIVE, false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
@@ -1073,7 +1073,7 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
     bool success = true;
 
     // Upload diagnostic info
-    if (!feedback.empty() || !surveyJSON.empty() || sendDiagnosticInfo) 
+    if (!feedback.empty() || !surveyJSON.empty() || sendDiagnosticInfo)
     {
         // We don't care if this succeeds.
         success = SendFeedbackAndDiagnosticInfo(

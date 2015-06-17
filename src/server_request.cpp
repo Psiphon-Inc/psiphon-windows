@@ -69,6 +69,7 @@ request through them.
 */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "server_request.h"
 #include "transport.h"
 #include "transport_registry.h"

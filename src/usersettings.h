@@ -24,6 +24,10 @@ namespace Settings
 {
     void Initialize();
 
+    void ToJson(Json::Value& o_json);
+    // Returns false on error.
+    bool FromJson(const string& utf8JSON, bool& o_settingsChanged);
+
     // Returns true if settings changed.
     bool Show(HINSTANCE hInst, HWND hParentWnd);
 
@@ -44,4 +48,9 @@ namespace Settings
 
     bool SkipBrowser();
     bool SkipProxySettings();
+    bool SkipAutoConnect();
+
+    // These are used by the web UI
+    void SetCookies(const string& value);
+    string GetCookies();
 }
