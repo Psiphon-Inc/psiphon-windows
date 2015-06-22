@@ -1063,6 +1063,7 @@ function addLogMessage(obj) {
   $('.log-messages').loadTemplate(
     $("#message-template"),
     {
+      timestamp: new Date().toLocaleTimeString(),
       message: obj.message,
       priority: 'priority-' + obj.priority
     },

@@ -43,6 +43,10 @@ body[dir="rtl"] .dropdown-menu {
   right: 0;
   float: right;
 }
+body[dir="rtl"] .table th,
+body[dir="rtl"] .table td {
+  text-align: right;
+}
 /*!
  * Bootstrap v2.3.2
  *
@@ -6645,6 +6649,10 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
 }
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
+}
+.log-messages .timestamp {
+  width: 1%;
+  white-space: nowrap;
 }
 /* LANGUAGES */
 #language-pane .language-item {

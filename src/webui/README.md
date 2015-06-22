@@ -22,7 +22,6 @@ $ node fake-translations.js
 ## TODO
 
 * adjust minimum size
-* timestamps in log view
 * replace spinning yin-yang with arrows or something
 
 

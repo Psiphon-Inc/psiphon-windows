@@ -605,15 +605,23 @@ body {
 
 /* LOG MESSAGES */
 
-.log-messages .priority-0 {
-  .hiding-priority-0& {
-    display: none;
+.log-messages {
+  .priority-0 {
+    .hiding-priority-0& {
+      display: none;
+    }
   }
-}
 
-.log-messages .priority-1 {
-  .showing-priority-0& {
-    background-color: @infoBackground;
+  .priority-1 {
+    .showing-priority-0& {
+      background-color: @infoBackground;
+    }
+  }
+
+  // We want the timestamp column to be only wide enough to fit content
+  .timestamp {
+    width: 1%;
+    white-space: nowrap;
   }
 }
 

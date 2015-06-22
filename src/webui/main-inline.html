@@ -750,6 +750,10 @@ body[dir="rtl"] .dropdown-menu {
   right: 0;
   float: right;
 }
+body[dir="rtl"] .table th,
+body[dir="rtl"] .table td {
+  text-align: right;
+}
 /*!
  * Bootstrap v2.3.2
  *
@@ -7352,6 +7356,10 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
 }
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
+}
+.log-messages .timestamp {
+  width: 1%;
+  white-space: nowrap;
 }
 /* LANGUAGES */
 #language-pane .language-item {
@@ -14254,6 +14262,7 @@ function addLogMessage(obj) {
   $('.log-messages').loadTemplate(
     $("#message-template"),
     {
+      timestamp: new Date().toLocaleTimeString(),
       message: obj.message,
       priority: 'priority-' + obj.priority
     },
@@ -15484,7 +15493,9 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
             <!-- Message template -->
             <script type="text/html" id="message-template">
               <tr data-class="priority">
-                <td data-content="message">
+                <td class="timestamp" data-content="timestamp">
+                </td>
+                <td class="message" data-content="message">
                 </td>
               </tr>
             </script>
