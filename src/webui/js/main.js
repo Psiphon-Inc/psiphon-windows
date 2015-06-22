@@ -1612,6 +1612,7 @@ function HtmlCtrlInterface_BannerClick() {
     var appURL = PSIPHON_LINK_PREFIX + 'bannerclick';
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
+      alert('Call from JS to C to launch banner URL');
     }
     else {
       window.location = appURL;
