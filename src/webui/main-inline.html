@@ -30,11 +30,11 @@
   <style>
 @font-face {
 	font-family: 'icomoon';
-	src:url('vendor/icomoon/fonts/icomoon.eot?2ophnh');
-	src:url('vendor/icomoon/fonts/icomoon.eot?#iefix2ophnh') format('embedded-opentype'),
-		url('vendor/icomoon/fonts/icomoon.ttf?2ophnh') format('truetype'),
-		url('vendor/icomoon/fonts/icomoon.woff?2ophnh') format('woff'),
-		url('vendor/icomoon/fonts/icomoon.svg?2ophnh#icomoon') format('svg');
+	src:url('vendor/icomoon/fonts/icomoon.eot?-msl55s');
+	src:url('vendor/icomoon/fonts/icomoon.eot?#iefix-msl55s') format('embedded-opentype'),
+		url('vendor/icomoon/fonts/icomoon.ttf?-msl55s') format('truetype'),
+		url('vendor/icomoon/fonts/icomoon.woff?-msl55s') format('woff'),
+		url('vendor/icomoon/fonts/icomoon.svg?-msl55s#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -167,11 +167,29 @@
 .icon-hour-glass:before {
 	content: "\e979";
 }
+.icon-spinner:before {
+	content: "\e97a";
+}
+.icon-spinner2:before {
+	content: "\e97b";
+}
+.icon-spinner3:before {
+	content: "\e97c";
+}
+.icon-spinner5:before {
+	content: "\e97e";
+}
 .icon-spinner6:before {
 	content: "\e97f";
 }
 .icon-spinner9:before {
 	content: "\e982";
+}
+.icon-spinner11:before {
+	content: "\e984";
+}
+.icon-loop2:before {
+	content: "\ea2e";
 }
 
 </style>
@@ -330,10 +348,10 @@
 /* Animated rotating icon */
 .icon-spin {
   display: inline-block;
-  -moz-animation: spin 2s infinite linear;
-  -o-animation: spin 2s infinite linear;
-  -webkit-animation: spin 2s infinite linear;
-  animation: spin 2s infinite linear;
+  -moz-animation: spin 1s infinite steps(8);
+  -o-animation: spin 1s infinite steps(8);
+  -webkit-animation: spin 1s infinite steps(8);
+  animation: spin 1s infinite steps(8);
 }
 /* Prevent stack and spinners from being taken inline when inside a link */
 a .icon-stack,
@@ -428,7 +446,6 @@ a .icon-flip-horizontal:before,
 a .icon-flip-vertical:before {
   display: inline-block;
 }
-
 
 </style>
   <style>
@@ -7601,11 +7618,29 @@ hr.dotted {
 .icon-hour-glass {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe979;');
 }
+.icon-spinner {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe97a;');
+}
+.icon-spinner2 {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe97b;');
+}
+.icon-spinner3 {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe97c;');
+}
+.icon-spinner5 {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe97e;');
+}
 .icon-spinner6 {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe97f;');
 }
 .icon-spinner9 {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe982;');
+}
+.icon-spinner11 {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe984;');
+}
+.icon-loop2 {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xea2e;');
 }
 
 </style>
@@ -11563,8 +11598,14 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 		'icon-cross-square': '&#xe99a;',
 		'icon-prohibited': '&#xe99c;',
 		'icon-hour-glass': '&#xe979;',
+		'icon-spinner': '&#xe97a;',
+		'icon-spinner2': '&#xe97b;',
+		'icon-spinner3': '&#xe97c;',
+		'icon-spinner5': '&#xe97e;',
 		'icon-spinner6': '&#xe97f;',
 		'icon-spinner9': '&#xe982;',
+		'icon-spinner11': '&#xe984;',
+		'icon-loop2': '&#xea2e;',
 		'0': 0
 		},
 		els = document.getElementsByTagName('*'),
@@ -14875,10 +14916,10 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
             <i class="icon-fixed-width icon-home3"></i>
             <span data-i18n="nav#connection">Connection</span>
             <span class="label label-warning hidden" data-connect-state="starting">
-              <i class="icon-spinner9 icon-spin"></i>
+              <i class="icon-spinner6 icon-spin"></i>
             </span>
             <span class="label label-warning hidden" data-connect-state="stopping">
-              <i class="icon-spinner9 icon-spin"></i>
+              <i class="icon-spinner6 icon-spin"></i>
             </span>
             <span class="label label-success hidden" data-connect-state="connected">
               <i class="icon-checkmark-circle" data-i18n-rtl-classes="icon-flip-horizontal"></i>
@@ -14950,7 +14991,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                  data-connect-state="starting"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div class="state-symbol">
-                <i class="icon-spinner9 icon-spin icon-state-symbol"></i>
+                <i class="icon-spinner6 icon-spin icon-state-symbol"></i>
               </div>
               <div>
                 <h2 class="slabtext-container">
@@ -14994,7 +15035,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                  data-connect-state="stopping"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div class="state-symbol">
-                <i class="icon-spinner9 icon-spin icon-state-symbol"></i>
+                <i class="icon-spinner6 icon-spin icon-state-symbol"></i>
               </div>
               <div>
                 <h2 class="slabtext-container">

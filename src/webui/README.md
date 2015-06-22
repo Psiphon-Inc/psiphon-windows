@@ -23,7 +23,6 @@ $ node fake-translations.js
 
 * replace spinning yin-yang with arrows or something
 
-* remember previous app window size
 * Automation: Switch to VS2013.
 * Update user guide on website.
 * Nicer looking, most usable connect button/state?

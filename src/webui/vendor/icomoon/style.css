@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('fonts/icomoon.eot?2ophnh');
-	src:url('fonts/icomoon.eot?#iefix2ophnh') format('embedded-opentype'),
-		url('fonts/icomoon.ttf?2ophnh') format('truetype'),
-		url('fonts/icomoon.woff?2ophnh') format('woff'),
-		url('fonts/icomoon.svg?2ophnh#icomoon') format('svg');
+	src:url('fonts/icomoon.eot?-msl55s');
+	src:url('fonts/icomoon.eot?#iefix-msl55s') format('embedded-opentype'),
+		url('fonts/icomoon.ttf?-msl55s') format('truetype'),
+		url('fonts/icomoon.woff?-msl55s') format('woff'),
+		url('fonts/icomoon.svg?-msl55s#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -137,9 +137,27 @@
 .icon-hour-glass:before {
 	content: "\e979";
 }
+.icon-spinner:before {
+	content: "\e97a";
+}
+.icon-spinner2:before {
+	content: "\e97b";
+}
+.icon-spinner3:before {
+	content: "\e97c";
+}
+.icon-spinner5:before {
+	content: "\e97e";
+}
 .icon-spinner6:before {
 	content: "\e97f";
 }
 .icon-spinner9:before {
 	content: "\e982";
+}
+.icon-spinner11:before {
+	content: "\e984";
+}
+.icon-loop2:before {
+	content: "\ea2e";
 }

@@ -152,10 +152,10 @@
 /* Animated rotating icon */
 .icon-spin {
   display: inline-block;
-  -moz-animation: spin 2s infinite linear;
-  -o-animation: spin 2s infinite linear;
-  -webkit-animation: spin 2s infinite linear;
-  animation: spin 2s infinite linear;
+  -moz-animation: spin 1s infinite steps(8);
+  -o-animation: spin 1s infinite steps(8);
+  -webkit-animation: spin 1s infinite steps(8);
+  animation: spin 1s infinite steps(8);
 }
 /* Prevent stack and spinners from being taken inline when inside a link */
 a .icon-stack,
@@ -250,4 +250,3 @@ a .icon-flip-horizontal:before,
 a .icon-flip-vertical:before {
   display: inline-block;
 }
-
