@@ -300,7 +300,7 @@
     "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
   },
   "about#description": {
-    "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+    "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
     "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
   },
   "about#visit-download-site": {

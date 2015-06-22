@@ -170,7 +170,7 @@
   "devltr": {
     "name": "[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]",
     "translation": {
-      "about#description": "[Ƥşīīƥħǿǿƞ īīş ȧȧ <strong>ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ŧǿǿǿǿŀ</strong> — īīŧ īīş ḓḗḗşīīɠƞḗḗḓ ŧǿǿ ɠīīṽḗḗ ȧȧƈƈḗḗşş ŧǿǿ ŧħḗḗ ǿǿƥḗḗƞ Īīƞŧḗḗřƞḗḗŧ, ƥȧȧşŧ ƈḗḗƞşǿǿřş ȧȧƞḓ ƒīīřḗḗẇȧȧŀŀş. Īīŧ īīş <strong>ǿǿƥḗḗƞ şǿǿŭŭřƈḗḗ</strong> ȧȧƞḓ ḓḗḗṽḗḗŀǿǿƥḗḗḓ ẇīīŧħ ŀǿǿṽḗḗ īīƞ Ŧǿǿřǿǿƞŧǿǿ, Ƈȧȧƞȧȧḓȧȧ.]",
+      "about#description": "[Ƥşīīƥħǿǿƞ īīş ȧȧ <strong>ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ŧǿǿǿǿŀ</strong> — īīŧ īīş ḓḗḗşīīɠƞḗḗḓ ŧǿǿ ɠīīṽḗḗ ȧȧƈƈḗḗşş ŧǿǿ ŧħḗḗ ǿǿƥḗḗƞ Īīƞŧḗḗřƞḗḗŧ, ƥȧȧşŧ ƈḗḗƞşǿǿřş ȧȧƞḓ ƒīīřḗḗẇȧȧŀŀş. Īīŧ īīş <strong>ǿǿƥḗḗƞ şǿǿŭŭřƈḗḗ</strong> ȧȧƞḓ ḓḗḗṽḗḗŀǿǿƥḗḗḓ īīƞ Ŧǿǿřǿǿƞŧǿǿ, Ƈȧȧƞȧȧḓȧȧ.]",
       "about#get-by-email": "[<strong>Īīƒ ŧħḗḗ ẇḗḗƀşīīŧḗḗ īīş īīƞȧȧƈƈḗḗşşīīƀŀḗḗ</strong>, ẏǿǿŭŭ ƈȧȧƞ ɠḗḗŧ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ:]",
       "about#visit-download-site": "[Ŧǿǿ <strong>ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</strong> ǿǿƒ Ƥşīīƥħǿǿƞ, ǿǿř ŧǿǿ <strong>ɠḗḗŧ ħḗḗŀƥ ȧȧƞḓ ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</strong>, ƥŀḗḗȧȧşḗḗ <a href=\"#\" class=\"InfoURL\">ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ</a>.]",
       "about#wordart-tag": "[Ɓḗḗẏǿǿƞḓ Ɓǿǿřḓḗḗřş]",
@@ -254,7 +254,7 @@
   "devrtl": {
     "name": "Ԁɐɔʞɐƃǝp‬ ‮Wıɹɹoɹǝp",
     "translation": {
-      "about#description": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐ‬ <strong>‮ɔǝusoɹsɥıd‬ ‮ɔıɹɔnɯʌǝuʇıou‬ ‮ʇooʅ‬</strong> — ‮ıʇ‬ ‮ıs‬ ‮pǝsıƃuǝp‬ ‮ʇo‬ ‮ƃıʌǝ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮odǝu‬ ‮Iuʇǝɹuǝʇ‬, ‮dɐsʇ‬ ‮ɔǝusoɹs‬ ‮ɐup‬ ‮ɟıɹǝʍɐʅʅs‬. ‮Iʇ‬ ‮ıs‬ <strong>‮odǝu‬ ‮sonɹɔǝ‬</strong> ‮ɐup‬ ‮pǝʌǝʅodǝp‬ ‮ʍıʇɥ‬ ‮ʅoʌǝ‬ ‮ıu‬ ‮⊥oɹouʇo‬, ‮Ↄɐuɐpɐ‬.",
+      "about#description": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐ‬ <strong>‮ɔǝusoɹsɥıd‬ ‮ɔıɹɔnɯʌǝuʇıou‬ ‮ʇooʅ‬</strong> — ‮ıʇ‬ ‮ıs‬ ‮pǝsıƃuǝp‬ ‮ʇo‬ ‮ƃıʌǝ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮odǝu‬ ‮Iuʇǝɹuǝʇ‬, ‮dɐsʇ‬ ‮ɔǝusoɹs‬ ‮ɐup‬ ‮ɟıɹǝʍɐʅʅs‬. ‮Iʇ‬ ‮ıs‬ <strong>‮odǝu‬ ‮sonɹɔǝ‬</strong> ‮ɐup‬ ‮pǝʌǝʅodǝp‬ ‮ıu‬ ‮⊥oɹouʇo‬, ‮Ↄɐuɐpɐ‬.",
       "about#get-by-email": "<strong>‮Iɟ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ıs‬ ‮ıuɐɔɔǝssıqʅǝ‬</strong>, ‮ʎon‬ ‮ɔɐu‬ ‮ƃǝʇ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬:",
       "about#visit-download-site": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" class=\"InfoURL\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
       "about#wordart-tag": "‮Ԑǝʎoup‬ ‮Ԑoɹpǝɹs‬",
@@ -497,7 +497,7 @@
       "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon.",
       "about#wordart-title": "Psiphon",
       "about#wordart-tag": "Beyond Borders",
-      "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed with love in Toronto, Canada.",
+      "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
       "about#visit-download-site": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"InfoURL\">visit the website</a>.",
       "about#get-by-email": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
       "general#modal-close-button": "Close"

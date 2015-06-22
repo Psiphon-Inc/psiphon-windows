@@ -21,7 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* Remove "with love"?
 * adjust minimum size
 * timestamps in log view
 * replace spinning yin-yang with arrows or something
