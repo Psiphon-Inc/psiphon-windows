@@ -32,7 +32,7 @@
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "connection#connected-msg": {
-        "message": "Psiphon bağlandı",
+        "message": "Psiphon <span class=\"state-word\">bağlandı</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "messages#placeholder": {
@@ -52,7 +52,7 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "connection#stopping-msg": {
-        "message": "Psiphon bağlantısı kesiliyor...",
+        "message": "Psiphon <span class=\"state-word\">bağlantısı kesiliyor</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "settings#upstream-proxy#error-modal-body-default": {
@@ -64,7 +64,7 @@
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "settings#split-tunnel#help-text": {
-        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "message": "Etkinleştirildiğinde, ülkeniz içerisindeki sunuculara yapılan istekler Psiphon tarafından tünellenmeyecek.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
@@ -72,7 +72,7 @@
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
-        "message": "Don't use upstream proxy",
+        "message": "Üst vekil sunucusu kullanma",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "settings#upstream-proxy#port-label": {
@@ -80,7 +80,7 @@
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#port-value-error-msg": {
-        "message": "Must be between 1 and 65535.",
+        "message": "1 ile 65535 arasında olmalı.",
         "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
     },
     "nav#feedback": {
@@ -88,7 +88,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "Psiphon bağlanıyor...",
+        "message": "Psiphon <span class=\"state-word\">bağlanıyor</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
@@ -147,20 +147,16 @@
         "message": "Öntanımlılara Sıfırla",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
-    "about#head": {
-        "message": "PSIPHON: <i>BEYOND BORDERS</i>",
-        "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
-    },
     "settings#upstream-proxy#heading": {
-        "message": "Upstream Proxy",
+        "message": "Üst Vekil Sunucu",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#egress-region#help-text": {
-        "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>\"Best Performance\"</strong>, but you may instead prefer to use a server in a specific country.",
+        "message": "Psiphon'ın birçok ülkede sunucusu mevcut. En hızlı bağlantı için <strong>\"En İyi Performans\"</strong> seçmelisiniz, ancak özel bir ülkedeki sunucu kullanımını da seçebilirsiniz.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
     },
     "settings#vpn-incompatible-msg": {
-        "message": "(Doesn't work with VPN mode.)",
+        "message": "(VPN kipinde çalışmıyor.)",
         "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
     "settings#local-proxy-ports#unique-error-msg": {
@@ -172,7 +168,7 @@
         "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "Local Proxy Ports",
+        "message": "Yerel Vekil Sunucu Bağlantı Noktaları",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#egress-region#select-de": {
@@ -212,7 +208,7 @@
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "connection#stopped-msg": {
-        "message": "Psiphon bağlantısı kesildi",
+        "message": "Psiphon <span class=\"state-word\">bağlantısı kesildi</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
     },
     "nav#about": {
@@ -220,7 +216,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
     },
     "settings#local-proxy-ports#leave-blank": {
-        "message": "Leave blank for automatic port selection (recommended).",
+        "message": "Otomatik bağlantı noktası seçimi için boş bırakın (önerilir).",
         "description": "Help text that appears above the 'Local Proxy Ports' settings. It indicates what the default/best option is (blank, automatic)."
     },
     "language#success-message": {
@@ -244,7 +240,7 @@
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "settings#split-tunnel#heading": {
-        "message": "Split Tunnel",
+        "message": "Ayrı Tünel",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -263,8 +259,12 @@
         "message": "Birleşik Krallık",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
     },
+    "about#wordart-title": {
+        "message": "Psiphon",
+        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
     "settings#upstream-proxy#hostname-label": {
-        "message": "Hostname",
+        "message": "Makine adı",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "feedback#smiley_sad": {
@@ -276,7 +276,7 @@
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#upstream-proxy#by-default": {
-        "message": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that by specifying a proxy to use, or by specifying that no such \"upstream proxy\" should be used.<br> Only HTTP proxies that support HTTPS are allowed.",
+        "message": "Bilgisayarınızın zaten yapılandırılmış bir vekil sunucusu varsa, öntanımlı olarak bir tünel kurulumu için Psiphon tarafından bu vekil sunucu kullanılacak. Bu ayarı, kullanmak üzere bir vekil sunucu belirterek veya \"üst vekil sunucunun\" kullanılmasını seçerek yok sayabilirsiniz.<br>Sadece HTTPS desteği sağlayan HTTP vekil sunucularına izin verilir.",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
     },
     "settings#split-tunnel#enable-label": {
@@ -294,6 +294,10 @@
     "feedback#smiley_happy": {
         "message": "Psiphon istediğim gibi bağlanıyor ve çalışıyor.",
         "description": "The text below the 'happy face' feedback choice."
+    },
+    "about#wordart-tag": {
+        "message": "Beyond Borders",
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "connection#wait-btn": {
         "message": "Lütfen bekleyin...",

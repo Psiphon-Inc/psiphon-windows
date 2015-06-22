@@ -32,7 +32,7 @@
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "connection#connected-msg": {
-        "message": "Psiphon 연결됨.",
+        "message": "Psiphon is <span class=\"state-word\">connected</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "messages#placeholder": {
@@ -52,7 +52,7 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "connection#stopping-msg": {
-        "message": "Psiphon 연결 끊는중..",
+        "message": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "settings#upstream-proxy#error-modal-body-default": {
@@ -88,7 +88,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "Psiphon 연결 하는중...",
+        "message": "Psiphon is <span class=\"state-word\">connecting</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
@@ -146,10 +146,6 @@
     "settings#reset-button": {
         "message": "기본값으로 초기화",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
-    },
-    "about#head": {
-        "message": "PSIPHON: <i>BEYOND BORDERS</i>",
-        "description": "The title at the top of the 'About' page. It is the application name and slogan. 'Psiphon' can be translated or transliterated if appropriate for you language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
     },
     "settings#upstream-proxy#heading": {
         "message": "업 스트림 프록시",
@@ -212,7 +208,7 @@
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "connection#stopped-msg": {
-        "message": "Psiphon 연결 끊김.",
+        "message": "Psiphon is <span class=\"state-word\">disconnected</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
     },
     "nav#about": {
@@ -263,6 +259,10 @@
         "message": "영국",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
     },
+    "about#wordart-title": {
+        "message": "Psiphon",
+        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
     "settings#upstream-proxy#hostname-label": {
         "message": "호스트 이름",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
@@ -294,6 +294,10 @@
     "feedback#smiley_happy": {
         "message": "Psiphon이 잘 연결되며 원하는 대로 잘 작동하고 있습니다.",
         "description": "The text below the 'happy face' feedback choice."
+    },
+    "about#wordart-tag": {
+        "message": "Beyond Borders",
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "connection#wait-btn": {
         "message": "잠시만 기다려 주십시오...",

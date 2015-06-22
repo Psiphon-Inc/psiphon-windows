@@ -21,7 +21,12 @@ $ node fake-translations.js
 
 ## TODO
 
-* Add timestamps to logs
+* Remove "with love"?
+* adjust minimum size
+* timestamps in log view
+* replace spinning yin-yang with arrows or something
+
+
 * Automation: Switch to VS2013.
 * Update user guide on website.
 * Nicer looking, most usable connect button/state?
