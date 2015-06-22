@@ -525,6 +525,82 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 #define WINDOW_X_MIN    680
 #define WINDOW_Y_MIN    580
 
+static void SaveWindowPlacement()
+{
+    if (!g_hWnd)
+    {
+        return;
+    }
+
+    WINDOWPLACEMENT wp = { 0 };
+    wp.length = sizeof(WINDOWPLACEMENT);
+    if (!GetWindowPlacement(g_hWnd, &wp))
+    {
+        return;
+    }
+
+    Json::Value json;
+    json["showCmd"] = wp.showCmd;
+    json["rcNormalPosition.top"] = wp.rcNormalPosition.top;
+    json["rcNormalPosition.bottom"] = wp.rcNormalPosition.bottom;
+    json["rcNormalPosition.left"] = wp.rcNormalPosition.left;
+    json["rcNormalPosition.right"] = wp.rcNormalPosition.right;
+    Json::FastWriter jsonWriter;
+    Settings::SetWindowPlacement(jsonWriter.write(json));
+}
+
+static void RestoreWindowPlacement()
+{
+    if (!g_hWnd)
+    {
+        return;
+    }
+
+    string windowPlacementJson = Settings::GetWindowPlacement();
+    if (windowPlacementJson.empty())
+    {
+        // No stored placement
+        return;
+    }
+
+    WINDOWPLACEMENT wp = { 0 };
+    wp.length = sizeof(WINDOWPLACEMENT);
+
+    Json::Value json;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(windowPlacementJson, json);
+    if (!parsingSuccessful)
+    {
+        my_print(NOT_SENSITIVE, false, _T("Failed to parse previous window placement"));
+    }
+
+    try
+    {
+        if (!json.isMember("showCmd") ||
+            !json.isMember("rcNormalPosition.top") ||
+            !json.isMember("rcNormalPosition.bottom") ||
+            !json.isMember("rcNormalPosition.left") ||
+            !json.isMember("rcNormalPosition.right"))
+        {
+            // The stored values are invalid
+            return;
+        }
+
+        wp.showCmd = json.get("showCmd", SW_SHOWNORMAL).asUInt();
+        wp.rcNormalPosition.top = (LONG)json.get("rcNormalPosition.top", 0).asLargestInt();
+        wp.rcNormalPosition.bottom = (LONG)json.get("rcNormalPosition.bottom", WINDOW_Y_START).asLargestInt();
+        wp.rcNormalPosition.left = (LONG)json.get("rcNormalPosition.left", 0).asLargestInt();
+        wp.rcNormalPosition.right = (LONG)json.get("rcNormalPosition.right", WINDOW_X_START).asLargestInt();
+    }
+    catch (exception& e)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        return;
+    }
+
+    SetWindowPlacement(g_hWnd, &wp);
+}
+
 static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 {
     if (hdr->idFrom == IDC_HTML_CTRL)
@@ -599,10 +675,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_PSIPHON_CREATED:
+    {
         // Display client version number
         my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
 
         // Content is loaded, so show the window.
+        RestoreWindowPlacement();
         ShowWindow(g_hWnd, SW_SHOW);
 
         // Start a connection
@@ -611,6 +689,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             g_connectionManager.Toggle();
         }
         break;
+    }
 
     case WM_PSIPHON_HTMLUI_BEFORENAVIGATE:
         HtmlUI_BeforeNavigateHandler((LPCTSTR)wParam);
@@ -678,6 +757,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Stop transport if running
         g_connectionManager.Stop(STOP_REASON_EXIT);
         g_htmlUiFinished = true;
+        SaveWindowPlacement();
         PostQuitMessage(0);
         break;
 

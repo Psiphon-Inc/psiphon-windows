@@ -71,6 +71,10 @@
 #define COOKIES_NAME                    "UICookies"
 #define COOKIES_DEFAULT                 ""
 
+#define WINDOW_PLACEMENT_NAME           "UIWindowPlacement"
+#define WINDOW_PLACEMENT_DEFAULT        ""
+
+
 static HANDLE g_registryMutex = CreateMutex(NULL, FALSE, 0);
 
 int GetSettingDword(const string& settingName, int defaultValue, bool writeDefault=false)
@@ -361,4 +365,16 @@ void Settings::SetCookies(const string& value)
 string Settings::GetCookies()
 {
     return GetSettingString(COOKIES_NAME, COOKIES_DEFAULT);
+}
+
+void Settings::SetWindowPlacement(const string& value)
+{
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+    (void)WriteRegistryStringValue(WINDOW_PLACEMENT_NAME, value, reason);
+    // ignoring failures
+}
+
+string Settings::GetWindowPlacement()
+{
+    return GetSettingString(WINDOW_PLACEMENT_NAME, WINDOW_PLACEMENT_DEFAULT);
 }

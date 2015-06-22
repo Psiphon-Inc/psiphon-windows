@@ -53,4 +53,8 @@ namespace Settings
     // These are used by the web UI
     void SetCookies(const string& value);
     string GetCookies();
+
+    // Used for storing and restoring the main window placement
+    void SetWindowPlacement(const string& value);
+    string GetWindowPlacement();
 }
