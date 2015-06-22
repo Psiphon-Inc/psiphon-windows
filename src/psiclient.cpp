@@ -520,6 +520,11 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 //==== Main window functions ==================================================
 
+#define WINDOW_X_START  780
+#define WINDOW_Y_START  580
+#define WINDOW_X_MIN    680
+#define WINDOW_Y_MIN    580
+
 static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
 {
     if (hdr->idFrom == IDC_HTML_CTRL)
@@ -577,7 +582,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        780, 580,
+        WINDOW_X_START, WINDOW_Y_START,
         NULL, NULL, hInstance, NULL);
 
     // Don't show the window until the content loads.
@@ -633,8 +638,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_GETMINMAXINFO:
     {
         MINMAXINFO* mmi = (MINMAXINFO*)lParam;
-        mmi->ptMinTrackSize.x = 680;
-        mmi->ptMinTrackSize.y = 410;
+        mmi->ptMinTrackSize.x = WINDOW_X_MIN;
+        mmi->ptMinTrackSize.y = WINDOW_Y_MIN;
         break;
     }
 
