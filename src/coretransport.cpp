@@ -149,13 +149,6 @@ bool CoreTransport::IsWholeSystemTunneled() const
 }
 
 
-bool CoreTransport::IsSplitTunnelSupported() const
-{
-    // Currently unsupported in the core.
-    return false;
-}
-
-
 bool CoreTransport::ServerWithCapabilitiesExists()
 {
     // For now, we assume there are sufficient server entries for SSH/OSSH.

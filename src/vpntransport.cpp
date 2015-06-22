@@ -129,11 +129,6 @@ bool VPNTransport::IsWholeSystemTunneled() const
     return true;
 }
 
-bool VPNTransport::IsSplitTunnelSupported() const
-{
-    return false;
-}
-
 bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
 {
     // VPN requires a pre-tunnel handshake
