@@ -236,7 +236,7 @@
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Psiphon es una <strong>herramienta de elusión de la censura</strong> — está diseñada para proporcionar acceso a la Internet abierta, dejando atrás censores y cortafuegos (firewalls). Es de <strong>código abierto</strong> y fue desarrollada con cariño en Toronto, Canadá.",
+        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "settings#split-tunnel#heading": {

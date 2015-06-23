@@ -21,8 +21,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* replace spinning yin-yang with arrows or something
-
 * Automation: Switch to VS2013.
 * Update user guide on website.
 * Nicer looking, most usable connect button/state?

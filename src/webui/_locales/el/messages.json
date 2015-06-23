@@ -236,7 +236,7 @@
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Το Psiphon είναι ένα <strong>εργαλείο παράκαμψης της λογοκρισίας</strong> - έχει σχεδιαστεί έτσι ώστε να δίνει πρόσβαση στο ελεύθερο Ίντερνετ, παρακάμπτοντας τους λογοκριτές και τα τείχη προστασίας. Είναι <strong>ανοιχτού κώδικα</strong> και έχει αναπτυχθεί με αγάπη στο Τορόντο, στον Καναδά.",
+        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "settings#split-tunnel#heading": {

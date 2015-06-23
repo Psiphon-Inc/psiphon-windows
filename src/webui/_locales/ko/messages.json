@@ -236,7 +236,7 @@
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Psiphon은 <strong>인터넷 검열 우회 툴</strong>입니다 — 이 프로그램은 열린 인터넷과 인터넷 검열 차단 필터를 우회하기 위해 만들어졌습니다. 이 프로그램은 <strong>오픈 소스</strong>이며 캐나다의 Toronto에서 만들어 졌습니다.",
+        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "settings#split-tunnel#heading": {
