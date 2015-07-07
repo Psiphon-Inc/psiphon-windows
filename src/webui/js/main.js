@@ -119,6 +119,9 @@ $(function() {
   // ...and now.
   resizeContent();
 
+  // We don't want buggy scrolling behaviour (which can result from some click-drag selecting)
+  initScrollFix();
+
   setTimeout(HtmlCtrlInterface_AppReady, 100);
 });
 
@@ -142,6 +145,15 @@ function resizeContent() {
               .css(!g_isRTL ? 'margin-right' : 'margin-left', 0);
 }
 
+// Ensures that elements that should not be scrolled are not scrolled.
+// This should only be called once.
+function initScrollFix() {
+  // It would be much better to fix this correctly using CSS rather than
+  // detecting a bad state and correcting it. But until we figure that out...
+  $('body').scroll(function() {
+    $('body').scrollTop(0);
+  });
+}
 
 /* CONNECTION ****************************************************************/
 

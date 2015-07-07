@@ -6090,6 +6090,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-y: hidden;
+  -ms-scroll-limit-y-max: 0;
   background-color: #f3f7fa;
 }
 * {
