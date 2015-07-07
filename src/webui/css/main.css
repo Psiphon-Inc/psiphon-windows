@@ -250,7 +250,7 @@ textarea {
 }
 body {
   margin: 0;
-  font-family: "Titillium Web", sans-serif;
+  font-family: "Titillium Web", "Segoe UI", sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #333333;
@@ -936,7 +936,7 @@ input,
 button,
 select,
 textarea {
-  font-family: "Titillium Web", sans-serif;
+  font-family: "Titillium Web", "Segoe UI", sans-serif;
 }
 label {
   display: block;
@@ -3351,7 +3351,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-search .search-query {
   margin-bottom: 0;
   padding: 4px 14px;
-  font-family: "Titillium Web", sans-serif;
+  font-family: "Titillium Web", "Segoe UI", sans-serif;
   font-size: 13px;
   font-weight: normal;
   line-height: 1;
