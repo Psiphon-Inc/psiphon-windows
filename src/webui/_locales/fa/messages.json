@@ -32,7 +32,7 @@
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "connection#connected-msg": {
-        "message": "سایفون<span class=\"state-word\">وصل شد</span>",
+        "message": "سایفون<span class=\"state-word\"> وصل شد</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "messages#placeholder": {
@@ -64,11 +64,11 @@
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "settings#split-tunnel#help-text": {
-        "message": "اگر فعال باشد٬ درخواست به سرورهای داخل کشورشما از طریق سرورهای سایفون تونل نمی‌شوند.  ",
+        "message": "اگر فعال باشد٬ درخواست های شما به سرورهای داخل کشور از طریق سرورهای سایفون تونل نمی‌شوند.  ",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "برای <strong>دانلود یک نسخه جدید</strong> سایفون٬ یا <strong> دریافت اطلاعات بیشتر٬ information</strong>لطفآ<a href=\"#\" class=\"InfoURL\"> وبسایت سایفون را چک کنید</a>.",
+        "message": "برای <strong>دانلود یک نسخه جدید</strong> سایفون٬ یا <strong> دریافت اطلاعات بیشتر٬</strong>لطفا<a href=\"#\" class=\"InfoURL\"> وبسایت سایفون را چک کنید</a>.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -152,7 +152,7 @@
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#egress-region#help-text": {
-        "message": "سایفون در کشورهای مختلفی سرور دارد. برای سریعترین سرعت اتصال گزینه «بهترین سرور» را انتخاب کنید. شما میتوانید سروری در کشور مورد نظر خود را نیز انتخاب کنید. ",
+        "message": "سایفون در کشورهای مختلفی سرور دارد. برای سریعترین سرعت اتصال گزینه «بهترین سرور»  یا سروری در کشور مورد نظر خود را انتخاب کنید. ",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
     },
     "settings#vpn-incompatible-msg": {
@@ -176,7 +176,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
     "nav#connection": {
-        "message": "ارتباط",
+        "message": "اتصال",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
     },
     "connection#stop-btn": {
@@ -228,7 +228,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
     "feedback#diagnostic_check": {
-        "message": "آپلود و ارسال اطلاعات فنی/تشخیصی برنامه. لطفا به خاطر داشته باشید که این اطلاعات به هیچ عنوان \nهویت شما را آشکار نمی‌کند، و به ما کمک می‌کند که سایفون کارکرد بهتری داشته باشد. \n<a class=\"dataCollectionInfoURL\" href=\"#\"> اینجا کلیک کنید تا ببینید ما چه اطلاعاتی را جمع آوری می‌کنیم. </a>",
+        "message": "آپلود و ارسال اطلاعات فنی/تشخیصی کارکرد سایفون. لطفا به خاطر داشته باشید که این اطلاعات به هیچ عنوان \nهویت شما را آشکار نمی‌کند، و به ما کمک می‌کند که سایفون کارکرد بهتری داشته باشد. \n<a class=\"dataCollectionInfoURL\" href=\"#\"> اینجا کلیک کنید تا ببینید ما چه اطلاعاتی را جمع آوری می‌کنیم. </a>",
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {
@@ -236,7 +236,7 @@
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
+        "message": "فیلترشکن سایفون برای دور زدن فیلترینگ اینترنت و ایجاد دسترسی به اطلاعات سانسور شده طراحی شده است. کد برنامه سایفون \n<strong>\nمتن باز / اپن سورس</strong> \nدر شهر تورنتو٬ کانادا نوشته شده است. ",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "settings#split-tunnel#heading": {

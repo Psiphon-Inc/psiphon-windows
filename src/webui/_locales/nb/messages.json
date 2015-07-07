@@ -24,7 +24,7 @@
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
     "messages#show-debug-label": {
-        "message": "Show debug messages",
+        "message": "Vis feilrettingsmeldinger",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
     },
     "banner#sponsored-by": {
@@ -32,7 +32,7 @@
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "connection#connected-msg": {
-        "message": "Psiphon is <span class=\"state-word\">connected</span>",
+        "message": "Psiphon er <span class=\"state-word\">tilkoblet</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "messages#placeholder": {
@@ -40,7 +40,7 @@
         "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
     },
     "nav#settings": {
-        "message": "Settings",
+        "message": "Innstillinger",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "settings#egress-region#error-modal-title": {
@@ -52,7 +52,7 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "connection#stopping-msg": {
-        "message": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
+        "message": "Psiphon <span class=\"state-word\">kobler fra</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "settings#upstream-proxy#error-modal-body-default": {
@@ -80,7 +80,7 @@
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#port-value-error-msg": {
-        "message": "Must be between 1 and 65535.",
+        "message": "Må være et tall fra 1 til 65535.",
         "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
     },
     "nav#feedback": {
@@ -88,7 +88,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "Psiphon is <span class=\"state-word\">connecting</span>…",
+        "message": "Psiphon <span class=\"state-word\">kobler til</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
@@ -120,11 +120,11 @@
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "settings#saved-message": {
-        "message": "Settings saved.",
+        "message": "Innstillingene ble lagret.",
         "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
-        "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+        "message": "<strong>Hvis nettsiden ikke kan nås</strong>, kan du hente en ny versjon av Psiphon ved å sende e-post til:",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
     },
     "settings#egress-region#select-nl": {
@@ -144,7 +144,7 @@
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
     },
     "settings#reset-button": {
-        "message": "Reset to Default",
+        "message": "Tilbakestill til forvalg",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "settings#upstream-proxy#heading": {
@@ -168,7 +168,7 @@
         "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "Local Proxy Ports",
+        "message": "Lokale mellomtjener-porter",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#egress-region#select-de": {
@@ -176,7 +176,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
     "nav#connection": {
-        "message": "Connection",
+        "message": "Tilkobling",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
     },
     "connection#stop-btn": {
@@ -196,7 +196,7 @@
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "connection#disconnect-btn": {
-        "message": "Disconnect",
+        "message": "Koble fra",
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "feedback#top_content_title": {
@@ -208,7 +208,7 @@
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "connection#stopped-msg": {
-        "message": "Psiphon is <span class=\"state-word\">disconnected</span>",
+        "message": "Psiphon er <span class=\"state-word\">frakoblet</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
     },
     "nav#about": {
@@ -216,11 +216,11 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
     },
     "settings#local-proxy-ports#leave-blank": {
-        "message": "Leave blank for automatic port selection (recommended).",
+        "message": "La stå tomt for automatisk portvalg (anbefalt).",
         "description": "Help text that appears above the 'Local Proxy Ports' settings. It indicates what the default/best option is (blank, automatic)."
     },
     "language#success-message": {
-        "message": "<strong>Hello!</strong> Welcome to Psiphon.",
+        "message": "<strong>Heia.</strong> Velkommen til Psiphon.",
         "description": "A welcome message shown to the user when they first switch to the correct UI language"
     },
     "settings#egress-region#select-sg": {
@@ -232,7 +232,7 @@
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {
-        "message": "Transport Mode",
+        "message": "Transport-modus",
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
@@ -244,11 +244,11 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#egress-region#invalid-error-msg": {
-        "message": "Choose a valid Psiphon server region.",
+        "message": "Velg en gyldig adresse og region for Psiphon-tjener.",
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "settings#transport-mode#check-label": {
-        "message": "Use VPN Mode",
+        "message": "Bruk VPN-modus",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended."
     },
     "nav#messages": {
@@ -264,7 +264,7 @@
         "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
     },
     "settings#upstream-proxy#hostname-label": {
-        "message": "Hostname",
+        "message": "Vertsnavn",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "feedback#smiley_sad": {
@@ -280,15 +280,15 @@
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
     },
     "settings#split-tunnel#enable-label": {
-        "message": "Don't proxy websites within your country",
+        "message": "Ikke mellomtjen nettsider fra ditt land",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "feedback#text_feedback_email_prompt": {
-        "message": "If you would like us to respond to you, please enter your email address:",
+        "message": "Hvis du ønsker at vi svarer deg, legg ved din epost-adresse:",
         "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
     },
     "feedback#text_feedback_prompt": {
-        "message": "Please enter your comments here:",
+        "message": "Kommenter her:",
         "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
     },
     "feedback#smiley_happy": {
@@ -296,11 +296,11 @@
         "description": "The text below the 'happy face' feedback choice."
     },
     "about#wordart-tag": {
-        "message": "Beyond Borders",
+        "message": "Grenseløs",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "connection#wait-btn": {
-        "message": "Please wait...",
+        "message": "Vent...",
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
@@ -308,11 +308,11 @@
         "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Best Performance",
+        "message": "Best ytelse",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "connection#connect-btn": {
-        "message": "Connect",
+        "message": "Koble til",
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     }
 }
