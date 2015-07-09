@@ -14733,13 +14733,23 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
 }
 
 // Set the connected state.
+// We will de-bounce the state change messages.
+var g_timeoutSetState = null;
 function HtmlCtrlInterface_SetState(jsonArgs) {
-  setTimeout(function() {
+  // Clear any queued state changes.
+  if (g_timeoutSetState !== null) {
+    clearTimeout(g_timeoutSetState);
+    g_timeoutSetState = null;
+  }
+
+  g_timeoutSetState = setTimeout(function() {
+    g_timeoutSetState = null;
+
     // Allow object as input to assist with debugging
     var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
     g_lastState = args.state;
     $window.trigger(CONNECTED_STATE_CHANGE_EVENT);
-  }, 1);
+  }, 100);
 }
 
 // Refresh the current settings values.

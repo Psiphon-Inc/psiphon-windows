@@ -35,6 +35,7 @@ extern ConnectionManager g_connectionManager;
 #define WM_PSIPHON_FEEDBACK_SUCCESS    WM_USER + 101
 #define WM_PSIPHON_FEEDBACK_FAILED     WM_USER + 102
 #define WM_PSIPHON_CREATED             WM_USER + 103
+#define WM_PSIPHON_TRAY_ICON_NOTIFY    WM_USER + 104
 
 
 //==== UI Interaction ==================================================

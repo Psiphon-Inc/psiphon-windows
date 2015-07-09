@@ -85,6 +85,8 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
     // NOTE: no lock, to prevent blocking connection thread with UI polling
     // Starting Time is informational only, consistency with state isn't critical
 
+    m_state = newState;
+
     if (newState == CONNECTION_MANAGER_STATE_STARTING)
     {
         UI_SetStateStarting(m_transport->GetTransportProtocolName());
@@ -104,8 +106,6 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
     {
         UI_SetStateStopped();
     }
-
-    m_state = newState;
 }
 
 ConnectionManagerState ConnectionManager::GetState()

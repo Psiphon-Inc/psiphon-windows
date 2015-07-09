@@ -107,6 +107,91 @@ void OnCreate(HWND hWndParent)
 }
 
 
+//==== Systray/Notification helpers ===========================================
+
+// General info on Notifications: https://msdn.microsoft.com/en-us/library/ee330740%28v=vs.85%29.aspx
+// NOTIFYICONDATA: https://msdn.microsoft.com/en-us/library/bb773352%28v=vs.85%29.aspx
+// Shell_NotifyIcon: https://msdn.microsoft.com/en-us/library/bb762159%28VS.85%29.aspx
+
+static NOTIFYICONDATA g_notifyIconData = { 0 };
+static HICON g_notifyIconStopped = NULL;
+static HICON g_notifyIconConnected = NULL;
+
+// InitSystrayIcon initializes the systray icon/notification. Gets called by 
+// UpdateSystrayState and should not be called directly.
+static bool InitSystrayIcon() {
+    static bool s_notifyIconInitialized = false;
+    if (s_notifyIconInitialized)
+    {
+        return true;
+    }
+
+    g_notifyIconStopped = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_SYSTRAY_STOPPED));
+    g_notifyIconConnected = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_SYSTRAY_CONNECTED));
+
+    g_notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
+    g_notifyIconData.hWnd = g_hWnd;
+    g_notifyIconData.uID = 1;  // Used to identify multiple icons. We only use one.
+    g_notifyIconData.uCallbackMessage = WM_PSIPHON_TRAY_ICON_NOTIFY;
+    g_notifyIconData.uTimeout = 30000;  // 30s is the max time the balloon can show
+
+    g_notifyIconData.hIcon = g_notifyIconStopped;  // Begin with the stopped icon.
+
+    _tcsncpy_s(
+        g_notifyIconData.szTip,
+        sizeof(g_notifyIconData.szTip) / sizeof(TCHAR),
+        g_szTitle,
+        _TRUNCATE);
+
+    g_notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+
+    /* TODO: Decide if we want an info balloon. Don't forget i18n. (Maybe get strings from webview?)
+    _tcscpy(g_notifyIconData.szInfoTitle, _T("My Icon Info Title"));
+    _tcscpy(g_notifyIconData.szInfo, _T("My Icon Info Body"));
+    const DWORD NIIF_LARGE_ICON = 0x00000020;
+    g_notifyIconData.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
+    g_notifyIconData.uFlags |= NIF_INFO;
+    */
+
+    BOOL bSuccess = Shell_NotifyIcon(NIM_ADD, &g_notifyIconData);
+    if (bSuccess)
+    {
+        g_notifyIconData.uVersion = NOTIFYICON_VERSION;
+        (void)Shell_NotifyIcon(NIM_SETVERSION, &g_notifyIconData);
+    }
+
+    s_notifyIconInitialized = !!bSuccess;
+    return s_notifyIconInitialized;
+}
+
+// UpdateSystrayState must be called every time the application connected state
+// changes.
+static void UpdateSystrayState()
+{
+    if (!InitSystrayIcon())
+    {
+        return;
+    }
+
+    if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED)
+    {
+        g_notifyIconData.hIcon = g_notifyIconConnected;
+    }
+    else
+    {
+        g_notifyIconData.hIcon = g_notifyIconStopped;
+    }
+
+    (void)Shell_NotifyIcon(NIM_MODIFY, &g_notifyIconData);
+}
+
+// SystrayCleanup must be called when the application is exiting.
+static void SystrayCleanup()
+{
+    (void)Shell_NotifyIcon(NIM_DELETE, &g_notifyIconData);
+}
+
+
 //==== HTML UI helpers ========================================================
 
 // Many of these helpers (particularly the ones that don't need an immediate
@@ -383,6 +468,8 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
 void UI_SetStateStopped()
 {
+    UpdateSystrayState();
+
     Json::Value json;
     json["state"] = "stopped";
     Json::FastWriter jsonWriter;
@@ -392,6 +479,8 @@ void UI_SetStateStopped()
 
 void UI_SetStateStopping()
 {
+    UpdateSystrayState();
+
     Json::Value json;
     json["state"] = "stopping";
     Json::FastWriter jsonWriter;
@@ -401,6 +490,8 @@ void UI_SetStateStopping()
 
 void UI_SetStateStarting(const tstring& transportProtocolName)
 {
+    UpdateSystrayState();
+
     Json::Value json;
     json["state"] = "starting";
     json["transport"] = WStringToUTF8(transportProtocolName.c_str());
@@ -411,6 +502,8 @@ void UI_SetStateStarting(const tstring& transportProtocolName)
 
 void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort)
 {
+    UpdateSystrayState();
+
     Json::Value json;
     json["state"] = "connected";
     json["transport"] = WStringToUTF8(transportProtocolName.c_str());
@@ -484,12 +577,16 @@ int APIENTRY _tWinMain(
             // arrives after the control is destroyed and will cause an app
             // crash if we let it through.
             if (msg.message == (WM_APP + 2) && g_htmlUiFinished)
+            {
                 continue;
+            }
 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
     }
+
+    SystrayCleanup();
 
     mcHtml_Terminate();
     mc_StaticLibTerminate();
@@ -587,6 +684,12 @@ static void RestoreWindowPlacement()
         }
 
         wp.showCmd = json.get("showCmd", SW_SHOWNORMAL).asUInt();
+        // Don't allow restoring minimized
+        if (wp.showCmd == SW_SHOWMINIMIZED)
+        {
+            wp.showCmd = SW_SHOWNORMAL;
+        }
+
         wp.rcNormalPosition.top = (LONG)json.get("rcNormalPosition.top", 0).asLargestInt();
         wp.rcNormalPosition.bottom = (LONG)json.get("rcNormalPosition.bottom", WINDOW_Y_START).asLargestInt();
         wp.rcNormalPosition.left = (LONG)json.get("rcNormalPosition.left", 0).asLargestInt();
@@ -728,6 +831,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_NOTIFY:
         return HandleNotify(hWnd, (NMHDR*)lParam);
+        break;
+
+    case WM_PSIPHON_TRAY_ICON_NOTIFY:
+        // Restore/foreground the app on any kind of click
+        if (lParam == WM_LBUTTONUP || 
+            lParam == WM_LBUTTONDBLCLK ||
+            lParam == WM_RBUTTONUP ||
+            lParam == WM_RBUTTONDBLCLK)
+        {
+            WINDOWPLACEMENT wp = { 0 };
+            wp.length = sizeof(WINDOWPLACEMENT);
+            if (GetWindowPlacement(g_hWnd, &wp) &&
+                wp.showCmd == SW_SHOWMINIMIZED)
+            {
+                ShowWindow(g_hWnd, SW_RESTORE);
+            }
+
+            ShowWindow(g_hWnd, SW_SHOW);
+            SetForegroundWindow(g_hWnd);
+        }
         break;
 
     case WM_PSIPHON_MY_PRINT:
