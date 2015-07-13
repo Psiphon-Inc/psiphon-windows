@@ -331,6 +331,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="psiclient.ico" />
+    <Image Include="systray-stopped.ico" />
     <Image Include="webui\flag_unknown_16.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -339,7 +339,7 @@ static void UpdateSystrayConnectedState()
     }
     else if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING)
     {
-        hIcon = g_notifyIconConnected;
+        hIcon = g_notifyIconStopped;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_BODY, infoBody);
     }
@@ -357,6 +357,10 @@ static void UpdateSystrayConnectedState()
     }
 
     UpdateSystrayIcon(hIcon, infoTitle, infoBody);
+
+    // Set app icon to match
+    PostMessage(g_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+    PostMessage(g_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 }
 
 

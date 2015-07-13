@@ -545,5 +545,6 @@
     <Image Include="webui\flag_unknown_16.png">
       <Filter>UI</Filter>
     </Image>
+    <Image Include="systray-stopped.ico" />
   </ItemGroup>
 </Project>
