@@ -1171,6 +1171,25 @@ function switchLocale(locale, initial) {
       $(this).toggleClass(rtlClasses, rtl);
     }
   });
+
+  //
+  // Update C code string table with new language values
+  //
+
+  // Iterate through the English keys, since we know it will be complete.
+  var translation = window.PSIPHON.LOCALES.en.translation;
+  var appBackendStringTable = {};
+  for (var key in translation) {
+    if (!translation.hasOwnProperty(key)) {
+      continue;
+    }
+
+    if (key.indexOf('appbackend#') === 0) {
+      appBackendStringTable[key] = i18n.t(key);
+    }
+  }
+
+  HtmlCtrlInterface_AddStringTableItem(appBackendStringTable);
 }
 
 function populateLocales() {
@@ -1398,8 +1417,12 @@ $(function() {
     return;
   }
 
-  // Make the connect button "work"
+  // Make the connect button "work" in browser mode
   $('#connect-toggle a').click(function(e) {
+    if (!IS_BROWSER) {
+      return;
+    }
+
     e.preventDefault();
     var buttonConnectState = $(this).parents('.connect-toggle-content').data('connect-state');
     if (buttonConnectState === 'stopped') {
@@ -1484,16 +1507,16 @@ var PSIPHON_LINK_PREFIX = 'psi:';
 
 // Add new status message.
 function HtmlCtrlInterface_AddMessage(jsonArgs) {
-  setTimeout(function() {
+  nextTick(function() {
     // Allow object as input to assist with debugging
     var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
     addLogMessage(args);
-  }, 1);
+  });
 }
 
 // Add new notice. This may be interpreted and acted upon.
 function HtmlCtrlInterface_AddNotice(jsonArgs) {
-  setTimeout(function() {
+  nextTick(function() {
     // Allow object as input to assist with debugging
     var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
     if (args.noticeType === 'UpstreamProxyError') {
@@ -1509,7 +1532,7 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
       // Update the UI.
       updateAvailableEgressRegions(true);
     }
-  }, 1);
+  });
 }
 
 // Set the connected state.
@@ -1534,17 +1557,17 @@ function HtmlCtrlInterface_SetState(jsonArgs) {
 
 // Refresh the current settings values.
 function HtmlCtrlInterface_RefreshSettings(jsonArgs) {
-  setTimeout(function() {
+  nextTick(function() {
     var args = JSON.parse(jsonArgs);
     refreshSettings(args);
-  }, 1);
+  });
 }
 
 /* Calls from JS code to C code. */
 
 // Let the C code know that the UI is ready.
 function HtmlCtrlInterface_AppReady() {
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'ready';
     if (IS_BROWSER) {
       console.log(appURL);
@@ -1552,7 +1575,37 @@ function HtmlCtrlInterface_AppReady() {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
+}
+
+// Give the C code a string table entry in the appropriate language.
+// The `stringtable` can and should be a full set of key:string mappings, but
+// the strings will be sent to the C code one at a time, to prevent URL size
+// overflow.
+function HtmlCtrlInterface_AddStringTableItem(stringtable) {
+  for (var key in stringtable) {
+    if (!stringtable.hasOwnProperty(key)) {
+      continue;
+    }
+
+    var item = {
+      key: key,
+      string: stringtable[key]
+    };
+    sendStringTableItem(item);
+  }
+
+  function sendStringTableItem(itemObj) {
+    nextTick(function() {
+      var appURL = PSIPHON_LINK_PREFIX + 'stringtable?' + encodeURIComponent(JSON.stringify(itemObj));
+      if (IS_BROWSER) {
+        console.log(decodeURIComponent(appURL));
+      }
+      else {
+        window.location = appURL;
+      }
+    });
+  }
 }
 
 // Connection should start.
@@ -1561,7 +1614,7 @@ function HtmlCtrlInterface_Start() {
   if (g_lastState === 'starting' || g_lastState === 'connected') {
     return;
   }
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'start';
     if (IS_BROWSER) {
       console.log(appURL);
@@ -1569,7 +1622,7 @@ function HtmlCtrlInterface_Start() {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
 }
 
 // Connection should stop.
@@ -1578,7 +1631,7 @@ function HtmlCtrlInterface_Stop() {
   if (g_lastState === 'stopping' || g_lastState === 'disconnected') {
     return;
   }
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'stop';
     if (IS_BROWSER) {
       console.log(appURL);
@@ -1586,12 +1639,12 @@ function HtmlCtrlInterface_Stop() {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
 }
 
 // Settings should be saved.
 function HtmlCtrlInterface_SaveSettings(settingsJSON) {
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'savesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
@@ -1600,12 +1653,12 @@ function HtmlCtrlInterface_SaveSettings(settingsJSON) {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
 }
 
 // Feedback should be sent.
 function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'sendfeedback?' + encodeURIComponent(feedbackJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
@@ -1613,12 +1666,12 @@ function HtmlCtrlInterface_SendFeedback(feedbackJSON) {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
 }
 
 // Cookies (i.e., UI settings) should be saved.
 function HtmlCtrlInterface_SetCookies(cookiesJSON) {
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'setcookies?' + encodeURIComponent(cookiesJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
@@ -1626,12 +1679,12 @@ function HtmlCtrlInterface_SetCookies(cookiesJSON) {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
 }
 
 // Banner was clicked.
 function HtmlCtrlInterface_BannerClick() {
-  setTimeout(function() {
+  nextTick(function() {
     var appURL = PSIPHON_LINK_PREFIX + 'bannerclick';
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
@@ -1640,7 +1693,7 @@ function HtmlCtrlInterface_BannerClick() {
     else {
       window.location = appURL;
     }
-  }, 1);
+  });
 }
 
 

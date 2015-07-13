@@ -314,5 +314,33 @@
   "general#modal-close-button": {
     "message": "Close",
     "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+  },
+  "appbackend#state-stopped-title": {
+    "message": "Psiphon is disconnected",
+    "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+  },
+  "appbackend#state-starting-title": {
+    "message": "Psiphon is connecting…",
+    "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+  },
+  "appbackend#state-starting-body": {
+    "message": "Please wait",
+    "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+  },
+  "appbackend#state-connected-title": {
+    "message": "Psiphon is connected",
+    "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+  },
+  "appbackend#state-connected-body": {
+    "message": "Explore beyond your borders!",
+    "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line."
+  },
+  "appbackend#minimized-to-systray-title": {
+    "message": "Psiphon has been minimized to the notification area",
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+  },
+  "appbackend#minimized-to-systray-body": {
+    "message": "Click the icon to restore the application",
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
   }
 }

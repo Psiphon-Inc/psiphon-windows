@@ -19,6 +19,34 @@
     "message": "[Ƥşīīƥħǿǿƞ]",
     "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
   },
+  "appbackend#minimized-to-systray-body": {
+    "message": "[Ƈŀīīƈķ ŧħḗḗ īīƈǿǿƞ ŧǿǿ řḗḗşŧǿǿřḗḗ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ]",
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+  },
+  "appbackend#minimized-to-systray-title": {
+    "message": "[Ƥşīīƥħǿǿƞ ħȧȧş ƀḗḗḗḗƞ ḿīīƞīīḿīīẑḗḗḓ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ]",
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+  },
+  "appbackend#state-connected-body": {
+    "message": "[Ƞǿǿẇ ɠǿǿ şŭŭřƒ ƒřḗḗḗḗŀẏ!]",
+    "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. 'Freely' should be interpreted in the 'libre' or 'free as in freedom' sense."
+  },
+  "appbackend#state-connected-title": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
+    "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+  },
+  "appbackend#state-starting-body": {
+    "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ]",
+    "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+  },
+  "appbackend#state-starting-title": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧīīƞɠ…]",
+    "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+  },
+  "appbackend#state-stopped-title": {
+    "message": "[Ƥşīīƥħǿǿƞ īīş ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ]",
+    "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+  },
   "banner#long-connecting": {
     "message": "[<strong>Ǿǿħ ƞǿǿ!</strong> Ẏǿǿŭŭ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ħȧȧṽīīƞɠ ŧřǿǿŭŭƀŀḗḗ ƈǿǿƞƞḗḗƈŧīīƞɠ!<br>\nḒǿǿẇƞŀǿǿȧȧḓ ŧħḗḗ ŀȧȧŧḗḗşŧ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƒřǿǿḿ ŧħḗḗ <a class=\"NewVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ şīīŧḗḗ</a>\nǿǿř ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ <a class=\"NewVersionEmail\" href=\"#\"></a>]",
     "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."

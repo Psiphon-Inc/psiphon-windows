@@ -107,21 +107,99 @@ void OnCreate(HWND hWndParent)
 }
 
 
+//==== String Table helpers ==================================================
+
+#define STRING_KEY_STATE_STOPPED_TITLE          "appbackend#state-stopped-title"
+#define STRING_KEY_STATE_STOPPED_BODY           "appbackend#state-stopped-body"
+#define STRING_KEY_STATE_STARTING_TITLE         "appbackend#state-starting-title"
+#define STRING_KEY_STATE_STARTING_BODY          "appbackend#state-starting-body"
+#define STRING_KEY_STATE_CONNECTED_TITLE        "appbackend#state-connected-title"
+#define STRING_KEY_STATE_CONNECTED_BODY         "appbackend#state-connected-body"
+#define STRING_KEY_STATE_STOPPING_TITLE         "appbackend#state-stopping-title"
+#define STRING_KEY_STATE_STOPPING_BODY          "appbackend#state-stopping-body"
+#define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE   "appbackend#minimized-to-systray-title"
+#define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY    "appbackend#minimized-to-systray-body"
+
+static map<string, wstring> g_stringTable;
+
+static void AddStringTableEntry(const string& entryJson)
+{
+    Json::Value json;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(entryJson, json);
+    if (!parsingSuccessful)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d: Failed to parse string table entry"), __TFUNCTION__, __LINE__);
+        return;
+    }
+
+    string key, narrowStr;
+
+    try
+    {
+        if (!json.isMember("key") ||
+            !json.isMember("string"))
+        {
+            // The stored values are invalid
+            return;
+        }
+
+        key = json.get("key", "").asString();
+        narrowStr = json.get("string", "").asString();
+        if (key.empty() || narrowStr.empty())
+        {
+            return;
+        }
+    }
+    catch (exception& e)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        return;
+    }
+
+    wstring str = UTF8ToWString(narrowStr.c_str());
+
+    g_stringTable[key] = str;
+}
+
+// Returns true if the string table entry is found, false otherwise. 
+static bool GetStringTableEntry(LPSTR key, wstring& o_entry)
+{
+    o_entry.clear();
+
+    map<string, wstring>::const_iterator iter = g_stringTable.find(key);
+    if (iter == g_stringTable.end())
+    {
+        return false;
+    }
+
+    o_entry = iter->second;
+
+    return true;
+}
+
+
 //==== Systray/Notification helpers ===========================================
 
 // General info on Notifications: https://msdn.microsoft.com/en-us/library/ee330740%28v=vs.85%29.aspx
 // NOTIFYICONDATA: https://msdn.microsoft.com/en-us/library/bb773352%28v=vs.85%29.aspx
 // Shell_NotifyIcon: https://msdn.microsoft.com/en-us/library/bb762159%28VS.85%29.aspx
 
+// Not defined on older OSes
+#ifndef NIIF_LARGE_ICON
+#define NIIF_LARGE_ICON 0x00000020
+#endif
+
 static NOTIFYICONDATA g_notifyIconData = { 0 };
 static HICON g_notifyIconStopped = NULL;
 static HICON g_notifyIconConnected = NULL;
+static bool g_notifyIconInitialized = false;
+
 
 // InitSystrayIcon initializes the systray icon/notification. Gets called by 
 // UpdateSystrayState and should not be called directly.
 static bool InitSystrayIcon() {
-    static bool s_notifyIconInitialized = false;
-    if (s_notifyIconInitialized)
+    if (g_notifyIconInitialized)
     {
         return true;
     }
@@ -137,6 +215,8 @@ static bool InitSystrayIcon() {
 
     g_notifyIconData.hIcon = g_notifyIconStopped;  // Begin with the stopped icon.
 
+    g_notifyIconData.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
+
     _tcsncpy_s(
         g_notifyIconData.szTip,
         sizeof(g_notifyIconData.szTip) / sizeof(TCHAR),
@@ -145,14 +225,6 @@ static bool InitSystrayIcon() {
 
     g_notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 
-    /* TODO: Decide if we want an info balloon. Don't forget i18n. (Maybe get strings from webview?)
-    _tcscpy(g_notifyIconData.szInfoTitle, _T("My Icon Info Title"));
-    _tcscpy(g_notifyIconData.szInfo, _T("My Icon Info Body"));
-    const DWORD NIIF_LARGE_ICON = 0x00000020;
-    g_notifyIconData.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
-    g_notifyIconData.uFlags |= NIF_INFO;
-    */
-
     BOOL bSuccess = Shell_NotifyIcon(NIM_ADD, &g_notifyIconData);
     if (bSuccess)
     {
@@ -160,35 +232,126 @@ static bool InitSystrayIcon() {
         (void)Shell_NotifyIcon(NIM_SETVERSION, &g_notifyIconData);
     }
 
-    s_notifyIconInitialized = !!bSuccess;
-    return s_notifyIconInitialized;
+    g_notifyIconInitialized = !!bSuccess;
+    return g_notifyIconInitialized;
 }
 
-// UpdateSystrayState must be called every time the application connected state
-// changes.
-static void UpdateSystrayState()
+// UpdateSystrayIcon sets the current systray icon. 
+// If infoTitle is non-empty, then it will also display a balloon.
+// If hIcon is NULL, then the icon will not be changed.
+static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody)
 {
-    if (!InitSystrayIcon())
+    if (!InitSystrayIcon() || g_htmlUiFinished)
     {
         return;
     }
 
-    if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED)
+    // The body isn't allowed to be an empty string, so set it to a space.
+    wstring infoBodyToUse = infoBody.empty() ? L" " : infoBody;
+
+    if (!infoTitle.empty())
     {
-        g_notifyIconData.hIcon = g_notifyIconConnected;
+        _tcsncpy_s(
+            g_notifyIconData.szInfoTitle,
+            sizeof(g_notifyIconData.szInfoTitle) / sizeof(TCHAR),
+            infoTitle.c_str(),
+            _TRUNCATE);
+
+        _tcsncpy_s(
+            g_notifyIconData.szInfo,
+            sizeof(g_notifyIconData.szInfo) / sizeof(TCHAR),
+            infoBody.c_str(),
+            _TRUNCATE);
+
+        g_notifyIconData.uFlags |= NIF_INFO;
     }
     else
     {
-        g_notifyIconData.hIcon = g_notifyIconStopped;
+        // We don't have the info text (yet)
+        g_notifyIconData.uFlags &= ~NIF_INFO;
+    }
+
+    if (hIcon != NULL)
+    {
+        g_notifyIconData.hIcon = hIcon;
     }
 
     (void)Shell_NotifyIcon(NIM_MODIFY, &g_notifyIconData);
 }
 
-// SystrayCleanup must be called when the application is exiting.
-static void SystrayCleanup()
+// SystrayIconCleanup must be called when the application is exiting.
+static void SystrayIconCleanup()
 {
     (void)Shell_NotifyIcon(NIM_DELETE, &g_notifyIconData);
+    g_notifyIconInitialized = false;
+}
+
+// If we start using more timers, we should move the IDs to a single location 
+// where they can be kept track of.
+#define TIMER_ID_HIDE   100
+
+static VOID CALLBACK HandleMinimizeHelper(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+    KillTimer(g_hWnd, TIMER_ID_HIDE);
+    
+    if (g_notifyIconInitialized)
+    {
+        ShowWindow(g_hWnd, SW_HIDE);
+
+        // Show a balloon letting the user know where the app went
+        wstring infoTitle, infoBody;
+        (void)GetStringTableEntry(STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE, infoTitle);
+        (void)GetStringTableEntry(STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY, infoBody);
+
+        UpdateSystrayIcon(NULL, infoTitle, infoBody);
+    }
+}
+
+static void HandleMinimize()
+{
+    // The time on this is a rough guess at how long the minimize animation will take.
+    SetTimer(g_hWnd, TIMER_ID_HIDE, 300, HandleMinimizeHelper);
+}
+
+// UpdateSystrayConnectedState must be called every time the application connected state
+// changes.
+static void UpdateSystrayConnectedState()
+{
+    if (g_htmlUiFinished)
+    {
+        return;
+    }
+
+    wstring infoTitle, infoBody;
+    bool infoTitleFound = false, infoBodyFound = false;
+    HICON hIcon = NULL;
+
+    if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED)
+    {
+        hIcon = g_notifyIconConnected;
+        infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_CONNECTED_TITLE, infoTitle);
+        infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_CONNECTED_BODY, infoBody);
+    }
+    else if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING)
+    {
+        hIcon = g_notifyIconConnected;
+        infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_TITLE, infoTitle);
+        infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_BODY, infoBody);
+    }
+    else if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STOPPING)
+    {
+        hIcon = g_notifyIconStopped;
+        infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STOPPING_TITLE, infoTitle);
+        infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STOPPING_BODY, infoBody);
+    }
+    else  // CONNECTION_MANAGER_STATE_STOPPED
+    {
+        hIcon = g_notifyIconStopped;
+        infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STOPPED_TITLE, infoTitle);
+        infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STOPPED_BODY, infoBody);
+    }
+
+    UpdateSystrayIcon(hIcon, infoTitle, infoBody);
 }
 
 
@@ -358,6 +521,8 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     // NOTE: Incoming query parameters will be URI-encoded
 
     const LPCTSTR appReady = PSIPHON_LINK_PREFIX _T("ready");
+    const LPCTSTR appStringTable = PSIPHON_LINK_PREFIX _T("stringtable?");
+    const size_t appStringTableLen = _tcslen(appStringTable);
     const LPCTSTR appStart = PSIPHON_LINK_PREFIX _T("start");
     const LPCTSTR appStop = PSIPHON_LINK_PREFIX _T("stop");
     const LPCTSTR appSaveSettings = PSIPHON_LINK_PREFIX _T("savesettings?");
@@ -373,6 +538,21 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         my_print(NOT_SENSITIVE, true, _T("%s: Ready requested"), __TFUNCTION__);
         g_htmlUiReady = true;
         PostMessage(g_hWnd, WM_PSIPHON_CREATED, 0, 0);
+    }
+    else if (_tcsncmp(url, appStringTable, appStringTableLen) == 0
+        && _tcslen(url) > appStringTableLen)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: String table addition requested"), __TFUNCTION__);
+
+        tstring urlDecoded = UrlDecode(url);
+        if (urlDecoded.length() < appStringTableLen + 1)
+        {
+            return;
+        }
+
+        string stringJSON(TStringToNarrow(urlDecoded).c_str() + appStringTableLen);
+
+        AddStringTableEntry(stringJSON);
     }
     else if (_tcscmp(url, appStart) == 0)
     {
@@ -468,7 +648,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
 void UI_SetStateStopped()
 {
-    UpdateSystrayState();
+    UpdateSystrayConnectedState();
 
     Json::Value json;
     json["state"] = "stopped";
@@ -479,7 +659,7 @@ void UI_SetStateStopped()
 
 void UI_SetStateStopping()
 {
-    UpdateSystrayState();
+    UpdateSystrayConnectedState();
 
     Json::Value json;
     json["state"] = "stopping";
@@ -490,7 +670,7 @@ void UI_SetStateStopping()
 
 void UI_SetStateStarting(const tstring& transportProtocolName)
 {
-    UpdateSystrayState();
+    UpdateSystrayConnectedState();
 
     Json::Value json;
     json["state"] = "starting";
@@ -502,7 +682,7 @@ void UI_SetStateStarting(const tstring& transportProtocolName)
 
 void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort)
 {
-    UpdateSystrayState();
+    UpdateSystrayConnectedState();
 
     Json::Value json;
     json["state"] = "connected";
@@ -586,7 +766,7 @@ int APIENTRY _tWinMain(
         }
     }
 
-    SystrayCleanup();
+    SystrayIconCleanup();
 
     mcHtml_Terminate();
     mc_StaticLibTerminate();
@@ -669,6 +849,7 @@ static void RestoreWindowPlacement()
     if (!parsingSuccessful)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to parse previous window placement"));
+        return;
     }
 
     try
@@ -747,8 +928,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         HWND otherWindow = FindWindow(g_szWindowClass, g_szTitle);
         if (otherWindow)
         {
-            SetForegroundWindow(otherWindow);
+            // Un-minimize if necessary
+            WINDOWPLACEMENT wp = { 0 };
+            wp.length = sizeof(WINDOWPLACEMENT);
+            if (GetWindowPlacement(otherWindow, &wp) &&
+                wp.showCmd == SW_SHOWMINIMIZED || wp.showCmd == SW_HIDE)
+            {
+                ShowWindow(otherWindow, SW_RESTORE);
+            }
+
             ShowWindow(otherWindow, SW_SHOW);
+            SetForegroundWindow(otherWindow);
         }
         return FALSE;
     }
@@ -825,25 +1015,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
 
+    case WM_SYSCOMMAND:
+        if ((wParam & 0xFFF0) == SC_MINIMIZE)
+        {
+            HandleMinimize();
+        }
+        return DefWindowProc(hWnd, message, wParam, lParam);
+
     case WM_SETFOCUS:
         SetFocus(g_hHtmlCtrl);
         break;
 
     case WM_NOTIFY:
         return HandleNotify(hWnd, (NMHDR*)lParam);
-        break;
 
     case WM_PSIPHON_TRAY_ICON_NOTIFY:
         // Restore/foreground the app on any kind of click
         if (lParam == WM_LBUTTONUP || 
             lParam == WM_LBUTTONDBLCLK ||
             lParam == WM_RBUTTONUP ||
-            lParam == WM_RBUTTONDBLCLK)
+            lParam == WM_RBUTTONDBLCLK ||
+            lParam == NIN_BALLOONUSERCLICK)
         {
             WINDOWPLACEMENT wp = { 0 };
             wp.length = sizeof(WINDOWPLACEMENT);
             if (GetWindowPlacement(g_hWnd, &wp) &&
-                wp.showCmd == SW_SHOWMINIMIZED)
+                wp.showCmd == SW_SHOWMINIMIZED || wp.showCmd == SW_HIDE)
             {
                 ShowWindow(g_hWnd, SW_RESTORE);
             }
