@@ -68,6 +68,9 @@
 #define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
 
+#define SYSTRAY_MINIMIZE_NAME           "SystrayMinimize"
+#define SYSTRAY_MINIMIZE_DEFAULT        FALSE
+
 #define COOKIES_NAME                    "UICookies"
 #define COOKIES_DEFAULT                 ""
 
@@ -156,6 +159,7 @@ void Settings::ToJson(Json::Value& o_json)
     o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
     o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
     o_json["EgressRegion"] = Settings::EgressRegion();
+    o_json["SystrayMinimize"] = Settings::SystrayMinimize();
     o_json["defaults"] = Json::Value();
     o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
     o_json["defaults"]["VPN"] = FALSE;
@@ -188,46 +192,50 @@ bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
 
         RegistryFailureReason failReason;
 
-        BOOL splitTunnel = json.get("SplitTunnel", 0).asUInt();
+        BOOL splitTunnel = json.get("SplitTunnel", SPLIT_TUNNEL_DEFAULT).asUInt();
         o_settingsChanged = o_settingsChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
-        wstring transport = json.get("VPN", 0).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
+        wstring transport = json.get("VPN", TRANSPORT_DEFAULT).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
         o_settingsChanged = o_settingsChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
             TRANSPORT_NAME,
             transport,
             failReason);
 
-        DWORD httpPort = json.get("LocalHttpProxyPort", 0).asUInt();
+        DWORD httpPort = json.get("LocalHttpProxyPort", HTTP_PROXY_PORT_DEFAULT).asUInt();
         o_settingsChanged = o_settingsChanged || httpPort != Settings::LocalHttpProxyPort();
         WriteRegistryDwordValue(HTTP_PROXY_PORT_NAME, httpPort);
 
-        DWORD socksPort = json.get("LocalSocksProxyPort", 0).asUInt();
+        DWORD socksPort = json.get("LocalSocksProxyPort", SOCKS_PROXY_PORT_DEFAULT).asUInt();
         o_settingsChanged = o_settingsChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
-        string upstreamProxyHostname = json.get("UpstreamProxyHostname", "").asString();
+        string upstreamProxyHostname = json.get("UpstreamProxyHostname", UPSTREAM_PROXY_HOSTNAME_DEFAULT).asString();
         o_settingsChanged = o_settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
             upstreamProxyHostname,
             failReason);
 
-        DWORD upstreamProxyPort = json.get("UpstreamProxyPort", 0).asUInt();
+        DWORD upstreamProxyPort = json.get("UpstreamProxyPort", UPSTREAM_PROXY_PORT_DEFAULT).asUInt();
         o_settingsChanged = o_settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
 
-        BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", 0).asUInt();
+        BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", SKIP_UPSTREAM_PROXY_DEFAULT).asUInt();
         o_settingsChanged = o_settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
         WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
 
-        string egressRegion = json.get("EgressRegion", "").asString();
+        string egressRegion = json.get("EgressRegion", EGRESS_REGION_DEFAULT).asString();
         o_settingsChanged = o_settingsChanged || egressRegion != Settings::EgressRegion();
         WriteRegistryStringValue(
             EGRESS_REGION_NAME,
             egressRegion,
             failReason);
+
+        BOOL systrayMinimize = json.get("SystrayMinimize", SYSTRAY_MINIMIZE_DEFAULT).asUInt();
+        o_settingsChanged = o_settingsChanged || !!systrayMinimize != Settings::SystrayMinimize();
+        WriteRegistryDwordValue(SYSTRAY_MINIMIZE_NAME, systrayMinimize);
     }
     catch (exception& e)
     {
@@ -329,6 +337,11 @@ bool Settings::SkipUpstreamProxy()
 string Settings::EgressRegion()
 {
     return GetSettingString(EGRESS_REGION_NAME, EGRESS_REGION_DEFAULT);
+}
+
+bool Settings::SystrayMinimize()
+{
+    return !!GetSettingDword(SYSTRAY_MINIMIZE_NAME, SYSTRAY_MINIMIZE_DEFAULT);
 }
 
 /*

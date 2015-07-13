@@ -46,6 +46,8 @@ namespace Settings
 
     string EgressRegion();
 
+    bool SystrayMinimize();
+
     bool SkipBrowser();
     bool SkipProxySettings();
     bool SkipAutoConnect();

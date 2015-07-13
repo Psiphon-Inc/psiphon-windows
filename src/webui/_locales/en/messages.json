@@ -223,6 +223,18 @@
     "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
     "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
   },
+  "settings#systray-minimize#heading": {
+    "message": "Minimize to Notification Area (System Tray)",
+    "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
+  },
+  "settings#systray-minimize#help-text": {
+    "message": "If enabled, when minimized the Psiphon application window will hide in the notification area (also known as the “system tray” or “systray”, located near the clock on your Windows task bar).",
+    "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
+  },
+  "settings#systray-minimize#enable-label": {
+    "message": "Minimize to the notification area (system tray)",
+    "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
+  },
   "settings#applying-message": {
     "message": "Reconnecting to apply your settings.",
     "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
@@ -320,11 +332,11 @@
     "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
   },
   "appbackend#state-starting-title": {
-    "message": "Psiphon is connecting…",
+    "message": "Psiphon is connecting",
     "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
   },
   "appbackend#state-starting-body": {
-    "message": "Please wait",
+    "message": "Please wait…",
     "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
   },
   "appbackend#state-connected-title": {
@@ -337,10 +349,10 @@
   },
   "appbackend#minimized-to-systray-title": {
     "message": "Psiphon has been minimized to the notification area",
-    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
   },
   "appbackend#minimized-to-systray-body": {
     "message": "Click the icon to restore the application",
-    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
   }
 }

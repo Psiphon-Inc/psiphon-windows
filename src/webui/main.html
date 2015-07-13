@@ -309,6 +309,40 @@
 
             <div class="accordion-group">
               <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-systray-minimize"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <span data-i18n="settings#systray-minimize#heading">
+                    Minimize to Notification Area (System Tray)
+                  </span>
+                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
+                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                </a>
+              </div>
+              <div id="settings-accordion-systray-minimize" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form>
+                    <fieldset>
+                      <p data-i18n="settings#systray-minimize#help-text">
+                        If enabled, when minimized the Psiphon application window will hide
+                        in the notification area (also known as the "system tray" or "systray",
+                        located near the clock on your Windows task bar).
+                      </p>
+                      <div class="controls checkbox checkbox-primary">
+                        <input type="checkbox" id="SystrayMinimize"/>
+                        <label for="SystrayMinimize">
+                          <span data-i18n="settings#systray-minimize#enable-label">
+                            Minimize to the notification area (system tray)
+                          </span>
+                        </label>
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-split-tunnel"
                    data-toggle="collapse" data-parent="#settings-accordion">
                   <span data-i18n="settings#split-tunnel#heading">

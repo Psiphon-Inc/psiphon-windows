@@ -309,6 +309,11 @@ static VOID CALLBACK HandleMinimizeHelper(HWND hwnd, UINT uMsg, UINT_PTR idEvent
 
 static void HandleMinimize()
 {
+    if (!Settings::SystrayMinimize())
+    {
+        return;
+    }
+
     // The time on this is a rough guess at how long the minimize animation will take.
     SetTimer(g_hWnd, TIMER_ID_HIDE, 300, HandleMinimizeHelper);
 }

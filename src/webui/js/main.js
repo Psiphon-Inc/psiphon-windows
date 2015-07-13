@@ -395,6 +395,7 @@ $(function settingsInit() {
       UpstreamProxyHostname: 'upstreamhost',
       UpstreamProxyPort: 234,
       EgressRegion: 'GB',
+      SystrayMinimize: 0,
       defaults: {
         SplitTunnel: 0,
         VPN: 0,
@@ -403,7 +404,8 @@ $(function settingsInit() {
         SkipUpstreamProxy: 0,
         UpstreamProxyHostname: '',
         UpstreamProxyPort: '',
-        EgressRegion: ''
+        EgressRegion: '',
+        SystrayMinimize: 0
       }
     };
   }
@@ -475,7 +477,7 @@ function applySettings() {
     return false;
   }
   else if (settingsJSON !== g_initialSettingsJSON) {
-    // Settings have changed -- update them in the application (and trigger a reconnect).
+    // Settings have changed -- update them in the application (and trigger a reconnect, if necessary).
     HtmlCtrlInterface_SaveSettings(settingsJSON);
 
     if (g_lastState === 'starting' || g_lastState === 'connected') {
@@ -549,6 +551,10 @@ function fillSettingsValues(obj) {
       'click',
       { ignoreDisabled: true });
   }
+
+  if (typeof(obj.SystrayMinimize) !== 'undefined') {
+    $('#SystrayMinimize').prop('checked', !!obj.SystrayMinimize);
+  }
 }
 
 // Handler for the Reset Settings button
@@ -579,7 +585,8 @@ function settingsToJSON() {
     UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
     UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
     SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
-    EgressRegion: egressRegion === BEST_REGION_VALUE ? '' : egressRegion
+    EgressRegion: egressRegion === BEST_REGION_VALUE ? '' : egressRegion,
+    SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0
   };
 
   return JSON.stringify(returnValue);

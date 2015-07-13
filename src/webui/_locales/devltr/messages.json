@@ -21,26 +21,26 @@
   },
   "appbackend#minimized-to-systray-body": {
     "message": "[Ƈŀīīƈķ ŧħḗḗ īīƈǿǿƞ ŧǿǿ řḗḗşŧǿǿřḗḗ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ]",
-    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
   },
   "appbackend#minimized-to-systray-title": {
     "message": "[Ƥşīīƥħǿǿƞ ħȧȧş ƀḗḗḗḗƞ ḿīīƞīīḿīīẑḗḗḓ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ]",
-    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (the area of the taskbar with the clock, battery indicator, and other icons -- often called the 'systray')."
+    "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
   },
   "appbackend#state-connected-body": {
-    "message": "[Ƞǿǿẇ ɠǿǿ şŭŭřƒ ƒřḗḗḗḗŀẏ!]",
-    "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. 'Freely' should be interpreted in the 'libre' or 'free as in freedom' sense."
+    "message": "[Ḗḗẋƥŀǿǿřḗḗ ƀḗḗẏǿǿƞḓ ẏǿǿŭŭř ƀǿǿřḓḗḗřş!]",
+    "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line."
   },
   "appbackend#state-connected-title": {
     "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ]",
     "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
   },
   "appbackend#state-starting-body": {
-    "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ]",
+    "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ…]",
     "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
   },
   "appbackend#state-starting-title": {
-    "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧīīƞɠ…]",
+    "message": "[Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧīīƞɠ]",
     "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
   },
   "appbackend#state-stopped-title": {
@@ -282,6 +282,18 @@
   "settings#split-tunnel#help-text": {
     "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, řḗḗɋŭŭḗḗşŧş ḿȧȧḓḗḗ ŧǿǿ şḗḗřṽḗḗřş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŧŭŭƞƞḗḗŀḗḗḓ ŧħřǿǿŭŭɠħ Ƥşīīƥħǿǿƞ.]",
     "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+  },
+  "settings#systray-minimize#enable-label": {
+    "message": "[Ḿīīƞīīḿīīẑḗḗ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (şẏşŧḗḗḿ ŧřȧȧẏ)]",
+    "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
+  },
+  "settings#systray-minimize#heading": {
+    "message": "[Ḿīīƞīīḿīīẑḗḗ ŧǿǿ Ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ Ȧȧřḗḗȧȧ (Şẏşŧḗḗḿ Ŧřȧȧẏ)]",
+    "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
+  },
+  "settings#systray-minimize#help-text": {
+    "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ẇħḗḗƞ ḿīīƞīīḿīīẑḗḗḓ ŧħḗḗ Ƥşīīƥħǿǿƞ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ẇīīƞḓǿǿẇ ẇīīŀŀ ħīīḓḗḗ īīƞ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (ȧȧŀşǿǿ ķƞǿǿẇƞ ȧȧş ŧħḗḗ “şẏşŧḗḗḿ ŧřȧȧẏ” ǿǿř “şẏşŧřȧȧẏ”, ŀǿǿƈȧȧŧḗḗḓ ƞḗḗȧȧř ŧħḗḗ ƈŀǿǿƈķ ǿǿƞ ẏǿǿŭŭř Ẇīīƞḓǿǿẇş ŧȧȧşķ ƀȧȧř).]",
+    "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
   },
   "settings#transport-mode#check-label": {
     "message": "[Ŭŭşḗḗ ṼƤȠ Ḿǿǿḓḗḗ]",
