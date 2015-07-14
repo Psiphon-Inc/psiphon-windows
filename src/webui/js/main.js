@@ -73,6 +73,10 @@ $(function() {
   // Set the logo "info" link
   $('.logo a').attr('href', g_initObj.Config.InfoURL).attr('title', g_initObj.Config.InfoURL);
 
+  // Update the logo when the connected state changes
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, updateLogoConnectState);
+
+
   // The banner image filename is parameterized.
   $('.banner img').attr('src', g_initObj.Config.Banner);
   // Let the C-code decide what should be opened when the banner is clicked.
@@ -125,6 +129,7 @@ $(function() {
   setTimeout(HtmlCtrlInterface_AppReady, 100);
 });
 
+
 function resizeContent() {
   // We want the content part of our window to fill the window, we don't want
   // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
@@ -145,6 +150,7 @@ function resizeContent() {
               .css(!g_isRTL ? 'margin-right' : 'margin-left', 0);
 }
 
+
 // Ensures that elements that should not be scrolled are not scrolled.
 // This should only be called once.
 function initScrollFix() {
@@ -154,6 +160,24 @@ function initScrollFix() {
     $('body').scrollTop(0);
   });
 }
+
+
+// Update the main connect button, as well as the connection indicator on the tab.
+function updateLogoConnectState() {
+  var newSrc, stoppedSrc, connectedSrc;
+  stoppedSrc = $('.logo img').data('stopped-src');
+  connectedSrc = $('.logo img').data('connected-src');
+
+  if (g_lastState === 'connected') {
+    newSrc = connectedSrc;
+  }
+  else {
+    newSrc = stoppedSrc;
+  }
+
+  $('.logo img').prop('src', newSrc);
+}
+
 
 /* CONNECTION ****************************************************************/
 
