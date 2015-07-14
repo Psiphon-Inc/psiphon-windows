@@ -59,6 +59,12 @@ static bool g_htmlUiReady = false;
 // which leads to a crash on exit.
 static bool g_htmlUiFinished = false;
 
+// Timer IDs
+// Note: Trying to use SetTimer/KillTimer without an explicit ID led to inconsistent behaviour.
+#define TIMER_ID_SYSTRAY_MINIMIZE       100
+#define TIMER_ID_SYSTRAY_STATE_UPDATE   101
+
+
 //==== Controls ================================================================
 
 static void OnResize(HWND hWnd, UINT uWidth, UINT uHeight)
@@ -286,13 +292,15 @@ static void SystrayIconCleanup()
     g_notifyIconInitialized = false;
 }
 
-// If we start using more timers, we should move the IDs to a single location 
-// where they can be kept track of.
-#define TIMER_ID_HIDE   100
 
-static VOID CALLBACK HandleMinimizeHelper(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+static INT_PTR g_handleMinimizeTimerID = 0;
+
+static VOID CALLBACK HandleMinimizeHelper(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
 {
-    KillTimer(g_hWnd, TIMER_ID_HIDE);
+    assert(idEvent == g_handleMinimizeTimerID);
+
+    ::KillTimer(hWnd, idEvent);
+    g_handleMinimizeTimerID = 0;
     
     if (g_notifyIconInitialized)
     {
@@ -315,35 +323,63 @@ static void HandleMinimize()
     }
 
     // The time on this is a rough guess at how long the minimize animation will take.
-    SetTimer(g_hWnd, TIMER_ID_HIDE, 300, HandleMinimizeHelper);
+    if (g_handleMinimizeTimerID == 0)
+    {
+        g_handleMinimizeTimerID = ::SetTimer(
+            g_hWnd, 
+            TIMER_ID_SYSTRAY_MINIMIZE, 
+            300, 
+            HandleMinimizeHelper);
+    }
 }
 
-// UpdateSystrayConnectedState must be called every time the application connected state
-// changes.
-static void UpdateSystrayConnectedState()
+
+/*
+The systray state updating is a bit complicated. We want to avoid this: 
+  When Psiphon quickly disconnects and reconnects, we don't want to spam the 
+  systray balloon text.
+What we want is:
+  When a disconnect occurs, we wait a bit before changing the systray state.
+  When that wait expires, if the state has gone back to connected, we don't 
+  show anything. If it has changed, we show the change.
+  (Unless the application window is foreground, because otherwise the UI and systray
+  state mismatch will be weird.)  
+*/
+
+static ConnectionManagerState g_UpdateSystrayConnectedState_LastState = (ConnectionManagerState)0xFFFFFFFF;
+
+static void UpdateSystrayConnectedStateHelper()
 {
     if (g_htmlUiFinished)
     {
         return;
     }
 
+    ConnectionManagerState currentState = g_connectionManager.GetState();
+
+    if (currentState == g_UpdateSystrayConnectedState_LastState)
+    {
+        return;
+    }
+    g_UpdateSystrayConnectedState_LastState = currentState;
+
     wstring infoTitle, infoBody;
     bool infoTitleFound = false, infoBodyFound = false;
     HICON hIcon = NULL;
 
-    if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED)
+    if (currentState == CONNECTION_MANAGER_STATE_CONNECTED)
     {
         hIcon = g_notifyIconConnected;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_CONNECTED_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_CONNECTED_BODY, infoBody);
     }
-    else if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING)
+    else if (currentState == CONNECTION_MANAGER_STATE_STARTING)
     {
         hIcon = g_notifyIconStopped;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_BODY, infoBody);
     }
-    else if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STOPPING)
+    else if (currentState == CONNECTION_MANAGER_STATE_STOPPING)
     {
         hIcon = g_notifyIconStopped;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STOPPING_TITLE, infoTitle);
@@ -361,6 +397,39 @@ static void UpdateSystrayConnectedState()
     // Set app icon to match
     PostMessage(g_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
     PostMessage(g_hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+}
+
+static UINT_PTR g_updateSystrayConnectedStateTimerID = 0;
+
+static VOID CALLBACK UpdateSystrayConnectedStateTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
+{
+    assert(g_updateSystrayConnectedStateTimerID == idEvent);
+    ::KillTimer(hWnd, idEvent);
+    g_updateSystrayConnectedStateTimerID = 0;
+
+    UpdateSystrayConnectedStateHelper();
+}
+
+static void UpdateSystrayConnectedState()
+{
+    if (g_UpdateSystrayConnectedState_LastState == CONNECTION_MANAGER_STATE_CONNECTED
+        && ::GetForegroundWindow() != g_hWnd)
+    {
+        // Don't keep resetting the timer once we've set it.
+        if (g_updateSystrayConnectedStateTimerID == 0)
+        {
+            g_updateSystrayConnectedStateTimerID = ::SetTimer(
+                g_hWnd, 
+                TIMER_ID_SYSTRAY_STATE_UPDATE, 
+                5000, 
+                UpdateSystrayConnectedStateTimer);
+        }
+    }
+    else
+    {
+        // Just update the state now.
+        UpdateSystrayConnectedStateHelper();
+    }
 }
 
 
@@ -984,6 +1053,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Content is loaded, so show the window.
         RestoreWindowPlacement();
         ShowWindow(g_hWnd, SW_SHOW);
+        UpdateSystrayConnectedState();
 
         // Start a connection
         if (!Settings::SkipAutoConnect())
