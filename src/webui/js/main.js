@@ -51,9 +51,9 @@ var g_initObj = {};
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
     g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/browser-InfoURL/index.html';
     g_initObj.Config.NewVersionEmail = g_initObj.Config.NewVersionEmail || 'browser-NewVersionEmail@example.com';
-    g_initObj.Config.NewVersionURL = g_initObj.Config.NewVersionURL || 'http://example.com/browser-NewVersionURL/index.html';
-    g_initObj.Config.FaqURL = g_initObj.Config.FaqURL || 'http://example.com/browser-FaqURL/index.html';
-    g_initObj.Config.DataCollectionInfoURL = g_initObj.Config.DataCollectionInfoURL || 'http://example.com/browser-DataCollectionInfoURL/index.html';
+    g_initObj.Config.NewVersionURL = g_initObj.Config.NewVersionURL || 'http://example.com/browser-NewVersionURL/en/download.html#direct';
+    g_initObj.Config.FaqURL = g_initObj.Config.FaqURL || 'http://example.com/browser-FaqURL/en/faq.html';
+    g_initObj.Config.DataCollectionInfoURL = g_initObj.Config.DataCollectionInfoURL || 'http://example.com/browser-DataCollectionInfoURL/en/privacy.html#information-collected';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
 
     g_initObj.Cookies = JSON.stringify({
@@ -88,12 +88,49 @@ $(function() {
   // Links to the download site and email address are parameterized and need to
   // be updated when the language changes.
   var updateLinks = nextTickFn(function updateLinks() {
-    $('.InfoURL').attr('href', g_initObj.Config.InfoURL);
-    $('.NewVersionURL').attr('href', g_initObj.Config.NewVersionURL);
+    // For some languages we alter the "download site" links to point directly
+    // to that language. But the site has different available languages than
+    // this application does, so we don't just do it blindly.
+    var defaultLang = 'en';
+    var siteLangs = ['fa', 'zh'];
+    var currentLang = i18n.lng();
+    var replaceLang = siteLangs.indexOf(currentLang) >= 0 ? currentLang : defaultLang;
+    var url;
+
+    // Note that we're using the function-as-replacement form for String.replace()
+    // because we don't entirely control the content of the language names, and
+    // we don't want to run into any issues with magic values: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
+
+    var replaceFn = function(match, p1, p2) {
+        return p1 + '/' + replaceLang + '/' + p2;
+      };
+
+    // This link may be to the redirect meta page (/index.html) or to a language-specific
+    // page (/en/index.html). If it's to the meta page, we won't force to English, otherwise we will.
+    // First change it to the meta page if it's not already
+    url = g_initObj.Config.InfoURL.replace('/en/', '/');
+    // Then force the language, but not to English
+    if (replaceLang !== defaultLang) {
+      // We're using the function form of
+      url = g_initObj.Config.InfoURL.replace(/^([^?#]*)\/(.*)$/, replaceFn);
+    }
+    $('.InfoURL').attr('href', url).attr('title', url);
+
+    var regex = /^([^?#]*)\/en\/(.*)$/;
+
+    url = g_initObj.Config.NewVersionURL.replace(regex, replaceFn);
+    $('.NewVersionURL').attr('href', url).attr('title', url);
+
+    url = g_initObj.Config.FaqURL.replace(regex, replaceFn);
+    $('.FaqURL').attr('href', url).attr('title', url);
+
+    url = g_initObj.Config.DataCollectionInfoURL.replace(regex, replaceFn);
+    $('.DataCollectionInfoURL').attr('href', url).attr('title', url);
+
+    // No replacement on the email address
     $('.NewVersionEmail').attr('href', 'mailto:' + g_initObj.Config.NewVersionEmail)
-                         .text(g_initObj.Config.NewVersionEmail);
-    $('.FaqURL').attr('href', g_initObj.Config.FaqURL);
-    $('.DataCollectionInfoURL').attr('href', g_initObj.Config.DataCollectionInfoURL);
+                         .text(g_initObj.Config.NewVersionEmail)
+                         .attr('title', g_initObj.Config.NewVersionEmail);
   });
   $window.on(LANGUAGE_CHANGE_EVENT, updateLinks);
   // ...and now.
