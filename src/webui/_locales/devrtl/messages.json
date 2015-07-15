@@ -157,7 +157,7 @@
   },
   "nav#connection": {
     "message": "‮Ↄouuǝɔʇıou‬",
-    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button"
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. In this context, 'Connection' means 'network connection' or 'connection to Psiphon server'."
   },
   "nav#feedback": {
     "message": "‮ɟǝǝpqɐɔʞ‬",
