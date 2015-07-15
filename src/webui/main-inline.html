@@ -6626,13 +6626,6 @@ body[dir="rtl"] .checkbox label::after {
   content: "\e934";
   font-weight: bold;
 }
-body[dir="rtl"] .checkbox input[type="checkbox"]:checked + label::after {
-  -webkit-transform: scale(-1, 1);
-  -moz-transform: scale(-1, 1);
-  -ms-transform: scale(-1, 1);
-  -o-transform: scale(-1, 1);
-  transform: scale(-1, 1);
-}
 .checkbox input[type="checkbox"]:disabled + label {
   opacity: 0.65;
 }
@@ -15079,7 +15072,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
               <i class="icon-spinner6 icon-spin"></i>
             </span>
             <span class="label label-success hidden" data-connect-state="connected">
-              <i class="icon-checkmark-circle" data-i18n-rtl-classes="icon-flip-horizontal"></i>
+              <i class="icon-checkmark-circle"></i>
             </span>
             <span class="label label-important" data-connect-state="stopped">
               <i class="icon-warning"></i>
@@ -15170,7 +15163,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                  data-connect-state="connected"
                  data-match-height=".connect-toggle-content" data-match-height-align="bottom">
               <div class="state-symbol">
-                <i class="icon-checkmark-circle icon-state-symbol" data-i18n-rtl-classes="icon-flip-horizontal"></i>
+                <i class="icon-checkmark-circle icon-state-symbol"></i>
               </div>
               <div>
                 <h2 class="slabtext-container">

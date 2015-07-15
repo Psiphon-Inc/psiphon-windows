@@ -119,16 +119,6 @@
       font-family: @font-family-icon;
       content: @awesome-bootstrap-check;
       font-weight: @font-weight;
-
-      // PSIPHON: RTL support
-      // Mirror-flip the checkmark.
-      body[dir="rtl"] & {
-        -webkit-transform: scale(-1, 1);
-        -moz-transform: scale(-1, 1);
-        -ms-transform: scale(-1, 1);
-        -o-transform: scale(-1, 1);
-        transform: scale(-1, 1);
-      }
     }
 
     &:disabled + label{
