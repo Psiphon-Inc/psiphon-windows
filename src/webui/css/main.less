@@ -303,7 +303,8 @@ body {
   max-width: 600px;
   position: relative;
   padding: 0;
-  top: 10%;
+  top: 5%; // fallback for older IE
+  top: ~"calc(50% - 200px)";
 
   > .connect-toggle-content {
 
