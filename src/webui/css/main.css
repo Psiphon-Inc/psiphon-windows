@@ -6187,9 +6187,6 @@ body[dir="rtl"] .nav-tabs > li.active {
   border-left: none;
   border-right-color: #376384;
 }
-.nav-tabs > li.active .label {
-  visibility: hidden;
-}
 .nav-tabs > li > a {
   outline: none;
   border: none;
