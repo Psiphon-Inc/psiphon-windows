@@ -105,21 +105,42 @@
 
         <li id="connection-tab" class="active">
           <!-- data-match-width is necessary for IE7 -->
-          <a href="#connection-pane" data-toggle="tab" data-match-width=".main-nav a">
-            <i class="icon-fixed-width icon-home3"></i>
-            <span data-i18n="nav#connection">Connection</span>
-            <span class="label label-warning hidden" data-connect-state="starting">
-              <i class="icon-spinner6 icon-spin"></i>
-            </span>
-            <span class="label label-warning hidden" data-connect-state="stopping">
-              <i class="icon-spinner6 icon-spin"></i>
-            </span>
-            <span class="label label-success hidden" data-connect-state="connected">
-              <i class="icon-checkmark-circle"></i>
-            </span>
-            <span class="label label-important" data-connect-state="stopped">
-              <i class="icon-warning"></i>
-            </span>
+          <a href="#connection-pane" data-toggle="tab"
+             data-match-width=".main-nav a" data-match-width-dependent="true"
+             data-match-height="#settings-tab > a" data-match-height-align="top">
+
+            <div data-match-width="#connection-tab [data-connect-state]">
+
+              <span class="z-behind" data-connect-state="starting">
+                <span class="label label-warning">
+                  <i class="icon-spinner6 icon-spin"></i>
+                </span>
+                <span data-i18n="nav#connection#starting">Connecting</span>
+              </span>
+
+              <span class="z-behind" data-connect-state="stopping">
+                <span class="label label-warning">
+                  <i class="icon-spinner6 icon-spin"></i>
+                </span>
+                <span data-i18n="nav#connection#stopping">Disconnecting</span>
+              </span>
+
+              <span class="z-behind" data-connect-state="connected">
+                <span class="label label-success">
+                  <i class="icon-checkmark-circle"></i>
+                </span>
+                <span data-i18n="nav#connection#connected">Connected</span>
+              </span>
+
+              <span data-connect-state="stopped">
+                <span class="label label-important">
+                  <i class="icon-warning"></i>
+                </span>
+                <span data-i18n="nav#connection#stopped">Disconnected</span>
+              </span>
+
+            </div>
+
           </a>
         </li>
 

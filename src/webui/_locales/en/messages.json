@@ -7,9 +7,21 @@
     "message": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"NewVersionURL\" href=\"#\">download site</a>\nor by sending an email to <a class=\"NewVersionEmail\" href=\"#\"></a>",
     "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
   },
-  "nav#connection": {
-    "message": "Connection",
-    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. In this context, 'Connection' means 'network connection' or 'connection to Psiphon server'."
+  "nav#connection#starting": {
+    "message": "Connecting",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
+  },
+  "nav#connection#connected": {
+    "message": "Connected",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
+  },
+  "nav#connection#stopping": {
+    "message": "Disconnecting",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
+  },
+  "nav#connection#stopped": {
+    "message": "Disconnected",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
   },
   "nav#settings": {
     "message": "Settings",
@@ -48,7 +60,7 @@
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {
-    "message": "Please wait...",
+    "message": "Please wait…",
     "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
   },
   "connection#stopped-msg": {

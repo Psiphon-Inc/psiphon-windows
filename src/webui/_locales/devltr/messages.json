@@ -84,7 +84,7 @@
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
   },
   "connection#wait-btn": {
-    "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ...]",
+    "message": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ…]",
     "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
   },
   "feedback#diagnostic_check": {
@@ -155,9 +155,21 @@
     "message": "[Ȧȧƀǿǿŭŭŧ]",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
   },
-  "nav#connection": {
-    "message": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
-    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. In this context, 'Connection' means 'network connection' or 'connection to Psiphon server'."
+  "nav#connection#connected": {
+    "message": "[Ƈǿǿƞƞḗḗƈŧḗḗḓ]",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
+  },
+  "nav#connection#starting": {
+    "message": "[Ƈǿǿƞƞḗḗƈŧīīƞɠ]",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
+  },
+  "nav#connection#stopped": {
+    "message": "[Ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ]",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
+  },
+  "nav#connection#stopping": {
+    "message": "[Ḓīīşƈǿǿƞƞḗḗƈŧīīƞɠ]",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
   },
   "nav#feedback": {
     "message": "[Ƒḗḗḗḗḓƀȧȧƈķ]",

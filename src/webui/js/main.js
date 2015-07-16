@@ -154,9 +154,7 @@ $(function() {
     nextTick(resizeContent);
   });
   // ...and when the language changes...
-  $window.on(LANGUAGE_CHANGE_EVENT, function() {
-    nextTick(resizeContent);
-  });
+  $window.on(LANGUAGE_CHANGE_EVENT, nextTickFn(resizeContent));
   // ...and now.
   resizeContent();
 
@@ -312,7 +310,7 @@ function connectToggleSetup() {
   $('.slabtext-container').slabText({noResizeEvent: true});
 
   // Update the button when the back-end tells us the state has changed.
-  $window.on(CONNECTED_STATE_CHANGE_EVENT, updateConnectToggle);
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, nextTickFn(updateConnectToggle));
 }
 
 // Update the main connect button, as well as the connection indicator on the tab.
@@ -321,8 +319,8 @@ function updateConnectToggle() {
     $(this).toggleClass('z-behind', $(this).data('connect-state') !== g_lastState);
   });
 
-  $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
-    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+  $('a[href="#connection-pane"][data-toggle="tab"] [data-connect-state]').each(function() {
+    $(this).toggleClass('z-behind', $(this).data('connect-state') !== g_lastState);
   });
 
   if (g_lastState === 'starting') {
@@ -1317,65 +1315,75 @@ function populateLocales() {
 
 // Support the `data-match-height` feature
 function doMatchHeight() {
-  var matchSelectors = [];
-  $('[data-match-height]').each(function() {
-    var $this = $(this);
+  var i, j, $elem, matchSelector, matchSelectorsToMaxHeight = {}, $matchSelectorMatches;
+  var $elemsToChange = $('[data-match-height]');
+
+  //
+  // Reset previously adjusted heights; record the match selectors.
+  //
+  for (i = 0; i < $elemsToChange.length; i++) {
+    $elem = $elemsToChange.eq(i);
 
     // Store the original padding, if we don't already have it.
-    if (typeof($this.data('match-height-orig-padding-top')) === 'undefined') {
-      $this.data('match-height-orig-padding-top', parseInt($this.css('padding-top')))
-           .data('match-height-orig-padding-bottom', parseInt($this.css('padding-bottom')));
+    if (typeof($elem.data('match-height-orig-padding-top')) === 'undefined') {
+      $elem.data('match-height-orig-padding-top', parseInt($elem.css('padding-top')))
+           .data('match-height-orig-padding-bottom', parseInt($elem.css('padding-bottom')));
     }
 
-    var matchSelector = $this.data('match-height');
-    if (matchSelectors.indexOf(matchSelector) < 0) {
-      matchSelectors.push(matchSelector);
-    }
-  });
+    // Reset the padding to its original state
+    $elem.css('padding-top', $elem.data('match-height-orig-padding-top'))
+         .css('padding-bottom', $elem.data('match-height-orig-padding-bottom'));
 
-  for (var i = 0; i < matchSelectors.length; i++) {
-    matchHeights(matchSelectors[i]);
+    matchSelector = $elem.data('match-height');
+    matchSelectorsToMaxHeight[matchSelector] = null;
   }
 
-  function matchHeights(matchSelector) {
-    var maxHeight = 0;
-    $(matchSelector).each(function() {
-      var $this = $(this);
-      // Reset the padding to its original state
-      $this.css('padding-top', $this.data('match-height-orig-padding-top'))
-           .css('padding-bottom', $this.data('match-height-orig-padding-bottom'));
+  //
+  // Alter the heights.
+  //
+  for (i = 0; i < $elemsToChange.length; i++) {
+    $elem = $elemsToChange.eq(i);
+    matchSelector = $elem.data('match-height');
 
-      maxHeight = Math.max(maxHeight, $this.height());
-    });
+    // If we haven't already determined the max for this selector, calculate it
+    if (matchSelectorsToMaxHeight[matchSelector] === null) {
+      $matchSelectorMatches  = $(matchSelector);
+      for (j = 0; j < $matchSelectorMatches.length; j++) {
+        matchSelectorsToMaxHeight[matchSelector] = Math.max(
+          matchSelectorsToMaxHeight[matchSelector],
+          $matchSelectorMatches.eq(j).height());
+      }
+    }
 
-    $(matchSelector).each(function() {
-      var $this = $(this);
+    // Alter the height.
+    matchHeight($elem, matchSelectorsToMaxHeight[matchSelector]);
+  }
 
-      var heightDiff = maxHeight - $this.height();
-      if (heightDiff <= 0) {
-        // Don't adjust the largest
-        return;
-      }
+  function matchHeight($elem, height) {
+    var heightDiff = height - $elem.height();
+    if (heightDiff <= 0) {
+      // Already at least big enough
+      return;
+    }
 
-      var align = $this.data('match-height-align');
-      if (align === 'top') {
-        $this.css('padding-bottom', heightDiff + $this.data('match-height-orig-padding-bottom'));
-      }
-      else if (align === 'bottom') {
-        $this.css('padding-top', heightDiff + $this.data('match-height-orig-padding-top'));
-      }
-      else { // center
-        $this.css('padding-top', heightDiff/2 + $this.data('match-height-orig-padding-top'))
-             .css('padding-bottom', heightDiff/2 + $this.data('match-height-orig-padding-bottom'));
-      }
-    });
+    var align = $elem.data('match-height-align');
+    if (align === 'top') {
+      $elem.css('padding-bottom', heightDiff + $elem.data('match-height-orig-padding-bottom'));
+    }
+    else if (align === 'bottom') {
+      $elem.css('padding-top', heightDiff + $elem.data('match-height-orig-padding-top'));
+    }
+    else { // center
+      $elem.css('padding-top', heightDiff/2 + $elem.data('match-height-orig-padding-top'))
+           .css('padding-bottom', heightDiff/2 + $elem.data('match-height-orig-padding-bottom'));
+    }
   }
 }
 
 // Support the `data-match-width` feature
 function doMatchWidth() {
-  var matchSelectors = {}, $dataMatchElems, $elem, matchSelector, $matchMaxElems,
-      matchSelectorMaxWidth, i, j;
+  var matchSelectors = [], $dataMatchElems, $elem,
+      matchSelector, $matchMaxElems, matchSelectorMaxWidth, i, j;
 
   $dataMatchElems = $('[data-match-width]');
 
@@ -1385,27 +1393,37 @@ function doMatchWidth() {
   for (i = 0; i < $dataMatchElems.length; i++) {
     $elem = $dataMatchElems.eq(i);
     $elem.css('width', '');
+
+    // Build up a list of the selectors used, with dependent ones at the end.
+    matchSelector = $elem.data('match-width');
+    if (matchSelectors.indexOf(matchSelector) < 0) {
+      if ($elem.data('match-width-dependent') === 'true') {
+        matchSelectors.push(matchSelector);
+      }
+      else {
+        matchSelectors.unshift(matchSelector);
+      }
+    }
   }
 
   // Then collect the maximums for each of the selectors provided by data-match-width
-  for (i = 0; i < $dataMatchElems.length; i++) {
-    $elem = $dataMatchElems.eq(i);
-    matchSelector = $elem.data('match-width');
+  for (i = 0; i < matchSelectors.length; i++) {
+    matchSelector = matchSelectors[i];
 
-    // If we haven't already determined the max for this selector, find it.
-    if (typeof(matchSelectors[matchSelector]) === 'undefined') {
-      matchSelectorMaxWidth = 0.0;
-      $matchMaxElems = $(matchSelector);
-      for (j = 0; j < $matchMaxElems.length; j++) {
-        matchSelectorMaxWidth = Math.max(
-                                  matchSelectorMaxWidth,
-                                  $matchMaxElems.eq(j).outerWidth());
-      }
-      matchSelectors[matchSelector] = matchSelectorMaxWidth;
+    matchSelectorMaxWidth = 0.0;
+    $matchMaxElems = $(matchSelector);
+    for (j = 0; j < $matchMaxElems.length; j++) {
+      matchSelectorMaxWidth = Math.max(
+                                matchSelectorMaxWidth,
+                                $matchMaxElems.eq(j).outerWidth());
     }
 
-    // Apply the max width to the target element.
-    $elem.width(getNetWidth($elem, matchSelectors[matchSelector]));
+    // Apply the max width to the target elements.
+    $dataMatchElems = $('[data-match-width="' + matchSelector + '"]');
+    for (j = 0; j < $dataMatchElems.length; j++) {
+      $elem = $dataMatchElems.eq(j);
+      $elem.width(getNetWidth($elem, matchSelectorMaxWidth));
+    }
   }
 
   function getNetWidth($elem, grossWidth) {

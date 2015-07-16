@@ -6951,6 +6951,9 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   /* IE7 inline-block hack */
   *zoom: 1;
 }
+.main-nav #connection-tab [data-connect-state] {
+  position: absolute;
+}
 .tab-content {
   overflow: hidden;
   padding-top: 1em;
@@ -11882,7 +11885,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "connection#stop-btn": "[Şŧǿǿƥ]",
       "connection#stopped-msg": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ</span>]",
       "connection#stopping-msg": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ḓīīşƈǿǿƞƞḗḗƈŧīīƞɠ</span>…]",
-      "connection#wait-btn": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ...]",
+      "connection#wait-btn": "[Ƥŀḗḗȧȧşḗḗ ẇȧȧīīŧ…]",
       "feedback#diagnostic_check": "[Ŭŭƥŀǿǿȧȧḓ ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ. Ƥŀḗḗȧȧşḗḗ ƞǿǿŧḗḗ ŧħȧȧŧ ŧħīīş ḓīīȧȧɠƞǿǿşŧīīƈ ḓȧȧŧȧȧ ḓǿǿḗḗş ƞǿǿŧ īīḓḗḗƞŧīīƒẏ ẏǿǿŭŭ, ȧȧƞḓ īīŧ ẇīīŀŀ ħḗḗŀƥ ŭŭş ŧǿǿ ķḗḗḗḗƥ Ƥşīīƥħǿǿƞ řŭŭƞƞīīƞɠ şḿǿǿǿǿŧħŀẏ. <a class=\"DataCollectionInfoURL\" href=\"#\">Ƈŀīīƈķ ħḗḗřḗḗ ŧǿǿ şḗḗḗḗ ẇħȧȧŧ ḓȧȧŧȧȧ ẇḗḗ ƈǿǿŀŀḗḗƈŧ.</a>]",
       "feedback#smiley_happy": "[Ƥşīīƥħǿǿƞ ƈǿǿƞƞḗḗƈŧş ȧȧƞḓ ƥḗḗřƒǿǿřḿş ŧħḗḗ ẇȧȧẏ Īī ẇȧȧƞŧ īīŧ ŧǿǿ.]",
       "feedback#smiley_sad": "[Ƥşīīƥħǿǿƞ ǿǿƒŧḗḗƞ ƒȧȧīīŀş ŧǿǿ ƈǿǿƞƞḗḗƈŧ ǿǿř ḓǿǿḗḗşƞ'ŧ ƥḗḗřƒǿǿřḿ ẇḗḗŀŀ ḗḗƞǿǿŭŭɠħ.]",
@@ -11900,7 +11903,10 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "messages#placeholder": "[Ƞǿǿ ḿḗḗşşȧȧɠḗḗş ẏḗḗŧ]",
       "messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
       "nav#about": "[Ȧȧƀǿǿŭŭŧ]",
-      "nav#connection": "[Ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
+      "nav#connection#connected": "[Ƈǿǿƞƞḗḗƈŧḗḗḓ]",
+      "nav#connection#starting": "[Ƈǿǿƞƞḗḗƈŧīīƞɠ]",
+      "nav#connection#stopped": "[Ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ]",
+      "nav#connection#stopping": "[Ḓīīşƈǿǿƞƞḗḗƈŧīīƞɠ]",
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
       "nav#messages": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
       "nav#settings": "[Şḗḗŧŧīīƞɠş]",
@@ -11976,7 +11982,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "connection#stop-btn": "‮Sʇod‬",
       "connection#stopped-msg": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮pısɔouuǝɔʇǝp‬</span>",
       "connection#stopping-msg": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮pısɔouuǝɔʇıuƃ‬</span>…",
-      "connection#wait-btn": "‮Ԁʅǝɐsǝ‬ ‮ʍɐıʇ‬...",
+      "connection#wait-btn": "‮Ԁʅǝɐsǝ‬ ‮ʍɐıʇ‬…",
       "feedback#diagnostic_check": "‮∩dʅoɐp‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬. ‮Ԁʅǝɐsǝ‬ ‮uoʇǝ‬ ‮ʇɥɐʇ‬ ‮ʇɥıs‬ ‮pıɐƃuosʇıɔ‬ ‮pɐʇɐ‬ ‮poǝs‬ ‮uoʇ‬ ‮ıpǝuʇıɟʎ‬ ‮ʎon‬, ‮ɐup‬ ‮ıʇ‬ ‮ʍıʅʅ‬ ‮ɥǝʅd‬ ‮ns‬ ‮ʇo‬ ‮ʞǝǝd‬ ‮Ԁsıdɥou‬ ‮ɹnuuıuƃ‬ ‮sɯooʇɥʅʎ‬. <a class=\"DataCollectionInfoURL\" href=\"#\">‮Ↄʅıɔʞ‬ ‮ɥǝɹǝ‬ ‮ʇo‬ ‮sǝǝ‬ ‮ʍɥɐʇ‬ ‮pɐʇɐ‬ ‮ʍǝ‬ ‮ɔoʅʅǝɔʇ‬.</a>",
       "feedback#smiley_happy": "‮Ԁsıdɥou‬ ‮ɔouuǝɔʇs‬ ‮ɐup‬ ‮dǝɹɟoɹɯs‬ ‮ʇɥǝ‬ ‮ʍɐʎ‬ ‮I‬ ‮ʍɐuʇ‬ ‮ıʇ‬ ‮ʇo‬.",
       "feedback#smiley_sad": "‮Ԁsıdɥou‬ ‮oɟʇǝu‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮oɹ‬ ‮poǝsu‬'‮ʇ‬ ‮dǝɹɟoɹɯ‬ ‮ʍǝʅʅ‬ ‮ǝuonƃɥ‬.",
@@ -11994,7 +12000,10 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "messages#placeholder": "‮No‬ ‮ɯǝssɐƃǝs‬ ‮ʎǝʇ‬",
       "messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
       "nav#about": "‮∀qonʇ‬",
-      "nav#connection": "‮Ↄouuǝɔʇıou‬",
+      "nav#connection#connected": "‮Ↄouuǝɔʇǝp‬",
+      "nav#connection#starting": "‮Ↄouuǝɔʇıuƃ‬",
+      "nav#connection#stopped": "‮pısɔouuǝɔʇǝp‬",
+      "nav#connection#stopping": "‮pısɔouuǝɔʇıuƃ‬",
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
       "nav#messages": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
       "nav#settings": "‮Sǝʇʇıuƃs‬",
@@ -12135,7 +12144,10 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
     "translation": {
       "banner#sponsored-by": "Sponsored by",
       "banner#long-connecting": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"NewVersionURL\" href=\"#\">download site</a>\nor by sending an email to <a class=\"NewVersionEmail\" href=\"#\"></a>",
-      "nav#connection": "Connection",
+      "nav#connection#starting": "Connecting",
+      "nav#connection#connected": "Connected",
+      "nav#connection#stopping": "Disconnecting",
+      "nav#connection#stopped": "Disconnected",
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",
       "nav#messages": "Log Messages",
@@ -12145,7 +12157,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "connection#connected-msg": "Psiphon is <span class=\"state-word\">connected</span>",
       "connection#disconnect-btn": "Disconnect",
       "connection#stopping-msg": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
-      "connection#wait-btn": "Please wait...",
+      "connection#wait-btn": "Please wait…",
       "connection#stopped-msg": "Psiphon is <span class=\"state-word\">disconnected</span>",
       "connection#connect-btn": "Connect",
       "settings#error-alert": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
@@ -13398,9 +13410,7 @@ $(function() {
     nextTick(resizeContent);
   });
   // ...and when the language changes...
-  $window.on(LANGUAGE_CHANGE_EVENT, function() {
-    nextTick(resizeContent);
-  });
+  $window.on(LANGUAGE_CHANGE_EVENT, nextTickFn(resizeContent));
   // ...and now.
   resizeContent();
 
@@ -13556,7 +13566,7 @@ function connectToggleSetup() {
   $('.slabtext-container').slabText({noResizeEvent: true});
 
   // Update the button when the back-end tells us the state has changed.
-  $window.on(CONNECTED_STATE_CHANGE_EVENT, updateConnectToggle);
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, nextTickFn(updateConnectToggle));
 }
 
 // Update the main connect button, as well as the connection indicator on the tab.
@@ -13565,8 +13575,8 @@ function updateConnectToggle() {
     $(this).toggleClass('z-behind', $(this).data('connect-state') !== g_lastState);
   });
 
-  $('a[href="#connection-pane"][data-toggle="tab"] .label').each(function() {
-    $(this).toggleClass('hidden', $(this).data('connect-state') !== g_lastState);
+  $('a[href="#connection-pane"][data-toggle="tab"] [data-connect-state]').each(function() {
+    $(this).toggleClass('z-behind', $(this).data('connect-state') !== g_lastState);
   });
 
   if (g_lastState === 'starting') {
@@ -14561,65 +14571,75 @@ function populateLocales() {
 
 // Support the `data-match-height` feature
 function doMatchHeight() {
-  var matchSelectors = [];
-  $('[data-match-height]').each(function() {
-    var $this = $(this);
+  var i, j, $elem, matchSelector, matchSelectorsToMaxHeight = {}, $matchSelectorMatches;
+  var $elemsToChange = $('[data-match-height]');
+
+  //
+  // Reset previously adjusted heights; record the match selectors.
+  //
+  for (i = 0; i < $elemsToChange.length; i++) {
+    $elem = $elemsToChange.eq(i);
 
     // Store the original padding, if we don't already have it.
-    if (typeof($this.data('match-height-orig-padding-top')) === 'undefined') {
-      $this.data('match-height-orig-padding-top', parseInt($this.css('padding-top')))
-           .data('match-height-orig-padding-bottom', parseInt($this.css('padding-bottom')));
+    if (typeof($elem.data('match-height-orig-padding-top')) === 'undefined') {
+      $elem.data('match-height-orig-padding-top', parseInt($elem.css('padding-top')))
+           .data('match-height-orig-padding-bottom', parseInt($elem.css('padding-bottom')));
     }
 
-    var matchSelector = $this.data('match-height');
-    if (matchSelectors.indexOf(matchSelector) < 0) {
-      matchSelectors.push(matchSelector);
-    }
-  });
+    // Reset the padding to its original state
+    $elem.css('padding-top', $elem.data('match-height-orig-padding-top'))
+         .css('padding-bottom', $elem.data('match-height-orig-padding-bottom'));
 
-  for (var i = 0; i < matchSelectors.length; i++) {
-    matchHeights(matchSelectors[i]);
+    matchSelector = $elem.data('match-height');
+    matchSelectorsToMaxHeight[matchSelector] = null;
   }
 
-  function matchHeights(matchSelector) {
-    var maxHeight = 0;
-    $(matchSelector).each(function() {
-      var $this = $(this);
-      // Reset the padding to its original state
-      $this.css('padding-top', $this.data('match-height-orig-padding-top'))
-           .css('padding-bottom', $this.data('match-height-orig-padding-bottom'));
+  //
+  // Alter the heights.
+  //
+  for (i = 0; i < $elemsToChange.length; i++) {
+    $elem = $elemsToChange.eq(i);
+    matchSelector = $elem.data('match-height');
 
-      maxHeight = Math.max(maxHeight, $this.height());
-    });
+    // If we haven't already determined the max for this selector, calculate it
+    if (matchSelectorsToMaxHeight[matchSelector] === null) {
+      $matchSelectorMatches  = $(matchSelector);
+      for (j = 0; j < $matchSelectorMatches.length; j++) {
+        matchSelectorsToMaxHeight[matchSelector] = Math.max(
+          matchSelectorsToMaxHeight[matchSelector],
+          $matchSelectorMatches.eq(j).height());
+      }
+    }
 
-    $(matchSelector).each(function() {
-      var $this = $(this);
+    // Alter the height.
+    matchHeight($elem, matchSelectorsToMaxHeight[matchSelector]);
+  }
 
-      var heightDiff = maxHeight - $this.height();
-      if (heightDiff <= 0) {
-        // Don't adjust the largest
-        return;
-      }
+  function matchHeight($elem, height) {
+    var heightDiff = height - $elem.height();
+    if (heightDiff <= 0) {
+      // Already at least big enough
+      return;
+    }
 
-      var align = $this.data('match-height-align');
-      if (align === 'top') {
-        $this.css('padding-bottom', heightDiff + $this.data('match-height-orig-padding-bottom'));
-      }
-      else if (align === 'bottom') {
-        $this.css('padding-top', heightDiff + $this.data('match-height-orig-padding-top'));
-      }
-      else { // center
-        $this.css('padding-top', heightDiff/2 + $this.data('match-height-orig-padding-top'))
-             .css('padding-bottom', heightDiff/2 + $this.data('match-height-orig-padding-bottom'));
-      }
-    });
+    var align = $elem.data('match-height-align');
+    if (align === 'top') {
+      $elem.css('padding-bottom', heightDiff + $elem.data('match-height-orig-padding-bottom'));
+    }
+    else if (align === 'bottom') {
+      $elem.css('padding-top', heightDiff + $elem.data('match-height-orig-padding-top'));
+    }
+    else { // center
+      $elem.css('padding-top', heightDiff/2 + $elem.data('match-height-orig-padding-top'))
+           .css('padding-bottom', heightDiff/2 + $elem.data('match-height-orig-padding-bottom'));
+    }
   }
 }
 
 // Support the `data-match-width` feature
 function doMatchWidth() {
-  var matchSelectors = {}, $dataMatchElems, $elem, matchSelector, $matchMaxElems,
-      matchSelectorMaxWidth, i, j;
+  var matchSelectors = [], $dataMatchElems, $elem,
+      matchSelector, $matchMaxElems, matchSelectorMaxWidth, i, j;
 
   $dataMatchElems = $('[data-match-width]');
 
@@ -14629,27 +14649,37 @@ function doMatchWidth() {
   for (i = 0; i < $dataMatchElems.length; i++) {
     $elem = $dataMatchElems.eq(i);
     $elem.css('width', '');
+
+    // Build up a list of the selectors used, with dependent ones at the end.
+    matchSelector = $elem.data('match-width');
+    if (matchSelectors.indexOf(matchSelector) < 0) {
+      if ($elem.data('match-width-dependent') === 'true') {
+        matchSelectors.push(matchSelector);
+      }
+      else {
+        matchSelectors.unshift(matchSelector);
+      }
+    }
   }
 
   // Then collect the maximums for each of the selectors provided by data-match-width
-  for (i = 0; i < $dataMatchElems.length; i++) {
-    $elem = $dataMatchElems.eq(i);
-    matchSelector = $elem.data('match-width');
+  for (i = 0; i < matchSelectors.length; i++) {
+    matchSelector = matchSelectors[i];
 
-    // If we haven't already determined the max for this selector, find it.
-    if (typeof(matchSelectors[matchSelector]) === 'undefined') {
-      matchSelectorMaxWidth = 0.0;
-      $matchMaxElems = $(matchSelector);
-      for (j = 0; j < $matchMaxElems.length; j++) {
-        matchSelectorMaxWidth = Math.max(
-                                  matchSelectorMaxWidth,
-                                  $matchMaxElems.eq(j).outerWidth());
-      }
-      matchSelectors[matchSelector] = matchSelectorMaxWidth;
+    matchSelectorMaxWidth = 0.0;
+    $matchMaxElems = $(matchSelector);
+    for (j = 0; j < $matchMaxElems.length; j++) {
+      matchSelectorMaxWidth = Math.max(
+                                matchSelectorMaxWidth,
+                                $matchMaxElems.eq(j).outerWidth());
     }
 
-    // Apply the max width to the target element.
-    $elem.width(getNetWidth($elem, matchSelectors[matchSelector]));
+    // Apply the max width to the target elements.
+    $dataMatchElems = $('[data-match-width="' + matchSelector + '"]');
+    for (j = 0; j < $dataMatchElems.length; j++) {
+      $elem = $dataMatchElems.eq(j);
+      $elem.width(getNetWidth($elem, matchSelectorMaxWidth));
+    }
   }
 
   function getNetWidth($elem, grossWidth) {
@@ -15059,21 +15089,42 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
 
         <li id="connection-tab" class="active">
           <!-- data-match-width is necessary for IE7 -->
-          <a href="#connection-pane" data-toggle="tab" data-match-width=".main-nav a">
-            <i class="icon-fixed-width icon-home3"></i>
-            <span data-i18n="nav#connection">Connection</span>
-            <span class="label label-warning hidden" data-connect-state="starting">
-              <i class="icon-spinner6 icon-spin"></i>
-            </span>
-            <span class="label label-warning hidden" data-connect-state="stopping">
-              <i class="icon-spinner6 icon-spin"></i>
-            </span>
-            <span class="label label-success hidden" data-connect-state="connected">
-              <i class="icon-checkmark-circle"></i>
-            </span>
-            <span class="label label-important" data-connect-state="stopped">
-              <i class="icon-warning"></i>
-            </span>
+          <a href="#connection-pane" data-toggle="tab"
+             data-match-width=".main-nav a" data-match-width-dependent="true"
+             data-match-height="#settings-tab > a" data-match-height-align="top">
+
+            <div data-match-width="#connection-tab [data-connect-state]">
+
+              <span class="z-behind" data-connect-state="starting">
+                <span class="label label-warning">
+                  <i class="icon-spinner6 icon-spin"></i>
+                </span>
+                <span data-i18n="nav#connection#starting">Connecting</span>
+              </span>
+
+              <span class="z-behind" data-connect-state="stopping">
+                <span class="label label-warning">
+                  <i class="icon-spinner6 icon-spin"></i>
+                </span>
+                <span data-i18n="nav#connection#stopping">Disconnecting</span>
+              </span>
+
+              <span class="z-behind" data-connect-state="connected">
+                <span class="label label-success">
+                  <i class="icon-checkmark-circle"></i>
+                </span>
+                <span data-i18n="nav#connection#connected">Connected</span>
+              </span>
+
+              <span data-connect-state="stopped">
+                <span class="label label-important">
+                  <i class="icon-warning"></i>
+                </span>
+                <span data-i18n="nav#connection#stopped">Disconnected</span>
+              </span>
+
+            </div>
+
           </a>
         </li>
 

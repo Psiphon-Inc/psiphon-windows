@@ -6227,6 +6227,9 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   /* IE7 inline-block hack */
   *zoom: 1;
 }
+.main-nav #connection-tab [data-connect-state] {
+  position: absolute;
+}
 .tab-content {
   overflow: hidden;
   padding-top: 1em;
