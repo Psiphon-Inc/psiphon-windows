@@ -389,7 +389,7 @@ function egressRegionComboSetup() {
   $('#EgressRegionCombo ul').html($('ul#EgressRegion').html());
 
   // When an item in the combo is clicked, make the settings code do the work.
-  $('#EgressRegionCombo a').click(function egressRegionComboSetup_EgressRegionCombo_click(e) {
+  $('#EgressRegionCombo ul a').click(function egressRegionComboSetup_EgressRegionCombo_click(e) {
     e.preventDefault();
     var region = $(this).parents('[data-region]').data('region');
     if (!region) {
