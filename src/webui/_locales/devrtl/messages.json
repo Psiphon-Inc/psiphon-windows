@@ -143,12 +143,12 @@
     "message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
     "description": "A welcome message shown to the user when they first switch to the correct UI language"
   },
-  "messages#placeholder": {
-    "message": "‮No‬ ‮ɯǝssɐƃǝs‬ ‮ʎǝʇ‬",
+  "logs#placeholder": {
+    "message": "‮No‬ ‮ʅoƃs‬ ‮ʎǝʇ‬",
     "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
   },
-  "messages#show-debug-label": {
-    "message": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
+  "logs#show-debug-label": {
+    "message": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ʅoƃs‬",
     "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
   },
   "nav#about": {
@@ -175,9 +175,9 @@
     "message": "‮ɟǝǝpqɐɔʞ‬",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
   },
-  "nav#messages": {
-    "message": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
-    "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+  "nav#logs": {
+    "message": "‮˥oƃs‬",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
   },
   "nav#settings": {
     "message": "‮Sǝʇʇıuƃs‬",

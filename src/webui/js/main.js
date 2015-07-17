@@ -1114,19 +1114,19 @@ function sendFeedback() {
 }
 
 
-/* LOG MESSAGES **************************************************************/
+/* LOGS **********************************************************************/
 
 $(function() {
-  $('#show-debug-messages').click(showDebugMessagesClicked);
+  $('#show-debug-logs').click(showDebugLogsClicked);
 
   // Set the initial show-debug state
-  var show = $('#show-debug-messages').prop('checked');
+  var show = $('#show-debug-logs').prop('checked');
   $('.log-messages')
     .toggleClass('showing-priority-0', show)
     .toggleClass('hiding-priority-0', !show);
 });
 
-function showDebugMessagesClicked(e) {
+function showDebugLogsClicked(e) {
   /*jshint validthis:true */
   var show = $(this).prop('checked');
   // We use both a showing and a hiding class to try to deal with IE7's CSS insanity.
@@ -1135,11 +1135,11 @@ function showDebugMessagesClicked(e) {
     .toggleClass('hiding-priority-0', !show);
 }
 
-function addLogMessage(obj) {
+function addLog(obj) {
   $('.log-messages .placeholder').remove();
 
   $('.log-messages').loadTemplate(
-    $("#message-template"),
+    $("#log-template"),
     {
       timestamp: new Date().toLocaleTimeString(),
       message: obj.message,
@@ -1149,10 +1149,10 @@ function addLogMessage(obj) {
       prepend:true
     });
 
-  // The "Show Debug Messages" checkbox is hidden until we actually get a debug
+  // The "Show Debug Logs" checkbox is hidden until we actually get a debug
   // message.
   if (obj.priority < 1) {
-    $('#messages-pane .invisible').removeClass('invisible');
+    $('#logs-pane .invisible').removeClass('invisible');
   }
 }
 
@@ -1196,6 +1196,7 @@ function switchLocale(locale, initial) {
     // code to run after everything else is done, so we'll force it to be async.
 
     nextTick(function() {
+      $('html').attr('lang', locale);
       $('body').i18n();
 
       // The content of elements will have changed, so trigger custom event that can
@@ -1540,10 +1541,10 @@ $(function() {
   });
 
   // Wire up add-message
-  $('#debug-message a').on('click', function() {
-    HtmlCtrlInterface_AddMessage({
-      message: $('#debug-message input').val(),
-      priority: parseInt($('#debug-message select').val())
+  $('#debug-log a').on('click', function() {
+    HtmlCtrlInterface_AddLog({
+      message: $('#debug-log input').val(),
+      priority: parseInt($('#debug-log select').val())
     });
   });
 
@@ -1592,11 +1593,11 @@ var PSIPHON_LINK_PREFIX = 'psi:';
 /* Calls from C code to JS code. */
 
 // Add new status message.
-function HtmlCtrlInterface_AddMessage(jsonArgs) {
+function HtmlCtrlInterface_AddLog(jsonArgs) {
   nextTick(function() {
     // Allow object as input to assist with debugging
     var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
-    addLogMessage(args);
+    addLog(args);
   });
 }
 
@@ -1788,7 +1789,7 @@ function HtmlCtrlInterface_BannerClick() {
 // The C interface code is unable to access functions that are members of objects,
 // so we'll need to directly expose our exports.
 
-window.HtmlCtrlInterface_AddMessage = HtmlCtrlInterface_AddMessage;
+window.HtmlCtrlInterface_AddLog = HtmlCtrlInterface_AddLog;
 window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
 window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
 window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;

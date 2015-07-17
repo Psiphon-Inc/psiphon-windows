@@ -612,7 +612,7 @@ body {
 }
 
 
-/* LOG MESSAGES */
+/* LOGS */
 
 .log-messages {
   .priority-0 {
@@ -631,6 +631,12 @@ body {
   .timestamp {
     width: 1%;
     white-space: nowrap;
+  }
+
+  // Log messages aren't translated, so we're forcing the list to LTR
+  &, & th, & td {
+    direction: ltr !important;
+    text-align: left !important;
   }
 }
 

@@ -7365,7 +7365,7 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
   cursor: hand;
   background-color: #ffffff;
 }
-/* LOG MESSAGES */
+/* LOGS */
 .hiding-priority-0.log-messages .priority-0 {
   display: none;
 }
@@ -7375,6 +7375,12 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
 .log-messages .timestamp {
   width: 1%;
   white-space: nowrap;
+}
+.log-messages,
+.log-messages th,
+.log-messages td {
+  direction: ltr !important;
+  text-align: left !important;
 }
 /* LANGUAGES */
 #language-pane .language-item {
@@ -11900,15 +11906,15 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "feedback#top_para_3": "[Ẏǿǿŭŭ ƈȧȧƞ ȧȧŀşǿǿ ƒīīƞḓ şǿǿŀŭŭŧīīǿǿƞş ŧǿǿ ḿȧȧƞẏ ƈǿǿḿḿǿǿƞ ƥřǿǿƀŀḗḗḿş īīƞ ǿǿŭŭř <a class=\"FaqURL\" href=\"#\">Ƒřḗḗɋŭŭḗḗƞŧŀẏ Ȧȧşķḗḗḓ Ɋŭŭḗḗşŧīīǿǿƞş</a>.]",
       "general#modal-close-button": "[Ƈŀǿǿşḗḗ]",
       "language#success-message": "[<strong>Ħḗḗŀŀǿǿ!</strong> Ẇḗḗŀƈǿǿḿḗḗ ŧǿǿ Ƥşīīƥħǿǿƞ.]",
-      "messages#placeholder": "[Ƞǿǿ ḿḗḗşşȧȧɠḗḗş ẏḗḗŧ]",
-      "messages#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ḿḗḗşşȧȧɠḗḗş]",
+      "logs#placeholder": "[Ƞǿǿ ŀǿǿɠş ẏḗḗŧ]",
+      "logs#show-debug-label": "[Şħǿǿẇ ḓḗḗƀŭŭɠ ŀǿǿɠş]",
       "nav#about": "[Ȧȧƀǿǿŭŭŧ]",
       "nav#connection#connected": "[Ƈǿǿƞƞḗḗƈŧḗḗḓ]",
       "nav#connection#starting": "[Ƈǿǿƞƞḗḗƈŧīīƞɠ]",
       "nav#connection#stopped": "[Ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ]",
       "nav#connection#stopping": "[Ḓīīşƈǿǿƞƞḗḗƈŧīīƞɠ]",
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
-      "nav#messages": "[Ŀǿǿɠ Ḿḗḗşşȧȧɠḗḗş]",
+      "nav#logs": "[Ŀǿǿɠş]",
       "nav#settings": "[Şḗḗŧŧīīƞɠş]",
       "settings#applying-message": "[Řḗḗƈǿǿƞƞḗḗƈŧīīƞɠ ŧǿǿ ȧȧƥƥŀẏ ẏǿǿŭŭř şḗḗŧŧīīƞɠş.]",
       "settings#egress-region#error-modal-body-http": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ \"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\" ƈħǿǿīīƈḗḗ.]",
@@ -11997,15 +12003,15 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "feedback#top_para_3": "‮ʎon‬ ‮ɔɐu‬ ‮ɐʅso‬ ‮ɟıup‬ ‮soʅnʇıous‬ ‮ʇo‬ ‮ɯɐuʎ‬ ‮ɔoɯɯou‬ ‮dɹoqʅǝɯs‬ ‮ıu‬ ‮onɹ‬ <a class=\"FaqURL\" href=\"#\">‮ɟɹǝbnǝuʇʅʎ‬ ‮∀sʞǝp‬ ‮Ònǝsʇıous‬</a>.",
       "general#modal-close-button": "‮Ↄʅosǝ‬",
       "language#success-message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
-      "messages#placeholder": "‮No‬ ‮ɯǝssɐƃǝs‬ ‮ʎǝʇ‬",
-      "messages#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ɯǝssɐƃǝs‬",
+      "logs#placeholder": "‮No‬ ‮ʅoƃs‬ ‮ʎǝʇ‬",
+      "logs#show-debug-label": "‮Sɥoʍ‬ ‮pǝqnƃ‬ ‮ʅoƃs‬",
       "nav#about": "‮∀qonʇ‬",
       "nav#connection#connected": "‮Ↄouuǝɔʇǝp‬",
       "nav#connection#starting": "‮Ↄouuǝɔʇıuƃ‬",
       "nav#connection#stopped": "‮pısɔouuǝɔʇǝp‬",
       "nav#connection#stopping": "‮pısɔouuǝɔʇıuƃ‬",
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
-      "nav#messages": "‮˥oƃ‬ ‮Wǝssɐƃǝs‬",
+      "nav#logs": "‮˥oƃs‬",
       "nav#settings": "‮Sǝʇʇıuƃs‬",
       "settings#applying-message": "‮ᴚǝɔouuǝɔʇıuƃ‬ ‮ʇo‬ ‮ɐddʅʎ‬ ‮ʎonɹ‬ ‮sǝʇʇıuƃs‬.",
       "settings#egress-region#error-modal-body-http": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɹǝƃıou‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮ɹǝƃıou‬ ‮ıs‬ ‮uo‬ ‮ʅouƃǝɹ‬ ‮ɐʌɐıʅɐqʅǝ‬.<br>\n‮ʎon‬ ‮ɯnsʇ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ɹǝƃıou‬ ‮oɹ‬ ‮ɔɥɐuƃǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ \"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\" ‮ɔɥoıɔǝ‬.",
@@ -12150,7 +12156,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "nav#connection#stopped": "Disconnected",
       "nav#settings": "Settings",
       "nav#feedback": "Feedback",
-      "nav#messages": "Log Messages",
+      "nav#logs": "Logs",
       "nav#about": "About",
       "connection#starting-msg": "Psiphon is <span class=\"state-word\">connecting</span>…",
       "connection#stop-btn": "Stop",
@@ -12218,8 +12224,8 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "feedback#submit_button": "Submit",
       "feedback#text_feedback_bottom_para": "If the above form is not working, or you would like to send screenshots, please email us at <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
       "feedback#success-message": "<strong>Thank you!</strong> Your feedback has been sent.",
-      "messages#show-debug-label": "Show debug messages",
-      "messages#placeholder": "No messages yet",
+      "logs#show-debug-label": "Show debug logs",
+      "logs#placeholder": "No logs yet",
       "language#success-message": "<strong>Hello!</strong> Welcome to Psiphon.",
       "about#wordart-title": "Psiphon",
       "about#wordart-tag": "Beyond Borders",
@@ -14370,19 +14376,19 @@ function sendFeedback() {
 }
 
 
-/* LOG MESSAGES **************************************************************/
+/* LOGS **********************************************************************/
 
 $(function() {
-  $('#show-debug-messages').click(showDebugMessagesClicked);
+  $('#show-debug-logs').click(showDebugLogsClicked);
 
   // Set the initial show-debug state
-  var show = $('#show-debug-messages').prop('checked');
+  var show = $('#show-debug-logs').prop('checked');
   $('.log-messages')
     .toggleClass('showing-priority-0', show)
     .toggleClass('hiding-priority-0', !show);
 });
 
-function showDebugMessagesClicked(e) {
+function showDebugLogsClicked(e) {
   /*jshint validthis:true */
   var show = $(this).prop('checked');
   // We use both a showing and a hiding class to try to deal with IE7's CSS insanity.
@@ -14391,11 +14397,11 @@ function showDebugMessagesClicked(e) {
     .toggleClass('hiding-priority-0', !show);
 }
 
-function addLogMessage(obj) {
+function addLog(obj) {
   $('.log-messages .placeholder').remove();
 
   $('.log-messages').loadTemplate(
-    $("#message-template"),
+    $("#log-template"),
     {
       timestamp: new Date().toLocaleTimeString(),
       message: obj.message,
@@ -14405,10 +14411,10 @@ function addLogMessage(obj) {
       prepend:true
     });
 
-  // The "Show Debug Messages" checkbox is hidden until we actually get a debug
+  // The "Show Debug Logs" checkbox is hidden until we actually get a debug
   // message.
   if (obj.priority < 1) {
-    $('#messages-pane .invisible').removeClass('invisible');
+    $('#logs-pane .invisible').removeClass('invisible');
   }
 }
 
@@ -14452,6 +14458,7 @@ function switchLocale(locale, initial) {
     // code to run after everything else is done, so we'll force it to be async.
 
     nextTick(function() {
+      $('html').attr('lang', locale);
       $('body').i18n();
 
       // The content of elements will have changed, so trigger custom event that can
@@ -14796,10 +14803,10 @@ $(function() {
   });
 
   // Wire up add-message
-  $('#debug-message a').on('click', function() {
-    HtmlCtrlInterface_AddMessage({
-      message: $('#debug-message input').val(),
-      priority: parseInt($('#debug-message select').val())
+  $('#debug-log a').on('click', function() {
+    HtmlCtrlInterface_AddLog({
+      message: $('#debug-log input').val(),
+      priority: parseInt($('#debug-log select').val())
     });
   });
 
@@ -14848,11 +14855,11 @@ var PSIPHON_LINK_PREFIX = 'psi:';
 /* Calls from C code to JS code. */
 
 // Add new status message.
-function HtmlCtrlInterface_AddMessage(jsonArgs) {
+function HtmlCtrlInterface_AddLog(jsonArgs) {
   nextTick(function() {
     // Allow object as input to assist with debugging
     var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
-    addLogMessage(args);
+    addLog(args);
   });
 }
 
@@ -15044,7 +15051,7 @@ function HtmlCtrlInterface_BannerClick() {
 // The C interface code is unable to access functions that are members of objects,
 // so we'll need to directly expose our exports.
 
-window.HtmlCtrlInterface_AddMessage = HtmlCtrlInterface_AddMessage;
+window.HtmlCtrlInterface_AddLog = HtmlCtrlInterface_AddLog;
 window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
 window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
 window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
@@ -15142,17 +15149,17 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
           </a>
         </li>
 
-        <li id="messages-tab">
-          <a href="#messages-pane" data-toggle="tab" data-match-width=".main-nav a">
-            <i class="icon-fixed-width icon-list"></i>
-            <span data-i18n="nav#messages">Log Messages</span>
-          </a>
-        </li>
-
         <li id="about-tab">
           <a href="#about-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-rocket"></i>
             <span data-i18n="nav#about">About</span>
+          </a>
+        </li>
+
+        <li id="logs-tab">
+          <a href="#logs-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-list"></i>
+            <span data-i18n="nav#logs">Logs</span>
           </a>
         </li>
 
@@ -15743,28 +15750,29 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
         </div><!-- /feedback-pane -->
 
 
-        <!-- LOG MESSAGES ==================================================-->
-        <div class="tab-pane fade" id="messages-pane">
+        <!-- LOGS ==========================================================-->
+        <div class="tab-pane fade" id="logs-pane">
           <div>
             <div class="controls checkbox checkbox-primary invisible">
-              <input type="checkbox" id="show-debug-messages"/>
-              <label for="show-debug-messages">
-                <span data-i18n="messages#show-debug-label">
-                  Show debug messages
+              <input type="checkbox" id="show-debug-logs"/>
+              <label for="show-debug-logs">
+                <span data-i18n="logs#show-debug-label">
+                  Show debug logs
                 </span>
               </label>
             </div>
 
-            <table class="log-messages table">
+            <!-- We're forcing this to LTR since logs aren't translated -->
+            <table dir="ltr" class="log-messages table">
               <tr class="placeholder">
-                <td data-i18n="messages#placeholder">
-                  No messages yet
+                <td data-i18n="logs#placeholder">
+                  No logs yet
                 </td>
               </tr>
             </table>
 
-            <!-- Message template -->
-            <script type="text/html" id="message-template">
+            <!-- Log template -->
+            <script type="text/html" id="log-template">
               <tr data-class="priority">
                 <td class="timestamp" data-content="timestamp">
                 </td>
@@ -15774,7 +15782,7 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
             </script>
 
           </div>
-        </div><!-- /messages-pane -->
+        </div><!-- /logs-pane -->
 
 
         <!-- ABOUT ======================================================-->
@@ -15837,8 +15845,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
 
           <hr>
 
-          <form class="form-inline" id="debug-message">
-            <label>Add message</label>
+          <form class="form-inline" id="debug-log">
+            <label>Add log</label>
             <select style="width:7em">
               <option value="1" selected>normal</option>
               <option value="0">debug</option>

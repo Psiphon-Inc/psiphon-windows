@@ -31,9 +31,9 @@
     "message": "Feedback",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
   },
-  "nav#messages": {
-    "message": "Log Messages",
-    "description": "Text on the tab that, if the user clicks on it, switches to the 'Log Messages' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+  "nav#logs": {
+    "message": "Logs",
+    "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
   },
   "nav#about": {
     "message": "About",
@@ -303,12 +303,12 @@
     "message": "<strong>Thank you!</strong> Your feedback has been sent.",
     "description": "Message shown to user after their feedback has been sent successufully"
   },
-  "messages#show-debug-label": {
-    "message": "Show debug messages",
+  "logs#show-debug-label": {
+    "message": "Show debug logs",
     "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
   },
-  "messages#placeholder": {
-    "message": "No messages yet",
+  "logs#placeholder": {
+    "message": "No logs yet",
     "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
   },
   "language#success-message": {

@@ -6641,7 +6641,7 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
   cursor: hand;
   background-color: #ffffff;
 }
-/* LOG MESSAGES */
+/* LOGS */
 .hiding-priority-0.log-messages .priority-0 {
   display: none;
 }
@@ -6651,6 +6651,12 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
 .log-messages .timestamp {
   width: 1%;
   white-space: nowrap;
+}
+.log-messages,
+.log-messages th,
+.log-messages td {
+  direction: ltr !important;
+  text-align: left !important;
 }
 /* LANGUAGES */
 #language-pane .language-item {

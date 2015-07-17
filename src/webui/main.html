@@ -158,17 +158,17 @@
           </a>
         </li>
 
-        <li id="messages-tab">
-          <a href="#messages-pane" data-toggle="tab" data-match-width=".main-nav a">
-            <i class="icon-fixed-width icon-list"></i>
-            <span data-i18n="nav#messages">Log Messages</span>
-          </a>
-        </li>
-
         <li id="about-tab">
           <a href="#about-pane" data-toggle="tab" data-match-width=".main-nav a">
             <i class="icon-fixed-width icon-rocket"></i>
             <span data-i18n="nav#about">About</span>
+          </a>
+        </li>
+
+        <li id="logs-tab">
+          <a href="#logs-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-list"></i>
+            <span data-i18n="nav#logs">Logs</span>
           </a>
         </li>
 
@@ -759,28 +759,29 @@
         </div><!-- /feedback-pane -->
 
 
-        <!-- LOG MESSAGES ==================================================-->
-        <div class="tab-pane fade" id="messages-pane">
+        <!-- LOGS ==========================================================-->
+        <div class="tab-pane fade" id="logs-pane">
           <div>
             <div class="controls checkbox checkbox-primary invisible">
-              <input type="checkbox" id="show-debug-messages"/>
-              <label for="show-debug-messages">
-                <span data-i18n="messages#show-debug-label">
-                  Show debug messages
+              <input type="checkbox" id="show-debug-logs"/>
+              <label for="show-debug-logs">
+                <span data-i18n="logs#show-debug-label">
+                  Show debug logs
                 </span>
               </label>
             </div>
 
-            <table class="log-messages table">
+            <!-- We're forcing this to LTR since logs aren't translated -->
+            <table dir="ltr" class="log-messages table">
               <tr class="placeholder">
-                <td data-i18n="messages#placeholder">
-                  No messages yet
+                <td data-i18n="logs#placeholder">
+                  No logs yet
                 </td>
               </tr>
             </table>
 
-            <!-- Message template -->
-            <script type="text/html" id="message-template">
+            <!-- Log template -->
+            <script type="text/html" id="log-template">
               <tr data-class="priority">
                 <td class="timestamp" data-content="timestamp">
                 </td>
@@ -790,7 +791,7 @@
             </script>
 
           </div>
-        </div><!-- /messages-pane -->
+        </div><!-- /logs-pane -->
 
 
         <!-- ABOUT ======================================================-->
@@ -853,8 +854,8 @@
 
           <hr>
 
-          <form class="form-inline" id="debug-message">
-            <label>Add message</label>
+          <form class="form-inline" id="debug-log">
+            <label>Add log</label>
             <select style="width:7em">
               <option value="1" selected>normal</option>
               <option value="0">debug</option>

@@ -450,11 +450,11 @@ static void UpdateSystrayConnectedState()
 
 #define WM_PSIPHON_HTMLUI_BEFORENAVIGATE    WM_USER + 200
 #define WM_PSIPHON_HTMLUI_SETSTATE          WM_USER + 201
-#define WM_PSIPHON_HTMLUI_ADDMESSAGE        WM_USER + 202
+#define WM_PSIPHON_HTMLUI_ADDLOG            WM_USER + 202
 #define WM_PSIPHON_HTMLUI_ADDNOTICE         WM_USER + 203
 #define WM_PSIPHON_HTMLUI_REFRESHSETTINGS   WM_USER + 204
 
-static void HtmlUI_AddMessage(int priority, LPCTSTR message)
+static void HtmlUI_AddLog(int priority, LPCTSTR message)
 {
     Json::Value json;
     json["priority"] = priority;
@@ -466,10 +466,10 @@ static void HtmlUI_AddMessage(int priority, LPCTSTR message)
     wchar_t* buf = new wchar_t[bufLen];
     wcsncpy_s(buf, bufLen, wJson.c_str(), bufLen);
     buf[bufLen - 1] = L'\0';
-    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_ADDMESSAGE, (WPARAM)buf, 0);
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_ADDLOG, (WPARAM)buf, 0);
 }
 
-static void HtmlUI_AddMessageHandler(LPCWSTR json)
+static void HtmlUI_AddLogHandler(LPCWSTR json)
 {
     if (!g_htmlUiReady)
     {
@@ -483,9 +483,9 @@ static void HtmlUI_AddMessageHandler(LPCWSTR json)
     argStruct.pszArg1 = json;
     if (!SendMessage(
         g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
-        (WPARAM)_T("HtmlCtrlInterface_AddMessage"), (LPARAM)&argStruct))
+        (WPARAM)_T("HtmlCtrlInterface_AddLog"), (LPARAM)&argStruct))
     {
-        throw std::exception("UI: HtmlCtrlInterface_AddMessage not found");
+        throw std::exception("UI: HtmlCtrlInterface_AddLog not found");
     }
     delete[] json;
 }
@@ -1069,8 +1069,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_HTMLUI_SETSTATE:
         HtmlUI_SetStateHandler((LPCWSTR)wParam);
         break;
-    case WM_PSIPHON_HTMLUI_ADDMESSAGE:
-        HtmlUI_AddMessageHandler((LPCWSTR)wParam);
+    case WM_PSIPHON_HTMLUI_ADDLOG:
+        HtmlUI_AddLogHandler((LPCWSTR)wParam);
         break;
     case WM_PSIPHON_HTMLUI_ADDNOTICE:
         HtmlUI_AddNoticeHandler((LPCWSTR)wParam);
@@ -1133,7 +1133,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         int priority = (int)wParam;
         TCHAR* message = (TCHAR*)lParam;
-        HtmlUI_AddMessage(priority, message);
+        HtmlUI_AddLog(priority, message);
         OutputDebugString(message);
         OutputDebugString(L"\n");
         free(message);
