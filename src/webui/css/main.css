@@ -6552,26 +6552,31 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   bottom: 1em;
   left: 50%;
 }
-.egress-region-combo-container #EgressRegionCombo {
+.egress-region-combo-container > * {
   position: relative;
   left: -50%;
 }
-#EgressRegionCombo > a {
+.egress-region-combo-container #EgressRegionCombo > a {
   padding: 0;
   background-color: #ffffff;
 }
-#EgressRegionCombo > a i {
+.egress-region-combo-container #EgressRegionCombo > a i {
   padding: 0.4em 0.5em 0 0.5em;
 }
-.open#EgressRegionCombo > a i:before {
+.open.egress-region-combo-container #EgressRegionCombo > a i:before {
   content: "\e963";
 }
-#EgressRegionCombo ul {
+.egress-region-combo-container #EgressRegionCombo ul {
   height: 200px;
   overflow-y: scroll;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+}
+label[for="EgressRegionCombo"],
+label[for="EgressRegion"] {
+  margin-bottom: 0;
+  font-size: 0.9em;
 }
 #EgressRegion,
 #EgressRegionCombo ul,

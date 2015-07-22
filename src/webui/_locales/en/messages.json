@@ -71,6 +71,10 @@
     "message": "Connect",
     "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
   },
+  "connection#egress-region-combo-label": {
+    "message": "Connect via",
+    "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+  },
   "settings#error-alert": {
     "message": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
     "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
@@ -102,6 +106,10 @@
   "settings#egress-region#heading": {
     "message": "Psiphon Server Region",
     "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+  },
+  "settings#egress-region#label": {
+    "message": "Connect via",
+    "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
   },
   "settings#egress-region#select-best-performance": {
     "message": "Best Performance",

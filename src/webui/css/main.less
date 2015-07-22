@@ -504,39 +504,46 @@ body {
 
   // And center it.
   left: 50%;
-  #EgressRegionCombo {
+  > * {
     position: relative;
     left: -50%;
   }
-}
 
-#EgressRegionCombo {
-  > a {
-    // Let the flag stuff take care of the padding
-    padding: 0;
+  #EgressRegionCombo {
+    > a {
+      // Let the flag stuff take care of the padding
+      padding: 0;
 
-    // Match the background color to the connect box
-    background-color: @connectBackgroundColor;
+      // Match the background color to the connect box
+      background-color: @connectBackgroundColor;
 
-    i {
-      // Make the caret more vertically centered, with a bit of space on the side.
-      padding: 0.4em 0.5em 0 0.5em;
+      i {
+        // Make the caret more vertically centered, with a bit of space on the side.
+        padding: 0.4em 0.5em 0 0.5em;
 
-      .open&:before {
-        // Change the icon when combo is open.
-        content: @icon-chevron-down-circle;
+        .open&:before {
+          // Change the icon when combo is open.
+          content: @icon-chevron-down-circle;
+        }
       }
     }
-  }
 
-  ul {
-    // We want to fix the size of the combo list, so it doesn't go off the view.
-    height: 200px;
-    overflow-y: scroll;
+    ul {
+      // We want to fix the size of the combo list, so it doesn't go off the view.
+      height: 200px;
+      overflow-y: scroll;
 
-    // No border radius
-    .border-radius(0);
+      // No border radius
+      .border-radius(0);
+    }
   }
+}
+
+label[for="EgressRegionCombo"], label[for="EgressRegion"] {
+  // Override the Bootstrap style
+  margin-bottom: 0;
+
+  font-size: 0.9em;
 }
 
 #EgressRegion, #EgressRegionCombo ul, #EgressRegionCombo .btn {

@@ -7276,26 +7276,31 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   bottom: 1em;
   left: 50%;
 }
-.egress-region-combo-container #EgressRegionCombo {
+.egress-region-combo-container > * {
   position: relative;
   left: -50%;
 }
-#EgressRegionCombo > a {
+.egress-region-combo-container #EgressRegionCombo > a {
   padding: 0;
   background-color: #ffffff;
 }
-#EgressRegionCombo > a i {
+.egress-region-combo-container #EgressRegionCombo > a i {
   padding: 0.4em 0.5em 0 0.5em;
 }
-.open#EgressRegionCombo > a i:before {
+.open.egress-region-combo-container #EgressRegionCombo > a i:before {
   content: "\e963";
 }
-#EgressRegionCombo ul {
+.egress-region-combo-container #EgressRegionCombo ul {
   height: 200px;
   overflow-y: scroll;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+}
+label[for="EgressRegionCombo"],
+label[for="EgressRegion"] {
+  margin-bottom: 0;
+  font-size: 0.9em;
 }
 #EgressRegion,
 #EgressRegionCombo ul,
@@ -11887,6 +11892,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "connection#connect-btn": "[Ƈǿǿƞƞḗḗƈŧ]",
       "connection#connected-msg": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ƈǿǿƞƞḗḗƈŧḗḗḓ</span>]",
       "connection#disconnect-btn": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
+      "connection#egress-region-combo-label": "[Ƈǿǿƞƞḗḗƈŧ ṽīīȧȧ]",
       "connection#starting-msg": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ƈǿǿƞƞḗḗƈŧīīƞɠ</span>…]",
       "connection#stop-btn": "[Şŧǿǿƥ]",
       "connection#stopped-msg": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ḓīīşƈǿǿƞƞḗḗƈŧḗḗḓ</span>]",
@@ -11922,6 +11928,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#egress-region#heading": "[Ƥşīīƥħǿǿƞ Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ]",
       "settings#egress-region#help-text": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ƒǿǿř ŧħḗḗ ƒȧȧşŧḗḗşŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ şƥḗḗḗḗḓ ẏǿǿŭŭ şħǿǿŭŭŀḓ ƈħǿǿǿǿşḗḗ <strong>\"Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ\"</strong>, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ īīƞşŧḗḗȧȧḓ ƥřḗḗƒḗḗř ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
       "settings#egress-region#invalid-error-msg": "[Ƈħǿǿǿǿşḗḗ ȧȧ ṽȧȧŀīīḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ.]",
+      "settings#egress-region#label": "[Ƈǿǿƞƞḗḗƈŧ ṽīīȧȧ]",
       "settings#egress-region#select-best-performance": "[Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ]",
       "settings#egress-region#select-de": "[Ɠḗḗřḿȧȧƞẏ]",
       "settings#egress-region#select-gb": "[Ŭŭƞīīŧḗḗḓ Ķīīƞɠḓǿǿḿ]",
@@ -11984,6 +11991,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "connection#connect-btn": "‮Ↄouuǝɔʇ‬",
       "connection#connected-msg": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮ɔouuǝɔʇǝp‬</span>",
       "connection#disconnect-btn": "‮pısɔouuǝɔʇ‬",
+      "connection#egress-region-combo-label": "‮Ↄouuǝɔʇ‬ ‮ʌıɐ‬",
       "connection#starting-msg": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮ɔouuǝɔʇıuƃ‬</span>…",
       "connection#stop-btn": "‮Sʇod‬",
       "connection#stopped-msg": "‮Ԁsıdɥou‬ ‮ıs‬ <span class=\"state-word\">‮pısɔouuǝɔʇǝp‬</span>",
@@ -12019,6 +12027,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#egress-region#heading": "‮Ԁsıdɥou‬ ‮Sǝɹʌǝɹ‬ ‮ᴚǝƃıou‬",
       "settings#egress-region#help-text": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮ɟɐsʇǝsʇ‬ ‮ɔouuǝɔʇıou‬ ‮sdǝǝp‬ ‮ʎon‬ ‮sɥonʅp‬ ‮ɔɥoosǝ‬ <strong>\"‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬\"</strong>, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ıusʇǝɐp‬ ‮dɹǝɟǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
       "settings#egress-region#invalid-error-msg": "‮Ↄɥoosǝ‬ ‮ɐ‬ ‮ʌɐʅıp‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ɹǝƃıou‬.",
+      "settings#egress-region#label": "‮Ↄouuǝɔʇ‬ ‮ʌıɐ‬",
       "settings#egress-region#select-best-performance": "‮Ԑǝsʇ‬ ‮Ԁǝɹɟoɹɯɐuɔǝ‬",
       "settings#egress-region#select-de": "‮פǝɹɯɐuʎ‬",
       "settings#egress-region#select-gb": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
@@ -12166,6 +12175,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "connection#wait-btn": "Please wait…",
       "connection#stopped-msg": "Psiphon is <span class=\"state-word\">disconnected</span>",
       "connection#connect-btn": "Connect",
+      "connection#egress-region-combo-label": "Connect via",
       "settings#error-alert": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
       "settings#reset-button": "Reset to Default",
       "settings#vpn-incompatible-msg": "(Doesn't work with VPN mode.)",
@@ -12174,6 +12184,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#split-tunnel#help-text": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
       "settings#split-tunnel#enable-label": "Don't proxy websites within your country",
       "settings#egress-region#heading": "Psiphon Server Region",
+      "settings#egress-region#label": "Connect via",
       "settings#egress-region#select-best-performance": "Best Performance",
       "settings#egress-region#select-us": "United States",
       "settings#egress-region#select-gb": "United Kingdom",
@@ -13693,6 +13704,13 @@ function egressRegionComboSetup() {
         .text($activeItem.find('a').text());
     }
   });
+
+  // If the label is clicked, jump to the Egress Region settings section
+  $('.egress-region-combo-container label a').click(function(e) {
+    e.preventDefault();
+    showSettingsSection('#settings-accordion-egress-region');
+    return false;
+  });
 }
 
 
@@ -14198,7 +14216,11 @@ function showSettingsSection(section, focusElem) {
   function onTabShown() {
     // Hack: The collapse-show doesn't seem to work unless we wait a bit
     setTimeout(function() {
+      // Expand the section
       $(section).collapse('show');
+
+      // Collapse any other sections
+      $('#settings-accordion .in.collapse').not(section).collapse('hide');
 
       // Scroll to the section, after allowing the section to expand
       setTimeout(function() {
@@ -15285,6 +15307,12 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
           </div><!-- /connect-toggle -->
 
           <div class="egress-region-combo-container vpn-incompatible-hide">
+
+            <label for="EgressRegionCombo">
+              <a href="#" data-i18n="connection#egress-region-combo-label">
+                Connect via
+              </a>
+            </label>
             <div class="btn-group dropup" id="EgressRegionCombo">
               <a class="btn btn-large dropdown-toggle f32 ie7Border" data-toggle="dropdown" href="#">
                 <span data-i18n-ltr-classes="pull-left" data-i18n-rtl-classes="pull-right">
@@ -15431,6 +15459,9 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                         </span>
                       </span>
                       <div class="controls">
+                        <label for="EgressRegion" data-i18n="settings#egress-region#label">
+                          Connect via
+                        </label>
                         <div class="dropdown clearfix">
                           <!-- Giving this the `control-group` class is a bit of a hack to get its error state working right. -->
                           <ul id="EgressRegion" class="control-group dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">

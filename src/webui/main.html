@@ -294,6 +294,12 @@
           </div><!-- /connect-toggle -->
 
           <div class="egress-region-combo-container vpn-incompatible-hide">
+
+            <label for="EgressRegionCombo">
+              <a href="#" data-i18n="connection#egress-region-combo-label">
+                Connect via
+              </a>
+            </label>
             <div class="btn-group dropup" id="EgressRegionCombo">
               <a class="btn btn-large dropdown-toggle f32 ie7Border" data-toggle="dropdown" href="#">
                 <span data-i18n-ltr-classes="pull-left" data-i18n-rtl-classes="pull-right">
@@ -440,6 +446,9 @@
                         </span>
                       </span>
                       <div class="controls">
+                        <label for="EgressRegion" data-i18n="settings#egress-region#label">
+                          Connect via
+                        </label>
                         <div class="dropdown clearfix">
                           <!-- Giving this the `control-group` class is a bit of a hack to get its error state working right. -->
                           <ul id="EgressRegion" class="control-group dropdown-menu f32" role="menu" style="display: block; position: static; margin-bottom: 5px; *width: 180px;">

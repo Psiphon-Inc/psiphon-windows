@@ -67,6 +67,10 @@
     "message": "[Ḓīīşƈǿǿƞƞḗḗƈŧ]",
     "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
+  "connection#egress-region-combo-label": {
+    "message": "[Ƈǿǿƞƞḗḗƈŧ ṽīīȧȧ]",
+    "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+  },
   "connection#starting-msg": {
     "message": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ƈǿǿƞƞḗḗƈŧīīƞɠ</span>…]",
     "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
@@ -206,6 +210,10 @@
   "settings#egress-region#invalid-error-msg": {
     "message": "[Ƈħǿǿǿǿşḗḗ ȧȧ ṽȧȧŀīīḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ.]",
     "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+  },
+  "settings#egress-region#label": {
+    "message": "[Ƈǿǿƞƞḗḗƈŧ ṽīīȧȧ]",
+    "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
   },
   "settings#egress-region#select-best-performance": {
     "message": "[Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ]",

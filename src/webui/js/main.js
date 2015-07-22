@@ -431,6 +431,13 @@ function egressRegionComboSetup() {
         .text($activeItem.find('a').text());
     }
   });
+
+  // If the label is clicked, jump to the Egress Region settings section
+  $('.egress-region-combo-container label a').click(function(e) {
+    e.preventDefault();
+    showSettingsSection('#settings-accordion-egress-region');
+    return false;
+  });
 }
 
 
@@ -936,7 +943,11 @@ function showSettingsSection(section, focusElem) {
   function onTabShown() {
     // Hack: The collapse-show doesn't seem to work unless we wait a bit
     setTimeout(function() {
+      // Expand the section
       $(section).collapse('show');
+
+      // Collapse any other sections
+      $('#settings-accordion .in.collapse').not(section).collapse('hide');
 
       // Scroll to the section, after allowing the section to expand
       setTimeout(function() {
