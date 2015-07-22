@@ -267,10 +267,6 @@
     "message": "Give Us Your Feedback",
     "description": "Title for the Feedback page"
   },
-  "feedback#top_para_1": {
-    "message": "Please let us know how Psiphon is working for you so we can make the system better!",
-    "description": "Text motivating the user to send Psiphon Inc. feedback."
-  },
   "feedback#top_para_2": {
     "message": "Many problems can be fixed by downloading the latest version. You can <a class=\"NewVersionURL\" href=\"#\">download the latest version by clicking here</a>, or you can send an email to <a class=\"NewVersionEmail\" href=\"#\"></a>.",
     "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."

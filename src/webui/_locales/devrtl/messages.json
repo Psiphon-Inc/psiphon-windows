@@ -127,10 +127,6 @@
     "message": "‮פıʌǝ‬ ‮∩s‬ ‮ʎonɹ‬ ‮ɟǝǝpqɐɔʞ‬",
     "description": "Title for the Feedback page"
   },
-  "feedback#top_para_1": {
-    "message": "‮Ԁʅǝɐsǝ‬ ‮ʅǝʇ‬ ‮ns‬ ‮ʞuoʍ‬ ‮ɥoʍ‬ ‮Ԁsıdɥou‬ ‮ıs‬ ‮ʍoɹʞıuƃ‬ ‮ɟoɹ‬ ‮ʎon‬ ‮so‬ ‮ʍǝ‬ ‮ɔɐu‬ ‮ɯɐʞǝ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬ ‮qǝʇʇǝɹ‬!",
-    "description": "Text motivating the user to send Psiphon Inc. feedback."
-  },
   "feedback#top_para_2": {
     "message": "‮Wɐuʎ‬ ‮dɹoqʅǝɯs‬ ‮ɔɐu‬ ‮qǝ‬ ‮ɟıxǝp‬ ‮qʎ‬ ‮poʍuʅoɐpıuƃ‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬. ‮ʎon‬ ‮ɔɐu‬ <a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮ʇɥǝ‬ ‮ʅɐʇǝsʇ‬ ‮ʌǝɹsıou‬ ‮qʎ‬ ‮ɔʅıɔʞıuƃ‬ ‮ɥǝɹǝ‬</a>, ‮oɹ‬ ‮ʎon‬ ‮ɔɐu‬ ‮sǝup‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬ <a class=\"NewVersionEmail\" href=\"#\"></a>.",
     "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
