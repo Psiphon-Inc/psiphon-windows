@@ -332,7 +332,7 @@
     "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
   },
   "about#visit-download-site": {
-    "message": "To <strong>download a new version</strong> of Psiphon, or to <strong>get help and more information</strong>, please <a href=\"#\" class=\"InfoURL\">visit the website</a>.",
+    "message": "Please visit the website to <strong><a class=\"NewVersionURL\" href=\"#\">download a new version</a></strong> or to get <strong><a class=\"InfoURL\" href=\"#\">help and information</a></strong>.",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
   },
   "about#get-by-email": {

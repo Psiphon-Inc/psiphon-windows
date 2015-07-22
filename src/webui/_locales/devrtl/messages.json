@@ -8,7 +8,7 @@
     "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
   },
   "about#visit-download-site": {
-    "message": "‮⊥o‬ <strong>‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</strong> ‮oɟ‬ ‮Ԁsıdɥou‬, ‮oɹ‬ ‮ʇo‬ <strong>‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ɯoɹǝ‬ ‮ıuɟoɹɯɐʇıou‬</strong>, ‮dʅǝɐsǝ‬ <a href=\"#\" class=\"InfoURL\">‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬</a>.",
+    "message": "‮Ԁʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ʇo‬ <strong><a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</a></strong> ‮oɹ‬ ‮ʇo‬ ‮ƃǝʇ‬ <strong><a class=\"InfoURL\" href=\"#\">‮ɥǝʅd‬ ‮ɐup‬ ‮ıuɟoɹɯɐʇıou‬</a></strong>.",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
   },
   "about#wordart-tag": {
