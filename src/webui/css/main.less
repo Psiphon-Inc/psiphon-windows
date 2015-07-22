@@ -702,11 +702,16 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
     border-bottom-width: 3px;
     border-bottom-style: solid;
     text-shadow: 3px 3px #D9D2BE;
+
+    // Without some padding, descending characters in Farsi (which does not
+    // respect `text-transform: uppercase`) cross the underline and look wrong.
+    padding-bottom: 0.15em;
   }
 
   .wordart-tag {
     font-size: 1.4em;
     color: #381E15;
+    padding-top: 0.1em;
   }
 }
 
