@@ -249,9 +249,9 @@
       "settings#systray-minimize#enable-label": "[Ḿīīƞīīḿīīẑḗḗ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (şẏşŧḗḗḿ ŧřȧȧẏ)]",
       "settings#systray-minimize#heading": "[Ḿīīƞīīḿīīẑḗḗ ŧǿǿ Ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ Ȧȧřḗḗȧȧ (Şẏşŧḗḗḿ Ŧřȧȧẏ)]",
       "settings#systray-minimize#help-text": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ẇħḗḗƞ ḿīīƞīīḿīīẑḗḗḓ ŧħḗḗ Ƥşīīƥħǿǿƞ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ẇīīƞḓǿǿẇ ẇīīŀŀ ħīīḓḗḗ īīƞ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (ȧȧŀşǿǿ ķƞǿǿẇƞ ȧȧş ŧħḗḗ “şẏşŧḗḗḿ ŧřȧȧẏ” ǿǿř “şẏşŧřȧȧẏ”, ŀǿǿƈȧȧŧḗḗḓ ƞḗḗȧȧř ŧħḗḗ ƈŀǿǿƈķ ǿǿƞ ẏǿǿŭŭř Ẇīīƞḓǿǿẇş ŧȧȧşķ ƀȧȧř).]",
-      "settings#transport-mode#check-label": "[Ŭŭşḗḗ ṼƤȠ Ḿǿǿḓḗḗ]",
+      "settings#transport-mode#check-label": "[Ŭŭşḗḗ Ŀ2ŦƤ/ĪīƤŞḗḗƈ ḿǿǿḓḗḗ]",
       "settings#transport-mode#heading": "[Ŧřȧȧƞşƥǿǿřŧ Ḿǿǿḓḗḗ]",
-      "settings#transport-mode#help-text": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş ĪīƤŞḗḗƈ/Ŀ2ŦƤ ṼƤȠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
+      "settings#transport-mode#help-text": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş Ŀ2ŦƤ/ĪīƤŞḗḗƈ ṽīīřŧŭŭȧȧŀ ƞḗḗŧẇǿǿřķīīƞɠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ǿǿƒ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
       "settings#upstream-proxy#by-default": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.<br> Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
       "settings#upstream-proxy#error-modal-body-configured": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧƞ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\".<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ƒīīẋ ŧħḗḗ şḗḗŧŧīīƞɠş ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
       "settings#upstream-proxy#error-modal-body-default": "[Ƥşīīƥħǿǿƞ īīş ƈŭŭřřḗḗƞŧŀẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŧǿǿ ŭŭşḗḗ ẏǿǿŭŭř şẏşŧḗḗḿ ƥřǿǿẋẏ ȧȧş īīŧş \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\".<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ḗḗƞȧȧƀŀḗḗ \"Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
@@ -262,8 +262,8 @@
       "settings#upstream-proxy#port-label": "[Ƥǿǿřŧ]",
       "settings#upstream-proxy#set-both-error-msg": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
       "settings#upstream-proxy#skip-label": "[Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ]",
-      "settings#vpn-incompatible-label": "[ṼƤȠ]",
-      "settings#vpn-incompatible-msg": "[(Ḓǿǿḗḗşƞ'ŧ ẇǿǿřķ ẇīīŧħ ṼƤȠ ḿǿǿḓḗḗ.)]"
+      "settings#vpn-incompatible-label": "[Ŀ2ŦƤ/ĪīƤŞḗḗƈ]",
+      "settings#vpn-incompatible-msg": "[(Ḓǿǿḗḗşƞ'ŧ ẇǿǿřķ ẇīīŧħ Ŀ2ŦƤ/ĪīƤŞḗḗƈ ḿǿǿḓḗḗ.)]"
     }
   },
   "devrtl": {
@@ -348,9 +348,9 @@
       "settings#systray-minimize#enable-label": "‮Wıuıɯızǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮uoʇıɟıɔɐʇıou‬ ‮ɐɹǝɐ‬ (‮sʎsʇǝɯ‬ ‮ʇɹɐʎ‬)",
       "settings#systray-minimize#heading": "‮Wıuıɯızǝ‬ ‮ʇo‬ ‮Noʇıɟıɔɐʇıou‬ ‮∀ɹǝɐ‬ (‮Sʎsʇǝɯ‬ ‮⊥ɹɐʎ‬)",
       "settings#systray-minimize#help-text": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ʍɥǝu‬ ‮ɯıuıɯızǝp‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮ɐddʅıɔɐʇıou‬ ‮ʍıupoʍ‬ ‮ʍıʅʅ‬ ‮ɥıpǝ‬ ‮ıu‬ ‮ʇɥǝ‬ ‮uoʇıɟıɔɐʇıou‬ ‮ɐɹǝɐ‬ (‮ɐʅso‬ ‮ʞuoʍu‬ ‮ɐs‬ ‮ʇɥǝ‬ “‮sʎsʇǝɯ‬ ‮ʇɹɐʎ‬” ‮oɹ‬ “‮sʎsʇɹɐʎ‬”, ‮ʅoɔɐʇǝp‬ ‮uǝɐɹ‬ ‮ʇɥǝ‬ ‮ɔʅoɔʞ‬ ‮ou‬ ‮ʎonɹ‬ ‮Ｍıupoʍs‬ ‮ʇɐsʞ‬ ‮qɐɹ‬).",
-      "settings#transport-mode#check-label": "‮∩sǝ‬ ‮ɅԀN‬ ‮Wopǝ‬",
+      "settings#transport-mode#check-label": "‮∩sǝ‬ ‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬ ‮ɯopǝ‬",
       "settings#transport-mode#heading": "‮⊥ɹɐusdoɹʇ‬ ‮Wopǝ‬",
-      "settings#transport-mode#help-text": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮IԀSǝɔ‬/‮˥‬2‮⊥Ԁ‬ ‮ɅԀN‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮ɟoɹ‬ ‮qʎdɐssıuƃ‬ ‮ɯosʇ‬ ‮ɟıɹǝʍɐʅʅs‬.",
+      "settings#transport-mode#help-text": "‮∩sǝs‬ ‮Ｍıupoʍs‬ ‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬ ‮ʌıɹʇnɐʅ‬ ‮uǝʇʍoɹʞıuƃ‬. ‮⊥ɥıs‬ ‮ɯopǝ‬ ‮ʍıʅʅ‬ ‮ʇnuuǝʅ‬ ‮ɐʅʅ‬ ‮oɟ‬ ‮ʎonɹ‬ ‮ɐdds‬, ‮qnʇ‬ ‮ıʇ‬ ‮poǝsu‬'‮ʇ‬ ‮dɹoʌıpǝ‬ ‮oqɟnsɔɐʇıou‬. ‮Iʇ‬ ‮ıs‬ <strong>‮uoʇ‬ ‮ɹǝɔoɯɯǝupǝp‬</strong> ‮ɟoɹ‬ ‮qʎdɐssıuƃ‬ ‮ɯosʇ‬ ‮ɟıɹǝʍɐʅʅs‬.",
       "settings#upstream-proxy#by-default": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.<br> ‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
       "settings#upstream-proxy#error-modal-body-configured": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐu‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\".<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ʇɥǝ‬ ‮sǝʇʇıuƃs‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
       "settings#upstream-proxy#error-modal-body-default": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔnɹɹǝuʇʅʎ‬ ‮ɔouɟıƃnɹǝp‬ ‮ʇo‬ ‮nsǝ‬ ‮ʎonɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮ɐs‬ ‮ıʇs‬ \"‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\".<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ǝuɐqʅǝ‬ \"‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬\" ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
@@ -361,8 +361,8 @@
       "settings#upstream-proxy#port-label": "‮Ԁoɹʇ‬",
       "settings#upstream-proxy#set-both-error-msg": "‮ʎon‬ ‮ɯnsʇ‬ ‮sǝʇ‬ ‮qoʇɥ‬ ‮Hosʇuɐɯǝ‬ ‮ɐup‬ ‮Ԁoɹʇ‬, ‮oɹ‬ ‮ʅǝɐʌǝ‬ ‮qoʇɥ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮sǝʅǝɔʇıou‬.",
       "settings#upstream-proxy#skip-label": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
-      "settings#vpn-incompatible-label": "‮ɅԀN‬",
-      "settings#vpn-incompatible-msg": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮ɅԀN‬ ‮ɯopǝ‬.)"
+      "settings#vpn-incompatible-label": "‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬",
+      "settings#vpn-incompatible-msg": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬ ‮ɯopǝ‬.)"
     }
   },
   "el": {
@@ -473,8 +473,8 @@
       "connection#egress-region-combo-label": "Connect via",
       "settings#error-alert": "<strong>Error!</strong> Please fix incorrect values before proceeding.",
       "settings#reset-button": "Reset to Default",
-      "settings#vpn-incompatible-msg": "(Doesn't work with VPN mode.)",
-      "settings#vpn-incompatible-label": "VPN",
+      "settings#vpn-incompatible-msg": "(Doesn't work with L2TP/IPSec mode.)",
+      "settings#vpn-incompatible-label": "L2TP/IPSec",
       "settings#split-tunnel#heading": "Split Tunnel",
       "settings#split-tunnel#help-text": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
       "settings#split-tunnel#enable-label": "Don't proxy websites within your country",
@@ -511,8 +511,8 @@
       "settings#upstream-proxy#error-modal-body-configured": "You have configured Psiphon to use an \"upstream proxy\".<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease fix the settings and try again.",
       "settings#upstream-proxy#error-modal-body-pre-message": "Here is the technical error info:",
       "settings#transport-mode#heading": "Transport Mode",
-      "settings#transport-mode#check-label": "Use VPN Mode",
-      "settings#transport-mode#help-text": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
+      "settings#transport-mode#check-label": "Use L2TP/IPSec mode",
+      "settings#transport-mode#help-text": "Uses Windows L2TP/IPSec virtual networking. This mode will tunnel all of your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
       "settings#systray-minimize#heading": "Minimize to Notification Area (System Tray)",
       "settings#systray-minimize#help-text": "If enabled, when minimized the Psiphon application window will hide in the notification area (also known as the “system tray” or “systray”, located near the clock on your Windows task bar).",
       "settings#systray-minimize#enable-label": "Minimize to the notification area (system tray)",

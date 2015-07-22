@@ -316,16 +316,16 @@
     "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
   },
   "settings#transport-mode#check-label": {
-    "message": "[Ŭŭşḗḗ ṼƤȠ Ḿǿǿḓḗḗ]",
-    "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended."
+    "message": "[Ŭŭşḗḗ Ŀ2ŦƤ/ĪīƤŞḗḗƈ ḿǿǿḓḗḗ]",
+    "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
   },
   "settings#transport-mode#heading": {
     "message": "[Ŧřȧȧƞşƥǿǿřŧ Ḿǿǿḓḗḗ]",
     "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
   },
   "settings#transport-mode#help-text": {
-    "message": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş ĪīƤŞḗḗƈ/Ŀ2ŦƤ ṼƤȠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
-    "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    "message": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş Ŀ2ŦƤ/ĪīƤŞḗḗƈ ṽīīřŧŭŭȧȧŀ ƞḗḗŧẇǿǿřķīīƞɠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ǿǿƒ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
+    "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
   },
   "settings#upstream-proxy#by-default": {
     "message": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.<br> Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
@@ -368,11 +368,11 @@
     "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
   },
   "settings#vpn-incompatible-label": {
-    "message": "[ṼƤȠ]",
-    "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    "message": "[Ŀ2ŦƤ/ĪīƤŞḗḗƈ]",
+    "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
   },
   "settings#vpn-incompatible-msg": {
-    "message": "[(Ḓǿǿḗḗşƞ'ŧ ẇǿǿřķ ẇīīŧħ ṼƤȠ ḿǿǿḓḗḗ.)]",
-    "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    "message": "[(Ḓǿǿḗḗşƞ'ŧ ẇǿǿřķ ẇīīŧħ Ŀ2ŦƤ/ĪīƤŞḗḗƈ ḿǿǿḓḗḗ.)]",
+    "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
   }
 }

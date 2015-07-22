@@ -84,12 +84,12 @@
     "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
   },
   "settings#vpn-incompatible-msg": {
-    "message": "(Doesn't work with VPN mode.)",
-    "description": "If 'VPN mode' is enabled, this text is displayed under or beside settings which are incompatible with VPN mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    "message": "(Doesn't work with L2TP/IPSec mode.)",
+    "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
   },
   "settings#vpn-incompatible-label": {
-    "message": "VPN",
-    "description": "If 'VPN mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with VPN mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    "message": "L2TP/IPSec",
+    "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
   },
   "settings#split-tunnel#heading": {
     "message": "Split Tunnel",
@@ -236,12 +236,12 @@
     "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
   },
   "settings#transport-mode#check-label": {
-    "message": "Use VPN Mode",
-    "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended."
+    "message": "Use L2TP/IPSec mode",
+    "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
   },
   "settings#transport-mode#help-text": {
-    "message": "Uses Windows IPSec/L2TP VPN. This mode will tunnel all your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
-    "description": "Help text for the 'Use VPN Mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    "message": "Uses Windows L2TP/IPSec virtual networking. This mode will tunnel all of your apps, but it doesn't provide obfuscation. It is <strong>not recommended</strong> for bypassing most firewalls.",
+    "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
   },
   "settings#systray-minimize#heading": {
     "message": "Minimize to Notification Area (System Tray)",
