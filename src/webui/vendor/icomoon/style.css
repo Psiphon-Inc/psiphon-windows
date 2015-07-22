@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('fonts/icomoon.eot?-msl55s');
-	src:url('fonts/icomoon.eot?#iefix-msl55s') format('embedded-opentype'),
-		url('fonts/icomoon.ttf?-msl55s') format('truetype'),
-		url('fonts/icomoon.woff?-msl55s') format('woff'),
-		url('fonts/icomoon.svg?-msl55s#icomoon') format('svg');
+	src:url('fonts/icomoon.eot?gke5q5');
+	src:url('fonts/icomoon.eot?#iefixgke5q5') format('embedded-opentype'),
+		url('fonts/icomoon.ttf?gke5q5') format('truetype'),
+		url('fonts/icomoon.woff?gke5q5') format('woff'),
+		url('fonts/icomoon.svg?gke5q5#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -95,6 +95,9 @@
 .icon-plus:before {
 	content: "\e936";
 }
+.icon-minus:before {
+	content: "\e937";
+}
 .icon-chevron-up:before {
 	content: "\e939";
 }
@@ -103,6 +106,12 @@
 }
 .icon-arrow-right:before {
 	content: "\e944";
+}
+.icon-expand:before {
+	content: "\e94a";
+}
+.icon-contract:before {
+	content: "\e94b";
 }
 .icon-warning:before {
 	content: "\e955";
@@ -113,11 +122,23 @@
 .icon-checkmark-circle:before {
 	content: "\e959";
 }
+.icon-plus-circle:before {
+	content: "\e95b";
+}
+.icon-circle-minus:before {
+	content: "\e95c";
+}
 .icon-chevron-up-circle:before {
 	content: "\e962";
 }
 .icon-chevron-down-circle:before {
 	content: "\e963";
+}
+.icon-plus-square:before {
+	content: "\e98e";
+}
+.icon-minus-square:before {
+	content: "\e98f";
 }
 .icon-chevron-up-square:before {
 	content: "\e995";

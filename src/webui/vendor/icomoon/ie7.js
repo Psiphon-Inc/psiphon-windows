@@ -1,6 +1,11 @@
 /* To avoid CSS expressions while still supporting IE 7 and IE 6, use this script */
 /* The script tag referencing this file must be placed before the ending body tag. */
 
+/* Use conditional comments in order to target IE 7 and older:
+	<!--[if lt IE 8]><!-->
+	<script src="ie7/ie7.js"></script>
+	<!--<![endif]-->
+*/
 
 (function() {
 	function addIcon(el, entity) {
@@ -32,14 +37,21 @@
 		'icon-list': '&#xe92c;',
 		'icon-check': '&#xe934;',
 		'icon-plus': '&#xe936;',
+		'icon-minus': '&#xe937;',
 		'icon-chevron-up': '&#xe939;',
 		'icon-chevron-down': '&#xe93a;',
 		'icon-arrow-right': '&#xe944;',
+		'icon-expand': '&#xe94a;',
+		'icon-contract': '&#xe94b;',
 		'icon-warning': '&#xe955;',
 		'icon-notification-circle': '&#xe956;',
 		'icon-checkmark-circle': '&#xe959;',
+		'icon-plus-circle': '&#xe95b;',
+		'icon-circle-minus': '&#xe95c;',
 		'icon-chevron-up-circle': '&#xe962;',
 		'icon-chevron-down-circle': '&#xe963;',
+		'icon-plus-square': '&#xe98e;',
+		'icon-minus-square': '&#xe98f;',
 		'icon-chevron-up-square': '&#xe995;',
 		'icon-chevron-down-square': '&#xe996;',
 		'icon-check-square': '&#xe999;',

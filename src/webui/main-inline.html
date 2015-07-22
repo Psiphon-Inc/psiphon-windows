@@ -30,11 +30,11 @@
   <style>
 @font-face {
 	font-family: 'icomoon';
-	src:url('vendor/icomoon/fonts/icomoon.eot?-msl55s');
-	src:url('vendor/icomoon/fonts/icomoon.eot?#iefix-msl55s') format('embedded-opentype'),
-		url('vendor/icomoon/fonts/icomoon.ttf?-msl55s') format('truetype'),
-		url('vendor/icomoon/fonts/icomoon.woff?-msl55s') format('woff'),
-		url('vendor/icomoon/fonts/icomoon.svg?-msl55s#icomoon') format('svg');
+	src:url('vendor/icomoon/fonts/icomoon.eot?gke5q5');
+	src:url('vendor/icomoon/fonts/icomoon.eot?#iefixgke5q5') format('embedded-opentype'),
+		url('vendor/icomoon/fonts/icomoon.ttf?gke5q5') format('truetype'),
+		url('vendor/icomoon/fonts/icomoon.woff?gke5q5') format('woff'),
+		url('vendor/icomoon/fonts/icomoon.svg?gke5q5#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -125,6 +125,9 @@
 .icon-plus:before {
 	content: "\e936";
 }
+.icon-minus:before {
+	content: "\e937";
+}
 .icon-chevron-up:before {
 	content: "\e939";
 }
@@ -133,6 +136,12 @@
 }
 .icon-arrow-right:before {
 	content: "\e944";
+}
+.icon-expand:before {
+	content: "\e94a";
+}
+.icon-contract:before {
+	content: "\e94b";
 }
 .icon-warning:before {
 	content: "\e955";
@@ -143,11 +152,23 @@
 .icon-checkmark-circle:before {
 	content: "\e959";
 }
+.icon-plus-circle:before {
+	content: "\e95b";
+}
+.icon-circle-minus:before {
+	content: "\e95c";
+}
 .icon-chevron-up-circle:before {
 	content: "\e962";
 }
 .icon-chevron-down-circle:before {
 	content: "\e963";
+}
+.icon-plus-square:before {
+	content: "\e98e";
+}
+.icon-minus-square:before {
+	content: "\e98f";
 }
 .icon-chevron-up-square:before {
 	content: "\e995";
@@ -7564,6 +7585,9 @@ hr.dotted {
 .icon-plus {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe936;');
 }
+.icon-minus {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe937;');
+}
 .icon-chevron-up {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe939;');
 }
@@ -7572,6 +7596,12 @@ hr.dotted {
 }
 .icon-arrow-right {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe944;');
+}
+.icon-expand {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe94a;');
+}
+.icon-contract {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe94b;');
 }
 .icon-warning {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe955;');
@@ -7582,11 +7612,23 @@ hr.dotted {
 .icon-checkmark-circle {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe959;');
 }
+.icon-plus-circle {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe95b;');
+}
+.icon-circle-minus {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe95c;');
+}
 .icon-chevron-up-circle {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe962;');
 }
 .icon-chevron-down-circle {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe963;');
+}
+.icon-plus-square {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe98e;');
+}
+.icon-minus-square {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe98f;');
 }
 .icon-chevron-up-square {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe995;');
@@ -11541,6 +11583,11 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 /* To avoid CSS expressions while still supporting IE 7 and IE 6, use this script */
 /* The script tag referencing this file must be placed before the ending body tag. */
 
+/* Use conditional comments in order to target IE 7 and older:
+	<!--[if lt IE 8]><!-->
+	<script src="ie7/ie7.js"></script>
+	<!--<![endif]-->
+*/
 
 (function() {
 	function addIcon(el, entity) {
@@ -11572,14 +11619,21 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 		'icon-list': '&#xe92c;',
 		'icon-check': '&#xe934;',
 		'icon-plus': '&#xe936;',
+		'icon-minus': '&#xe937;',
 		'icon-chevron-up': '&#xe939;',
 		'icon-chevron-down': '&#xe93a;',
 		'icon-arrow-right': '&#xe944;',
+		'icon-expand': '&#xe94a;',
+		'icon-contract': '&#xe94b;',
 		'icon-warning': '&#xe955;',
 		'icon-notification-circle': '&#xe956;',
 		'icon-checkmark-circle': '&#xe959;',
+		'icon-plus-circle': '&#xe95b;',
+		'icon-circle-minus': '&#xe95c;',
 		'icon-chevron-up-circle': '&#xe962;',
 		'icon-chevron-down-circle': '&#xe963;',
+		'icon-plus-square': '&#xe98e;',
+		'icon-minus-square': '&#xe98f;',
 		'icon-chevron-up-square': '&#xe995;',
 		'icon-chevron-down-square': '&#xe996;',
 		'icon-check-square': '&#xe999;',
@@ -15354,8 +15408,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                   <span data-i18n="settings#systray-minimize#heading">
                     Minimize to Notification Area (System Tray)
                   </span>
-                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
-                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                 </a>
               </div>
               <div id="settings-accordion-systray-minimize" class="accordion-body collapse">
@@ -15388,8 +15442,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                   <span data-i18n="settings#split-tunnel#heading">
                     Split Tunnel
                   </span>
-                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
-                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span class="label label-warning vpn-incompatible-msg ie7Remove">
                     <i class="icon-prohibited"></i>
                     <span data-i18n="settings#vpn-incompatible-label">VPN</span>
@@ -15430,8 +15484,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                   <span data-i18n="settings#egress-region#heading">
                     Psiphon Server Region
                   </span>
-                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
-                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span class="label label-warning vpn-incompatible-msg ie7Remove">
                     <i class="icon-prohibited"></i>
                     <span data-i18n="settings#vpn-incompatible-label">VPN</span>
@@ -15524,8 +15578,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                   <span data-i18n="settings#local-proxy-ports#heading">
                     Local Proxy Ports
                   </span>
-                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
-                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span class="label label-warning vpn-incompatible-msg ie7Remove">
                     <i class="icon-prohibited"></i>
                     <span data-i18n="settings#vpn-incompatible-label">VPN</span>
@@ -15584,8 +15638,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                   <span data-i18n="settings#upstream-proxy#heading">
                     Upstream Proxy
                   </span>
-                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
-                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                 </a>
               </div>
               <div id="settings-accordion-upstream-proxy" class="accordion-body collapse">
@@ -15647,8 +15701,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                   <span data-i18n="settings#transport-mode#heading">
                     Transport Mode
                   </span>
-                  <i class="accordion-expand-icon icon-chevron-down-square ie7Remove"
-                     data-icon-closed="icon-chevron-down-square" data-icon-opened="icon-chevron-up-square"></i>
+                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                 </a>
               </div>
               <div id="settings-accordion-transport-mode" class="accordion-body collapse">
