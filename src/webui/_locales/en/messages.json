@@ -112,7 +112,7 @@
     "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
   },
   "settings#egress-region#select-best-performance": {
-    "message": "Best Performance",
+    "message": "Fastest Country",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
   },
   "settings#egress-region#select-us": {
@@ -140,7 +140,7 @@
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
   },
   "settings#egress-region#help-text": {
-    "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>\"Best Performance\"</strong>, but you may instead prefer to use a server in a specific country.",
+    "message": "Psiphon has servers in many different countries. For the fastest connection speed you should choose <strong>“Fastest Country”</strong>, but you may instead prefer to use a server in a specific country.",
     "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
   },
   "settings#egress-region#invalid-error-msg": {
@@ -152,7 +152,7 @@
     "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
   },
   "settings#egress-region#error-modal-body-http": {
-    "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default \"Best Performance\" choice.",
+    "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Fastest Country” choice.",
     "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
   },
   "settings#local-proxy-ports#heading": {
