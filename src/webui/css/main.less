@@ -31,7 +31,6 @@
 
 @psiLinkHoverColor: @psiDarkNeutral;
 
-
 @brand-primary: @psiHighlight;
 @brand-success: #5cb85c;
 @brand-info: #5bc0de;
@@ -415,7 +414,59 @@ body {
 
 /* SETTINGS */
 
+// This animation gives s slight wiggle followed by motionlessness (the timing
+// can be configured with the `animation` style).
+@keyframes buttonWiggle {
+  0% { transform: rotate(0deg); }
+  2% { transform: rotate(-1deg); }
+  3.5% { transform: rotate(1deg); }
+  5% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.settings-buttons {
+  position: absolute;
+  overflow: hidden;
+  left: 1em;
+  right: 1em;
+
+  .clearfix;
+
+  .apply-settings {
+    body[dir="ltr"] & {
+      .pull-left;
+    }
+    body[dir="rtl"] & {
+      .pull-right;
+    }
+
+    // This allows the box shadow to extend outside the parent element.
+    position: fixed;
+    z-index: 2;
+
+    &:not(.disabled) {
+      animation: buttonWiggle 3s infinite;
+    }
+  }
+
+  .reset-settings {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+  }
+}
+
 #settings-accordion {
+  position: absolute;
+  top: 2.5em;
+  bottom: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-bottom: 0;
+
   .accordion-heading {
     font-size: 1.4em;
 
@@ -441,21 +492,6 @@ body {
 .value-error-alert {
   // For some reason the error alert is not showing over the body text.
   z-index: @zindexPopover;
-}
-
-.settings-reset {
-  .clearfix;
-  margin-bottom: 5px;
-
-  a {
-    body[dir="ltr"] & {
-      .pull-right;
-    }
-
-    body[dir="rtl"] & {
-      .pull-left;
-    }
-  }
 }
 
 .vpn-incompatible-msg {

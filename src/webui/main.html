@@ -54,6 +54,7 @@
   <script src="vendor/es5-shim.min.js?__inline=true"></script>
   <script src="vendor/json2.js?__inline=true"></script>
   <script src="vendor/jquery-1.11.2.min.js?__inline=true"></script>
+  <script src="vendor/lodash.min.js?__inline=true"></script>
   <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
   <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
   <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
@@ -326,8 +327,12 @@
             <strong>Error!</strong> Please fix incorrect values before proceeding.
           </div>
 
-          <div class="settings-reset">
-            <a href="#" class="btn" data-i18n="settings#reset-button">
+          <div class="settings-buttons">
+            <a href="#" class="apply-settings btn btn-primary disabled" disabled
+               data-i18n="settings#apply-button">
+              Apply Changes
+            </a>
+            <a href="#" class="reset-settings btn" data-i18n="settings#reset-button">
               Reset to Default
             </a>
           </div>
@@ -1094,6 +1099,69 @@
       </div>
     </div>
   </div><!-- /EgressRegionUnavailableModal -->
+
+  <!-- Modal dialog shown to user when there is an error in their settings -->
+  <div class="modal fade" id="SettingsErrorModal" tabindex="-1" role="dialog"
+       aria-labelledby="SettingsErrorModalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="SettingsErrorModalTitle">
+            <span data-i18n="settings#error-modal#title">
+              Settings Error
+            </span>
+          </h3>
+        </div>
+        <div class="modal-body">
+          <p data-i18n="[html]settings#error-modal#body">
+            There are errors in your settings values. Please correct them before proceeding.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="general#modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /SettingsErrorModal -->
+
+  <!-- Modal dialog shown to user when they try to navigate away from settings without applying changes -->
+  <div class="modal fade" id="SettingsUnappliedChangesPrompt" tabindex="-1" role="dialog"
+       aria-labelledby="SettingsUnappliedChangesPromptTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="SettingsUnappliedChangesPromptTitle">
+            <span data-i18n="settings#unapplied-changes-prompt#title">
+              Settings Changed
+            </span>
+          </h3>
+        </div>
+        <div class="modal-body">
+          <p data-i18n="[html]settings#unapplied-changes-prompt#body">
+            You have made changes to your settings, but you have not applied the changes.
+            <br><br>
+            Do you wish to apply your changes now or discard them?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary apply-button">
+            <span data-i18n="settings#unapplied-changes-prompt#apply-button">
+              Apply
+            </span>
+          </button>
+          <button type="button" class="btn btn-warning discard-button">
+            <span data-i18n="settings#unapplied-changes-prompt#discard-button">
+              Discard
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /SettingsUnappliedChangesPrompt -->
 
 </body>
 </html>

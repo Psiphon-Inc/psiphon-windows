@@ -49,11 +49,15 @@ var g_initObj = {};
     g_initObj.Config = g_initObj.Config || {};
     g_initObj.Config.Language = g_initObj.Config.Language || 'en';
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
-    g_initObj.Config.InfoURL = g_initObj.Config.InfoURL || 'http://example.com/browser-InfoURL/index.html';
-    g_initObj.Config.NewVersionEmail = g_initObj.Config.NewVersionEmail || 'browser-NewVersionEmail@example.com';
-    g_initObj.Config.NewVersionURL = g_initObj.Config.NewVersionURL || 'http://example.com/browser-NewVersionURL/en/download.html#direct';
+    g_initObj.Config.InfoURL =
+      g_initObj.Config.InfoURL || 'http://example.com/browser-InfoURL/index.html';
+    g_initObj.Config.NewVersionEmail =
+      g_initObj.Config.NewVersionEmail || 'browser-NewVersionEmail@example.com';
+    g_initObj.Config.NewVersionURL =
+      g_initObj.Config.NewVersionURL || 'http://example.com/browser-NewVersionURL/en/download.html#direct';
     g_initObj.Config.FaqURL = g_initObj.Config.FaqURL || 'http://example.com/browser-FaqURL/en/faq.html';
-    g_initObj.Config.DataCollectionInfoURL = g_initObj.Config.DataCollectionInfoURL || 'http://example.com/browser-DataCollectionInfoURL/en/privacy.html#information-collected';
+    g_initObj.Config.DataCollectionInfoURL =
+      g_initObj.Config.DataCollectionInfoURL || 'http://example.com/browser-DataCollectionInfoURL/en/privacy.html#information-collected';
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
 
     g_initObj.Cookies = JSON.stringify({
@@ -64,7 +68,7 @@ var g_initObj = {};
   }
 })();
 
-$(function() {
+$(function overallInit() {
   // Do some browser-version-dependent DOM pruning
   if (browserCheck('lt-ie8')) {
     $('.ie7Remove').remove();
@@ -99,7 +103,8 @@ $(function() {
 
     // Note that we're using the function-as-replacement form for String.replace()
     // because we don't entirely control the content of the language names, and
-    // we don't want to run into any issues with magic values: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
+    // we don't want to run into any issues with magic values:
+    // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
 
     var replaceFn = function(match, p1, p2) {
         return p1 + '/' + replaceLang + '/' + p2;
@@ -223,7 +228,7 @@ var g_lastState = 'stopped';
 // so if a "download new version" message should be shown.
 var g_connectingTooLongTimeout = null;
 
-$(function() {
+$(function connectionInit() {
   connectToggleSetup();
   egressRegionComboSetup();
 
@@ -443,10 +448,14 @@ function egressRegionComboSetup() {
 
 /* SETTINGS ******************************************************************/
 
-// We will use this later to check if any settings have changed.
-var g_initialSettingsJSON;
+// Event fired on #settings-pane when a setting is changed.
+var SETTING_CHANGED_EVENT = 'setting-changed';
 
 var BEST_REGION_VALUE = 'BEST';
+
+// We need to store the settings as we enter the tab, so that we can reliably
+// revert to them.
+var g_initialSettings = {};
 
 $(function settingsInit() {
   // This is merely to help with testing
@@ -476,7 +485,17 @@ $(function settingsInit() {
     };
   }
 
-  $('.settings-reset a').click(onSettingsReset);
+  // Event handlers
+  $('#settings-pane').on(SETTING_CHANGED_EVENT, onSettingChanged);
+  $('.settings-buttons .reset-settings').click(onSettingsReset);
+  $('.settings-buttons .apply-settings').click(onSettingsApply);
+  $('a[href="#settings-pane"][data-toggle="tab"]').on('shown', onSettingsTabShown);
+  $('a[data-toggle="tab"]').on('show', function(e) {
+    if ($('#settings-tab').hasClass('active') &&    // we were active
+        !$(this).parent().is($('#settings-tab'))) { // we won't be active
+      onSettingsTabHiding(e);
+    }
+  });
 
   // Change the accordion heading icon on expand/collapse
   $('.accordion-body')
@@ -486,7 +505,8 @@ $(function settingsInit() {
       $expandIcon.removeClass($expandIcon.data('icon-closed'))
                  .addClass($expandIcon.data('icon-opened'));
 
-      // Remove focus from the heading to clear the text-decoration. (It's too ham-fisted to do it in CSS.)
+      // Remove focus from the heading to clear the text-decoration. (It's too
+      // ham-fisted to do it in CSS.)
       $(headingSelector).blur();
     })
     .on('hide', function() {
@@ -495,36 +515,17 @@ $(function settingsInit() {
       $expandIcon.removeClass($expandIcon.data('icon-opened'))
                  .addClass($expandIcon.data('icon-closed'));
 
-      // Remove focus from the heading to clear the text-decoration. (It's too ham-fisted to do it in CSS.)
+      // Remove focus from the heading to clear the text-decoration. (It's too
+      // ham-fisted to do it in CSS.)
       $(headingSelector).blur();
     });
 
-  // Some fields are disabled in VPN mode
-  $('#VPN').change(vpnModeUpdate);
-  vpnModeUpdate();
-
+  systrayMinimizeSetup();
+  splitTunnelSetup();
   egressRegionSetup();
   localProxySetup();
   upstreamProxySetup();
-
-  // Capture the settings as the tab is entered, to check for changes later.
-  $('a[href="#settings-pane"][data-toggle="tab"]').on('shown', function(e) {
-    g_initialSettingsJSON = settingsToJSON();
-  });
-
-  // The settings are saved (and applied) when the user navigates away from the
-  // Settings tab.
-  $('a[data-toggle="tab"]').on('show', function(e) {
-    // If we are navigating away from our tab, then we need to apply our settings
-    // (if changed).
-    if ($('#settings-tab').hasClass('active') &&    // we were active
-        !$(this).parent().is($('#settings-tab'))) { // we won't be active
-      if (!applySettings()) {
-        // Something wrong with the settings.
-        e.preventDefault();
-      }
-    }
-  });
+  vpnModeSetup();
 
   updateAvailableEgressRegions(false); // don't force valid -- haven't filled in settings yet
 
@@ -532,28 +533,139 @@ $(function settingsInit() {
   refreshSettings();
 });
 
+//
+// Overall event handlers
+//
+
+// Settings tab has been navigated to and is shown
+function onSettingsTabShown() {
+  // Capture the initial settings
+  g_initialSettings = getSettingsTabValues();
+
+  // Reset the Apply button
+  enableSettingsApplyButton(false);
+}
+
+// Settings tab is showing, but is being navigated away from.
+// Call e.preventDefault() to prevent navigation away.
+function onSettingsTabHiding(e) {
+  // If the settings have been changed and not applied, prevent navigating away
+  // and prompt the user for how it should be resolved.
+  if (getSettingsApplyButtonEnabled()) {
+    e.preventDefault();
+
+    var $modal = $('#SettingsUnappliedChangesPrompt');
+
+    $modal.modal({
+      show: true,
+      backdrop: 'static'
+    });
+
+    // Note: If we don't first remove existing click handlers (with .off), then
+    // the handler that wasn't clicked last time will still be present.
+
+    $modal.find('.apply-button').off('click').one('click', function() {
+      $modal.modal('hide');
+      if (applySettings()) {
+        enableSettingsApplyButton(false);
+        $(e.target).tab('show');
+      }
+      else {
+        showSettingsErrorModal();
+      }
+    });
+
+    $modal.find('.discard-button').off('click').one('click', function() {
+      $modal.modal('hide');
+      refreshSettings(g_initialSettings);
+      enableSettingsApplyButton(false);
+      $(e.target).tab('show');
+    });
+  }
+}
+
+// A setting value has been changed.
+function onSettingChanged(e, id) {
+  console.log('onSettingChanged: ' + id);
+
+  var settingsValues = getSettingsTabValues();
+  if (_.isEqual(settingsValues, g_initialSettings)) {
+    // No actual change, or the change has been reverted
+    enableSettingsApplyButton(false);
+    return;
+  }
+
+  enableSettingsApplyButton(true);
+}
+
+// Handler for the Reset Settings button
+function onSettingsReset(e) {
+  e.preventDefault();
+
+  refreshSettings(g_initObj.Settings.defaults);
+
+  // Enable the Apply button (assume actual changes)
+  enableSettingsApplyButton(true);
+}
+
+// Handler for the Apply Settings button
+function onSettingsApply(e) {
+  e.preventDefault();
+
+  if (!getSettingsApplyButtonEnabled()) {
+    return;
+  }
+
+  if (applySettings()) {
+    // Reset the Apply button
+    enableSettingsApplyButton(false);
+  }
+  else {
+    showSettingsErrorModal();
+  }
+}
+
+//
+// General settings functions
+//
+
+function enableSettingsApplyButton(enable) {
+  var $applyButton = $('#settings-pane .apply-settings');
+  var currentlyEnabled = getSettingsApplyButtonEnabled();
+
+  if (enable && !currentlyEnabled) {
+    $applyButton.removeClass('disabled').removeAttr('disabled');
+    drawAttentionToButton($applyButton);
+  }
+  else if (!enable && currentlyEnabled) {
+    $applyButton.addClass('disabled').attr('disabled', true);
+  }
+}
+
+function getSettingsApplyButtonEnabled() {
+  var $applyButton = $('#settings-pane .apply-settings');
+  return !$applyButton.hasClass('disabled');
+}
+
 // Save the current settings (and possibly reconnect).
 function applySettings() {
-  var settingsJSON = settingsToJSON();
-  if (settingsJSON === false) {
-    // Settings are invalid. Expand the error sections and prevent switching tabs.
-    showSettingsSection(
-      $('#settings-accordion .collapse .error').parents('.collapse').eq(0),
-      $('#settings-pane .error input').eq(0).focus());
+  var settingsValues = getSettingsTabValues();
+  if (settingsValues === false) {
+    // Settings are invalid.
     return false;
   }
-  else if (settingsJSON !== g_initialSettingsJSON) {
-    // Settings have changed -- update them in the application (and trigger a reconnect, if necessary).
-    HtmlCtrlInterface_SaveSettings(settingsJSON);
 
-    if (g_lastState === 'starting' || g_lastState === 'connected') {
-      // We're going to reconnect to apply the settings
-      displayCornerAlert($('#settings-apply-alert'));
-    }
-    else {
-      // We're saving the settings, but not reconnecting/applying.
-      displayCornerAlert($('#settings-save-alert'));
-    }
+  // Update settings in the application (and trigger a reconnect, if
+  // necessary).
+  HtmlCtrlInterface_SaveSettings(JSON.stringify(settingsValues));
+
+  if (g_lastState === 'starting' || g_lastState === 'connected') {
+    // We're going to reconnect to apply the settings
+    displayCornerAlert($('#settings-apply-alert'));
+  }
+  else {
+    // We're saving the settings, but not reconnecting/applying.
+    displayCornerAlert($('#settings-save-alert'));
   }
 
   return true;
@@ -575,6 +687,10 @@ function refreshSettings(newSettings) {
 
 // Fill in the settings controls with the values in `obj`.
 function fillSettingsValues(obj) {
+  // Bit of a hack: Unhook the setting-changed event while we fill in the
+  // values, then hook it up again after.
+  $('#settings-pane').off(SETTING_CHANGED_EVENT, onSettingChanged);
+
   if (typeof(obj.SplitTunnel) !== 'undefined') {
     $('#SplitTunnel').prop('checked', !!obj.SplitTunnel);
   }
@@ -582,7 +698,6 @@ function fillSettingsValues(obj) {
   if (typeof(obj.VPN) !== 'undefined') {
     $('#VPN').prop('checked', obj.VPN);
   }
-  $('#VPN').change(vpnModeUpdate);
   vpnModeUpdate();
 
   if (typeof(obj.LocalHttpProxyPort) !== 'undefined') {
@@ -607,7 +722,6 @@ function fillSettingsValues(obj) {
   if (typeof(obj.SkipUpstreamProxy) !== 'undefined') {
     $('#SkipUpstreamProxy').prop('checked', obj.SkipUpstreamProxy);
   }
-  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
   skipUpstreamProxyUpdate();
 
   if (typeof(obj.EgressRegion) !== 'undefined') {
@@ -621,16 +735,14 @@ function fillSettingsValues(obj) {
   if (typeof(obj.SystrayMinimize) !== 'undefined') {
     $('#SystrayMinimize').prop('checked', !!obj.SystrayMinimize);
   }
+
+  // Re-hook the setting-changed event
+  $('#settings-pane').on(SETTING_CHANGED_EVENT, onSettingChanged);
 }
 
-// Handler for the Reset Settings button
-function onSettingsReset(e) {
-  e.preventDefault();
-  refreshSettings(g_initObj.Settings.defaults);
-}
-
-// Packages the current settings into JSON string. Returns false if invalid value found.
-function settingsToJSON() {
+// Extracts the values current set in the tab and returns and object with them.
+// Returns false if the settings are invalid.
+function getSettingsTabValues() {
   var valid = true;
 
   valid = valid && egressRegionValid(true);
@@ -655,29 +767,51 @@ function settingsToJSON() {
     SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0
   };
 
-  return JSON.stringify(returnValue);
+  return returnValue;
 }
 
-// Show/hide the error alert depending on whether we have an erroneous field
-function updateErrorAlert() {
-  $('#settings-pane .value-error-alert').toggleClass(
-    'hidden', $('#settings-pane .control-group.error').length === 0);
+function showSettingsErrorModal() {
+  $('#SettingsErrorModal').modal({
+    show: true,
+    backdrop: 'static'
+  }).one('hidden', function() {
+    showSettingErrorSection();
+  });
 }
 
-// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
-// return value, and falsy, so use `=== false`.
-function validatePort(val) {
-  if (val.length === 0) {
-    return 0;
-  }
-
-  val = parseInt(val);
-  if (isNaN(val) || val < 1 || val > 65535) {
-    return false;
-  }
-
-  return val;
+function showSettingErrorSection() {
+  showSettingsSection(
+    $('#settings-accordion .collapse .error').parents('.collapse').eq(0),
+    $('#settings-pane .error input').eq(0).focus());
 }
+
+//
+// Systray Minimize
+//
+
+// Will be called exactly once. Set up event listeners, etc.
+function systrayMinimizeSetup() {
+  $('#SystrayMinimize').change(function() {
+    // Tell the settings pane a change was made.
+    $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+  });
+}
+
+//
+// Split Tunnel
+//
+
+// Will be called exactly once. Set up event listeners, etc.
+function splitTunnelSetup() {
+  $('#SplitTunnel').change(function() {
+    // Tell the settings pane a change was made.
+    $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+  });
+}
+
+//
+// Egress Region (Psiphon Server Region)
+//
 
 // Will be called exactly once. Set up event listeners, etc.
 function egressRegionSetup() {
@@ -700,7 +834,12 @@ function egressRegionSetup() {
     $('#EgressRegion [data-region]').removeClass('active');
     $(this).parents('[data-region]').addClass('active');
     egressRegionValid(false);
+
+    // This event helps the combobox on the connect pane stay in sync.
     $('#EgressRegion').trigger('change');
+
+    // Tell the settings pane a change was made.
+    $('#settings-pane').trigger(SETTING_CHANGED_EVENT, 'EgressRegion');
   });
 }
 
@@ -770,17 +909,22 @@ function updateAvailableEgressRegions(forceValid) {
   $('#EgressRegion').trigger('change');
 }
 
+//
+// Local Proxy Ports
+//
+
 // Will be called exactly once. Set up event listeners, etc.
 function localProxySetup() {
+  // Handle change events
   $('#LocalHttpProxyPort, #LocalSocksProxyPort').on(
       'keyup change blur',
       function(event) {
+        // Tell the settings pane a change was made.
+        $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+
+        // Check for validity.
         localProxyValid(false);
       });
-
-  $('#LocalHttpProxyPort, #LocalSocksProxyPort').each(function() {
-    localProxyValid(false);
-  });
 }
 
 // Returns true if the local proxy values are valid, otherwise false.
@@ -842,22 +986,57 @@ function localProxyValid(finalCheck) {
   return httpPort !== false && socksPort !== false && unique;
 }
 
-// Will be called exactly once. Set up event listeners, etc.
-function upstreamProxySetup() {
-  // Check for upstream proxy validity
-  $('#UpstreamProxyHostname, #UpstreamProxyPort').on(
-    'keyup change blur',
-    function(event) {
-      upstreamProxyValid(false);
-    });
+// Show an error modal telling the user there is a local port conflict problem
+function localProxyPortConflictNotice(noticeType) {
+  // Show/hide the appropriate message depending on the error
+  $('#LocalProxyPortErrorModal .local-proxy-port-http')
+    .toggleClass('hidden', noticeType !== 'HttpProxyPortInUse');
+  $('#LocalProxyPortErrorModal .local-proxy-port-socks')
+    .toggleClass('hidden', noticeType !== 'SocksProxyPortInUse');
 
-  $('#UpstreamProxyHostname, #UpstreamProxyPort').each(
-    function() {upstreamProxyValid(false);
+  // Put up the modal
+  $('#LocalProxyPortErrorModal').modal({
+    show: true,
+    backdrop: 'static'
+  }).one('hidden', function() {
+    if (noticeType === 'HttpProxyPortInUse') {
+      $('#LocalHttpProxyPort').focus();
+    }
+    else {
+      $('#LocalSocksProxyPort').focus();
+    }
   });
 
-  // Disable the other upstream proxy settings if skipping
-  $('#SkipUpstreamProxy').change(skipUpstreamProxyUpdate);
-  skipUpstreamProxyUpdate();
+  // Switch to the appropriate settings section
+  showSettingsSection(
+    '#settings-accordion-local-proxy-ports',
+    noticeType === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
+}
+
+//
+// Upstream Proxy
+//
+
+// Will be called exactly once. Set up event listeners, etc.
+function upstreamProxySetup() {
+  // Handle change events
+  $('#UpstreamProxyHostname, #UpstreamProxyPort').on(
+      'keyup change blur',
+      function(event) {
+        // Tell the settings pane a change was made.
+        $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+
+        // Check validity.
+        upstreamProxyValid(false);
+      });
+
+  // Add the "skip" checkbox handler.
+  $('#SkipUpstreamProxy').change(function(e) {
+    // Trigger overall change event
+    $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+
+    skipUpstreamProxyUpdate();
+  });
 }
 
 // Returns true if the upstream proxy values are valid, otherwise false.
@@ -910,74 +1089,14 @@ function upstreamProxyValid(finalCheck) {
   return setMatch && portOK;
 }
 
-// Some of the settings are incompatible with VPN mode. We'll modify the display
-// depending on the choice of VPN mode.
-function vpnModeUpdate() {
-  var vpn = $('#VPN').prop('checked');
-  $('input.vpn-incompatible, .vpn-incompatible input, '+
-    'select.vpn-incompatible, .vpn-incompatible select, .vpn-incompatible .dropdown-menu')
-      .prop('disabled', vpn).toggleClass('disabled', vpn);
-  $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
-  $('.vpn-incompatible').toggleClass('disabled-text', vpn);
-  $('.vpn-incompatible-hide').toggleClass('hidden', vpn);
-
-  // The fancy msDropDown controls require more work to disable.
-  $('body select').each(function() {
-    if ($(this).data('dd')) {
-      $(this).data('dd').set('disabled', this.disabled);
-    }
-  });
-}
-
-// The other upstream proxy settings should be disabled if skip-upstream-proxy is set.
+// The other upstream proxy settings should be disabled if skip-upstream-proxy
+// is set.
 function skipUpstreamProxyUpdate() {
   var skipUpstreamProxy = $('#SkipUpstreamProxy').prop('checked');
   $('.skip-upstream-proxy-incompatible input').prop('disabled', skipUpstreamProxy);
   $('.skip-upstream-proxy-incompatible').toggleClass('disabled-text', skipUpstreamProxy);
 }
 
-// Show the Settings tab and expand the target section.
-// If focusElem is optional; if set, focus will be put in that element.
-function showSettingsSection(section, focusElem) {
-  // We can only expand the section after the tab is shown
-  function onTabShown() {
-    // Hack: The collapse-show doesn't seem to work unless we wait a bit
-    setTimeout(function() {
-      // Expand the section
-      $(section).collapse('show');
-
-      // Collapse any other sections
-      $('#settings-accordion .in.collapse').not(section).collapse('hide');
-
-      // Scroll to the section, after allowing the section to expand
-      setTimeout(function() {
-        $('#settings-pane').scrollTo(
-          $(section).parents('.accordion-group').eq(0),
-          {
-            duration: 500, // animation time
-            offset: -50,   // leave some space for the alert
-            onAfter: function() {
-              if (focusElem) {
-                $(focusElem).eq(0).focus();
-              }
-            }
-          });
-      }, 200);
-    }, 500);
-  }
-
-  if ($('#settings-tab').hasClass('active')) {
-    // Settings tab already showing. Just expand and scroll.
-    onTabShown();
-  }
-  else {
-    // Settings tab not already showing. Switch to it before expanding and scrolling.
-    $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
-    $('.main-nav a[href="#settings-pane"]').tab('show');
-  }
-}
-
-//
 // The occurrence of an upstream proxy error might mean that a tunnel cannot
 // ever be established, but not necessarily -- it might just be, for example,
 // that the upstream proxy doesn't allow the port needed for one of our
@@ -1032,7 +1151,7 @@ function upstreamProxyErrorNotice(errorMessage) {
     $('#UpstreamProxyErrorModal').modal({
       show: true,
       backdrop: 'static'
-    }).on('hidden', function() {
+    }).one('hidden', function() {
       $('#UpstreamProxyHostname').focus();
     });
 
@@ -1045,31 +1164,97 @@ function upstreamProxyErrorNotice(errorMessage) {
   }, 60000);
 }
 
-// Show an error modal telling the user there is a local port conflict problem
-function localProxyPortConflictNotice(noticeType) {
-  // Show/hide the appropriate message depending on the error
-  $('#LocalProxyPortErrorModal .local-proxy-port-http')
-    .toggleClass('hidden', noticeType !== 'HttpProxyPortInUse');
-  $('#LocalProxyPortErrorModal .local-proxy-port-socks')
-    .toggleClass('hidden', noticeType !== 'SocksProxyPortInUse');
+//
+// VPN Mode (Transport Mode)
+//
 
-  // Put up the modal
-  $('#LocalProxyPortErrorModal').modal({
-    show: true,
-    backdrop: 'static'
-  }).on('hidden', function() {
-    if (noticeType === 'HttpProxyPortInUse') {
-      $('#LocalHttpProxyPort').focus();
-    }
-    else {
-      $('#LocalSocksProxyPort').focus();
-    }
+// Will be called exactly once. Set up event listeners, etc.
+function vpnModeSetup() {
+  // Some fields are disabled in VPN mode
+  $('#VPN').change(function() {
+    // Tell the settings pane a change was made.
+    $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+
+    vpnModeUpdate();
   });
+}
 
-  // Switch to the appropriate settings section
-  showSettingsSection(
-    '#settings-accordion-local-proxy-ports',
-    noticeType === 'HttpProxyPortInUse' ? '#LocalHttpProxyPort' : '#LocalSocksProxyPort');
+// Some of the settings are incompatible with VPN mode. We'll modify the
+// display depending on the choice of VPN mode.
+function vpnModeUpdate() {
+  var vpn = $('#VPN').prop('checked');
+  $('input.vpn-incompatible, .vpn-incompatible input, '+
+    'select.vpn-incompatible, .vpn-incompatible select, .vpn-incompatible .dropdown-menu')
+      .prop('disabled', vpn).toggleClass('disabled', vpn);
+  $('.vpn-incompatible-msg').toggleClass('hidden', !vpn);
+  $('.vpn-incompatible').toggleClass('disabled-text', vpn);
+  $('.vpn-incompatible-hide').toggleClass('hidden', vpn);
+}
+
+//
+// Helpers
+//
+
+// Show/hide the error alert depending on whether we have an erroneous field
+function updateErrorAlert() {
+  $('#settings-pane .value-error-alert').toggleClass(
+    'hidden', $('#settings-pane .control-group.error').length === 0);
+}
+
+// Returns the numeric port if valid, otherwise false. Note that 0 is a valid
+// return value, and falsy, so use `=== false`.
+function validatePort(val) {
+  if (val.length === 0) {
+    return 0;
+  }
+
+  val = parseInt(val);
+  if (isNaN(val) || val < 1 || val > 65535) {
+    return false;
+  }
+
+  return val;
+}
+
+// Show the Settings tab and expand the target section.
+// If focusElem is optional; if set, focus will be put in that element.
+function showSettingsSection(section, focusElem) {
+  // We can only expand the section after the tab is shown
+  function onTabShown() {
+    // Hack: The collapse-show doesn't seem to work unless we wait a bit
+    setTimeout(function() {
+      // Expand the section
+      $(section).collapse('show');
+
+      // Collapse any other sections
+      $('#settings-accordion .in.collapse').not(section).collapse('hide');
+
+      // Scroll to the section, after allowing the section to expand
+      setTimeout(function() {
+        $('#settings-pane').scrollTo(
+          $(section).parents('.accordion-group').eq(0),
+          {
+            duration: 500, // animation time
+            offset: -50,   // leave some space for the alert
+            onAfter: function() {
+              if (focusElem) {
+                $(focusElem).eq(0).focus();
+              }
+            }
+          });
+      }, 200);
+    }, 500);
+  }
+
+  if ($('#settings-tab').hasClass('active')) {
+    // Settings tab already showing. Just expand and scroll.
+    onTabShown();
+  }
+  else {
+    // Settings tab not already showing. Switch to it before expanding and scrolling.
+    $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
+    $('.main-nav a[href="#settings-pane"]').tab('show');
+  }
 }
 
 
@@ -1504,12 +1689,70 @@ function nextTickFn(callback, context) {
   };
 }
 
+// Convert hex-style color (#FFFFFF or #FFF) to RGB style (rgb(255, 255, 255)).
+// From http://stackoverflow.com/a/5624139/729729
+function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+// Draws attention to a button. Note that this may require some extra styling
+// to fully work (so test accordingly).
+function drawAttentionToButton(elem) {
+  // We will draw attention by temporarily flaring a box-shadow, and then
+  // wiggling the button.
+
+  var backgroundColor, backgroundColorRGB, shadowColor;
+  var $elem = $(elem);
+
+  // The box shadow will be same colour as the button background, with reduced
+  // opacity.
+
+  backgroundColor = $elem.css('background-color');
+  if (!backgroundColor) {
+    backgroundColor = '#999';
+  }
+
+  if (backgroundColor[0] === '#') {
+    // hex style; convert to rgb
+    backgroundColorRGB = hexToRgb(backgroundColor);
+    backgroundColor = 'rgb(' + backgroundColorRGB.r + ', ' +
+                               backgroundColorRGB.g + ', ' +
+                               backgroundColorRGB.b + ')';
+  }
+
+  // Only add alpha if this is a rgb(..) colour, and not rgba(...) or anything else.
+  if (backgroundColor.slice(0, 4) === 'rgb(') {
+    shadowColor = 'rgba(' + backgroundColor.slice(4, -1) + ', 0.7)';
+  }
+  else {
+    shadowColor = backgroundColor;
+  }
+
+  $elem.css('transition', '');
+  $elem.css('box-shadow', '0 0 30px 20px ' + shadowColor);
+  nextTick(function() {
+    $elem.css('transition', 'box-shadow 5s');
+    $elem.css('box-shadow', 'none');
+  });
+}
+
 
 /* DEBUGGING *****************************************************************/
 
 // Some functionality to help us debug (and demo) in browser.
 
-$(function() {
+$(function debugInit() {
   if (!g_initObj.Config.Debug) {
     $('#debug-tab, #debug-pane').remove();
     return;

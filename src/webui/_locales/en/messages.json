@@ -83,6 +83,26 @@
     "message": "Reset to Default",
     "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
   },
+  "settings#apply-button": {
+    "message": "Apply Changes",
+    "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
+  },
+  "settings#unapplied-changes-prompt#title": {
+    "message": "Settings Changed",
+    "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+  },
+  "settings#unapplied-changes-prompt#body": {
+    "message": "You have made changes to your settings, but you have not applied the changes.<br><br>Do you wish to apply your changes now or discard them?",
+    "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+  },
+  "settings#unapplied-changes-prompt#apply-button": {
+    "message": "Apply",
+    "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
+  },
+  "settings#unapplied-changes-prompt#discard-button": {
+    "message": "Discard",
+    "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
+  },
   "settings#vpn-incompatible-msg": {
     "message": "(Doesn't work with L2TP/IPSec mode.)",
     "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
@@ -262,6 +282,14 @@
   "settings#saved-message": {
     "message": "Settings saved.",
     "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
+  },
+  "settings#error-modal#title": {
+    "message": "Settings Error",
+    "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
+  },
+  "settings#error-modal#body": {
+    "message": "There are errors in your settings values. Please correct them before proceeding.",
+    "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
   },
   "feedback#top_content_title": {
     "message": "Give Us Your Feedback",

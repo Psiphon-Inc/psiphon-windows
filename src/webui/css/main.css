@@ -6485,6 +6485,66 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   height: 1em;
 }
 /* SETTINGS */
+@keyframes buttonWiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+  2% {
+    transform: rotate(-1deg);
+  }
+  3.5% {
+    transform: rotate(1deg);
+  }
+  5% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+.settings-buttons {
+  position: absolute;
+  overflow: hidden;
+  left: 1em;
+  right: 1em;
+  *zoom: 1;
+}
+.settings-buttons:before,
+.settings-buttons:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.settings-buttons:after {
+  clear: both;
+}
+.settings-buttons .apply-settings {
+  position: fixed;
+  z-index: 2;
+}
+body[dir="ltr"] .settings-buttons .apply-settings {
+  float: left;
+}
+body[dir="rtl"] .settings-buttons .apply-settings {
+  float: right;
+}
+.settings-buttons .apply-settings:not(.disabled) {
+  animation: buttonWiggle 3s infinite;
+}
+body[dir="ltr"] .settings-buttons .reset-settings {
+  float: right;
+}
+body[dir="rtl"] .settings-buttons .reset-settings {
+  float: left;
+}
+#settings-accordion {
+  position: absolute;
+  top: 2.5em;
+  bottom: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-bottom: 0;
+}
 #settings-accordion .accordion-heading {
   font-size: 1.4em;
 }
@@ -6501,25 +6561,6 @@ body[dir="rtl"] #settings-accordion .accordion-heading .accordion-expand-icon {
 }
 .value-error-alert {
   z-index: 1010;
-}
-.settings-reset {
-  *zoom: 1;
-  margin-bottom: 5px;
-}
-.settings-reset:before,
-.settings-reset:after {
-  display: table;
-  content: "";
-  line-height: 0;
-}
-.settings-reset:after {
-  clear: both;
-}
-body[dir="ltr"] .settings-reset a {
-  float: right;
-}
-body[dir="rtl"] .settings-reset a {
-  float: left;
 }
 .help-block .vpn-incompatible-msg {
   color: #c09853;
