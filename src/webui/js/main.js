@@ -1714,6 +1714,7 @@ function drawAttentionToButton(elem) {
 
   var backgroundColor, backgroundColorRGB, shadowColor;
   var $elem = $(elem);
+  var originalBoxShadow = $elem.css('box-shadow');
 
   // The box shadow will be same colour as the button background, with reduced
   // opacity.
@@ -1739,11 +1740,18 @@ function drawAttentionToButton(elem) {
     shadowColor = backgroundColor;
   }
 
+  var animationTimeSecs = 5;
+
   $elem.css('transition', '');
   $elem.css('box-shadow', '0 0 30px 20px ' + shadowColor);
   nextTick(function() {
-    $elem.css('transition', 'box-shadow 5s');
+    $elem.css('transition', 'box-shadow ' + animationTimeSecs + 's');
     $elem.css('box-shadow', 'none');
+
+    setTimeout(function() {
+      $elem.css('transition', '');
+      $elem.css('box-shadow', originalBoxShadow);
+    }, animationTimeSecs * 1000);
   });
 }
 
