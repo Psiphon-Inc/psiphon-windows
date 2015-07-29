@@ -20,7 +20,13 @@
 #pragma once
 
 #include "resource.h"
+#include "connectionmanager.h"
 
+
+//==== global state ===================================================
+
+// TODO: wrap this in a singleton interface?
+extern ConnectionManager g_connectionManager;
 
 //==== global constants ================================================
 

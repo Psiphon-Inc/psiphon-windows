@@ -30,10 +30,12 @@
 #include "config.h"
 #include "diagnostic_info.h"
 #include "embeddedvalues.h"
+#include "utilities.h"
 
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
+#define URL_PROXY_EXE_NAME                   _T("psiphon-url-proxy.exe")
 #define MAX_LEGACY_SERVER_ENTRIES            30
 #define LEGACY_SERVER_ENTRY_LIST_NAME        (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + "OSSH").c_str()
 
@@ -224,6 +226,17 @@ void CoreTransport::TransportConnect()
 }
 
 
+bool CoreTransport::RequestingUrlProxyWithoutTunnel()
+{
+    // If the transport is invoked with a temp tunnel
+    // server entry having a blank address, this is a special
+    // case where the core is being used for direct connections
+    // through its url proxy. No tunnel will be established.
+    return m_tempConnectServerEntry != 0 &&
+        m_tempConnectServerEntry->serverAddress.empty();
+}
+
+    
 void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
@@ -294,6 +307,25 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
+    tstring tempPath;
+    if (!GetTempPath(tempPath))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetTempPath failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    // Passing short path names for data store directories due to sqlite3 incompatibility
+    // with exetended Unicode characters in paths (e.g., unicode user name in AppData or
+    // Temp path)
+    tstring shortDataStoreDirectory;
+    tstring shortTempPath;
+    if (!GetShortPathName(dataStoreDirectory, shortDataStoreDirectory) ||
+        !GetShortPathName(tempPath, shortTempPath))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetShortPathName failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
     Json::Value config;
     config["ClientPlatform"] = CLIENT_PLATFORM;
     config["ClientVersion"] = CLIENT_VERSION;
@@ -301,11 +333,18 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["SponsorId"] = SPONSOR_ID;
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
-    config["DataStoreDirectory"] = TStringToNarrow(dataStoreDirectory);
-    config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
-    config["EgressRegion"] = Settings::EgressRegion();
-    config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-    config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+    config["DataStoreDirectory"] = TStringToNarrow(shortDataStoreDirectory);
+    config["DataStoreTempDirectory"] = TStringToNarrow(shortTempPath);
+
+    // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
+    // we may not be able to route to it. If the proxy is on a public network we prefer not
+    // to use it for Psiphon requests (this assumes that this core transport has been created
+    // as a temp tunnel or url proxy facilitator, since some underlying transport is already
+    // providing whole system tunneling).
+    if (!g_connectionManager.IsWholeSystemTunneled())
+    {
+        config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
+    }
 
     if (Settings::SplitTunnel())
     {
@@ -318,7 +357,12 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // and a handshake is not performed.
     // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
     // perform its own handshake request to get a PSK.
-    if (m_tempConnectServerEntry != 0)
+    //
+    // This same minimal setup is used in the RequireUrlProxyWithoutTunnel mode,
+    // although in this case we don't set a deadline to connect since we don't
+    // expect to ever connect to a tunnel and we we want to allow the caller to
+    // complete the (direct) url proxied request
+    if (m_tempConnectServerEntry != 0 || RequestingUrlProxyWithoutTunnel())
     {
         config["DisableApi"] = true;
         config["DisableRemoteServerListFetcher"] = true;
@@ -327,14 +371,34 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             Hexlify((const unsigned char*)(serverEntry.c_str()), serverEntry.length());
         // Use whichever region the server entry is located in
         config["EgressRegion"] = "";
-        config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
+
+        if (!RequestingUrlProxyWithoutTunnel())
+        {
+            config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
+        }
+    }
+    else
+    {
+        config["EgressRegion"] = Settings::EgressRegion();
+        config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+        config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
     }
 
     ostringstream configDataStream;
     Json::FastWriter jsonWriter;
     configDataStream << jsonWriter.write(config);
 
-    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME))
+    // RequireUrlProxyWithoutTunnel mode has a distinct config file so that
+    // it won't conflict with a standard CoreTransport which may already be
+    // running. Also, this mode omits the server list file, since it's not
+    // trying to establish a tunnel.
+    // TODO: there's still a remote chance that concurrently spawned url
+    // proxy instances could clobber each other's config file?
+
+    if (!PathAppend(path,
+            RequestingUrlProxyWithoutTunnel() ?
+                LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME :
+                LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
@@ -347,33 +411,36 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
-    _tcsncpy_s(path, dataStoreDirectory.c_str(), _TRUNCATE);
-    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME))
+    if (!RequestingUrlProxyWithoutTunnel())
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
-    }
-    serverListFilename = path;
+        _tcsncpy_s(path, dataStoreDirectory.c_str(), _TRUNCATE);
+        if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
+        serverListFilename = path;
 
-    string serverList = EMBEDDED_SERVER_LIST;
+        string serverList = EMBEDDED_SERVER_LIST;
 
-    // Retain some existing server entries that were useed by the legacy client
-    ServerEntries legacyEntries = ServerList::GetListFromSystem(LEGACY_SERVER_ENTRY_LIST_NAME);
-    if (legacyEntries.size() > MAX_LEGACY_SERVER_ENTRIES)
-    {
-        legacyEntries.resize(MAX_LEGACY_SERVER_ENTRIES);
-    }
-    if (legacyEntries.size() > 0 && serverList.length() > 0)
-    {
-        // EMBEDDED_SERVER_LIST may be LF-delimited, not LF-terminated
-        serverList += "\n";
-    }
-    serverList += ServerList::EncodeServerEntries(legacyEntries);
+        // Retain some existing server entries that were used by the legacy client
+        ServerEntries legacyEntries = ServerList::GetListFromSystem(LEGACY_SERVER_ENTRY_LIST_NAME);
+        if (legacyEntries.size() > MAX_LEGACY_SERVER_ENTRIES)
+        {
+            legacyEntries.resize(MAX_LEGACY_SERVER_ENTRIES);
+        }
+        if (legacyEntries.size() > 0 && serverList.length() > 0)
+        {
+            // EMBEDDED_SERVER_LIST may be LF-delimited, not LF-terminated
+            serverList += "\n";
+        }
+        serverList += ServerList::EncodeServerEntries(legacyEntries);
 
-    if (!WriteFile(serverListFilename, serverList))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
+        if (!WriteFile(serverListFilename, serverList))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
     }
 
     return true;
@@ -420,15 +487,34 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
 
     if (m_exePath.size() == 0)
     {
-        if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, EXE_NAME, m_exePath))
+        if (RequestingUrlProxyWithoutTunnel())
         {
-            return false;
+            // In RequestingUrlProxyWithoutTunnel mode, we allow for multiple instances
+            // so we don't fail extract if the file already exists -- and don't try to
+            // kill any associated process holding a lock on it.
+            if (!ExtractExecutable(
+                    IDR_PSIPHON_TUNNEL_CORE_EXE, URL_PROXY_EXE_NAME, m_exePath, true))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (!ExtractExecutable(
+                    IDR_PSIPHON_TUNNEL_CORE_EXE, EXE_NAME, m_exePath))
+            {
+                return false;
+            }
         }
     }
 
     commandLine << m_exePath
-        << _T(" --config \"") << configFilename << _T("\"")
-        << _T(" --serverList \"") << serverListFilename << _T("\"");
+        << _T(" --config \"") << configFilename << _T("\"");
+
+    if (!RequestingUrlProxyWithoutTunnel())
+    {
+        commandLine << _T(" --serverList \"") << serverListFilename << _T("\"");
+    }
 
     STARTUPINFO startupInfo;
     ZeroMemory(&startupInfo, sizeof(startupInfo));
@@ -630,6 +716,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         {
             int port = data["port"].asInt();
             m_localHttpProxyPort = port;
+
+            // In this special case, we're running the core solely to
+            // use its url proxy and we do not expect to connect to a
+            // tunnel. So ensure that TransportConnectHelper() returns
+            // once the url proxy is running.
+            if (RequestingUrlProxyWithoutTunnel())
+            {
+                m_isConnected = true;
+            }
         }
         else if (noticeType == "SocksProxyPortInUse")
         {
@@ -662,8 +757,16 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         else if (noticeType == "UpstreamProxyError")
         {
             string message = data["message"].asString();
-            // SENSITIVE_FORMAT_ARGS: "message" may contain address info that identifies user
-            my_print(SENSITIVE_FORMAT_ARGS, false, _T("Upstream Proxy Error: %S"), message.c_str());
+
+            if (message != m_lastUpstreamProxyErrorMessage)
+            {
+                // SENSITIVE_FORMAT_ARGS: "message" may contain address info that identifies user
+                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Upstream Proxy Error: %S"), message.c_str());
+
+                // Don't repeatedly display the same error message, which may be emitted
+                // many times as the core is making multiple attempts to establish tunnels.
+                m_lastUpstreamProxyErrorMessage = message;
+            }
 
             // Don't include in diagnostics as "message" may contain private user data
             logOutputToDiagnostics = false;
@@ -671,7 +774,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             // In this case, the user most likely input an incorrect upstream proxy
             // address or credential. So stop attempting to connect and let the user
             // handle the error message.
-            throw TransportFailed(false);
+            // UPDATE:
+            // Actually, there are many other conditions that might cause this case,
+            // such as attempting to connect to disallowed ports through the proxy,
+            // the proxy being temporarily overloaded, other temporary network conditions, etc.
+            // So don't throw here.
+            //throw TransportFailed(false);
+            // TODO: The client should keep track of these notices and if it has not connected
+            // within a certain amount of time and received many of these notices it should
+            // suggest to the user that there might be a problem with the Upstream Proxy Settings.
         }
     }
     catch (exception& e)

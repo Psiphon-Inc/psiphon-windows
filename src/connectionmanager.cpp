@@ -230,7 +230,8 @@ void ConnectionManager::FetchRemoteServerList(void)
                 NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
                 response,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
-                false) // don't use local proxy
+                false, // don't use local proxy
+                true)  // fail over to URL proxy
             || response.length() <= 0)
         {
             my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
@@ -825,7 +826,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                 NarrowToTString(UPGRADE_REQUEST_PATH).c_str(),
                 downloadResponse,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                true) // tunnel request
+                true, // tunnel request
+                true) // fail over to URL proxy
             || downloadResponse.length() <= 0)
         {
             // If the download failed, we simply do nothing.

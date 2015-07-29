@@ -25,6 +25,7 @@
 #include <WinSock2.h>
 #include <TlHelp32.h>
 #include <WinCrypt.h>
+#include <WinInet.h>
 #include "utilities.h"
 #include "stopsignal.h"
 #include "cryptlib.h"
@@ -68,7 +69,11 @@ void TerminateProcessByName(const TCHAR* executableName)
 }
 
 
-bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path)
+bool ExtractExecutable(
+    DWORD resourceID,
+    const TCHAR* exeFilename,
+    tstring& path,
+    bool succeedIfExists/*=false*/)
 {
     // Extract executable from resources and write to temporary file
 
@@ -94,19 +99,15 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
     data = (BYTE*)LockResource(handle);
     size = SizeofResource(NULL, res);
 
-    DWORD ret;
-    TCHAR tempPath[MAX_PATH];
-    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
-    // tempPath can contain no more than MAX_PATH-14 characters
-    ret = GetTempPath(MAX_PATH, tempPath);
-    if (ret > MAX_PATH-14 || ret == 0)
+    tstring tempPath;
+    if (!GetTempPath(tempPath))
     {
         my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
         return false;
     }
 
     TCHAR filePath[MAX_PATH];
-    if (NULL == PathCombine(filePath, tempPath, exeFilename))
+    if (NULL == PathCombine(filePath, tempPath.c_str(), exeFilename))
     {
         my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
         return false;
@@ -123,6 +124,19 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
             if (!attemptedTerminate &&
                 ERROR_SHARING_VIOLATION == lastError)
             {
+                if (succeedIfExists)
+                {
+                    // The file must exist, and we can't write to it, most likely because it is
+                    // locked by a currently executing process. We can go ahead and consider the
+                    // file extracted.
+                    // TODO: We should check that the file size and contents are the same. If the file
+                    // is different, it would be better to proceed with attempting to extract the
+                    // executable and even terminating any locking process -- for example, the locking
+                    // process may be a dangling child process left over from before a client upgrade.
+                    path = filePath;
+                    return true;
+                }
+
                 TerminateProcessByName(exeFilename);
                 attemptedTerminate = true;
             }
@@ -152,6 +166,45 @@ bool ExtractExecutable(DWORD resourceID, const TCHAR* exeFilename, tstring& path
 
     path = filePath;
 
+    return true;
+}
+
+
+// Caller can check GetLastError() on failure
+bool GetTempPath(tstring& path)
+{
+    DWORD ret;
+    TCHAR tempPath[MAX_PATH];
+    // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
+    // tempPath can contain no more than MAX_PATH-14 characters
+    ret = GetTempPath(MAX_PATH, tempPath);
+    if (ret > MAX_PATH-14 || ret == 0)
+    {
+        return false;
+    }
+
+    path = tempPath;
+    return true;
+}
+
+
+// Caller can check GetLastError() on failure
+bool GetShortPathName(const tstring& path, tstring& shortPath)
+{
+    DWORD ret = GetShortPathName(path.c_str(), NULL, 0);
+    if (ret == 0)
+    {
+        return false;
+    }
+    TCHAR* buffer = new TCHAR [ret];
+    ret = GetShortPathName(path.c_str(), buffer, ret);
+    if (ret == 0)
+    {
+        delete[] buffer;
+        return false;
+    }
+    shortPath = buffer;
+    delete[] buffer;
     return true;
 }
 
@@ -258,7 +311,8 @@ DWORD WaitForConnectability(
 
         // Check if cancel is signalled
 
-        if (stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
+        if (stopInfo.stopSignal != 0 &&
+            stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons))
         {
             returnValue = ERROR_OPERATION_ABORTED;
             break;
@@ -925,6 +979,40 @@ wstring EscapeSOCKSArg(const char* input)
         output.push_back(c);
     }
     return NarrowToTString(output).c_str();
+}
+
+// Adapted from:
+// http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+tstring UrlEncode(const tstring& input)
+{
+    tstring encodedURL = _T("");
+    DWORD outputBufferSize = input.size() * 2;
+    LPTSTR outputBuffer = new TCHAR[outputBufferSize];
+    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    DWORD error = ::GetLastError();
+    if (!result && error == ERROR_INSUFFICIENT_BUFFER)
+    {
+        delete[] outputBuffer;
+        outputBuffer = new TCHAR[outputBufferSize];
+        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    }
+
+    if (result)
+    {
+        encodedURL = outputBuffer;
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: InternetCanonicalizeUrl failed for %s with code %ld"), __TFUNCTION__, input.c_str(), GetLastError());
+    }
+    
+    if (outputBuffer != 0)
+    {
+        delete[] outputBuffer;
+        outputBuffer = 0;
+    }
+
+    return encodedURL;
 }
 
 tstring GetLocaleName()
