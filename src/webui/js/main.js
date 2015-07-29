@@ -453,10 +453,6 @@ var SETTING_CHANGED_EVENT = 'setting-changed';
 
 var BEST_REGION_VALUE = 'BEST';
 
-// We need to store the settings as we enter the tab, so that we can reliably
-// revert to them.
-var g_initialSettings = {};
-
 $(function settingsInit() {
   // This is merely to help with testing
   if (!g_initObj.Settings)
@@ -539,9 +535,6 @@ $(function settingsInit() {
 
 // Settings tab has been navigated to and is shown
 function onSettingsTabShown() {
-  // Capture the initial settings
-  g_initialSettings = getSettingsTabValues();
-
   // Reset the Apply button
   enableSettingsApplyButton(false);
 }
@@ -577,7 +570,7 @@ function onSettingsTabHiding(e) {
 
     $modal.find('.discard-button').off('click').one('click', function() {
       $modal.modal('hide');
-      refreshSettings(g_initialSettings);
+      refreshSettings(g_initObj.Settings);
       enableSettingsApplyButton(false);
       $(e.target).tab('show');
     });
@@ -586,23 +579,22 @@ function onSettingsTabHiding(e) {
 
 // A setting value has been changed.
 function onSettingChanged(e, id) {
-  console.log('onSettingChanged: ' + id);
+  DEBUG_LOG('onSettingChanged: ' + id);
 
   var settingsValues = getSettingsTabValues();
-  if (_.isEqual(settingsValues, g_initialSettings)) {
-    // No actual change, or the change has been reverted
-    enableSettingsApplyButton(false);
-    return;
-  }
+  var settingsChanged = settingsObjectChanged(settingsValues);
 
-  enableSettingsApplyButton(true);
+  enableSettingsApplyButton(settingsChanged);
 }
 
 // Handler for the Reset Settings button
 function onSettingsReset(e) {
-  e.preventDefault();
+  /*jshint validthis:true */
 
-  refreshSettings(g_initObj.Settings.defaults);
+  e.preventDefault();
+  $(this).blur();
+
+  refreshSettings(g_initObj.Settings.defaults, false);
 
   // Enable the Apply button (assume actual changes)
   enableSettingsApplyButton(true);
@@ -610,7 +602,10 @@ function onSettingsReset(e) {
 
 // Handler for the Apply Settings button
 function onSettingsApply(e) {
+  /*jshint validthis:true */
+
   e.preventDefault();
+  $(this).blur();
 
   if (!getSettingsApplyButtonEnabled()) {
     return;
@@ -628,6 +623,30 @@ function onSettingsApply(e) {
 //
 // General settings functions
 //
+
+// Returns true if newSettings differs from the current canonical settings.
+function settingsObjectChanged(newSettings) {
+  // This does not take into account more/fewer keys in the object, since that
+  // should not happen.
+
+  var key, i;
+  var keys = _.keys(g_initObj.Settings);
+  for (i = 0; i < keys.length; i++) {
+    key = keys[i];
+    if (key === 'defaults') {
+      // The defaults object doesn't count in the comparison.
+      continue;
+    }
+
+    if (newSettings[key] !== g_initObj.Settings[key]) {
+      DEBUG_LOG('settingsObjectChanged: detected change: ' + key);
+      return true;
+    }
+  }
+
+  DEBUG_LOG('settingsObjectChanged: no change');
+  return false;
+}
 
 function enableSettingsApplyButton(enable) {
   var $applyButton = $('#settings-pane .apply-settings');
@@ -659,15 +678,6 @@ function applySettings() {
   // necessary).
   HtmlCtrlInterface_SaveSettings(JSON.stringify(settingsValues));
 
-  if (g_lastState === 'starting' || g_lastState === 'connected') {
-    // We're going to reconnect to apply the settings
-    displayCornerAlert($('#settings-apply-alert'));
-  }
-  else {
-    // We're saving the settings, but not reconnecting/applying.
-    displayCornerAlert($('#settings-save-alert'));
-  }
-
   return true;
 }
 
@@ -675,8 +685,12 @@ function applySettings() {
 // the new current settings, otherwise the existing current settings will be
 // refreshed in the UI.
 // newSettings can be a partial settings object (like, just {egressRegion: "US"} or whatever).
-function refreshSettings(newSettings) {
-  g_initObj.Settings = $.extend(g_initObj.Settings, newSettings || {});
+// If forceCurrent is true, the new settings will be become canonical (rather than just displayed).
+function refreshSettings(newSettings, forceCurrent) {
+  if (forceCurrent) {
+    g_initObj.Settings = $.extend(g_initObj.Settings, newSettings || {});
+  }
+
   fillSettingsValues(g_initObj.Settings);
 
   // When the settings change, we need to check the current egress region choice.
@@ -703,12 +717,12 @@ function fillSettingsValues(obj) {
   if (typeof(obj.LocalHttpProxyPort) !== 'undefined') {
     $('#LocalHttpProxyPort').val(obj.LocalHttpProxyPort > 0 ? obj.LocalHttpProxyPort : '');
   }
-  $('#LocalHttpProxyPort').trigger('keyup');
 
   if (typeof(obj.LocalSocksProxyPort) !== 'undefined') {
     $('#LocalSocksProxyPort').val(obj.LocalSocksProxyPort > 0 ? obj.LocalSocksProxyPort : '');
   }
-  $('#LocalSocksProxyPort').trigger('keyup');
+
+  localProxyValid(false);
 
   if (typeof(obj.UpstreamProxyHostname) !== 'undefined') {
     $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
@@ -717,12 +731,13 @@ function fillSettingsValues(obj) {
   if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
     $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : '');
   }
-  $('#UpstreamProxyPort').trigger('keyup');
 
   if (typeof(obj.SkipUpstreamProxy) !== 'undefined') {
     $('#SkipUpstreamProxy').prop('checked', obj.SkipUpstreamProxy);
   }
   skipUpstreamProxyUpdate();
+
+  upstreamProxyValid(false);
 
   if (typeof(obj.EgressRegion) !== 'undefined') {
     var region = obj.EgressRegion || BEST_REGION_VALUE;
@@ -917,13 +932,18 @@ function updateAvailableEgressRegions(forceValid) {
 function localProxySetup() {
   // Handle change events
   $('#LocalHttpProxyPort, #LocalSocksProxyPort').on(
-      'keyup change blur',
+      'keyup keydown keypress change blur',
       function(event) {
-        // Tell the settings pane a change was made.
-        $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+        // We need to delay this processing so that the change to the text has
+        // had a chance to take effect. Otherwise this.val() will return the old
+        // value.
+        _.delay(_.bind(function(event) {
+          // Tell the settings pane a change was made.
+          $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
 
-        // Check for validity.
-        localProxyValid(false);
+          // Check for validity.
+          localProxyValid(false);
+        }, this, event), 100);
       });
 }
 
@@ -1021,13 +1041,18 @@ function localProxyPortConflictNotice(noticeType) {
 function upstreamProxySetup() {
   // Handle change events
   $('#UpstreamProxyHostname, #UpstreamProxyPort').on(
-      'keyup change blur',
+      'keyup keydown keypress change blur',
       function(event) {
-        // Tell the settings pane a change was made.
-        $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+        // We need to delay this processing so that the change to the text has
+        // had a chance to take effect. Otherwise this.val() will return the old
+        // value.
+        _.delay(_.bind(function(event) {
+          // Tell the settings pane a change was made.
+          $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
 
-        // Check validity.
-        upstreamProxyValid(false);
+          // Check for validity.
+          upstreamProxyValid(false);
+        }, this, event), 100);
       });
 
   // Add the "skip" checkbox handler.
@@ -1349,6 +1374,21 @@ function addLog(obj) {
   // message.
   if (obj.priority < 1) {
     $('#logs-pane .invisible').removeClass('invisible');
+  }
+}
+
+// Used for temporary debugging messages.
+function DEBUG_LOG(msg) {
+  if (!g_initObj.Config.Debug) {
+    return;
+  }
+
+  msg = 'DEBUG: ' + JSON.stringify(msg);
+
+  addLog({priority: 0, message: msg});
+
+  if (IS_BROWSER) {
+    console.log(msg);
   }
 }
 
@@ -1714,7 +1754,12 @@ function drawAttentionToButton(elem) {
 
   var backgroundColor, backgroundColorRGB, shadowColor;
   var $elem = $(elem);
-  var originalBoxShadow = $elem.css('box-shadow');
+
+  var originalBoxShadow = $elem.data('drawAttentionToButton-originalBoxShadow');
+  if (!originalBoxShadow) {
+    originalBoxShadow = $elem.css('box-shadow');
+    $elem.data('drawAttentionToButton-originalBoxShadow', originalBoxShadow);
+  }
 
   // The box shadow will be same colour as the button background, with reduced
   // opacity.
@@ -1740,19 +1785,25 @@ function drawAttentionToButton(elem) {
     shadowColor = backgroundColor;
   }
 
+  // The effect we're going for is a big shadow that slowly shrinks back down.
   var animationTimeSecs = 5;
 
+  // Add the initial big shadow
   $elem.css('transition', '');
   $elem.css('box-shadow', '0 0 30px 20px ' + shadowColor);
-  nextTick(function() {
+
+  // After giving that CSS change a moment to take effect...
+  _.delay(function() {
+    // ...add a transition and remove the box shadow. It will disappear slowly.
     $elem.css('transition', 'box-shadow ' + animationTimeSecs + 's');
     $elem.css('box-shadow', 'none');
 
-    setTimeout(function() {
+    // When the big box shadow is gone, reset to the original value
+    $elem.one('transitionend', function() {
       $elem.css('transition', '');
       $elem.css('box-shadow', originalBoxShadow);
-    }, animationTimeSecs * 1000);
-  });
+    });
+  }, 10); // if this is too low, the effect seems to fail sometimes (like when a port number field is changed in settings)
 }
 
 
@@ -1908,7 +1959,18 @@ function HtmlCtrlInterface_SetState(jsonArgs) {
 function HtmlCtrlInterface_RefreshSettings(jsonArgs) {
   nextTick(function() {
     var args = JSON.parse(jsonArgs);
-    refreshSettings(args);
+    refreshSettings(args.settings, true);
+
+    if (args.success){
+      if (args.reconnectRequired) {
+        // backend is reconnecting to apply the settings
+        displayCornerAlert($('#settings-apply-alert'));
+      }
+      else {
+        displayCornerAlert($('#settings-save-alert'));
+      }
+    }
+    // else an error occurred when saving settings... TODO: tell user?
   });
 }
 
@@ -1997,7 +2059,13 @@ function HtmlCtrlInterface_SaveSettings(settingsJSON) {
     var appURL = PSIPHON_LINK_PREFIX + 'savesettings?' + encodeURIComponent(settingsJSON);
     if (IS_BROWSER) {
       console.log(decodeURIComponent(appURL));
-      HtmlCtrlInterface_RefreshSettings(settingsJSON);
+
+      // DEBUG: Make it appear to behave like a real client
+      _.delay(HtmlCtrlInterface_RefreshSettings, 100, JSON.stringify({
+        settings: JSON.parse(settingsJSON),
+        success: true,
+        reconnectRequired: g_lastState === 'connected' || g_lastState === 'starting'
+      }));
     }
     else {
       window.location = appURL;

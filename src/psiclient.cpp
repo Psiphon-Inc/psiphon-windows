@@ -596,6 +596,8 @@ static void HtmlUI_BeforeNavigate(MC_NMHTMLURL* nmHtmlUrl)
 #define PSIPHON_LINK_PREFIX     _T("psi:")
 static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 {
+    // NOTE: Do NOT early-return from this. Use `goto done;`
+
     // NOTE: Incoming query parameters will be URI-encoded
 
     const LPCTSTR appReady = PSIPHON_LINK_PREFIX _T("ready");
@@ -625,7 +627,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         tstring urlDecoded = UrlDecode(url);
         if (urlDecoded.length() < appStringTableLen + 1)
         {
-            return;
+            goto done;
         }
 
         string stringJSON(TStringToNarrow(urlDecoded).c_str() + appStringTableLen);
@@ -650,27 +652,36 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         tstring urlDecoded = UrlDecode(url);
         if (urlDecoded.length() < appSaveSettingsLen + 1)
         {
-            return;
+            goto done;
         }
 
         string stringJSON(TStringToNarrow(urlDecoded).c_str() + appSaveSettingsLen);
-        bool settingsChanged = false;
-        if (Settings::FromJson(stringJSON, settingsChanged) && settingsChanged)
-        {
-            // Refresh settings in UI
-            Json::Value settingsJSON;
-            Settings::ToJson(settingsJSON);
-            Json::FastWriter jsonWriter;
-            UI_RefreshSettings(jsonWriter.write(settingsJSON));
+        bool reconnectRequired = false;
+        bool success = Settings::FromJson(stringJSON, reconnectRequired);
 
-            if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
-                || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING)
-            {
-                // Reconnect.
-                my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
-                g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
-                g_connectionManager.Start();
-            }
+        bool doReconnect = success && reconnectRequired &&
+            (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
+             || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING);
+
+        // refresh the settings in the UI
+        Json::Value settingsJSON;
+        Settings::ToJson(settingsJSON);
+
+        Json::Value settingsRefreshJSON;
+        settingsRefreshJSON["settings"] = settingsJSON;
+        settingsRefreshJSON["success"] = success;
+        settingsRefreshJSON["reconnectRequired"] = doReconnect;
+
+        Json::FastWriter jsonWriter;
+        string strSettingsRefreshJSON = jsonWriter.write(settingsRefreshJSON);
+        UI_RefreshSettings(strSettingsRefreshJSON);
+
+        if (doReconnect)
+        {
+            // Reconnect.
+            my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
+            g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+            g_connectionManager.Start();
         }
     }
     else if (_tcsncmp(url, appSendFeedback, appSendFeedbackLen) == 0
@@ -680,7 +691,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         tstring urlDecoded = UrlDecode(url);
         if (urlDecoded.length() < appSendFeedbackLen + 1)
         {
-            return;
+            goto done;
         }
 
         string stringJSON(TStringToNarrow(urlDecoded).c_str() + appSendFeedbackLen);
@@ -694,7 +705,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         tstring urlDecoded = UrlDecode(url);
         if (urlDecoded.length() < appSetCookiesLen + 1)
         {
-            return;
+            goto done;
         }
 
         string stringJSON(TStringToNarrow(urlDecoded).c_str() + appSetCookiesLen);
@@ -719,6 +730,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         OpenBrowser(url);
     }
 
+done:
     delete[] url;
 }
 

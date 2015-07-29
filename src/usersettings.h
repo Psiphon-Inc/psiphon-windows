@@ -26,7 +26,7 @@ namespace Settings
 
     void ToJson(Json::Value& o_json);
     // Returns false on error.
-    bool FromJson(const string& utf8JSON, bool& o_settingsChanged);
+    bool FromJson(const string& utf8JSON, bool& o_reconnectRequired);
 
     // Returns true if settings changed.
     bool Show(HINSTANCE hInst, HWND hParentWnd);

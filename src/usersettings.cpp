@@ -152,14 +152,14 @@ void Settings::ToJson(Json::Value& o_json)
 {
     o_json.clear();
     o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
-    o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
+    o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN) ? TRUE : FALSE;
     o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
     o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-    o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
+    o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
     o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
     o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
     o_json["EgressRegion"] = Settings::EgressRegion();
-    o_json["SystrayMinimize"] = Settings::SystrayMinimize();
+    o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
     o_json["defaults"] = Json::Value();
     o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
     o_json["defaults"]["VPN"] = FALSE;
@@ -171,9 +171,12 @@ void Settings::ToJson(Json::Value& o_json)
     o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
 }
 
-bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
+// FromJson updates the stores settings from an object stored in JSON format.
+bool Settings::FromJson(
+    const string& utf8JSON, 
+    bool& o_reconnectRequired)
 {
-    o_settingsChanged = false;
+    o_reconnectRequired = false;
 
     Json::Value json;
     Json::Reader reader;
@@ -184,6 +187,8 @@ bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
         return false;
     }
 
+    bool reconnectRequiredValueChanged = false;
+
     try
     {
         AutoMUTEX lock(g_registryMutex);
@@ -193,48 +198,48 @@ bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
         RegistryFailureReason failReason;
 
         BOOL splitTunnel = json.get("SplitTunnel", SPLIT_TUNNEL_DEFAULT).asUInt();
-        o_settingsChanged = o_settingsChanged || !!splitTunnel != Settings::SplitTunnel();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
         wstring transport = json.get("VPN", TRANSPORT_DEFAULT).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
-        o_settingsChanged = o_settingsChanged || transport != Settings::Transport();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
             TRANSPORT_NAME,
             transport,
             failReason);
 
         DWORD httpPort = json.get("LocalHttpProxyPort", HTTP_PROXY_PORT_DEFAULT).asUInt();
-        o_settingsChanged = o_settingsChanged || httpPort != Settings::LocalHttpProxyPort();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || httpPort != Settings::LocalHttpProxyPort();
         WriteRegistryDwordValue(HTTP_PROXY_PORT_NAME, httpPort);
 
         DWORD socksPort = json.get("LocalSocksProxyPort", SOCKS_PROXY_PORT_DEFAULT).asUInt();
-        o_settingsChanged = o_settingsChanged || socksPort != Settings::LocalSocksProxyPort();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", UPSTREAM_PROXY_HOSTNAME_DEFAULT).asString();
-        o_settingsChanged = o_settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
             upstreamProxyHostname,
             failReason);
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", UPSTREAM_PROXY_PORT_DEFAULT).asUInt();
-        o_settingsChanged = o_settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
 
         BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", SKIP_UPSTREAM_PROXY_DEFAULT).asUInt();
-        o_settingsChanged = o_settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
         WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
 
         string egressRegion = json.get("EgressRegion", EGRESS_REGION_DEFAULT).asString();
-        o_settingsChanged = o_settingsChanged || egressRegion != Settings::EgressRegion();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || egressRegion != Settings::EgressRegion();
         WriteRegistryStringValue(
             EGRESS_REGION_NAME,
             egressRegion,
             failReason);
 
         BOOL systrayMinimize = json.get("SystrayMinimize", SYSTRAY_MINIMIZE_DEFAULT).asUInt();
-        o_settingsChanged = o_settingsChanged || !!systrayMinimize != Settings::SystrayMinimize();
+        // Does not require reconnect to apply change.
         WriteRegistryDwordValue(SYSTRAY_MINIMIZE_NAME, systrayMinimize);
     }
     catch (exception& e)
@@ -242,6 +247,8 @@ bool Settings::FromJson(const string& utf8JSON, bool& o_settingsChanged)
         my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
         return false;
     }
+
+    o_reconnectRequired = reconnectRequiredValueChanged;
 
     return true;
 }

@@ -6507,6 +6507,8 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   overflow: hidden;
   left: 1em;
   right: 1em;
+  padding: 0.2em;
+  background-color: #e1ebf3;
   *zoom: 1;
 }
 .settings-buttons:before,
@@ -6539,7 +6541,7 @@ body[dir="rtl"] .settings-buttons .reset-settings {
 }
 #settings-accordion {
   position: absolute;
-  top: 2.5em;
+  top: 38px;
   bottom: 0;
   overflow-y: scroll;
   overflow-x: hidden;

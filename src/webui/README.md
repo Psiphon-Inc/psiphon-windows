@@ -75,6 +75,9 @@ $ node fake-translations.js
 
 * IE7: jQuery's `$().clone()` doesn't seem to work.
 
+* ALL: `keyup` and `keydown` events are unreliable. Use `keypress` instead.
+  - Related: `change` event doesn't fire for text boxes until focus is lost.
+
 
 ## Links to tools used
 
