@@ -170,6 +170,7 @@
   "devltr": {
     "name": "[Ƥȧȧƈķȧȧɠḗḗḓ Ȧȧƈƈḗḗƞŧḗḗḓ]",
     "translation": {
+      "about#client-version": "[Ƥşīīƥħǿǿƞ ƒǿǿř Ẇīīƞḓǿǿẇş ƈŀīīḗḗƞŧ ṽḗḗřşīīǿǿƞ:]",
       "about#description": "[Ƥşīīƥħǿǿƞ īīş ȧȧ <strong>ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ŧǿǿǿǿŀ</strong> — īīŧ īīş ḓḗḗşīīɠƞḗḗḓ ŧǿǿ ɠīīṽḗḗ ȧȧƈƈḗḗşş ŧǿǿ ŧħḗḗ ǿǿƥḗḗƞ Īīƞŧḗḗřƞḗḗŧ, ƥȧȧşŧ ƈḗḗƞşǿǿřş ȧȧƞḓ ƒīīřḗḗẇȧȧŀŀş. Īīŧ īīş <strong>ǿǿƥḗḗƞ şǿǿŭŭřƈḗḗ</strong> ȧȧƞḓ ḓḗḗṽḗḗŀǿǿƥḗḗḓ īīƞ Ŧǿǿřǿǿƞŧǿǿ, Ƈȧȧƞȧȧḓȧȧ.]",
       "about#get-by-email": "[<strong>Īīƒ ŧħḗḗ ẇḗḗƀşīīŧḗḗ īīş īīƞȧȧƈƈḗḗşşīīƀŀḗḗ</strong>, ẏǿǿŭŭ ƈȧȧƞ ɠḗḗŧ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ ǿǿƒ Ƥşīīƥħǿǿƞ ƀẏ şḗḗƞḓīīƞɠ ȧȧƞ ḗḗḿȧȧīīŀ ŧǿǿ:]",
       "about#visit-download-site": "[Ƥŀḗḗȧȧşḗḗ ṽīīşīīŧ ŧħḗḗ ẇḗḗƀşīīŧḗḗ ŧǿǿ <strong><a class=\"NewVersionURL\" href=\"#\">ḓǿǿẇƞŀǿǿȧȧḓ ȧȧ ƞḗḗẇ ṽḗḗřşīīǿǿƞ</a></strong> ǿǿř ŧǿǿ ɠḗḗŧ <strong><a class=\"InfoURL\" href=\"#\">ħḗḗŀƥ ȧȧƞḓ īīƞƒǿǿřḿȧȧŧīīǿǿƞ</a></strong>.]",
@@ -275,6 +276,7 @@
   "devrtl": {
     "name": "Ԁɐɔʞɐƃǝp‬ ‮Wıɹɹoɹǝp",
     "translation": {
+      "about#client-version": "‮Ԁsıdɥou‬ ‮ɟoɹ‬ ‮Ｍıupoʍs‬ ‮ɔʅıǝuʇ‬ ‮ʌǝɹsıou‬:",
       "about#description": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐ‬ <strong>‮ɔǝusoɹsɥıd‬ ‮ɔıɹɔnɯʌǝuʇıou‬ ‮ʇooʅ‬</strong> — ‮ıʇ‬ ‮ıs‬ ‮pǝsıƃuǝp‬ ‮ʇo‬ ‮ƃıʌǝ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮odǝu‬ ‮Iuʇǝɹuǝʇ‬, ‮dɐsʇ‬ ‮ɔǝusoɹs‬ ‮ɐup‬ ‮ɟıɹǝʍɐʅʅs‬. ‮Iʇ‬ ‮ıs‬ <strong>‮odǝu‬ ‮sonɹɔǝ‬</strong> ‮ɐup‬ ‮pǝʌǝʅodǝp‬ ‮ıu‬ ‮⊥oɹouʇo‬, ‮Ↄɐuɐpɐ‬.",
       "about#get-by-email": "<strong>‮Iɟ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ıs‬ ‮ıuɐɔɔǝssıqʅǝ‬</strong>, ‮ʎon‬ ‮ɔɐu‬ ‮ƃǝʇ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬:",
       "about#visit-download-site": "‮Ԁʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ʇo‬ <strong><a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</a></strong> ‮oɹ‬ ‮ʇo‬ ‮ƃǝʇ‬ <strong><a class=\"InfoURL\" href=\"#\">‮ɥǝʅd‬ ‮ɐup‬ ‮ıuɟoɹɯɐʇıou‬</a></strong>.",
@@ -556,6 +558,7 @@
       "about#description": "Psiphon is a <strong>censorship circumvention tool</strong> — it is designed to give access to the open Internet, past censors and firewalls. It is <strong>open source</strong> and developed in Toronto, Canada.",
       "about#visit-download-site": "Please visit the website to <strong><a class=\"NewVersionURL\" href=\"#\">download a new version</a></strong> or to get <strong><a class=\"InfoURL\" href=\"#\">help and information</a></strong>.",
       "about#get-by-email": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+      "about#client-version": "Psiphon for Windows client version:",
       "general#modal-close-button": "Close",
       "appbackend#state-stopped-title": "Psiphon is disconnected",
       "appbackend#state-starting-title": "Psiphon is connecting",

@@ -79,6 +79,7 @@ void OnCreate(HWND hWndParent)
     initJSON["Settings"] = settingsJSON;
     initJSON["Cookies"] = Settings::GetCookies();
     initJSON["Config"] = Json::Value();
+    initJSON["Config"]["ClientVersion"] = CLIENT_VERSION;
     initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
     initJSON["Config"]["Banner"] = "banner.png";
     initJSON["Config"]["Version"] = CLIENT_VERSION;

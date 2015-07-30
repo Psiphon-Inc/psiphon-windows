@@ -47,6 +47,7 @@ var g_initObj = {};
   if (IS_BROWSER) {
     g_initObj = g_initObj || {};
     g_initObj.Config = g_initObj.Config || {};
+    g_initObj.Config.ClientVersion = g_initObj.Config.ClientVersion || '99';
     g_initObj.Config.Language = g_initObj.Config.Language || 'en';
     g_initObj.Config.Banner = g_initObj.Config.Banner || 'banner.png';
     g_initObj.Config.InfoURL =
@@ -136,6 +137,8 @@ $(function overallInit() {
     $('.NewVersionEmail').attr('href', 'mailto:' + g_initObj.Config.NewVersionEmail)
                          .text(g_initObj.Config.NewVersionEmail)
                          .attr('title', g_initObj.Config.NewVersionEmail);
+
+    $('.ClientVersion').text(g_initObj.Config.ClientVersion);
   });
   $window.on(LANGUAGE_CHANGE_EVENT, updateLinks);
   // ...and now.

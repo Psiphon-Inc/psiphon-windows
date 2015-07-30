@@ -367,6 +367,10 @@
     "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
     "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
   },
+  "about#client-version": {
+    "message": "Psiphon for Windows client version:",
+    "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
+  },
   "general#modal-close-button": {
     "message": "Close",
     "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."

@@ -6730,6 +6730,9 @@ body[dir="rtl"] #language-pane .language-item {
   font-size: 1.5em;
   line-height: 1.3em;
 }
+#about-pane .client-version {
+  font-size: 60%;
+}
 .wordart {
   display: inline-block;
   *display: inline;
