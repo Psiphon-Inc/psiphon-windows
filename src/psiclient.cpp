@@ -888,9 +888,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //==== Main window functions ==================================================
 
 #define WINDOW_X_START  780
-#define WINDOW_Y_START  580
+#define WINDOW_Y_START  600
 #define WINDOW_X_MIN    680
-#define WINDOW_Y_MIN    580
+#define WINDOW_Y_MIN    600
 
 static void SaveWindowPlacement()
 {
