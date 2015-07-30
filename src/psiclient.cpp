@@ -313,6 +313,7 @@ static VOID CALLBACK HandleMinimizeHelper(HWND hWnd, UINT, UINT_PTR idEvent, DWO
         (void)GetStringTableEntry(STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY, infoBody);
 
         UpdateSystrayIcon(NULL, infoTitle, infoBody);
+        my_print(NOT_SENSITIVE, true, _T("%s: systray updated"), __TFUNCTION__);
     }
 }
 
@@ -364,7 +365,7 @@ static void UpdateSystrayConnectedStateHelper()
     }
     g_UpdateSystrayConnectedState_LastState = currentState;
 
-    wstring infoTitle, infoBody;
+    wstring infoTitle, infoBody, state;
     bool infoTitleFound = false, infoBodyFound = false;
     HICON hIcon = NULL;
 
@@ -373,27 +374,32 @@ static void UpdateSystrayConnectedStateHelper()
         hIcon = g_notifyIconConnected;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_CONNECTED_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_CONNECTED_BODY, infoBody);
+        state = L"connected";
     }
     else if (currentState == CONNECTION_MANAGER_STATE_STARTING)
     {
         hIcon = g_notifyIconStopped;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STARTING_BODY, infoBody);
+        state = L"starting";
     }
     else if (currentState == CONNECTION_MANAGER_STATE_STOPPING)
     {
         hIcon = g_notifyIconStopped;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STOPPING_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STOPPING_BODY, infoBody);
+        state = L"stopping";
     }
     else  // CONNECTION_MANAGER_STATE_STOPPED
     {
         hIcon = g_notifyIconStopped;
         infoTitleFound = GetStringTableEntry(STRING_KEY_STATE_STOPPED_TITLE, infoTitle);
         infoBodyFound = GetStringTableEntry(STRING_KEY_STATE_STOPPED_BODY, infoBody);
+        state = L"stopped";
     }
 
     UpdateSystrayIcon(hIcon, infoTitle, infoBody);
+    my_print(NOT_SENSITIVE, true, _T("%s: systray updated: %s"), __TFUNCTION__, state.c_str());
 
     // Set app icon to match
     PostMessage(g_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
