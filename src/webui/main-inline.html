@@ -14071,9 +14071,15 @@ function onSettingChanged(e, id) {
   DEBUG_LOG('onSettingChanged: ' + id);
 
   var settingsValues = getSettingsTabValues();
-  var settingsChanged = settingsObjectChanged(settingsValues);
 
-  enableSettingsApplyButton(settingsChanged);
+  if (settingsValues === false) {
+    // Settings values are invalid
+    enableSettingsApplyButton(false);
+  }
+  else {
+    var settingsChanged = settingsObjectChanged(settingsValues);
+    enableSettingsApplyButton(settingsChanged);
+  }
 }
 
 // Handler for the Reset Settings button
@@ -14176,11 +14182,13 @@ function applySettings() {
 // newSettings can be a partial settings object (like, just {egressRegion: "US"} or whatever).
 // If forceCurrent is true, the new settings will be become canonical (rather than just displayed).
 function refreshSettings(newSettings, forceCurrent) {
+  var fullNewSettings = $.extend(g_initObj.Settings, newSettings || {});
+
   if (forceCurrent) {
-    g_initObj.Settings = $.extend(g_initObj.Settings, newSettings || {});
+    g_initObj.Settings = fullNewSettings;
   }
 
-  fillSettingsValues(g_initObj.Settings);
+  fillSettingsValues(fullNewSettings);
 
   // When the settings change, we need to check the current egress region choice.
   forceEgressRegionValid();
