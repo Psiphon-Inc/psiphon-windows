@@ -1,7 +1,10 @@
 ## Design
 
-Send messages from HTML to C via either "psi:" (like, window.location="psi:blah") or via page title (like, document.title="blah".
-Send messages from C to HTML via new JS thing.
+Communication in both directions is enabled by the [`mctrl`](https://github.com/Psiphon-Inc/mctrl) HTML control that we are using (and some changes we have made to it).
+
+Messages are passed from JavaScript (frontend) to C (backend) via attempts to change location to `psi:...`. For example: `psi:start` or `psi:sendfeedback?<feedback_data>`. These URLs get processed by the backend code and handled appropriately.
+
+Messages are passed from C (backend) to JavaScript (frontend) via called to exposed JS functions, such as `HtmlCtrlInterface_SetState` and `HtmlCtrlInterface_AddNotice`. 
 
 
 ## i18n
@@ -77,6 +80,8 @@ $ node fake-translations.js
 
 * ALL: `keyup` and `keydown` events are unreliable. Use `keypress` instead.
   - Related: `change` event doesn't fire for text boxes until focus is lost.
+
+* IE7: Can't use `float:right` on an element that's a child/grandchild of a `postition:absolute` element. See the comment for `#settings-accordion` in `lteIE7.css` for details.
 
 
 ## Links to tools used

@@ -63,6 +63,15 @@ module.exports = function(grunt) {
       }
     },
 
+    execute: {
+        dist: {
+            options: {
+              cwd: './utils'
+            },
+            src: ['./utils/fake-translations.js']
+        }
+    },
+
     locales: {
       dist: {
         src: '_locales/',
@@ -72,11 +81,12 @@ module.exports = function(grunt) {
 
   });
 
+  grunt.loadNpmTasks('grunt-execute');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-inline');
 
-  grunt.registerTask('default', ['concat', 'less', 'locales', 'inline']);
+  grunt.registerTask('default', ['execute', 'concat', 'less', 'locales', 'inline']);
 
   grunt.registerMultiTask(
     'locales',
