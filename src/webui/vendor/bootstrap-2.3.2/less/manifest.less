@@ -1,0 +1,14 @@
+@import 'bootstrap.less';
+@import 'responsive.less';
+
+@import 'variables.less';
+
+// Fixes problem with compiling with new Less
+// From http://stackoverflow.com/a/28182792/729729
+#grid {
+    .core  {
+        .span(@gridColumns) {
+            width: (@gridColumnWidth * @gridColumns) + (@gridGutterWidth * (@gridColumns - 1));
+        }
+    }
+};

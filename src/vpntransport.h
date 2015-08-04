@@ -57,7 +57,6 @@ public:
     virtual tstring GetLastTransportError() const;
     virtual bool IsHandshakeRequired() const;
     virtual bool IsWholeSystemTunneled() const;
-    virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
 
     virtual bool Cleanup();

@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "httpsrequest.h"
+#include "logging.h"
 #include "psiclient.h"
 #include <WinCrypt.h>
 #include "config.h"

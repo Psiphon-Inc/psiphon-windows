@@ -1,0 +1,11 @@
+hr.dotted {
+  border-top-style: dotted;
+}
+
+/* Can't spin in IE<=9, so use an hourglass */
+.icon-spin {
+  *zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe979;');
+}
+.icon-spin:before {
+  content: "\e979";
+}

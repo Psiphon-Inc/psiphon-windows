@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "local_proxy.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "utilities.h"
 #include "sessioninfo.h"
