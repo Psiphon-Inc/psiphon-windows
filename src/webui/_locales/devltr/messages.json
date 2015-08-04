@@ -195,6 +195,14 @@
     "message": "[Řḗḗƈǿǿƞƞḗḗƈŧīīƞɠ ŧǿǿ ȧȧƥƥŀẏ ẏǿǿŭŭř şḗḗŧŧīīƞɠş.]",
     "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
   },
+  "settings#egress-region#default": {
+    "message": "[Ƈħǿǿǿǿşīīƞɠ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ <strong>“Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ”</strong> ǿǿƥŧīīǿǿƞ ȧȧŀŀǿǿẇş Ƥşīīƥħǿǿƞ ŧǿǿ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƈħǿǿǿǿşḗḗ ȧȧ şḗḗřṽḗḗř, ẇħīīƈħ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ řḗḗşŭŭŀŧ īīƞ ŧħḗḗ ƀḗḗşŧ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ.]",
+    "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
+  },
+  "settings#egress-region#description": {
+    "message": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ŭŭşīīƞɠ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř īīƞ ȧȧ ƈǿǿŭŭƞŧřẏ ƈŀǿǿşḗḗ ŧǿǿ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ ƥřǿǿṽīīḓḗḗ ȧȧ ƀḗḗŧŧḗḗř ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ ẇīīşħ ŧǿǿ ȧȧƈƈḗḗşş ẇḗḗƀşīīŧḗḗş ȧȧƞḓ şḗḗřṽīīƈḗḗş ŀīīķḗḗ ẏǿǿŭŭ ȧȧřḗḗ ṽīīřŧŭŭȧȧŀŀẏ īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
+    "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+  },
   "settings#egress-region#error-modal-body-http": {
     "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ “Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ” ƈħǿǿīīƈḗḗ.]",
     "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
@@ -206,10 +214,6 @@
   "settings#egress-region#heading": {
     "message": "[Ƥşīīƥħǿǿƞ Şḗḗřṽḗḗř Řḗḗɠīīǿǿƞ]",
     "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
-  },
-  "settings#egress-region#help-text": {
-    "message": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ƒǿǿř ŧħḗḗ ƒȧȧşŧḗḗşŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ şƥḗḗḗḗḓ ẏǿǿŭŭ şħǿǿŭŭŀḓ ƈħǿǿǿǿşḗḗ <strong>“Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ”</strong>, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ īīƞşŧḗḗȧȧḓ ƥřḗḗƒḗḗř ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
-    "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the setting does and what the default (and best) option is."
   },
   "settings#egress-region#invalid-error-msg": {
     "message": "[Ƈħǿǿǿǿşḗḗ ȧȧ ṽȧȧŀīīḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ.]",
@@ -280,8 +284,12 @@
     "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
   },
   "settings#local-proxy-ports#leave-blank": {
-    "message": "[Ŀḗḗȧȧṽḗḗ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ ƥǿǿřŧ şḗḗŀḗḗƈŧīīǿǿƞ (řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ).]",
-    "description": "Help text that appears above the 'Local Proxy Ports' settings. It indicates what the default/best option is (blank, automatic)."
+    "message": "[Ŀḗḗȧȧṽḗḗ <strong>ƀŀȧȧƞķ</strong> ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ ƥǿǿřŧ şḗḗŀḗḗƈŧīīǿǿƞ (řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ).]",
+    "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
+  },
+  "settings#local-proxy-ports#reason": {
+    "message": "[Īīƒ ẏǿǿŭŭ ŭŭşḗḗ ŧǿǿǿǿŀş ǿǿƞ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ŧħȧȧŧ řḗḗɋŭŭīīřḗḗ ḿȧȧƞŭŭȧȧŀ ƈǿǿƞƒīīɠŭŭřȧȧŧīīǿǿƞ ŧǿǿ ẇǿǿřķ ẇīīŧħ Ƥşīīƥħǿǿƞ, ẏǿǿŭŭ ẇīīŀŀ ẇȧȧƞŧ Ƥşīīƥħǿǿƞ ŧǿǿ ƈǿǿƞşīīşŧḗḗƞŧŀẏ ŭŭşḗḗ ŧħḗḗ şȧȧḿḗḗ ŀǿǿƈȧȧŀ ƥǿǿřŧ ƞŭŭḿƀḗḗřş. Īīƒ ẏǿǿŭŭ ḓǿǿƞ’ŧ ħȧȧṽḗḗ ȧȧ řḗḗȧȧşǿǿƞ ŧǿǿ şƥḗḗƈīīƒẏ ƥǿǿřŧ ƞŭŭḿƀḗḗřş, ẏǿǿŭŭ şħǿǿŭŭŀḓ ȧȧŀŀǿǿẇ Ƥşīīƥħǿǿƞ ŧǿǿ ƈħǿǿǿǿşḗḗ ŧħḗḗḿ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ŧǿǿ ħḗḗŀƥ ȧȧṽǿǿīīḓ ƈǿǿƞƒŀīīƈŧş.]",
+    "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
   },
   "settings#local-proxy-ports#socks-label": {
     "message": "[ŞǾǿƇĶŞ]",
@@ -315,6 +323,10 @@
     "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, řḗḗɋŭŭḗḗşŧş ḿȧȧḓḗḗ ŧǿǿ şḗḗřṽḗḗřş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŧŭŭƞƞḗḗŀḗḗḓ ŧħřǿǿŭŭɠħ Ƥşīīƥħǿǿƞ.]",
     "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
   },
+  "settings#split-tunnel#reason": {
+    "message": "[Ẇḗḗƀşīīŧḗḗş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ȧȧřḗḗ ɠḗḗƞḗḗřȧȧŀŀẏ ƞǿǿŧ ƀŀǿǿƈķḗḗḓ, şǿǿ ḗḗƞȧȧƀŀīīƞɠ ŧħīīş ǿǿƥŧīīǿǿƞ ẇīīŀŀ ɠīīṽḗḗ ẏǿǿŭŭ ƒȧȧşŧḗḗř ȧȧƈƈḗḗşş ŧǿǿ ŧħǿǿşḗḗ şīīŧḗḗş ȧȧƞḓ ƈȧȧƞ şǿǿḿḗḗŧīīḿḗḗş řḗḗḓŭŭƈḗḗ ĪīŞƤ ḓȧȧŧȧȧ ŭŭşȧȧɠḗḗ ƈǿǿşŧş.]",
+    "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+  },
   "settings#systray-minimize#enable-label": {
     "message": "[Ḿīīƞīīḿīīẑḗḗ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (şẏşŧḗḗḿ ŧřȧȧẏ)]",
     "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
@@ -327,6 +339,10 @@
     "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ẇħḗḗƞ ḿīīƞīīḿīīẑḗḗḓ ŧħḗḗ Ƥşīīƥħǿǿƞ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ẇīīƞḓǿǿẇ ẇīīŀŀ ħīīḓḗḗ īīƞ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (ȧȧŀşǿǿ ķƞǿǿẇƞ ȧȧş ŧħḗḗ “şẏşŧḗḗḿ ŧřȧȧẏ” ǿǿř “şẏşŧřȧȧẏ”, ŀǿǿƈȧȧŧḗḗḓ ƞḗḗȧȧř ŧħḗḗ ƈŀǿǿƈķ ǿǿƞ ẏǿǿŭŭř Ẇīīƞḓǿǿẇş ŧȧȧşķ ƀȧȧř).]",
     "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
   },
+  "settings#systray-minimize#reason": {
+    "message": "[Ḿīīƞīīḿīīẑīīƞɠ Ƥşīīƥħǿǿƞ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (“şẏşŧḗḗḿ ŧřȧȧẏ”) ƒřḗḗḗḗş ŭŭƥ şƥȧȧƈḗḗ ǿǿƞ ẏǿǿŭŭř ŧȧȧşķ ƀȧȧř. Ŧħīīş īīş ḗḗşƥḗḗƈīīȧȧŀŀẏ ħḗḗŀƥƒŭŭŀ īīƒ ẏǿǿŭŭ ǿǿƒŧḗḗƞ řŭŭƞ Ƥşīīƥħǿǿƞ ƒǿǿř ŀǿǿƞɠ ƥḗḗřīīǿǿḓş ǿǿƒ ŧīīḿḗḗ.]",
+    "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
+  },
   "settings#transport-mode#check-label": {
     "message": "[Ŭŭşḗḗ Ŀ2ŦƤ/ĪīƤŞḗḗƈ ḿǿǿḓḗḗ]",
     "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -336,7 +352,7 @@
     "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
   },
   "settings#transport-mode#help-text": {
-    "message": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş Ŀ2ŦƤ/ĪīƤŞḗḗƈ ṽīīřŧŭŭȧȧŀ ƞḗḗŧẇǿǿřķīīƞɠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ǿǿƒ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ'ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
+    "message": "[Ŭŭşḗḗş Ẇīīƞḓǿǿẇş Ŀ2ŦƤ/ĪīƤŞḗḗƈ ṽīīřŧŭŭȧȧŀ ƞḗḗŧẇǿǿřķīīƞɠ. Ŧħīīş ḿǿǿḓḗḗ ẇīīŀŀ ŧŭŭƞƞḗḗŀ ȧȧŀŀ ǿǿƒ ẏǿǿŭŭř ȧȧƥƥş, ƀŭŭŧ īīŧ ḓǿǿḗḗşƞ’ŧ ƥřǿǿṽīīḓḗḗ ǿǿƀƒŭŭşƈȧȧŧīīǿǿƞ ȧȧƞḓ şǿǿ ḓǿǿḗḗş ƞǿǿŧ ħȧȧṽḗḗ şŧřǿǿƞɠ ƈḗḗƞşǿǿřşħīīƥ ƈīīřƈŭŭḿṽḗḗƞŧīīǿǿƞ ƈȧȧƥȧȧƀīīŀīīŧīīḗḗş. Īīŧ īīş <strong>ƞǿǿŧ řḗḗƈǿǿḿḿḗḗƞḓḗḗḓ</strong> ƒǿǿř ƀẏƥȧȧşşīīƞɠ ḿǿǿşŧ ƒīīřḗḗẇȧȧŀŀş.]",
     "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
   },
   "settings#unapplied-changes-prompt#apply-button": {
@@ -356,15 +372,15 @@
     "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
   },
   "settings#upstream-proxy#by-default": {
-    "message": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.<br> Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
+    "message": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀḗḗħȧȧṽīīǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ” şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.]",
     "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
   },
   "settings#upstream-proxy#error-modal-body-configured": {
-    "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧƞ \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\".<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ƒīīẋ ŧħḗḗ şḗḗŧŧīīƞɠş ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
+    "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧƞ “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ”.<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ƒīīẋ ŧħḗḗ şḗḗŧŧīīƞɠş ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
     "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
   },
   "settings#upstream-proxy#error-modal-body-default": {
-    "message": "[Ƥşīīƥħǿǿƞ īīş ƈŭŭřřḗḗƞŧŀẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŧǿǿ ŭŭşḗḗ ẏǿǿŭŭř şẏşŧḗḗḿ ƥřǿǿẋẏ ȧȧş īīŧş \"ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\".<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ḗḗƞȧȧƀŀḗḗ \"Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ\" ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
+    "message": "[Ƥşīīƥħǿǿƞ īīş ƈŭŭřřḗḗƞŧŀẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŧǿǿ ŭŭşḗḗ ẏǿǿŭŭř şẏşŧḗḗḿ ƥřǿǿẋẏ ȧȧş īīŧş “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ”.<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ḗḗƞȧȧƀŀḗḗ “Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ” ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
     "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
   },
   "settings#upstream-proxy#error-modal-body-pre-message": {
@@ -386,6 +402,14 @@
   "settings#upstream-proxy#port-label": {
     "message": "[Ƥǿǿřŧ]",
     "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+  },
+  "settings#upstream-proxy#proxy-reqs": {
+    "message": "[Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
+    "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+  },
+  "settings#upstream-proxy#reason": {
+    "message": "[Ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋīīḗḗş ȧȧřḗḗ şǿǿḿḗḗŧīīḿḗḗş řḗḗɋŭŭīīřḗḗḓ ƀẏ şƈħǿǿǿǿŀş, ŭŭƞīīṽḗḗřşīīŧīīḗḗş, ǿǿř ƀŭŭşīīƞḗḗşşḗḗş. Īīƒ ẏǿǿŭŭ ķƞǿǿẇ ŧħḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş řḗḗɋŭŭīīřḗḗḓ ƀẏ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ ƥřǿǿṽīīḓḗḗř, ŧħḗḗƞ ḿȧȧƞŭŭȧȧŀŀẏ şḗḗŧŧīīƞɠ ŧħḗḗḿ ħḗḗřḗḗ ḿȧȧẏ ƀḗḗ řḗḗɋŭŭīīřḗḗḓ ŧǿǿ ƈǿǿƞƞḗḗƈŧ.]",
+    "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
   },
   "settings#upstream-proxy#set-both-error-msg": {
     "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",

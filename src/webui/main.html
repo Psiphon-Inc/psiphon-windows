@@ -355,9 +355,16 @@
                   <form>
                     <fieldset>
                       <p data-i18n="settings#systray-minimize#help-text">
-                        If enabled, when minimized the Psiphon application window will hide
-                        in the notification area (also known as the "system tray" or "systray",
-                        located near the clock on your Windows task bar).
+                        If enabled, when minimized the Psiphon application
+                        window will hide in the notification area (also known as
+                        the “system tray” or “systray”, located near the clock
+                        on your Windows task bar).
+                      </p>
+                      <p data-i18n="settings#systray-minimize#reason">
+                        Minimizing Psiphon to the notification area (“systray”)
+                        frees up space on your task bar. This is especially
+                        helpful if you often run Psiphon for long periods of
+                        time.
                       </p>
                       <div class="controls checkbox checkbox-primary">
                         <input type="checkbox" id="SystrayMinimize"/>
@@ -395,6 +402,11 @@
                       <p data-i18n="settings#split-tunnel#help-text">
                         If enabled, requests made to servers within your home country will not be
                         tunneled through Psiphon.
+                      </p>
+                      <p data-i18n="settings#split-tunnel#reason">
+                        Websites within your home country are generally not blocked,
+                        so enabling this option will give you faster access to those sites
+                        and can sometimes reduce ISP data usage costs.
                       </p>
                       <div class="controls checkbox checkbox-primary">
                         <input type="checkbox" id="SplitTunnel"/>
@@ -434,10 +446,18 @@
                 <div class="accordion-inner">
                   <form class="vpn-incompatible">
                     <fieldset>
-                      <span class="help-block" data-i18n="[html]settings#egress-region#help-text">
-                        Psiphon has servers in many different countries. For the fastest connection
-                        speed you should choose <strong>“Fastest Country”</strong>,
-                        but you may instead prefer to use a server in a specific country.
+                      <span class="help-block" data-i18n="settings#egress-region#description">
+                        Psiphon has servers in many different countries. Using a
+                        Psiphon server in a country close to your home country
+                        will generally provide a better network connection, but
+                        you may wish to access websites and services like you
+                        are virtually in a specific country.
+                      </span>
+                      <span class="help-block" data-i18n="[html]settings#egress-region#default">
+                        Choosing the default <strong>“Fastest Country”</strong>
+                        option allows Psiphon to automatically choose a server,
+                        which will generally result in the best network
+                        connection.
                       </span>
                       <span class="help-block">
                         <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
@@ -528,8 +548,17 @@
                 <div class="accordion-inner">
                   <form class="form-horizontal">
                     <fieldset>
-                      <p data-i18n="settings#local-proxy-ports#leave-blank">
-                        Leave blank for automatic port selection (recommended).
+                      <p data-i18n="[html]settings#local-proxy-ports#leave-blank">
+                        Leave <strong>blank</strong> for automatic port
+                        selection (recommended).
+                      </p>
+                      <p data-i18n="settings#local-proxy-ports#reason">
+                        If you use tools on your computer that require manual
+                        configuration to work with Psiphon, you will want
+                        Psiphon to consistently use the same local port numbers.
+                        If you don’t have a reason to specify port numbers, you
+                        should allow Psiphon to choose them automatically to
+                        help avoid conflicts.
                       </p>
                       <div class="control-group">
                         <label for="LocalHttpProxyPort" class="control-label"
@@ -584,10 +613,20 @@
                 <div class="accordion-inner">
                   <form class="form-horizontal">
                     <fieldset>
-                      <p data-i18n="[html]settings#upstream-proxy#by-default">
-                        If your computer already has a proxy configured, by default Psiphon will
-                        use that proxy when establishing a tunnel. You can override that by specifying
-                        a proxy to use, or by specifying that no such "upstream proxy" should be used.<br>
+                      <p data-i18n="settings#upstream-proxy#by-default">
+                        If your computer already has a proxy configured, by
+                        default Psiphon will use that proxy when establishing a
+                        tunnel. You can override that behavior by specifying a
+                        proxy to use, or by specifying that no such “upstream
+                        proxy" should be used.
+                      </p>
+                      <p data-i18n="settings#upstream-proxy#reason">
+                        Upstream proxies are sometimes required by schools,
+                        universities, or businesses. If you know the upstream
+                        proxy settings required by your network provider, then
+                        manually setting them here may be required to connect.
+                      </p>
+                      <p data-i18n="settings#upstream-proxy#proxy-reqs">
                         Only HTTP proxies that support HTTPS are allowed.
                       </p>
                       <div class="control-group skip-upstream-proxy-incompatible">
@@ -657,9 +696,10 @@
                       </div>
                       <span class="help-block" data-i18n="[html]settings#transport-mode#help-text">
                         Uses Windows L2TP/IPSec virtual networking. This mode
-                        will tunnel all of your apps, but it doesn't provide
-                        obfuscation. It is <strong>not recommended</strong> for
-                        bypassing most firewalls.
+                        will tunnel all of your apps, but it doesn’t provide
+                        obfuscation and so does not have strong censorship
+                        circumvention capabilities. It is <strong>not
+                        recommended</strong> for bypassing most firewalls.
                       </span>
                     </fieldset>
                   </form>
@@ -995,13 +1035,13 @@
           <p>
             <span class="upstream-proxy-default"
                   data-i18n="[html]settings#upstream-proxy#error-modal-body-default">
-              Psiphon is currently configured to use your system proxy as its "upstream proxy".<br>
+              Psiphon is currently configured to use your system proxy as its “upstream proxy”.<br>
               However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
-              Please enable "Don't use upstream proxy" and try again.
+              Please enable “Don't use upstream proxy” and try again.
             </span>
             <span class="upstream-proxy-configured"
                   data-i18n="[html]settings#upstream-proxy#error-modal-body-configured">
-              You have configured Psiphon to use an "upstream proxy".<br>
+              You have configured Psiphon to use an “upstream proxy”.<br>
               However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
               Please fix the settings and try again.
             </span>
