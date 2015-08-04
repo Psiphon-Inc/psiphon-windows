@@ -196,6 +196,9 @@ static bool GetStringTableEntry(LPSTR key, wstring& o_entry)
 #ifndef NIIF_LARGE_ICON
 #define NIIF_LARGE_ICON 0x00000020
 #endif
+#ifndef NIIF_USER
+#define NIIF_USER       0x00000004
+#endif
 
 static NOTIFYICONDATA g_notifyIconData = { 0 };
 static HICON g_notifyIconStopped = NULL;
