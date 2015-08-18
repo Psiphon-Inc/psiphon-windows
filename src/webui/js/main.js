@@ -253,13 +253,7 @@ $(function connectionInit() {
 
 function resizeConnectContent() {
   // Resize the text in the button
-  var i;
-  var $slabs = $('.slabtext-container');
-  for (i = 0; i < $slabs.length; i++) {
-    if ($slabs.eq(i).data('slabText')) {
-      $slabs.eq(i).data('slabText').resizeSlabs();
-    }
-  }
+  $('.textfill-container').textfill({ maxFontPixels: -1 });
 
   // Set the outer connect button div to the correct height
   $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
@@ -316,7 +310,7 @@ function connectToggleSetup() {
   });
   updateConnectToggle();
 
-  $('.slabtext-container').slabText({noResizeEvent: true});
+  $('.textfill-container').textfill({ maxFontPixels: -1 });
 
   // Update the button when the back-end tells us the state has changed.
   $window.on(CONNECTED_STATE_CHANGE_EVENT, nextTickFn(updateConnectToggle));

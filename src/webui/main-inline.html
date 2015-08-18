@@ -485,9 +485,6 @@ a .icon-flip-vertical:before {
 
 </style>
   <style>
-.slabtexted .slabtext{display:-moz-inline-box;display:inline-block;white-space:nowrap}.slabtextinactive .slabtext{display:inline;white-space:normal;font-size:1em !important;letter-spacing:inherit !important;word-spacing:inherit !important;*letter-spacing:0 !important;*word-spacing:0 !important;}.slabtextdone .slabtext{display:block;line-height:0.9;}
-</style>
-  <style>
 /*
 Copyright (c) 2012 Martijn Lafeber
 Permission is hereby granted, free of charge, to any person obtaining
@@ -7022,7 +7019,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   top: 0;
   margin: auto;
   overflow: hidden;
-  padding: 30px 10%;
+  padding: 30px 5%;
   width: 78%;
   background-color: #ffffff;
   text-transform: uppercase;
@@ -7223,13 +7220,16 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   display: block;
   position: relative;
 }
+#connect-toggle > .connect-toggle-content .textfill-container {
+  height: 70px;
+  white-space: nowrap;
+  margin-bottom: 0;
+}
 #connect-toggle > .connect-toggle-content hr {
   width: 70%;
   margin-left: auto;
   margin-right: auto;
-}
-#connect-toggle .slabtext-container {
-  height: 50px;
+  margin-top: 0;
 }
 #connect-toggle a {
   min-width: 10em;
@@ -7582,9 +7582,6 @@ hr.dotted {
   border-top-width: 2px;
   border-bottom-style: none;
   border-bottom-width: 0px;
-}
-.slabtextdone .slabtext {
-  line-height: 1.2;
 }
 
 </style>
@@ -11534,255 +11531,330 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 
 </script>
   <script>
-/*! jQuery slabtext plugin v2.3.1 MIT/GPL2 @freqdec */
-(function( $ ){
+/**
+ * @preserve  textfill
+ * @name      jquery.textfill.js
+ * @author    Russ Painter
+ * @author    Yu-Jie Lin
+ * @author    Alexandre Dantas
+ * @version   0.6.0
+ * @date      2014-08-19
+ * @copyright (c) 2014 Alexandre Dantas
+ * @copyright (c) 2012-2013 Yu-Jie Lin
+ * @copyright (c) 2009 Russ Painter
+ * @license   MIT License
+ * @homepage  https://github.com/jquery-textfill/jquery-textfill
+ * @example   http://jquery-textfill.github.io/jquery-textfill/index.html
+ */
+; (function($) {
 
-    $.fn.slabText = function(options) {
+  /**
+   * Resizes an inner element's font so that the
+   * inner element completely fills the outer element.
+   *
+   * @param {Object} options User options that take
+   *                         higher precedence when
+   *                         merging with the default ones.
+   *
+   * @return All outer elements processed
+   */
+  $.fn.textfill = function(options) {
 
-        var settings = {
-            // The ratio used when calculating the characters per line
-            // (parent width / (font-size * fontRatio)).
-            "fontRatio"             : 0.78,
-            // Always recalculate the characters per line, not just when the
-            // font-size changes? Defaults to true (CPU intensive)
-            "forceNewCharCount"     : true,
-            // Do we wrap ampersands in <span class="amp">
-            "wrapAmpersand"         : true,
-            // Under what pixel width do we remove the slabtext styling?
-            "headerBreakpoint"      : null,
-            "viewportBreakpoint"    : null,
-            // Don't attach a resize event
-            "noResizeEvent"         : false,
-            // By many milliseconds do we throttle the resize event
-            "resizeThrottleTime"    : 300,
-            // The maximum pixel font size the script can set
-            "maxFontSize"           : 999,
-            // Do we try to tweak the letter-spacing or word-spacing?
-            "postTweak"             : true,
-            // Decimal precision to use when setting CSS values
-            "precision"             : 3,
-            // The min num of chars a line has to contain
-            "minCharsPerLine"       : 0
-            };
+    // ______  _______ _______ _______ _     _        _______ _______
+    // |     \ |______ |______ |_____| |     | |         |    |______
+    // |_____/ |______ |       |     | |_____| |_____    |    ______|
+        //
+    // Merging user options with the default values
 
-        // Add the slabtexted classname to the body to initiate the styling of
-        // the injected spans
-        $("body").addClass("slabtexted");
-
-        return this.each(function(){
-
-            if(options) {
-                $.extend(settings, options);
-            };
-
-            var $this               = $(this),
-                keepSpans           = $("span.slabtext", $this).length,
-                words               = keepSpans ? [] : String($.trim($this.text())).replace(/\s{2,}/g, " ").split(" "),
-                origFontSize        = null,
-                idealCharPerLine    = null,
-                fontRatio           = settings.fontRatio,
-                forceNewCharCount   = settings.forceNewCharCount,
-                headerBreakpoint    = settings.headerBreakpoint,
-                viewportBreakpoint  = settings.viewportBreakpoint,
-                postTweak           = settings.postTweak,
-                precision           = settings.precision,
-                resizeThrottleTime  = settings.resizeThrottleTime,
-                minCharsPerLine     = settings.minCharsPerLine,
-                resizeThrottle      = null,
-                viewportWidth       = $(window).width(),
-                headLink            = $this.find("a:first").attr("href") || $this.attr("href"),
-                linkTitle           = headLink ? $this.find("a:first").attr("title") : "";
-
-            if(!keepSpans && minCharsPerLine && words.join(" ").length < minCharsPerLine) {
-                return;
-            };
-
-            // Calculates the pixel equivalent of 1em within the current header
-            var grabPixelFontSize = function() {
-                var dummy = jQuery('<div style="display:none;font-size:1em;margin:0;padding:0;height:auto;line-height:1;border:0;">&nbsp;</div>').appendTo($this),
-                    emH   = dummy.height();
-                dummy.remove();
-                return emH;
-            };
-
-            // Most of this function is a (very) stripped down AS3 to JS port of
-            // the slabtype algorithm by Eric Loyer with the original comments
-            // left intact
-            // http://erikloyer.com/index.php/blog/the_slabtype_algorithm_part_1_background/
-            var resizeSlabs = function resizeSlabs() {
-
-                // Cache the parent containers width
-                var parentWidth = $this.width(),
-                    fs;
-
-               //Sanity check to prevent infinite loop
-                if(parentWidth === 0) {
-                    return;
-                };
-
-                // Remove the slabtextdone and slabtextinactive classnames to enable the inline-block shrink-wrap effect
-                $this.removeClass("slabtextdone slabtextinactive");
-
-                if(viewportBreakpoint && viewportBreakpoint > viewportWidth
-                   ||
-                   headerBreakpoint && headerBreakpoint > parentWidth) {
-                    // Add the slabtextinactive classname to set the spans as inline
-                    // and to reset the font-size to 1em (inherit won't work in IE6/7)
-                    $this.addClass("slabtextinactive");
-                    return;
-                };
-
-                fs = grabPixelFontSize();
-                // If the parent containers font-size has changed or the "forceNewCharCount" option is true (the default),
-                // then recalculate the "characters per line" count and re-render the inner spans
-                // Setting "forceNewCharCount" to false will save CPU cycles...
-                if(!keepSpans && (forceNewCharCount || fs != origFontSize)) {
-
-                    origFontSize = fs;
-
-                    var newCharPerLine      = Math.min(60, Math.floor(parentWidth / (origFontSize * fontRatio))),
-                        wordIndex           = 0,
-                        lineText            = [],
-                        counter             = 0,
-                        preText             = "",
-                        postText            = "",
-                        finalText           = "",
-                        slice,
-                        preDiff,
-                        postDiff;
-
-                    if(newCharPerLine != 0 && newCharPerLine != idealCharPerLine) {
-                        idealCharPerLine = newCharPerLine;
-
-                        while (wordIndex < words.length) {
-
-                            postText = "";
-
-                            // build two strings (preText and postText) word by word, with one
-                            // string always one word behind the other, until
-                            // the length of one string is less than the ideal number of characters
-                            // per line, while the length of the other is greater than that ideal
-                            while (postText.length < idealCharPerLine) {
-                                preText   = postText;
-                                postText += words[wordIndex] + " ";
-                                if(++wordIndex >= words.length) {
-                                    break;
-                                };
-                            };
-
-                            // This bit hacks in a minimum characters per line test
-                            // on the last line
-                            if(minCharsPerLine) {
-                                slice = words.slice(wordIndex).join(" ");
-                                if(slice.length < minCharsPerLine) {
-                                    postText += slice;
-                                    preText = postText;
-                                    wordIndex = words.length + 2;
-                                };
-                            };
-
-                            // calculate the character difference between the two strings and the
-                            // ideal number of characters per line
-                            preDiff  = idealCharPerLine - preText.length;
-                            postDiff = postText.length - idealCharPerLine;
-
-                            // if the smaller string is closer to the length of the ideal than
-                            // the longer string, and doesn’t contain less than minCharsPerLine
-                            // characters, then use that one for the line
-                            if((preDiff < postDiff) && (preText.length >= (minCharsPerLine || 2))) {
-                                finalText = preText;
-                                wordIndex--;
-                            // otherwise, use the longer string for the line
-                            } else {
-                                finalText = postText;
-                            };
-
-                            // HTML-escape the text
-                            finalText = $('<div/>').text(finalText).html()
-
-                            // Wrap ampersands in spans with class `amp` for specific styling
-                            if(settings.wrapAmpersand) {
-                                finalText = finalText.replace(/&amp;/g, '<span class="amp">&amp;</span>');
-                            };
-
-                            finalText = $.trim(finalText);
-
-                            lineText.push('<span class="slabtext">' + finalText + "</span>");
-                        };
-
-                        $this.html(lineText.join(" "));
-                        // If we have a headLink, add it back just inside our target, around all the slabText spans
-                        if(headLink) {
-                            $this.wrapInner('<a href="' + headLink + '" ' + (linkTitle ? 'title="' + linkTitle + '" ' : '') + '/>');
-                        };
-                    };
-                } else {
-                    // We only need the font-size for the resize-to-fit functionality
-                    // if not injecting the spans
-                    origFontSize = fs;
-                };
-
-                $("span.slabtext", $this).each(function() {
-                    var $span       = $(this),
-                        // the .text method appears as fast as using custom -data attributes in this case
-                        innerText   = $span.text(),
-                        wordSpacing = innerText.split(" ").length > 1,
-                        diff,
-                        ratio,
-                        fontSize;
-
-                    if(postTweak) {
-                        $span.css({
-                            "word-spacing":0,
-                            "letter-spacing":0
-                            });
-                    };
-
-                    ratio    = parentWidth / $span.width();
-                    fontSize = parseFloat(this.style.fontSize) || origFontSize;
-
-                    $span.css("font-size", Math.min((fontSize * ratio).toFixed(precision), settings.maxFontSize) + "px");
-
-                    // Do we still have space to try to fill or crop
-                    diff = !!postTweak ? parentWidth - $span.width() : false;
-
-                    // A "dumb" tweak in the blind hope that the browser will
-                    // resize the text to better fit the available space.
-                    // Better "dumb" and fast...
-                    if(diff) {
-                        $span.css((wordSpacing ? 'word' : 'letter') + '-spacing', (diff / (wordSpacing ? innerText.split(" ").length - 1 : innerText.length)).toFixed(precision) + "px");
-                    };
-                });
-
-                // Add the class slabtextdone to set a display:block on the child spans
-                // and avoid styling & layout issues associated with inline-block
-                $this.addClass("slabtextdone");
-            };
-
-            // PSIPHON
-            $this.data("slabText", { resizeSlabs: resizeSlabs });
-            // /PSIPHON
-
-            // Immediate resize
-            resizeSlabs();
-
-            if(!settings.noResizeEvent) {
-                $(window).resize(function() {
-                    // Only run the resize code if the viewport width has changed.
-                    // we ignore the viewport height as it will be constantly changing.
-                    if($(window).width() == viewportWidth) {
-                        return;
-                    };
-
-                    viewportWidth = $(window).width();
-
-                    clearTimeout(resizeThrottle);
-                    resizeThrottle = setTimeout(resizeSlabs, resizeThrottleTime);
-                });
-            };
-        });
+    var defaults = {
+      debug            : false,
+      maxFontPixels    : 40,
+      minFontPixels    : 4,
+      innerTag         : 'span',
+      widthOnly        : false,
+      success          : null, // callback when a resizing is done
+      callback         : null, // callback when a resizing is done (deprecated, use success)
+      fail             : null, // callback when a resizing is failed
+      complete         : null, // callback when all is done
+      explicitWidth    : null,
+      explicitHeight   : null,
+      changeLineHeight : false
     };
-})(jQuery);
+
+    var Opts = $.extend(defaults, options);
+
+    // _______ _     _ __   _ _______ _______ _____  _____  __   _ _______
+    // |______ |     | | \  | |          |      |   |     | | \  | |______
+    // |       |_____| |  \_| |_____     |    __|__ |_____| |  \_| ______|
+    //
+    // Predefining the awesomeness
+
+    // Output arguments to the Debug console
+    // if "Debug Mode" is enabled
+    function _debug() {
+      if (!Opts.debug
+        ||  typeof console       == 'undefined'
+        ||  typeof console.debug == 'undefined') {
+        return;
+      }
+      console.debug.apply(console, arguments);
+    }
+
+    // Output arguments to the Warning console
+    function _warn() {
+      if (typeof console      == 'undefined' ||
+        typeof console.warn == 'undefined') {
+        return;
+      }
+      console.warn.apply(console, arguments);
+    }
+
+    // Outputs all information on the current sizing
+    // of the font.
+    function _debug_sizing(prefix, ourText, maxHeight, maxWidth, minFontPixels, maxFontPixels) {
+
+      function _m(v1, v2) {
+
+        var marker = ' / ';
+
+        if (v1 > v2)
+          marker = ' > ';
+
+        else if (v1 == v2)
+          marker = ' = ';
+
+        return marker;
+      }
+
+      _debug(
+        '[TextFill] '  + prefix + ' { ' +
+        'font-size: ' + ourText.css('font-size') + ',' +
+        'Height: '    + ourText.height() + 'px ' + _m(ourText.height(), maxHeight) + maxHeight + 'px,' +
+        'Width: '     + ourText.width()  + _m(ourText.width() , maxWidth)  + maxWidth + ',' +
+        'minFontPixels: ' + minFontPixels + 'px, ' +
+        'maxFontPixels: ' + maxFontPixels + 'px }'
+      );
+    }
+
+    /**
+     * Calculates which size the font can get resized,
+     * according to constrains.
+     *
+     * @param {String} prefix Gets shown on the console before
+     *                        all the arguments, if debug mode is on.
+     * @param {Object} ourText The DOM element to resize,
+     *                         that contains the text.
+     * @param {function} func Function called on `ourText` that's
+     *                        used to compare with `max`.
+     * @param {number} max Maximum value, that gets compared with
+     *                     `func` called on `ourText`.
+     * @param {number} minFontPixels Minimum value the font can
+     *                               get resized to (in pixels).
+     * @param {number} maxFontPixels Maximum value the font can
+     *                               get resized to (in pixels).
+     *
+     * @return Size (in pixels) that the font can be resized.
+     */
+    function _sizing(prefix, ourText, func, max, maxHeight, maxWidth, minFontPixels, maxFontPixels) {
+
+      _debug_sizing(
+        prefix, ourText,
+        maxHeight, maxWidth,
+        minFontPixels, maxFontPixels
+      );
+
+      // The kernel of the whole plugin, take most attention
+      // on this part.
+      //
+      // This is a loop that keeps increasing the `font-size`
+      // until it fits the parent element.
+      //
+      // - Start from the minimal allowed value (`minFontPixels`)
+      // - Guesses an average font size (in pixels) for the font,
+      // - Resizes the text and sees if its size is within the
+      //   boundaries (`minFontPixels` and `maxFontPixels`).
+      //   - If so, keep guessing until we break.
+      //   - If not, return the last calculated size.
+      //
+      // I understand this is not optimized and we should
+      // consider implementing something akin to
+      // Daniel Hoffmann's answer here:
+      //
+      //     http://stackoverflow.com/a/17433451/1094964
+      //
+
+      while (minFontPixels < (maxFontPixels - 1)) {
+
+        var fontSize = Math.floor((minFontPixels + maxFontPixels) / 2);
+        ourText.css('font-size', fontSize);
+
+        if (func.call(ourText) <= max) {
+          minFontPixels = fontSize;
+
+          if (func.call(ourText) == max)
+            break;
+        }
+        else
+          maxFontPixels = fontSize;
+
+        _debug_sizing(
+          prefix, ourText,
+          maxHeight, maxWidth,
+          minFontPixels, maxFontPixels
+        );
+      }
+
+      ourText.css('font-size', maxFontPixels);
+
+      if (func.call(ourText) <= max) {
+        minFontPixels = maxFontPixels;
+
+        _debug_sizing(
+          prefix + '* ', ourText,
+          maxHeight, maxWidth,
+          minFontPixels, maxFontPixels
+        );
+      }
+      return minFontPixels;
+    }
+
+    // _______ _______ _______  ______ _______
+    // |______    |    |_____| |_____/    |
+    // ______|    |    |     | |    \_    |
+        //
+    // Let's get it started (yeah)!
+
+    _debug('[TextFill] Start Debug');
+
+    this.each(function() {
+
+      // Contains the child element we will resize.
+      // $(this) means the parent container
+      var ourText = $(Opts.innerTag + ':visible:first', this);
+
+      // Will resize to this dimensions.
+      // Use explicit dimensions when specified
+      var maxHeight = Opts.explicitHeight || $(this).height();
+      var maxWidth  = Opts.explicitWidth  || $(this).width();
+
+      var oldFontSize = ourText.css('font-size');
+
+      var lineHeight  = parseFloat(ourText.css('line-height')) / parseFloat(oldFontSize);
+
+      _debug('[TextFill] Inner text: ' + ourText.text());
+      _debug('[TextFill] All options: ', Opts);
+      _debug('[TextFill] Maximum sizes: { ' +
+           'Height: ' + maxHeight + 'px, ' +
+           'Width: '  + maxWidth  + 'px' + ' }'
+          );
+
+      var minFontPixels = Opts.minFontPixels;
+
+      // Remember, if this `maxFontPixels` is negative,
+      // the text will resize to as long as the container
+      // can accomodate
+      var maxFontPixels = (Opts.maxFontPixels <= 0 ?
+                 maxHeight :
+                 Opts.maxFontPixels);
+
+
+      // Let's start it all!
+
+      // 1. Calculate which `font-size` would
+      //    be best for the Height
+      var fontSizeHeight = undefined;
+
+      if (! Opts.widthOnly)
+        fontSizeHeight = _sizing(
+          'Height', ourText,
+          $.fn.height, maxHeight,
+          maxHeight, maxWidth,
+          minFontPixels, maxFontPixels
+        );
+
+      // 2. Calculate which `font-size` would
+      //    be best for the Width
+      var fontSizeWidth = undefined;
+
+      fontSizeWidth = _sizing(
+        'Width', ourText,
+        $.fn.width, maxWidth,
+        maxHeight, maxWidth,
+        minFontPixels, maxFontPixels
+      );
+
+      // 3. Actually resize the text!
+
+      if (Opts.widthOnly) {
+        ourText.css({
+          'font-size'  : fontSizeWidth,
+          'white-space': 'nowrap'
+        });
+
+        if (Opts.changeLineHeight)
+          ourText.parent().css(
+            'line-height',
+            (lineHeight * fontSizeWidth + 'px')
+          );
+      }
+      else {
+        var fontSizeFinal = Math.min(fontSizeHeight, fontSizeWidth);
+
+        ourText.css('font-size', fontSizeFinal);
+
+        if (Opts.changeLineHeight)
+          ourText.parent().css(
+            'line-height',
+            (lineHeight * fontSizeFinal) + 'px'
+          );
+      }
+
+      _debug(
+        '[TextFill] Finished { ' +
+        'Old font-size: ' + oldFontSize              + ', ' +
+        'New font-size: ' + ourText.css('font-size') + ' }'
+      );
+
+      // Oops, something wrong happened!
+      // We weren't supposed to exceed the original size
+      if ((ourText.width()  > maxWidth) ||
+        (ourText.height() > maxHeight && !Opts.widthOnly)) {
+
+        ourText.css('font-size', oldFontSize);
+
+        // Failure callback
+        if (Opts.fail)
+          Opts.fail(this);
+
+        _debug(
+          '[TextFill] Failure { ' +
+          'Current Width: '  + ourText.width()  + ', ' +
+          'Maximum Width: '  + maxWidth         + ', ' +
+          'Current Height: ' + ourText.height() + ', ' +
+          'Maximum Height: ' + maxHeight        + ' }'
+        );
+      }
+      else if (Opts.success) {
+        Opts.success(this);
+      }
+      else if (Opts.callback) {
+        _warn('callback is deprecated, use success, instead');
+
+        // Success callback
+        Opts.callback(this);
+      }
+    });
+
+    // Complete callback
+    if (Opts.complete)
+      Opts.complete(this);
+
+    _debug('[TextFill] End Debug');
+    return this;
+  };
+
+})(window.jQuery);
+
 
 </script>
   <script>
@@ -14086,13 +14158,7 @@ $(function connectionInit() {
 
 function resizeConnectContent() {
   // Resize the text in the button
-  var i;
-  var $slabs = $('.slabtext-container');
-  for (i = 0; i < $slabs.length; i++) {
-    if ($slabs.eq(i).data('slabText')) {
-      $slabs.eq(i).data('slabText').resizeSlabs();
-    }
-  }
+  $('.textfill-container').textfill({ maxFontPixels: -1 });
 
   // Set the outer connect button div to the correct height
   $('#connect-toggle').height($('#connect-toggle > *').outerHeight());
@@ -14149,7 +14215,7 @@ function connectToggleSetup() {
   });
   updateConnectToggle();
 
-  $('.slabtext-container').slabText({noResizeEvent: true});
+  $('.textfill-container').textfill({ maxFontPixels: -1 });
 
   // Update the button when the back-end tells us the state has changed.
   $window.on(CONNECTED_STATE_CHANGE_EVENT, nextTickFn(updateConnectToggle));
@@ -16114,8 +16180,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 <i class="icon-spinner6 icon-spin icon-state-symbol"></i>
               </div>
               <div>
-                <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="[html]connection#starting-msg">
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#starting-msg">
                     Psiphon is <span class="state-word">connecting</span>…
                   </span>
                 </h2>
@@ -16136,8 +16202,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 <i class="icon-checkmark-circle icon-state-symbol"></i>
               </div>
               <div>
-                <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="[html]connection#connected-msg">
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#connected-msg">
                     Psiphon is <span class="state-word">connected</span>
                   </span>
                 </h2>
@@ -16158,8 +16224,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 <i class="icon-spinner6 icon-spin icon-state-symbol"></i>
               </div>
               <div>
-                <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="[html]connection#stopping-msg">
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#stopping-msg">
                     Psiphon is <span class="state-word">disconnecting</span>…
                   </span>
                 </h2>
@@ -16182,8 +16248,8 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 </div>
               </div>
               <div>
-                <h2 class="slabtext-container">
-                  <span class="slabtext" data-i18n="[html]connection#stopped-msg">
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#stopped-msg">
                     Psiphon is <span class="state-word">disconnected</span>
                   </span>
                 </h2>

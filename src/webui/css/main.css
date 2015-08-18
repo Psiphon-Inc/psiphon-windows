@@ -6253,7 +6253,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   top: 0;
   margin: auto;
   overflow: hidden;
-  padding: 30px 10%;
+  padding: 30px 5%;
   width: 78%;
   background-color: #ffffff;
   text-transform: uppercase;
@@ -6454,13 +6454,16 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   display: block;
   position: relative;
 }
+#connect-toggle > .connect-toggle-content .textfill-container {
+  height: 70px;
+  white-space: nowrap;
+  margin-bottom: 0;
+}
 #connect-toggle > .connect-toggle-content hr {
   width: 70%;
   margin-left: auto;
   margin-right: auto;
-}
-#connect-toggle .slabtext-container {
-  height: 50px;
+  margin-top: 0;
 }
 #connect-toggle a {
   min-width: 10em;
@@ -6813,7 +6816,4 @@ hr.dotted {
   border-top-width: 2px;
   border-bottom-style: none;
   border-bottom-width: 0px;
-}
-.slabtextdone .slabtext {
-  line-height: 1.2;
 }

@@ -378,7 +378,7 @@ a[href^=http], a[href^=mailto] {
     margin: auto;
     overflow: hidden;
 
-    padding: 30px 10%;
+    padding: 30px 5%;
     width: 78%; // hand-tweaked to look right with width and padding
 
     background-color: @connectBackgroundColor;
@@ -446,15 +446,20 @@ a[href^=http], a[href^=mailto] {
       .stateColors(@stoppedColor, @connectedColor, @connectBackgroundColor, 0 0 0 5px);
     }
 
+    .textfill-container {
+      height: 70px;
+      white-space: nowrap;
+      margin-bottom: 0;
+    }
+
     hr {
       width: 70%;
       margin-left: auto;
       margin-right: auto;
-    }
-  }
 
-  .slabtext-container {
-    height: 50px;
+      // Shrink the default top margin to bring the hr closer to the status text
+      margin-top: 0;
+    }
   }
 
   a {
@@ -901,11 +906,4 @@ hr.dotted {
   border-top-width: 2px;
   border-bottom-style: none;
   border-bottom-width: 0px;
-}
-
-// Override base SlabText styling
-.slabtextdone .slabtext {
-  // The default line-height is not big enough for for letters that drop below
-  // the baseline, at least for Farsi on IE7.
-  line-height: 1.2;
 }
