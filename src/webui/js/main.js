@@ -80,6 +80,7 @@ $(function overallInit() {
 
   // Update the logo when the connected state changes
   $window.on(CONNECTED_STATE_CHANGE_EVENT, updateLogoConnectState);
+  updateLogoConnectState(); // ...and now
 
 
   // The banner image filename is parameterized.
