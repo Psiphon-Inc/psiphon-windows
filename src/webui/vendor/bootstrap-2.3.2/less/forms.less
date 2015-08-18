@@ -332,6 +332,7 @@ select[readonly],
 textarea[readonly] {
   cursor: not-allowed;
   background-color: @inputDisabledBackground;
+  border: 1px solid darken(@inputDisabledBackground, 20%);
 }
 // Explicitly reset the colors here
 input[type="radio"][disabled],
@@ -339,6 +340,7 @@ input[type="checkbox"][disabled],
 input[type="radio"][readonly],
 input[type="checkbox"][readonly] {
   background-color: transparent;
+  border: 1px solid darken(@inputDisabledBackground, 20%);
 }
 
 

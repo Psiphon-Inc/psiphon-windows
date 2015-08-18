@@ -80,7 +80,7 @@ $(function overallInit() {
 
   // Update the logo when the connected state changes
   $window.on(CONNECTED_STATE_CHANGE_EVENT, updateLogoConnectState);
-  updateLogoConnectState(); // ...and now
+  updateLogoConnectState();
 
 
   // The banner image filename is parameterized.
@@ -226,7 +226,7 @@ function updateLogoConnectState() {
 /* CONNECTION ****************************************************************/
 
 // The current connected actual state of the application
-var g_lastState = 'stopped';
+var g_lastState = 'connected';
 
 // Used to monitor whether the current connection attempt is taking too long and
 // so if a "download new version" message should be shown.
@@ -501,6 +501,7 @@ $(function settingsInit() {
   $('.accordion-body')
     .on('show', function() {
       var headingSelector = '.accordion-toggle[href="#' + this.id + '"]';
+      $(headingSelector).addClass('accordion-expanded');
       var $expandIcon = $(headingSelector).find('.accordion-expand-icon');
       $expandIcon.removeClass($expandIcon.data('icon-closed'))
                  .addClass($expandIcon.data('icon-opened'));
@@ -511,6 +512,7 @@ $(function settingsInit() {
     })
     .on('hide', function() {
       var headingSelector = '.accordion-toggle[href="#' + this.id + '"]';
+      $(headingSelector).removeClass('accordion-expanded');
       var $expandIcon = $(headingSelector).find('.accordion-expand-icon');
       $expandIcon.removeClass($expandIcon.data('icon-opened'))
                  .addClass($expandIcon.data('icon-closed'));

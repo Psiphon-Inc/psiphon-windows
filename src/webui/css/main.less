@@ -18,24 +18,74 @@
 
 @import "_rtl-support.less";
 
+// Based on this palette: https://coolors.co/app/b63f1e-1b7b9c-d4e4bc-90a959-16627f
 
-@psiPrimary: #FFFFFF;
-@psiHighlight: #D43F27;
-@psiSecondary: #9E8E5F;
-@psiTextOnPrimary: #3A3A3A;
-@psiTextOnHighlight: #FFFFFF;
+// Main red in P logo: #B63F1E
+// Three blues sometimes used for Psiphon stuff: Light: #1B7B9C, Shaded: #16627F, Dark: #052239
 
-@psiNeutral: #F3F7FA;
-@psiDarkNeutral: darken(@psiNeutral, 60%);
-@psiLightNeutral: darken(@psiNeutral, 20%);
+//
+// The main interaction colors and their semantic implication/usage.
+//
 
-@psiLinkHoverColor: @psiDarkNeutral;
+// "If clicked, this will lead you elsewhere (either in or out of the app),
+// but won't *do* anything."
+//    - links
+//    - Clicking must produce no side-effects (besides navigation)
+//    - Exception: non-active nav items should be included under this, but for
+//      aesthetic reasons we're leaving them white.
+@psiLink: #B63F1E;
 
-@brand-primary: @psiHighlight;
-@brand-success: #5cb85c;
+// "If clicked, this will be engaged."
+//    - unselected Happy/sad, checkboxes, egress dropdown
+//    - no side-effects (until form is submitted or whatever)
+@psiEngageable: #90A959;
+
+// "If clicked, irrevocable action will occur."
+//    - Apply, Submit
+@psiAction: #16627F;
+
+// "This is engaged."
+//    - selected nav, selected dropdown, selected happy/sad
+//    - Items with this colour should be non-interactive (because they're already engaged)
+//    - Also the transitory 'active' color for links? Maybe for focused textbox?
+//    - Not checked checkboxes, since checked and unchecked have equally significant meaning.
+@psiEngaged: #1B7B9C;
+
+// "This clickable thing is hovered."
+//    - For all clickable things? Maybe for hovered textbox?
+@psiClickHover: #D4E4BC;
+
+//
+// Other colors and uses
+//
+
+// The color of text on the action colors.
+@psiTextOnLink: #EEEEEE;
+@psiTextOnEngageable: #EEEEEE;
+@psiTextOnAction: #EEEEEE;
+@psiTextOnEngaged: #EEEEEE;
+@psiTextOnClickHover: darken(@psiClickHover, 60%);
+
+@psiLinkHover: darken(@psiClickHover, 20%);
+
+// Some items are overwhelmed by the engageable color, so we need a lighter variant
+@psiEngageableLight: lighten(@psiEngageable, 40%);
+
+// Aesthetically, we want the header and the active nav item to be the same color.
+// This is effectively the main app color.
+@psiHeader: @psiEngaged;
+@psiTextOnHeader: @psiTextOnEngaged;
+
+@psiBaseWhite: #FFF; // e.g., nav background
+@psiBaseLight: #FBFCF9; // a very light derivation of the other greens
+@psiBaseText: #222;
+
+
+@brand-primary: @psiAction;
+@brand-success: #51A253;
 @brand-info: #5bc0de;
 @brand-warning: #f0ad4e;
-@brand-danger: #d9534f;
+@brand-danger: #C25350;
 
 
 @import "vendor/bootstrap-2.3.2/less/bootstrap.less";
@@ -67,8 +117,6 @@ body {
   // should be fixed by this:
   -ms-scroll-limit-y-max: 0;
   // But isn't. So the JS initScrollFix() function is used to really fix it.
-
-  background-color: @psiNeutral;
 }
 
 // The element focus outlines spoils the illusion of being an app vs. a webpage.
@@ -92,13 +140,23 @@ body {
 @navTopPad: ((@headerLogoHeight + @headerLogoMarginTop) - @headerHeight + @headerLogoMarginTop + 30px);
 @headerBannerTopMargin: (@headerHeight - @headerBannerHeight) / 2;
 
-@navLeftBorderColor: @psiLightNeutral;
-@navLeftBorderActiveColor: @psiDarkNeutral;
-@navLeftBorder: 5px solid @psiLightNeutral;
+@navLeftBorderColor: @psiHeader;
+@navLeftBorderActiveColor: @psiClickHover;
+@navLeftBorder: 5px solid @navLeftBorderColor;
+
+@psiNavBackgroundColor: @psiBaseWhite;
+@psiNavTextColor: #444444;
+
+@navActiveBackgroundColor: @psiHeader;
+@navActiveTextColor: @psiTextOnHeader;
+
+@navHoverBackgroundColor: @psiClickHover;
+@navHoverTextColor: @psiTextOnClickHover;
+
 
 .psiphon-header {
   height: @headerHeight;
-  background-color: #DA4D30;
+  background-color: @psiHeader;
   padding: 0;
 
   .banner {
@@ -106,14 +164,14 @@ body {
     padding: 0.5em;
 
     > div {
-      color: @psiTextOnHighlight;
+      color: @psiTextOnHeader;
     }
 
     > a {
       display: inline-block;
       .ie7-inline-block();
       background: #FFFFFF;  // Our banner spec indicates image will be on white or light background.
-      border: thin darken(@psiPrimary, 10%) solid;
+      border: thin darken(@psiHeader, 10%) solid;
 
       img {
         height: @headerBannerHeight;
@@ -128,7 +186,7 @@ body {
         margin: auto;
 
         a {
-          color: @psiTextOnHighlight;
+          color: @psiTextOnHeader;
           font-weight: bold;
           text-decoration: underline;
         }
@@ -162,7 +220,7 @@ body {
 
     height: (@headerHeight + @navTopPad - @headerLogoMarginTop);
     // width: set dynamically to match tabs
-    background-color: @psiPrimary;
+    background-color: @psiNavBackgroundColor;
   }
 }
 
@@ -172,7 +230,7 @@ body {
 }
 
 .nav-tabs {
-  background-color: @psiPrimary;
+  background-color: @psiNavBackgroundColor;
   min-width: 10em;
 
   // Override default styles. Over-specify in order to default default rule precedence.
@@ -213,7 +271,7 @@ body {
     outline: none;
     border: none;
     margin: 0 !important; // override default
-    color: @psiTextOnPrimary;
+    color: @psiNavTextColor;
     font-weight: bold;
     text-transform: uppercase;
     transition: background-color 300ms, color 300ms;
@@ -222,8 +280,8 @@ body {
 
   & > li > a:hover,
   & > li > a:focus {
-    color: @psiTextOnHighlight;
-    background-color: @navLeftBorderActiveColor;
+    color: @navHoverTextColor;
+    background-color: @navHoverBackgroundColor;
   }
 
   & > .active > a,
@@ -231,8 +289,8 @@ body {
   & > .active > a:focus {
     outline: none;
     border: none;
-    color: @psiTextOnHighlight;
-    background-color: @psiHighlight;
+    color: @navActiveTextColor;
+    background-color: @navActiveBackgroundColor;
   }
 }
 
@@ -430,7 +488,8 @@ body {
   left: 1em;
   right: 1em;
   padding: 0.2em;
-  background-color: darken(@psiNeutral, 5%);
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e5e5e5
 
   .clearfix;
 
@@ -481,6 +540,21 @@ body {
       body[dir="rtl"] & {
         .pull-left;
         margin-right: 0.5em;
+      }
+    }
+
+    a {
+      background-color: @psiEngageable;
+      color:@psiTextOnEngageable;
+
+      &:hover, &:focus {
+        background-color: @psiClickHover;
+        color: @psiTextOnClickHover;
+      }
+
+      &.accordion-expanded {
+        background-color: @psiEngaged;
+        color: @psiTextOnEngaged;
       }
     }
   }
@@ -548,6 +622,8 @@ body {
   }
 
   #EgressRegionCombo {
+    border: 1px solid @psiEngageable;
+
     > a {
       // Let the flag stuff take care of the padding
       padding: 0;
@@ -635,7 +711,7 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
   & .feedback-choice {
     .text-center;
     .muted; // will get trumped when selected
-    .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+    .box-shadow(0px 0px 10px 0px fade(@psiEngageable, 75%));
     margin: 10px;
     padding: 1em;
     border: thin #ccc solid;
@@ -645,13 +721,17 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
     }
 
     &.selected {
-      .alert-info;
+      background-color: @psiEngaged;
+      color: @psiTextOnEngaged;
+      .box-shadow(none);
     }
 
     &:hover:not(.selected) {
       cursor: pointer;
       cursor: hand;
-      background-color: @white;
+      background-color: @psiClickHover;
+      color: @psiTextOnClickHover;
+      .box-shadow(0px 0px 10px 0px @psiClickHover);
     }
   }
 }
@@ -739,8 +819,8 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
     font-size: 3em;
     line-height: 1em;
     font-weight: 900;
-    color: #D63F28;
-    border-color: #D63F28;
+    color: #B63F1E;
+    border-color: #B63F1E;
     border-bottom-width: 3px;
     border-bottom-style: solid;
     text-shadow: 3px 3px #D9D2BE;

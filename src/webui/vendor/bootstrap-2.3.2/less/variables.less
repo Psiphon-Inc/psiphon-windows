@@ -32,14 +32,14 @@
 
 // Scaffolding
 // -------------------------
-@bodyBackground:        @white;
-@textColor:             @grayDark;
+@bodyBackground:        @psiBaseLight;
+@textColor:             @psiBaseText;
 
 
 // Links
 // -------------------------
-@linkColor:             @psiHighlight;
-@linkColorHover:        @psiLinkHoverColor;
+@linkColor:             @psiLink;
+@linkColorHover:        @psiLinkHover;
 
 
 // Typography
@@ -101,7 +101,7 @@
 @btnBorder:                         #ccc;
 
 @btnPrimaryBackground:              @brand-primary;
-@btnPrimaryBackgroundHighlight:     darken(@brand-primary, 10%);
+@btnPrimaryBackgroundHighlight:     lighten(@btnPrimaryBackground, 10%);
 
 @btnInfoBackground:                 @brand-info;
 @btnInfoBackgroundHighlight:        darken(@brand-info, 10%);
@@ -122,7 +122,7 @@
 // Forms
 // -------------------------
 @inputBackground:               @white;
-@inputBorder:                   #ccc;
+@inputBorder:                   @psiEngageable;
 @inputBorderRadius:             @baseBorderRadius;
 @inputDisabledBackground:       @grayLighter;
 @formActionsBackground:         #f5f5f5;
@@ -141,11 +141,14 @@
 @dropdownDividerBottom:         @white;
 
 @dropdownLinkColor:             @grayDark;
-@dropdownLinkColorHover:        @white;
+@dropdownLinkColorHover:        @psiTextOnClickHover;
 @dropdownLinkColorActive:       @white;
+// Psiphon added
+@dropdownLinkBackground:        @psiEngageableLight;
+@dropLinkBorder:                2px solid @white;
 
-@dropdownLinkBackgroundActive:  @linkColor;
-@dropdownLinkBackgroundHover:   @linkColorHover;
+@dropdownLinkBackgroundActive:  @psiEngaged;
+@dropdownLinkBackgroundHover:   @psiClickHover;
 
 
 

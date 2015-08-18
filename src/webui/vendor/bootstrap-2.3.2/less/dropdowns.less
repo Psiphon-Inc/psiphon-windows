@@ -80,6 +80,8 @@
     line-height: @baseLineHeight;
     color: @dropdownLinkColor;
     white-space: nowrap;
+    background-color: @dropdownLinkBackground;
+    border: @dropLinkBorder;
   }
 }
 
@@ -91,7 +93,7 @@
 .dropdown-submenu:focus > a {
   text-decoration: none;
   color: @dropdownLinkColorHover;
-  #gradient > .vertical(@dropdownLinkBackgroundHover, darken(@dropdownLinkBackgroundHover, 5%));
+  background-color: @dropdownLinkBackgroundHover;
 }
 
 // Active state
@@ -102,7 +104,7 @@
   color: @dropdownLinkColorActive;
   text-decoration: none;
   outline: 0;
-  #gradient > .vertical(@dropdownLinkBackgroundActive, darken(@dropdownLinkBackgroundActive, 5%));
+  background-color: @dropdownLinkBackgroundActive;
 }
 
 // Disabled state
