@@ -30,11 +30,11 @@
   <style>
 @font-face {
 	font-family: 'icomoon';
-	src:url('vendor/icomoon/fonts/icomoon.eot?gke5q5');
-	src:url('vendor/icomoon/fonts/icomoon.eot?#iefixgke5q5') format('embedded-opentype'),
-		url('vendor/icomoon/fonts/icomoon.ttf?gke5q5') format('truetype'),
-		url('vendor/icomoon/fonts/icomoon.woff?gke5q5') format('woff'),
-		url('vendor/icomoon/fonts/icomoon.svg?gke5q5#icomoon') format('svg');
+	src:url('vendor/icomoon/fonts/icomoon.eot?-whg5mh');
+	src:url('vendor/icomoon/fonts/icomoon.eot?#iefix-whg5mh') format('embedded-opentype'),
+		url('vendor/icomoon/fonts/icomoon.ttf?-whg5mh') format('truetype'),
+		url('vendor/icomoon/fonts/icomoon.woff?-whg5mh') format('woff'),
+		url('vendor/icomoon/fonts/icomoon.svg?-whg5mh#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -58,6 +58,12 @@
 }
 .icon-cog:before {
 	content: "\e672";
+}
+.icon-launch:before {
+	content: "\e7b0";
+}
+.icon-new-tab:before {
+	content: "\e7b1";
 }
 .icon-bubble-heart:before {
 	content: "\e7e1";
@@ -116,6 +122,9 @@
 .icon-bug:before {
 	content: "\e90a";
 }
+.icon-share:before {
+	content: "\e91f";
+}
 .icon-list:before {
 	content: "\e92c";
 }
@@ -136,6 +145,9 @@
 }
 .icon-arrow-right:before {
 	content: "\e944";
+}
+.icon-arrow-up-right:before {
+	content: "\e945";
 }
 .icon-expand:before {
 	content: "\e94a";
@@ -184,6 +196,9 @@
 }
 .icon-prohibited:before {
 	content: "\e99c";
+}
+.icon-ellipsis:before {
+	content: "\e9e9";
 }
 .icon-hour-glass:before {
 	content: "\e979";
@@ -1020,7 +1035,6 @@ a {
 a:hover,
 a:focus {
   color: #a5c773;
-  text-decoration: underline;
 }
 .img-rounded {
   -webkit-border-radius: 6px;
@@ -6835,6 +6849,10 @@ body {
 * {
   outline: 0 !important;
 }
+a[href^=http],
+a[href^=mailto] {
+  text-decoration: underline;
+}
 /* HEADER AND NAV */
 .psiphon-header {
   height: 90px;
@@ -6867,9 +6885,8 @@ body {
   margin: auto;
 }
 .psiphon-header .banner.long-connecting-show div a {
-  color: #eeeeee;
+  color: #ea9983;
   font-weight: bold;
-  text-decoration: underline;
 }
 .psiphon-header .header-nav-join {
   position: absolute;
@@ -7580,6 +7597,12 @@ hr.dotted {
 .icon-cog {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe672;');
 }
+.icon-launch {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe7b0;');
+}
+.icon-new-tab {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe7b1;');
+}
 .icon-bubble-heart {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe7e1;');
 }
@@ -7637,6 +7660,9 @@ hr.dotted {
 .icon-bug {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe90a;');
 }
+.icon-share {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe91f;');
+}
 .icon-list {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe92c;');
 }
@@ -7657,6 +7683,9 @@ hr.dotted {
 }
 .icon-arrow-right {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe944;');
+}
+.icon-arrow-up-right {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe945;');
 }
 .icon-expand {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe94a;');
@@ -7705,6 +7734,9 @@ hr.dotted {
 }
 .icon-prohibited {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe99c;');
+}
+.icon-ellipsis {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe9e9;');
 }
 .icon-hour-glass {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe979;');
@@ -11775,6 +11807,8 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 	var icons = {
 		'icon-home3': '&#xe602;',
 		'icon-cog': '&#xe672;',
+		'icon-launch': '&#xe7b0;',
+		'icon-new-tab': '&#xe7b1;',
 		'icon-bubble-heart': '&#xe7e1;',
 		'icon-rocket': '&#xe837;',
 		'icon-earth': '&#xe884;',
@@ -11794,6 +11828,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 		'icon-sync': '&#xe8da;',
 		'icon-sync2': '&#xe8dd;',
 		'icon-bug': '&#xe90a;',
+		'icon-share': '&#xe91f;',
 		'icon-list': '&#xe92c;',
 		'icon-check': '&#xe934;',
 		'icon-plus': '&#xe936;',
@@ -11801,6 +11836,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 		'icon-chevron-up': '&#xe939;',
 		'icon-chevron-down': '&#xe93a;',
 		'icon-arrow-right': '&#xe944;',
+		'icon-arrow-up-right': '&#xe945;',
 		'icon-expand': '&#xe94a;',
 		'icon-contract': '&#xe94b;',
 		'icon-warning': '&#xe955;',
@@ -11817,6 +11853,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
 		'icon-check-square': '&#xe999;',
 		'icon-cross-square': '&#xe99a;',
 		'icon-prohibited': '&#xe99c;',
+		'icon-ellipsis': '&#xe9e9;',
 		'icon-hour-glass': '&#xe979;',
 		'icon-spinner': '&#xe97a;',
 		'icon-spinner2': '&#xe97b;',

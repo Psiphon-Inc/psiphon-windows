@@ -4,6 +4,12 @@
 .icon-cog {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe672;');
 }
+.icon-launch {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe7b0;');
+}
+.icon-new-tab {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe7b1;');
+}
 .icon-bubble-heart {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe7e1;');
 }
@@ -61,6 +67,9 @@
 .icon-bug {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe90a;');
 }
+.icon-share {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe91f;');
+}
 .icon-list {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe92c;');
 }
@@ -81,6 +90,9 @@
 }
 .icon-arrow-right {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe944;');
+}
+.icon-arrow-up-right {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe945;');
 }
 .icon-expand {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe94a;');
@@ -129,6 +141,9 @@
 }
 .icon-prohibited {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe99c;');
+}
+.icon-ellipsis {
+	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe9e9;');
 }
 .icon-hour-glass {
 	*zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe979;');

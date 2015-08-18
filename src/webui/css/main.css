@@ -266,7 +266,6 @@ a {
 a:hover,
 a:focus {
   color: #a5c773;
-  text-decoration: underline;
 }
 .img-rounded {
   -webkit-border-radius: 6px;
@@ -6081,6 +6080,10 @@ body {
 * {
   outline: 0 !important;
 }
+a[href^=http],
+a[href^=mailto] {
+  text-decoration: underline;
+}
 /* HEADER AND NAV */
 .psiphon-header {
   height: 90px;
@@ -6113,9 +6116,8 @@ body {
   margin: auto;
 }
 .psiphon-header .banner.long-connecting-show div a {
-  color: #eeeeee;
+  color: #ea9983;
   font-weight: bold;
-  text-decoration: underline;
 }
 .psiphon-header .header-nav-join {
   position: absolute;

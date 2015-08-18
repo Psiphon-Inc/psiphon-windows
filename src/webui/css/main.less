@@ -30,6 +30,7 @@
 // "If clicked, this will lead you elsewhere (either in or out of the app),
 // but won't *do* anything."
 //    - links
+//    - Additional semantic: Underlined means it's an external link.
 //    - Clicking must produce no side-effects (besides navigation)
 //    - Exception: non-active nav items should be included under this, but for
 //      aesthetic reasons we're leaving them white.
@@ -127,6 +128,11 @@ body {
   outline: 0 !important;
 }
 
+// External links should be underlined
+a[href^=http], a[href^=mailto] {
+  text-decoration: underline;
+}
+
 
 /* HEADER AND NAV */
 
@@ -186,9 +192,8 @@ body {
         margin: auto;
 
         a {
-          color: @psiTextOnHeader;
+          color: lighten(@psiLink, 30%);
           font-weight: bold;
-          text-decoration: underline;
         }
       }
     }
