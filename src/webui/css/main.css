@@ -6084,6 +6084,9 @@ a[href^=http],
 a[href^=mailto] {
   text-decoration: underline;
 }
+textarea {
+  resize: vertical;
+}
 /* HEADER AND NAV */
 .psiphon-header {
   height: 90px;

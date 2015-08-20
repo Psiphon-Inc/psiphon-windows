@@ -133,6 +133,12 @@ a[href^=http], a[href^=mailto] {
   text-decoration: underline;
 }
 
+// Disallow textarea horizontal resizing. Our layout can handle vertical size
+// changes, but horizontal might wreck it.
+textarea {
+  resize: vertical;
+}
+
 
 /* HEADER AND NAV */
 
