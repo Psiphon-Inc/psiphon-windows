@@ -603,6 +603,9 @@ static void HtmlUI_BeforeNavigate(MC_NMHTMLURL* nmHtmlUrl)
     PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_BEFORENAVIGATE, (WPARAM)buf, 0);
 }
 
+// HtmlUI_BeforeNavigateHandler intercepts all navigation attempts in the HTML control.
+// It is also mechanism that is used for the HTML control to communicate with the
+// back-end code (the code you're looking at now). 
 #define PSIPHON_LINK_PREFIX     _T("psi:")
 static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 {
@@ -1076,6 +1079,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         RestoreWindowPlacement();
         ShowWindow(g_hWnd, SW_SHOW);
         UpdateSystrayConnectedState();
+
+        // Set initial state.
+        UI_SetStateStopped();
 
         // Start a connection
         if (!Settings::SkipAutoConnect())
