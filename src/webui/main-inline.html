@@ -6853,6 +6853,20 @@ a[href^=mailto] {
 textarea {
   resize: vertical;
 }
+.checkbox-container {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  padding: 2px 3px;
+  margin-bottom: 5px;
+}
+.checkbox-container:hover {
+  background-color: #bcdae4;
+}
+.checkbox-container label {
+  margin: 0;
+}
 /* HEADER AND NAV */
 .psiphon-header {
   height: 90px;
@@ -16511,13 +16525,15 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                         helpful if you often run Psiphon for long periods of
                         time.
                       </p>
-                      <div class="controls checkbox">
-                        <input type="checkbox" id="SystrayMinimize"/>
-                        <label for="SystrayMinimize">
-                          <span data-i18n="settings#systray-minimize#enable-label">
-                            Minimize to the notification area (system tray)
-                          </span>
-                        </label>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="SystrayMinimize"/>
+                          <label for="SystrayMinimize">
+                            <span data-i18n="settings#systray-minimize#enable-label">
+                              Minimize to the notification area (system tray)
+                            </span>
+                          </label>
+                        </div>
                       </div>
                     </fieldset>
                   </form>
@@ -16553,13 +16569,15 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                         so enabling this option will give you faster access to those sites
                         and can sometimes reduce ISP data usage costs.
                       </p>
-                      <div class="controls checkbox">
-                        <input type="checkbox" id="SplitTunnel"/>
-                        <label for="SplitTunnel">
-                          <span data-i18n="settings#split-tunnel#enable-label">
-                            Don't proxy domestic websites
-                          </span>
-                        </label>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="SplitTunnel"/>
+                          <label for="SplitTunnel">
+                            <span data-i18n="settings#split-tunnel#enable-label">
+                              Don't proxy domestic websites
+                            </span>
+                          </label>
+                        </div>
                       </div>
                       <span class="help-block">
                         <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
@@ -16796,13 +16814,17 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                         </div>
                       </div>
                       <div class="control-group">
-                        <div class="controls checkbox">
-                          <input type="checkbox" id="SkipUpstreamProxy"/>
-                          <label for="SkipUpstreamProxy">
-                            <span data-i18n="settings#upstream-proxy#skip-label">
-                              Don't use upstream proxy
-                            </span>
-                          </label>
+                        <div class="controls">
+                          <div class="checkbox-container">
+                            <div class="checkbox">
+                              <input type="checkbox" id="SkipUpstreamProxy"/>
+                              <label for="SkipUpstreamProxy">
+                                <span data-i18n="settings#upstream-proxy#skip-label">
+                                  Don't use upstream proxy
+                                </span>
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <span class="help-block upstream-proxy-set-match">
@@ -16831,13 +16853,15 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
                 <div class="accordion-inner">
                   <form>
                     <fieldset>
-                      <div class="controls checkbox checkbox-warning">
-                        <input type="checkbox" id="VPN"/>
-                        <label for="VPN">
-                          <span data-i18n="settings#transport-mode#check-label">
-                            Use L2TP/IPSec Mode
-                          </span>
-                        </label>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox checkbox-warning">
+                          <input type="checkbox" id="VPN"/>
+                          <label for="VPN">
+                            <span data-i18n="settings#transport-mode#check-label">
+                              Use L2TP/IPSec Mode
+                            </span>
+                          </label>
+                        </div>
                       </div>
                       <span class="help-block" data-i18n="[html]settings#transport-mode#help-text">
                         Uses Windows L2TP/IPSec virtual networking. This mode
@@ -16926,15 +16950,17 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
               </div>
 
               <div>
-                <div class="controls checkbox">
-                  <input type="checkbox" checked="true" id="feedback-send-diagnostic">
-                  <label for="feedback-send-diagnostic">
-                    <span data-i18n="[html]feedback#diagnostic_check">
-                      Upload diagnostic data. Please note that this diagnostic data does not
-                      identify you, and it will help us to keep Psiphon running smoothly.
-                      <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
-                    </span>
-                  </label>
+                <div class="checkbox-container">
+                  <div class="controls checkbox">
+                    <input type="checkbox" checked="true" id="feedback-send-diagnostic">
+                    <label for="feedback-send-diagnostic">
+                      <span data-i18n="[html]feedback#diagnostic_check">
+                        Upload diagnostic data. Please note that this diagnostic data does not
+                        identify you, and it will help us to keep Psiphon running smoothly.
+                        <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
@@ -16958,13 +16984,15 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
         <!-- LOGS ==========================================================-->
         <div class="tab-pane fade" id="logs-pane">
           <div>
-            <div class="controls checkbox invisible">
-              <input type="checkbox" id="show-debug-logs"/>
-              <label for="show-debug-logs">
-                <span data-i18n="logs#show-debug-label">
-                  Show debug logs
-                </span>
-              </label>
+            <div class="checkbox-container">
+              <div class="controls checkbox invisible">
+                <input type="checkbox" id="show-debug-logs"/>
+                <label for="show-debug-logs">
+                  <span data-i18n="logs#show-debug-label">
+                    Show debug logs
+                  </span>
+                </label>
+              </div>
             </div>
 
             <!-- We're forcing this to LTR since logs aren't translated -->
@@ -17100,29 +17128,41 @@ window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
           <form class="form-inline" id="debug-AvailableEgressRegions">
             <label>Notice:AvailableEgressRegions</label>
 
-            <div class="controls checkbox inline">
-              <input type="checkbox" id="debug-AvailableEgressRegions-US" value="US">
-              <label class="checkbox inline" for="debug-AvailableEgressRegions-US">US</label>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-US" value="US">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-US">US</label>
+              </div>
             </div>
-            <div class="controls checkbox inline">
-              <input type="checkbox" id="debug-AvailableEgressRegions-GB" value="GB">
-              <label class="checkbox inline" for="debug-AvailableEgressRegions-GB">UK</label>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-GB" value="GB">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-GB">UK</label>
+              </div>
             </div>
-            <div class="controls checkbox inline">
-              <input type="checkbox" id="debug-AvailableEgressRegions-JP" value="JP">
-              <label class="checkbox inline" for="debug-AvailableEgressRegions-JP">JP</label>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-JP" value="JP">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-JP">JP</label>
+              </div>
             </div>
-            <div class="controls checkbox inline">
-              <input type="checkbox" id="debug-AvailableEgressRegions-SG" value="SG">
-              <label class="checkbox inline" for="debug-AvailableEgressRegions-SG">SG</label>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-SG" value="SG">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-SG">SG</label>
+              </div>
             </div>
-            <div class="controls checkbox inline">
-              <input type="checkbox" id="debug-AvailableEgressRegions-NL" value="NL">
-              <label class="checkbox inline" for="debug-AvailableEgressRegions-NL">NL</label>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-NL" value="NL">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-NL">NL</label>
+              </div>
             </div>
-            <div class="controls checkbox inline">
-              <input type="checkbox" id="debug-AvailableEgressRegions-DE" value="DE">
-              <label class="checkbox inline" for="debug-AvailableEgressRegions-DE">DE</label>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-DE" value="DE">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-DE">DE</label>
+              </div>
             </div>
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
           </form>

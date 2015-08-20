@@ -18,7 +18,7 @@
 
 @import "_rtl-support.less";
 
-// Based on this palette: https://coolors.co/app/b63f1e-1b7b9c-d4e4bc-90a959-16627f
+// Based on this palette: https://coolors.co/app/b63f1e-1b7b9c-75b7ab-16627f-bcdae4
 
 // Main red in P logo: #B63F1E
 // Three blues sometimes used for Psiphon stuff: Light: #1B7B9C, Shaded: #16627F, Dark: #052239
@@ -137,6 +137,24 @@ a[href^=http], a[href^=mailto] {
 // changes, but horizontal might wreck it.
 textarea {
   resize: vertical;
+}
+
+// Give checkbox and label a hover effect
+.checkbox-container {
+  display: inline-block;
+  .ie7-inline-block();
+  padding: 2px 3px;
+
+  &:hover {
+    background-color: @psiClickHover;
+  }
+
+  label {
+    // Remove default margin...
+    margin: 0;
+  }
+  // ...and add it to the container
+  margin-bottom: 5px;
 }
 
 

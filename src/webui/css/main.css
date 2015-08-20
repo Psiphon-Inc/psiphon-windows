@@ -6087,6 +6087,20 @@ a[href^=mailto] {
 textarea {
   resize: vertical;
 }
+.checkbox-container {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+  *zoom: 1;
+  padding: 2px 3px;
+  margin-bottom: 5px;
+}
+.checkbox-container:hover {
+  background-color: #bcdae4;
+}
+.checkbox-container label {
+  margin: 0;
+}
 /* HEADER AND NAV */
 .psiphon-header {
   height: 90px;
