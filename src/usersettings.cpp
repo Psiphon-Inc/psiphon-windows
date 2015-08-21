@@ -151,24 +151,31 @@ void Settings::Initialize()
 void Settings::ToJson(Json::Value& o_json)
 {
     o_json.clear();
-    o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
-    o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN) ? TRUE : FALSE;
-    o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-    o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-    o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
-    o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
-    o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
-    o_json["EgressRegion"] = Settings::EgressRegion();
-    o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
-    o_json["defaults"] = Json::Value();
-    o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
-    o_json["defaults"]["VPN"] = FALSE;
-    o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
-    o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
-    o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
-    o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
-    o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
-    o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+	o_json["defaults"] = Json::Value();
+	
+	o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
+	o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
+	
+	o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN) ? TRUE : FALSE;
+	o_json["defaults"]["VPN"] = FALSE;
+	
+	o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+	o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+	o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+	o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+	
+	o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
+	o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
+	o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
+	o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
+	o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
+	o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+	
+	o_json["EgressRegion"] = Settings::EgressRegion();
+	o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+	
+	o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
+	o_json["defaults"]["SystrayMinimize"] = SYSTRAY_MINIMIZE_DEFAULT;
 }
 
 // FromJson updates the stores settings from an object stored in JSON format.
