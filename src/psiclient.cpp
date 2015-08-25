@@ -49,6 +49,7 @@ TCHAR g_szTitle[MAX_LOADSTRING];
 TCHAR g_szWindowClass[MAX_LOADSTRING];
 
 HWND g_hWnd = NULL;
+float g_dpiScaling = 1.0;
 ConnectionManager g_connectionManager;
 
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
@@ -88,6 +89,7 @@ void OnCreate(HWND hWndParent)
     initJSON["Config"]["NewVersionURL"] = GET_NEW_VERSION_URL;
     initJSON["Config"]["FaqURL"] = FAQ_URL;
     initJSON["Config"]["DataCollectionInfoURL"] = DATA_COLLECTION_INFO_URL;
+    initJSON["Config"]["DpiScaling"] = g_dpiScaling;
 #ifdef _DEBUG
     initJSON["Config"]["Debug"] = true;
 #else
@@ -463,6 +465,7 @@ static void UpdateSystrayConnectedState()
 #define WM_PSIPHON_HTMLUI_ADDLOG            WM_USER + 202
 #define WM_PSIPHON_HTMLUI_ADDNOTICE         WM_USER + 203
 #define WM_PSIPHON_HTMLUI_REFRESHSETTINGS   WM_USER + 204
+#define WM_PSIPHON_HTMLUI_UPDATEDPISCALING  WM_USER + 205
 
 static void HtmlUI_AddLog(int priority, LPCTSTR message)
 {
@@ -590,6 +593,38 @@ static void HtmlUI_RefreshSettingsHandler(LPCWSTR json)
         (WPARAM)_T("HtmlCtrlInterface_RefreshSettings"), (LPARAM)&argStruct))
     {
         throw std::exception("UI: HtmlCtrlInterface_RefreshSettings not found");
+    }
+    delete[] json;
+}
+
+static void HtmlUI_UpdateDpiScaling(const string& dpiScalingJSON)
+{
+    wstring wJson = UTF8ToWString(dpiScalingJSON.c_str());
+
+    size_t bufLen = wJson.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, wJson.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_UPDATEDPISCALING, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_UpdateDpiScalingHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    if (!SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
+        (WPARAM)_T("HtmlCtrlInterface_UpdateDpiScaling"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlUI_UpdateDpiScaling not found");
     }
     delete[] json;
 }
@@ -809,6 +844,11 @@ void UI_RefreshSettings(const string& settingsJSON)
     HtmlUI_RefreshSettings(settingsJSON);
 }
 
+void UI_UpdateDpiScaling(const string& dpiScalingJSON)
+{
+    HtmlUI_UpdateDpiScaling(dpiScalingJSON);
+}
+
 //==== Win32 boilerplate ======================================================
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -975,9 +1015,13 @@ static void RestoreWindowPlacement()
         }
 
         wp.rcNormalPosition.top = (LONG)json.get("rcNormalPosition.top", 0).asLargestInt();
-        wp.rcNormalPosition.bottom = (LONG)json.get("rcNormalPosition.bottom", WINDOW_Y_START).asLargestInt();
+        wp.rcNormalPosition.bottom = (LONG)json.get(
+            "rcNormalPosition.bottom", 
+            (LONG)ceil(WINDOW_Y_START * g_dpiScaling)).asLargestInt();
         wp.rcNormalPosition.left = (LONG)json.get("rcNormalPosition.left", 0).asLargestInt();
-        wp.rcNormalPosition.right = (LONG)json.get("rcNormalPosition.right", WINDOW_X_START).asLargestInt();
+        wp.rcNormalPosition.right = (LONG)json.get(
+            "rcNormalPosition.right", 
+            (LONG)ceil(WINDOW_X_START * g_dpiScaling)).asLargestInt();
     }
     catch (exception& e)
     {
@@ -1023,6 +1067,7 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
     return 0;
 }
 
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     // Don't allow multiple instances of this application to run
@@ -1048,13 +1093,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     g_hInst = hInstance;
 
+    // This isn't supported for all OS versions.
+    SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+    if (GetDpiScalingForCurrentMonitor(g_hWnd, g_dpiScaling) != S_OK)
+    {
+        g_dpiScaling = 1.0;
+    }
+    my_print(NOT_SENSITIVE, true, _T("%s:%d: Initial DPI scaling: %f"), __TFUNCTION__, __LINE__, g_dpiScaling);
+
     g_hWnd = CreateWindowEx(
         WS_EX_APPWINDOW,
         g_szWindowClass,
         g_szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        WINDOW_X_START, WINDOW_Y_START,
+        (LONG)ceil(WINDOW_X_START * g_dpiScaling), (LONG)ceil(WINDOW_Y_START * g_dpiScaling),
         NULL, NULL, hInstance, NULL);
 
     // Don't show the window until the content loads.
@@ -1091,6 +1144,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
 
+    case WM_DPICHANGED:
+    {
+        // This message is received when the window is moved between monitors
+        // with different DPI settings. We need to scale our content.
+
+        auto x = LOWORD(wParam), y = HIWORD(wParam);
+        auto rect = *reinterpret_cast<RECT*>(lParam);
+        SetWindowPos(
+            hWnd, // no relative window
+            NULL,
+            rect.left,
+            rect.top,
+            rect.right - rect.left,
+            rect.bottom - rect.top,
+            SWP_NOACTIVATE | SWP_NOZORDER);
+
+        g_dpiScaling = ConvertDpiToScaling(y);
+
+        my_print(NOT_SENSITIVE, true, _T("WM_DPICHANGED: %f"), g_dpiScaling);
+
+        Json::Value dpiScalingJSON;
+        dpiScalingJSON["dpiScaling"] = g_dpiScaling;
+
+        Json::FastWriter jsonWriter;
+        string strDpiScalingJSON = jsonWriter.write(dpiScalingJSON);
+        UI_UpdateDpiScaling(strDpiScalingJSON);
+
+        break;
+    }
+
     case WM_PSIPHON_HTMLUI_BEFORENAVIGATE:
         HtmlUI_BeforeNavigateHandler((LPCTSTR)wParam);
         break;
@@ -1106,6 +1189,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_HTMLUI_REFRESHSETTINGS:
         HtmlUI_RefreshSettingsHandler((LPCWSTR)wParam);
         break;
+    case WM_PSIPHON_HTMLUI_UPDATEDPISCALING:
+        HtmlUI_UpdateDpiScalingHandler((LPCWSTR)wParam);
+        break;
 
     case WM_SIZE:
         if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED)
@@ -1116,9 +1202,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_GETMINMAXINFO:
     {
-        MINMAXINFO* mmi = (MINMAXINFO*)lParam;
-        mmi->ptMinTrackSize.x = WINDOW_X_MIN;
-        mmi->ptMinTrackSize.y = WINDOW_Y_MIN;
+        // This message is received when the system wants to know the minimum
+        // window size (etc.) for this application. It needs to take scaling
+        // into account.
+
+        // It can happen that the we end up in this handler before WM_DPICHANGED
+        // is received, but after the current monitor DPI is different. To avoid
+        // any window size mistakes, we won't set the minimum size if that
+        // mismatch is detected.
+
+        float curMonDpiScaling = 1.0;
+        GetDpiScalingForCurrentMonitor(g_hWnd, curMonDpiScaling);
+
+        if (curMonDpiScaling == g_dpiScaling)
+        {
+            MINMAXINFO* mmi = (MINMAXINFO*)lParam;
+            mmi->ptMinTrackSize.x = (LONG)ceil(WINDOW_X_MIN * g_dpiScaling);
+            mmi->ptMinTrackSize.y = (LONG)ceil(WINDOW_Y_MIN * g_dpiScaling);
+        }
+
         break;
     }
 

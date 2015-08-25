@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -1275,4 +1275,103 @@ AutoMUTEX::~AutoMUTEX()
 {
     if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: releasing 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
     ReleaseMutex(m_mutex);
+}
+
+/*
+DPI Awareness Utilities
+*/
+
+HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
+{
+    // In the no-op/unsupported case we're going to return success.
+    HRESULT res = S_OK;
+
+    HINSTANCE hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+
+    if (hinstSHCORE)
+    {
+        typedef HRESULT STDAPICALLTYPE SETPROCESSDPIAWARENESSFN(PROCESS_DPI_AWARENESS value);
+        SETPROCESSDPIAWARENESSFN *pfnSetProcessDpiAwareness;
+        pfnSetProcessDpiAwareness = (SETPROCESSDPIAWARENESSFN*)GetProcAddress(hinstSHCORE, "SetProcessDpiAwareness");
+
+        if (pfnSetProcessDpiAwareness)
+        {
+            res = pfnSetProcessDpiAwareness(value);
+        }
+
+        FreeLibrary(hinstSHCORE);
+    }
+
+    return res;
+}
+
+HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY)
+{
+    HRESULT res = ERROR_NOT_SUPPORTED;
+
+    HINSTANCE hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+
+    if (hinstSHCORE)
+    {
+        typedef HRESULT STDAPICALLTYPE GETDPIFORMONITORFN(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
+        GETDPIFORMONITORFN *pfnGetDpiForMonitor;
+        pfnGetDpiForMonitor = (GETDPIFORMONITORFN*)GetProcAddress(hinstSHCORE, "GetDpiForMonitor");
+
+        if (pfnGetDpiForMonitor)
+        {
+            res = pfnGetDpiForMonitor(hmonitor, dpiType, dpiX, dpiY);
+        }
+
+        FreeLibrary(hinstSHCORE);
+    }
+
+    return res;
+}
+
+HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi)
+{
+    o_dpi = 0;
+
+    HMONITOR const monitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+
+    UINT x = 0, y = 0;
+
+    HRESULT res = GetDpiForMonitor(
+        monitor,
+        MDT_EFFECTIVE_DPI,
+        &x,
+        &y);
+
+    if (res != S_OK)
+    {
+        return res;
+    }
+
+    o_dpi = y;
+
+    return S_OK;
+}
+
+HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale)
+{
+    o_scale = 1.0;
+    
+    UINT dpi = 0;
+
+    HRESULT res = GetDpiForCurrentMonitor(hWnd, dpi);
+
+    if (res != S_OK)
+    {
+        return res;
+    }
+
+    o_scale = ConvertDpiToScaling(dpi);
+
+    return S_OK;
+}
+
+float ConvertDpiToScaling(UINT dpi)
+{
+    const UINT defaultDPI = 96;
+    return dpi / (float)defaultDPI;
 }

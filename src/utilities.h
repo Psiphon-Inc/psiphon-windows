@@ -102,7 +102,6 @@ wstring EscapeSOCKSArg(const char* input);
 tstring UrlEncode(const tstring& input);
 tstring UrlDecode(const tstring& input);
 
-
 /*
 String Utilities
 */
@@ -156,3 +155,42 @@ private:
 };
 
 #define AUTOMUTEX(mutex)
+
+/*
+DPI Awareness Utilities
+*/
+
+// From ShellScalingAPI.h
+#ifndef DPI_ENUMS_DECLARED
+typedef enum PROCESS_DPI_AWARENESS {
+    PROCESS_DPI_UNAWARE = 0,
+    PROCESS_SYSTEM_DPI_AWARE = 1,
+    PROCESS_PER_MONITOR_DPI_AWARE = 2
+} PROCESS_DPI_AWARENESS;
+typedef enum MONITOR_DPI_TYPE {
+    MDT_EFFECTIVE_DPI = 0,
+    MDT_ANGULAR_DPI = 1,
+    MDT_RAW_DPI = 2,
+    MDT_DEFAULT = MDT_EFFECTIVE_DPI
+} MONITOR_DPI_TYPE;
+#define DPI_ENUMS_DECLARED
+#endif // (DPI_ENUMS_DECLARED)
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED       0x02E0
+#endif
+
+// Unlike the real version of this, it will return ERROR_NOT_SUPPORTED on OS 
+// versions that do not support it.
+HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value);
+
+// Helper for getting the useful DPI value. 
+// Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
+HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi);
+
+// Helper for getting the useful DPI scaling value. 
+// o_scale will be like 1.0, 1.25, 1.5, 2.0, 2.5
+// Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
+HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale);
+
+// Helper for converting DPI value to scaling value.
+float ConvertDpiToScaling(UINT dpi);

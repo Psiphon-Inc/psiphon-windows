@@ -59,6 +59,7 @@ var g_initObj = {};
     g_initObj.Config.FaqURL = g_initObj.Config.FaqURL || 'http://example.com/browser-FaqURL/en/faq.html';
     g_initObj.Config.DataCollectionInfoURL =
       g_initObj.Config.DataCollectionInfoURL || 'http://example.com/browser-DataCollectionInfoURL/en/privacy.html#information-collected';
+    g_initObj.Config.DpiScaling = 1.5;
     g_initObj.Config.Debug = g_initObj.Config.Debug || true;
 
     g_initObj.Cookies = JSON.stringify({
@@ -81,7 +82,6 @@ $(function overallInit() {
   // Update the logo when the connected state changes
   $window.on(CONNECTED_STATE_CHANGE_EVENT, updateLogoConnectState);
   updateLogoConnectState();
-
 
   // The banner image filename is parameterized.
   $('.banner img').attr('src', g_initObj.Config.Banner);
@@ -175,13 +175,16 @@ $(function overallInit() {
 
 
 function resizeContent() {
+  // Do DPI scaling
+  updateDpiScaling(g_initObj.Config.DpiScaling, false);
+
   // We want the content part of our window to fill the window, we don't want
   // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
   // with just CSS, so we're going to do some on-resize height adjustment in JS.
   var fillHeight = $window.innerHeight() - $('.main-height').position().top;
   var footerHeight = $('.footer').outerHeight();
-  $('.main-height').outerHeight(fillHeight - footerHeight);
-  $('.main-height').parentsUntil('.body').add($('.main-height').siblings()).css('height', '100%');
+  $('.main-height').outerHeight((fillHeight - footerHeight) / g_initObj.Config.DpiScaling);
+  $('.main-height').parentsUntil('body').add($('.main-height').siblings()).css('height', '100%');
 
   // Let the panes know that content resized
   $('.main-height').trigger('resize');
@@ -194,6 +197,56 @@ function resizeContent() {
               .css(!g_isRTL ? 'margin-right' : 'margin-left', 0);
 }
 
+function updateDpiScaling(dpiScaling, andResizeContent/*=true*/) {
+  DEBUG_LOG('updateDpiScaling: ' + dpiScaling);
+  g_initObj.Config.DpiScaling = dpiScaling;
+
+  if (browserCheck('lt-ie9')) {
+    // We need IE9+ to support DPI scaling
+    return;
+  }
+
+  var ltrTransformOrigin = '0 0 0',
+      ltrBottomRightTransformOrigin = '100% 100% 0',
+      rtlTransformOrigin = '0 0 0',
+      rtlBottomRightTransformOrigin = '0 100% 0';
+
+  if (!browserCheck('is-ie') && g_isRTL) {
+    // Non-IE in RTL need the origin on the right.
+    rtlTransformOrigin = '100% 0 0';
+  }
+
+  var transformOrigin = g_isRTL ? rtlTransformOrigin : ltrTransformOrigin,
+      bottomRightTransformOrigin = g_isRTL ? rtlBottomRightTransformOrigin : ltrBottomRightTransformOrigin;
+
+  // Set the overall body scaling
+  $('html').css({
+    'transform-origin': transformOrigin,
+    'transform': 'scale(' + dpiScaling + ')',
+    'width': (100.0 / dpiScaling).toFixed(1) + '%',
+    'height': (100.0 / dpiScaling).toFixed(1) + '%'
+  });
+
+  // For elements (like modals) outside the normal flow, additional changes are needed.
+  if (browserCheck('is-ie')) {
+    $('.modal').css({
+      'transform-origin': transformOrigin,
+      'transform': 'scale(' + dpiScaling + ')',
+      // I don't understand why this is necessary and works
+      'margin-left': 'calc(-280px * ' + dpiScaling + ')'
+    });
+  }
+
+  $('.global-alert').css({
+    'transform-origin': bottomRightTransformOrigin,
+    'transform': 'scale(' + dpiScaling + ')'
+  });
+
+  if (andResizeContent !== false) {
+    // Need to resize everything.
+    nextTick(resizeContent);
+  }
+}
 
 // Ensures that elements that should not be scrolled are not scrolled.
 // This should only be called once.
@@ -1695,10 +1748,14 @@ function displayCornerAlert(elem) {
 }
 
 // Check the current browser version number. `versionCompare` must be one of:
-// lt-ie9 lt-ie8 lt-ie7
+// is-ie lt-ie9 lt-ie8 lt-ie7
 // Return value is boolean.
 // Note that this isn't super flexible yet. It will need to be improved as it's used.
 function browserCheck(versionCompare) {
+  if (versionCompare === 'is-ie') {
+    return window.navigator.userAgent.indexOf('MSIE') >= 0;
+  }
+
   return $('html').hasClass(versionCompare);
 }
 
@@ -1793,23 +1850,29 @@ function drawAttentionToButton(elem) {
     shadowColor = backgroundColor;
   }
 
-  // The effect we're going for is a big shadow that slowly shrinks back down.
-  var animationTimeSecs = 5;
+  // The effect we're going for is the color draining from outside into the button.
+  var animationTimeSecs = 3;
 
-  // Add the initial big shadow
-  $elem.css('transition', '');
-  $elem.css('box-shadow', '0 0 30px 20px ' + shadowColor);
+  // Add the initial internal and external shadow
+  $elem.css({
+    'transition': '',
+    'box-shadow': 'inset 0 0 100px #FFF, 0 0 10px ' + shadowColor
+  });
 
   // After giving that CSS change a moment to take effect...
   _.delay(function() {
     // ...add a transition and remove the box shadow. It will disappear slowly.
-    $elem.css('transition', 'box-shadow ' + animationTimeSecs + 's');
-    $elem.css('box-shadow', 'none');
+    $elem.css({
+      'transition': 'box-shadow ' + animationTimeSecs + 's',
+      'box-shadow': 'none'
+    });
 
     // When the big box shadow is gone, reset to the original value
     $elem.one('transitionend', function() {
-      $elem.css('transition', '');
-      $elem.css('box-shadow', originalBoxShadow);
+      $elem.css({
+        'transition': '',
+        'box-shadow': originalBoxShadow
+      });
     });
   }, 10); // if this is too low, the effect seems to fail sometimes (like when a port number field is changed in settings)
 }
@@ -1904,6 +1967,13 @@ $(function debugInit() {
       data: { regions: regions }
     });
   });
+
+  // Wire up the SocksProxyPortInUse notice
+  $('#debug-UpdateDpiScaling a').on('click', function() {
+    HtmlCtrlInterface_UpdateDpiScaling({
+      dpiScaling: $('#debug-UpdateDpiScaling input').val()
+    });
+  });
 });
 
 
@@ -1979,6 +2049,15 @@ function HtmlCtrlInterface_RefreshSettings(jsonArgs) {
       }
     }
     // else an error occurred when saving settings... TODO: tell user?
+  });
+}
+
+// Indicate a DPI-based scaling change.
+function HtmlCtrlInterface_UpdateDpiScaling(jsonArgs) {
+  // Allow object as input to assist with debugging
+  var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
+  nextTick(function() {
+    updateDpiScaling(args.dpiScaling);
   });
 }
 
@@ -2131,5 +2210,6 @@ window.HtmlCtrlInterface_AddLog = HtmlCtrlInterface_AddLog;
 window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
 window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
 window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
+window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
 
 })(window);

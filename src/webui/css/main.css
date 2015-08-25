@@ -6070,12 +6070,15 @@ html {
   overflow: hidden;
 }
 body {
-  /*position:absolute; top:0; bottom:0; right:0; left:0;*/
   height: 100%;
   margin: 0;
   padding: 0;
   overflow-y: hidden;
   -ms-scroll-limit-y-max: 0;
+}
+html,
+body {
+  -ms-content-zooming: none;
 }
 * {
   outline: 0 !important;
@@ -6523,10 +6526,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   border-bottom: 1px solid #e5e5e5
 
   .clearfix;
-}
-.settings-buttons .apply-settings {
-  position: fixed;
-  z-index: 2;
+  overflow: visible;
 }
 body[dir="ltr"] .settings-buttons .apply-settings {
   float: left;

@@ -97,7 +97,6 @@
 @awesome-bootstrap-check: @icon-check;
 @import "vendor/awesome-bootstrap-checkbox.less";
 
-
 html {
   height: 100%;
   margin: 0;
@@ -107,7 +106,6 @@ html {
 }
 
 body {
-  /*position:absolute; top:0; bottom:0; right:0; left:0;*/
   // Try to prevent a vertical scroll bar.
   height: 100%;
   margin: 0;
@@ -118,6 +116,12 @@ body {
   // should be fixed by this:
   -ms-scroll-limit-y-max: 0;
   // But isn't. So the JS initScrollFix() function is used to really fix it.
+}
+
+html, body
+{
+  // This should disable manualy zooming, but... doesn't.
+  -ms-content-zooming: none;
 }
 
 // The element focus outlines spoils the illusion of being an app vs. a webpage.
@@ -527,6 +531,9 @@ textarea {
 
   .clearfix;
 
+  // This allows the button box shadow to extend outside its parent element.
+  overflow: visible;
+
   .apply-settings {
     body[dir="ltr"] & {
       .pull-left;
@@ -534,10 +541,6 @@ textarea {
     body[dir="rtl"] & {
       .pull-right;
     }
-
-    // This allows the box shadow to extend outside the parent element.
-    position: fixed;
-    z-index: 2;
 
     &:not(.disabled) {
       animation: buttonWiggle 3s infinite;
