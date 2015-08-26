@@ -1370,6 +1370,30 @@ HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale)
     return S_OK;
 }
 
+HRESULT GetDpiScalingForMonitorFromPoint(POINT pt, float& o_scale)
+{
+    o_scale = 1.0;
+
+    HMONITOR const monitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+
+    UINT x = 0, y = 0;
+
+    HRESULT res = GetDpiForMonitor(
+        monitor,
+        MDT_EFFECTIVE_DPI,
+        &x,
+        &y);
+
+    if (res != S_OK)
+    {
+        return res;
+    }
+
+    o_scale = ConvertDpiToScaling(y);
+
+    return S_OK;
+}
+
 float ConvertDpiToScaling(UINT dpi)
 {
     const UINT defaultDPI = 96;

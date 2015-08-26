@@ -49,7 +49,9 @@ TCHAR g_szTitle[MAX_LOADSTRING];
 TCHAR g_szWindowClass[MAX_LOADSTRING];
 
 HWND g_hWnd = NULL;
-float g_dpiScaling = 1.0;
+static float g_dpiScaling = 1.0;
+static bool g_windowRestored = false;
+
 ConnectionManager g_connectionManager;
 
 LimitSingleInstance g_singleInstanceObject(TEXT("Global\\{B88F6262-9CC8-44EF-887D-FB77DC89BB8C}"));
@@ -971,6 +973,11 @@ static void SaveWindowPlacement()
 
 static void RestoreWindowPlacement()
 {
+    auto restoreExit = finally([] { 
+        ShowWindow(g_hWnd, SW_SHOW);
+        g_windowRestored = true; 
+    });
+
     if (!g_hWnd)
     {
         return;
@@ -1130,7 +1137,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         // Content is loaded, so show the window.
         RestoreWindowPlacement();
-        ShowWindow(g_hWnd, SW_SHOW);
         UpdateSystrayConnectedState();
 
         // Set initial state.
@@ -1151,14 +1157,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         auto x = LOWORD(wParam), y = HIWORD(wParam);
         auto rect = *reinterpret_cast<RECT*>(lParam);
-        SetWindowPos(
-            hWnd, // no relative window
-            NULL,
-            rect.left,
-            rect.top,
-            rect.right - rect.left,
-            rect.bottom - rect.top,
-            SWP_NOACTIVATE | SWP_NOZORDER);
+
+        if (g_windowRestored)
+        {
+            SetWindowPos(
+                hWnd, // no relative window
+                NULL,
+                rect.left,
+                rect.top,
+                rect.right - rect.left,
+                rect.bottom - rect.top,
+                SWP_NOACTIVATE | SWP_NOZORDER);
+        }
 
         g_dpiScaling = ConvertDpiToScaling(y);
 
@@ -1214,9 +1224,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         float curMonDpiScaling = 1.0;
         GetDpiScalingForCurrentMonitor(g_hWnd, curMonDpiScaling);
 
-        if (curMonDpiScaling == g_dpiScaling)
+        MINMAXINFO* mmi = (MINMAXINFO*)lParam;
+
+        if (g_windowRestored && curMonDpiScaling == g_dpiScaling)
         {
-            MINMAXINFO* mmi = (MINMAXINFO*)lParam;
             mmi->ptMinTrackSize.x = (LONG)ceil(WINDOW_X_MIN * g_dpiScaling);
             mmi->ptMinTrackSize.y = (LONG)ceil(WINDOW_Y_MIN * g_dpiScaling);
         }

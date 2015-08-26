@@ -156,6 +156,31 @@ private:
 
 #define AUTOMUTEX(mutex)
 
+
+/*
+finally function
+
+Pass a (lambda) function to finally(...) to ensure it will be executed when 
+leaving the current scope. E.g.,
+char* d = new char[...];
+auto deleteOnReturn = finally([d] { delete[] d; });
+
+From http://stackoverflow.com/a/25510879/729729
+*/
+
+template <typename F>
+struct FinalAction {
+    FinalAction(F f) : clean_{ f } {}
+    ~FinalAction() { clean_(); }
+    F clean_;
+};
+
+template <typename F>
+FinalAction<F> finally(F f) {
+    return FinalAction<F>(f);
+}
+
+
 /*
 DPI Awareness Utilities
 */
@@ -191,6 +216,11 @@ HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi);
 // o_scale will be like 1.0, 1.25, 1.5, 2.0, 2.5
 // Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
 HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale);
+
+// Finds the DPI scaling factor for the monitor at point pt.
+// o_scale will be like 1.0, 1.25, 1.5, 2.0, 2.5
+// Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
+HRESULT GetDpiScalingForMonitorFromPoint(POINT pt, float& o_scale);
 
 // Helper for converting DPI value to scaling value.
 float ConvertDpiToScaling(UINT dpi);
