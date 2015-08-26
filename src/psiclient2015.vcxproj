@@ -63,7 +63,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>3rdParty\mctrl\Debug2015\mCtrl.lib;3rdParty\cryptopp\Debug2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Debug2015\libyaml-cppmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>3rdParty\mctrl\Debug2015\mCtrl.lib;3rdParty\cryptopp\Debug2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Debug2015\libyaml-cppmtd.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,7 +84,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>3rdParty\mctrl\Release2015\mCtrl.lib;3rdParty\cryptopp\Release2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Release2015\libyaml-cppmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>3rdParty\mctrl\Release2015\mCtrl.lib;3rdParty\cryptopp\Release2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;3rdParty\yaml-cpp\Release2015\libyaml-cppmt.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
