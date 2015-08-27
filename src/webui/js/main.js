@@ -229,11 +229,18 @@ function updateDpiScaling(dpiScaling, andResizeContent/*=true*/) {
 
   // For elements (like modals) outside the normal flow, additional changes are needed.
   if (browserCheck('is-ie')) {
+    // The left margin will vary depending on default value.
+    // First reset an overridden left margin
+    $('.modal').css('margin-left', '');
+    // Get the default left margin
+    var defaultLeftMargin = $('.modal').css('margin-left');
+    // Create the left margin we want, based on the default
+    var scaledLeftMargin = 'calc(' + defaultLeftMargin + ' * ' + dpiScaling + ')';
+    // Now apply the styles.
     $('.modal').css({
       'transform-origin': transformOrigin,
       'transform': 'scale(' + dpiScaling + ')',
-      // I don't understand why this is necessary and works
-      'margin-left': 'calc(-280px * ' + dpiScaling + ')'
+      'margin-left': scaledLeftMargin
     });
   }
 
