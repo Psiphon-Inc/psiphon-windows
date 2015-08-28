@@ -593,6 +593,11 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
     if (fileVersionInfoSize > 0)
     {
         LPVOID fileVersionInfoBytes = new byte[fileVersionInfoSize];
+        if (!fileVersionInfoBytes)
+        {
+	        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
+        }
+
         auto cleanup = finally([fileVersionInfoBytes] {
             delete[] fileVersionInfoBytes;
         });
