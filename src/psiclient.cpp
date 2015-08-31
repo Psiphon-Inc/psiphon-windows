@@ -207,16 +207,18 @@ static bool GetStringTableEntry(LPSTR key, wstring& o_entry)
 static NOTIFYICONDATA g_notifyIconData = { 0 };
 static HICON g_notifyIconStopped = NULL;
 static HICON g_notifyIconConnected = NULL;
-static bool g_notifyIconInitialized = false;
+static bool g_notifyIconAdded = false;
 
 
 // InitSystrayIcon initializes the systray icon/notification. Gets called by 
 // UpdateSystrayState and should not be called directly.
-static bool InitSystrayIcon() {
-    if (g_notifyIconInitialized)
+static void InitSystrayIcon() {
+    static bool s_initialized = false;
+    if (s_initialized)
     {
-        return true;
+        return;
     }
+    s_initialized = true;
 
     g_notifyIconStopped = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_SYSTRAY_STOPPED));
     g_notifyIconConnected = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_SYSTRAY_CONNECTED));
@@ -239,15 +241,7 @@ static bool InitSystrayIcon() {
 
     g_notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 
-    BOOL bSuccess = Shell_NotifyIcon(NIM_ADD, &g_notifyIconData);
-    if (bSuccess)
-    {
-        g_notifyIconData.uVersion = NOTIFYICON_VERSION;
-        (void)Shell_NotifyIcon(NIM_SETVERSION, &g_notifyIconData);
-    }
-
-    g_notifyIconInitialized = !!bSuccess;
-    return g_notifyIconInitialized;
+    g_notifyIconData.uVersion = NOTIFYICON_VERSION;
 }
 
 // UpdateSystrayIcon sets the current systray icon. 
@@ -255,10 +249,25 @@ static bool InitSystrayIcon() {
 // If hIcon is NULL, then the icon will not be changed.
 static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody)
 {
-    if (!InitSystrayIcon() || g_htmlUiFinished)
+    if (g_htmlUiFinished)
     {
         return;
     }
+
+    InitSystrayIcon();
+
+    // Prevent duplicate updates
+    static HICON s_lastIcon = NULL;
+    static wstring s_lastInfoTitle;
+    static wstring s_lastInfoBody;
+
+    if (hIcon == s_lastIcon && infoTitle == s_lastInfoTitle && infoBody == s_lastInfoBody)
+    {
+        return;
+    }
+    s_lastIcon = hIcon;
+    s_lastInfoTitle = infoTitle;
+    s_lastInfoBody = infoBody;
 
     // The body isn't allowed to be an empty string, so set it to a space.
     wstring infoBodyToUse = infoBody.empty() ? L" " : infoBody;
@@ -290,16 +299,45 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
         g_notifyIconData.hIcon = hIcon;
     }
 
-    (void)Shell_NotifyIcon(NIM_MODIFY, &g_notifyIconData);
+    // The way an existing systray icon ought to be updated is like:
+    //   Shell_NotifyIcon(NIM_MODIFY, &g_notifyIconData);
+    // But on Windows 10 this doesn't immediately update the icon or info tip
+    // and instead waits for the previous one to expire, which can result in
+    // a noticeable update delay (UI says connected, info tip still says connecting).
+    // So instead we'll delete-and-recreate instead of updating.
+    // On older versions of Windows, this has the unfortunate effect of causing
+    // the systray icon to flash.
+
+    if (g_notifyIconAdded)
+    {
+        (void)Shell_NotifyIcon(NIM_DELETE, &g_notifyIconData);
+    }
+
+    BOOL bSuccess = Shell_NotifyIcon(NIM_ADD, &g_notifyIconData);
+    if (bSuccess)
+    {
+        (void)Shell_NotifyIcon(NIM_SETVERSION, &g_notifyIconData);
+    }
+
+    g_notifyIconAdded = true;
 }
 
 // SystrayIconCleanup must be called when the application is exiting.
 static void SystrayIconCleanup()
 {
+    if (!g_notifyIconAdded)
+    {
+        return;
+    }
+
     (void)Shell_NotifyIcon(NIM_DELETE, &g_notifyIconData);
-    g_notifyIconInitialized = false;
+    g_notifyIconAdded = false;
 }
 
+/*
+In order to get the minimize animation, we will delay hiding the window until
+after the minimize animation is complete.
+*/
 
 static INT_PTR g_handleMinimizeTimerID = 0;
 
@@ -310,7 +348,7 @@ static VOID CALLBACK HandleMinimizeHelper(HWND hWnd, UINT, UINT_PTR idEvent, DWO
     ::KillTimer(hWnd, idEvent);
     g_handleMinimizeTimerID = 0;
     
-    if (g_notifyIconInitialized)
+    if (g_notifyIconAdded)
     {
         ShowWindow(g_hWnd, SW_HIDE);
 
@@ -341,7 +379,6 @@ static void HandleMinimize()
             HandleMinimizeHelper);
     }
 }
-
 
 /*
 The systray state updating is a bit complicated. We want to avoid this: 

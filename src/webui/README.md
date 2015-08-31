@@ -24,18 +24,18 @@ $ node fake-translations.js
 
 ## TODO
 
-* Automation: Switch to VS2013.
+* Automation: Switch to VS2015.
 * Update user guide on website.
-* Nicer looking, most usable connect button/state?
-* More elaborate connection animation?
 
 
 ## Longer-term TODO
 
-* Minimize to systray
 * Allow copying selected text
+* HighDPI: Apply button wiggle shows through forgot-to-apply modal.
+* HighDPI: Fix bottom-right slide-out notification. Gets truncated.
+* Force Connect box to be centered on egress combo.
+* More elaborate connection animation?
 * Maybe use larger/sharper flag sprites. Hard to find 64px images. Maybe from: http://www.browniesblog.com/A55CBC/blog.nsf/dx/responsive-css-sprites.html
-* Links should show target on hover. (Tooltip? `title` attr?)
 * Better OOBE. Introductory screen. Basic help/info. Language.
 * Create tool to extract English strings from HTML and re-populate messages.json
   - This will help to make sure all strings are in string table, and no defunct strings remain.
