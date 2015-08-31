@@ -53,6 +53,8 @@ $ node fake-translations.js
 
 ## Technical and compatibility notes
 
+* MSVC can't cope with paths in resource names. So anything that needs to be accessed via resource must be in root.
+
 * IE7: Can't use data URIs. But IE8+ okay.
 
 * IE7, IE8, IE9: Responsive-ness doesn't work.
