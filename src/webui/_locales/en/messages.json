@@ -384,7 +384,7 @@
     "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
   },
   "about#visit-download-site": {
-    "message": "Please visit the website to <strong><a class=\"NewVersionURL\" href=\"#\">download a new version</a></strong> or to get <strong><a class=\"InfoURL\" href=\"#\">help and information</a></strong>.",
+    "message": "Please visit the website to <strong><a class=\"NewVersionURL\" href=\"#\">download a new version</a></strong> or to <strong><a class=\"InfoURL\" href=\"#\">get help and information</a></strong>. Psiphon is available for Android and Windows.",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
   },
   "about#get-by-email": {
