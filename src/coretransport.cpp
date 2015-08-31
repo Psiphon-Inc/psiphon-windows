@@ -343,7 +343,11 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // providing whole system tunneling).
     if (!g_connectionManager.IsWholeSystemTunneled())
     {
-        config["UpstreamHttpProxyAddress"] = GetUpstreamProxyAddress();
+        string proxyAddress = GetUpstreamProxyAddress();
+        if (proxyAddress.length() > 0)
+        {
+            config["UpstreamProxyUrl"] = "http://"+proxyAddress;
+        }
     }
 
     if (Settings::SplitTunnel())
@@ -449,7 +453,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     
 string CoreTransport::GetUpstreamProxyAddress()
 {
-    // Note: upstream SOCKS proxy and proxy auth currently not supported in core
+    // Note: upstream SOCKS proxy and proxy auth currently not supported
 
     if (Settings::SkipUpstreamProxy())
     {
