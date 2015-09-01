@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "systemproxysettings.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "wininet.h"
 #include "config.h"
@@ -61,6 +62,21 @@ SystemProxySettings::~SystemProxySettings()
     // And nowhere else do we rely on SystemProxySettings' dtor
     // for reverting.
     //Revert();
+}
+
+int SystemProxySettings::GetHttpProxyPort() const
+{
+    return m_httpProxyPort;
+}
+
+int SystemProxySettings::GetHttpsProxyPort() const
+{
+    return m_httpsProxyPort;
+}
+
+int SystemProxySettings::GetSocksProxyPort() const
+{
+    return m_socksProxyPort;
 }
 
 void SystemProxySettings::SetHttpProxyPort(int port)

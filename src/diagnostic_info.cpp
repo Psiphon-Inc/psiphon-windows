@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "embeddedvalues.h"
 #include "httpsrequest.h"
@@ -322,6 +323,7 @@ struct SystemInfo
     UINT16 servicePackMajor;
     UINT16 servicePackMinor;
     wstring status;
+    wstring mshtmlDLLVersion;
 
     bool starter;
     bool mideastEnabled;
@@ -333,7 +335,7 @@ struct SystemInfo
     UserGroupInfo groupInfo;
 };
 
-bool GetSystemInfo(SystemInfo& sysInfo)
+bool GetSystemInfo(SystemInfo& o_sysInfo)
 {
     // This code adapted from: http://msdn.microsoft.com/en-us/library/aa390423.aspx
 
@@ -461,28 +463,28 @@ bool GetSystemInfo(SystemInfo& sysInfo)
         hr = pclsObj->Get(L"Caption", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.name = vtProp.bstrVal;
+            o_sysInfo.name = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"Version", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.version = vtProp.bstrVal;
+            o_sysInfo.version = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"CodeSet", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.codeSet = vtProp.bstrVal;
+            o_sysInfo.codeSet = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"CountryCode", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.countryCode = vtProp.bstrVal;
+            o_sysInfo.countryCode = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
@@ -492,56 +494,56 @@ bool GetSystemInfo(SystemInfo& sysInfo)
         hr = pclsObj->Get(L"FreePhysicalMemory", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.freePhysicalMemoryKB = vtProp.bstrVal;
+            o_sysInfo.freePhysicalMemoryKB = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"FreeVirtualMemory", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.freeVirtualMemoryKB = vtProp.bstrVal;
+            o_sysInfo.freeVirtualMemoryKB = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"Locale", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.locale = vtProp.bstrVal;
+            o_sysInfo.locale = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"OSArchitecture", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.architecture = vtProp.bstrVal;
+            o_sysInfo.architecture = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"OSLanguage", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.language = vtProp.uintVal;
+            o_sysInfo.language = vtProp.uintVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"ServicePackMajorVersion", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.servicePackMajor = vtProp.uiVal;
+            o_sysInfo.servicePackMajor = vtProp.uiVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"ServicePackMinorVersion", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.servicePackMinor = vtProp.uiVal;
+            o_sysInfo.servicePackMinor = vtProp.uiVal;
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"Status", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            sysInfo.status = vtProp.bstrVal;
+            o_sysInfo.status = vtProp.bstrVal;
             VariantClear(&vtProp);
         }
 
@@ -562,27 +564,90 @@ bool GetSystemInfo(SystemInfo& sysInfo)
 
     // Miscellaneous
 
-    sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
+    o_sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
 
-    sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
-    sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
+    o_sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
+    o_sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
 
     // Network info
 
     WininetNetworkInfo netInfo;
-    sysInfo.wininet_success = false;
+    o_sysInfo.wininet_success = false;
     if (WininetGetNetworkInfo(netInfo))
     {
-        sysInfo.wininet_success = true;
-        sysInfo.wininet_info = netInfo;
+        o_sysInfo.wininet_success = true;
+        o_sysInfo.wininet_info = netInfo;
     }
 
-    sysInfo.groupInfo_success = false;
-    if (GetUserGroupInfo(sysInfo.groupInfo))
+    o_sysInfo.groupInfo_success = false;
+    if (GetUserGroupInfo(o_sysInfo.groupInfo))
     {
-        sysInfo.groupInfo_success = true;
+        o_sysInfo.groupInfo_success = true;
     }
 
+    // System DLL versions
+
+    LPCTSTR filename = TEXT("MSHTML.DLL");
+    DWORD dw;
+    DWORD fileVersionInfoSize = GetFileVersionInfoSize(filename, &dw);
+    if (fileVersionInfoSize > 0)
+    {
+        LPVOID fileVersionInfoBytes = new byte[fileVersionInfoSize];
+        if (!fileVersionInfoBytes)
+        {
+	        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
+        }
+
+        auto cleanup = finally([fileVersionInfoBytes] {
+            delete[] fileVersionInfoBytes;
+        });
+
+        if (GetFileVersionInfo(
+            filename,
+            0,
+            fileVersionInfoSize,
+            fileVersionInfoBytes))
+        {
+            struct LANGANDCODEPAGE {
+                WORD wLanguage;
+                WORD wCodePage;
+            } *langAndCodePages;
+            UINT langAndCodePagesSize = 0;
+
+            // Read the list of languages and code pages.
+
+            if (VerQueryValue(fileVersionInfoBytes,
+                TEXT("\\VarFileInfo\\Translation"),
+                (LPVOID*)&langAndCodePages,
+                &langAndCodePagesSize))
+            {
+                TCHAR subBlock[50];
+                for (size_t i = 0; i < (langAndCodePagesSize / sizeof(struct LANGANDCODEPAGE)); i++)
+                {
+                    if (langAndCodePages[i].wLanguage == 0x0409)
+                    {
+                        swprintf_s(
+                            subBlock,
+                            sizeof(subBlock) / sizeof(TCHAR),
+                            TEXT("\\StringFileInfo\\%04x%04x\\FileVersion"),
+                            langAndCodePages[i].wLanguage,
+                            langAndCodePages[i].wCodePage);
+
+                        LPCTSTR fileVersion = NULL;
+                        UINT fvLen = 0;
+                        if (VerQueryValue(fileVersionInfoBytes,
+                            subBlock,
+                            (LPVOID*)&fileVersion,
+                            &fvLen))
+                        {                            
+                            o_sysInfo.mshtmlDLLVersion = fileVersion;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     return true;
 }
 
@@ -1007,6 +1072,7 @@ void GetDiagnosticInfo(YAML::Emitter& out)
     out << YAML::Key << "servicePackMinor" << YAML::Value << sysInfo.servicePackMinor;
     out << YAML::Key << "status" << YAML::Value << WStringToNarrow(sysInfo.status).c_str();
     out << YAML::Key << "starter" << YAML::Value << sysInfo.starter;
+    out << YAML::Key << "mshtmlDLLVersion" << YAML::Value << WStringToNarrow(sysInfo.mshtmlDLLVersion).c_str();
     out << YAML::EndMap; // osinfo
 
     out << YAML::Key << "NetworkInfo";

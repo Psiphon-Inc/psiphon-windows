@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "usersettings.h"
 #include "utilities.h"
@@ -52,6 +53,9 @@
 #define SKIP_PROXY_SETTINGS_NAME        "SkipProxySettings"
 #define SKIP_PROXY_SETTINGS_DEFAULT     FALSE
 
+#define SKIP_AUTO_CONNECT_NAME          "SkipAutoConnect"
+#define SKIP_AUTO_CONNECT_DEFAULT       FALSE
+
 #define SKIP_UPSTREAM_PROXY_NAME        "SSHParentProxySkip"
 #define SKIP_UPSTREAM_PROXY_DEFAULT     FALSE
 
@@ -63,6 +67,16 @@
 
 #define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
+
+#define SYSTRAY_MINIMIZE_NAME           "SystrayMinimize"
+#define SYSTRAY_MINIMIZE_DEFAULT        FALSE
+
+#define COOKIES_NAME                    "UICookies"
+#define COOKIES_DEFAULT                 ""
+
+#define WINDOW_PLACEMENT_NAME           "UIWindowPlacement"
+#define WINDOW_PLACEMENT_DEFAULT        ""
+
 
 static HANDLE g_registryMutex = CreateMutex(NULL, FALSE, 0);
 
@@ -131,108 +145,142 @@ void Settings::Initialize()
     // This is to help users find and modify them.
     (void)GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT, true);
     (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
+    (void)GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT, true);
 }
 
-bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+void Settings::ToJson(Json::Value& o_json)
 {
-    Json::Value config;
-    config["SplitTunnel"] = Settings::SplitTunnel();
-    config["VPN"] = (Settings::Transport() == TRANSPORT_VPN);
-    config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-    config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-    config["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy();
-    config["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
-    config["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
-    config["EgressRegion"] = Settings::EgressRegion();
-    config["defaults"] = Json::Value();
-    config["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
-    config["defaults"]["VPN"] = FALSE;
-    config["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
-    config["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
-    config["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
-    config["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
-    config["defaults"]["UpstreamProxyPort"] = NULL_PORT;
-    config["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+    o_json.clear();
+	o_json["defaults"] = Json::Value();
+	
+	o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
+	o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
+	
+	o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN) ? TRUE : FALSE;
+	o_json["defaults"]["VPN"] = FALSE;
+	
+	o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+	o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+	o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+	o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+	
+	o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
+	o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
+	o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
+	o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
+	o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
+	o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+	
+	o_json["EgressRegion"] = Settings::EgressRegion();
+	o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+	
+	o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
+	o_json["defaults"]["SystrayMinimize"] = SYSTRAY_MINIMIZE_DEFAULT;
+}
 
-    stringstream configDataStream;
-    Json::FastWriter jsonWriter;
-    configDataStream << jsonWriter.write(config);
-
-    tstring result;
-    if (ShowHTMLDlg(
-        hParentWnd,
-        _T("SETTINGS_HTML_RESOURCE"),
-        GetLocaleName().c_str(),
-        NarrowToTString(configDataStream.str()).c_str(),
-        result) != 1)
-    {
-        // error or user cancelled
-        return false;
-    }
+// FromJson updates the stores settings from an object stored in JSON format.
+bool Settings::FromJson(
+    const string& utf8JSON, 
+    bool& o_reconnectRequired)
+{
+    o_reconnectRequired = false;
 
     Json::Value json;
     Json::Reader reader;
-    bool parsingSuccessful = reader.parse(WStringToUTF8(result.c_str()), json);
+    bool parsingSuccessful = reader.parse(utf8JSON, json);
     if (!parsingSuccessful)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to save settings!"));
         return false;
     }
 
-    bool settingsChanged = false;
+    bool reconnectRequiredValueChanged = false;
 
     try
     {
         AutoMUTEX lock(g_registryMutex);
 
-        // Note: We're not purposely not bothering to check registry write return values.
+        // Note: We're purposely not bothering to check registry write return values.
 
         RegistryFailureReason failReason;
 
-        BOOL splitTunnel = json.get("SplitTunnel", 0).asUInt();
-        settingsChanged = settingsChanged || !!splitTunnel != Settings::SplitTunnel();
+        BOOL splitTunnel = json.get("SplitTunnel", SPLIT_TUNNEL_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
-        wstring transport = json.get("VPN", 0).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
-        settingsChanged = settingsChanged || transport != Settings::Transport();
+        wstring transport = json.get("VPN", TRANSPORT_DEFAULT).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
             TRANSPORT_NAME,
             transport,
             failReason);
 
-        DWORD httpPort = json.get("LocalHttpProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || httpPort != Settings::LocalHttpProxyPort();
+        DWORD httpPort = json.get("LocalHttpProxyPort", HTTP_PROXY_PORT_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || httpPort != Settings::LocalHttpProxyPort();
         WriteRegistryDwordValue(HTTP_PROXY_PORT_NAME, httpPort);
 
-        DWORD socksPort = json.get("LocalSocksProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || socksPort != Settings::LocalSocksProxyPort();
+        DWORD socksPort = json.get("LocalSocksProxyPort", SOCKS_PROXY_PORT_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
-        string upstreamProxyHostname = json.get("UpstreamProxyHostname", "").asString();
-        settingsChanged = settingsChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
+        string upstreamProxyHostname = json.get("UpstreamProxyHostname", UPSTREAM_PROXY_HOSTNAME_DEFAULT).asString();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
             upstreamProxyHostname,
             failReason);
 
-        DWORD upstreamProxyPort = json.get("UpstreamProxyPort", 0).asUInt();
-        settingsChanged = settingsChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
+        DWORD upstreamProxyPort = json.get("UpstreamProxyPort", UPSTREAM_PROXY_PORT_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyPort != Settings::UpstreamProxyPort();
         WriteRegistryDwordValue(UPSTREAM_PROXY_PORT_NAME, upstreamProxyPort);
 
-        BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", 0).asUInt();
-        settingsChanged = settingsChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
+        BOOL skipUpstreamProxy = json.get("SkipUpstreamProxy", SKIP_UPSTREAM_PROXY_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!skipUpstreamProxy != Settings::SkipUpstreamProxy();
         WriteRegistryDwordValue(SKIP_UPSTREAM_PROXY_NAME, skipUpstreamProxy);
 
-        string egressRegion = json.get("EgressRegion", "").asString();
-        settingsChanged = settingsChanged || egressRegion != Settings::EgressRegion();
+        string egressRegion = json.get("EgressRegion", EGRESS_REGION_DEFAULT).asString();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || egressRegion != Settings::EgressRegion();
         WriteRegistryStringValue(
             EGRESS_REGION_NAME,
             egressRegion,
             failReason);
+
+        BOOL systrayMinimize = json.get("SystrayMinimize", SYSTRAY_MINIMIZE_DEFAULT).asUInt();
+        // Does not require reconnect to apply change.
+        WriteRegistryDwordValue(SYSTRAY_MINIMIZE_NAME, systrayMinimize);
     }
     catch (exception& e)
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d: JSON parse exception: %S"), __TFUNCTION__, __LINE__, e.what());
+        return false;
+    }
+
+    o_reconnectRequired = reconnectRequiredValueChanged;
+
+    return true;
+}
+
+bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
+{
+    Json::Value config;
+    Settings::ToJson(config);
+
+    tstring result;
+    if (ShowHTMLDlg(
+        hParentWnd,
+        _T("SETTINGS_HTML_RESOURCE"),
+        GetLocaleName().c_str(),
+        NarrowToTString(Json::FastWriter().write(config)).c_str(),
+        result) != 1)
+    {
+        // error or user cancelled
+        return false;
+    }
+
+    bool settingsChanged = false;
+    if (!FromJson(WStringToUTF8(result.c_str()), settingsChanged))
+    {
+        return false;
     }
 
     return settingsChanged;
@@ -305,6 +353,11 @@ string Settings::EgressRegion()
     return GetSettingString(EGRESS_REGION_NAME, EGRESS_REGION_DEFAULT);
 }
 
+bool Settings::SystrayMinimize()
+{
+    return !!GetSettingDword(SYSTRAY_MINIMIZE_NAME, SYSTRAY_MINIMIZE_DEFAULT);
+}
+
 /*
 Settings that are not exposed in the UI.
 */
@@ -317,4 +370,38 @@ bool Settings::SkipBrowser()
 bool Settings::SkipProxySettings()
 {
     return !!GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);
+}
+
+bool Settings::SkipAutoConnect()
+{
+    return !!GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT);
+}
+
+/*
+For internal use only
+TODO: Probably shouldn't be in the "usersettings" file
+*/
+
+void Settings::SetCookies(const string& value)
+{
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+    (void)WriteRegistryStringValue(COOKIES_NAME, value, reason);
+    // ignoring failures
+}
+
+string Settings::GetCookies()
+{
+    return GetSettingString(COOKIES_NAME, COOKIES_DEFAULT);
+}
+
+void Settings::SetWindowPlacement(const string& value)
+{
+    RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
+    (void)WriteRegistryStringValue(WINDOW_PLACEMENT_NAME, value, reason);
+    // ignoring failures
+}
+
+string Settings::GetWindowPlacement()
+{
+    return GetSettingString(WINDOW_PLACEMENT_NAME, WINDOW_PLACEMENT_DEFAULT);
 }

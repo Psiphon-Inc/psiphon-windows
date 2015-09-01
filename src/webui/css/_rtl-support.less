@@ -1,0 +1,92 @@
+// Copyright (c) 2015, Psiphon Inc.
+// All rights reserved.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// Some styling -- especially from Bootstrap -- is very left-to-right-centric.
+// We will need to override some classes/styles for the RTL case.
+
+
+body[dir="rtl"] {
+
+  // See bootstrap:forms.less
+  .radio,
+  .checkbox {
+    padding-right: 20px;
+  }
+  .radio input[type="radio"],
+  .checkbox input[type="checkbox"] {
+    float: right;
+    margin-left: 0;
+    margin-right: -20px;
+  }
+
+  // See bootstrap:forms.less
+  .form-horizontal {
+    .control-label {
+      float: right;
+      text-align: left;
+    }
+    .controls {
+      *padding-left: 0;
+      *padding-right: 20px;
+      margin-left: 0;
+      *margin-left: 0;
+      margin-right: @horizontalComponentOffset;
+      *margin-right: 0;
+      &:first-child {
+        *padding-left: 0;
+        *padding-right: @horizontalComponentOffset;
+      }
+    }
+    .form-actions {
+      padding-left: 0;
+      padding-right: @horizontalComponentOffset;
+    }
+  }
+
+  // See bootstrap:mixins.less
+  // If this explodes into more stuff, we might want to copy the whole #core mixin.
+  @media (min-width: 768px) and (max-width: 979px) {
+    .row {
+      margin-left: 0;
+      margin-right: @gridGutterWidth * -1;
+    }
+  }
+
+  // See bootstrap:modals.less
+  .modal-footer {
+    // By default, the modal buttons are always right-aligned.
+    text-align: left;
+  }
+
+  // See bootstrap:dropdowns.less
+  .dropdown-menu {
+    left: auto;
+    right: 0;
+    float: right;
+  }
+
+  // See bootstrap:tables.less
+  .table {
+    th, td {
+      text-align: right;
+    }
+  }
+
+  // See bootstrap:scaffolding.less
+  & {
+    font-family: @baseFontFamilyRTL;
+  }
+}

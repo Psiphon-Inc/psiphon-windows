@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "config.h"
 #include "psiclient.h"
 #include "webbrowser.h"

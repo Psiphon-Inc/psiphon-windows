@@ -1,1 +1,1 @@
-Current version of yaml-cpp: 0.5.1
+Current version of yaml-cpp: 0.5.2

@@ -18,6 +18,7 @@
  */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "transport.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
