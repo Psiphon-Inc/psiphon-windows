@@ -680,6 +680,9 @@ function onSettingsApply(e) {
   if (applySettings()) {
     // Reset the Apply button
     enableSettingsApplyButton(false);
+
+    // Switch to Connection tab
+    switchToTab('#connection-tab');
   }
   else {
     showSettingsErrorModal();
@@ -1339,15 +1342,8 @@ function showSettingsSection(section, focusElem) {
     }, 500);
   }
 
-  if ($('#settings-tab').hasClass('active')) {
-    // Settings tab already showing. Just expand and scroll.
-    onTabShown();
-  }
-  else {
-    // Settings tab not already showing. Switch to it before expanding and scrolling.
-    $('.main-nav a[href="#settings-pane"]').one('show', onTabShown);
-    $('.main-nav a[href="#settings-pane"]').tab('show');
-  }
+  // Make sure the settings tab is showing.
+  switchToTab('#settings-tab', onTabShown);
 }
 
 
@@ -1387,7 +1383,7 @@ function sendFeedback() {
   };
 
   // Switch to the connection tab
-  $('.main-nav a:first').tab('show');
+  switchToTab('#connection-tab');
 
   // Clear the feedback form
   $('.feedback-choice.selected').removeClass('selected');
@@ -1882,6 +1878,25 @@ function drawAttentionToButton(elem) {
       });
     });
   }, 10); // if this is too low, the effect seems to fail sometimes (like when a port number field is changed in settings)
+}
+
+// Make the given tab visible. `tab` may be a selector, a DOM element, or a
+// jQuery object. If `callback` is provided, it will be invoked when tab is shown.
+function switchToTab(tab, callback) {
+  var $tab = $(tab);
+  if ($tab.hasClass('active')) {
+    // Tab already showing.
+    if (callback) {
+      nextTick(callback);
+    }
+  }
+  else {
+    // Settings tab not already showing. Switch to it before expanding and scrolling.
+    if (callback) {
+      $tab.find('[data-toggle="tab"]').one('show', callback);
+    }
+    $tab.find('[data-toggle="tab"]').tab('show');
+  }
 }
 
 
