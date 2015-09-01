@@ -72,7 +72,7 @@ var g_initObj = {};
 
 $(function overallInit() {
   // Do some browser-version-dependent DOM pruning
-  if (browserCheck('lt-ie8')) {
+  if (compareIEVersion('eq', 7, false)) {
     $('.ie7Remove').remove();
   }
 
@@ -201,7 +201,7 @@ function updateDpiScaling(dpiScaling, andResizeContent/*=true*/) {
   DEBUG_LOG('updateDpiScaling: ' + dpiScaling);
   g_initObj.Config.DpiScaling = dpiScaling;
 
-  if (browserCheck('lt-ie9')) {
+  if (compareIEVersion('lt', 9, false)) {
     // We need IE9+ to support DPI scaling
     return;
   }
@@ -211,7 +211,7 @@ function updateDpiScaling(dpiScaling, andResizeContent/*=true*/) {
       rtlTransformOrigin = '0 0 0',
       rtlBottomRightTransformOrigin = '0 100% 0';
 
-  if (!browserCheck('is-ie') && g_isRTL) {
+  if (getIEVersion() === false && g_isRTL) {
     // Non-IE in RTL need the origin on the right.
     rtlTransformOrigin = '100% 0 0';
   }
@@ -228,7 +228,7 @@ function updateDpiScaling(dpiScaling, andResizeContent/*=true*/) {
   });
 
   // For elements (like modals) outside the normal flow, additional changes are needed.
-  if (browserCheck('is-ie')) {
+  if (getIEVersion() !== false) {
     // The left margin will vary depending on default value.
     // First reset an overridden left margin
     $('.modal').css('margin-left', '');
@@ -248,6 +248,30 @@ function updateDpiScaling(dpiScaling, andResizeContent/*=true*/) {
     'transform-origin': bottomRightTransformOrigin,
     'transform': 'scale(' + dpiScaling + ')'
   });
+
+  // Elements with the `affix` class are position:fixed and need to be adjusted separately
+  if (getIEVersion() !== false) {
+    // Reset previous position modification.
+    $('.affix')
+      .css({'top': '', 'left': ''})
+      .each(function() {
+        var basePosition = $(this).position();
+        $(this).css({
+          'transform-origin': transformOrigin,
+          'transform': 'scale(' + dpiScaling + ')'
+        });
+        if (basePosition.top) {
+          $(this).css({
+            'top': (basePosition.top * dpiScaling) + 'px'
+          });
+        }
+        if (basePosition.left) {
+          $(this).css({
+            'left': (basePosition.left * dpiScaling) + 'px'
+          });
+        }
+      });
+  }
 
   if (andResizeContent !== false) {
     // Need to resize everything.
@@ -1294,7 +1318,7 @@ function vpnModeUpdate() {
 // Show/hide the error alert depending on whether we have an erroneous field
 function updateErrorAlert() {
   $('#settings-pane .value-error-alert').toggleClass(
-    'hidden', $('#settings-pane .control-group.error').length === 0);
+    'invisible z-behind', $('#settings-pane .control-group.error').length === 0);
 }
 
 // Returns the numeric port if valid, otherwise false. Note that 0 is a valid
@@ -1750,16 +1774,58 @@ function displayCornerAlert(elem) {
   });
 }
 
-// Check the current browser version number. `versionCompare` must be one of:
-// is-ie lt-ie9 lt-ie8 lt-ie7
-// Return value is boolean.
-// Note that this isn't super flexible yet. It will need to be improved as it's used.
-function browserCheck(versionCompare) {
-  if (versionCompare === 'is-ie') {
-    return window.navigator.userAgent.indexOf('MSIE') >= 0;
+function getIEVersion() {
+  // This is complicated by the fact that the MSHTML control uses a different
+  // user agent string than browsers do.
+
+  var ieVersion = false;
+
+  // This will match MSHTMLv8-11, IEv8-11.
+  var tridentMatch = window.navigator.userAgent.match(/MSIE \d+.*Trident\/(\d+)/);
+  // This will match IEv7. Note that it must be checked after the Trident match.
+  var msieMatch = window.navigator.userAgent.match(/MSIE (\d+)/);
+  // This will match Edgev1 (which we will consider IE12).
+  var edgeMatch = /Trident\/(\d+)/;
+
+  if (tridentMatch) {
+    // Trident version is 4 versions behind IE version.
+    ieVersion = parseInt(tridentMatch[1]) + 4;
+  }
+  else if (msieMatch) {
+    ieVersion = parseInt(msieMatch[1]);
+  }
+  else if (edgeMatch) {
+    ieVersion = parseInt(edgeMatch[1]);
   }
 
-  return $('html').hasClass(versionCompare);
+  return ieVersion;
+}
+
+// `comparison` may be: 'eq', 'lt', 'gt', 'lte', 'gte'
+function compareIEVersion(comparison, targetVersion, acceptNonIE) {
+  var ieVersion = getIEVersion();
+
+  if (ieVersion === false) {
+    return acceptNonIE;
+  }
+
+  if (comparison === 'eq') {
+    return ieVersion == targetVersion;
+  }
+  else if (comparison === 'lt') {
+    return ieVersion < targetVersion;
+  }
+  else if (comparison === 'gt') {
+    return ieVersion > targetVersion;
+  }
+  else if (comparison === 'lte') {
+    return ieVersion <= targetVersion;
+  }
+  else if (comparison === 'gte') {
+    return ieVersion >= targetVersion;
+  }
+
+  return false;
 }
 
 //
