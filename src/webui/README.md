@@ -24,6 +24,17 @@ $ node fake-translations.js
 
 ## TODO
 
+* The legacy code emits a log that should be more of a prompt, as the user may need to see it and act on it. It’s in SetCurrentSystemConnectionsProxy:
+  ```
+  if (failedToVerify)
+  {
+      my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
+      my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
+                                     _T("to use the local Psiphon proxies."));
+  }
+  ```
+  Make it a notice-ish thing and display modal.
+
 * Automation: Switch to VS2015.
 * Update user guide on website.
 
@@ -34,6 +45,10 @@ $ node fake-translations.js
 * HighDPI: Apply button wiggle shows through forgot-to-apply modal.
 * HighDPI: Fix bottom-right slide-out notification. Gets truncated.
 * Force Connect box to be centered on egress combo.
+* Add functionality to export an encrypted diagnostic file to disk and tell user to attach it to an email to us.
+  - Detect feedback send fail and tell user to do this.
+  - Existing encrypted feedback email service should process these.
+* Maybe add another, higher, log priority. This would be the only priority shown by default. Use it for, e.g., split tunnel messages. This would be for messages that the "might realistically want or need to see" rather than "maybe might help someone sometime". Would need a checkbox to also show the mid-priority logs.
 * More elaborate connection animation?
 * Maybe use larger/sharper flag sprites. Hard to find 64px images. Maybe from: http://www.browniesblog.com/A55CBC/blog.nsf/dx/responsive-css-sprites.html
 * Better OOBE. Introductory screen. Basic help/info. Language.
