@@ -72,7 +72,7 @@ var g_initObj = {};
 
 $(function overallInit() {
   // Do some browser-version-dependent DOM pruning
-  if (compareIEVersion('eq', 7, false)) {
+  if (compareIEVersion('lte', 7, false)) {
     $('.ie7Remove').remove();
   }
 
@@ -310,7 +310,7 @@ function updateLogoConnectState() {
 /* CONNECTION ****************************************************************/
 
 // The current connected actual state of the application
-var g_lastState = 'connected';
+var g_lastState = 'stopped';
 
 // Used to monitor whether the current connection attempt is taking too long and
 // so if a "download new version" message should be shown.
@@ -1778,24 +1778,56 @@ function getIEVersion() {
   // This is complicated by the fact that the MSHTML control uses a different
   // user agent string than browsers do.
 
+  var ie7_10Match, ie11Match, edgeMatch, tridentMatch, msieMatch;
+
   var ieVersion = false;
 
-  // This will match MSHTMLv8-11, IEv8-11.
-  var tridentMatch = window.navigator.userAgent.match(/MSIE \d+.*Trident\/(\d+)/);
-  // This will match IEv7. Note that it must be checked after the Trident match.
-  var msieMatch = window.navigator.userAgent.match(/MSIE (\d+)/);
-  // This will match Edgev1 (which we will consider IE12).
-  var edgeMatch = /Trident\/(\d+)/;
+  // User agents differ between browser and actual application, so we need
+  // different checks
 
-  if (tridentMatch) {
-    // Trident version is 4 versions behind IE version.
-    ieVersion = parseInt(tridentMatch[1]) + 4;
+  if (IS_BROWSER) {
+    // Some care needs to be taken to work with IE11+'s old-version test mode.
+    // We can't just use Trident versions.
+
+    // This will match IEv7-10.
+    ie7_10Match = window.navigator.userAgent.match(/^Mozilla\/\d\.0 \(compatible; MSIE (\d+)/);
+    // This will match IE11.
+    ie11Match = window.navigator.userAgent.match(/Trident\/(\d+)/);
+    // This will match Edgev1 (which we will consider IE12).
+    edgeMatch = window.navigator.userAgent.match(/Edge\/(\d+)/);
+
+    if (ie7_10Match) {
+      ieVersion = parseInt(ie7_10Match[1]);
+    }
+    else if (ie11Match) {
+      // Trident version is 4 versions behind IE version.
+      ieVersion = parseInt(ie11Match[1]) + 4;
+    }
+    else if (edgeMatch) {
+      ieVersion = parseInt(edgeMatch[1]);
+    }
   }
-  else if (msieMatch) {
-    ieVersion = parseInt(msieMatch[1]);
-  }
-  else if (edgeMatch) {
-    ieVersion = parseInt(edgeMatch[1]);
+  else {
+    // This will match MSHTMLv8-11.
+    tridentMatch = window.navigator.userAgent.match(/MSIE \d+.*Trident\/(\d+)/);
+    // This will match MSHTMLv7. Note that it must be checked after the Trident match.
+    msieMatch = window.navigator.userAgent.match(/MSIE (\d+)/);
+
+    // This will match Edgev1 (which we will consider IE12).
+    // Note that this hasn't been seen in the Wild. MSHTML on Win10 uses Trident/8,
+    // which hits the above regex and returns version 12.
+    edgeMatch = window.navigator.userAgent.match(/Edge\/(\d+)/);
+
+    if (tridentMatch) {
+      // Trident version is 4 versions behind IE version.
+      ieVersion = parseInt(tridentMatch[1]) + 4;
+    }
+    else if (msieMatch) {
+      ieVersion = parseInt(msieMatch[1]);
+    }
+    else if (edgeMatch) {
+      ieVersion = parseInt(edgeMatch[1]);
+    }
   }
 
   return ieVersion;

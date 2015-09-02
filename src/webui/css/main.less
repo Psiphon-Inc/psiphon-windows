@@ -527,9 +527,7 @@ textarea {
   right: 1em;
   padding: 0.2em;
   background-color: #f5f5f5;
-  border-bottom: 1px solid #e5e5e5
-
-  .clearfix;
+  border-bottom: 1px solid #e5e5e5;
 
   // This allows the button box shadow to extend outside its parent element.
   overflow: visible;
@@ -568,21 +566,11 @@ textarea {
   .accordion-heading {
     font-size: 1.4em;
 
-    .accordion-expand-icon {
-      body[dir="ltr"] & {
-        .pull-left;
-        margin-right: 0.5em;
-      }
-
-      body[dir="rtl"] & {
-        .pull-right;
-        margin-left: 0.5em;
-      }
-    }
-
-    a {
+    .accordion-toggle {
       background-color: @psiEngageable;
       color:@psiTextOnEngageable;
+
+      .clearfix;
 
       &:hover, &:focus {
         background-color: @psiClickHover;
@@ -592,6 +580,15 @@ textarea {
       &.accordion-expanded {
         background-color: @psiEngaged;
         color: @psiTextOnEngaged;
+      }
+
+      .accordion-expand-icon {
+        body[dir="ltr"] & {
+          margin-right: 0.5em;
+        }
+        body[dir="rtl"] & {
+          margin-left: 0.5em;
+        }
       }
     }
   }

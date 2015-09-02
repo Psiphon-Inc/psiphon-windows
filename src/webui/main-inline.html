@@ -7291,9 +7291,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   right: 1em;
   padding: 0.2em;
   background-color: #f5f5f5;
-  border-bottom: 1px solid #e5e5e5
-
-  .clearfix;
+  border-bottom: 1px solid #e5e5e5;
   overflow: visible;
 }
 body[dir="ltr"] .settings-buttons .apply-settings {
@@ -7322,26 +7320,34 @@ body[dir="rtl"] .settings-buttons .reset-settings {
 #settings-accordion .accordion-heading {
   font-size: 1.4em;
 }
-body[dir="ltr"] #settings-accordion .accordion-heading .accordion-expand-icon {
-  float: left;
-  margin-right: 0.5em;
-}
-body[dir="rtl"] #settings-accordion .accordion-heading .accordion-expand-icon {
-  float: right;
-  margin-left: 0.5em;
-}
-#settings-accordion .accordion-heading a {
+#settings-accordion .accordion-heading .accordion-toggle {
   background-color: #75b7ab;
   color: #eeeeee;
+  *zoom: 1;
 }
-#settings-accordion .accordion-heading a:hover,
-#settings-accordion .accordion-heading a:focus {
+#settings-accordion .accordion-heading .accordion-toggle:before,
+#settings-accordion .accordion-heading .accordion-toggle:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+#settings-accordion .accordion-heading .accordion-toggle:after {
+  clear: both;
+}
+#settings-accordion .accordion-heading .accordion-toggle:hover,
+#settings-accordion .accordion-heading .accordion-toggle:focus {
   background-color: #bcdae4;
   color: #20434e;
 }
-#settings-accordion .accordion-heading a.accordion-expanded {
+#settings-accordion .accordion-heading .accordion-toggle.accordion-expanded {
   background-color: #1b7b9c;
   color: #eeeeee;
+}
+body[dir="ltr"] #settings-accordion .accordion-heading .accordion-toggle .accordion-expand-icon {
+  margin-right: 0.5em;
+}
+body[dir="rtl"] #settings-accordion .accordion-heading .accordion-toggle .accordion-expand-icon {
+  margin-left: 0.5em;
 }
 #settings-accordion form {
   margin: 0;
@@ -7849,6 +7855,26 @@ hr.dotted {
 }
 .icon-spin:before {
   content: "\e979";
+}
+
+/*
+Required for the checkbox to be visible in RTL layouts.
+See comment in lteIE7.css above the `#settings-accordion` for info about why
+why need to do this.
+*/
+.checkbox-container {
+  width: 97%;
+}
+
+/*
+Ref: bootstrap:modals.less
+In RTL layout, centering of modals works on IE10+, but not in IE<=9.
+*/
+body[dir="rtl"] .modal {
+  left: initial;
+  margin-left: initial;
+  right: 50%;
+  margin-right: -280px;
 }
 
 </style>
@@ -14167,7 +14193,7 @@ var g_initObj = {};
 
 $(function overallInit() {
   // Do some browser-version-dependent DOM pruning
-  if (compareIEVersion('eq', 7, false)) {
+  if (compareIEVersion('lte', 7, false)) {
     $('.ie7Remove').remove();
   }
 
@@ -14405,7 +14431,7 @@ function updateLogoConnectState() {
 /* CONNECTION ****************************************************************/
 
 // The current connected actual state of the application
-var g_lastState = 'connected';
+var g_lastState = 'stopped';
 
 // Used to monitor whether the current connection attempt is taking too long and
 // so if a "download new version" message should be shown.
@@ -15873,24 +15899,56 @@ function getIEVersion() {
   // This is complicated by the fact that the MSHTML control uses a different
   // user agent string than browsers do.
 
+  var ie7_10Match, ie11Match, edgeMatch, tridentMatch, msieMatch;
+
   var ieVersion = false;
 
-  // This will match MSHTMLv8-11, IEv8-11.
-  var tridentMatch = window.navigator.userAgent.match(/MSIE \d+.*Trident\/(\d+)/);
-  // This will match IEv7. Note that it must be checked after the Trident match.
-  var msieMatch = window.navigator.userAgent.match(/MSIE (\d+)/);
-  // This will match Edgev1 (which we will consider IE12).
-  var edgeMatch = /Trident\/(\d+)/;
+  // User agents differ between browser and actual application, so we need
+  // different checks
 
-  if (tridentMatch) {
-    // Trident version is 4 versions behind IE version.
-    ieVersion = parseInt(tridentMatch[1]) + 4;
+  if (IS_BROWSER) {
+    // Some care needs to be taken to work with IE11+'s old-version test mode.
+    // We can't just use Trident versions.
+
+    // This will match IEv7-10.
+    ie7_10Match = window.navigator.userAgent.match(/^Mozilla\/\d\.0 \(compatible; MSIE (\d+)/);
+    // This will match IE11.
+    ie11Match = window.navigator.userAgent.match(/Trident\/(\d+)/);
+    // This will match Edgev1 (which we will consider IE12).
+    edgeMatch = window.navigator.userAgent.match(/Edge\/(\d+)/);
+
+    if (ie7_10Match) {
+      ieVersion = parseInt(ie7_10Match[1]);
+    }
+    else if (ie11Match) {
+      // Trident version is 4 versions behind IE version.
+      ieVersion = parseInt(ie11Match[1]) + 4;
+    }
+    else if (edgeMatch) {
+      ieVersion = parseInt(edgeMatch[1]);
+    }
   }
-  else if (msieMatch) {
-    ieVersion = parseInt(msieMatch[1]);
-  }
-  else if (edgeMatch) {
-    ieVersion = parseInt(edgeMatch[1]);
+  else {
+    // This will match MSHTMLv8-11.
+    tridentMatch = window.navigator.userAgent.match(/MSIE \d+.*Trident\/(\d+)/);
+    // This will match MSHTMLv7. Note that it must be checked after the Trident match.
+    msieMatch = window.navigator.userAgent.match(/MSIE (\d+)/);
+
+    // This will match Edgev1 (which we will consider IE12).
+    // Note that this hasn't been seen in the Wild. MSHTML on Win10 uses Trident/8,
+    // which hits the above regex and returns version 12.
+    edgeMatch = window.navigator.userAgent.match(/Edge\/(\d+)/);
+
+    if (tridentMatch) {
+      // Trident version is 4 versions behind IE version.
+      ieVersion = parseInt(tridentMatch[1]) + 4;
+    }
+    else if (msieMatch) {
+      ieVersion = parseInt(msieMatch[1]);
+    }
+    else if (edgeMatch) {
+      ieVersion = parseInt(edgeMatch[1]);
+    }
   }
 
   return ieVersion;
@@ -16672,11 +16730,11 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
               <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-systray-minimize"
                    data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span data-i18n="settings#systray-minimize#heading">
                     Minimize to Notification Area (System Tray)
                   </span>
-                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
-                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                 </a>
               </div>
               <div id="settings-accordion-systray-minimize" class="accordion-body collapse">
@@ -16715,12 +16773,12 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
               <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-split-tunnel"
                    data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span data-i18n="settings#split-tunnel#heading">
                     Split Tunnel
                   </span>
-                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
-                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
-                  <span class="label label-warning vpn-incompatible-msg ie7Remove">
+                  <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-prohibited"></i>
                     <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
                   </span>
@@ -16764,12 +16822,12 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
               <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-egress-region"
                    data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span data-i18n="settings#egress-region#heading">
                     Psiphon Server Region
                   </span>
-                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
-                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
-                  <span class="label label-warning vpn-incompatible-msg ie7Remove">
+                  <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-prohibited"></i>
                     <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
                   </span>
@@ -16866,12 +16924,12 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
               <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-local-proxy-ports"
                    data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span data-i18n="settings#local-proxy-ports#heading">
                     Local Proxy Ports
                   </span>
-                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
-                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
-                  <span class="label label-warning vpn-incompatible-msg ie7Remove">
+                  <span class="label label-warning vpn-incompatible-msg">
                     <i class="icon-prohibited"></i>
                     <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
                   </span>
@@ -16935,11 +16993,11 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
               <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-upstream-proxy"
                    data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span data-i18n="settings#upstream-proxy#heading">
                     Upstream Proxy
                   </span>
-                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
-                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                 </a>
               </div>
               <div id="settings-accordion-upstream-proxy" class="accordion-body collapse">
@@ -17012,11 +17070,11 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
               <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-transport-mode"
                    data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                   <span data-i18n="settings#transport-mode#heading">
                     Transport Mode
                   </span>
-                  <i class="accordion-expand-icon icon-plus-square ie7Remove"
-                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
                 </a>
               </div>
               <div id="settings-accordion-transport-mode" class="accordion-body collapse">

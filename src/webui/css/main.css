@@ -6523,9 +6523,7 @@ body[dir="rtl"] .main-nav .multiline-tab-icon {
   right: 1em;
   padding: 0.2em;
   background-color: #f5f5f5;
-  border-bottom: 1px solid #e5e5e5
-
-  .clearfix;
+  border-bottom: 1px solid #e5e5e5;
   overflow: visible;
 }
 body[dir="ltr"] .settings-buttons .apply-settings {
@@ -6554,26 +6552,34 @@ body[dir="rtl"] .settings-buttons .reset-settings {
 #settings-accordion .accordion-heading {
   font-size: 1.4em;
 }
-body[dir="ltr"] #settings-accordion .accordion-heading .accordion-expand-icon {
-  float: left;
-  margin-right: 0.5em;
-}
-body[dir="rtl"] #settings-accordion .accordion-heading .accordion-expand-icon {
-  float: right;
-  margin-left: 0.5em;
-}
-#settings-accordion .accordion-heading a {
+#settings-accordion .accordion-heading .accordion-toggle {
   background-color: #75b7ab;
   color: #eeeeee;
+  *zoom: 1;
 }
-#settings-accordion .accordion-heading a:hover,
-#settings-accordion .accordion-heading a:focus {
+#settings-accordion .accordion-heading .accordion-toggle:before,
+#settings-accordion .accordion-heading .accordion-toggle:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+#settings-accordion .accordion-heading .accordion-toggle:after {
+  clear: both;
+}
+#settings-accordion .accordion-heading .accordion-toggle:hover,
+#settings-accordion .accordion-heading .accordion-toggle:focus {
   background-color: #bcdae4;
   color: #20434e;
 }
-#settings-accordion .accordion-heading a.accordion-expanded {
+#settings-accordion .accordion-heading .accordion-toggle.accordion-expanded {
   background-color: #1b7b9c;
   color: #eeeeee;
+}
+body[dir="ltr"] #settings-accordion .accordion-heading .accordion-toggle .accordion-expand-icon {
+  margin-right: 0.5em;
+}
+body[dir="rtl"] #settings-accordion .accordion-heading .accordion-toggle .accordion-expand-icon {
+  margin-left: 0.5em;
 }
 #settings-accordion form {
   margin: 0;

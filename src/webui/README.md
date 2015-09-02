@@ -24,12 +24,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* IE7,8,9 RTL: checkboxes invisible
-* IE8,9: settings `+` expando wrapped
-  - and VPN mode badge
-* IE8 (real) RTL: modal box misaligned
-  - 7,9: slighly off
-
 * Automation: Switch to VS2015.
 * Update user guide on website.
 
