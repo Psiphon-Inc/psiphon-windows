@@ -7,9 +7,18 @@ Messages are passed from JavaScript (frontend) to C (backend) via attempts to ch
 Messages are passed from C (backend) to JavaScript (frontend) via called to exposed JS functions, such as `HtmlCtrlInterface_SetState` and `HtmlCtrlInterface_AddNotice`. 
 
 
+## Building
+
+`grunt`
+
+(Add more instruction.)
+
+
 ## i18n
 
-To generate fake translation files from the English `messages.json`:
+Running `grunt` will process available languages and generate fake (development) translation files. 
+
+The fake translation files can also be generated manually:
 
 ```
 $ cd utils

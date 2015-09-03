@@ -571,7 +571,8 @@
                           HTTP/HTTPS
                         </label>
                         <div class="controls">
-                          <input type="text" id="LocalHttpProxyPort" class="port-entry"/>
+                          <input type="text" id="LocalHttpProxyPort" class="port-entry"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                           <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
@@ -581,7 +582,8 @@
                         <label for="LocalSocksProxyPort" class="control-label"
                                 data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
                         <div class="controls">
-                          <input type="text" id="LocalSocksProxyPort" class="port-entry"/>
+                          <input type="text" id="LocalSocksProxyPort" class="port-entry"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                           <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
@@ -640,7 +642,8 @@
                           Hostname
                         </label>
                         <div class="controls">
-                          <input type="text" id="UpstreamProxyHostname"/>
+                          <input type="text" id="UpstreamProxyHostname"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                         </div>
                       </div>
                       <div class="control-group skip-upstream-proxy-incompatible">
@@ -649,7 +652,8 @@
                           Port
                         </label>
                         <div class="controls">
-                          <input type="text" id="UpstreamProxyPort" class="port-entry"/>
+                          <input type="text" id="UpstreamProxyPort" class="port-entry"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                           <span class="help-inline UpstreamProxyPort" data-i18n="settings#port-value-error-msg">
                             Must be between 1 and 65535.
                           </span>
@@ -1056,87 +1060,25 @@
   </div>
 
   <!-- Modal dialog shown to user when there's an upstream proxy error -->
-  <div class="modal fade" id="UpstreamProxyErrorModal" tabindex="-1" role="dialog"
-       aria-labelledby="UpstreamProxyErrorTitle" aria-hidden="true" style="display: none;">
+  <div class="modal fade" id="NoticeModal" tabindex="-1" role="dialog"
+       aria-labelledby="NoticeModalTitle" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title" id="UpstreamProxyErrorTitle">
-            <span data-i18n="settings#upstream-proxy#error-modal-title">
-              Upstream Proxy Error
-            </span>
+          <h3 class="modal-title" id="NoticeModalTitle">
+            NoticeModalTitle
           </h3>
         </div>
         <div class="modal-body">
-          <p>
-            <span class="upstream-proxy-default"
-                  data-i18n="[html]settings#upstream-proxy#error-modal-body-default">
-              Psiphon is currently configured to use your system proxy as its “upstream proxy”.<br>
-              However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
-              Please enable “Don't use upstream proxy” and try again.
-            </span>
-            <span class="upstream-proxy-configured"
-                  data-i18n="[html]settings#upstream-proxy#error-modal-body-configured">
-              You have configured Psiphon to use an “upstream proxy”.<br>
-              However, we seem to be unable to connect to a Psiphon server through that proxy.<br>
-              Please fix the settings and try again.
-            </span>
-          </p>
-          <p>
-            <span class="notice-error-pre-message"
-                  data-i18n="settings#upstream-proxy#error-modal-body-pre-message">
-              Here is the technical error info:
-            </span>
-          </p>
-          <p>
-            <!-- Don't try to newline+indent this HTML. The <pre> will interpret it literally. -->
-            <pre><code class="notice-error-message">error message will go here</code></pre>
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">
-            <span data-i18n="general#modal-close-button">
-              Close
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div><!-- /UpstreamProxyErrorModal -->
-
-  <!-- Modal dialog shown to user when there's a local proxy port conflict -->
-  <div class="modal fade" id="LocalProxyPortErrorModal" tabindex="-1" role="dialog"
-       aria-labelledby="LocalProxyPortErrorTitle" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="LocalProxyPortErrorTitle">
-            <span data-i18n="settings#local-proxy-ports#error-modal-title">
-              Local Proxy Port Conflict
-            </span>
-          </h3>
-        </div>
-        <div class="modal-body">
-          <div class="local-proxy-port-http"
-               data-i18n="[html]settings#local-proxy-ports#error-modal-body-http">
-              <p>
-                You have configured Psiphon to use a specific local port for its HTTP proxy.<br>
-                However, that port appears to be already in use and so Psiphon cannot use it.
-              </p>
-              <p>
-                Please change the configured HTTP proxy port value and try again. We recommended
-                that you clear the value so that Psiphon can automatically pick an available port.
-              </p>
+          <div class="notice-modal-body">
           </div>
-          <div class="local-proxy-port-socks"
-                data-i18n="[html]settings#local-proxy-ports#error-modal-body-socks">
-            <p>
-              You have configured Psiphon to use a specific local port for its SOCKS proxy.<br>
-              However, that port appears to be already in use and so Psiphon cannot use it.
+          <div class="notice-modal-tech">
+            <br>
+            <p class="notice-modal-tech-preamble">
             </p>
             <p>
-              Please change the configured SOCKS proxy port value and try again. We recommended
-              that you clear the value so that Psiphon can automatically pick an available port.
+              <!-- Don't try to newline+indent this HTML. The <pre> will interpret it literally. -->
+              <pre><code class="notice-modal-tech-info">technical info will go here</code></pre>
             </p>
           </div>
         </div>
@@ -1149,68 +1091,7 @@
         </div>
       </div>
     </div>
-  </div><!-- /LocalProxyPortErrorModal -->
-
-  <!-- Modal dialog shown to user when it is detected that their selected
-       egress region is not among the available egress regions. -->
-  <div class="modal fade" id="EgressRegionUnavailableModal" tabindex="-1" role="dialog"
-       aria-labelledby="EgressRegionUnavailableTitle" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="EgressRegionUnavailableTitle">
-            <span data-i18n="settings#egress-region#error-modal-title">
-              Server Region Unavailable
-            </span>
-          </h3>
-        </div>
-        <div class="modal-body">
-          <p>
-            <span data-i18n="[html]settings#egress-region#error-modal-body-http">
-              You have configured Psiphon to use a server in a specific region.<br>
-              However, that region is no longer available.<br>
-              You must choose a new region or change to the default “Fastest Country” choice.
-            </span>
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">
-            <span data-i18n="general#modal-close-button">
-              Close
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div><!-- /EgressRegionUnavailableModal -->
-
-  <!-- Modal dialog shown to user when there is an error in their settings -->
-  <div class="modal fade" id="SettingsErrorModal" tabindex="-1" role="dialog"
-       aria-labelledby="SettingsErrorModalTitle" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="SettingsErrorModalTitle">
-            <span data-i18n="settings#error-modal#title">
-              Settings Error
-            </span>
-          </h3>
-        </div>
-        <div class="modal-body">
-          <p data-i18n="[html]settings#error-modal#body">
-            There are errors in your settings values. Please correct them before proceeding.
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">
-            <span data-i18n="general#modal-close-button">
-              Close
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div><!-- /SettingsErrorModal -->
+  </div><!-- /NoticeModal -->
 
   <!-- Modal dialog shown to user when they try to navigate away from settings without applying changes -->
   <div class="modal fade" id="SettingsUnappliedChangesPrompt" tabindex="-1" role="dialog"

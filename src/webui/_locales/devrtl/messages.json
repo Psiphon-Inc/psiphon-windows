@@ -143,6 +143,10 @@
     "message": "‮Ↄʅosǝ‬",
     "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
   },
+  "general#notice-modal-tech-preamble": {
+    "message": "‮Hǝɹǝ‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʇǝɔɥuıɔɐʅ‬ ‮ǝɹɹoɹ‬ ‮ıuɟo‬:",
+    "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+  },
   "language#success-message": {
     "message": "<strong>‮Hǝʅʅo‬!</strong> ‮Ｍǝʅɔoɯǝ‬ ‮ʇo‬ ‮Ԁsıdɥou‬.",
     "description": "A welcome message shown to the user when they first switch to the correct UI language"
@@ -382,10 +386,6 @@
   "settings#upstream-proxy#error-modal-body-default": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔnɹɹǝuʇʅʎ‬ ‮ɔouɟıƃnɹǝp‬ ‮ʇo‬ ‮nsǝ‬ ‮ʎonɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮ɐs‬ ‮ıʇs‬ “‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬”.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ǝuɐqʅǝ‬ “‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬” ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
     "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
-  },
-  "settings#upstream-proxy#error-modal-body-pre-message": {
-    "message": "‮Hǝɹǝ‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʇǝɔɥuıɔɐʅ‬ ‮ǝɹɹoɹ‬ ‮ıuɟo‬:",
-    "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
   },
   "settings#upstream-proxy#error-modal-title": {
     "message": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",

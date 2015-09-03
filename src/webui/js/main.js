@@ -881,12 +881,14 @@ function getSettingsTabValues() {
 }
 
 function showSettingsErrorModal() {
-  $('#SettingsErrorModal').modal({
-    show: true,
-    backdrop: 'static'
-  }).one('hidden', function() {
-    showSettingErrorSection();
-  });
+  showNoticeModal(
+    'settings#error-modal#title',
+    'settings#error-modal#body',
+    null, null,
+    function() {
+      showSettingErrorSection();
+    }
+  );
 }
 
 function showSettingErrorSection() {
@@ -979,11 +981,11 @@ function forceEgressRegionValid() {
     return;
   }
 
-  // Put up the modal
-  $('#EgressRegionUnavailableModal').modal({
-    show: true,
-    backdrop: 'static'
-  });
+  // Put up the modal message
+  showNoticeModal(
+    'settings#egress-region#error-modal-title',
+    'settings#egress-region#error-modal-body-http',
+    null, null, null);
 
   showSettingsSection('#settings-accordion-egress-region');
 }
@@ -1103,24 +1105,15 @@ function localProxyValid(finalCheck) {
 
 // Show an error modal telling the user there is a local port conflict problem
 function localProxyPortConflictNotice(noticeType) {
-  // Show/hide the appropriate message depending on the error
-  $('#LocalProxyPortErrorModal .local-proxy-port-http')
-    .toggleClass('hidden', noticeType !== 'HttpProxyPortInUse');
-  $('#LocalProxyPortErrorModal .local-proxy-port-socks')
-    .toggleClass('hidden', noticeType !== 'SocksProxyPortInUse');
+  // Show the appropriate message depending on the error
+  var bodyKey = noticeType === 'HttpProxyPortInUse' ?
+                'settings#local-proxy-ports#error-modal-body-http' :
+                'settings#local-proxy-ports#error-modal-body-socks';
 
-  // Put up the modal
-  $('#LocalProxyPortErrorModal').modal({
-    show: true,
-    backdrop: 'static'
-  }).one('hidden', function() {
-    if (noticeType === 'HttpProxyPortInUse') {
-      $('#LocalHttpProxyPort').focus();
-    }
-    else {
-      $('#LocalSocksProxyPort').focus();
-    }
-  });
+  showNoticeModal(
+    'settings#local-proxy-ports#error-modal-title',
+    bodyKey,
+    null, null, null);
 
   // Switch to the appropriate settings section
   showSettingsSection(
@@ -1246,34 +1239,22 @@ function upstreamProxyErrorNotice(errorMessage) {
   // This is the first upstream proxy error we've received, so start waiting to
   // show a message for it.
   g_upstreamProxyErrorNoticeTimer = setTimeout(function() {
-    // Show/hide the appropriate message depending on the state of the settings
-    $('#UpstreamProxyErrorModal .upstream-proxy-default')
-      .toggleClass('hidden', !!g_initObj.Settings.UpstreamProxyHostname);
-    $('#UpstreamProxyErrorModal .upstream-proxy-configured')
-      .toggleClass('hidden', !g_initObj.Settings.UpstreamProxyHostname);
-
-    // Show the "technical error message" if we have one
-    if (!errorMessage) {
-      $('#UpstreamProxyErrorModal')
-        .find('.notice-error-pre-message, .notice-error-message')
-        .addClass('hidden');
-    }
-    else {
-      $('#UpstreamProxyErrorModal')
-        .find('.notice-error-pre-message, .notice-error-message')
-        .removeClass('hidden');
-
-      $('#UpstreamProxyErrorModal .notice-error-message')
-        .text(errorMessage);
+    // There are two slightly different error messages shown depending on whether
+    // there is an upstream proxy explicitly configured, or it's the default
+    // empty value, which means the pre-existing system proxy will be used.
+    var bodyKey = 'settings#upstream-proxy#error-modal-body-default';
+    if (g_initObj.Settings.UpstreamProxyHostname) {
+      bodyKey = 'settings#upstream-proxy#error-modal-body-configured';
     }
 
-    // Put up the modal
-    $('#UpstreamProxyErrorModal').modal({
-      show: true,
-      backdrop: 'static'
-    }).one('hidden', function() {
-      $('#UpstreamProxyHostname').focus();
-    });
+    showNoticeModal(
+      'settings#upstream-proxy#error-modal-title',
+      bodyKey,
+      'general#notice-modal-tech-preamble',
+      errorMessage,
+      function() {
+        $('#UpstreamProxyHostname').focus();
+      });
 
     // Switch to the appropriate settings section
     showSettingsSection('#settings-accordion-upstream-proxy');
@@ -1636,7 +1617,72 @@ function populateLocales() {
 // No special code. Sponsor-specific links are set elsewhere.
 
 
-/* HELPERS *******************************************************************/
+/* UI HELPERS ****************************************************************/
+
+function displayCornerAlert(elem) {
+  // Show -- and then hide -- the alert
+  var appearAnimationTime = 300;
+  var showingTime = 4000;
+  var disappearAnimationTime = 1000;
+  $(elem).toggle('fold', {horizFirst: true}, appearAnimationTime, function() {
+    setTimeout(function() {
+      $(elem).toggle('fold', {horizFirst: true}, disappearAnimationTime);
+    }, showingTime);
+  });
+}
+
+// Make the given tab visible. `tab` may be a selector, a DOM element, or a
+// jQuery object. If `callback` is provided, it will be invoked when tab is shown.
+function switchToTab(tab, callback) {
+  var $tab = $(tab);
+  if ($tab.hasClass('active')) {
+    // Tab already showing.
+    if (callback) {
+      nextTick(callback);
+    }
+  }
+  else {
+    // Settings tab not already showing. Switch to it before expanding and scrolling.
+    if (callback) {
+      $tab.find('[data-toggle="tab"]').one('show', callback);
+    }
+    $tab.find('[data-toggle="tab"]').tab('show');
+  }
+}
+
+// Shows a modal box.
+// String table keys will be used for filling in the content. The "tech" values
+// are optional. `techInfoString` is an explicit string.
+// `closedCallback` is optional and will be called when the modal is closed.
+function showNoticeModal(titleKey, bodyKey, techPreambleKey, techInfoString, closedCallback) {
+  DEBUG_ASSERT(titleKey && bodyKey);
+
+  var $modal = $('#NoticeModal');
+
+  $modal.find('.modal-title').html(i18n.t(titleKey));
+  $modal.find('.notice-modal-body').html(i18n.t(bodyKey));
+
+  if (techPreambleKey && techInfoString) {
+    $modal.find('.notice-modal-tech-preamble').html(i18n.t(techPreambleKey));
+    $modal.find('.notice-modal-tech-info').text(techInfoString);
+    $modal.find('.notice-modal-tech').removeClass('hidden');
+  }
+  else {
+    $modal.find('.notice-modal-tech').addClass('hidden');
+  }
+
+  // Put up the modal
+  $modal.modal({
+    show: true,
+    backdrop: 'static'
+  }).one('hidden', function() {
+    if (closedCallback) {
+      closedCallback();
+    }
+  });
+}
+
+/* MISC HELPERS AND UTILITIES ************************************************/
 
 // Support the `data-match-height` feature
 function doMatchHeight() {
@@ -1760,18 +1806,6 @@ function doMatchWidth() {
             (parseFloat($elem.css('margin-right')) || 0) -
             (parseFloat($elem.css('margin-left')) || 0);
   }
-}
-
-function displayCornerAlert(elem) {
-  // Show -- and then hide -- the alert
-  var appearAnimationTime = 300;
-  var showingTime = 4000;
-  var disappearAnimationTime = 1000;
-  $(elem).toggle('fold', {horizFirst: true}, appearAnimationTime, function() {
-    setTimeout(function() {
-      $(elem).toggle('fold', {horizFirst: true}, disappearAnimationTime);
-    }, showingTime);
-  });
 }
 
 function getIEVersion() {
@@ -1978,22 +2012,15 @@ function drawAttentionToButton(elem) {
   }, 10); // if this is too low, the effect seems to fail sometimes (like when a port number field is changed in settings)
 }
 
-// Make the given tab visible. `tab` may be a selector, a DOM element, or a
-// jQuery object. If `callback` is provided, it will be invoked when tab is shown.
-function switchToTab(tab, callback) {
-  var $tab = $(tab);
-  if ($tab.hasClass('active')) {
-    // Tab already showing.
-    if (callback) {
-      nextTick(callback);
+function DEBUG_ASSERT(check) {
+  if (g_initObj.Config.Debug) {
+    if (typeof(check) === 'function') {
+      check = check();
     }
-  }
-  else {
-    // Settings tab not already showing. Switch to it before expanding and scrolling.
-    if (callback) {
-      $tab.find('[data-toggle="tab"]').one('show', callback);
+
+    if (!check) {
+      throw new Exception('DEBUG_ASSERT failed: ' + check);
     }
-    $tab.find('[data-toggle="tab"]').tab('show');
   }
 }
 
