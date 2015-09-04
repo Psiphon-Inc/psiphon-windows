@@ -873,9 +873,22 @@ void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, i
     HtmlUI_SetState(wJson);
 }
 
+// Take JSON in the form provided by CoreTransport
 void UI_Notice(const string& noticeJSON)
 {
     HtmlUI_AddNotice(noticeJSON);
+}
+
+// This is a helper to construct the JSON required for the previous function.
+// Notice ID must be unique. (Recommended: Prefix it.)
+// `techInfo` may be an empty string.
+void UI_Notice(const string& noticeID, const string& techInfo)
+{
+    Json::Value json;
+    json["noticeType"] = noticeID;
+    json["data"] = techInfo;
+    Json::FastWriter jsonWriter;
+    UI_Notice(jsonWriter.write(json));
 }
 
 void UI_RefreshSettings(const string& settingsJSON)

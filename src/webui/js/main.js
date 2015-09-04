@@ -1425,6 +1425,7 @@ function showDebugLogsClicked(e) {
     .toggleClass('hiding-priority-0', !show);
 }
 
+// Expects obj to be of the form {priority: 0|1|2, message: string}
 function addLog(obj) {
   $('.log-messages .placeholder').remove();
 
@@ -2156,6 +2157,20 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
       setCookie('AvailableEgressRegions', args.data.regions);
       // Update the UI.
       updateAvailableEgressRegions(true);
+    }
+    else if (args.noticeType === 'SystemProxySettings::SetProxyError') {
+      showNoticeModal(
+        'notice#systemproxysettings-setproxy-error-title',
+        'notice#systemproxysettings-setproxy-error-body',
+        null, null, null);
+    }
+    else if (args.noticeType === 'SystemProxySettings::SetProxyWarning') {
+      var setProxyWarningTemplate = i18n.t('notice#systemproxysettings-setproxy-warning-template');
+
+      addLog({
+        priority: 2, // high
+        message: _.template(setProxyWarningTemplate)({data: args.data})
+      });
     }
   });
 }

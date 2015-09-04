@@ -316,7 +316,6 @@ bool SetCurrentSystemConnectionProxy(const ConnectionProxy& setting)
 bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connectionsProxies)
 {
     bool success = true;
-    bool failedToVerify = false;
 
     for (vector<ConnectionProxy>::const_iterator ii = connectionsProxies.begin();
          ii != connectionsProxies.end();
@@ -333,28 +332,21 @@ bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connections
         if (!GetCurrentSystemConnectionProxy(ii->name, entry) ||
             entry != *ii)
         {
-            failedToVerify = true;
-
             if (entry.name.empty())
             {
                 // This is the default or LAN connection.
-                my_print(NOT_SENSITIVE, false, _T("Error: failed to set the system's proxy settings."));
+                UI_Notice("SystemProxySettings::SetProxyError", "");
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: failed to verify proxy setting for default connection"), __TFUNCTION__, __LINE__);
                 success = false;
                 break;
             }
             else
             {
                 // Don't force the connection to fail, this might not be an active connection.
-                my_print(SENSITIVE_FORMAT_ARGS, false, _T("Error: failed to set the proxy settings for the Internet connection named %s."), entry.name.c_str());
+                UI_Notice("SystemProxySettings::SetProxyWarning", TStringToNarrow(entry.name));
+                my_print(SENSITIVE_FORMAT_ARGS, true, _T("%s:%d: failed to verify proxy setting for non-default connection: %s"), __TFUNCTION__, __LINE__, entry.name.c_str());
             }
         }
-    }
-
-    if (failedToVerify)
-    {
-        my_print(NOT_SENSITIVE, false, _T("This might be due to a conflict with your antivirus software."));
-        my_print(NOT_SENSITIVE, false, _T("You might need to manually configure your application or system proxy settings ")
-                                       _T("to use the local Psiphon proxies."));
     }
 
     return success;

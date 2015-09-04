@@ -7496,6 +7496,12 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
 }
+.log-messages .priority-2 .message {
+  font-weight: bold;
+}
+.showing-priority-0.log-messages .priority-2 {
+  background-color: #d9edf7;
+}
 .log-messages .timestamp {
   width: 1%;
   white-space: nowrap;
@@ -12368,6 +12374,9 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "nav#feedback": "[Ƒḗḗḗḗḓƀȧȧƈķ]",
       "nav#logs": "[Ŀǿǿɠş]",
       "nav#settings": "[Şḗḗŧŧīīƞɠş]",
+      "notice#systemproxysettings-setproxy-error-body": "[<p>Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş.</p>\n<p>Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.</p>]",
+      "notice#systemproxysettings-setproxy-error-title": "[Şẏşŧḗḗḿ Ƥřǿǿẋẏ Ḗḗřřǿǿř]",
+      "notice#systemproxysettings-setproxy-warning-template": "[Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ƒǿǿř ŧħḗḗ Īīƞŧḗḗřƞḗḗŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ ƞȧȧḿḗḗḓ “<%- data %>”. Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.]",
       "settings#apply-button": "[Ȧȧƥƥŀẏ Ƈħȧȧƞɠḗḗş]",
       "settings#applying-message": "[Řḗḗƈǿǿƞƞḗḗƈŧīīƞɠ ŧǿǿ ȧȧƥƥŀẏ ẏǿǿŭŭř şḗḗŧŧīīƞɠş.]",
       "settings#egress-region#default": "[Ƈħǿǿǿǿşīīƞɠ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ <strong>“Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ”</strong> ǿǿƥŧīīǿǿƞ ȧȧŀŀǿǿẇş Ƥşīīƥħǿǿƞ ŧǿǿ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƈħǿǿǿǿşḗḗ ȧȧ şḗḗřṽḗḗř, ẇħīīƈħ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ řḗḗşŭŭŀŧ īīƞ ŧħḗḗ ƀḗḗşŧ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ.]",
@@ -12480,6 +12489,9 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "nav#feedback": "‮ɟǝǝpqɐɔʞ‬",
       "nav#logs": "‮˥oƃs‬",
       "nav#settings": "‮Sǝʇʇıuƃs‬",
+      "notice#systemproxysettings-setproxy-error-body": "<p>‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬.</p>\n<p>‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.</p>",
+      "notice#systemproxysettings-setproxy-error-title": "‮Sʎsʇǝɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
+      "notice#systemproxysettings-setproxy-warning-template": "‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮Iuʇǝɹuǝʇ‬ ‮ɔouuǝɔʇıou‬ ‮uɐɯǝp‬ “<%- data %>”. ‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.",
       "settings#apply-button": "‮∀ddʅʎ‬ ‮Ↄɥɐuƃǝs‬",
       "settings#applying-message": "‮ᴚǝɔouuǝɔʇıuƃ‬ ‮ʇo‬ ‮ɐddʅʎ‬ ‮ʎonɹ‬ ‮sǝʇʇıuƃs‬.",
       "settings#egress-region#default": "‮Ↄɥoosıuƃ‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ <strong>“‮ɟɐsʇǝsʇ‬ ‮Ↄonuʇɹʎ‬”</strong> ‮odʇıou‬ ‮ɐʅʅoʍs‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬, ‮ʍɥıɔɥ‬ ‮ʍıʅʅ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮ɹǝsnʅʇ‬ ‮ıu‬ ‮ʇɥǝ‬ ‮qǝsʇ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬.",
@@ -12756,6 +12768,9 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "about#client-version": "Psiphon for Windows client version:",
       "general#modal-close-button": "Close",
       "general#notice-modal-tech-preamble": "Here is the technical error info:",
+      "notice#systemproxysettings-setproxy-error-title": "System Proxy Error",
+      "notice#systemproxysettings-setproxy-error-body": "<p>Psiphon failed to set the system’s proxy settings.</p>\n<p>This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.</p>",
+      "notice#systemproxysettings-setproxy-warning-template": "Psiphon failed to set the system’s proxy settings for the Internet connection named “<%- data %>”. This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.",
       "appbackend#state-stopped-title": "Psiphon is disconnected",
       "appbackend#state-starting-title": "Psiphon is connecting",
       "appbackend#state-starting-body": "Please wait…",
@@ -15546,6 +15561,7 @@ function showDebugLogsClicked(e) {
     .toggleClass('hiding-priority-0', !show);
 }
 
+// Expects obj to be of the form {priority: 0|1|2, message: string}
 function addLog(obj) {
   $('.log-messages .placeholder').remove();
 
@@ -16277,6 +16293,20 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
       setCookie('AvailableEgressRegions', args.data.regions);
       // Update the UI.
       updateAvailableEgressRegions(true);
+    }
+    else if (args.noticeType === 'SystemProxySettings::SetProxyError') {
+      showNoticeModal(
+        'notice#systemproxysettings-setproxy-error-title',
+        'notice#systemproxysettings-setproxy-error-body',
+        null, null, null);
+    }
+    else if (args.noticeType === 'SystemProxySettings::SetProxyWarning') {
+      var setProxyWarningTemplate = i18n.t('notice#systemproxysettings-setproxy-warning-template');
+
+      addLog({
+        priority: 2, // high
+        message: _.template(setProxyWarningTemplate)({data: args.data})
+      });
     }
   });
 }
@@ -17352,6 +17382,7 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
             <label>Add log</label>
             <select style="width:7em">
               <option value="1" selected>normal</option>
+              <option value="2">high</option>
               <option value="0">debug</option>
             </select>
             <input type="text">

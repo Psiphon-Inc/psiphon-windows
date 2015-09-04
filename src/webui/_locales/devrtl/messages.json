@@ -191,6 +191,18 @@
     "message": "‮Sǝʇʇıuƃs‬",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
+  "notice#systemproxysettings-setproxy-error-body": {
+    "message": "<p>‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬.</p>\n<p>‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.</p>",
+    "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+  },
+  "notice#systemproxysettings-setproxy-error-title": {
+    "message": "‮Sʎsʇǝɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
+    "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+  },
+  "notice#systemproxysettings-setproxy-warning-template": {
+    "message": "‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮Iuʇǝɹuǝʇ‬ ‮ɔouuǝɔʇıou‬ ‮uɐɯǝp‬ “<%- data %>”. ‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.",
+    "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+  },
   "settings#apply-button": {
     "message": "‮∀ddʅʎ‬ ‮Ↄɥɐuƃǝs‬",
     "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."

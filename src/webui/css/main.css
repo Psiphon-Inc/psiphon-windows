@@ -6728,6 +6728,12 @@ body[dir="rtl"] #EgressRegionCombo .btn .flag {
 .showing-priority-0.log-messages .priority-1 {
   background-color: #d9edf7;
 }
+.log-messages .priority-2 .message {
+  font-weight: bold;
+}
+.showing-priority-0.log-messages .priority-2 {
+  background-color: #d9edf7;
+}
 .log-messages .timestamp {
   width: 1%;
   white-space: nowrap;

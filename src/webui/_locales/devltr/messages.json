@@ -191,6 +191,18 @@
     "message": "[Şḗḗŧŧīīƞɠş]",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
+  "notice#systemproxysettings-setproxy-error-body": {
+    "message": "[<p>Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş.</p>\n<p>Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.</p>]",
+    "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+  },
+  "notice#systemproxysettings-setproxy-error-title": {
+    "message": "[Şẏşŧḗḗḿ Ƥřǿǿẋẏ Ḗḗřřǿǿř]",
+    "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+  },
+  "notice#systemproxysettings-setproxy-warning-template": {
+    "message": "[Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ƒǿǿř ŧħḗḗ Īīƞŧḗḗřƞḗḗŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ ƞȧȧḿḗḗḓ “<%- data %>”. Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.]",
+    "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+  },
   "settings#apply-button": {
     "message": "[Ȧȧƥƥŀẏ Ƈħȧȧƞɠḗḗş]",
     "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."

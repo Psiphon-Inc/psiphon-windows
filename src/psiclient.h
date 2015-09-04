@@ -40,9 +40,15 @@ extern ConnectionManager g_connectionManager;
 
 //==== UI Interaction ==================================================
 
+// Indicate connection state
 void UI_SetStateStopped();
 void UI_SetStateStopping();
 void UI_SetStateStarting(const tstring& transportProtocolName);
 void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort);
+
+// Send informational notice to the UI
 void UI_Notice(const string& noticeJSON);
+void UI_Notice(const string& noticeID, const string& techInfo);
+
+// Indicate that the settings have change and should be refreshed in the UI
 void UI_RefreshSettings(const string& settingsJSON);
