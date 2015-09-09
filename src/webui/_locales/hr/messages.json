@@ -16,7 +16,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
     },
     "settings#upstream-proxy#error-modal-body-configured": {
-        "message": "You have configured Psiphon to use an “upstream proxy”.<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease fix the settings and try again.",
+        "message": "Konfigurirali ste Psiphon da koristi \"uzvodni proxy\".<br>\nKako bilo, čini se da nismo u mogućnosti spojiti se sa Psiphon poslužiteljem kroz taj proxy.<br>\nMolimo Vas da to popravite i pokušate ponovno.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
     "logs#show-debug-label": {
@@ -32,7 +32,7 @@
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
     "settings#local-proxy-ports#reason": {
-        "message": "If you use tools on your computer that require manual configuration to work with Psiphon, you will want Psiphon to consistently use the same local port numbers. If you don’t have a reason to specify port numbers, you should allow Psiphon to choose them automatically to help avoid conflicts.",
+        "message": "Ako koristite alate na svom računalu koji zahtjevaju ručno konfiguriranje kako bi radili sa Psiphon-om, želite da Psiphon konzistentno koristi iste brojeve lokalnih port-ova. Ako nema razloga specificirati brojeve port-ova, trebali bi dopustiti Psiphon-u da ih odabere automatski kako bi izbjegli konflikte.",
         "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
     },
     "appbackend#minimized-to-systray-body": {
@@ -52,7 +52,7 @@
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "settings#split-tunnel#reason": {
-        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
+        "message": "Stranice unutar Vaše države u pravilu nisu blokirane, tako da će Vam omogućavanje ove opcije dati brži pristup tim stranicama i ponekad može smanjiti troškove prijenosa podataka.",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#settings": {
@@ -72,7 +72,7 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#egress-region#default": {
-        "message": "Choosing the default <strong>“Fastest Country”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "message": "Odabirom zadane <strong>\"Najbrža država\"</strong> opcije dozvoljava Psiphon-u da se automatski spoji na poslužitelj, što će generalno rezultirati najboljom mrežnom povezanosti.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
     },
     "connection#stopping-msg": {
@@ -80,7 +80,7 @@
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon is currently configured to use your system proxy as its “upstream proxy”.<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease enable “Don't use upstream proxy” and try again.",
+        "message": "Psiphon je trenutno konfiguriran da koristi proxy Vašeg sustava kao svoj \"uzvodni proxy\". <br>\nKako bilo, čini se da nismo u mogućnosti spojiti se sa Psiphon poslužiteljem kroz taj proxy.<br>\nMolimo Vas da omogućite \"Ne koristi uzvodni proxy\" i pokušate ponovno.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
     },
     "feedback#success-message": {
@@ -96,7 +96,7 @@
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "Please visit the website to <strong><a class=\"NewVersionURL\" href=\"#\">download a new version</a></strong> or to get <strong><a class=\"InfoURL\" href=\"#\">help and information</a></strong>.",
+        "message": "Molimo Vas da posjetite stranicu kako bi <strong><a class=\"NewVersionURL\" href=\"#\">preuzeli novu verziju</a></strong> ili kako bi <strong><a class=\"InfoURL\" href=\"#\">dobili pomoć i informacije</a></strong>. Psiphon je dostupan za Android i Windows.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -132,7 +132,7 @@
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#unapplied-changes-prompt#title": {
-        "message": "Settings Changed",
+        "message": "Postavke promijenjene",
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#egress-region#select-us": {
@@ -143,6 +143,10 @@
         "message": "Mnogi problemi mogu biti riješeni preuzimanjem najnovije verzije. Možete <a class=\"NewVersionURL\" href=\"#\">preuzeti novu verziju ovdje</a>, ili nam možete poslati email na <a class=\"NewVersionEmail\" href=\"#\"></a>.",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
+    "notice#systemproxysettings-setproxy-error-body": {
+        "message": "<p>Psiphon failed to set the system’s proxy settings.</p>\n<p>This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.</p>",
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nKonfigurirali ste Psiphon da koristi specifičan lokalni port za SOCKS proxy.<br>\nKako bilo, čini se da se taj port već koristi tako da ga Psiphon ne može koristiti.\n</p>\n<p>\nMolimo promijenite konfiguriranu SOCKS proxy port vrijednost i pokušajte ponovo. Preporučamo da očistite tu vrijednost tako da Psiphon može automatski odabrati dostupan port.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
@@ -152,15 +156,19 @@
         "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
     },
     "settings#systray-minimize#reason": {
-        "message": "Minimizing Psiphon to the notification area (“system tray”) frees up space on your task bar. This is especially helpful if you often run Psiphon for long periods of time.",
+        "message": "Minimaliziranje Psiphon-a u obavijesni prostor (sistemska ploča) oslobađa prostor na Vašoj traci zadataka. Ovo je naročito korisno ako često koristite Psiphon u dužim periodima.",
         "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
     },
     "settings#unapplied-changes-prompt#discard-button": {
-        "message": "Discard",
+        "message": "Odbaci",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
+    "notice#systemproxysettings-setproxy-error-title": {
+        "message": "System Proxy Error",
+        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
     "settings#egress-region#label": {
-        "message": "Connect via",
+        "message": "Spoji se putem",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#local-proxy-ports#socks-label": {
@@ -187,16 +195,12 @@
         "message": "Zatvori",
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
-    "settings#upstream-proxy#error-modal-body-pre-message": {
-        "message": "Ovdje su tehnički podatci pogreške:",
-        "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
-    },
     "settings#local-proxy-ports#http-label": {
         "message": "HTTP/HTTPS",
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
     },
     "settings#unapplied-changes-prompt#apply-button": {
-        "message": "Apply",
+        "message": "Primjeni",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#reset-button": {
@@ -204,7 +208,7 @@
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "about#client-version": {
-        "message": "Psiphon for Windows client version:",
+        "message": "Psiphon za Windows verzija klijenta:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
     "settings#upstream-proxy#heading": {
@@ -212,12 +216,16 @@
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
+        "message": "Psiphon ima poslužitelje u mnogim državama. Koristeći Psiphon poslužitelj u državi koja Vam je blizu će u pravilu pružiti bolju mrežnu povezanost, ali možda želite pristupati stranicama i uslugama kao da ste virtualno u određenoj državi.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
     },
     "settings#vpn-incompatible-msg": {
-        "message": "(Doesn't work with L2TP/IPSec mode.)",
+        "message": "(Ne radi u L2TP/IPSec načinu rada.)",
         "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    },
+    "general#notice-modal-tech-preamble": {
+        "message": "Here is the technical error info:",
+        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
     },
     "settings#local-proxy-ports#unique-error-msg": {
         "message": "Lokalni portovi moraju biti različiti jedni od drugih.",
@@ -228,7 +236,7 @@
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#error-modal#body": {
-        "message": "There are errors in your settings values. Please correct them before proceeding.",
+        "message": "Postoje pogreške u vrijednostima Vaših postavki. Molimo, ispravite ih prije nastavljanja.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "nav#connection#stopped": {
@@ -243,12 +251,16 @@
         "message": "Njemačka",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
+    "notice#systemproxysettings-setproxy-warning-template": {
+        "message": "Psiphon failed to set the system’s proxy settings for the Internet connection named “<%- data %>”. This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.",
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+    },
     "connection#stop-btn": {
         "message": "Stop",
         "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Fastest Country” choice.",
+        "message": "Konfigurirali ste Psiphon da koristi poslužitelj u specifičnoj regiji.<br>\nKako bilo, ta regija više nije dostupna.<br>\nMorate odabrati novu regiju ili promijeniti na zadani izbor: \"Najbrža država\".",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "feedback#text_feedback_bottom_para": {
@@ -256,7 +268,7 @@
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "settings#upstream-proxy#reason": {
-        "message": "Upstream proxies are sometimes required by schools, universities, or businesses. If you know the upstream proxy settings required by your network provider, then manually setting them here may be required to connect.",
+        "message": "Uzvodni proxy-i su nekad zahtjevani od strane škola, sveučilišta ili poslova. Ako znate postavke uzvodnog proxy-a zahtjevanog od strane Vašeg mrežnog davatelja, možda ćete ih morati ručno unijeti kako bi se spojili.",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#local-proxy-ports#error-modal-title": {
@@ -288,7 +300,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
     },
     "settings#local-proxy-ports#leave-blank": {
-        "message": "Leave <strong>blank</strong> for automatic port selection (recommended).",
+        "message": "Ostavite <strong>prazno</strong> za automatski odabir port-a (preporučeno).",
         "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
     },
     "settings#systray-minimize#heading": {
@@ -320,11 +332,11 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
     },
     "settings#error-modal#title": {
-        "message": "Settings Error",
+        "message": "Pogreška postavki",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
     },
     "settings#apply-button": {
-        "message": "Apply Changes",
+        "message": "Primjeni promjene",
         "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
     },
     "appbackend#minimized-to-systray-title": {
@@ -344,15 +356,15 @@
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
     },
     "settings#upstream-proxy#proxy-reqs": {
-        "message": "Only HTTP proxies that support HTTPS are allowed.",
+        "message": "Samo HTTP proxy-i koji podržavaju HTTPS su dopušteni.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#transport-mode#check-label": {
-        "message": "Use L2TP/IPSec mode",
+        "message": "Koristi L2TP/IPSec način rada",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "connection#egress-region-combo-label": {
-        "message": "Connect via",
+        "message": "Spoji se putem",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#egress-region#select-gb": {
@@ -372,7 +384,7 @@
         "description": "The text below the 'sad face' feedback choice."
     },
     "settings#unapplied-changes-prompt#body": {
-        "message": "You have made changes to your settings, but you have not applied the changes.<br><br>Do you wish to apply your changes now or discard them?",
+        "message": "Promijenili ste svoje postavke, ali ih niste primjenili.<br><br>Želite li primjeniti svoje promjene sad ili ih želite odbaciti?",
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#systray-minimize#enable-label": {
@@ -384,7 +396,7 @@
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#upstream-proxy#by-default": {
-        "message": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that behavior by specifying a proxy to use, or by specifying that no such “upstream proxy” should be used.",
+        "message": "Ako vaše računalo već ima konfiguriran proxy, Psiphon će pod zadano koristiti taj proxy kad uspostavlja tunel. Ovo ponašanje možete zaobići specificirajući proxy koji će se koristiti, ili specificirajući da se nijedan takav \"uzvodni proxy\" ne koristi.",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
     },
     "settings#split-tunnel#enable-label": {
@@ -416,11 +428,11 @@
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
-        "message": "Uses Windows L2TP/IPSec virtual networking. This mode will tunnel all of your apps, but it doesn’t provide obfuscation and so does not have strong censorship circumvention capabilities. It is <strong>not recommended</strong> for bypassing most firewalls.",
+        "message": "Koristi Windows L2TP/IPSec virtualno umrežavanje. Ovaj način rada će tunelirati sve Vaše aplikacije, ali ne pruža skrivanje i samim time nema snažne mogućnosti obilaženja cenzure. <strong>Nije preporučeno</strong> za obilaženje većine vatrozida.",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Fastest Country",
+        "message": "Najbrža država",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "connection#connect-btn": {

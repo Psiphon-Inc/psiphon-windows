@@ -96,7 +96,7 @@
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "Por favor, visite el sitio web para <strong><a class=\"NewVersionURL\" href=\"#\">descargar una nueva versión</a></strong> u obtener <strong><a class=\"InfoURL\" href=\"#\">ayuda e información</a></strong>.",
+        "message": "Por favor, visite el sitio web para <strong><a class=\"NewVersionURL\" href=\"#\">descargar una nueva versión</a></strong> o para <strong><a class=\"InfoURL\" href=\"#\">obtener ayuda e información</a></strong>. Psiphon está disponible para Android y Windows.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -143,6 +143,10 @@
         "message": "Muchos problemas pueden arreglarse descargando la versión más reciente. Puede <a class=\"NewVersionURL\" href=\"#\">descargar la última versión haciendo clic aquí</a>, o puede enviar un correo electrónico a <a class=\"NewVersionEmail\" href=\"#\"></a>.",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
+    "notice#systemproxysettings-setproxy-error-body": {
+        "message": "<p>Psiphon no pudo al establecer la configuración para proxy (interpuesto) del sistema.</p>\n<p>Esto podría deberse a un conflicto con su software antivirus. Puede que necesite configurar manualmente su aplicación o los ajustes para proxy de su sistema para que use los servidores proxy locales de Psiphon.</p>",
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nHa configurado Psiphon para que use un puerto local específico para su propio proxy SOCKS.<br>\nSin embargo, ese puerto parece estar ya en uso y por tanto Psiphon no puede usarlo.\n</p>\n<p>\nPor favor, cambie el valor configurado de puerto para proxy SOCKS e inténtelo de nuevo. Recomendamos que deje en blanco el valor de forma que Psiphon pueda seleccionar automáticamente un puerto disponible.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
@@ -158,6 +162,10 @@
     "settings#unapplied-changes-prompt#discard-button": {
         "message": "Descartar",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
+    },
+    "notice#systemproxysettings-setproxy-error-title": {
+        "message": "Error con el proxy del sistema",
+        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#egress-region#label": {
         "message": "Conectar vía",
@@ -187,10 +195,6 @@
         "message": "Cerrar",
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
-    "settings#upstream-proxy#error-modal-body-pre-message": {
-        "message": "Aquí está la información técnica del error:",
-        "description": "Preamble before the technical error message is shown in the 'Upstream Proxy Error' dialog box. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
-    },
     "settings#local-proxy-ports#http-label": {
         "message": "HTTP/HTTPS",
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
@@ -219,6 +223,10 @@
         "message": "(No funciona con el modo L2TP/IPSec (VPN).)",
         "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
+    "general#notice-modal-tech-preamble": {
+        "message": "Aquí tiene la información técnica del error:",
+        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+    },
     "settings#local-proxy-ports#unique-error-msg": {
         "message": "Los puertos locales tienen que ser distintos entre si.",
         "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
@@ -242,6 +250,10 @@
     "settings#egress-region#select-de": {
         "message": "Alemania",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "notice#systemproxysettings-setproxy-warning-template": {
+        "message": "Psiphon no pudo establecer la configuración para proxy (interpuesto) del sistema para la conexión a Internet de nombre “<%- data %>”. Esto podría deberse a un conflicto con su software antivirus. Puede que necesite configurar manualmente su aplicación o los ajustes para proxy del sistema para que usen los servidores proxy locales de Psiphon.",
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
     },
     "connection#stop-btn": {
         "message": "Detener",
