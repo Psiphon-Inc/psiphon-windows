@@ -948,31 +948,6 @@
 
           <hr>
 
-          <form class="form-inline" id="debug-UpstreamProxyError">
-            <label>Notice:UpstreamProxyError</label>
-            <input type="text" placeholder="optional message">
-            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
-            <span class="help-block">
-              Note: The error won't be shown until/unless the connection state hasn't changed in 60 seconds.
-            </span>
-          </form>
-
-          <hr>
-
-          <form class="form-inline" id="debug-HttpProxyPortInUse">
-            <label>Notice:HttpProxyPortInUse</label>
-            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
-          </form>
-
-          <hr>
-
-          <form class="form-inline" id="debug-SocksProxyPortInUse">
-            <label>Notice:SocksProxyPortInUse</label>
-            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
-          </form>
-
-          <hr>
-
           <form class="form-inline" id="debug-AvailableEgressRegions">
             <label>Notice:AvailableEgressRegions</label>
 
@@ -1014,6 +989,54 @@
             </div>
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
           </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-UpstreamProxyError">
+            <label>Notice:UpstreamProxyError</label>
+            <input type="text" placeholder="optional message">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+            <span class="help-block">
+              Note: The error won't be shown until/unless the connection state hasn't changed in 60 seconds.
+            </span>
+          </form>
+
+          <hr>
+
+          <p>
+            Simple notices resulting in modals or log lines:
+          </p>
+          <style>
+            #debug-modal-notices li {
+              list-style: none;
+            }
+          </style>
+          <ul id="debug-modal-notices">
+            <li>
+              <form class="form-inline" id="debug-HttpProxyPortInUse">
+                <label>Notice:HttpProxyPortInUse (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SocksProxyPortInUse">
+                <label>Notice:SocksProxyPortInUse (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SetProxyError">
+                <label>Notice:SystemProxySettings::SetProxyError (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SetProxyWarning">
+                <label>Notice:SystemProxySettings::SetProxyWarning (log)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+          </ul>
 
           <hr>
 

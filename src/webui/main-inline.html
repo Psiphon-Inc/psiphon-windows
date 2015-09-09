@@ -16216,6 +16216,20 @@ $(function debugInit() {
     });
   });
 
+  // Wire up the AvailableEgressRegions notice
+  $('#debug-AvailableEgressRegions a').on('click', function() {
+    var regions = [], regionCheckboxes = $('#debug-AvailableEgressRegions input');
+    for (var i = 0; i < regionCheckboxes.length; i++) {
+      if (regionCheckboxes.eq(i).prop('checked')) {
+        regions.push(regionCheckboxes.eq(i).val());
+      }
+    }
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'AvailableEgressRegions',
+      data: { regions: regions }
+    });
+  });
+
   // Wire up the UpstreamProxyError notice
   $('#debug-UpstreamProxyError a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
@@ -16238,17 +16252,18 @@ $(function debugInit() {
     });
   });
 
-  // Wire up the AvailableEgressRegions notice
-  $('#debug-AvailableEgressRegions a').on('click', function() {
-    var regions = [], regionCheckboxes = $('#debug-AvailableEgressRegions input');
-    for (var i = 0; i < regionCheckboxes.length; i++) {
-      if (regionCheckboxes.eq(i).prop('checked')) {
-        regions.push(regionCheckboxes.eq(i).val());
-      }
-    }
+  // Wire up the SystemProxySettings::SetProxyError notice
+  $('#debug-SetProxyError a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
-      noticeType: 'AvailableEgressRegions',
-      data: { regions: regions }
+      noticeType: 'SystemProxySettings::SetProxyError'
+    });
+  });
+
+  // Wire up the SystemProxySettings::SetProxyWarning notice
+  $('#debug-SetProxyWarning a').on('click', function() {
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'SystemProxySettings::SetProxyWarning',
+      data: '[CONN NAME]'
     });
   });
 
@@ -16302,7 +16317,6 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
     }
     else if (args.noticeType === 'SystemProxySettings::SetProxyWarning') {
       var setProxyWarningTemplate = i18n.t('notice#systemproxysettings-setproxy-warning-template');
-
       addLog({
         priority: 2, // high
         message: _.template(setProxyWarningTemplate)({data: args.data})
@@ -17391,31 +17405,6 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
 
           <hr>
 
-          <form class="form-inline" id="debug-UpstreamProxyError">
-            <label>Notice:UpstreamProxyError</label>
-            <input type="text" placeholder="optional message">
-            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
-            <span class="help-block">
-              Note: The error won't be shown until/unless the connection state hasn't changed in 60 seconds.
-            </span>
-          </form>
-
-          <hr>
-
-          <form class="form-inline" id="debug-HttpProxyPortInUse">
-            <label>Notice:HttpProxyPortInUse</label>
-            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
-          </form>
-
-          <hr>
-
-          <form class="form-inline" id="debug-SocksProxyPortInUse">
-            <label>Notice:SocksProxyPortInUse</label>
-            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
-          </form>
-
-          <hr>
-
           <form class="form-inline" id="debug-AvailableEgressRegions">
             <label>Notice:AvailableEgressRegions</label>
 
@@ -17457,6 +17446,54 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
             </div>
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
           </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-UpstreamProxyError">
+            <label>Notice:UpstreamProxyError</label>
+            <input type="text" placeholder="optional message">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+            <span class="help-block">
+              Note: The error won't be shown until/unless the connection state hasn't changed in 60 seconds.
+            </span>
+          </form>
+
+          <hr>
+
+          <p>
+            Simple notices resulting in modals or log lines:
+          </p>
+          <style>
+            #debug-modal-notices li {
+              list-style: none;
+            }
+          </style>
+          <ul id="debug-modal-notices">
+            <li>
+              <form class="form-inline" id="debug-HttpProxyPortInUse">
+                <label>Notice:HttpProxyPortInUse (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SocksProxyPortInUse">
+                <label>Notice:SocksProxyPortInUse (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SetProxyError">
+                <label>Notice:SystemProxySettings::SetProxyError (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SetProxyWarning">
+                <label>Notice:SystemProxySettings::SetProxyWarning (log)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+          </ul>
 
           <hr>
 

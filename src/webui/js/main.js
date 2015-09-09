@@ -2080,6 +2080,20 @@ $(function debugInit() {
     });
   });
 
+  // Wire up the AvailableEgressRegions notice
+  $('#debug-AvailableEgressRegions a').on('click', function() {
+    var regions = [], regionCheckboxes = $('#debug-AvailableEgressRegions input');
+    for (var i = 0; i < regionCheckboxes.length; i++) {
+      if (regionCheckboxes.eq(i).prop('checked')) {
+        regions.push(regionCheckboxes.eq(i).val());
+      }
+    }
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'AvailableEgressRegions',
+      data: { regions: regions }
+    });
+  });
+
   // Wire up the UpstreamProxyError notice
   $('#debug-UpstreamProxyError a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
@@ -2102,17 +2116,18 @@ $(function debugInit() {
     });
   });
 
-  // Wire up the AvailableEgressRegions notice
-  $('#debug-AvailableEgressRegions a').on('click', function() {
-    var regions = [], regionCheckboxes = $('#debug-AvailableEgressRegions input');
-    for (var i = 0; i < regionCheckboxes.length; i++) {
-      if (regionCheckboxes.eq(i).prop('checked')) {
-        regions.push(regionCheckboxes.eq(i).val());
-      }
-    }
+  // Wire up the SystemProxySettings::SetProxyError notice
+  $('#debug-SetProxyError a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
-      noticeType: 'AvailableEgressRegions',
-      data: { regions: regions }
+      noticeType: 'SystemProxySettings::SetProxyError'
+    });
+  });
+
+  // Wire up the SystemProxySettings::SetProxyWarning notice
+  $('#debug-SetProxyWarning a').on('click', function() {
+    HtmlCtrlInterface_AddNotice({
+      noticeType: 'SystemProxySettings::SetProxyWarning',
+      data: '[CONN NAME]'
     });
   });
 
@@ -2166,7 +2181,6 @@ function HtmlCtrlInterface_AddNotice(jsonArgs) {
     }
     else if (args.noticeType === 'SystemProxySettings::SetProxyWarning') {
       var setProxyWarningTemplate = i18n.t('notice#systemproxysettings-setproxy-warning-template');
-
       addLog({
         priority: 2, // high
         message: _.template(setProxyWarningTemplate)({data: args.data})
