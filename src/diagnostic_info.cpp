@@ -31,42 +31,39 @@
 
 
 HANDLE g_diagnosticHistoryMutex = CreateMutex(NULL, FALSE, 0);
-vector<string> g_diagnosticHistory;
+Json::Value g_diagnosticHistory(Json::arrayValue);
 
-void _AddDiagnosticInfoHelper(const char* entry)
+
+// This is really just a non-template wrapper around AddDiagnosticInfo, to help
+// users of it recognize that they can pass a Json::Value.
+void AddDiagnosticInfoJson(const char* message, const Json::Value& jsonValue)
 {
-    AutoMUTEX mutex(g_diagnosticHistoryMutex);
-    g_diagnosticHistory.push_back(entry);
-
-    OutputDebugStringA(entry);
-    OutputDebugStringA("\n");
+    AddDiagnosticInfo(message, jsonValue);
 }
 
-void AddDiagnosticInfoYaml(const char* message, const char* yaml)
+void AddDiagnosticInfoJson(const char* message, const char* jsonString)
 {
-    YAML::Node node = YAML::Load(yaml);
-    if (!node.IsNull())
-    {
-        AddDiagnosticInfo(message, node);
+    if (!jsonString) {
+        AddDiagnosticInfo(message, Json::nullValue);
+
     }
-    else
+
+    Json::Value json;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(jsonString, json);
+    if (!parsingSuccessful)
     {
-        AddDiagnosticInfo(message, "");
+        return;
     }
+
+    AddDiagnosticInfo(message, json);
 }
 
-void GetDiagnosticHistory(YAML::Emitter& out)
+void GetDiagnosticHistory(Json::Value& o_json)
 {
+    o_json.clear();
     AutoMUTEX mutex(g_diagnosticHistoryMutex);
-    out << YAML::BeginSeq;
-    for (vector<string>::const_iterator it = g_diagnosticHistory.begin();
-         it != g_diagnosticHistory.end();
-         it++)
-    {
-        YAML::Node node = YAML::Load(*it);
-        out << node;
-    }
-    out << YAML::EndSeq;
+    o_json = Json::Value(g_diagnosticHistory);
 }
 
 
@@ -315,8 +312,8 @@ struct SystemInfo
     wstring version;
     wstring codeSet;
     wstring countryCode;
-    wstring freePhysicalMemoryKB;
-    wstring freeVirtualMemoryKB;
+    UINT64 freePhysicalMemoryKB;
+    UINT64 freeVirtualMemoryKB;
     wstring locale;
     wstring architecture;
     UINT32 language;
@@ -490,18 +487,18 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
 
         // The MSDN documentation says that FreePhysicalMemory and FreeVirtualMemory
         // are uint64, but in practice vtProp.ullVal is getting bad values. We'll 
-        // use the string value.
+        // get the string value and convert.
         hr = pclsObj->Get(L"FreePhysicalMemory", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            o_sysInfo.freePhysicalMemoryKB = vtProp.bstrVal;
+            o_sysInfo.freePhysicalMemoryKB = std::wcstoll(vtProp.bstrVal, NULL, 10);
             VariantClear(&vtProp);
         }
 
         hr = pclsObj->Get(L"FreeVirtualMemory", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
         {
-            o_sysInfo.freeVirtualMemoryKB = vtProp.bstrVal;
+            o_sysInfo.freeVirtualMemoryKB = std::wcstoll(vtProp.bstrVal, NULL, 10);
             VariantClear(&vtProp);
         }
 
@@ -1033,90 +1030,81 @@ void DoStartupDiagnosticCollection()
 Assumes that `out` is already initialized with YAML::BeginMap.
 Adds diagnostic info to `out`.
 */
-void GetDiagnosticInfo(YAML::Emitter& out)
+void GetDiagnosticInfo(Json::Value& o_json)
 {
+    o_json = Json::Value(Json::objectValue);
+
     /*
-     * System Information
+     * SystemInformation
      */
 
-    out << YAML::Key << "SystemInformation";
-    out << YAML::Value;
-    out << YAML::BeginMap; // sysinfo
+    o_json["SystemInformation"] = Json::Value(Json::objectValue);
 
-    out << YAML::Key << "PsiphonInfo";
-    out << YAML::Value;
-    out << YAML::BeginMap; // embedded
-    out << YAML::Key << "PROPAGATION_CHANNEL_ID" << YAML::Value << PROPAGATION_CHANNEL_ID;
-    out << YAML::Key << "SPONSOR_ID" << YAML::Value << SPONSOR_ID;
-    out << YAML::Key << "CLIENT_VERSION" << YAML::Value << CLIENT_VERSION;
-    out << YAML::Key << "splitTunnel" << YAML::Value << Settings::SplitTunnel();
-    out << YAML::Key << "selectedTransport" << YAML::Value << TStringToNarrow(Settings::Transport()).c_str();
-    out << YAML::EndMap; // embedded
+    Json::Value psiphonInfo = Json::Value(Json::objectValue);
+    psiphonInfo["PROPAGATION_CHANNEL_ID"] = PROPAGATION_CHANNEL_ID;
+    psiphonInfo["SPONSOR_ID"] = SPONSOR_ID;
+    psiphonInfo["CLIENT_VERSION"] = CLIENT_VERSION;
+    psiphonInfo["splitTunnel"] = Settings::SplitTunnel();
+    psiphonInfo["selectedTransport"] = TStringToNarrow(Settings::Transport());
+    o_json["SystemInformation"]["PsiphonInfo"] = psiphonInfo;
+
+    /*
+    * SystemInformation::OSInfo
+    */
 
     SystemInfo sysInfo;
     // We'll fill in the values even if this call fails.
     (void)GetSystemInfo(sysInfo);
-    out << YAML::Key << "OSInfo";
-    out << YAML::Value;
-    out << YAML::BeginMap; // osinfo
-    out << YAML::Key << "name" << YAML::Value << WStringToNarrow(sysInfo.name).c_str();
-    out << YAML::Key << "version" << YAML::Value << WStringToNarrow(sysInfo.version).c_str();
-    out << YAML::Key << "codeSet" << YAML::Value << WStringToNarrow(sysInfo.codeSet).c_str();
-    out << YAML::Key << "countryCode" << YAML::Value << WStringToNarrow(sysInfo.countryCode).c_str();
-    out << YAML::Key << "freePhysicalMemoryKB" << YAML::Value << WStringToNarrow(sysInfo.freePhysicalMemoryKB).c_str();
-    out << YAML::Key << "freeVirtualMemoryKB" << YAML::Value << WStringToNarrow(sysInfo.freeVirtualMemoryKB).c_str();
-    out << YAML::Key << "locale" << YAML::Value << WStringToNarrow(sysInfo.locale).c_str();
-    out << YAML::Key << "architecture" << YAML::Value << WStringToNarrow(sysInfo.architecture).c_str();
-    out << YAML::Key << "language" << YAML::Value << sysInfo.language;
-    out << YAML::Key << "servicePackMajor" << YAML::Value << sysInfo.servicePackMajor;
-    out << YAML::Key << "servicePackMinor" << YAML::Value << sysInfo.servicePackMinor;
-    out << YAML::Key << "status" << YAML::Value << WStringToNarrow(sysInfo.status).c_str();
-    out << YAML::Key << "starter" << YAML::Value << sysInfo.starter;
-    out << YAML::Key << "mshtmlDLLVersion" << YAML::Value << WStringToNarrow(sysInfo.mshtmlDLLVersion).c_str();
-    out << YAML::EndMap; // osinfo
+    Json::Value osInfo = Json::Value(Json::objectValue);
+    osInfo["name"] = WStringToUTF8(sysInfo.name);
+    osInfo["version"] = WStringToUTF8(sysInfo.version);
+    osInfo["codeSet"] = WStringToUTF8(sysInfo.codeSet);
+    osInfo["countryCode"] = WStringToUTF8(sysInfo.countryCode);
+    osInfo["freePhysicalMemoryKB"] = sysInfo.freePhysicalMemoryKB;
+    osInfo["freeVirtualMemoryKB"] = sysInfo.freeVirtualMemoryKB;
+    osInfo["locale"] = WStringToUTF8(sysInfo.locale);
+    osInfo["architecture"] = WStringToUTF8(sysInfo.architecture);
+    osInfo["language"] = sysInfo.language;
+    osInfo["servicePackMajor"] = sysInfo.servicePackMajor;
+    osInfo["servicePackMinor"] = sysInfo.servicePackMinor;
+    osInfo["status"] = WStringToUTF8(sysInfo.status);
+    osInfo["starter"] = sysInfo.starter;
+    osInfo["mshtmlDLLVersion"] = WStringToUTF8(sysInfo.mshtmlDLLVersion);
+    o_json["SystemInformation"]["OSInfo"] = osInfo;
 
-    out << YAML::Key << "NetworkInfo";
-    out << YAML::Value;
-    out << YAML::BeginMap; // NetworkInfo
+    /*
+    * SystemInformation::NetworkInfo
+    */
 
-    out << YAML::Key << "Current";
-    out << YAML::Value;
-    out << YAML::BeginMap; // NetworkInfo:Current
-    
-    out << YAML::Key << "Internet";
-    out << YAML::Value;
-    out << YAML::BeginMap; // NetworkInfo:Current:Internet
+    Json::Value networkInfo = Json::Value(Json::objectValue);
+
+    networkInfo["Current"] = Json::Value(Json::objectValue);
+
+    networkInfo["Current"]["Internet"] = Json::Value(Json::objectValue);
     if (sysInfo.wininet_success)
     {
-        out << YAML::Key << "internetConnected" << YAML::Value << true;
-        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << sysInfo.wininet_info.internetConnectionConfigured;
-        out << YAML::Key << "internetConnectionLAN" << YAML::Value << sysInfo.wininet_info.internetConnectionLAN;
-        out << YAML::Key << "internetConnectionModem" << YAML::Value << sysInfo.wininet_info.internetConnectionModem;
-        out << YAML::Key << "internetConnectionOffline" << YAML::Value << sysInfo.wininet_info.internetConnectionOffline;
-        out << YAML::Key << "internetConnectionProxy" << YAML::Value << sysInfo.wininet_info.internetConnectionProxy;
-        out << YAML::Key << "internetRASInstalled" << YAML::Value << sysInfo.wininet_info.internetRASInstalled;
+        networkInfo["Current"]["Internet"]["internetConnected"] = true;
+        networkInfo["Current"]["Internet"]["internetConnectionConfigured"] = sysInfo.wininet_info.internetConnectionConfigured;
+        networkInfo["Current"]["Internet"]["internetConnectionLAN"] = sysInfo.wininet_info.internetConnectionLAN;
+        networkInfo["Current"]["Internet"]["internetConnectionModem"] = sysInfo.wininet_info.internetConnectionModem;
+        networkInfo["Current"]["Internet"]["internetConnectionOffline"] = sysInfo.wininet_info.internetConnectionOffline;
+        networkInfo["Current"]["Internet"]["internetConnectionProxy"] = sysInfo.wininet_info.internetConnectionProxy;
+        networkInfo["Current"]["Internet"]["internetRASInstalled"] = sysInfo.wininet_info.internetRASInstalled;
     }
     else 
     {
-        out << YAML::Key << "internetConnected" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionOffline" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
+        networkInfo["Current"]["Internet"]["internetConnected"] = Json::nullValue;
+        networkInfo["Current"]["Internet"]["internetConnectionConfigured"] = Json::nullValue;
+        networkInfo["Current"]["Internet"]["internetConnectionLAN"] = Json::nullValue;
+        networkInfo["Current"]["Internet"]["internetConnectionModem"] = Json::nullValue;
+        networkInfo["Current"]["Internet"]["internetConnectionOffline"] = Json::nullValue;
+        networkInfo["Current"]["Internet"]["internetConnectionProxy"] = Json::nullValue;
+        networkInfo["Current"]["Internet"]["internetRASInstalled"] = Json::nullValue;
     }
-    out << YAML::EndMap; // NetworkInfo:Current:Internet
-    out << YAML::EndMap; // NetworkInfo:Current
 
+    networkInfo["Original"] = Json::Value(Json::objectValue);
 
-    out << YAML::Key << "Original";
-    out << YAML::Value;
-    out << YAML::BeginMap; // NetworkInfo:Original
-
-    out << YAML::Key << "Proxy";
-    out << YAML::Value;
-    out << YAML::BeginSeq;
+    networkInfo["Original"]["Proxy"] = Json::Value(Json::arrayValue);
 
     vector<ConnectionProxy> originalProxyInfo;
     GetSanitizedOriginalProxyInfo(originalProxyInfo);
@@ -1124,61 +1112,67 @@ void GetDiagnosticInfo(YAML::Emitter& out)
          it != originalProxyInfo.end();
          it++)
     {
-        out << YAML::BeginMap; // NetworkInfo:Original:Proxy
-        out << YAML::Key << "connectionName" << YAML::Value << TStringToNarrow(it->name).c_str();
-        out << YAML::Key << "flags" << YAML::Value << TStringToNarrow(it->flagsString).c_str();
-        out << YAML::Key << "proxy" << YAML::Value << TStringToNarrow(it->proxy).c_str();
-        out << YAML::Key << "bypass" << YAML::Value << TStringToNarrow(it->bypass).c_str();
-        out << YAML::EndMap; // NetworkInfo:Original:Proxy
-    }
-    out << YAML::EndSeq;
+        Json::Value originalProxyInfoEntry(Json::objectValue);
+        originalProxyInfoEntry["connectionName"] = WStringToUTF8(it->name);
+        originalProxyInfoEntry["flags"] = WStringToUTF8(it->flagsString);
+        originalProxyInfoEntry["proxy"] = WStringToUTF8(it->proxy);
+        originalProxyInfoEntry["bypass"] = WStringToUTF8(it->bypass);
 
-    out << YAML::Key << "Internet";
-    out << YAML::Value;
-    out << YAML::BeginMap; // NetworkInfo:Original:Internet
+        networkInfo["Original"]["Proxy"].append(originalProxyInfoEntry);
+    }
+
+    networkInfo["Original"]["Internet"] = Json::Value(Json::objectValue);
     if (g_startupDiagnosticInfo.wininet_success)
     {
-        out << YAML::Key << "internetConnected" << YAML::Value << true;
-        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionConfigured;
-        out << YAML::Key << "internetConnectionLAN" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionLAN;
-        out << YAML::Key << "internetConnectionModem" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionModem;
-        out << YAML::Key << "internetConnectionOffline" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionOffline;
-        out << YAML::Key << "internetConnectionProxy" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetConnectionProxy;
-        out << YAML::Key << "internetRASInstalled" << YAML::Value << g_startupDiagnosticInfo.wininet_info.internetRASInstalled;
+        networkInfo["Original"]["Internet"]["internetConnected"] = true;
+        networkInfo["Original"]["Internet"]["internetConnectionConfigured"] = g_startupDiagnosticInfo.wininet_info.internetConnectionConfigured;
+        networkInfo["Original"]["Internet"]["internetConnectionLAN"] = g_startupDiagnosticInfo.wininet_info.internetConnectionLAN;
+        networkInfo["Original"]["Internet"]["internetConnectionModem"] = g_startupDiagnosticInfo.wininet_info.internetConnectionModem;
+        networkInfo["Original"]["Internet"]["internetConnectionOffline"] = g_startupDiagnosticInfo.wininet_info.internetConnectionOffline;
+        networkInfo["Original"]["Internet"]["internetConnectionProxy"] = g_startupDiagnosticInfo.wininet_info.internetConnectionProxy;
+        networkInfo["Original"]["Internet"]["internetRASInstalled"] = g_startupDiagnosticInfo.wininet_info.internetRASInstalled;
     }
     else 
     {
-        out << YAML::Key << "internetConnected" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionConfigured" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionLAN" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionModem" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionOffline" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetConnectionProxy" << YAML::Value << YAML::Null;
-        out << YAML::Key << "internetRASInstalled" << YAML::Value << YAML::Null;
+        networkInfo["Original"]["Internet"]["internetConnected"] = Json::nullValue;
+        networkInfo["Original"]["Internet"]["internetConnectionConfigured"] = Json::nullValue;
+        networkInfo["Original"]["Internet"]["internetConnectionLAN"] = Json::nullValue;
+        networkInfo["Original"]["Internet"]["internetConnectionModem"] = Json::nullValue;
+        networkInfo["Original"]["Internet"]["internetConnectionOffline"] = Json::nullValue;
+        networkInfo["Original"]["Internet"]["internetConnectionProxy"] = Json::nullValue;
+        networkInfo["Original"]["Internet"]["internetRASInstalled"] = Json::nullValue;
     }
-    out << YAML::EndMap; // NetworkInfo:Original:Internet
-    out << YAML::EndMap; // NetworkInfo:Original
 
-    out << YAML::EndMap; // NetworkInfo
+    o_json["SystemInformation"]["NetworkInfo"] = networkInfo;
 
-    out << YAML::Key << "UserInfo";
-    out << YAML::Value;
-    out << YAML::BeginMap; //UserInfo
+    /*
+    * SystemInformation::UserInfo
+    */
+
+    Json::Value userInfo = Json::Value(Json::objectValue);
+
     if (sysInfo.groupInfo_success)
     {
-        out << YAML::Key << "inAdminsGroup" << YAML::Value << sysInfo.groupInfo.inAdminsGroup;
-        out << YAML::Key << "inUsersGroup" << YAML::Value << sysInfo.groupInfo.inUsersGroup;
-        out << YAML::Key << "inGuestsGroup" << YAML::Value << sysInfo.groupInfo.inGuestsGroup;
-        out << YAML::Key << "inPowerUsersGroup" << YAML::Value << sysInfo.groupInfo.inPowerUsersGroup;
+        userInfo["inAdminsGroup"] = sysInfo.groupInfo.inAdminsGroup;
+        userInfo["inUsersGroup"] = sysInfo.groupInfo.inUsersGroup;
+        userInfo["inGuestsGroup"] = sysInfo.groupInfo.inGuestsGroup;
+        userInfo["inPowerUsersGroup"] = sysInfo.groupInfo.inPowerUsersGroup;
     }
     else 
     {
-        out << YAML::Key << "inAdminsGroup" << YAML::Value << YAML::Null;
-        out << YAML::Key << "inUsersGroup" << YAML::Value << YAML::Null;
-        out << YAML::Key << "inGuestsGroup" << YAML::Value << YAML::Null;
-        out << YAML::Key << "inPowerUsersGroup" << YAML::Value << YAML::Null;
+        userInfo["inAdminsGroup"] = Json::nullValue;
+        userInfo["inUsersGroup"] = Json::nullValue;
+        userInfo["inGuestsGroup"] = Json::nullValue;
+        userInfo["inPowerUsersGroup"] = Json::nullValue;
     }
-    out << YAML::EndMap; // UserInfo
+
+    o_json["SystemInformation"]["UserInfo"] = userInfo;
+
+    /*
+    * SystemInformation::SecurityInfo
+    */
+
+    Json::Value securityInfo = Json::Value(Json::objectValue);
 
     vector<SecurityInfo> antiVirusInfo, antiSpywareInfo, firewallInfo;
     GetOSSecurityInfo(antiVirusInfo, antiSpywareInfo, firewallInfo);
@@ -1193,63 +1187,56 @@ void GetDiagnosticInfo(YAML::Emitter& out)
     securityInfoSets.push_back(SecurityInfoSet("AntiSpywareInfo", antiSpywareInfo));
     securityInfoSets.push_back(SecurityInfoSet("FirewallInfo", firewallInfo));
 
-    out << YAML::Key << "SecurityInfo";
-    out << YAML::Value;
-    out << YAML::BeginMap; // SecurityInfo
-
     for (vector<SecurityInfoSet>::const_iterator securityInfoSet = securityInfoSets.begin();
          securityInfoSet != securityInfoSets.end();
          securityInfoSet++)
     {
-        out << YAML::Key << securityInfoSet->name.c_str();
-        out << YAML::Value;
-        out << YAML::BeginSeq;
+        Json::Value securityInfoSetJson(Json::arrayValue);
+
         for (vector<SecurityInfo>::const_iterator it = securityInfoSet->results.begin();
              it != securityInfoSet->results.end();
              it++)
         {
-            out << YAML::BeginMap;
-            out << YAML::Key << "displayName" << YAML::Value << TStringToNarrow(it->displayName).c_str();
-            out << YAML::Key << "version" << YAML::Value << TStringToNarrow(it->version).c_str();
-            out << YAML::Key << "v1";
-            out << YAML::Value;
-            out << YAML::BeginMap;
-            out << YAML::Key << "productUpToDate" << YAML::Value << it->v1.productUpToDate;
-            out << YAML::Key << "enabled" << YAML::Value << it->v1.enabled;
-            out << YAML::Key << "versionNumber" << YAML::Value << TStringToNarrow(it->v1.versionNumber).c_str();
-            out << YAML::EndMap;
-            out << YAML::Key << "v2";
-            out << YAML::Value;
-            out << YAML::BeginMap;
-            out << YAML::Key << "productState" << YAML::Value << it->v2.productState;
-            out << YAML::Key << "securityProvider" << YAML::Value << TStringToNarrow(it->v2.securityProvider).c_str();
-            out << YAML::Key << "enabled" << YAML::Value << it->v2.enabled;
-            out << YAML::Key << "definitionsUpToDate" << YAML::Value << it->v2.definitionsUpToDate;
-            out << YAML::EndMap;
-            out << YAML::EndMap;
+            Json::Value resultJson(Json::objectValue);
+
+            resultJson["displayName"] = WStringToUTF8(it->displayName);
+            resultJson["version"] = WStringToUTF8(it->version);
+            
+            resultJson["v1"] = Json::Value(Json::objectValue);
+            resultJson["v1"]["productUpToDate"] = it->v1.productUpToDate;
+            resultJson["v1"]["enabled"] = it->v1.enabled;
+            resultJson["v1"]["versionNumber"] = WStringToUTF8(it->v1.versionNumber);
+
+            resultJson["v2"] = Json::Value(Json::objectValue);
+            resultJson["v2"]["productState"] = (Json::Int)it->v2.productState;
+            resultJson["v2"]["securityProvider"] = WStringToUTF8(it->v2.securityProvider);
+            resultJson["v2"]["enabled"] = it->v2.enabled;
+            resultJson["v2"]["definitionsUpToDate"] = it->v2.definitionsUpToDate;
+
+            securityInfoSetJson.append(resultJson);
         }
-        out << YAML::EndSeq;
+
+        securityInfo[securityInfoSet->name] = securityInfoSetJson;
     }
 
-    out << YAML::EndMap; // SecurityInfo
+    o_json["SystemInformation"]["SecurityInfo"] = securityInfo;
 
-    out << YAML::Key << "Misc";
-    out << YAML::Value;
-    out << YAML::BeginMap; // misc
-    out << YAML::Key << "mideastEnabled" << YAML::Value << sysInfo.mideastEnabled;
-    out << YAML::Key << "slowMachine" << YAML::Value << sysInfo.slowMachine;
-    out << YAML::EndMap; // misc
+    /*
+    * SystemInformation::Misc
+    */
 
+    Json::Value miscInfo = Json::Value(Json::objectValue);
 
-    out << YAML::EndMap; // sysinfo
+    miscInfo["mideastEnabled"] = sysInfo.mideastEnabled;
+    miscInfo["slowMachine"] = sysInfo.slowMachine;
+
+    o_json["SystemInformation"]["Misc"] = miscInfo;
 
     /*
      * Status History
      */
 
-    out << YAML::Key << "StatusHistory";
-    out << YAML::Value;
-    out << YAML::BeginSeq;
+    Json::Value statusHistory = Json::Value(Json::arrayValue);
 
     vector<MessageHistoryEntry> messageHistory;
     GetMessageHistory(messageHistory);
@@ -1257,14 +1244,15 @@ void GetDiagnosticInfo(YAML::Emitter& out)
          entry != messageHistory.end();
          entry++)
     {
-        out << YAML::BeginMap;
-        out << YAML::Key << "message" << YAML::Value << TStringToNarrow(entry->message).c_str();
-        out << YAML::Key << "debug" << YAML::Value << entry->debug;
-        out << YAML::Key << "timestamp" << YAML::Value << TStringToNarrow(entry->timestamp).c_str();
-        out << YAML::EndMap;
+        Json::Value messageEntry(Json::objectValue);
+        messageEntry["message"] = WStringToUTF8(entry->message);
+        messageEntry["debug"] = entry->debug;
+        messageEntry["timestamp!!timestamp"] = WStringToUTF8(entry->timestamp);
+        
+        statusHistory.append(messageEntry);
     }
 
-    out << YAML::EndSeq;
+    o_json["StatusHistory"] = statusHistory;
 }
 
 
@@ -1287,31 +1275,22 @@ bool SendFeedbackAndDiagnosticInfo(
     rng.GenerateBlock(randBytes, randBytesLen);
     string feedbackID = Hexlify(randBytes, randBytesLen);
 
-    YAML::Emitter out;
-    out.SetOutputCharset(YAML::EscapeNonAscii);
-
-    out << YAML::BeginMap; // overall
+    Json::Value outJson(Json::objectValue);
 
     // Metadata
-    out << YAML::Key << "Metadata";
-    out << YAML::Value;
-    out << YAML::BeginMap; // Metadata
-    out << YAML::Key << "platform" << YAML::Value << "windows";
-    out << YAML::Key << "version" << YAML::Value << 2;
-    out << YAML::Key << "id" << YAML::Value << feedbackID;
-    out << YAML::EndMap; // Metadata
+    outJson["Metadata"] = Json::Value(Json::objectValue);
+    outJson["Metadata"]["platform"] = "windows";
+    outJson["Metadata"]["version"] = 2;
+    outJson["Metadata"]["id"] = feedbackID;
 
     // Diagnostic info
     if (sendDiagnosticInfo)
     {
-        out << YAML::Key << "DiagnosticInfo";
-        out << YAML::Value;
-        out << YAML::BeginMap; // DiagnosticInfo
-        GetDiagnosticInfo(out);
-        out << YAML::Key << "DiagnosticHistory";
-        out << YAML::Value;
-        GetDiagnosticHistory(out);
-        out << YAML::EndMap; // DiagnosticInfo
+        outJson["DiagnosticInfo"] = Json::Value(Json::objectValue);
+        GetDiagnosticInfo(outJson["DiagnosticInfo"]);
+        
+        outJson["DiagnosticInfo"]["DiagnosticHistory"] = Json::Value(Json::arrayValue);
+        GetDiagnosticHistory(outJson["DiagnosticInfo"]["DiagnosticHistory"]);
     }
 
     // Feedback
@@ -1319,33 +1298,28 @@ bool SendFeedbackAndDiagnosticInfo(
     // email address is discarded.
     if (!feedback.empty() || !surveyJSON.empty())
     {
-        out << YAML::Key << "Feedback";
-        out << YAML::Value;
-        out << YAML::BeginMap; // Feedback
-        out << YAML::Key << "email" << emailAddress.c_str();
-        out << YAML::Key << "Message";
-        out << YAML::Value;
-        out << YAML::BeginMap; // Feedback.Message
-        out << YAML::Key << "text" << YAML::Value << feedback.c_str();
-        out << YAML::EndMap; // Feedback.Message
-        out << YAML::Key << "Survey";
-        out << YAML::Value;
-        out << YAML::BeginMap; // Feedback.Survey
-        out << YAML::Key << "json" << surveyJSON.c_str();
-        out << YAML::EndMap; // Feedback.Survey
-        out << YAML::EndMap; // Feedback
-    }
+        outJson["Feedback"] = Json::Value(Json::objectValue);
 
-    out << YAML::EndMap; // overall
+        outJson["Feedback"]["email"] = emailAddress;
+
+        outJson["Feedback"]["Message"] = Json::Value(Json::objectValue);
+        outJson["Feedback"]["Message"]["text"] = feedback;
+
+        outJson["Feedback"]["Survey"] = Json::Value(Json::objectValue);
+        outJson["Feedback"]["Survey"]["json"] = surveyJSON;
+    }
 
     //
     // Upload the feedback/diagnostic info 
     //
 
+    Json::FastWriter jsonWriter;
+    string outJsonString = jsonWriter.write(outJson);
+
     string encryptedPayload;
     if (!PublicKeyEncryptData(
             FEEDBACK_ENCRYPTION_PUBLIC_KEY, 
-            out.c_str(), 
+            outJsonString.c_str(),
             encryptedPayload))
     {
         return false;

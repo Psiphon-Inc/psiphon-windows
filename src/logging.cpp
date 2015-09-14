@@ -34,7 +34,7 @@
 * `my_print` is displayed to user (mid-priority) and is added to 
   `MessageHistory` (and so feedback).
     - Has sensitivity flag.
-* `AddDiagnosticInfoYaml` is added to `DiagnosticHistory` (and so feedback) but 
+* `AddDiagnosticInfoJson` is added to `DiagnosticHistory` (and so feedback) but 
   is not displayed to user.
     - Does not have sensitivity flag. It's only called with data that needs to go in feedback.
 

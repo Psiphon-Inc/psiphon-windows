@@ -73,6 +73,11 @@ static string WStringToUTF8(LPCWSTR wString)
     return utf8_string;
 }
 
+static string WStringToUTF8(const wstring& wString)
+{
+    return WStringToUTF8(wString.c_str());
+}
+
 static wstring UTF8ToWString(LPCSTR utf8String)
 {
     // There is an issue in VS2015 that messes up codecvt. For a bit of info

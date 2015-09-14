@@ -810,7 +810,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 
     if (logOutputToDiagnostics)
     {
-        AddDiagnosticInfoYaml("CoreNotice", line);
+        AddDiagnosticInfoJson("CoreNotice", line);
     }
 }
 
