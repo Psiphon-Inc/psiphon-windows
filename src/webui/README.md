@@ -33,6 +33,8 @@ $ node fake-translations.js
 
 ## TODO
 
+* IE7: For long languages (like Croatian), text in EgressRegion selector doesn't fit.
+
 * Automation: Switch to VS2015.
 * Update user guide on website.
 
