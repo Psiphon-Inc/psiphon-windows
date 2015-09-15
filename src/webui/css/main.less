@@ -1,0 +1,947 @@
+// Copyright (c) 2015, Psiphon Inc.
+// All rights reserved.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+/* MAIN.CSS IS GENERATED. EDIT MAIN.LESS. */
+
+@import "_rtl-support.less";
+
+// Based on this palette: https://coolors.co/app/B83E1F-1b7b9c-75b7ab-16627f-bcdae4
+
+// Main red in P logo: #B83E1F
+// Three blues sometimes used for Psiphon stuff: Light: #1B7B9C, Shaded: #16627F, Dark: #052239
+
+//
+// The main interaction colors and their semantic implication/usage.
+//
+
+// "If clicked, this will lead you elsewhere (either in or out of the app),
+// but won't *do* anything."
+//    - links
+//    - Additional semantic: Underlined means it's an external link.
+//    - Clicking must produce no side-effects (besides navigation)
+//    - Exception: non-active nav items should be included under this, but for
+//      aesthetic reasons we're leaving them white.
+@psiLink: #B83E1F;
+
+// "If clicked, this will be engaged."
+//    - unselected Happy/sad, checkboxes, egress dropdown
+//    - no side-effects (until form is submitted or whatever)
+@psiEngageable: #75B7AB;
+
+// "If clicked, irrevocable action will occur."
+//    - Apply, Submit
+@psiAction: #16627F;
+
+// "This is engaged."
+//    - selected nav, selected dropdown, selected happy/sad
+//    - Items with this colour should be non-interactive (because they're already engaged)
+//    - Also the transitory 'active' color for links? Maybe for focused textbox?
+//    - Not checked checkboxes, since checked and unchecked have equally significant meaning.
+@psiEngaged: #1B7B9C;
+
+// "This clickable thing is hovered."
+//    - For all clickable things? Maybe for hovered textbox?
+@psiClickHover: #BCDAE4;
+
+//
+// Other colors and uses
+//
+
+// The color of text on the action colors.
+@psiTextOnLink: #EEEEEE;
+@psiTextOnEngageable: #EEEEEE;
+@psiTextOnAction: #EEEEEE;
+@psiTextOnEngaged: #EEEEEE;
+@psiTextOnClickHover: darken(@psiClickHover, 60%);
+
+@psiLinkHover: darken(@psiClickHover, 20%);
+
+// Some items are overwhelmed by the engageable color, so we need a lighter variant
+@psiEngageableLight: lighten(@psiEngageable, 30%);
+
+// Aesthetically, we want the header and the active nav item to be the same color.
+// This is effectively the main app color.
+@psiHeader: @psiEngaged;
+@psiTextOnHeader: @psiTextOnEngaged;
+
+@psiBaseWhite: #FFF; // e.g., nav background
+@psiBaseLight: #FBFCF9; // a very light derivation of the other greens
+@psiBaseText: #222;
+
+
+@brand-primary: @psiAction;
+@brand-success: #51A253;
+@brand-info: #5bc0de;
+@brand-warning: #f0ad4e;
+@brand-danger: #C25350;
+
+
+@import "vendor/bootstrap-2.3.2/less/bootstrap.less";
+@import "vendor/bootstrap-2.3.2/less/responsive.less";
+
+@import "vendor/icomoon/variables.less";
+
+@awesome-bootstrap-check: @icon-check;
+@import "vendor/awesome-bootstrap-checkbox.less";
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  // Without this, there will always be a scrollbar on the window.
+  overflow: hidden;
+}
+
+body {
+  // Try to prevent a vertical scroll bar.
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  overflow-y: hidden;
+  // We stil seem to have body scroll problems triggered by click-drag. That
+  // should be fixed by this:
+  -ms-scroll-limit-y-max: 0;
+  // But isn't. So the JS initScrollFix() function is used to really fix it.
+}
+
+html, body
+{
+  // This should disable manualy zooming, but... doesn't.
+  -ms-content-zooming: none;
+}
+
+// The element focus outlines spoils the illusion of being an app vs. a webpage.
+// Note that this doesn't seem to have an effect with IE<=9.
+// Note also that this is a bad usuability and accessibility trick for real webpages.
+// We should think about *not* doing this.
+* {
+  outline: 0 !important;
+}
+
+// External links should be underlined
+a[href^=http], a[href^=mailto] {
+  text-decoration: underline;
+}
+
+// Disallow textarea horizontal resizing. Our layout can handle vertical size
+// changes, but horizontal might wreck it.
+textarea {
+  resize: vertical;
+}
+
+// Give checkbox and label a hover effect
+.checkbox-container {
+  display: inline-block;
+  .ie7-inline-block();
+  padding: 2px 3px;
+
+  &:hover {
+    background-color: @psiClickHover;
+  }
+
+  label {
+    // Remove default margin...
+    margin: 0;
+  }
+  // ...and add it to the container
+  margin-bottom: 5px;
+}
+
+
+/* HEADER AND NAV */
+
+@headerHeight: 90px;
+@headerPad: 0px;
+@headerBannerHeight: 48px; // Determined by our banner spec.
+@headerLogoHeight: 100px;
+@headerLogoMarginTop: 10px;
+// By default the nav top is at @headerHeight, but we want it to be below the
+// bottom of the logo image (with pad).
+@navTopPad: ((@headerLogoHeight + @headerLogoMarginTop) - @headerHeight + @headerLogoMarginTop + 30px);
+@headerBannerTopMargin: (@headerHeight - @headerBannerHeight) / 2;
+
+@navLeftBorderColor: @psiHeader;
+@navLeftBorderActiveColor: @psiClickHover;
+@navLeftBorder: 5px solid @navLeftBorderColor;
+
+@psiNavBackgroundColor: @psiBaseWhite;
+@psiNavTextColor: #444444;
+
+@navActiveBackgroundColor: @psiHeader;
+@navActiveTextColor: @psiTextOnHeader;
+
+@navHoverBackgroundColor: @psiClickHover;
+@navHoverTextColor: @psiTextOnClickHover;
+
+
+.psiphon-header {
+  height: @headerHeight;
+  background-color: @psiHeader;
+  padding: 0;
+
+  .banner {
+    height: 100%;
+    padding: 0.5em;
+
+    > div {
+      color: @psiTextOnHeader;
+    }
+
+    > a {
+      display: inline-block;
+      .ie7-inline-block();
+      background: #FFFFFF;  // Our banner spec indicates image will be on white or light background.
+      border: thin darken(@psiHeader, 10%) solid;
+
+      img {
+        height: @headerBannerHeight;
+      }
+    }
+
+    &.long-connecting-show {
+      font-size: 0.9em;
+
+      div {
+        max-width: 400px;
+        margin: auto;
+
+        a {
+          color: lighten(@psiLink, 30%);
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  .header-nav-join {
+    body[dir="ltr"] & {
+      .pull-left;
+      left: 0;  // IE7 hack
+      padding-left: 20px;
+      border-left: @navLeftBorder;
+      border-right: none;
+    }
+    body[dir="rtl"] & {
+      .pull-right;
+      right: 0; // IE7 hack
+      padding-right: 20px;
+      border-right: @navLeftBorder;
+      border-left: none;
+    }
+
+    position: absolute;
+    padding-top: @headerLogoMarginTop;
+    margin: 0;
+
+    img {
+      height: @headerLogoHeight;
+    }
+
+    height: (@headerHeight + @navTopPad - @headerLogoMarginTop);
+    // width: set dynamically to match tabs
+    background-color: @psiNavBackgroundColor;
+  }
+}
+
+.nav, .nav ul {
+  padding-top: @navTopPad;
+  margin-bottom: 0;
+}
+
+.nav-tabs {
+  background-color: @psiNavBackgroundColor;
+  min-width: 10em;
+
+  // Override default styles. Over-specify in order to default default rule precedence.
+  &.main-nav.nav {
+    border-width: 0;
+    margin: 0;
+  }
+
+  #fill-tab {
+    height: 100%;
+  }
+
+  > li {
+    body[dir="ltr"] & {
+      border-right: none;
+      border-left: @navLeftBorder;
+    }
+    body[dir="rtl"] & {
+      border-left: none;
+      border-right: @navLeftBorder;
+    }
+
+    &.active {
+      body[dir="ltr"] & {
+        border-right: none;
+        border-left-color: @navLeftBorderActiveColor;
+      }
+      body[dir="rtl"] & {
+        border-left: none;
+        border-right-color: @navLeftBorderActiveColor;
+      }
+    }
+
+    margin: 0; // mostly to override default styles
+  }
+
+  & > li > a {
+    outline: none;
+    border: none;
+    margin: 0 !important; // override default
+    color: @psiNavTextColor;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 300ms, color 300ms;
+    white-space: nowrap; // IE7 hack
+  }
+
+  & > li > a:hover,
+  & > li > a:focus {
+    color: @navHoverTextColor;
+    background-color: @navHoverBackgroundColor;
+  }
+
+  & > .active > a,
+  & > .active > a:hover,
+  & > .active > a:focus {
+    outline: none;
+    border: none;
+    color: @navActiveTextColor;
+    background-color: @navActiveBackgroundColor;
+  }
+}
+
+.main-nav {
+  .label i[class^="icon-"] {
+    vertical-align: baseline;
+  }
+
+  .multiline-tab-icon {
+    body[dir="ltr"] & {
+      .pull-left();
+      // pull-left causes us to lose the icon's padding-right. This rule is copied from FontAwesome's core.less.
+      padding-right: 4/14em;
+    }
+    body[dir="rtl"] & {
+      .pull-right();
+      padding-left: 4/14em;
+    }
+  }
+
+  .multiline-tab-text {
+    display: inline-block;
+    .ie7-inline-block();
+  }
+
+  // The connection tab link has more complex content
+  #connection-tab {
+    [data-connect-state] {
+      position: absolute;
+    }
+  }
+}
+
+.tab-content {
+  overflow: hidden;
+  padding-top: 1em;
+
+  .tab-pane {
+    height: 100%;
+    overflow: auto;
+    padding: 0 1em;
+
+    // Needed to fix IE7 position:relative+overflow bug
+    position: relative;
+  }
+}
+
+.tab-pane.fade {
+  // Shorten the default fade animation time.
+  .transition(opacity .10s linear);
+}
+
+
+/* CONNECT */
+
+@connectBackgroundColor: #FFFFFF;
+
+#connection-pane  {
+  overflow: hidden;
+}
+
+#connect-toggle {
+  @startingColor1: @brand-warning;
+  @startingColor2: @brand-success;
+  @connectedColor: @brand-success;
+  @stoppingColor1: @brand-warning;
+  @stoppingColor2: @brand-danger;
+  @stoppedColor: @brand-danger;
+
+  max-width: 600px;
+  position: relative;
+  padding: 0;
+  top: 5%; // fallback for older IE
+  top: ~"calc(50% - 200px)";
+
+  > .connect-toggle-content {
+
+    position: absolute;
+    top: 0;
+    margin: auto;
+    overflow: hidden;
+
+    padding: 30px 5%;
+    width: 78%; // hand-tweaked to look right with width and padding
+
+    background-color: @connectBackgroundColor;
+    // If some transparency is desired:
+    //background-color: rgba(red(@connectBackgroundColor),green(@connectBackgroundColor),blue(@connectBackgroundColor), 0.9);
+    text-transform: uppercase;
+
+    .state-symbol {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+    }
+
+    .stateColors(@color, @oppositeColor, @iconColor, @circlePad: 0) {
+      .icon-state-symbol {
+        color: @iconColor;
+      }
+
+      .state-word {
+        color: @color;
+      }
+      i {
+        color: @color;
+        font-size: 2em;
+      }
+
+      .btn {
+        .buttonBackground(@oppositeColor, darken(@oppositeColor, 10%), @connectBackgroundColor);
+      }
+
+      .circle {
+        height: 2.5em;
+        width: 2.5em;
+        border-radius: 50%;
+        background-color: @color;
+        margin: auto;
+
+        i {
+          padding: @circlePad;
+          display: block;
+          position: relative;
+        }
+      }
+    }
+
+    &[data-connect-state="starting"] {
+      .stateColors(@startingColor1, @stoppedColor, @startingColor1);
+
+      // Used for color-cycling
+      .icon-spin.in-progress, .state-word.in-progress {
+        color: @startingColor2;
+      }
+    }
+    &[data-connect-state="connected"] {
+      .stateColors(@connectedColor, @stoppedColor, @connectedColor);
+    }
+    &[data-connect-state="stopping"] {
+      .stateColors(@stoppingColor1, @stoppingColor1, @stoppingColor1);
+
+      // Used for color-cycling
+      .icon-spin.in-progress, .state-word.in-progress {
+        color: @stoppingColor2;
+      }
+    }
+    &[data-connect-state="stopped"] {
+      .stateColors(@stoppedColor, @connectedColor, @connectBackgroundColor, 0 0 0 5px);
+    }
+
+    .textfill-container {
+      height: 70px;
+      white-space: nowrap;
+      margin-bottom: 0;
+    }
+
+    hr {
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+
+      // Shrink the default top margin to bring the hr closer to the status text
+      margin-top: 0;
+    }
+  }
+
+  a {
+    // Set a min-width to help keep the button the same size regardless of the text.
+    min-width: 10em;
+    font-size: 1.5em;
+    padding: 0.6em 1em;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
+
+  .wait-spinner {
+    position: relative;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+  }
+}
+
+
+/* SETTINGS */
+
+// This animation gives s slight wiggle followed by motionlessness (the timing
+// can be configured with the `animation` style).
+@keyframes buttonWiggle {
+  0% { transform: rotate(0deg); }
+  2% { transform: rotate(-1deg); }
+  3.5% { transform: rotate(1deg); }
+  5% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.settings-buttons {
+  position: absolute;
+  overflow: hidden;
+  left: 1em;
+  right: 1em;
+  padding: 0.2em;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e5e5e5;
+
+  // This allows the button box shadow to extend outside its parent element.
+  overflow: visible;
+
+  .apply-settings {
+    body[dir="ltr"] & {
+      .pull-left;
+    }
+    body[dir="rtl"] & {
+      .pull-right;
+    }
+
+    &:not(.disabled) {
+      animation: buttonWiggle 3s infinite;
+    }
+  }
+
+  .reset-settings {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+  }
+}
+
+#settings-accordion {
+  position: absolute;
+  top: 38px; // based on eyeballing
+  bottom: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-bottom: 0;
+
+  .accordion-heading {
+    font-size: 1.4em;
+
+    .accordion-toggle {
+      background-color: @psiEngageable;
+      color:@psiTextOnEngageable;
+
+      .clearfix;
+
+      &:hover, &:focus {
+        background-color: @psiClickHover;
+        color: @psiTextOnClickHover;
+      }
+
+      &.accordion-expanded {
+        background-color: @psiEngaged;
+        color: @psiTextOnEngaged;
+      }
+
+      .accordion-expand-icon {
+        body[dir="ltr"] & {
+          margin-right: 0.5em;
+        }
+        body[dir="rtl"] & {
+          margin-left: 0.5em;
+        }
+      }
+    }
+  }
+
+  form {
+    // Get rid of the big bottom margin that Bootstrap gives forms.
+    margin: 0;
+  }
+}
+
+.value-error-alert {
+  // For some reason the error alert is not showing over the body text.
+  z-index: @zindexPopover;
+}
+
+.vpn-incompatible-msg {
+  .help-block & {
+    .text-warning;
+  }
+
+  &.label {
+    body[dir="ltr"] & {
+      .pull-right;
+    }
+
+    body[dir="rtl"] & {
+      .pull-left;
+    }
+
+    i {
+      font-size: 0.8em;
+    }
+  }
+}
+
+.vpn-incompatible.disabled-text *:not(.vpn-incompatible-msg) {
+  .muted;
+}
+
+.port-entry {
+  width: 5em;
+}
+
+.local-port-unique, .upstream-proxy-set-match {
+  .text-error;
+}
+
+// NOTE: #EgressRegionCombo is actually on the connect tab. #EgressRegion is in the settings tab.
+
+#EgressRegion {
+  display: block;
+  position: static;
+}
+
+.egress-region-combo-container {
+  // Stick it to the bottom.
+  position: absolute;
+  bottom: 1em;
+
+  // And center it.
+  left: 50%;
+  > * {
+    position: relative;
+    left: -50%;
+  }
+
+  #EgressRegionCombo {
+    border: 1px solid @psiEngageable;
+
+    > a {
+      // Let the flag stuff take care of the padding
+      padding: 0;
+
+      // Match the background color to the connect box
+      background-color: @connectBackgroundColor;
+
+      i {
+        // Make the caret more vertically centered, with a bit of space on the side.
+        padding: 0.4em 0.5em 0 0.5em;
+
+        .open&:before {
+          // Change the icon when combo is open.
+          content: @icon-chevron-down-circle;
+        }
+      }
+    }
+
+    ul {
+      // We want to fix the size of the combo list, so it doesn't go off the view.
+      height: 200px;
+      overflow-y: scroll;
+
+      // No border radius
+      .border-radius(0);
+    }
+  }
+}
+
+label[for="EgressRegionCombo"], label[for="EgressRegion"] {
+  // Override the Bootstrap style
+  margin-bottom: 0;
+
+  font-size: 0.9em;
+}
+
+#EgressRegion, #EgressRegionCombo ul, #EgressRegionCombo .btn {
+  @egressRegionWidth: 300px;
+  width: @egressRegionWidth;
+
+  .flag {
+    display: block;
+    width: auto;
+
+    body[dir="ltr"] & {
+      padding: 0 0 0 40px;
+      background-position-x: 2%;
+    }
+    body[dir="rtl"] & {
+      padding: 0 40px 0 0;
+      background-position-x: 98%; // Handy way of getting the flag on the right side
+    }
+
+    background-repeat: no-repeat;
+    filter: none;
+    background-image: url(../flags32.png);
+
+    // Set the image we'll use for "best" region.
+    &.unknown{
+      // User a higher-res
+      background-image: url(../flag_unknown_64.png);
+      background-size: contain;
+      // Setting the background image size
+      background-image: url(../flag_unknown_32.png) e("\9");
+    }
+  }
+}
+
+
+/* FEEDBACK */
+
+.feedback-smiley-container {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.feedback-smiley {
+  padding: 0px;
+  width: 100%;
+
+  & td {
+    width: 50%;
+  }
+
+  & .feedback-choice {
+    .text-center;
+    .muted; // will get trumped when selected
+    .box-shadow(0px 0px 10px 0px fade(@psiEngageable, 75%));
+    margin: 10px;
+    padding: 1em;
+    border: thin #ccc solid;
+
+    i {
+      font-size: 50px;
+    }
+
+    &.selected {
+      background-color: @psiEngaged;
+      color: @psiTextOnEngaged;
+      .box-shadow(none);
+    }
+
+    &:hover:not(.selected) {
+      cursor: pointer;
+      cursor: hand;
+      background-color: @psiClickHover;
+      color: @psiTextOnClickHover;
+      .box-shadow(0px 0px 10px 0px @psiClickHover);
+    }
+  }
+}
+
+
+/* LOGS */
+
+.log-messages {
+  .priority-0 {
+    .hiding-priority-0& {
+      display: none;
+    }
+  }
+
+  .priority-1 {
+    .showing-priority-0& {
+      background-color: @infoBackground;
+    }
+  }
+
+  .priority-2 {
+    .message {
+      font-weight: bold;
+    }
+
+    .showing-priority-0& {
+      background-color: @infoBackground;
+    }
+  }
+
+  // We want the timestamp column to be only wide enough to fit content
+  .timestamp {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  // Log messages aren't translated, so we're forcing the list to LTR
+  &, & th, & td {
+    direction: ltr !important;
+    text-align: left !important;
+  }
+}
+
+
+/* LANGUAGES */
+
+#language-pane {
+  .language-item {
+    i {
+      body[dir="ltr"] & {
+        margin-right: 0.5em;
+      }
+      body[dir="rtl"] & {
+        margin-left: 0.5em;
+      }
+    }
+
+    body[dir="ltr"] & {
+      float: left;
+    }
+    body[dir="rtl"] & {
+      float: right;
+    }
+
+    font-size: 1em;
+    width: 16em; // Chosen arbitrarily to help prevent wrapping
+    height: 2em;
+    font-weight: bold;
+  }
+}
+
+
+/* ABOUT */
+
+#about-pane {
+  // There's not much text, so let's bump it up a bit.
+  font-size: 1.5em;
+  line-height: 1.3em;
+
+  .client-version {
+    font-size: 60%;
+  }
+}
+
+.wordart-link {
+  text-decoration: none !important;
+}
+
+.wordart {
+  display: inline-block;
+  .ie7-inline-block();
+  text-transform: uppercase;
+  transform: skew(-10deg) rotate(-7deg);
+  transform-origin: right;
+  display: table;
+  margin: 1em auto 3em auto;
+
+  .wordart-title {
+    font-size: 3em;
+    line-height: 1em;
+    font-weight: 900;
+    color: @psiLink;
+    border-color: @psiLink;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+    text-shadow: 3px 3px #D9D2BE;
+
+    // Without some padding, descending characters in Farsi (which does not
+    // respect `text-transform: uppercase`) cross the underline and look wrong.
+    padding-bottom: 0.15em;
+  }
+
+  .wordart-tag {
+    font-size: 1.4em;
+    color: #381E15;
+    padding-top: 0.1em;
+  }
+}
+
+
+/* MISCELLANEOUS AND HELPERS */
+
+.global-alert {
+  position: fixed;
+  bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
+  z-index: @zindexPopover;
+
+  body[dir="ltr"] & {
+    right: 0;
+  }
+
+  body[dir="rtl"] & {
+    left: 0;
+  }
+}
+
+// IE7 behaves poorly when .invisible is used for hiding and showing elements.
+// In some cases we can instead use the z-index to achieve the desired effect.
+.z-behind {
+  z-index: -2;
+  .opacity(0);
+}
+
+.z-infront {
+  z-index: 2;
+  .opacity(100);
+}
+
+// IE7's image scaling is poor. This style helps.
+// https://css-tricks.com/ie-fix-bicubic-scaling-for-images/
+img {
+  -ms-interpolation-mode: bicubic;
+}
+
+// Give our egress region selector an error state
+.control-group.dropdown-menu.error {
+  border-color: darken(@errorBorder, 20%);
+  .box-shadow(0 5px 10px darken(@errorBorder, 20%));
+}
+
+hr.dotted {
+  // Achieve a nice dotted effect.
+  // From: http://stackoverflow.com/a/18064496/729729
+  height: 3px;
+  background-image: linear-gradient(to right, #666 15%, rgba(255, 255, 255, 0) 0%);
+  background-position: top;
+  background-size: 14px 2px;
+  background-repeat: repeat-x;
+
+  // Get rid of the default border, but prep it for IE fall-back
+  border-top-style: none;
+  border-top-color: #333;
+  border-top-width: 2px;
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+}
