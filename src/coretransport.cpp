@@ -802,12 +802,10 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse exception: %S"), __TFUNCTION__, e.what());
     }
 
-    // Debug output
-
-    my_print(NOT_SENSITIVE, true, _T("core notice: %S"), line);
+    // Debug output, flag sensitive to exclude from feedback
+    my_print(SENSITIVE_LOG, true, _T("core notice: %S"), line);
 
     // Add to diagnostics
-
     if (logOutputToDiagnostics)
     {
         AddDiagnosticInfoJson("CoreNotice", line);
