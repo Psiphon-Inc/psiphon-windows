@@ -1027,8 +1027,7 @@ void DoStartupDiagnosticCollection()
 
 
 /**
-Assumes that `out` is already initialized with YAML::BeginMap.
-Adds diagnostic info to `out`.
+Adds diagnostic info to `o_json`.
 */
 void GetDiagnosticInfo(Json::Value& o_json)
 {
