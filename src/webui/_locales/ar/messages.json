@@ -180,11 +180,11 @@
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "settings#saved-message": {
-        "message": "وقع تسجيل الإعدادات",
+        "message": " تم تسجيل الإعدادات  ",
         "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
-        "message": "<strong>If the website is inaccessible</strong>, you can get a new version of Psiphon by sending an email to:",
+        "message": "<strong>إذا كنتم لا تستطيعون الدخول إلى الموقع </strong>, يمكنكم الحصول على نسخة جديدة عبر إرسال بريد إلكتروني إلى:  ",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
     },
     "settings#egress-region#select-nl": {
@@ -192,7 +192,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
     },
     "general#modal-close-button": {
-        "message": "قريب",
+        "message": "أغلق ",
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
     "settings#local-proxy-ports#http-label": {
@@ -280,7 +280,7 @@
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "feedback#top_content_title": {
-        "message": "وافينا بردك",
+        "message": "شاركنا برأيك ",
         "description": "Title for the Feedback page"
     },
     "banner#long-connecting": {
@@ -308,7 +308,7 @@
         "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
     },
     "language#success-message": {
-        "message": "<strong>Hello!</strong> Welcome to Psiphon.",
+        "message": "<strong>السلام عليكم !</strong> سايفون يرحب بكم. ",
         "description": "A welcome message shown to the user when they first switch to the correct UI language"
     },
     "settings#egress-region#select-sg": {

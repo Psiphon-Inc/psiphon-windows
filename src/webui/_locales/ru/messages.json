@@ -56,7 +56,7 @@
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#settings": {
-        "message": "Settings",
+        "message": "Настройки",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "nav#connection#connected": {
@@ -204,7 +204,7 @@
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#reset-button": {
-        "message": "Reset to Default",
+        "message": "Восстановить настройки по умолчанию",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "about#client-version": {

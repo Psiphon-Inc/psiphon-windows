@@ -41,6 +41,8 @@ $ node fake-translations.js
 
 * Allow copying selected text
 * IE7 (and others?): Long text in pre/code inside error modal doesn't wrap and goes too far.
+* Add title to banner image/link with text indicating that home page(s) will load.
+  - Could get fancier and pass the URLs from win32 to JS and display them.
 * HighDPI: Apply button wiggle shows through forgot-to-apply modal.
 * HighDPI: Fix bottom-right slide-out notification. Gets truncated.
 * Force Connect box to be centered on egress combo.

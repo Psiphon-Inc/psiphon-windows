@@ -686,7 +686,8 @@ function onSettingsReset(e) {
 
   refreshSettings(g_initObj.Settings.defaults, false);
 
-  // Enable the Apply button (assume actual changes)
+  // Force the Apply button to be enabled. Otherwise the user might be confused
+  // about how to make the Reset take effect.
   enableSettingsApplyButton(true);
 }
 
