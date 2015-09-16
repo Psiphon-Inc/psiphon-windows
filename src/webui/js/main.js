@@ -1239,6 +1239,18 @@ function upstreamProxyErrorNotice(errorMessage) {
   // This is the first upstream proxy error we've received, so start waiting to
   // show a message for it.
   g_upstreamProxyErrorNoticeTimer = setTimeout(function() {
+    // It can happen that we receive a notice about an upstream error *after*
+    // we have successfully connected -- it will have been received from one
+    // of the parallel unsuccessful connection attempts. We should not show
+    // such an error. So, as a general statement: Do not show upstream errors
+    // if we're already successfully connected.
+    if (g_lastState === 'connected') {
+      if (g_upstreamProxyErrorNoticeTimer) {
+        g_upstreamProxyErrorNoticeTimer = null;
+      }
+      return;
+    }
+
     // There are two slightly different error messages shown depending on whether
     // there is an upstream proxy explicitly configured, or it's the default
     // empty value, which means the pre-existing system proxy will be used.
