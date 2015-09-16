@@ -33,8 +33,6 @@ $ node fake-translations.js
 
 ## TODO
 
-* IE7: For long languages (like Croatian), text in EgressRegion selector doesn't fit.
-
 * Automation: Switch to VS2015.
 * Update user guide on website.
 
@@ -42,6 +40,7 @@ $ node fake-translations.js
 ## Longer-term TODO
 
 * Allow copying selected text
+* IE7 (and others?): Long text in pre/code inside error modal doesn't wrap and goes too far.
 * HighDPI: Apply button wiggle shows through forgot-to-apply modal.
 * HighDPI: Fix bottom-right slide-out notification. Gets truncated.
 * Force Connect box to be centered on egress combo.
