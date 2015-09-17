@@ -15639,6 +15639,19 @@ function addLog(obj) {
   if (obj.priority < 1) {
     $('#logs-pane .invisible').removeClass('invisible');
   }
+
+  // Record the priorities we've seen.
+  // We'll keep them in a (fake) Set.
+  addLog.priorities = addLog.priorities || {};
+  addLog.priorities[obj.priority] = true;
+
+  // Don't allow the log messages list to grow forever!
+  // We will keep 50 of each priority. (Arbitrarily. May need to revisit.)
+  var MAX_LOGS_PER_PRIORITY = 50;
+  var priorities = _.keys(addLog.priorities);
+  for (var i = 0; i < priorities.length; i++) {
+    $('.log-messages .priority-'+priorities[i]).slice(MAX_LOGS_PER_PRIORITY).remove();
+  }
 }
 
 // Used for temporary debugging messages.
@@ -16266,7 +16279,7 @@ $(function debugInit() {
     HtmlCtrlInterface_SetState({state: $('#debug-state').val()});
   });
 
-  // Wire up add-message
+  // Wire up AddLog
   $('#debug-log a').on('click', function() {
     HtmlCtrlInterface_AddLog({
       message: $('#debug-log input').val(),
