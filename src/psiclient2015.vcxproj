@@ -55,7 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>3rdParty\mctrl;3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdParty\mctrl;3rdParty\zlib;3rdParty\jsoncpp;3rdParty\cryptopp;3rdParty\boost</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <EnablePREfast>false</EnablePREfast>
@@ -74,7 +74,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);JSON_IS_AMALGAMATION</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>3rdParty\mctrl;3rdParty\zlib;3rdParty\json;3rdParty\cryptopp;3rdParty\yaml-cpp;3rdParty\boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdParty\mctrl;3rdParty\zlib;3rdParty\jsoncpp;3rdParty\cryptopp;3rdParty\boost</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
@@ -224,8 +224,8 @@
     <ClInclude Include="3rdParty\cryptopp\zdeflate.h" />
     <ClInclude Include="3rdParty\cryptopp\zinflate.h" />
     <ClInclude Include="3rdParty\cryptopp\zlib.h" />
-    <ClInclude Include="3rdParty\json\forwards.h" />
-    <ClInclude Include="3rdParty\json\json.h" />
+    <ClInclude Include="3rdParty\jsoncpp\json\json-forwards.h" />
+    <ClInclude Include="3rdParty\jsoncpp\json\json.h" />
     <ClInclude Include="3rdParty\zlib\crc32.h" />
     <ClInclude Include="3rdParty\zlib\inffast.h" />
     <ClInclude Include="3rdParty\zlib\inffixed.h" />
@@ -267,9 +267,11 @@
     <ClInclude Include="worker_thread.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="3rdParty\json\jsoncpp.cpp">
+    <ClCompile Include="3rdParty\jsoncpp\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="3rdParty\zlib\adler32.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

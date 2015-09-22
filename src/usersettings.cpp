@@ -187,6 +187,7 @@ bool Settings::FromJson(
 
     Json::Value json;
     Json::Reader reader;
+
     bool parsingSuccessful = reader.parse(utf8JSON, json);
     if (!parsingSuccessful)
     {

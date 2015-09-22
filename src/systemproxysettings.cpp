@@ -787,10 +787,10 @@ void ReadRegistryProxyInfo(const char* regKey, vector<ConnectionProxy>& o_proxyI
         for (Json::Value::ArrayIndex i = 0; i < proxiesJson.size(); i++)
         {
             ConnectionProxy proxy;
-            proxy.name = NarrowToTString(proxiesJson[i].get("name", "").asString());
+            proxy.name = UTF8ToWString(proxiesJson[i].get("name", "").asString());
             proxy.flags = proxiesJson[i].get("flags", 0).asUInt();
-            proxy.proxy = NarrowToTString(proxiesJson[i].get("proxy", "").asString());
-            proxy.bypass = NarrowToTString(proxiesJson[i].get("bypass", "").asString());
+            proxy.proxy = UTF8ToWString(proxiesJson[i].get("proxy", "").asString());
+            proxy.bypass = UTF8ToWString(proxiesJson[i].get("bypass", "").asString());
             o_proxyInfo.push_back(proxy);
         }
     }
@@ -813,10 +813,10 @@ void WriteRegistryProxyInfo(const char* regKey, const vector<ConnectionProxy>& p
          ++ii)
     {
         Json::Value entry;
-        entry["name"] = TStringToNarrow(ii->name);
+        entry["name"] = WStringToUTF8(ii->name);
         entry["flags"] = Json::UInt(ii->flags);
-        entry["proxy"] = TStringToNarrow(ii->proxy);
-        entry["bypass"] = TStringToNarrow(ii->bypass);
+        entry["proxy"] = WStringToUTF8(ii->proxy);
+        entry["bypass"] = WStringToUTF8(ii->bypass);
         proxies.append(entry);
     }
 

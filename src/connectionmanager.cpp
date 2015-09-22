@@ -989,10 +989,10 @@ struct FeedbackThreadData
     wstring feedbackJSON;
 } g_feedbackThreadData;
 
-void ConnectionManager::SendFeedback(LPCWSTR feedbackJSON)
+void ConnectionManager::SendFeedback(LPCWSTR unicodeFeedbackJSON)
 {
     g_feedbackThreadData.connectionManager = this;
-    g_feedbackThreadData.feedbackJSON = feedbackJSON;
+    g_feedbackThreadData.feedbackJSON = unicodeFeedbackJSON;
 
     if (!m_feedbackThread ||
         WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))

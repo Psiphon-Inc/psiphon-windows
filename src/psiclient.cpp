@@ -99,7 +99,7 @@ void OnCreate(HWND hWndParent)
 #endif
 
     Json::FastWriter jsonWriter;
-    tstring initJsonString = NarrowToTString(jsonWriter.write(initJSON));
+    tstring initJsonString = UTF8ToWString(jsonWriter.write(initJSON).c_str());
 
     tstring url = ResourceToUrl(_T("main.html"), NULL, initJsonString.c_str());
 
@@ -133,11 +133,11 @@ void OnCreate(HWND hWndParent)
 
 static map<string, wstring> g_stringTable;
 
-static void AddStringTableEntry(const string& entryJson)
+static void AddStringTableEntry(const string& utf8EntryJson)
 {
     Json::Value json;
     Json::Reader reader;
-    bool parsingSuccessful = reader.parse(entryJson, json);
+    bool parsingSuccessful = reader.parse(utf8EntryJson, json);
     if (!parsingSuccessful)
     {
         my_print(NOT_SENSITIVE, true, _T("%s:%d: Failed to parse string table entry"), __TFUNCTION__, __LINE__);
@@ -734,7 +734,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     else if (_tcsncmp(url, appSaveSettings, appSaveSettingsLen) == 0
         && _tcslen(url) > appSaveSettingsLen)
     {
-        my_print(NOT_SENSITIVE, true, _T("%s: Update settings requested"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: Save settings requested"), __TFUNCTION__);
         
         tstring urlDecoded = UrlDecode(url);
         if (urlDecoded.length() < appSaveSettingsLen + 1)
@@ -781,9 +781,12 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             goto done;
         }
 
-        string stringJSON(TStringToNarrow(urlDecoded).c_str() + appSendFeedbackLen);
         my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
-        g_connectionManager.SendFeedback(NarrowToTString(stringJSON).c_str());
+
+        // We will receive UTF-8 encoded data from the JS, so we'll widen it 
+        // before sending it on.
+        wstring unicodeJSON = UTF8ToWString(urlDecoded.c_str() + appSendFeedbackLen);
+        g_connectionManager.SendFeedback(unicodeJSON.c_str());
     }
     else if (_tcsncmp(url, appSetCookies, appSetCookiesLen) == 0
         && _tcslen(url) > appSetCookiesLen)

@@ -65,7 +65,8 @@ public:
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
-    void SendFeedback(LPCWSTR feedbackJSON);
+    // NOTE: The JSON string must contain wide unicode codepoints, not UTF-8.
+    void SendFeedback(LPCWSTR unicodeFeedbackJSON);
 
     bool IsWholeSystemTunneled()
     {

@@ -34,9 +34,6 @@
     <ClCompile Include="local_proxy.cpp" />
     <ClCompile Include="utilities.cpp" />
     <ClCompile Include="worker_thread.cpp" />
-    <ClCompile Include="3rdParty\json\jsoncpp.cpp">
-      <Filter>3rdParty\json</Filter>
-    </ClCompile>
     <ClCompile Include="server_request.cpp" />
     <ClCompile Include="transport_connection.cpp" />
     <ClCompile Include="authenticated_data_package.cpp" />
@@ -49,6 +46,9 @@
     <ClCompile Include="wininet_network_check.cpp" />
     <ClCompile Include="coretransport.cpp" />
     <ClCompile Include="logging.cpp" />
+    <ClCompile Include="3rdParty\jsoncpp\jsoncpp.cpp">
+      <Filter>3rdParty\jsoncpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -95,12 +95,6 @@
     <ClInclude Include="local_proxy.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="worker_thread.h" />
-    <ClInclude Include="3rdParty\json\forwards.h">
-      <Filter>3rdParty\json</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdParty\json\json.h">
-      <Filter>3rdParty\json</Filter>
-    </ClInclude>
     <ClInclude Include="limitsingleinstance.h" />
     <ClInclude Include="server_request.h" />
     <ClInclude Include="transport_connection.h" />
@@ -516,6 +510,12 @@
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="coretransport.h" />
     <ClInclude Include="logging.h" />
+    <ClInclude Include="3rdParty\jsoncpp\json\json.h">
+      <Filter>3rdParty\jsoncpp\json</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\jsoncpp\json\json-forwards.h">
+      <Filter>3rdParty\jsoncpp\json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
@@ -533,11 +533,14 @@
     <Filter Include="3rdParty\cryptopp">
       <UniqueIdentifier>{1983563a-6c6d-4741-9327-207e0bce70e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3rdParty\json">
-      <UniqueIdentifier>{106ceb3c-f752-4f8a-b641-e0707df25db2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="3rdParty\zlib">
       <UniqueIdentifier>{41e9db18-683d-474f-89e2-b80064cd2d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\jsoncpp">
+      <UniqueIdentifier>{17f7eda6-291a-4d82-9051-77c3228f05dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\jsoncpp\json">
+      <UniqueIdentifier>{50104d07-2601-4ae5-9602-f6340013c2c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

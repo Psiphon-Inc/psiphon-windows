@@ -4,19 +4,30 @@ Communication in both directions is enabled by the [`mctrl`](https://github.com/
 
 Messages are passed from JavaScript (frontend) to C (backend) via attempts to change location to `psi:...`. For example: `psi:start` or `psi:sendfeedback?<feedback_data>`. These URLs get processed by the backend code and handled appropriately.
 
-Messages are passed from C (backend) to JavaScript (frontend) via called to exposed JS functions, such as `HtmlCtrlInterface_SetState` and `HtmlCtrlInterface_AddNotice`. 
+Messages are passed from C (backend) to JavaScript (frontend) via called to exposed JS functions, such as `HtmlCtrlInterface_SetState` and `HtmlCtrlInterface_AddNotice`.
 
+
+## Prerequisites
+
+```
+$ npm install -g grunt-cli
+# In the webui directory...
+$ npm install .
+```
 
 ## Building
 
-`grunt`
+```
+# In the webui directory...
+$ grunt
+```
 
-(Add more instruction.)
+And then build the project in Visual Studio.
 
 
 ## i18n
 
-Running `grunt` will process available languages and generate fake (development) translation files. 
+Running `grunt` will process available languages and generate fake (development) translation files.
 
 The fake translation files can also be generated manually:
 
@@ -24,11 +35,6 @@ The fake translation files can also be generated manually:
 $ cd utils
 $ node fake-translations.js
 ```
-
-
-## Notes and discussion points
-
-* It feels like there should be more icons or images -- it feels like it’s a lot of just text. I have added a custom icon font, so we have a lot of icons that can be easily used -- you can see a few of them in the nav tabs. But custom images would probably be good/better.
 
 
 ## TODO
@@ -43,6 +49,8 @@ $ node fake-translations.js
 * IE7 (and others?): Long text in pre/code inside error modal doesn't wrap and goes too far.
 * Add title to banner image/link with text indicating that home page(s) will load.
   - Could get fancier and pass the URLs from win32 to JS and display them.
+* Support [internationalized domain names](https://en.wikipedia.org/wiki/Internationalized_domain_name) for upstream proxy hostname (and anywhere else).
+  - Right now the user will have to enter punycode directly or the hostname won't work.
 * HighDPI: Apply button wiggle shows through forgot-to-apply modal.
 * HighDPI: Fix bottom-right slide-out notification. Gets truncated.
 * Force Connect box to be centered on egress combo.

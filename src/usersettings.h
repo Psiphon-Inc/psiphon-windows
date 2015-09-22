@@ -25,7 +25,8 @@ namespace Settings
     void Initialize();
 
     void ToJson(Json::Value& o_json);
-    // Returns false on error.
+    // Returns false on error. o_reconnectRequired will be true if a reconnect
+    // is going to occur to apply the settings.
     bool FromJson(const string& utf8JSON, bool& o_reconnectRequired);
 
     // Returns true if settings changed.
