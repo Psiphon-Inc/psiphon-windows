@@ -49,8 +49,7 @@ $ node fake-translations.js
 * IE7 (and others?): Long text in pre/code inside error modal doesn't wrap and goes too far.
 * Add title to banner image/link with text indicating that home page(s) will load.
   - Could get fancier and pass the URLs from win32 to JS and display them.
-* Support [internationalized domain names](https://en.wikipedia.org/wiki/Internationalized_domain_name) for upstream proxy hostname (and anywhere else).
-  - Right now the user will have to enter punycode directly or the hostname won't work.
+* Translate (win32) window title.
 * HighDPI: Apply button wiggle shows through forgot-to-apply modal.
 * HighDPI: Fix bottom-right slide-out notification. Gets truncated.
 * Force Connect box to be centered on egress combo.
@@ -73,6 +72,8 @@ $ node fake-translations.js
 * Will a long disconnect hang UI? Probably. But is that avoidable in JS, or just because Stop() blocks and is called from message queue handler?
 * Maybe don't use custom font, since it looks even less like a native app? Or just use it for headings?
 * Is logo jagged on some displays? Need dpp media queries to choose image rather than resize?
+* Support [internationalized domain names](https://en.wikipedia.org/wiki/Internationalized_domain_name) for upstream proxy hostname (and anywhere else).
+  - Right now the user will have to enter punycode directly or the hostname won't work.
 
 
 ## Technical and compatibility notes

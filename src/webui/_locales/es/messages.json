@@ -45,7 +45,7 @@
     },
     "appbackend#state-connected-body": {
         "message": "¡Explore más allá de sus fronteras!",
-        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line."
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "connection#connected-msg": {
         "message": "Psiphon está <span class=\"state-word\">conectado</span>",
