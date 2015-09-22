@@ -36,6 +36,8 @@ struct ServerEntry
         const string& meekObfuscatedKey, const int meekServerPort,
         const string& meekCookieEncryptionPublicKey,
         const string& meekFrontingDomain, const string& meekFrontingHost,
+        const string& meekFrontingAddressesRegex,
+        const vector<string>& meekFrontingAddresses,
         const vector<string>& capabilities);
     void Copy(const ServerEntry& src);
 
@@ -64,6 +66,8 @@ struct ServerEntry
     string meekCookieEncryptionPublicKey;
     string meekFrontingDomain;
     string meekFrontingHost;
+    string meekFrontingAddressesRegex;
+    vector<string> meekFrontingAddresses;
 };
 
 typedef vector<ServerEntry> ServerEntries;
