@@ -420,7 +420,7 @@
     "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
   },
   "settings#upstream-proxy#reason": {
-    "message": "‮∩dsʇɹǝɐɯ‬ ‮dɹoxıǝs‬ ‮ɐɹǝ‬ ‮soɯǝʇıɯǝs‬ ‮ɹǝbnıɹǝp‬ ‮qʎ‬ ‮sɔɥooʅs‬, ‮nuıʌǝɹsıʇıǝs‬, ‮oɹ‬ ‮qnsıuǝssǝs‬. ‮Iɟ‬ ‮ʎon‬ ‮ʞuoʍ‬ ‮ʇɥǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ɹǝbnıɹǝp‬ ‮qʎ‬ ‮ʎonɹ‬ ‮uǝʇʍoɹʞ‬ ‮dɹoʌıpǝɹ‬, ‮ʇɥǝu‬ ‮ɯɐunɐʅʅʎ‬ ‮sǝʇʇıuƃ‬ ‮ʇɥǝɯ‬ ‮ɥǝɹǝ‬ ‮ɯɐʎ‬ ‮qǝ‬ ‮ɹǝbnıɹǝp‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬.",
+    "message": "‮∩dsʇɹǝɐɯ‬ ‮dɹoxıǝs‬ ‮ɐɹǝ‬ ‮soɯǝʇıɯǝs‬ ‮ɹǝbnıɹǝp‬ ‮qʎ‬ ‮sɔɥooʅs‬, ‮nuıʌǝɹsıʇıǝs‬, ‮oɹ‬ ‮qnsıuǝssǝs‬. ‮Iɟ‬ ‮ʎonɹ‬ ‮uǝʇʍoɹʞ‬ ‮dɹoʌıpǝɹ‬ ‮ɥɐs‬ ‮ƃıʌǝu‬ ‮ʎon‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬, ‮ʇɥǝu‬ ‮ɯɐunɐʅʅʎ‬ ‮sǝʇʇıuƃ‬ ‮ʇɥǝɯ‬ ‮ɥǝɹǝ‬ ‮ɯɐʎ‬ ‮qǝ‬ ‮ɹǝbnıɹǝp‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬.",
     "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
   },
   "settings#upstream-proxy#set-both-error-msg": {

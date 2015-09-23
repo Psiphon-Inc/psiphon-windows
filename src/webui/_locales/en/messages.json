@@ -232,7 +232,7 @@
     "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
   },
   "settings#upstream-proxy#reason": {
-    "message": "Upstream proxies are sometimes required by schools, universities, or businesses. If you know the upstream proxy settings required by your network provider, then manually setting them here may be required to connect.",
+    "message": "Upstream proxies are sometimes required by schools, universities, or businesses. If your network provider has given you upstream proxy settings, then manually setting them here may be required to connect.",
     "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
   },
   "settings#upstream-proxy#proxy-reqs": {
