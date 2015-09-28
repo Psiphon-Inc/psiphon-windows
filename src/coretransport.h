@@ -48,7 +48,6 @@ public:
     virtual bool Cleanup();
     virtual bool IsHandshakeRequired() const;
     virtual bool IsWholeSystemTunneled() const;
-    virtual bool IsSplitTunnelSupported() const;
     virtual bool ServerWithCapabilitiesExists();
     virtual bool ServerHasCapabilities(const ServerEntry& entry) const;
     virtual bool RequiresStatsSupport() const;

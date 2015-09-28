@@ -141,7 +141,7 @@ const T & Singleton<T, F, instance>::Ref(CRYPTOPP_NOINLINE_DOTDOTDOT) const
 
 // ************** misc functions ***************
 
-#if (!__STDC_WANT_SECURE_LIB__)
+#if (!__STDC_WANT_SECURE_LIB__ && !defined(_MEMORY_S_DEFINED))
 inline void memcpy_s(void *dest, size_t sizeInBytes, const void *src, size_t count)
 {
 	if (count > sizeInBytes)
@@ -580,13 +580,13 @@ CRYPTOPP_DLL void CRYPTOPP_API UnalignedDeallocate(void *p);
 template <class T> inline T rotlFixed(T x, unsigned int y)
 {
 	assert(y < sizeof(T)*8);
-	return T((x<<y) | (x>>(sizeof(T)*8-y)));
+	return y ? T((x<<y) | (x>>(sizeof(T)*8-y))) : x;
 }
 
 template <class T> inline T rotrFixed(T x, unsigned int y)
 {
 	assert(y < sizeof(T)*8);
-	return T((x>>y) | (x<<(sizeof(T)*8-y)));
+	return y ? T((x>>y) | (x<<(sizeof(T)*8-y))) : x;
 }
 
 template <class T> inline T rotlVariable(T x, unsigned int y)

@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "transport_registry.h"
+#include "logging.h"
 #include "transport.h"
 #include "vpntransport.h"
 #include "coretransport.h"
