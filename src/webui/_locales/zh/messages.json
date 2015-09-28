@@ -144,7 +144,7 @@
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
     "notice#systemproxysettings-setproxy-error-body": {
-        "message": "<p>Psiphon failed to set the system’s proxy settings.</p>\n<p>This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.</p>",
+        "message": "<p>Psiphon 设置系统的代理设置失败了。</p>\n<p>这有可能是由于您的防病毒软件。您可能需要手动配置您的应用程序或者系统代理为使用本地的 Psiphon 代理。</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
@@ -164,7 +164,7 @@
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
     "notice#systemproxysettings-setproxy-error-title": {
-        "message": "System Proxy Error",
+        "message": "系统代理错误",
         "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#egress-region#label": {
@@ -252,7 +252,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
-        "message": "Psiphon failed to set the system’s proxy settings for the Internet connection named “<%- data %>”. This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.",
+        "message": "Psiphon 设置名为“<%- data %>”的网络连接的代理设置失败了。这有可能是由于您的防病毒软件。您可能需要手动配置您的应用程序或者系统代理为使用本地的 Psiphon 代理。",
         "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
     },
     "connection#stop-btn": {

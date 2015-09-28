@@ -268,7 +268,7 @@
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "settings#upstream-proxy#reason": {
-        "message": "ألأبستريم بروكسي (upstream proxies ) مطلوبين أحيانا في المدارس، الجامعات، وأماكن العمل. إذا كنت تعلم إعدادات  الأبستريم بروكسي المطلوب من موفر خدمة الإنترنت خاصتك فقد يكون إدخالهم يدويا هنا مطلوب للإتصال.       ",
+        "message": "ألأبستريم بروكسي (upstream proxies ) مطلوبين أحيانا في المدارس، الجامعات، وأماكن العمل. إذا كنت تعلم إعدادات الأبستريم بروكسي المطلوب من موفر خدمة الإنترنت خاصتك فقد يكون إدخالهم يدويا هنا مطلوب للإتصال.",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#local-proxy-ports#error-modal-title": {
@@ -428,7 +428,7 @@
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
-        "message": "يستعمل ويندوز  L2TP/IPSec ربط الشبكات الإفتراضي  \"Virtual Networking\". هذا الوضع سيمرر كل التطبيقات  في مسار امن ، لكن  لن  يوفر  التجهيل   وبذلك لا  يؤمن  قدرات قوية لتجاوز الرقابة. لا  <strong>ننصح به </strong> لتجاوز أغلب جدران النار (Firewalls) .",
+        "message": "يستعمل ويندوز  L2TP/IPSec ربط الشبكات الإفتراضي  \"Virtual Networking\". هذا الوضع سيمرر كل التطبيقات  في نفق ، لكن  لن  يوفر  التجهيل   وبذلك لا  يؤمن  قدرات قوية لتجاوز الرقابة. لا  <strong>ننصح به </strong> لتجاوز أغلب جدران النار (Firewalls) .",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {

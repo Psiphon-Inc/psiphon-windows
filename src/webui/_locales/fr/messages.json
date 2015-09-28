@@ -268,7 +268,7 @@
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "settings#upstream-proxy#reason": {
-        "message": "Les serveurs mandataires ascendants sont parfois exigés par les écoles, les universités ou les entreprises. Si vous connaissez les paramètres de mandataire ascendant exigés par votre fournisseur de réseau, vous pourriez devoir les définir ici afin de vous connecter.",
+        "message": "Les serveurs mandataires ascendants sont parfois exigés par les écoles, les universités ou les entreprises. Si votre fournisseur de réseau vous a donné des paramètres de mandataire ascendant, il sera peut-être nécessaire de les configurer manuellement ici pour vous connecter.",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#local-proxy-ports#error-modal-title": {
