@@ -1,0 +1,46 @@
+/* Can be used to help with the IE7 "hasLayout" problem. http://www.satzansatz.de/cssd/onhavinglayout.html */
+.gainLayout { zoom: 1; }
+div { display: inline-block; }
+div { display: block; }
+
+.ie7Hidden {
+  display: none;
+  visibility: hidden;
+  zoom: 1;
+};
+
+.ie7Invisible {
+  visibility: hidden;
+  zoom: 1;
+};
+
+.ie7Remove {
+  /* Elements with this class get removed from DOM */
+}
+
+.ie7Border {
+  border-width: 1px;
+}
+
+/* Prevent tab icons from being cut off at the top */
+.icon-fixed-width {
+  padding-top: 0.1em;
+}
+
+/*
+IE7's crappy rendering can't cope with float:right inside a position:absolute parent.
+Info: https://stackoverflow.com/questions/24431054/float-right-and-float-left-in-absolute-container-ie7-expands-to-100-width
+This causes breakage in the Settings pane when using a RTL language (the accordion
+is position:absolute).
+One way to fix this would be to remove all usage on that tab of float:right on
+IE7, but we'll have to add a bunch of rules to do so, and there's a risk of
+forgetting to add a new one later.
+Another way to fix it is to set a width on the position:absolute element. This
+doesn't look perfect, but not terrible, and fixes the float problem for all
+child elements.
+*/
+#settings-accordion {
+  /* This value has been chosen by tweaking and checking. It looks less good as
+     the window gets wider. */
+  width: 97%;
+}

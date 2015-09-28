@@ -73,12 +73,40 @@ static string WStringToUTF8(LPCWSTR wString)
     return utf8_string;
 }
 
-static wstring UTF8ToWString(LPCSTR utf8String)
+static string WStringToUTF8(const wstring& wString)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
-    std::u16string utf16 = utf16conv.from_bytes(utf8String);
+    return WStringToUTF8(wString.c_str());
+}
+
+static wstring UTF8ToWString(LPCSTR utf8String)
+{    
+    // There is an issue in VS2015 that messes up codecvt. For a bit of info
+    // and the workaround, see here:
+    // https://social.msdn.microsoft.com/Forums/en-US/8f40dcd8-c67f-4eba-9134-a19b9178e481/vs-2015-rc-linker-stdcodecvt-error?forum=vcgeneral
+    // These two lines are the correct (and currently broken) form:
+    //std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+    //std::u16string utf16 = utf16conv.from_bytes(utf8String);
+    // And these two lines are the workaround:
+    std::wstring_convert<std::codecvt_utf8_utf16<__int16>, __int16> utf16conv;
+    basic_string<__int16, char_traits<__int16>, allocator<__int16> > utf16 = utf16conv.from_bytes(utf8String);
+
     wstring wide_string(utf16.begin(), utf16.end());
     return wide_string;
+}
+
+static wstring UTF8ToWString(const string& utf8String)
+{
+    return UTF8ToWString(utf8String.c_str());
+}
+
+static wstring UTF8ToWString(LPCTSTR utf8String)
+{
+    return UTF8ToWString(TStringToNarrow(utf8String).c_str());
+}
+
+static wstring UTF8ToWString(const tstring& utf8String)
+{
+    return UTF8ToWString(utf8String.c_str());
 }
 
 #ifdef UNICODE

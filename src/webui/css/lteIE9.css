@@ -1,0 +1,31 @@
+hr.dotted {
+  border-top-style: dotted;
+}
+
+/* Can't spin in IE<=9, so use an hourglass */
+.icon-spin {
+  *zoom: expression(this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe979;');
+}
+.icon-spin:before {
+  content: "\e979";
+}
+
+/*
+Required for the checkbox to be visible in RTL layouts.
+See comment in lteIE7.css above the `#settings-accordion` for info about why
+why need to do this.
+*/
+.checkbox-container {
+  width: 97%;
+}
+
+/*
+Ref: bootstrap:modals.less
+In RTL layout, centering of modals works on IE10+, but not in IE<=9.
+*/
+body[dir="rtl"] .modal {
+  left: initial;
+  margin-left: initial;
+  right: 50%;
+  margin-right: -280px;
+}

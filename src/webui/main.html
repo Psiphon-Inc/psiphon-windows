@@ -1,0 +1,1157 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+
+  <title></title>
+
+  <!-- This is bootstrap-responsive.css broken into 4000-byte chunks and spread across data URIs.
+       It's a dirty hack to make respond.js work with IE7 data URIs. -->
+  <link href="data:text/css;base64,LmNsZWFyZml4IHsKICAqem9vbTogMTsKfQouY2xlYXJmaXg6YmVmb3JlLAouY2xlYXJmaXg6YWZ0ZXIgewogIGRpc3BsYXk6IHRhYmxlOwogIGNvbnRlbnQ6ICIiOwogIGxpbmUtaGVpZ2h0OiAwOwp9Ci5jbGVhcmZpeDphZnRlciB7CiAgY2xlYXI6IGJvdGg7Cn0KLmhpZGUtdGV4dCB7CiAgZm9udDogMC8wIGE7CiAgY29sb3I6IHRyYW5zcGFyZW50OwogIHRleHQtc2hhZG93OiBub25lOwogIGJhY2tncm91bmQtY29sb3I6IHRyYW5zcGFyZW50OwogIGJvcmRlcjogMDsKfQouaW5wdXQtYmxvY2stbGV2ZWwgewogIGRpc3BsYXk6IGJsb2NrOwogIHdpZHRoOiAxMDAlOwogIG1pbi1oZWlnaHQ6IDMwcHg7CiAgLXdlYmtpdC1ib3gtc2l6aW5nOiBib3JkZXItYm94OwogIC1tb3otYm94LXNpemluZzogYm9yZGVyLWJveDsKICBib3gtc2l6aW5nOiBib3JkZXItYm94Owp9CkAtbXMtdmlld3BvcnQgewogIHdpZHRoOiBkZXZpY2Utd2lkdGg7Cn0KLmhpZGRlbiB7CiAgZGlzcGxheTogbm9uZTsKICB2aXNpYmlsaXR5OiBoaWRkZW47Cn0KLnZpc2libGUtcGhvbmUgewogIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKfQoudmlzaWJsZS10YWJsZXQgewogIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKfQouaGlkZGVuLWRlc2t0b3AgewogIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKfQoudmlzaWJsZS1kZXNrdG9wIHsKICBkaXNwbGF5OiBpbmhlcml0ICFpbXBvcnRhbnQ7Cn0KQG1lZGlhIChtaW4td2lkdGg6IDc2OHB4KSBhbmQgKG1heC13aWR0aDogOTc5cHgpIHsKICAuaGlkZGVuLWRlc2t0b3AgewogICAgZGlzcGxheTogaW5oZXJpdCAhaW1wb3J0YW50OwogIH0KICAudmlzaWJsZS1kZXNrdG9wIHsKICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudCA7CiAgfQogIC52aXNpYmxlLXRhYmxldCB7CiAgICBkaXNwbGF5OiBpbmhlcml0ICFpbXBvcnRhbnQ7CiAgfQogIC5oaWRkZW4tdGFibGV0IHsKICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDsKICB9Cn0KQG1lZGlhIChtYXgtd2lkdGg6IDc2N3B4KSB7CiAgLmhpZGRlbi1kZXNrdG9wIHsKICAgIGRpc3BsYXk6IGluaGVyaXQgIWltcG9ydGFudDsKICB9CiAgLnZpc2libGUtZGVza3RvcCB7CiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7CiAgfQogIC52aXNpYmxlLXBob25lIHsKICAgIGRpc3BsYXk6IGluaGVyaXQgIWltcG9ydGFudDsKICB9CiAgLmhpZGRlbi1waG9uZSB7CiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7CiAgfQp9Ci52aXNpYmxlLXByaW50IHsKICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7Cn0KQG1lZGlhIHByaW50IHsKICAudmlzaWJsZS1wcmludCB7CiAgICBkaXNwbGF5OiBpbmhlcml0ICFpbXBvcnRhbnQ7CiAgfQogIC5oaWRkZW4tcHJpbnQgewogICAgZGlzcGxheTogbm9uZSAhaW1wb3J0YW50OwogIH0KfQo=" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtaW4td2lkdGg6IDEyMDBweCkgewogIC5yb3cgewogICAgbWFyZ2luLWxlZnQ6IC0zMHB4OwogICAgKnpvb206IDE7CiAgfQogIC5yb3c6YmVmb3JlLAogIC5yb3c6YWZ0ZXIgewogICAgZGlzcGxheTogdGFibGU7CiAgICBjb250ZW50OiAiIjsKICAgIGxpbmUtaGVpZ2h0OiAwOwogIH0KICAucm93OmFmdGVyIHsKICAgIGNsZWFyOiBib3RoOwogIH0KICBbY2xhc3MqPSJzcGFuIl0gewogICAgZmxvYXQ6IGxlZnQ7CiAgICBtaW4taGVpZ2h0OiAxcHg7CiAgICBtYXJnaW4tbGVmdDogMzBweDsKICB9CiAgLmNvbnRhaW5lciwKICAubmF2YmFyLXN0YXRpYy10b3AgLmNvbnRhaW5lciwKICAubmF2YmFyLWZpeGVkLXRvcCAuY29udGFpbmVyLAogIC5uYXZiYXItZml4ZWQtYm90dG9tIC5jb250YWluZXIgewogICAgd2lkdGg6IDExNzBweDsKICB9CiAgLnNwYW4xMiB7CiAgICB3aWR0aDogMTE3MHB4OwogIH0KICAuc3BhbjExIHsKICAgIHdpZHRoOiAxMDcwcHg7CiAgfQogIC5zcGFuMTAgewogICAgd2lkdGg6IDk3MHB4OwogIH0KICAuc3BhbjkgewogICAgd2lkdGg6IDg3MHB4OwogIH0KICAuc3BhbjggewogICAgd2lkdGg6IDc3MHB4OwogIH0KICAuc3BhbjcgewogICAgd2lkdGg6IDY3MHB4OwogIH0KICAuc3BhbjYgewogICAgd2lkdGg6IDU3MHB4OwogIH0KICAuc3BhbjUgewogICAgd2lkdGg6IDQ3MHB4OwogIH0KICAuc3BhbjQgewogICAgd2lkdGg6IDM3MHB4OwogIH0KICAuc3BhbjMgewogICAgd2lkdGg6IDI3MHB4OwogIH0KICAuc3BhbjIgewogICAgd2lkdGg6IDE3MHB4OwogIH0KICAuc3BhbjEgewogICAgd2lkdGg6IDcwcHg7CiAgfQogIC5vZmZzZXQxMiB7CiAgICBtYXJnaW4tbGVmdDogMTIzMHB4OwogIH0KICAub2Zmc2V0MTEgewogICAgbWFyZ2luLWxlZnQ6IDExMzBweDsKICB9CiAgLm9mZnNldDEwIHsKICAgIG1hcmdpbi1sZWZ0OiAxMDMwcHg7CiAgfQogIC5vZmZzZXQ5IHsKICAgIG1hcmdpbi1sZWZ0OiA5MzBweDsKICB9CiAgLm9mZnNldDggewogICAgbWFyZ2luLWxlZnQ6IDgzMHB4OwogIH0KICAub2Zmc2V0NyB7CiAgICBtYXJnaW4tbGVmdDogNzMwcHg7CiAgfQogIC5vZmZzZXQ2IHsKICAgIG1hcmdpbi1sZWZ0OiA2MzBweDsKICB9CiAgLm9mZnNldDUgewogICAgbWFyZ2luLWxlZnQ6IDUzMHB4OwogIH0KICAub2Zmc2V0NCB7CiAgICBtYXJnaW4tbGVmdDogNDMwcHg7CiAgfQogIC5vZmZzZXQzIHsKICAgIG1hcmdpbi1sZWZ0OiAzMzBweDsKICB9CiAgLm9mZnNldDIgewogICAgbWFyZ2luLWxlZnQ6IDIzMHB4OwogIH0KICAub2Zmc2V0MSB7CiAgICBtYXJnaW4tbGVmdDogMTMwcHg7CiAgfQogIC5yb3ctZmx1aWQgewogICAgd2lkdGg6IDEwMCU7CiAgICAqem9vbTogMTsKICB9CiAgLnJvdy1mbHVpZDpiZWZvcmUsCiAgLnJvdy1mbHVpZDphZnRlciB7CiAgICBkaXNwbGF5OiB0YWJsZTsKICAgIGNvbnRlbnQ6ICIiOwogICAgbGluZS1oZWlnaHQ6IDA7CiAgfQogIC5yb3ctZmx1aWQ6YWZ0ZXIgewogICAgY2xlYXI6IGJvdGg7CiAgfQogIC5yb3ctZmx1aWQgW2NsYXNzKj0ic3BhbiJdIHsKICAgIGRpc3BsYXk6IGJsb2NrOwogICAgd2lkdGg6IDEwMCU7CiAgICBtaW4taGVpZ2h0OiAzMHB4OwogICAgLXdlYmtpdC1ib3gtc2l6aW5nOiBib3JkZXItYm94OwogICAgLW1vei1ib3gtc2l6aW5nOiBib3JkZXItYm94OwogICAgYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIGZsb2F0OiBsZWZ0OwogICAgbWFyZ2luLWxlZnQ6IDIuNTY0MTAyNTYlOwogICAgKm1hcmdpbi1sZWZ0OiAyLjUxMDkxMTA3JTsKICB9CiAgLnJvdy1mbHVpZCBbY2xhc3MqPSJzcGFuIl06Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDA7CiAgfQogIC5yb3ctZmx1aWQgLmNvbnRyb2xzLXJvdyBbY2xhc3MqPSJzcGFuIl0gKyBbY2xhc3MqPSJzcGFuIl0gewogICAgbWFyZ2luLWxlZnQ6IDIuNTY0MTAyNTYlOwogIH0KICAucm93LWZsdWlkIC5zcGFuMTIgewogICAgd2lkdGg6IDEwMCU7CiAgICAqd2lkdGg6IDk5Ljk0NjgwODUxJTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjExIHsKICAgIHdpZHRoOiA5MS40NTI5OTE0NSU7CiAgICAqd2lkdGg6IDkxLjM5OTc5OTk2JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjEwIHsKICAgIHdpZHRoOiA4Mi45MDU5ODI5MSU7CiAgICAqd2lkdGg6IDgyLjg1Mjc5MTQyJTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjkgewogICAgd2lkdGg6IDc0LjM1ODk3NDM2JTsKICAgICp3aWR0aDogNzQuMzA1NzgyODclOwogIH0KICAucm93LWZsdWlkIC5zcGFuOCB7CiAgICB3aWR0aDogNjUuODExOTY1ODElOwogICAgKndpZHRoOiA2NS43NTg3NzQzMiU7CiAgfQogIC5yb3ctZmx1aWQgLnNwYW43IHsKICAgIHdpZHRoOiA1Ny4yNjQ5NTcyNiU7CiAgICAqd2lkdGg6IDU3LjIxMTc2NTc4JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjYgewogICAgd2lkdGg6IDQ4LjcxNzk0ODcyJTsKICAgICp3aWR0aDogNDguNjY0NzU3MjMlOwogIH0KICAucm93LWZsdWlkIC5zcGFuNSB7CiAgICB3aWR0aDogNDAuMTcwOTQwMTclOwogICAgKndpZHRoOiA0MC4xMTc3NDg2OCU7CiAgfQogIC5yb3ctZmx1aWQgLnNwYW40IHsKICAgIHdpZHRoOiAzMS42MjM5MzE2MiU7CiAgICAqd2lkdGg6IDMxLjU3MDc0MDEzJTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjMgewogICAgd2lkdGg6IDIzLjA3NjkyMzA4JTsKICAgICp3aWR0aDogMjMuMDIzNzMxNTklOwogIH0KICAucm93LWZsdWlkIC5zcGFuMiB7CiAgICB3aWR0aDogMTQuNTI5OTE0NTMlOwogICAgKndpZHRoOiAxNC40NzY3MjMwNCU7CiAgfQp9" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtaW4td2lkdGg6IDEyMDBweCkgewogIC5yb3ctZmx1aWQgLnNwYW4xIHsKICAgIHdpZHRoOiA1Ljk4MjkwNTk4JTsKICAgICp3aWR0aDogNS45Mjk3MTQ0OSU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDEyIHsKICAgIG1hcmdpbi1sZWZ0OiAxMDUuMTI4MjA1MTMlOwogICAgKm1hcmdpbi1sZWZ0OiAxMDUuMDIxODIyMTUlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQxMjpmaXJzdC1jaGlsZCB7CiAgICBtYXJnaW4tbGVmdDogMTAyLjU2NDEwMjU2JTsKICAgICptYXJnaW4tbGVmdDogMTAyLjQ1NzcxOTU5JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTEgewogICAgbWFyZ2luLWxlZnQ6IDk2LjU4MTE5NjU4JTsKICAgICptYXJnaW4tbGVmdDogOTYuNDc0ODEzNiU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDExOmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiA5NC4wMTcwOTQwMiU7CiAgICAqbWFyZ2luLWxlZnQ6IDkzLjkxMDcxMTA0JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTAgewogICAgbWFyZ2luLWxlZnQ6IDg4LjAzNDE4ODAzJTsKICAgICptYXJnaW4tbGVmdDogODcuOTI3ODA1MDYlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQxMDpmaXJzdC1jaGlsZCB7CiAgICBtYXJnaW4tbGVmdDogODUuNDcwMDg1NDclOwogICAgKm1hcmdpbi1sZWZ0OiA4NS4zNjM3MDI0OSU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDkgewogICAgbWFyZ2luLWxlZnQ6IDc5LjQ4NzE3OTQ5JTsKICAgICptYXJnaW4tbGVmdDogNzkuMzgwNzk2NTElOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQ5OmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiA3Ni45MjMwNzY5MiU7CiAgICAqbWFyZ2luLWxlZnQ6IDc2LjgxNjY5Mzk0JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0OCB7CiAgICBtYXJnaW4tbGVmdDogNzAuOTQwMTcwOTQlOwogICAgKm1hcmdpbi1sZWZ0OiA3MC44MzM3ODc5NiU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDg6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDY4LjM3NjA2ODM4JTsKICAgICptYXJnaW4tbGVmdDogNjguMjY5Njg1NCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDcgewogICAgbWFyZ2luLWxlZnQ6IDYyLjM5MzE2MjM5JTsKICAgICptYXJnaW4tbGVmdDogNjIuMjg2Nzc5NDElOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQ3OmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiA1OS44MjkwNTk4MyU7CiAgICAqbWFyZ2luLWxlZnQ6IDU5LjcyMjY3Njg1JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0NiB7CiAgICBtYXJnaW4tbGVmdDogNTMuODQ2MTUzODUlOwogICAgKm1hcmdpbi1sZWZ0OiA1My43Mzk3NzA4NyU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDY6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDUxLjI4MjA1MTI4JTsKICAgICptYXJnaW4tbGVmdDogNTEuMTc1NjY4MyU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDUgewogICAgbWFyZ2luLWxlZnQ6IDQ1LjI5OTE0NTMlOwogICAgKm1hcmdpbi1sZWZ0OiA0NS4xOTI3NjIzMiU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDU6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDQyLjczNTA0Mjc0JTsKICAgICptYXJnaW4tbGVmdDogNDIuNjI4NjU5NzYlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQ0IHsKICAgIG1hcmdpbi1sZWZ0OiAzNi43NTIxMzY3NSU7CiAgICAqbWFyZ2luLWxlZnQ6IDM2LjY0NTc1Mzc3JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0NDpmaXJzdC1jaGlsZCB7CiAgICBtYXJnaW4tbGVmdDogMzQuMTg4MDM0MTklOwogICAgKm1hcmdpbi1sZWZ0OiAzNC4wODE2NTEyMSU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDMgewogICAgbWFyZ2luLWxlZnQ6IDI4LjIwNTEyODIxJTsKICAgICptYXJnaW4tbGVmdDogMjguMDk4NzQ1MjMlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQzOmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiAyNS42NDEwMjU2NCU7CiAgICAqbWFyZ2luLWxlZnQ6IDI1LjUzNDY0MjY2JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MiB7CiAgICBtYXJnaW4tbGVmdDogMTkuNjU4MTE5NjYlOwogICAgKm1hcmdpbi1sZWZ0OiAxOS41NTE3MzY2OCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDI6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDE3LjA5NDAxNzA5JTsKICAgICptYXJnaW4tbGVmdDogMTYuOTg3NjM0MTIlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQxIHsKICAgIG1hcmdpbi1sZWZ0OiAxMS4xMTExMTExMSU7CiAgICAqbWFyZ2luLWxlZnQ6IDExLjAwNDcyODEzJTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTpmaXJzdC1jaGlsZCB7CiAgICBtYXJnaW4tbGVmdDogOC41NDcwMDg1NSU7CiAgICAqbWFyZ2luLWxlZnQ6IDguNDQwNjI1NTclOwogIH0KICBpbnB1dCwKICB0ZXh0YXJlYSwKICAudW5lZGl0YWJsZS1pbnB1dCB7CiAgICBtYXJnaW4tbGVmdDogMDsKICB9CiAgLmNvbnRyb2xzLXJvdyBbY2xhc3MqPSJzcGFuIl0gKyBbY2xhc3MqPSJzcGFuIl0gewogICAgbWFyZ2luLWxlZnQ6IDMwcHg7CiAgfQogIGlucHV0LnNwYW4xMiwKICB0ZXh0YXJlYS5zcGFuMTIsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjEyIHsKICAgIHdpZHRoOiAxMTU2cHg7CiAgfQogIGlucHV0LnNwYW4xMSwKICB0ZXh0YXJlYS5zcGFuMTEsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjExIHsKICAgIHdpZHRoOiAxMDU2cHg7CiAgfQp9" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtaW4td2lkdGg6IDEyMDBweCkgewogIGlucHV0LnNwYW4xMCwKICB0ZXh0YXJlYS5zcGFuMTAsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjEwIHsKICAgIHdpZHRoOiA5NTZweDsKICB9CiAgaW5wdXQuc3BhbjksCiAgdGV4dGFyZWEuc3BhbjksCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjkgewogICAgd2lkdGg6IDg1NnB4OwogIH0KICBpbnB1dC5zcGFuOCwKICB0ZXh0YXJlYS5zcGFuOCwKICAudW5lZGl0YWJsZS1pbnB1dC5zcGFuOCB7CiAgICB3aWR0aDogNzU2cHg7CiAgfQogIGlucHV0LnNwYW43LAogIHRleHRhcmVhLnNwYW43LAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW43IHsKICAgIHdpZHRoOiA2NTZweDsKICB9CiAgaW5wdXQuc3BhbjYsCiAgdGV4dGFyZWEuc3BhbjYsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjYgewogICAgd2lkdGg6IDU1NnB4OwogIH0KICBpbnB1dC5zcGFuNSwKICB0ZXh0YXJlYS5zcGFuNSwKICAudW5lZGl0YWJsZS1pbnB1dC5zcGFuNSB7CiAgICB3aWR0aDogNDU2cHg7CiAgfQogIGlucHV0LnNwYW40LAogIHRleHRhcmVhLnNwYW40LAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW40IHsKICAgIHdpZHRoOiAzNTZweDsKICB9CiAgaW5wdXQuc3BhbjMsCiAgdGV4dGFyZWEuc3BhbjMsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjMgewogICAgd2lkdGg6IDI1NnB4OwogIH0KICBpbnB1dC5zcGFuMiwKICB0ZXh0YXJlYS5zcGFuMiwKICAudW5lZGl0YWJsZS1pbnB1dC5zcGFuMiB7CiAgICB3aWR0aDogMTU2cHg7CiAgfQogIGlucHV0LnNwYW4xLAogIHRleHRhcmVhLnNwYW4xLAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW4xIHsKICAgIHdpZHRoOiA1NnB4OwogIH0KICAudGh1bWJuYWlscyB7CiAgICBtYXJnaW4tbGVmdDogLTMwcHg7CiAgfQogIC50aHVtYm5haWxzID4gbGkgewogICAgbWFyZ2luLWxlZnQ6IDMwcHg7CiAgfQogIC5yb3ctZmx1aWQgLnRodW1ibmFpbHMgewogICAgbWFyZ2luLWxlZnQ6IDA7CiAgfQp9CkBtZWRpYSAobWluLXdpZHRoOiA3NjhweCkgYW5kIChtYXgtd2lkdGg6IDk3OXB4KSB7CiAgLnJvdyB7CiAgICBtYXJnaW4tbGVmdDogLTIwcHg7CiAgICAqem9vbTogMTsKICB9CiAgLnJvdzpiZWZvcmUsCiAgLnJvdzphZnRlciB7CiAgICBkaXNwbGF5OiB0YWJsZTsKICAgIGNvbnRlbnQ6ICIiOwogICAgbGluZS1oZWlnaHQ6IDA7CiAgfQogIC5yb3c6YWZ0ZXIgewogICAgY2xlYXI6IGJvdGg7CiAgfQogIFtjbGFzcyo9InNwYW4iXSB7CiAgICBmbG9hdDogbGVmdDsKICAgIG1pbi1oZWlnaHQ6IDFweDsKICAgIG1hcmdpbi1sZWZ0OiAyMHB4OwogIH0KICAuY29udGFpbmVyLAogIC5uYXZiYXItc3RhdGljLXRvcCAuY29udGFpbmVyLAogIC5uYXZiYXItZml4ZWQtdG9wIC5jb250YWluZXIsCiAgLm5hdmJhci1maXhlZC1ib3R0b20gLmNvbnRhaW5lciB7CiAgICB3aWR0aDogNzI0cHg7CiAgfQogIC5zcGFuMTIgewogICAgd2lkdGg6IDcyNHB4OwogIH0KICAuc3BhbjExIHsKICAgIHdpZHRoOiA2NjJweDsKICB9CiAgLnNwYW4xMCB7CiAgICB3aWR0aDogNjAwcHg7CiAgfQogIC5zcGFuOSB7CiAgICB3aWR0aDogNTM4cHg7CiAgfQogIC5zcGFuOCB7CiAgICB3aWR0aDogNDc2cHg7CiAgfQogIC5zcGFuNyB7CiAgICB3aWR0aDogNDE0cHg7CiAgfQogIC5zcGFuNiB7CiAgICB3aWR0aDogMzUycHg7CiAgfQogIC5zcGFuNSB7CiAgICB3aWR0aDogMjkwcHg7CiAgfQogIC5zcGFuNCB7CiAgICB3aWR0aDogMjI4cHg7CiAgfQogIC5zcGFuMyB7CiAgICB3aWR0aDogMTY2cHg7CiAgfQogIC5zcGFuMiB7CiAgICB3aWR0aDogMTA0cHg7CiAgfQogIC5zcGFuMSB7CiAgICB3aWR0aDogNDJweDsKICB9CiAgLm9mZnNldDEyIHsKICAgIG1hcmdpbi1sZWZ0OiA3NjRweDsKICB9CiAgLm9mZnNldDExIHsKICAgIG1hcmdpbi1sZWZ0OiA3MDJweDsKICB9CiAgLm9mZnNldDEwIHsKICAgIG1hcmdpbi1sZWZ0OiA2NDBweDsKICB9CiAgLm9mZnNldDkgewogICAgbWFyZ2luLWxlZnQ6IDU3OHB4OwogIH0KICAub2Zmc2V0OCB7CiAgICBtYXJnaW4tbGVmdDogNTE2cHg7CiAgfQogIC5vZmZzZXQ3IHsKICAgIG1hcmdpbi1sZWZ0OiA0NTRweDsKICB9CiAgLm9mZnNldDYgewogICAgbWFyZ2luLWxlZnQ6IDM5MnB4OwogIH0KICAub2Zmc2V0NSB7CiAgICBtYXJnaW4tbGVmdDogMzMwcHg7CiAgfQogIC5vZmZzZXQ0IHsKICAgIG1hcmdpbi1sZWZ0OiAyNjhweDsKICB9CiAgLm9mZnNldDMgewogICAgbWFyZ2luLWxlZnQ6IDIwNnB4OwogIH0KICAub2Zmc2V0MiB7CiAgICBtYXJnaW4tbGVmdDogMTQ0cHg7CiAgfQogIC5vZmZzZXQxIHsKICAgIG1hcmdpbi1sZWZ0OiA4MnB4OwogIH0KICAucm93LWZsdWlkIHsKICAgIHdpZHRoOiAxMDAlOwogICAgKnpvb206IDE7CiAgfQogIC5yb3ctZmx1aWQ6YmVmb3JlLAogIC5yb3ctZmx1aWQ6YWZ0ZXIgewogICAgZGlzcGxheTogdGFibGU7CiAgICBjb250ZW50OiAiIjsKICAgIGxpbmUtaGVpZ2h0OiAwOwogIH0KICAucm93LWZsdWlkOmFmdGVyIHsKICAgIGNsZWFyOiBib3RoOwogIH0KICAucm93LWZsdWlkIFtjbGFzcyo9InNwYW4iXSB7CiAgICBkaXNwbGF5OiBibG9jazsKICAgIHdpZHRoOiAxMDAlOwogICAgbWluLWhlaWdodDogMzBweDsKICAgIC13ZWJraXQtYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIC1tb3otYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7CiAgICBmbG9hdDogbGVmdDsKICAgIG1hcmdpbi1sZWZ0OiAyLjc2MjQzMDk0JTsKICAgICptYXJnaW4tbGVmdDogMi43MDkyMzk0NSU7CiAgfQogIC5yb3ctZmx1aWQgW2NsYXNzKj0ic3BhbiJdOmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiAwOwogIH0KfQ==" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtaW4td2lkdGg6IDc2OHB4KSBhbmQgKG1heC13aWR0aDogOTc5cHgpIHsKICAucm93LWZsdWlkIC5jb250cm9scy1yb3cgW2NsYXNzKj0ic3BhbiJdICsgW2NsYXNzKj0ic3BhbiJdIHsKICAgIG1hcmdpbi1sZWZ0OiAyLjc2MjQzMDk0JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjEyIHsKICAgIHdpZHRoOiAxMDAlOwogICAgKndpZHRoOiA5OS45NDY4MDg1MSU7CiAgfQogIC5yb3ctZmx1aWQgLnNwYW4xMSB7CiAgICB3aWR0aDogOTEuNDM2NDY0MDklOwogICAgKndpZHRoOiA5MS4zODMyNzI2JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjEwIHsKICAgIHdpZHRoOiA4Mi44NzI5MjgxOCU7CiAgICAqd2lkdGg6IDgyLjgxOTczNjY5JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjkgewogICAgd2lkdGg6IDc0LjMwOTM5MjI3JTsKICAgICp3aWR0aDogNzQuMjU2MjAwNzglOwogIH0KICAucm93LWZsdWlkIC5zcGFuOCB7CiAgICB3aWR0aDogNjUuNzQ1ODU2MzUlOwogICAgKndpZHRoOiA2NS42OTI2NjQ4NiU7CiAgfQogIC5yb3ctZmx1aWQgLnNwYW43IHsKICAgIHdpZHRoOiA1Ny4xODIzMjA0NCU7CiAgICAqd2lkdGg6IDU3LjEyOTEyODk1JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjYgewogICAgd2lkdGg6IDQ4LjYxODc4NDUzJTsKICAgICp3aWR0aDogNDguNTY1NTkzMDQlOwogIH0KICAucm93LWZsdWlkIC5zcGFuNSB7CiAgICB3aWR0aDogNDAuMDU1MjQ4NjIlOwogICAgKndpZHRoOiA0MC4wMDIwNTcxMyU7CiAgfQogIC5yb3ctZmx1aWQgLnNwYW40IHsKICAgIHdpZHRoOiAzMS40OTE3MTI3MSU7CiAgICAqd2lkdGg6IDMxLjQzODUyMTIyJTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjMgewogICAgd2lkdGg6IDIyLjkyODE3NjglOwogICAgKndpZHRoOiAyMi44NzQ5ODUzMSU7CiAgfQogIC5yb3ctZmx1aWQgLnNwYW4yIHsKICAgIHdpZHRoOiAxNC4zNjQ2NDA4OCU7CiAgICAqd2lkdGg6IDE0LjMxMTQ0OTM5JTsKICB9CiAgLnJvdy1mbHVpZCAuc3BhbjEgewogICAgd2lkdGg6IDUuODAxMTA0OTclOwogICAgKndpZHRoOiA1Ljc0NzkxMzQ4JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTIgewogICAgbWFyZ2luLWxlZnQ6IDEwNS41MjQ4NjE4OCU7CiAgICAqbWFyZ2luLWxlZnQ6IDEwNS40MTg0Nzg5JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTI6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDEwMi43NjI0MzA5NCU7CiAgICAqbWFyZ2luLWxlZnQ6IDEwMi42NTYwNDc5NiU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDExIHsKICAgIG1hcmdpbi1sZWZ0OiA5Ni45NjEzMjU5NyU7CiAgICAqbWFyZ2luLWxlZnQ6IDk2Ljg1NDk0Mjk5JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTE6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDk0LjE5ODg5NTAzJTsKICAgICptYXJnaW4tbGVmdDogOTQuMDkyNTEyMDUlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQxMCB7CiAgICBtYXJnaW4tbGVmdDogODguMzk3NzkwMDYlOwogICAgKm1hcmdpbi1sZWZ0OiA4OC4yOTE0MDcwOCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDEwOmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiA4NS42MzUzNTkxMiU7CiAgICAqbWFyZ2luLWxlZnQ6IDg1LjUyODk3NjE0JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0OSB7CiAgICBtYXJnaW4tbGVmdDogNzkuODM0MjU0MTQlOwogICAgKm1hcmdpbi1sZWZ0OiA3OS43Mjc4NzExNiU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDk6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDc3LjA3MTgyMzIlOwogICAgKm1hcmdpbi1sZWZ0OiA3Ni45NjU0NDAyMyU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDggewogICAgbWFyZ2luLWxlZnQ6IDcxLjI3MDcxODIzJTsKICAgICptYXJnaW4tbGVmdDogNzEuMTY0MzM1MjUlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQ4OmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiA2OC41MDgyODcyOSU7CiAgICAqbWFyZ2luLWxlZnQ6IDY4LjQwMTkwNDMxJTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0NyB7CiAgICBtYXJnaW4tbGVmdDogNjIuNzA3MTgyMzIlOwogICAgKm1hcmdpbi1sZWZ0OiA2Mi42MDA3OTkzNCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDc6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDU5Ljk0NDc1MTM4JTsKICAgICptYXJnaW4tbGVmdDogNTkuODM4MzY4NCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDYgewogICAgbWFyZ2luLWxlZnQ6IDU0LjE0MzY0NjQxJTsKICAgICptYXJnaW4tbGVmdDogNTQuMDM3MjYzNDMlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQ2OmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiA1MS4zODEyMTU0NyU7CiAgICAqbWFyZ2luLWxlZnQ6IDUxLjI3NDgzMjQ5JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0NSB7CiAgICBtYXJnaW4tbGVmdDogNDUuNTgwMTEwNSU7CiAgICAqbWFyZ2luLWxlZnQ6IDQ1LjQ3MzcyNzUyJTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0NTpmaXJzdC1jaGlsZCB7CiAgICBtYXJnaW4tbGVmdDogNDIuODE3Njc5NTYlOwogICAgKm1hcmdpbi1sZWZ0OiA0Mi43MTEyOTY1OCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDQgewogICAgbWFyZ2luLWxlZnQ6IDM3LjAxNjU3NDU5JTsKICAgICptYXJnaW4tbGVmdDogMzYuOTEwMTkxNjElOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQ0OmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiAzNC4yNTQxNDM2NSU7CiAgICAqbWFyZ2luLWxlZnQ6IDM0LjE0Nzc2MDY3JTsKICB9Cn0=" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtaW4td2lkdGg6IDc2OHB4KSBhbmQgKG1heC13aWR0aDogOTc5cHgpIHsKICAucm93LWZsdWlkIC5vZmZzZXQzIHsKICAgIG1hcmdpbi1sZWZ0OiAyOC40NTMwMzg2NyU7CiAgICAqbWFyZ2luLWxlZnQ6IDI4LjM0NjY1NTclOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQzOmZpcnN0LWNoaWxkIHsKICAgIG1hcmdpbi1sZWZ0OiAyNS42OTA2MDc3MyU7CiAgICAqbWFyZ2luLWxlZnQ6IDI1LjU4NDIyNDc2JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MiB7CiAgICBtYXJnaW4tbGVmdDogMTkuODg5NTAyNzYlOwogICAgKm1hcmdpbi1sZWZ0OiAxOS43ODMxMTk3OCU7CiAgfQogIC5yb3ctZmx1aWQgLm9mZnNldDI6Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDE3LjEyNzA3MTgyJTsKICAgICptYXJnaW4tbGVmdDogMTcuMDIwNjg4ODQlOwogIH0KICAucm93LWZsdWlkIC5vZmZzZXQxIHsKICAgIG1hcmdpbi1sZWZ0OiAxMS4zMjU5NjY4NSU7CiAgICAqbWFyZ2luLWxlZnQ6IDExLjIxOTU4Mzg3JTsKICB9CiAgLnJvdy1mbHVpZCAub2Zmc2V0MTpmaXJzdC1jaGlsZCB7CiAgICBtYXJnaW4tbGVmdDogOC41NjM1MzU5MSU7CiAgICAqbWFyZ2luLWxlZnQ6IDguNDU3MTUyOTMlOwogIH0KICBpbnB1dCwKICB0ZXh0YXJlYSwKICAudW5lZGl0YWJsZS1pbnB1dCB7CiAgICBtYXJnaW4tbGVmdDogMDsKICB9CiAgLmNvbnRyb2xzLXJvdyBbY2xhc3MqPSJzcGFuIl0gKyBbY2xhc3MqPSJzcGFuIl0gewogICAgbWFyZ2luLWxlZnQ6IDIwcHg7CiAgfQogIGlucHV0LnNwYW4xMiwKICB0ZXh0YXJlYS5zcGFuMTIsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjEyIHsKICAgIHdpZHRoOiA3MTBweDsKICB9CiAgaW5wdXQuc3BhbjExLAogIHRleHRhcmVhLnNwYW4xMSwKICAudW5lZGl0YWJsZS1pbnB1dC5zcGFuMTEgewogICAgd2lkdGg6IDY0OHB4OwogIH0KICBpbnB1dC5zcGFuMTAsCiAgdGV4dGFyZWEuc3BhbjEwLAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW4xMCB7CiAgICB3aWR0aDogNTg2cHg7CiAgfQogIGlucHV0LnNwYW45LAogIHRleHRhcmVhLnNwYW45LAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW45IHsKICAgIHdpZHRoOiA1MjRweDsKICB9CiAgaW5wdXQuc3BhbjgsCiAgdGV4dGFyZWEuc3BhbjgsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjggewogICAgd2lkdGg6IDQ2MnB4OwogIH0KICBpbnB1dC5zcGFuNywKICB0ZXh0YXJlYS5zcGFuNywKICAudW5lZGl0YWJsZS1pbnB1dC5zcGFuNyB7CiAgICB3aWR0aDogNDAwcHg7CiAgfQogIGlucHV0LnNwYW42LAogIHRleHRhcmVhLnNwYW42LAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW42IHsKICAgIHdpZHRoOiAzMzhweDsKICB9CiAgaW5wdXQuc3BhbjUsCiAgdGV4dGFyZWEuc3BhbjUsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjUgewogICAgd2lkdGg6IDI3NnB4OwogIH0KICBpbnB1dC5zcGFuNCwKICB0ZXh0YXJlYS5zcGFuNCwKICAudW5lZGl0YWJsZS1pbnB1dC5zcGFuNCB7CiAgICB3aWR0aDogMjE0cHg7CiAgfQogIGlucHV0LnNwYW4zLAogIHRleHRhcmVhLnNwYW4zLAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW4zIHsKICAgIHdpZHRoOiAxNTJweDsKICB9CiAgaW5wdXQuc3BhbjIsCiAgdGV4dGFyZWEuc3BhbjIsCiAgLnVuZWRpdGFibGUtaW5wdXQuc3BhbjIgewogICAgd2lkdGg6IDkwcHg7CiAgfQogIGlucHV0LnNwYW4xLAogIHRleHRhcmVhLnNwYW4xLAogIC51bmVkaXRhYmxlLWlucHV0LnNwYW4xIHsKICAgIHdpZHRoOiAyOHB4OwogIH0KfQo=" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtYXgtd2lkdGg6IDc2N3B4KSB7CiAgYm9keSB7CiAgICBwYWRkaW5nLWxlZnQ6IDIwcHg7CiAgICBwYWRkaW5nLXJpZ2h0OiAyMHB4OwogIH0KICAubmF2YmFyLWZpeGVkLXRvcCwKICAubmF2YmFyLWZpeGVkLWJvdHRvbSwKICAubmF2YmFyLXN0YXRpYy10b3AgewogICAgbWFyZ2luLWxlZnQ6IC0yMHB4OwogICAgbWFyZ2luLXJpZ2h0OiAtMjBweDsKICB9CiAgLmNvbnRhaW5lci1mbHVpZCB7CiAgICBwYWRkaW5nOiAwOwogIH0KICAuZGwtaG9yaXpvbnRhbCBkdCB7CiAgICBmbG9hdDogbm9uZTsKICAgIGNsZWFyOiBub25lOwogICAgd2lkdGg6IGF1dG87CiAgICB0ZXh0LWFsaWduOiBsZWZ0OwogIH0KICAuZGwtaG9yaXpvbnRhbCBkZCB7CiAgICBtYXJnaW4tbGVmdDogMDsKICB9CiAgLmNvbnRhaW5lciB7CiAgICB3aWR0aDogYXV0bzsKICB9CiAgLnJvdy1mbHVpZCB7CiAgICB3aWR0aDogMTAwJTsKICB9CiAgLnJvdywKICAudGh1bWJuYWlscyB7CiAgICBtYXJnaW4tbGVmdDogMDsKICB9CiAgLnRodW1ibmFpbHMgPiBsaSB7CiAgICBmbG9hdDogbm9uZTsKICAgIG1hcmdpbi1sZWZ0OiAwOwogIH0KICBbY2xhc3MqPSJzcGFuIl0sCiAgLnVuZWRpdGFibGUtaW5wdXRbY2xhc3MqPSJzcGFuIl0sCiAgLnJvdy1mbHVpZCBbY2xhc3MqPSJzcGFuIl0gewogICAgZmxvYXQ6IG5vbmU7CiAgICBkaXNwbGF5OiBibG9jazsKICAgIHdpZHRoOiAxMDAlOwogICAgbWFyZ2luLWxlZnQ6IDA7CiAgICAtd2Via2l0LWJveC1zaXppbmc6IGJvcmRlci1ib3g7CiAgICAtbW96LWJveC1zaXppbmc6IGJvcmRlci1ib3g7CiAgICBib3gtc2l6aW5nOiBib3JkZXItYm94OwogIH0KICAuc3BhbjEyLAogIC5yb3ctZmx1aWQgLnNwYW4xMiB7CiAgICB3aWR0aDogMTAwJTsKICAgIC13ZWJraXQtYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIC1tb3otYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7CiAgfQogIC5yb3ctZmx1aWQgW2NsYXNzKj0ib2Zmc2V0Il06Zmlyc3QtY2hpbGQgewogICAgbWFyZ2luLWxlZnQ6IDA7CiAgfQogIC5pbnB1dC1sYXJnZSwKICAuaW5wdXQteGxhcmdlLAogIC5pbnB1dC14eGxhcmdlLAogIGlucHV0W2NsYXNzKj0ic3BhbiJdLAogIHNlbGVjdFtjbGFzcyo9InNwYW4iXSwKICB0ZXh0YXJlYVtjbGFzcyo9InNwYW4iXSwKICAudW5lZGl0YWJsZS1pbnB1dCB7CiAgICBkaXNwbGF5OiBibG9jazsKICAgIHdpZHRoOiAxMDAlOwogICAgbWluLWhlaWdodDogMzBweDsKICAgIC13ZWJraXQtYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIC1tb3otYm94LXNpemluZzogYm9yZGVyLWJveDsKICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7CiAgfQogIC5pbnB1dC1wcmVwZW5kIGlucHV0LAogIC5pbnB1dC1hcHBlbmQgaW5wdXQsCiAgLmlucHV0LXByZXBlbmQgaW5wdXRbY2xhc3MqPSJzcGFuIl0sCiAgLmlucHV0LWFwcGVuZCBpbnB1dFtjbGFzcyo9InNwYW4iXSB7CiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7CiAgICB3aWR0aDogYXV0bzsKICB9CiAgLmNvbnRyb2xzLXJvdyBbY2xhc3MqPSJzcGFuIl0gKyBbY2xhc3MqPSJzcGFuIl0gewogICAgbWFyZ2luLWxlZnQ6IDA7CiAgfQogIC5tb2RhbCB7CiAgICBwb3NpdGlvbjogZml4ZWQ7CiAgICB0b3A6IDIwcHg7CiAgICBsZWZ0OiAyMHB4OwogICAgcmlnaHQ6IDIwcHg7CiAgICB3aWR0aDogYXV0bzsKICAgIG1hcmdpbjogMDsKICB9CiAgLm1vZGFsLmZhZGUgewogICAgdG9wOiAtMTAwcHg7CiAgfQogIC5tb2RhbC5mYWRlLmluIHsKICAgIHRvcDogMjBweDsKICB9Cn0KQG1lZGlhIChtYXgtd2lkdGg6IDQ4MHB4KSB7CiAgLm5hdi1jb2xsYXBzZSB7CiAgICAtd2Via2l0LXRyYW5zZm9ybTogdHJhbnNsYXRlM2QoMCwgMCwgMCk7CiAgfQogIC5wYWdlLWhlYWRlciBoMSBzbWFsbCB7CiAgICBkaXNwbGF5OiBibG9jazsKICAgIGxpbmUtaGVpZ2h0OiAyMHB4OwogIH0KICBpbnB1dFt0eXBlPSJjaGVja2JveCJdLAogIGlucHV0W3R5cGU9InJhZGlvIl0gewogICAgYm9yZGVyOiAxcHggc29saWQgI2NjYzsKICB9CiAgLmZvcm0taG9yaXpvbnRhbCAuY29udHJvbC1sYWJlbCB7CiAgICBmbG9hdDogbm9uZTsKICAgIHdpZHRoOiBhdXRvOwogICAgcGFkZGluZy10b3A6IDA7CiAgICB0ZXh0LWFsaWduOiBsZWZ0OwogIH0KICAuZm9ybS1ob3Jpem9udGFsIC5jb250cm9scyB7CiAgICBtYXJnaW4tbGVmdDogMDsKICB9CiAgLmZvcm0taG9yaXpvbnRhbCAuY29udHJvbC1saXN0IHsKICAgIHBhZGRpbmctdG9wOiAwOwogIH0KICAuZm9ybS1ob3Jpem9udGFsIC5mb3JtLWFjdGlvbnMgewogICAgcGFkZGluZy1sZWZ0OiAxMHB4OwogICAgcGFkZGluZy1yaWdodDogMTBweDsKICB9CiAgLm1lZGlhIC5wdWxsLWxlZnQsCiAgLm1lZGlhIC5wdWxsLXJpZ2h0IHsKICAgIGZsb2F0OiBub25lOwogICAgZGlzcGxheTogYmxvY2s7CiAgICBtYXJnaW4tYm90dG9tOiAxMHB4OwogIH0KICAubWVkaWEtb2JqZWN0IHsKICAgIG1hcmdpbi1yaWdodDogMDsKICAgIG1hcmdpbi1sZWZ0OiAwOwogIH0KICAubW9kYWwgewogICAgdG9wOiAxMHB4OwogICAgbGVmdDogMTBweDsKICAgIHJpZ2h0OiAxMHB4OwogIH0KICAubW9kYWwtaGVhZGVyIC5jbG9zZSB7CiAgICBwYWRkaW5nOiAxMHB4OwogICAgbWFyZ2luOiAtMTBweDsKICB9CiAgLmNhcm91c2VsLWNhcHRpb24gewogICAgcG9zaXRpb246IHN0YXRpYzsKICB9Cn0K" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtYXgtd2lkdGg6IDk3OXB4KSB7CiAgYm9keSB7CiAgICBwYWRkaW5nLXRvcDogMDsKICB9CiAgLm5hdmJhci1maXhlZC10b3AsCiAgLm5hdmJhci1maXhlZC1ib3R0b20gewogICAgcG9zaXRpb246IHN0YXRpYzsKICB9CiAgLm5hdmJhci1maXhlZC10b3AgewogICAgbWFyZ2luLWJvdHRvbTogMjBweDsKICB9CiAgLm5hdmJhci1maXhlZC1ib3R0b20gewogICAgbWFyZ2luLXRvcDogMjBweDsKICB9CiAgLm5hdmJhci1maXhlZC10b3AgLm5hdmJhci1pbm5lciwKICAubmF2YmFyLWZpeGVkLWJvdHRvbSAubmF2YmFyLWlubmVyIHsKICAgIHBhZGRpbmc6IDVweDsKICB9CiAgLm5hdmJhciAuY29udGFpbmVyIHsKICAgIHdpZHRoOiBhdXRvOwogICAgcGFkZGluZzogMDsKICB9CiAgLm5hdmJhciAuYnJhbmQgewogICAgcGFkZGluZy1sZWZ0OiAxMHB4OwogICAgcGFkZGluZy1yaWdodDogMTBweDsKICAgIG1hcmdpbjogMCAwIDAgLTVweDsKICB9CiAgLm5hdi1jb2xsYXBzZSB7CiAgICBjbGVhcjogYm90aDsKICB9CiAgLm5hdi1jb2xsYXBzZSAubmF2IHsKICAgIGZsb2F0OiBub25lOwogICAgbWFyZ2luOiAwIDAgMTBweDsKICB9CiAgLm5hdi1jb2xsYXBzZSAubmF2ID4gbGkgewogICAgZmxvYXQ6IG5vbmU7CiAgfQogIC5uYXYtY29sbGFwc2UgLm5hdiA+IGxpID4gYSB7CiAgICBtYXJnaW4tYm90dG9tOiAycHg7CiAgfQogIC5uYXYtY29sbGFwc2UgLm5hdiA+IC5kaXZpZGVyLXZlcnRpY2FsIHsKICAgIGRpc3BsYXk6IG5vbmU7CiAgfQogIC5uYXYtY29sbGFwc2UgLm5hdiAubmF2LWhlYWRlciB7CiAgICBjb2xvcjogIzc3Nzc3NzsKICAgIHRleHQtc2hhZG93OiBub25lOwogIH0KICAubmF2LWNvbGxhcHNlIC5uYXYgPiBsaSA+IGEsCiAgLm5hdi1jb2xsYXBzZSAuZHJvcGRvd24tbWVudSBhIHsKICAgIHBhZGRpbmc6IDlweCAxNXB4OwogICAgZm9udC13ZWlnaHQ6IGJvbGQ7CiAgICBjb2xvcjogIzc3Nzc3NzsKICAgIC13ZWJraXQtYm9yZGVyLXJhZGl1czogM3B4OwogICAgLW1vei1ib3JkZXItcmFkaXVzOiAzcHg7CiAgICBib3JkZXItcmFkaXVzOiAzcHg7CiAgfQogIC5uYXYtY29sbGFwc2UgLmJ0biB7CiAgICBwYWRkaW5nOiA0cHggMTBweCA0cHg7CiAgICBmb250LXdlaWdodDogbm9ybWFsOwogICAgLXdlYmtpdC1ib3JkZXItcmFkaXVzOiA0cHg7CiAgICAtbW96LWJvcmRlci1yYWRpdXM6IDRweDsKICAgIGJvcmRlci1yYWRpdXM6IDRweDsKICB9CiAgLm5hdi1jb2xsYXBzZSAuZHJvcGRvd24tbWVudSBsaSArIGxpIGEgewogICAgbWFyZ2luLWJvdHRvbTogMnB4OwogIH0KICAubmF2LWNvbGxhcHNlIC5uYXYgPiBsaSA+IGE6aG92ZXIsCiAgLm5hdi1jb2xsYXBzZSAubmF2ID4gbGkgPiBhOmZvY3VzLAogIC5uYXYtY29sbGFwc2UgLmRyb3Bkb3duLW1lbnUgYTpob3ZlciwKICAubmF2LWNvbGxhcHNlIC5kcm9wZG93bi1tZW51IGE6Zm9jdXMgewogICAgYmFja2dyb3VuZC1jb2xvcjogI2YyZjJmMjsKICB9CiAgLm5hdmJhci1pbnZlcnNlIC5uYXYtY29sbGFwc2UgLm5hdiA+IGxpID4gYSwKICAubmF2YmFyLWludmVyc2UgLm5hdi1jb2xsYXBzZSAuZHJvcGRvd24tbWVudSBhIHsKICAgIGNvbG9yOiAjOTk5OTk5OwogIH0KICAubmF2YmFyLWludmVyc2UgLm5hdi1jb2xsYXBzZSAubmF2ID4gbGkgPiBhOmhvdmVyLAogIC5uYXZiYXItaW52ZXJzZSAubmF2LWNvbGxhcHNlIC5uYXYgPiBsaSA+IGE6Zm9jdXMsCiAgLm5hdmJhci1pbnZlcnNlIC5uYXYtY29sbGFwc2UgLmRyb3Bkb3duLW1lbnUgYTpob3ZlciwKICAubmF2YmFyLWludmVyc2UgLm5hdi1jb2xsYXBzZSAuZHJvcGRvd24tbWVudSBhOmZvY3VzIHsKICAgIGJhY2tncm91bmQtY29sb3I6ICMxMTExMTE7CiAgfQogIC5uYXYtY29sbGFwc2UuaW4gLmJ0bi1ncm91cCB7CiAgICBtYXJnaW4tdG9wOiA1cHg7CiAgICBwYWRkaW5nOiAwOwogIH0KICAubmF2LWNvbGxhcHNlIC5kcm9wZG93bi1tZW51IHsKICAgIHBvc2l0aW9uOiBzdGF0aWM7CiAgICB0b3A6IGF1dG87CiAgICBsZWZ0OiBhdXRvOwogICAgZmxvYXQ6IG5vbmU7CiAgICBkaXNwbGF5OiBub25lOwogICAgbWF4LXdpZHRoOiBub25lOwogICAgbWFyZ2luOiAwIDE1cHg7CiAgICBwYWRkaW5nOiAwOwogICAgYmFja2dyb3VuZC1jb2xvcjogdHJhbnNwYXJlbnQ7CiAgICBib3JkZXI6IG5vbmU7CiAgICAtd2Via2l0LWJvcmRlci1yYWRpdXM6IDA7CiAgICAtbW96LWJvcmRlci1yYWRpdXM6IDA7CiAgICBib3JkZXItcmFkaXVzOiAwOwogICAgLXdlYmtpdC1ib3gtc2hhZG93OiBub25lOwogICAgLW1vei1ib3gtc2hhZG93OiBub25lOwogICAgYm94LXNoYWRvdzogbm9uZTsKICB9CiAgLm5hdi1jb2xsYXBzZSAub3BlbiA+IC5kcm9wZG93bi1tZW51IHsKICAgIGRpc3BsYXk6IGJsb2NrOwogIH0KICAubmF2LWNvbGxhcHNlIC5kcm9wZG93bi1tZW51OmJlZm9yZSwKICAubmF2LWNvbGxhcHNlIC5kcm9wZG93bi1tZW51OmFmdGVyIHsKICAgIGRpc3BsYXk6IG5vbmU7CiAgfQogIC5uYXYtY29sbGFwc2UgLmRyb3Bkb3duLW1lbnUgLmRpdmlkZXIgewogICAgZGlzcGxheTogbm9uZTsKICB9CiAgLm5hdi1jb2xsYXBzZSAubmF2ID4gbGkgPiAuZHJvcGRvd24tbWVudTpiZWZvcmUsCiAgLm5hdi1jb2xsYXBzZSAubmF2ID4gbGkgPiAuZHJvcGRvd24tbWVudTphZnRlciB7CiAgICBkaXNwbGF5OiBub25lOwogIH0KfQ==" rel="stylesheet">
+  <link href="data:text/css;base64,QG1lZGlhIChtYXgtd2lkdGg6IDk3OXB4KSB7CiAgLm5hdi1jb2xsYXBzZSAubmF2YmFyLWZvcm0sCiAgLm5hdi1jb2xsYXBzZSAubmF2YmFyLXNlYXJjaCB7CiAgICBmbG9hdDogbm9uZTsKICAgIHBhZGRpbmc6IDEwcHggMTVweDsKICAgIG1hcmdpbjogMTBweCAwOwogICAgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNmMmYyZjI7CiAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2YyZjJmMjsKICAgIC13ZWJraXQtYm94LXNoYWRvdzogaW5zZXQgMCAxcHggMCByZ2JhKDI1NSwyNTUsMjU1LC4xKSwgMCAxcHggMCByZ2JhKDI1NSwyNTUsMjU1LC4xKTsKICAgIC1tb3otYm94LXNoYWRvdzogaW5zZXQgMCAxcHggMCByZ2JhKDI1NSwyNTUsMjU1LC4xKSwgMCAxcHggMCByZ2JhKDI1NSwyNTUsMjU1LC4xKTsKICAgIGJveC1zaGFkb3c6IGluc2V0IDAgMXB4IDAgcmdiYSgyNTUsMjU1LDI1NSwuMSksIDAgMXB4IDAgcmdiYSgyNTUsMjU1LDI1NSwuMSk7CiAgfQogIC5uYXZiYXItaW52ZXJzZSAubmF2LWNvbGxhcHNlIC5uYXZiYXItZm9ybSwKICAubmF2YmFyLWludmVyc2UgLm5hdi1jb2xsYXBzZSAubmF2YmFyLXNlYXJjaCB7CiAgICBib3JkZXItdG9wLWNvbG9yOiAjMTExMTExOwogICAgYm9yZGVyLWJvdHRvbS1jb2xvcjogIzExMTExMTsKICB9CiAgLm5hdmJhciAubmF2LWNvbGxhcHNlIC5uYXYucHVsbC1yaWdodCB7CiAgICBmbG9hdDogbm9uZTsKICAgIG1hcmdpbi1sZWZ0OiAwOwogIH0KICAubmF2LWNvbGxhcHNlLAogIC5uYXYtY29sbGFwc2UuY29sbGFwc2UgewogICAgb3ZlcmZsb3c6IGhpZGRlbjsKICAgIGhlaWdodDogMDsKICB9CiAgLm5hdmJhciAuYnRuLW5hdmJhciB7CiAgICBkaXNwbGF5OiBibG9jazsKICB9CiAgLm5hdmJhci1zdGF0aWMgLm5hdmJhci1pbm5lciB7CiAgICBwYWRkaW5nLWxlZnQ6IDEwcHg7CiAgICBwYWRkaW5nLXJpZ2h0OiAxMHB4OwogIH0KfQpAbWVkaWEgKG1pbi13aWR0aDogOTc5cHggKyAxKSB7CiAgLm5hdi1jb2xsYXBzZS5jb2xsYXBzZSB7CiAgICBoZWlnaHQ6IGF1dG8gIWltcG9ydGFudDsKICAgIG92ZXJmbG93OiB2aXNpYmxlICFpbXBvcnRhbnQ7CiAgfQp9Cg==" rel="stylesheet">
+  <link href="vendor/jqueryui/jquery-ui.structure.min.css?__inline=true" rel="stylesheet">
+  <link href="vendor/icomoon/style.css?__inline=true" rel="stylesheet">
+  <link href="vendor/icomoon/helpers.css?__inline=true" rel="stylesheet">
+  <link href="vendor/flags32.css?__inline=true" rel="stylesheet">
+  <link href="css/main.css?__inline=true" rel="stylesheet">
+
+  <!--[if lte IE 7]>
+    <link href="vendor/icomoon/ie7.css?__inline=true" rel="stylesheet">
+    <link href="css/lteIE7.css?__inline=true" rel="stylesheet">
+  <![endif]-->
+
+  <!--[if lte IE 9]>
+    <link href="css/lteIE9.css?__inline=true" rel="stylesheet">
+  <![endif]-->
+
+  <script>
+    // We need to set up the window.onerror handler in a separate script block, otherwise
+    // compilation errors in the main code might prevent the handler from getting set.
+    window.onerror = function(errorMsg, url, lineNumber) {
+      alert("Window caught error on line " + lineNumber + ": " + errorMsg + "\nPlease report this error.");
+    };
+
+    function exceptionString(ex) {
+      return ex.name + ': ' + ex.description;
+    }
+  </script>
+
+  <script src="vendor/base64.js?__inline=true"></script>
+  <script src="vendor/respond.src.js?__inline=true"></script>
+  <script src="vendor/modernizr.min.js?__inline=true"></script>
+  <script src="vendor/es5-shim.min.js?__inline=true"></script>
+  <script src="vendor/json2.js?__inline=true"></script>
+  <script src="vendor/jquery-1.11.2.min.js?__inline=true"></script>
+  <script src="vendor/lodash.min.js?__inline=true"></script>
+  <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
+  <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
+  <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
+  <script src="vendor/spin.js?__inline=true"></script>
+  <script src="vendor/jquery.textfill.js?__inline=true"></script>
+  <script src="vendor/i18next.min.js?__inline=true"></script>
+
+  <!--[if lt IE 8]>
+    <script src="vendor/icomoon/ie7.js?__inline=true"></script>
+  <![endif]-->
+
+  <script src="js/plugins.js?__inline=true"></script>
+  <script src="js/locales.js?__inline=true"></script>
+  <script src="js/main.js?__inline=true"></script>
+</head>
+
+<body dir="ltr">
+
+  <div class="psiphon-header">
+    <div class="header-nav-join logo" data-match-width=".main-nav">
+      <a href="#">
+        <img src="logo-bw.png" data-stopped-src="logo-bw.png" data-connected-src="logo.png">
+      </a>
+    </div>
+
+    <div class="text-center banner long-connecting-hide">
+      <div data-i18n="banner#sponsored-by">
+        Sponsored by
+      </div>
+      <a href="#">
+        <img src="">
+      </a>
+    </div>
+
+    <div class="text-center banner hidden long-connecting-show">
+      <div data-i18n="[html]banner#long-connecting">
+        <strong>Oh no!</strong> You seem to be having trouble connecting!<br>
+        Download the latest version of Psiphon from the
+        <a class="NewVersionURL" href="#">download site</a>
+        or by sending an email to <a class="NewVersionEmail" href="#"></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="tabbable tabs-left"
+         data-i18n-ltr-classes="tabs-left" data-i18n-rtl-classes="tabs-right">
+      <ul class="main-nav nav nav-tabs">
+
+        <li id="connection-tab" class="active">
+          <!-- data-match-width is necessary for IE7 -->
+          <a href="#connection-pane" data-toggle="tab"
+             data-match-width=".main-nav a" data-match-width-dependent="true"
+             data-match-height="#settings-tab > a" data-match-height-align="top">
+
+            <div data-match-width="#connection-tab [data-connect-state]">
+
+              <span class="z-behind" data-connect-state="starting">
+                <span class="label label-warning">
+                  <i class="icon-spinner6 icon-spin"></i>
+                </span>
+                <span data-i18n="nav#connection#starting">Connecting</span>
+              </span>
+
+              <span class="z-behind" data-connect-state="stopping">
+                <span class="label label-warning">
+                  <i class="icon-spinner6 icon-spin"></i>
+                </span>
+                <span data-i18n="nav#connection#stopping">Disconnecting</span>
+              </span>
+
+              <span class="z-behind" data-connect-state="connected">
+                <span class="label label-success">
+                  <i class="icon-checkmark-circle"></i>
+                </span>
+                <span data-i18n="nav#connection#connected">Connected</span>
+              </span>
+
+              <span data-connect-state="stopped">
+                <span class="label label-important">
+                  <i class="icon-warning"></i>
+                </span>
+                <span data-i18n="nav#connection#stopped">Disconnected</span>
+              </span>
+
+            </div>
+
+          </a>
+        </li>
+
+        <li id="settings-tab">
+          <a href="#settings-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-cog"></i>
+            <span data-i18n="nav#settings">Settings</span>
+          </a>
+        </li>
+
+        <li id="feedback-tab">
+          <a href="#feedback-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-bubble-heart"></i>
+            <span data-i18n="nav#feedback">Feedback</span>
+          </a>
+        </li>
+
+        <li id="about-tab">
+          <a href="#about-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-rocket"></i>
+            <span data-i18n="nav#about">About</span>
+          </a>
+        </li>
+
+        <li id="logs-tab">
+          <a href="#logs-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-list"></i>
+            <span data-i18n="nav#logs">Logs</span>
+          </a>
+        </li>
+
+        <li id="language-tab">
+          <a href="#language-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <div class="multiline-tab-icon" style="">
+              <i class="icon-fixed-width icon-earth"></i>
+            </div>
+            <div class="multiline-tab-text" style="">
+              Language<br>
+              زبان<br>
+              语言
+            </div>
+          </a>
+        </li>
+
+        <li id="debug-tab">
+          <a href="#debug-pane" data-toggle="tab" data-match-width=".main-nav a">
+            <i class="icon-fixed-width icon-bug"></i>
+            <span>Debug</span>
+          </a>
+        </li>
+
+        <li id="fill-tab"></li>
+
+      </ul>
+      <div class="tab-content main-height">
+
+        <!-- CONNECTION ================================================-->
+        <div class="tab-pane active fade in" id="connection-pane">
+          <div id="connect-toggle">
+
+            <div class="connect-toggle-content z-behind well text-center"
+                 data-connect-state="starting"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <i class="icon-spinner6 icon-spin icon-state-symbol"></i>
+              </div>
+              <div>
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#starting-msg">
+                    Psiphon is <span class="state-word">connecting</span>…
+                  </span>
+                </h2>
+              </div>
+              <hr class="dotted">
+              <div>
+                <a href="#" class="btn btn-large"
+                   data-i18n="connection#stop-btn">
+                    Stop
+                </a>
+              </div>
+            </div><!-- /starting -->
+
+            <div class="connect-toggle-content z-behind well text-center"
+                 data-connect-state="connected"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <i class="icon-checkmark-circle icon-state-symbol"></i>
+              </div>
+              <div>
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#connected-msg">
+                    Psiphon is <span class="state-word">connected</span>
+                  </span>
+                </h2>
+              </div>
+              <hr class="dotted">
+              <div>
+                <a href="#" class="btn btn-large"
+                   data-i18n="connection#disconnect-btn">
+                    Disconnect
+                </a>
+              </div>
+            </div><!-- /connected -->
+
+            <div class="connect-toggle-content z-behind well text-center"
+                 data-connect-state="stopping"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <i class="icon-spinner6 icon-spin icon-state-symbol"></i>
+              </div>
+              <div>
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#stopping-msg">
+                    Psiphon is <span class="state-word">disconnecting</span>…
+                  </span>
+                </h2>
+              </div>
+              <hr class="dotted">
+              <div>
+                <a href="#" class="btn btn-large disabled" disabled
+                   data-i18n="connection#wait-btn">
+                      Please wait...
+                </a>
+              </div>
+            </div><!-- /stopping -->
+
+            <div class="connect-toggle-content well text-center"
+                 data-connect-state="stopped"
+                 data-match-height=".connect-toggle-content" data-match-height-align="bottom">
+              <div class="state-symbol">
+                <div class="circle">
+                  <i class="icon-warning icon-state-symbol"></i>
+                </div>
+              </div>
+              <div>
+                <h2 class="textfill-container">
+                  <span data-i18n="[html]connection#stopped-msg">
+                    Psiphon is <span class="state-word">disconnected</span>
+                  </span>
+                </h2>
+              </div>
+              <hr class="dotted">
+              <div>
+                <a href="#" class="btn btn-large"
+                   data-i18n="connection#connect-btn">
+                    Connect
+                </a>
+              </div>
+            </div><!-- /stopped -->
+
+          </div><!-- /connect-toggle -->
+
+          <div class="egress-region-combo-container vpn-incompatible-hide">
+
+            <label for="EgressRegionCombo">
+              <a href="#" data-i18n="connection#egress-region-combo-label">
+                Connect via
+              </a>
+            </label>
+            <div class="btn-group dropup" id="EgressRegionCombo">
+              <a class="btn btn-large dropdown-toggle f32 ie7Border" data-toggle="dropdown" href="#">
+                <span data-i18n-ltr-classes="pull-left" data-i18n-rtl-classes="pull-right">
+                  <span class="flag">
+                    placeholder
+                  </span>
+                </span>
+                <i class="icon-chevron-up-circle"
+                   data-i18n-ltr-classes="pull-right" data-i18n-rtl-classes="pull-left"></i>
+              </a>
+              <ul class="control-group dropdown-menu f32" role="menu">
+                <!-- filled in dynamically -->
+             </ul>
+            </div>
+          </div>
+        </div><!-- /connection-pane -->
+
+
+        <!-- SETTINGS ==================================================-->
+        <div class="tab-pane fade" id="settings-pane">
+
+          <div class="alert alert-error affix value-error-alert invisible z-behind"
+               data-i18n="[html]settings#error-alert">
+            <strong>Error!</strong> Please fix incorrect values before proceeding.
+          </div>
+
+          <div class="settings-buttons">
+            <a href="#" class="apply-settings btn btn-primary disabled" disabled
+               data-i18n="settings#apply-button">
+              Apply Changes
+            </a>
+            <a href="#" class="reset-settings btn" data-i18n="settings#reset-button">
+              Reset to Default
+            </a>
+          </div>
+
+          <div class="accordion" id="settings-accordion">
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-systray-minimize"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#systray-minimize#heading">
+                    Minimize to Notification Area (System Tray)
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-systray-minimize" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form>
+                    <fieldset>
+                      <p data-i18n="settings#systray-minimize#help-text">
+                        If enabled, when minimized the Psiphon application
+                        window will hide in the notification area (also known as
+                        the “system tray” or “systray”, located near the clock
+                        on your Windows task bar).
+                      </p>
+                      <p data-i18n="settings#systray-minimize#reason">
+                        Minimizing Psiphon to the notification area (“systray”)
+                        frees up space on your task bar. This is especially
+                        helpful if you often run Psiphon for long periods of
+                        time.
+                      </p>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="SystrayMinimize"/>
+                          <label for="SystrayMinimize">
+                            <span data-i18n="settings#systray-minimize#enable-label">
+                              Minimize to the notification area (system tray)
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-split-tunnel"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#split-tunnel#heading">
+                    Split Tunnel
+                  </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-split-tunnel" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <p data-i18n="settings#split-tunnel#help-text">
+                        If enabled, requests made to servers within your home country will not be
+                        tunneled through Psiphon.
+                      </p>
+                      <p data-i18n="settings#split-tunnel#reason">
+                        Websites within your home country are generally not blocked,
+                        so enabling this option will give you faster access to those sites
+                        and can sometimes reduce ISP data usage costs.
+                      </p>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="SplitTunnel"/>
+                          <label for="SplitTunnel">
+                            <span data-i18n="settings#split-tunnel#enable-label">
+                              Don't proxy domestic websites
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with L2TP/IPSec mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-egress-region"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#egress-region#heading">
+                    Psiphon Server Region
+                  </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-egress-region" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <span class="help-block" data-i18n="settings#egress-region#description">
+                        Psiphon has servers in many different countries. Using a
+                        Psiphon server in a country close to your home country
+                        will generally provide a better network connection, but
+                        you may wish to access websites and services like you
+                        are virtually in a specific country.
+                      </span>
+                      <span class="help-block" data-i18n="[html]settings#egress-region#default">
+                        Choosing the default <strong>“Fastest Country”</strong>
+                        option allows Psiphon to automatically choose a server,
+                        which will generally result in the best network
+                        connection.
+                      </span>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with L2TP/IPSec mode.)
+                        </small>
+                      </span>
+                      <span class="help-block egress-region-invalid">
+                        <span class="text-error"
+                              data-i18n="settings#egress-region#invalid-error-msg">
+                          Choose a valid Psiphon server region.
+                        </span>
+                      </span>
+                      <div class="controls">
+                        <label for="EgressRegion" data-i18n="settings#egress-region#label">
+                          Connect via
+                        </label>
+                        <div class="dropdown clearfix">
+                          <!-- Giving this the `control-group` class is a bit of a hack to get its error state working right. -->
+                          <ul id="EgressRegion" class="control-group dropdown-menu f32" role="menu"
+                              style="display: block; position: static; margin-bottom: 5px; *min-width: 180px;">
+                            <li data-region="BEST">
+                                <a tabindex="-1" href="#" class="flag unknown">
+                                  <strong data-i18n="settings#egress-region#select-best-performance">
+                                    Fastest Country
+                                  </strong>
+                                </a>
+                            </li>
+                            <li data-region="US">
+                              <a href="#" tabindex="-1" class="flag us"
+                                 data-i18n="settings#egress-region#select-us">
+                                United States
+                              </a>
+                            </li>
+                            <li data-region="GB">
+                              <a href="#" tabindex="-1" class="flag gb"
+                                 data-i18n="settings#egress-region#select-gb">
+                                United Kingdom
+                              </a>
+                            </li>
+                            <li data-region="JP">
+                              <a href="#" tabindex="-1" class="flag jp"
+                                 data-i18n="settings#egress-region#select-jp">
+                                Japan
+                              </a>
+                            </li>
+                            <li data-region="SG">
+                              <a href="#" tabindex="-1" class="flag sg"
+                                 data-i18n="settings#egress-region#select-sg">
+                                Singapore
+                              </a>
+                            </li>
+                            <li data-region="NL">
+                              <a href="#" tabindex="-1" class="flag nl"
+                                 data-i18n="settings#egress-region#select-nl">
+                                Netherlands
+                              </a>
+                            </li>
+                            <li data-region="DE">
+                              <a href="#" tabindex="-1" class="flag de"
+                                 data-i18n="settings#egress-region#select-de">
+                                Germany
+                              </a>
+                            </li>
+                          </ul>
+                        </div><!--/.dropdown-->
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-local-proxy-ports"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#local-proxy-ports#heading">
+                    Local Proxy Ports
+                  </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-local-proxy-ports" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="form-horizontal">
+                    <fieldset>
+                      <p data-i18n="[html]settings#local-proxy-ports#leave-blank">
+                        Leave <strong>blank</strong> for automatic port
+                        selection (recommended).
+                      </p>
+                      <p data-i18n="settings#local-proxy-ports#reason">
+                        If you use tools on your computer that require manual
+                        configuration to work with Psiphon, you will want
+                        Psiphon to consistently use the same local port numbers.
+                        If you don’t have a reason to specify port numbers, you
+                        should allow Psiphon to choose them automatically to
+                        help avoid conflicts.
+                      </p>
+                      <div class="control-group">
+                        <label for="LocalHttpProxyPort" class="control-label"
+                               data-i18n="settings#local-proxy-ports#http-label">
+                          HTTP/HTTPS
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="LocalHttpProxyPort" class="port-entry"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                          <span class="help-inline LocalHttpProxyPort" data-i18n="settings#port-value-error-msg">
+                            Must be between 1 and 65535.
+                          </span>
+                        </div>
+                      </div>
+                      <div class="control-group vpn-incompatible">
+                        <label for="LocalSocksProxyPort" class="control-label"
+                                data-i18n="settings#local-proxy-ports#socks-label">SOCKS</label>
+                        <div class="controls">
+                          <input type="text" id="LocalSocksProxyPort" class="port-entry"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                          <span class="help-inline LocalSocksProxyPort" data-i18n="settings#port-value-error-msg">
+                            Must be between 1 and 65535.
+                          </span>
+                        </div>
+                        <span class="help-block local-port-unique">
+                          <span data-i18n="settings#local-proxy-ports#unique-error-msg">
+                            Local ports must be distinct from each other.
+                          </span>
+                        </span>
+                        <span class="help-block">
+                          <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                            (Doesn't work with L2TP/IPSec mode.)
+                          </small>
+                        </span>
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-upstream-proxy"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#upstream-proxy#heading">
+                    Upstream Proxy
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-upstream-proxy" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="form-horizontal">
+                    <fieldset>
+                      <p data-i18n="settings#upstream-proxy#by-default">
+                        If your computer already has a proxy configured, by
+                        default Psiphon will use that proxy when establishing a
+                        tunnel. You can override that behavior by specifying a
+                        proxy to use, or by specifying that no such “upstream
+                        proxy" should be used.
+                      </p>
+                      <p data-i18n="settings#upstream-proxy#reason">
+                        Upstream proxies are sometimes required by schools,
+                        universities, or businesses. If you know the upstream
+                        proxy settings required by your network provider, then
+                        manually setting them here may be required to connect.
+                      </p>
+                      <p data-i18n="settings#upstream-proxy#proxy-reqs">
+                        Only HTTP proxies that support HTTPS are allowed.
+                      </p>
+                      <div class="control-group skip-upstream-proxy-incompatible">
+                        <label for="UpstreamProxyHostname" class="control-label"
+                                data-i18n="settings#upstream-proxy#hostname-label">
+                          Hostname
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyHostname"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible">
+                        <label for="UpstreamProxyPort" class="control-label"
+                                data-i18n="settings#upstream-proxy#port-label">
+                          Port
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyPort" class="port-entry"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                          <span class="help-inline UpstreamProxyPort" data-i18n="settings#port-value-error-msg">
+                            Must be between 1 and 65535.
+                          </span>
+                        </div>
+                      </div>
+                      <div class="control-group">
+                        <div class="controls">
+                          <div class="checkbox-container">
+                            <div class="checkbox">
+                              <input type="checkbox" id="SkipUpstreamProxy"/>
+                              <label for="SkipUpstreamProxy">
+                                <span data-i18n="settings#upstream-proxy#skip-label">
+                                  Don't use upstream proxy
+                                </span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="help-block upstream-proxy-set-match">
+                        <span data-i18n="settings#upstream-proxy#set-both-error-msg">
+                          You must set both Hostname and Port, or leave both blank for automatic selection.
+                        </span>
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-transport-mode"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#transport-mode#heading">
+                    Transport Mode
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-transport-mode" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form>
+                    <fieldset>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox checkbox-warning">
+                          <input type="checkbox" id="VPN"/>
+                          <label for="VPN">
+                            <span data-i18n="settings#transport-mode#check-label">
+                              Use L2TP/IPSec Mode
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block" data-i18n="[html]settings#transport-mode#help-text">
+                        Uses Windows L2TP/IPSec virtual networking. This mode
+                        will tunnel all of your apps, but it doesn’t provide
+                        obfuscation and so does not have strong censorship
+                        circumvention capabilities. It is <strong>not
+                        recommended</strong> for bypassing most firewalls.
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /#settings-accordion -->
+
+        </div><!-- /settings-pane -->
+
+        <!-- FEEDBACK ==================================================-->
+
+        <div class="tab-pane fade" id="feedback-pane">
+          <h2 data-i18n="feedback#top_content_title">Give Us Your Feedback</h2>
+
+          <div>
+            <div>
+              <p data-i18n="[html]feedback#top_para_2">
+                Many problems can be fixed by downloading the latest version. You can
+                <a class="NewVersionURL" href="#">download the latest version by clicking here</a>,
+                or you can send an email to <a class="NewVersionEmail" href="#"></a>.
+              </p>
+              <p data-i18n="[html]feedback#top_para_3">
+                You can also find solutions to many common problems in our
+                <a class="FaqURL" href="#">Frequently Asked Questions</a>.
+              </p>
+            </div>
+
+            <form id="feedback-form" action="feedback" method="get">
+
+              <div class="feedback-smiley-container">
+                <table class="feedback-smiley">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="happy feedback-choice"
+                             data-feedback-choice-value=0
+                             data-feedback-choice-hash="24f5c290039e5b0a2fd17bfcdb8d3108"
+                             data-feedback-choice-title="Overall satisfaction"
+                             data-match-height=".feedback-choice" data-match-height-align="center">
+                          <i class="icon-happy-grin"></i>
+                          <br>
+                          <span data-i18n="feedback#smiley_happy">
+                            Psiphon connects and performs the way I want it to.
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="sad feedback-choice"
+                             data-feedback-choice-value=1
+                             data-feedback-choice-hash="24f5c290039e5b0a2fd17bfcdb8d3108"
+                             data-feedback-choice-title="Overall satisfaction"
+                             data-match-height=".feedback-choice" data-match-height-align="center">
+                          <i class="icon-mad"></i>
+                          <br>
+                          <span data-i18n="feedback#smiley_sad">
+                            Psiphon often fails to connect or doesn't perform well enough.
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div><!-- /feedback-smiley-container -->
+
+              <div>
+                <label for="feedback-comments" data-i18n="feedback#text_feedback_prompt">
+                  Please enter your comments here:
+                </label>
+                <textarea class="input-block-level" id="feedback-comments" rows="3"></textarea>
+              </div>
+
+              <div>
+                <label for="feedback-email" data-i18n="feedback#text_feedback_email_prompt">
+                  If you would like us to respond to you, please enter your email address:
+                </label>
+                <input type="email" id="feedback-email" class="input-block-level">
+              </div>
+
+              <div>
+                <div class="checkbox-container">
+                  <div class="controls checkbox">
+                    <input type="checkbox" checked="true" id="feedback-send-diagnostic">
+                    <label for="feedback-send-diagnostic">
+                      <span data-i18n="[html]feedback#diagnostic_check">
+                        Upload diagnostic data. Please note that this diagnostic data does not
+                        identify you, and it will help us to keep Psiphon running smoothly.
+                        <a class="DataCollectionInfoURL" href="#">Click here to see what data we collect.</a>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <a id="feedback-submit" class="btn btn-primary btn-large" data-i18n="feedback#submit_button">
+                  Submit
+                </a>
+              </div>
+            </form>
+
+          </div><!-- /questionnaire content -->
+
+          <div class="help-block" data-i18n="[html]feedback#text_feedback_bottom_para">
+            If the above form is not working, or you would like to send screenshots, please email us at
+            <a href="mailto:feedback+windows@psiphon.ca">feedback+windows@psiphon.ca</a>.
+          </div>
+
+        </div><!-- /feedback-pane -->
+
+
+        <!-- LOGS ==========================================================-->
+        <div class="tab-pane fade" id="logs-pane">
+          <div>
+            <div class="checkbox-container">
+              <div class="controls checkbox invisible">
+                <input type="checkbox" id="show-debug-logs"/>
+                <label for="show-debug-logs">
+                  <span data-i18n="logs#show-debug-label">
+                    Show debug logs
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- We're forcing this to LTR since logs aren't translated -->
+            <table dir="ltr" class="log-messages table">
+              <tr class="placeholder">
+                <td data-i18n="logs#placeholder">
+                  No logs yet
+                </td>
+              </tr>
+            </table>
+
+            <!-- Log template -->
+            <script type="text/html" id="log-template">
+              <tr data-class="priority">
+                <td class="timestamp" data-content="timestamp">
+                </td>
+                <td class="message" data-content="message">
+                </td>
+              </tr>
+            </script>
+
+          </div>
+        </div><!-- /logs-pane -->
+
+
+        <!-- ABOUT ======================================================-->
+        <div class="tab-pane fade" id="about-pane">
+          <a class="InfoURL wordart-link" href="#">
+            <div class="wordart">
+              <div class="wordart-title text-center" data-i18n="about#wordart-title">
+                Psiphon
+              </div>
+              <div class="wordart-tag text-center" data-i18n="about#wordart-tag">
+                Beyond Borders
+              </div>
+            </div>
+          </a>
+
+          <p data-i18n="[html]about#description">
+            Psiphon is a <strong>censorship circumvention tool</strong> — it is
+            designed to give access to the open Internet, past censors and
+            firewalls. It is <strong>open source</strong> and developed in
+            Toronto, Canada.
+          </p>
+          <p data-i18n="[html]about#visit-download-site">
+            Please visit the website to
+            <strong><a class="NewVersionURL" href="#">download a new version</a></strong>
+            or to <strong><a class="InfoURL" href="#">get help and information</a></strong>.
+            Psiphon is available for Android and Windows.
+          </p>
+          <p>
+            <span data-i18n="[html]about#get-by-email">
+              <strong>If the website is inaccessible</strong>, you can get a new
+              version of Psiphon by sending an email to:
+            </span>
+            <a class="NewVersionEmail" href="#"></a>
+          </p>
+
+          <hr>
+          <p class="client-version text-center muted">
+            <span data-i18n="about#client-version">
+              Psiphon for Windows client version:
+            </span>
+            <span class="ClientVersion"></span>
+          </p>
+        </div><!-- /about-pane -->
+
+
+        <!-- LANGUAGE ======================================================-->
+        <div class="tab-pane fade" id="language-pane">
+          <!-- Supported locales will be filled in here -->
+
+          <!-- Locale template -->
+          <script type="text/html" id="locale-template">
+            <div class="language-item">
+              <a href="#" class="language-choice"
+                 data-value="localeCode" data-content="localeName"></a>
+            </div>
+          </script>
+        </div><!-- /language-pane -->
+
+
+        <!-- DEBUG =========================================================-->
+        <div class="tab-pane fade" id="debug-pane">
+          <form class="form-inline">
+            <label>Change connection state</label>
+            <select id="debug-state">
+              <option value="starting">starting</option>
+              <option value="connected">connected</option>
+              <option value="stopping">stopping</option>
+              <option value="stopped">stopped</option>
+            </select>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-log">
+            <label>Add log</label>
+            <select style="width:7em">
+              <option value="1" selected>normal</option>
+              <option value="2">high</option>
+              <option value="0">debug</option>
+            </select>
+            <input type="text">
+            <a class="btn btn-primary"><i class="icon-plus"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-AvailableEgressRegions">
+            <label>Notice:AvailableEgressRegions</label>
+
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-US" value="US">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-US">US</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-GB" value="GB">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-GB">UK</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-JP" value="JP">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-JP">JP</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-SG" value="SG">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-SG">SG</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-NL" value="NL">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-NL">NL</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-DE" value="DE">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-DE">DE</label>
+              </div>
+            </div>
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-UpstreamProxyError">
+            <label>Notice:UpstreamProxyError</label>
+            <input type="text" placeholder="optional message">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+            <span class="help-block">
+              Note: The error won't be shown until/unless the connection state hasn't changed in 60 seconds.
+            </span>
+          </form>
+
+          <hr>
+
+          <p>
+            Simple notices resulting in modals or log lines:
+          </p>
+          <style>
+            #debug-modal-notices li {
+              list-style: none;
+            }
+          </style>
+          <ul id="debug-modal-notices">
+            <li>
+              <form class="form-inline" id="debug-HttpProxyPortInUse">
+                <label>Notice:HttpProxyPortInUse (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SocksProxyPortInUse">
+                <label>Notice:SocksProxyPortInUse (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SetProxyError">
+                <label>Notice:SystemProxySettings::SetProxyError (modal)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+            <li>
+              <form class="form-inline" id="debug-SetProxyWarning">
+                <label>Notice:SystemProxySettings::SetProxyWarning (log)</label>
+                <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+              </form>
+            </li>
+          </ul>
+
+          <hr>
+
+          <form class="form-inline" id="debug-UpdateDpiScaling">
+            <label>UpdateDpiScaling</label>
+            <input type="text" placeholder="1.0, 1.2, 1.5, 2.0, ..." style="width:3em">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <span class="help-block">
+            The contents of this page are not shown to the user and so are not translated.
+          </span>
+
+        </div><!-- /about-pane -->
+
+
+      </div><!-- /tab-content -->
+    </div><!-- /tabbable -->
+  </div><!-- /main-container -->
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="feedback-success-alert" class="alert alert-success global-alert" style="display:none"
+       data-i18n="[html]feedback#success-message">
+    <strong>Thank you!</strong> Your feedback has been sent.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="language-success-alert" class="alert alert-success global-alert" style="display:none"
+       data-i18n="[html]language#success-message">
+    <strong>Hello!</strong> Welcome to Psiphon.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="settings-apply-alert" class="alert alert-warning global-alert" style="display:none"
+       data-i18n="settings#applying-message">
+    Reconnecting to apply your settings.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="settings-save-alert" class="alert alert-success global-alert" style="display:none"
+       data-i18n="settings#saved-message">
+    Settings saved.
+  </div>
+
+  <!-- Modal dialog shown to user when there's an upstream proxy error -->
+  <div class="modal fade" id="NoticeModal" tabindex="-1" role="dialog"
+       aria-labelledby="NoticeModalTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="NoticeModalTitle">
+            NoticeModalTitle
+          </h3>
+        </div>
+        <div class="modal-body">
+          <div class="notice-modal-body">
+          </div>
+          <div class="notice-modal-tech">
+            <br>
+            <p class="notice-modal-tech-preamble">
+            </p>
+            <p>
+              <!-- Don't try to newline+indent this HTML. The <pre> will interpret it literally. -->
+              <pre><code class="notice-modal-tech-info">technical info will go here</code></pre>
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <span data-i18n="general#modal-close-button">
+              Close
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /NoticeModal -->
+
+  <!-- Modal dialog shown to user when they try to navigate away from settings without applying changes -->
+  <div class="modal fade" id="SettingsUnappliedChangesPrompt" tabindex="-1" role="dialog"
+       aria-labelledby="SettingsUnappliedChangesPromptTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="SettingsUnappliedChangesPromptTitle">
+            <span data-i18n="settings#unapplied-changes-prompt#title">
+              Settings Changed
+            </span>
+          </h3>
+        </div>
+        <div class="modal-body">
+          <p data-i18n="[html]settings#unapplied-changes-prompt#body">
+            You have made changes to your settings, but you have not applied the changes.
+            <br><br>
+            Do you wish to apply your changes now or discard them?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary apply-button">
+            <span data-i18n="settings#unapplied-changes-prompt#apply-button">
+              Apply
+            </span>
+          </button>
+          <button type="button" class="btn btn-warning discard-button">
+            <span data-i18n="settings#unapplied-changes-prompt#discard-button">
+              Discard
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /SettingsUnappliedChangesPrompt -->
+
+</body>
+</html>

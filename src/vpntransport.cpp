@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "transport.h"
 #include "vpntransport.h"
+#include "logging.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "ras.h"
@@ -126,11 +127,6 @@ bool VPNTransport::IsHandshakeRequired() const
 bool VPNTransport::IsWholeSystemTunneled() const
 {
     return true;
-}
-
-bool VPNTransport::IsSplitTunnelSupported() const
-{
-    return false;
 }
 
 bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
@@ -290,9 +286,9 @@ void VPNTransport::TransportConnectHelper()
     sessionInfo.Set(serverEntry);
 
     // Record which server we're attempting to connect to
-    ostringstream ss;
-    ss << "ipAddress: " << sessionInfo.GetServerAddress();
-    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+    Json::Value json;
+    json["ipAddress"] = sessionInfo.GetServerAddress();
+    AddDiagnosticInfoJson("ConnectingServer", json);
 
     // Do pre-handshake
 
