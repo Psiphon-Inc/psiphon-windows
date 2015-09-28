@@ -455,6 +455,8 @@ ServerEntry::ServerEntry(
     const string& meekObfuscatedKey, const int meekServerPort,
     const string& meekCookieEncryptionPublicKey,
     const string& meekFrontingDomain, const string& meekFrontingHost,
+    const string& meekFrontingAddressesRegex,
+    const vector<string>& meekFrontingAddresses,
     const vector<string>& capabilities)
 {
     this->serverAddress = serverAddress;
@@ -473,6 +475,8 @@ ServerEntry::ServerEntry(
     this->meekCookieEncryptionPublicKey = meekCookieEncryptionPublicKey;
     this->meekFrontingDomain = meekFrontingDomain;
     this->meekFrontingHost = meekFrontingHost;
+    this->meekFrontingAddressesRegex = meekFrontingAddressesRegex;
+    this->meekFrontingAddresses = meekFrontingAddresses;
 
     this->capabilities = capabilities;
 }
@@ -521,6 +525,7 @@ string ServerEntry::ToString() const
     entry["meekFrontingDomain"] = meekFrontingDomain;
     entry["meekFrontingHost"] = meekFrontingHost;
     entry["meekCookieEncryptionPublicKey"] = meekCookieEncryptionPublicKey;
+    entry["meekFrontingAddressesRegex"] = meekFrontingAddressesRegex;
 
     Json::Value capabilities(Json::arrayValue);
     for (vector<string>::const_iterator i = this->capabilities.begin(); i != this->capabilities.end(); i++)
@@ -528,6 +533,13 @@ string ServerEntry::ToString() const
         capabilities.append(*i);
     }
     entry["capabilities"] = capabilities;
+
+    Json::Value meekFrontingAddresses(Json::arrayValue);
+    for (vector<string>::const_iterator i = this->meekFrontingAddresses.begin(); i != this->meekFrontingAddresses.end(); i++)
+    {
+        meekFrontingAddresses.append(*i);
+    }
+    entry["meekFrontingAddresses"] = meekFrontingAddresses;
 
     Json::FastWriter jsonWriter;
     ss << jsonWriter.write(entry);
@@ -641,11 +653,26 @@ void ServerEntry::FromString(const string& str)
         {
             meekFrontingDomain = json_entry.get("meekFrontingDomain", "").asString();
             meekFrontingHost  = json_entry.get("meekFrontingHost", "").asString();
+            meekFrontingAddressesRegex = json_entry.get("meekFrontingAddressesRegex", "").asString();
+            Json::Value meekFrontingAddresses;
+            Json::Value emptyArray(Json::arrayValue);
+            meekFrontingAddresses = json_entry.get("meekFrontingAddresses", emptyArray);
+            this->meekFrontingAddresses.clear();
+            for (Json::ArrayIndex i = 0; i < meekFrontingAddresses.size(); i++)
+            {
+                string item = meekFrontingAddresses.get(i, "").asString();
+                if (!item.empty())
+                {
+                    this->meekFrontingAddresses.push_back(item);
+                }
+            }
         }
         else
         {
             meekFrontingDomain = "";
             meekFrontingHost  = "";
+            meekFrontingAddressesRegex = "";
+            meekFrontingAddresses.clear();
         }
     }
     catch (exception& e)

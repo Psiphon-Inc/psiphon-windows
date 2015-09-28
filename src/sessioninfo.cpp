@@ -357,6 +357,8 @@ ServerEntry SessionInfo::GetServerEntry() const
         GetMeekObfuscatedKey(), GetMeekServerPort(),
         GetMeekCookieEncryptionPublicKey(),
         GetMeekFrontingDomain(), GetMeekFrontingHost(),
+        m_serverEntry.meekFrontingAddressesRegex,
+        m_serverEntry.meekFrontingAddresses,
         m_serverEntry.capabilities);
     return newServerEntry;
 }
