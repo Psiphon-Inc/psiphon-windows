@@ -22,7 +22,7 @@ Build the static library from source: http://www.cryptopp.com/
 
 It doesn't seem possible to just add this as a dependency project, so we'll have to build it fresh each time.
 
-1. Get [the code](https://code.google.com/p/yaml-cpp/). Maybe 0.5.x? Or whatever's newest.
+1. Get [the code](https://github.com/jbeder/yaml-cpp). Maybe 0.5.x? Or whatever's newest.
 
 2. You'll probably need to download [Boost](http://www.boost.org/), extract it, and set your `BOOST_ROOT` environment variable ([doc](http://www.boost.org/doc/libs/1_56_0/more/getting_started/windows.html)).
 
@@ -32,7 +32,7 @@ It doesn't seem possible to just add this as a dependency project, so we'll have
    ```
    mkdir build
    cd build
-   cmake -DBUILD_SHARED_LIBS=OFF -DMSVC_SHARED_RT=OFF -G "Visual Studio 14 2015" ..
+   cmake -DBUILD_SHARED_LIBS=OFF -DMSVC_SHARED_RT=OFF -G "Visual Studio 14 2015" -T "v140_xp" ..
    ```  
 
 4. The project we need is `yaml-cpp static mt`. Check its project properties (and **fix the XP setting**, as above) -- maybe optimize for size. Build it for Debug and Release.

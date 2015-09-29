@@ -1,0 +1,442 @@
+{
+    "appbackend#state-starting-body": {
+        "message": "Lütfen bekleyin...",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#local-proxy-ports#error-modal-body-http": {
+        "message": "<p>\nPsiphon'ı HTTP vekil sunucusu için kullanması üzere özel bir bağlantı noktası yapılandırdınız.<br>\nAncak bu bağlantı noktası zaten kullanımda olduğundan Psiphon bunu kullanamaz.\n</p>\n<p>\nLütfen yapılandırılmış HTTP vekil sunucu bağlantı noktasıdeğerini değiştirin ve tekrar deneyin. Bu alanı boş bırakıp Psiphon'ın otomatik olarak bir bağlantı noktası seçmesini öneririz.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    },
+    "settings#upstream-proxy#set-both-error-msg": {
+        "message": "Sunucu adı ve Bağlantı noktasını aynı anda girmeli veya otomatik seçim için boş bırakmalısınız.",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "Japonya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#upstream-proxy#error-modal-body-configured": {
+        "message": "Psiphon'ı şu anda \"üst vekil sunucusu\" olarak sistem vekil sunucunuzu kullanmak üzere yapılandırmışsınız.<br>\nAncak bir Psiphon sunucusuna bu vekil aracılığıyla bağlanamıyoruz.<br>\nLütfen ayarları düzeltip yeniden deneyin.",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+    },
+    "logs#show-debug-label": {
+        "message": "Hata ayıklama kayıtlarını göster",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "nav#logs": {
+        "message": "Günlükler",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+    },
+    "settings#error-alert": {
+        "message": "<strong>Hata!</strong> Lütfen devam etmeden önce geçersiz değerleri düzeltin.",
+        "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
+    },
+    "settings#local-proxy-ports#reason": {
+        "message": "If you use tools on your computer that require manual configuration to work with Psiphon, you will want Psiphon to consistently use the same local port numbers. If you don’t have a reason to specify port numbers, you should allow Psiphon to choose them automatically to help avoid conflicts.",
+        "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
+    },
+    "appbackend#minimized-to-systray-body": {
+        "message": "Uygulamayı açmak için simgeye tıklayın",
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "banner#sponsored-by": {
+        "message": "Sponsor",
+        "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+    },
+    "appbackend#state-connected-body": {
+        "message": "Sınırlarınızın ötesini keşfedin!",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "connection#connected-msg": {
+        "message": "Psiphon <span class=\"state-word\">bağlandı</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "settings#split-tunnel#reason": {
+        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "nav#settings": {
+        "message": "Ayarlar",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "nav#connection#connected": {
+        "message": "Bağlandı",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
+    },
+    "settings#egress-region#error-modal-title": {
+        "message": "Sunucu Bölgesi Kullanılamıyor",
+        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#upstream-proxy#error-modal-title": {
+        "message": "Üst Vekil Sunucu Hatası",
+        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+    },
+    "settings#egress-region#default": {
+        "message": "Choosing the default <strong>“Fastest Country”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
+    },
+    "connection#stopping-msg": {
+        "message": "Psiphon <span class=\"state-word\">bağlantısı kesiliyor</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "settings#upstream-proxy#error-modal-body-default": {
+        "message": "Psiphon şu anda \"üst vekil sunucusu\" kullanmak üzere yapılandırılmış.<br>\nAncak bir Psiphon sunucusuna bu vekil aracılığıyla bağlanamıyoruz.<br>\nLütfen \"Üst vekil sunucusu kullanma\" seçeneğini etkinleştirip yeniden deneyin.",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
+    },
+    "feedback#success-message": {
+        "message": "<strong>Teşekkürler!</strong> Geribildiriminiz gönderildi.",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "appbackend#state-stopped-title": {
+        "message": "Psiphon bağlantısı kesildi",
+        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "Etkinleştirildiğinde, ülkeniz içerisindeki sunuculara yapılan istekler Psiphon tarafından tünellenmeyecek.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+    },
+    "about#visit-download-site": {
+        "message": "Please visit the website to <strong><a class=\"NewVersionURL\" href=\"#\">download a new version</a></strong> or to <strong><a class=\"InfoURL\" href=\"#\">get help and information</a></strong>. Psiphon is available for Android and Windows.",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "Üst vekil sunucusu kullanma",
+        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#systray-minimize#help-text": {
+        "message": "Etkinleştirildiğinde; simge durumuna küçülttüğünüzde, Psiphon uygulama penceresi bildirim alanına gizlenecek (Windows görev çubuğundaki saatinizin yanında bulunan \"sistem çekmecesi\" olarak da bilinir).",
+        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "Bağl. Noktası",
+        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+    },
+    "settings#port-value-error-msg": {
+        "message": "1 ile 65535 arasında olmalı.",
+        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
+    },
+    "nav#feedback": {
+        "message": "Geribildirim",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
+    },
+    "connection#starting-msg": {
+        "message": "Psiphon <span class=\"state-word\">bağlanıyor</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#applying-message": {
+        "message": "Ayarlarınızı uygulamak için yeniden bağlanıyor.",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+    },
+    "appbackend#state-starting-title": {
+        "message": "Psiphon bağlanıyor",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#unapplied-changes-prompt#title": {
+        "message": "Ayarlar Kaydedildi",
+        "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#egress-region#select-us": {
+        "message": "Amerika Birleşik Devletleri",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
+    },
+    "feedback#top_para_2": {
+        "message": "Çoğu sorun en son sürüm indirilerek çözülebilir. <a class=\"NewVersionURL\" href=\"#\">En son sürümü buraya tıklayarak</a>\nveya <a class=\"NewVersionEmail\" href=\"#\"></a> adresine\ne-posta göndererek indirebilirsiniz.",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "notice#systemproxysettings-setproxy-error-body": {
+        "message": "<p>Psiphon failed to set the system’s proxy settings.</p>\n<p>This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.</p>",
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#local-proxy-ports#error-modal-body-socks": {
+        "message": "<p>\nPsiphon'ı SOCKS vekil sunucusu için kullanması üzere özel bir bağlantı noktası yapılandırdınız.<br>\nAncak bu bağlantı noktası zaten kullanımda olduğundan Psiphon bunu kullanamaz.\n</p>\n<p>\nLütfen yapılandırılmış SOCKS vekil sunucu bağlantı noktasıdeğerini değiştirin ve tekrar deneyin. Bu alanı boş bırakıp Psiphon'ın otomatik olarak bir bağlantı noktası seçmesini öneririz.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+    },
+    "feedback#submit_button": {
+        "message": "Gönder",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "settings#systray-minimize#reason": {
+        "message": "Minimizing Psiphon to the notification area (“system tray”) frees up space on your task bar. This is especially helpful if you often run Psiphon for long periods of time.",
+        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
+    },
+    "settings#unapplied-changes-prompt#discard-button": {
+        "message": "Discard",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
+    },
+    "notice#systemproxysettings-setproxy-error-title": {
+        "message": "System Proxy Error",
+        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#egress-region#label": {
+        "message": "Şununla bağlan",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
+    },
+    "feedback#top_para_3": {
+        "message": "Ayrıca çoğu ortak soruna çözümleri\n<a class=\"FaqURL\" href=\"#\">Sıkça Sorulan Sorular</a> sayfamızda bulabilirsiniz.",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "settings#saved-message": {
+        "message": "Ayarlar kaydedildi.",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
+    },
+    "about#get-by-email": {
+        "message": "<strong>Web sitesine erişilemiyorsa</strong>, Psiphon'un yeni bir sürümünü şuraya e-posta göndererek edinebilirsiniz:",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "settings#egress-region#select-nl": {
+        "message": "Hollanda",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "general#modal-close-button": {
+        "message": "Kapalı",
+        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
+    },
+    "settings#unapplied-changes-prompt#apply-button": {
+        "message": "Apply",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
+    },
+    "settings#reset-button": {
+        "message": "Öntanımlılara Sıfırla",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "about#client-version": {
+        "message": "Psiphon for Windows client version:",
+        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "Üst Vekil Sunucu",
+        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
+    },
+    "settings#egress-region#description": {
+        "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "( L2TP/IPSec kipi ile çalışmıyor.)",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    },
+    "general#notice-modal-tech-preamble": {
+        "message": "Here is the technical error info:",
+        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+    },
+    "settings#local-proxy-ports#unique-error-msg": {
+        "message": "Yerel bağlantı noktaları birbirinden farklı olmalıdır.",
+        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+    },
+    "settings#vpn-incompatible-label": {
+        "message": "L2TP/IPSec",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    },
+    "settings#error-modal#body": {
+        "message": "There are errors in your settings values. Please correct them before proceeding.",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
+    },
+    "nav#connection#stopped": {
+        "message": "Bağlantı kesildi",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "Yerel Vekil Sunucu Bağlantı Noktaları",
+        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
+    },
+    "settings#egress-region#select-de": {
+        "message": "Almanya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "notice#systemproxysettings-setproxy-warning-template": {
+        "message": "Psiphon failed to set the system’s proxy settings for the Internet connection named “<%- data %>”. This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.",
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+    },
+    "connection#stop-btn": {
+        "message": "Durdur",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "settings#egress-region#error-modal-body-http": {
+        "message": "Psiphon'ı belirli bir bölgedeki sunucuyu kullanması üzere yapılandırdınız.<br>\nAncak bu bölge artık kullanılamıyor.<br>\nYeni bir bölge seçmeli veya öntanımlı \"En Hızlı Ülke\" seçeneğine değiştirmelisiniz.",
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "Eğer yukarıdaki form çalışmıyorsa veya ekran görüntüsü yollamak isterseniz, lütfen bize <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> adresinden e-posta gönderin.",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "settings#upstream-proxy#reason": {
+        "message": "Upstream proxies are sometimes required by schools, universities, or businesses. If your network provider has given you upstream proxy settings, then manually setting them here may be required to connect.",
+        "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
+    },
+    "settings#local-proxy-ports#error-modal-title": {
+        "message": "Yerel Vekil Sunucu Bağlantı Noktası Çakışması",
+        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
+    },
+    "connection#disconnect-btn": {
+        "message": "Bağlantıyı Kes",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "feedback#top_content_title": {
+        "message": "Geri Bildirim Yapın",
+        "description": "Title for the Feedback page"
+    },
+    "banner#long-connecting": {
+        "message": "<strong>Olamaz!</strong> Bağlanmakta sorun yaşıyorsunuz gigi görünüyor!<br>\nEn son sürümü <a class=\"NewVersionURL\" href=\"#\">indirme sitesinden</a> veya <a class=\"NewVersionEmail\" href=\"#\"></a> adresine e-posta göndererek indirebilirsiniz.",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+    },
+    "logs#placeholder": {
+        "message": "Henüz kayıt yok",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
+    "connection#stopped-msg": {
+        "message": "Psiphon <span class=\"state-word\">bağlantısı kesildi</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "nav#about": {
+        "message": "Hakkında",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "Leave <strong>blank</strong> for automatic port selection (recommended).",
+        "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
+    },
+    "settings#systray-minimize#heading": {
+        "message": "Bildirim Alanına Küçült (Sistem Çekmecesi)",
+        "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
+    },
+    "language#success-message": {
+        "message": "<strong>Merhaba!</strong> Psiphon'a hoş geldiniz.",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "settings#egress-region#select-sg": {
+        "message": "Singapur",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
+    },
+    "feedback#diagnostic_check": {
+        "message": "Kullanım verisini yükle. Lütfen bu kullanım verisinin sizin kimliğinizin tanımlanması\niçin değil Psiphon'un akıcı şekilde tutulmasına yardımcı olması için kullanılacağını unutmayın.\n<a class=\"DataCollectionInfoURL\" href=\"#\">Topladığımız bilgiler için buraya tıklayın.</a>",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "settings#transport-mode#heading": {
+        "message": "Aktarım Kipi",
+        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
+    },
+    "about#description": {
+        "message": "Psiphon, <strong>sansür aşma aracıdır</strong> — açık İnternet'e erişim vermek, sansürleri ve güvenlik duvarlarını aşmak için tasarlanmıştır. <strong>Açık kaynaktır</strong> ve Toronto, Kanada'da geliştirilmiştir.",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "nav#connection#stopping": {
+        "message": "Bağlantı kesiliyor",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
+    },
+    "settings#error-modal#title": {
+        "message": "Settings Error",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
+    },
+    "settings#apply-button": {
+        "message": "Değişiklikleri Uygula",
+        "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
+    },
+    "appbackend#minimized-to-systray-title": {
+        "message": "Psiphon bildirim alanına küçültüldü",
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "Ayrı Tünel",
+        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#egress-region#invalid-error-msg": {
+        "message": "Geçerli bir Psiphon sunucu bölgesi seçin.",
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+    },
+    "appbackend#state-connected-title": {
+        "message": "Psiphon bağlandı",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+    },
+    "settings#upstream-proxy#proxy-reqs": {
+        "message": "Only HTTP proxies that support HTTPS are allowed.",
+        "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+    },
+    "settings#transport-mode#check-label": {
+        "message": "L2TP/IPSec kipini kullan",
+        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
+    },
+    "connection#egress-region-combo-label": {
+        "message": "Şununla bağlan",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "Birleşik Krallık",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
+    },
+    "about#wordart-title": {
+        "message": "Psiphon",
+        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "Makine adı",
+        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
+    },
+    "feedback#smiley_sad": {
+        "message": "Psiphon genellikle bağlanamıyor ve yeterince iyi çalışmıyor.",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "settings#unapplied-changes-prompt#body": {
+        "message": "You have made changes to your settings, but you have not applied the changes.<br><br>Do you wish to apply your changes now or discard them?",
+        "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#systray-minimize#enable-label": {
+        "message": "Bildirim alanına küçült (sistem çekmecesi)",
+        "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
+    },
+    "settings#egress-region#heading": {
+        "message": "Psiphon Sunucu Bölgesi",
+        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that behavior by specifying a proxy to use, or by specifying that no such “upstream proxy” should be used.",
+        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "Ülkenizdeki web siteleri için vekil sunucu kullanma",
+        "description": "The label on the checkbox that enables 'Split Tunnel'."
+    },
+    "nav#connection#starting": {
+        "message": "Bağlanıyor",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "Eğer size geri dönmememizi isterseniz, lütfen e-posta adresinizi girin:",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "Lütfen yorumlarınızı buraya girin:",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#smiley_happy": {
+        "message": "Psiphon istediğim gibi bağlanıyor ve çalışıyor.",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "about#wordart-tag": {
+        "message": "Sınırlar Ötesinde",
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
+    },
+    "connection#wait-btn": {
+        "message": "Lütfen bekleyin...",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#transport-mode#help-text": {
+        "message": "Uses Windows L2TP/IPSec virtual networking. This mode will tunnel all of your apps, but it doesn’t provide obfuscation and so does not have strong censorship circumvention capabilities. It is <strong>not recommended</strong> for bypassing most firewalls.",
+        "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "En Hızlı Ülke",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
+    },
+    "connection#connect-btn": {
+        "message": "Bağlan",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    }
+}
