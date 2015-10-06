@@ -1,4 +1,0 @@
-2015-05-21T18:55:51+0000
-git@github.com:adam-p/psiphon-tunnel-core.git
-85d64b010171bd7d0fe71611b12c67ed5383fa43
-
