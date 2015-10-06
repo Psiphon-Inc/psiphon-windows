@@ -273,6 +273,7 @@ public:
 		try
 #endif
 		{
+#pragma warning(disable: 4297) // PSIPHON: Disable warning: "function assumed not to throw an exception but does" https://msdn.microsoft.com/en-us/library/84e2zwhh.aspx
 			if (m_throwIfNotUsed && !m_used)
 				throw ParameterNotUsed(m_name);
 		}
