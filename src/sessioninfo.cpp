@@ -150,7 +150,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         Json::Value homepages = config["homepages"];
         for (Json::Value::ArrayIndex i = 0; i < homepages.size(); i++)
         {
-            m_homepages.push_back(NarrowToTString(homepages[i].asString()));
+            m_homepages.push_back(UTF8ToWString(homepages[i].asString()));
         }
 
         // Upgrade
@@ -216,7 +216,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
 void SessionInfo::SetHomepage(const char* homepage)
 {
-    tstring newHomepage = NarrowToTString(homepage);
+    tstring newHomepage = UTF8ToWString(homepage);
     if (m_homepages.end() == std::find(m_homepages.begin(), m_homepages.end(), newHomepage))
     {
         m_homepages.push_back(newHomepage);

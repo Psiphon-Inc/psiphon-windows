@@ -288,7 +288,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
             SENSITIVE_LOG, 
             true,
             _T("server: %s, responded: %s, response time: %d"),
-            NarrowToTString((*data)->m_entry.serverAddress).c_str(),
+            UTF8ToWString((*data)->m_entry.serverAddress).c_str(),
             (*data)->m_responded ? L"yes" : L"no",
             (*data)->m_responseTime);
 

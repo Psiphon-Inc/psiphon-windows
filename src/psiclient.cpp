@@ -83,10 +83,10 @@ void OnCreate(HWND hWndParent)
     initJSON["Cookies"] = Settings::GetCookies();
     initJSON["Config"] = Json::Value();
     initJSON["Config"]["ClientVersion"] = CLIENT_VERSION;
-    initJSON["Config"]["Language"] = TStringToNarrow(GetLocaleName());
+    initJSON["Config"]["Language"] = WStringToUTF8(GetLocaleName());
     initJSON["Config"]["Banner"] = "banner.png";
     initJSON["Config"]["Version"] = CLIENT_VERSION;
-    initJSON["Config"]["InfoURL"] = TStringToNarrow(INFO_LINK_URL);
+    initJSON["Config"]["InfoURL"] = WStringToUTF8(INFO_LINK_URL);
     initJSON["Config"]["NewVersionEmail"] = GET_NEW_VERSION_EMAIL;
     initJSON["Config"]["NewVersionURL"] = GET_NEW_VERSION_URL;
     initJSON["Config"]["FaqURL"] = FAQ_URL;
@@ -717,7 +717,8 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             goto done;
         }
 
-        string stringJSON(TStringToNarrow(urlDecoded).c_str() + appStringTableLen);
+        // This is already UTF-8 encoded, we just need to narrow it into a string.
+        string stringJSON(WStringToNarrow(urlDecoded).c_str() + appStringTableLen);
 
         AddStringTableEntry(stringJSON);
     }
@@ -742,7 +743,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             goto done;
         }
 
-        string stringJSON(TStringToNarrow(urlDecoded).c_str() + appSaveSettingsLen);
+        string stringJSON(WStringToNarrow(urlDecoded).c_str() + appSaveSettingsLen);
         bool reconnectRequired = false;
         bool success = Settings::FromJson(stringJSON, reconnectRequired);
 
@@ -785,7 +786,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
         // We will receive UTF-8 encoded data from the JS, so we'll widen it 
         // before sending it on.
-        wstring unicodeJSON = UTF8ToWString(urlDecoded.c_str() + appSendFeedbackLen);
+        wstring unicodeJSON = WidenUTF8(urlDecoded.c_str() + appSendFeedbackLen);
         g_connectionManager.SendFeedback(unicodeJSON.c_str());
     }
     else if (_tcsncmp(url, appSetCookies, appSetCookiesLen) == 0
@@ -798,7 +799,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             goto done;
         }
 
-        string stringJSON(TStringToNarrow(urlDecoded).c_str() + appSetCookiesLen);
+        string stringJSON(WStringToNarrow(urlDecoded).c_str() + appSetCookiesLen);
         Settings::SetCookies(stringJSON);
     }
     else if (_tcscmp(url, appBannerClick) == 0)
@@ -1186,7 +1187,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_CREATED:
     {
         // Display client version number
-        my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + NarrowToTString(CLIENT_VERSION)).c_str());
+        my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + UTF8ToWString(CLIENT_VERSION)).c_str());
 
         // Content is loaded, so show the window.
         RestoreWindowPlacement();

@@ -629,11 +629,11 @@ tstring ConnectionManager::GetFailedRequestPath(ITransport* transport)
     AutoMUTEX lock(m_mutex);
 
     return tstring(HTTP_FAILED_REQUEST_PATH) +
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("?client_session_id=") + UTF8ToWString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
+           _T("&client_version=") + UTF8ToWString(CLIENT_VERSION) +
+           _T("&server_secret=") + UTF8ToWString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") +  transport->GetTransportRequestName() +
            _T("&error_code=") + transport->GetLastTransportError();
 }
@@ -649,14 +649,14 @@ tstring ConnectionManager::GetConnectRequestPath(ITransport* transport)
     if (lastConnected.length() == 0) lastConnected = "None";
 
     return tstring(HTTP_CONNECTED_REQUEST_PATH) +
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("?client_session_id=") + UTF8ToWString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
+           _T("&client_version=") + UTF8ToWString(CLIENT_VERSION) +
+           _T("&server_secret=") + UTF8ToWString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") + transport->GetTransportRequestName() +
            _T("&session_id=") + transport->GetSessionID(m_currentSessionInfo) +
-           _T("&last_connected=") + NarrowToTString(lastConnected);
+           _T("&last_connected=") + UTF8ToWString(lastConnected);
 }
 
 tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool connected)
@@ -675,11 +675,11 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
     // TODO: get error code from SSH client?
 
     return tstring(HTTP_STATUS_REQUEST_PATH) +
-           _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-           _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret()) +
+           _T("?client_session_id=") + UTF8ToWString(m_currentSessionInfo.GetClientSessionID()) +
+           _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
+           _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
+           _T("&client_version=") + UTF8ToWString(CLIENT_VERSION) +
+           _T("&server_secret=") + UTF8ToWString(m_currentSessionInfo.GetWebServerSecret()) +
            _T("&relay_protocol=") +  transport->GetTransportRequestName() +
            _T("&session_id=") + sessionID +
            _T("&connected=") + (connected ? _T("1") : _T("0"));
@@ -691,11 +691,11 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
     sessionInfo = m_currentSessionInfo;
     requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) +
-                    _T("?client_session_id=") + NarrowToTString(m_currentSessionInfo.GetClientSessionID()) +
-                    _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                    _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                    _T("&client_version=") + NarrowToTString(m_currentSessionInfo.GetUpgradeVersion()) +
-                    _T("&server_secret=") + NarrowToTString(m_currentSessionInfo.GetWebServerSecret());
+                    _T("?client_session_id=") + UTF8ToWString(m_currentSessionInfo.GetClientSessionID()) +
+                    _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
+                    _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
+                    _T("&client_version=") + UTF8ToWString(m_currentSessionInfo.GetUpgradeVersion()) +
+                    _T("&server_secret=") + UTF8ToWString(m_currentSessionInfo.GetWebServerSecret());
 }
 
 
@@ -730,10 +730,10 @@ void ConnectionManager::FetchRemoteServerList(void)
         HTTPSRequest httpsRequest;
         // NOTE: Not using local proxy
         if (!httpsRequest.MakeRequest(
-                NarrowToTString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
+                UTF8ToWString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
                 443,
                 "",
-                NarrowToTString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
+                UTF8ToWString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
                 response,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
                 false, // don't use local proxy
@@ -820,10 +820,10 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         DWORD start = GetTickCount();
         HTTPSRequest httpsRequest;
         if (!httpsRequest.MakeRequest(
-                NarrowToTString(UPGRADE_ADDRESS).c_str(),
+                UTF8ToWString(UPGRADE_ADDRESS).c_str(),
                 443,
                 "",
-                NarrowToTString(UPGRADE_REQUEST_PATH).c_str(),
+                UTF8ToWString(UPGRADE_REQUEST_PATH).c_str(),
                 downloadResponse,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                 true, // tunnel request

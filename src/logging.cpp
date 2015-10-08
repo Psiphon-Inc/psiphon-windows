@@ -138,5 +138,5 @@ void my_print(LogSensitivity sensitivity, bool bDebugMessage, const TCHAR* forma
 
 void my_print(LogSensitivity sensitivity, bool bDebugMessage, const string& message)
 {
-    my_print(sensitivity, bDebugMessage, NarrowToTString(message).c_str());
+    my_print(sensitivity, bDebugMessage, UTF8ToWString(message).c_str());
 }

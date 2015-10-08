@@ -34,7 +34,7 @@ ServerList::ServerList(LPCSTR listName)
     m_name = listName;
 
     // Used a named mutex, because we'll need to use the mutex across instances.
-    tstring mutexName = _T("Local\\ServerListMutex-") + NarrowToTString(listName);
+    tstring mutexName = _T("Local\\ServerListMutex-") + UTF8ToWString(listName);
     m_mutex = CreateMutex(NULL, FALSE, mutexName.c_str());
 }
 

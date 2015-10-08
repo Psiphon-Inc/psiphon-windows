@@ -178,7 +178,7 @@ bool CoreTransport::RequiresStatsSupport() const
 
 tstring CoreTransport::GetSessionID(const SessionInfo& sessionInfo)
 {
-    return NarrowToTString(sessionInfo.GetSSHSessionID());
+    return UTF8ToWString(sessionInfo.GetSSHSessionID());
 }
 
 
@@ -327,8 +327,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["SponsorId"] = SPONSOR_ID;
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
-    config["DataStoreDirectory"] = TStringToNarrow(shortDataStoreDirectory);
-    config["DataStoreTempDirectory"] = TStringToNarrow(shortTempPath);
+    config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
+    config["DataStoreTempDirectory"] = WStringToUTF8(shortTempPath);
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
@@ -473,7 +473,7 @@ string CoreTransport::GetUpstreamProxyAddress()
         if (!proxyConfig.httpsProxy.empty())
         {
             upstreamProxyAddress <<
-                TStringToNarrow(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
+				WStringToUTF8(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
         }
     }
 

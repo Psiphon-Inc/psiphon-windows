@@ -261,32 +261,6 @@ bool Settings::FromJson(
     return true;
 }
 
-bool Settings::Show(HINSTANCE hInst, HWND hParentWnd)
-{
-    Json::Value config;
-    Settings::ToJson(config);
-
-    tstring result;
-    if (ShowHTMLDlg(
-        hParentWnd,
-        _T("SETTINGS_HTML_RESOURCE"),
-        GetLocaleName().c_str(),
-        NarrowToTString(Json::FastWriter().write(config)).c_str(),
-        result) != 1)
-    {
-        // error or user cancelled
-        return false;
-    }
-
-    bool settingsChanged = false;
-    if (!FromJson(WStringToUTF8(result.c_str()), settingsChanged))
-    {
-        return false;
-    }
-
-    return settingsChanged;
-}
-
 bool Settings::SplitTunnel()
 {
     return !!GetSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
