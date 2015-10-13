@@ -97,8 +97,6 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 
 DWORD GetTickCountDiff(DWORD start, DWORD end);
 
-wstring EscapeSOCKSArg(const char* input);
-
 tstring UrlEncode(const tstring& input);
 tstring UrlDecode(const tstring& input);
 

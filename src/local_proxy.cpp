@@ -277,7 +277,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
         }
         if(m_serverAddress.length() > 0)
         {
-            polipoCommandLine << _T(" psiphonServer=") << NarrowToTString(m_serverAddress);
+            polipoCommandLine << _T(" psiphonServer=") << UTF8ToWString(m_serverAddress);
         }
     }
 

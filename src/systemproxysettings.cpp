@@ -327,6 +327,7 @@ bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connections
             break;
         }
 
+
         // Read back the settings to verify that they have been applied
         ConnectionProxy entry;
         if (!GetCurrentSystemConnectionProxy(ii->name, entry) ||
@@ -343,7 +344,7 @@ bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connections
             else
             {
                 // Don't force the connection to fail, this might not be an active connection.
-                UI_Notice("SystemProxySettings::SetProxyWarning", TStringToNarrow(entry.name));
+                UI_Notice("SystemProxySettings::SetProxyWarning", WStringToUTF8(entry.name));
                 my_print(SENSITIVE_FORMAT_ARGS, true, _T("%s:%d: failed to verify proxy setting for non-default connection: %s"), __TFUNCTION__, __LINE__, entry.name.c_str());
             }
         }
