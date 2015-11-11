@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "transport.h"
 #include "vpntransport.h"
+#include "logging.h"
 #include "sessioninfo.h"
 #include "psiclient.h"
 #include "ras.h"
@@ -113,9 +114,9 @@ bool VPNTransport::RequiresStatsSupport() const
 
 tstring VPNTransport::GetLastTransportError() const
 {
-    std::stringstream s;
+    tstringstream s;
     s << GetLastErrorCode();
-    return NarrowToTString(s.str());
+    return s.str();
 }
 
 bool VPNTransport::IsHandshakeRequired() const
@@ -128,18 +129,13 @@ bool VPNTransport::IsWholeSystemTunneled() const
     return true;
 }
 
-bool VPNTransport::IsSplitTunnelSupported() const
-{
-    return false;
-}
-
 bool VPNTransport::ServerHasCapabilities(const ServerEntry& entry) const
 {
     // VPN requires a pre-tunnel handshake
 
     bool canHandshake = ServerRequest::ServerHasRequestCapabilities(entry);
 
-    return canHandshake && entry.HasCapability(TStringToNarrow(GetTransportProtocolName()));
+    return canHandshake && entry.HasCapability(WStringToUTF8(GetTransportProtocolName()));
 }
 
 bool VPNTransport::Cleanup()
@@ -290,9 +286,9 @@ void VPNTransport::TransportConnectHelper()
     sessionInfo.Set(serverEntry);
 
     // Record which server we're attempting to connect to
-    ostringstream ss;
-    ss << "ipAddress: " << sessionInfo.GetServerAddress();
-    AddDiagnosticInfoYaml("ConnectingServer", ss.str().c_str());
+    Json::Value json;
+    json["ipAddress"] = sessionInfo.GetServerAddress();
+    AddDiagnosticInfoJson("ConnectingServer", json);
 
     // Do pre-handshake
 
@@ -317,8 +313,8 @@ void VPNTransport::TransportConnectHelper()
     //
 
     if (!Establish(
-            NarrowToTString(sessionInfo.GetServerAddress()), 
-            NarrowToTString(sessionInfo.GetPSK())))
+            UTF8ToWString(sessionInfo.GetServerAddress()), 
+            UTF8ToWString(sessionInfo.GetPSK())))
     {
         MarkServerFailed(sessionInfo.GetServerEntry());
         throw TransportFailed();
@@ -936,7 +932,7 @@ void FixVPNServices()
                     if (ERROR_ACCESS_DENIED == GetLastError())
                     {
                         error << "insufficient privileges to configure or start service " <<
-                                    TStringToNarrow(serviceConfigs[i].name);
+                                    WStringToUTF8(serviceConfigs[i].name);
                     }
                     else
                     {

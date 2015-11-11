@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include <WinSock2.h>
+#include "logging.h"
 #include "config.h"
 #include "psiclient.h"
 #include "utilities.h"
@@ -287,7 +288,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
             SENSITIVE_LOG, 
             true,
             _T("server: %s, responded: %s, response time: %d"),
-            NarrowToTString((*data)->m_entry.serverAddress).c_str(),
+            UTF8ToWString((*data)->m_entry.serverAddress).c_str(),
             (*data)->m_responded ? L"yes" : L"no",
             (*data)->m_responseTime);
 
@@ -296,11 +297,11 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
             fastestResponseTime = (*data)->m_responseTime;
         }
 
-        ostringstream ss;
-        ss << "{ipAddress: " << (*data)->m_entry.serverAddress << ", ";
-        ss << "responded: " << ((*data)->m_responded ? "true" : "false") << ", ";
-        ss << "responseTime: " << (*data)->m_responseTime << "}";
-        AddDiagnosticInfoYaml("ServerResponseCheck", ss.str().c_str());
+        Json::Value json;
+        json["ipAddress"] = (*data)->m_entry.serverAddress;
+        json["responded"] = (*data)->m_responded;
+        json["responseTime"] = (*data)->m_responseTime;
+        AddDiagnosticInfoJson("ServerResponseCheck", json);
     }
 
     ServerEntries respondingServers;

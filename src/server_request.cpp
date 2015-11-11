@@ -69,6 +69,7 @@ request through them.
 */
 
 #include "stdafx.h"
+#include "logging.h"
 #include "server_request.h"
 #include "transport.h"
 #include "transport_registry.h"
@@ -125,7 +126,7 @@ bool ServerRequest::MakeRequest(
         HTTPSRequest httpsRequest;
         bool requestSuccess = 
             httpsRequest.MakeRequest(
-                NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                UTF8ToWString(sessionInfo.GetServerAddress()).c_str(),
                 sessionInfo.GetWebPort(),
                 sessionInfo.GetWebServerCertificate(),
                 requestPath,
@@ -161,7 +162,7 @@ bool ServerRequest::MakeRequest(
         {
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
-                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                    UTF8ToWString(sessionInfo.GetServerAddress()).c_str(),
                     *port_iter,
                     sessionInfo.GetWebServerCertificate(),
                     requestPath,
@@ -217,7 +218,7 @@ bool ServerRequest::MakeRequest(
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
-                    NarrowToTString(sessionInfo.GetServerAddress()).c_str(),
+                    UTF8ToWString(sessionInfo.GetServerAddress()).c_str(),
                     sessionInfo.GetWebPort(),
                     sessionInfo.GetWebServerCertificate(),
                     requestPath,

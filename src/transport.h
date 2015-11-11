@@ -82,9 +82,6 @@ public:
     // In other words, this is true for VPN, false for SSH.
     virtual bool IsWholeSystemTunneled() const = 0;
 
-    // Returns true if split tunnelling is supported for the transport.
-    virtual bool IsSplitTunnelSupported() const = 0;
-
     // Returns true if at least one server supports this transport.
     virtual bool ServerWithCapabilitiesExists();
 

@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "sessioninfo.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "config.h"
 #include "utilities.h"
@@ -58,6 +59,9 @@ void SessionInfo::Clear()
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
+    m_localHttpProxyPort = 0;
+    m_localHttpsProxyPort = 0;
+    m_localSocksProxyPort = 0;
 }
 
 void SessionInfo::Set(const ServerEntry& serverEntry, bool generateClientSessionID/*=true*/)
@@ -126,6 +130,9 @@ bool SessionInfo::ProcessConfig(const string& config_json)
     m_pageViewRegexes.clear();
     m_httpsRequestRegexes.clear();
     m_preemptiveReconnectLifetimeMilliseconds = PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT;
+    m_localHttpProxyPort = 0;
+    m_localHttpsProxyPort = 0;
+    m_localSocksProxyPort = 0;
 
     Json::Value config;
     Json::Reader reader;
@@ -143,7 +150,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         Json::Value homepages = config["homepages"];
         for (Json::Value::ArrayIndex i = 0; i < homepages.size(); i++)
         {
-            m_homepages.push_back(NarrowToTString(homepages[i].asString()));
+            m_homepages.push_back(UTF8ToWString(homepages[i].asString()));
         }
 
         // Upgrade
@@ -209,7 +216,7 @@ bool SessionInfo::ProcessConfig(const string& config_json)
 
 void SessionInfo::SetHomepage(const char* homepage)
 {
-    tstring newHomepage = NarrowToTString(homepage);
+    tstring newHomepage = UTF8ToWString(homepage);
     if (m_homepages.end() == std::find(m_homepages.begin(), m_homepages.end(), newHomepage))
     {
         m_homepages.push_back(newHomepage);
@@ -219,6 +226,13 @@ void SessionInfo::SetHomepage(const char* homepage)
 void SessionInfo::SetUpgradeVersion(const char* upgradeVersion)
 {
     m_upgradeVersion = upgradeVersion;
+}
+
+void SessionInfo::SetLocalProxyPorts(int http, int https, int socks)
+{
+    m_localHttpProxyPort = http;
+    m_localHttpsProxyPort = https;
+    m_localSocksProxyPort = socks;
 }
 
 string SessionInfo::GetServerAddress() const 
@@ -343,6 +357,8 @@ ServerEntry SessionInfo::GetServerEntry() const
         GetMeekObfuscatedKey(), GetMeekServerPort(),
         GetMeekCookieEncryptionPublicKey(),
         GetMeekFrontingDomain(), GetMeekFrontingHost(),
+        m_serverEntry.meekFrontingAddressesRegex,
+        m_serverEntry.meekFrontingAddresses,
         m_serverEntry.capabilities);
     return newServerEntry;
 }

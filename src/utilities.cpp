@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Psiphon Inc.
+ * Copyright (c) 2015, Psiphon Inc.
  * All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 #include "stdafx.h"
 #include "psiclient.h"
+#include "logging.h"
 #include "config.h"
 #include <Shlwapi.h>
 #include <WinSock2.h>
@@ -640,7 +641,7 @@ bool WriteRegistryStringValue(const string& name, const wstring& value, Registry
     HKEY key = 0;
     LONG returnCode = 0;
     reason = REGISTRY_FAILURE_NO_REASON;
-    wstring wName = NarrowToTString(name);
+    wstring wName = UTF8ToWString(name);
 
     if (ERROR_SUCCESS != (returnCode = RegCreateKeyEx(
         HKEY_CURRENT_USER,
@@ -733,7 +734,7 @@ bool ReadRegistryStringValue(LPCSTR name, wstring& value)
     DWORD bufferLength = 0;
     wchar_t* buffer = 0;
     DWORD type;
-    wstring wName = NarrowToTString(name);
+    wstring wName = UTF8ToWString(name);
 
     if (ERROR_SUCCESS == RegOpenKeyEx(
                             HKEY_CURRENT_USER,
@@ -957,44 +958,22 @@ string Dehexlify(const string& input)
     return output;
 }
 
-wstring EscapeSOCKSArg(const char* input)
-{
-    DWORD length = strlen(input);
-    string output;
-    output.reserve(2 * length);
-    for (size_t i = 0; i < length; ++i)
-    {
-        const char c = input[i];
-        /* From goptlib.git/args.go:
-
-        "If any [k=v] items are provided, they are configuration parameters for the
-        proxy: Tor should separate them with semicolons ... If a key or value value
-        must contain [an equals sign or] a semicolon or a backslash, it is escaped
-        with a backslash."
-        */
-        if(c == '=' || c == ';' || c == '\\')
-        {
-            output.push_back('\\');
-        }
-        output.push_back(c);
-    }
-    return NarrowToTString(output).c_str();
-}
 
 // Adapted from:
 // http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
-tstring UrlEncode(const tstring& input)
+tstring UrlCodec(const tstring& input, bool encode)
 {
+    DWORD flags = encode ? 0 : ICU_DECODE;
     tstring encodedURL = _T("");
     DWORD outputBufferSize = input.size() * 2;
     LPTSTR outputBuffer = new TCHAR[outputBufferSize];
-    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+    BOOL result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, flags);
     DWORD error = ::GetLastError();
     if (!result && error == ERROR_INSUFFICIENT_BUFFER)
     {
         delete[] outputBuffer;
         outputBuffer = new TCHAR[outputBufferSize];
-        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, 0);
+        result = ::InternetCanonicalizeUrl(input.c_str(), outputBuffer, &outputBufferSize, flags);
     }
 
     if (result)
@@ -1014,6 +993,17 @@ tstring UrlEncode(const tstring& input)
 
     return encodedURL;
 }
+
+tstring UrlEncode(const tstring& input)
+{
+    return UrlCodec(input, true);
+}
+
+tstring UrlDecode(const tstring& input)
+{
+    return UrlCodec(input, false);
+}
+
 
 tstring GetLocaleName()
 {
@@ -1261,4 +1251,127 @@ AutoMUTEX::~AutoMUTEX()
 {
     if (m_logInfo.length()>0) my_print(NOT_SENSITIVE, true, _T("%s: releasing 0x%x: %s"), __TFUNCTION__, (int)m_mutex, m_logInfo.c_str());
     ReleaseMutex(m_mutex);
+}
+
+/*
+DPI Awareness Utilities
+*/
+
+HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
+{
+    // In the no-op/unsupported case we're going to return success.
+    HRESULT res = S_OK;
+
+    HINSTANCE hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+
+    if (hinstSHCORE)
+    {
+        typedef HRESULT STDAPICALLTYPE SETPROCESSDPIAWARENESSFN(PROCESS_DPI_AWARENESS value);
+        SETPROCESSDPIAWARENESSFN *pfnSetProcessDpiAwareness;
+        pfnSetProcessDpiAwareness = (SETPROCESSDPIAWARENESSFN*)GetProcAddress(hinstSHCORE, "SetProcessDpiAwareness");
+
+        if (pfnSetProcessDpiAwareness)
+        {
+            res = pfnSetProcessDpiAwareness(value);
+        }
+
+        FreeLibrary(hinstSHCORE);
+    }
+
+    return res;
+}
+
+HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY)
+{
+    HRESULT res = ERROR_NOT_SUPPORTED;
+
+    HINSTANCE hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+
+    if (hinstSHCORE)
+    {
+        typedef HRESULT STDAPICALLTYPE GETDPIFORMONITORFN(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
+        GETDPIFORMONITORFN *pfnGetDpiForMonitor;
+        pfnGetDpiForMonitor = (GETDPIFORMONITORFN*)GetProcAddress(hinstSHCORE, "GetDpiForMonitor");
+
+        if (pfnGetDpiForMonitor)
+        {
+            res = pfnGetDpiForMonitor(hmonitor, dpiType, dpiX, dpiY);
+        }
+
+        FreeLibrary(hinstSHCORE);
+    }
+
+    return res;
+}
+
+HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi)
+{
+    o_dpi = 0;
+
+    HMONITOR const monitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+
+    UINT x = 0, y = 0;
+
+    HRESULT res = GetDpiForMonitor(
+        monitor,
+        MDT_EFFECTIVE_DPI,
+        &x,
+        &y);
+
+    if (res != S_OK)
+    {
+        return res;
+    }
+
+    o_dpi = y;
+
+    return S_OK;
+}
+
+HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale)
+{
+    o_scale = 1.0;
+    
+    UINT dpi = 0;
+
+    HRESULT res = GetDpiForCurrentMonitor(hWnd, dpi);
+
+    if (res != S_OK)
+    {
+        return res;
+    }
+
+    o_scale = ConvertDpiToScaling(dpi);
+
+    return S_OK;
+}
+
+HRESULT GetDpiScalingForMonitorFromPoint(POINT pt, float& o_scale)
+{
+    o_scale = 1.0;
+
+    HMONITOR const monitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+
+    UINT x = 0, y = 0;
+
+    HRESULT res = GetDpiForMonitor(
+        monitor,
+        MDT_EFFECTIVE_DPI,
+        &x,
+        &y);
+
+    if (res != S_OK)
+    {
+        return res;
+    }
+
+    o_scale = ConvertDpiToScaling(y);
+
+    return S_OK;
+}
+
+float ConvertDpiToScaling(UINT dpi)
+{
+    const UINT defaultDPI = 96;
+    return dpi / (float)defaultDPI;
 }

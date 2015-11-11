@@ -36,36 +36,6 @@ using namespace std;
 
 typedef basic_stringstream<TCHAR> tstringstream;
 
-static tstring NarrowToTString(const string& narrowString)
-{
-#ifdef _UNICODE
-    wstring wideString(narrowString.length(), L' ');
-    std::copy(narrowString.begin(), narrowString.end(), wideString.begin());
-    return wideString;
-#else
-    return narrowString;
-#endif
-}
-
-static string TStringToNarrow(const tstring& tString)
-{
-#ifdef _UNICODE
-    return string(tString.begin(), tString.end());
-#else
-    return tString;
-#endif
-}
-
-static string WStringToNarrow(const wstring& wString)
-{
-    return string(wString.begin(), wString.end());
-}
-
-static string WStringToNarrow(LPCWSTR wString)
-{
-    return WStringToNarrow(wstring(wString));
-}
-
 static string WStringToUTF8(LPCWSTR wString)
 {
     wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -73,12 +43,47 @@ static string WStringToUTF8(LPCWSTR wString)
     return utf8_string;
 }
 
-static wstring UTF8ToWString(LPCSTR utf8String)
+static string WStringToUTF8(const wstring& wString)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
-    std::u16string utf16 = utf16conv.from_bytes(utf8String);
+    return WStringToUTF8(wString.c_str());
+}
+
+static wstring UTF8ToWString(LPCSTR utf8String)
+{    
+    // There is an issue in VS2015 that messes up codecvt. For a bit of info
+    // and the workaround, see here:
+    // https://social.msdn.microsoft.com/Forums/en-US/8f40dcd8-c67f-4eba-9134-a19b9178e481/vs-2015-rc-linker-stdcodecvt-error?forum=vcgeneral
+    // These two lines are the correct (and currently broken) form:
+    //std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+    //std::u16string utf16 = utf16conv.from_bytes(utf8String);
+    // And these two lines are the workaround:
+    std::wstring_convert<std::codecvt_utf8_utf16<__int16>, __int16> utf16conv;
+    basic_string<__int16, char_traits<__int16>, allocator<__int16> > utf16 = utf16conv.from_bytes(utf8String);
+
     wstring wide_string(utf16.begin(), utf16.end());
     return wide_string;
+}
+
+static wstring UTF8ToWString(const string& utf8String)
+{
+    return UTF8ToWString(utf8String.c_str());
+}
+
+// This function is used to handle UTF-8 encoded data stored inside of a wstring
+static string WStringToNarrow(const wstring& wString)
+{
+    return string(wString.begin(), wString.end());
+}
+
+// This function is used to handle UTF-8 encoded data stored inside of a wstring
+static wstring WidenUTF8(LPCTSTR utf8String)
+{
+#ifdef _UNICODE
+    string narrowString = WStringToNarrow(utf8String);
+#else
+    string narrowString(utf8String);
+#endif
+    return UTF8ToWString(narrowString.c_str());
 }
 
 #ifdef UNICODE

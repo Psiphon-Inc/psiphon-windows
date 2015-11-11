@@ -19,13 +19,6 @@
 
 #pragma once
 
-// YAML-CPP produces some annoying warnings. 
-// (And... disabling C4996 doesn't actually seem to work...)
-#pragma warning(push)
-#pragma warning(disable: 4146 4996)
-#include "yaml-cpp/yaml.h"
-#pragma warning(pop)
-
 
 /**
 Should be called before Psiphon has attempted to connect or made any system
@@ -42,36 +35,41 @@ bool SendFeedbackAndDiagnosticInfo(
         const StopInfo& stopInfo);
 
 
-// Forward declarations. Do not access directly.
+// Forward declarations. Do not access directly. (They're only here because the
+// template function needs them.)
 extern vector<string> g_diagnosticInfo;
 void _AddDiagnosticInfoHelper(const char* entry);
 
+
 /**
 `message` is the identifier for this entry.
-`entry` can be of any type that can a YAML::Emitter can handle. This includes
-most primitive types, std::string, std::map, std::vector, std::list.
-Note that it does *not* include std::wstring (or tstring).
-Other approaches for custom data types can be seen here:
-http://code.google.com/p/yaml-cpp/wiki/HowToEmitYAML#STL_Containers,_and_Other_Overloads
-and here:
-http://code.google.com/p/yaml-cpp/wiki/Tutorial#Converting_To/From_Native_Data_Types
+`jsonValue` is a JSON value. `jsonString` is a stringified JSON value.
+`jsonString` may be null if no value is desired.
+*/
+void AddDiagnosticInfoJson(const char* message, const Json::Value& jsonValue);
+void AddDiagnosticInfoJson(const char* message, const char* jsonString);
+
+
+
+/**
+`message` is the identifier for this entry.
+`entry` can be of any type that can a Json::Value can handle -- see docs:
+https://open-source-parsers.github.io/jsoncpp-docs/doxygen/class_json_1_1_value.html
 */
 template<typename T>
 void AddDiagnosticInfo(const char* message, const T& entry)
 {
-    YAML::Emitter out;
-    out.SetOutputCharset(YAML::EscapeNonAscii);
-    out << YAML::BeginMap;
-    out << YAML::Key << "timestamp" << YAML::Value << TStringToNarrow(GetISO8601DatetimeString()).c_str();
-    out << YAML::Key << "msg" << YAML::Value << message;
-    out << YAML::Key << "data" << YAML::Value << entry;
-    out << YAML::EndMap;
-    _AddDiagnosticInfoHelper(out.c_str());
-}
+    Json::Value json(Json::objectValue);
+    json["timestamp!!timestamp"] = WStringToUTF8(GetISO8601DatetimeString());
+    json["msg"] = message;
+    json["data"] = entry;
 
-/**
-`message` is the identifier for this entry.
-`yaml` can be any valid YAML string. Note that this allows for easy single-entry
-maps: "key: value". And for multi-entry maps: "{key1: val1, key2: val2}".
-*/
-void AddDiagnosticInfoYaml(const char* message, const char* yaml);
+    Json::FastWriter jsonWriter;
+    string jsonString = jsonWriter.write(json);
+
+    OutputDebugStringA(jsonString.c_str());
+    OutputDebugStringA("\n");
+
+    AutoMUTEX mutex(g_diagnosticHistoryMutex);
+    g_diagnosticHistory.append(json);
+}

@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -41,9 +41,9 @@ bool WriteFile(const tstring& filename, const string& data);
 //  ERROR_OPERATION_ABORTED if cancel event signaled
 // process and cancelEvent can be NULL
 DWORD WaitForConnectability(
-        int port, 
-        DWORD timeout, 
-        HANDLE process, 
+        int port,
+        DWORD timeout,
+        HANDLE process,
         const StopInfo& stopInfo);
 
 // NOTE: targetPort is inout, outputing the first available port
@@ -97,9 +97,8 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
 
 DWORD GetTickCountDiff(DWORD start, DWORD end);
 
-wstring EscapeSOCKSArg(const char* input);
-
 tstring UrlEncode(const tstring& input);
+tstring UrlDecode(const tstring& input);
 
 /*
 String Utilities
@@ -129,6 +128,7 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 #define STRINGIZE(x) __STRINGIZEX(x)
 #endif
 
+
 /*
 AutoHANDLE and AutoMUTEX
 */
@@ -152,4 +152,73 @@ private:
     tstring m_logInfo;
 };
 
-#define AUTOMUTEX(mutex) 
+#define AUTOMUTEX(mutex)
+
+
+/*
+finally function
+
+Pass a (lambda) function to finally(...) to ensure it will be executed when 
+leaving the current scope. E.g.,
+char* d = new char[...];
+auto deleteOnReturn = finally([d] { delete[] d; });
+
+From http://stackoverflow.com/a/25510879/729729
+*/
+
+template <typename F>
+struct FinalAction {
+    FinalAction(F f) : clean_{ f } {}
+    ~FinalAction() { clean_(); }
+    F clean_;
+};
+
+template <typename F>
+FinalAction<F> finally(F f) {
+    return FinalAction<F>(f);
+}
+
+
+/*
+DPI Awareness Utilities
+*/
+
+// From ShellScalingAPI.h
+#ifndef DPI_ENUMS_DECLARED
+typedef enum PROCESS_DPI_AWARENESS {
+    PROCESS_DPI_UNAWARE = 0,
+    PROCESS_SYSTEM_DPI_AWARE = 1,
+    PROCESS_PER_MONITOR_DPI_AWARE = 2
+} PROCESS_DPI_AWARENESS;
+typedef enum MONITOR_DPI_TYPE {
+    MDT_EFFECTIVE_DPI = 0,
+    MDT_ANGULAR_DPI = 1,
+    MDT_RAW_DPI = 2,
+    MDT_DEFAULT = MDT_EFFECTIVE_DPI
+} MONITOR_DPI_TYPE;
+#define DPI_ENUMS_DECLARED
+#endif // (DPI_ENUMS_DECLARED)
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED       0x02E0
+#endif
+
+// Unlike the real version of this, it will return ERROR_NOT_SUPPORTED on OS 
+// versions that do not support it.
+HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value);
+
+// Helper for getting the useful DPI value. 
+// Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
+HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi);
+
+// Helper for getting the useful DPI scaling value. 
+// o_scale will be like 1.0, 1.25, 1.5, 2.0, 2.5
+// Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
+HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale);
+
+// Finds the DPI scaling factor for the monitor at point pt.
+// o_scale will be like 1.0, 1.25, 1.5, 2.0, 2.5
+// Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
+HRESULT GetDpiScalingForMonitorFromPoint(POINT pt, float& o_scale);
+
+// Helper for converting DPI value to scaling value.
+float ConvertDpiToScaling(UINT dpi);

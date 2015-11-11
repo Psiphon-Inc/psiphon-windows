@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "local_proxy.h"
+#include "logging.h"
 #include "psiclient.h"
 #include "utilities.h"
 #include "sessioninfo.h"
@@ -276,7 +277,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
         }
         if(m_serverAddress.length() > 0)
         {
-            polipoCommandLine << _T(" psiphonServer=") << NarrowToTString(m_serverAddress);
+            polipoCommandLine << _T(" psiphonServer=") << UTF8ToWString(m_serverAddress);
         }
     }
 

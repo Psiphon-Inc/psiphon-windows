@@ -86,7 +86,7 @@ public:
     { 
     public:
         Error(const TCHAR* msg=NULL) { if (msg) m_msg=msg; } 
-        Error(const char* msg) { if (msg) m_msg=NarrowToTString(msg); } 
+        Error(const char* msg) { if (msg) m_msg=UTF8ToWString(msg); } 
         tstring GetMessage() { return m_msg; }
     private:
         tstring m_msg;
