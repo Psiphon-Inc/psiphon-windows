@@ -36,36 +36,6 @@ using namespace std;
 
 typedef basic_stringstream<TCHAR> tstringstream;
 
-static tstring NarrowToTString(const string& narrowString)
-{
-#ifdef _UNICODE
-    wstring wideString(narrowString.length(), L' ');
-    std::copy(narrowString.begin(), narrowString.end(), wideString.begin());
-    return wideString;
-#else
-    return narrowString;
-#endif
-}
-
-static string TStringToNarrow(const tstring& tString)
-{
-#ifdef _UNICODE
-    return string(tString.begin(), tString.end());
-#else
-    return tString;
-#endif
-}
-
-static string WStringToNarrow(const wstring& wString)
-{
-    return string(wString.begin(), wString.end());
-}
-
-static string WStringToNarrow(LPCWSTR wString)
-{
-    return WStringToNarrow(wstring(wString));
-}
-
 static string WStringToUTF8(LPCWSTR wString)
 {
     wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -99,14 +69,21 @@ static wstring UTF8ToWString(const string& utf8String)
     return UTF8ToWString(utf8String.c_str());
 }
 
-static wstring UTF8ToWString(LPCTSTR utf8String)
+// This function is used to handle UTF-8 encoded data stored inside of a wstring
+static string WStringToNarrow(const wstring& wString)
 {
-    return UTF8ToWString(TStringToNarrow(utf8String).c_str());
+    return string(wString.begin(), wString.end());
 }
 
-static wstring UTF8ToWString(const tstring& utf8String)
+// This function is used to handle UTF-8 encoded data stored inside of a wstring
+static wstring WidenUTF8(LPCTSTR utf8String)
 {
-    return UTF8ToWString(utf8String.c_str());
+#ifdef _UNICODE
+    string narrowString = WStringToNarrow(utf8String);
+#else
+    string narrowString(utf8String);
+#endif
+    return UTF8ToWString(narrowString.c_str());
 }
 
 #ifdef UNICODE

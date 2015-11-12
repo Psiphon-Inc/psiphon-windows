@@ -37,7 +37,7 @@
 ITransport::ITransport(LPCTSTR transportProtocolName)
     : m_systemProxySettings(NULL),
       m_tempConnectServerEntry(NULL),
-      m_serverList(TStringToNarrow(transportProtocolName).c_str()),
+      m_serverList(WStringToUTF8(transportProtocolName).c_str()),
       m_firstConnectionAttempt(true),
       m_reconnectStateReceiver(NULL),
       m_connectRetryOkay(true)
@@ -183,11 +183,11 @@ tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
 {
     tstring handshakeRequestPath;
     handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
-                           _T("?client_session_id=") + NarrowToTString(sessionInfo.GetClientSessionID()) +
-                           _T("&propagation_channel_id=") + NarrowToTString(PROPAGATION_CHANNEL_ID) +
-                           _T("&sponsor_id=") + NarrowToTString(SPONSOR_ID) +
-                           _T("&client_version=") + NarrowToTString(CLIENT_VERSION) +
-                           _T("&server_secret=") + NarrowToTString(sessionInfo.GetWebServerSecret()) +
+                           _T("?client_session_id=") + UTF8ToWString(sessionInfo.GetClientSessionID()) +
+                           _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
+                           _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
+                           _T("&client_version=") + UTF8ToWString(CLIENT_VERSION) +
+                           _T("&server_secret=") + UTF8ToWString(sessionInfo.GetWebServerSecret()) +
                            _T("&relay_protocol=") + GetTransportRequestName();
 
     // Include a list of known server IP addresses in the request query string as required by /handshake
@@ -195,7 +195,7 @@ tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
     for (ServerEntryIterator ii = serverEntries.begin(); ii != serverEntries.end(); ++ii)
     {
         handshakeRequestPath += _T("&known_server=");
-        handshakeRequestPath += NarrowToTString(ii->serverAddress);
+        handshakeRequestPath += UTF8ToWString(ii->serverAddress);
     }
 
     return handshakeRequestPath;
@@ -244,6 +244,6 @@ size_t ITransport::AddServerEntries(
         const vector<string>& newServerEntryList, 
         const ServerEntry* serverEntry)
 {
-    ServerList serverList(TStringToNarrow(transportProtocolName).c_str());
+    ServerList serverList(WStringToUTF8(transportProtocolName).c_str());
     return serverList.AddEntriesToList(newServerEntryList, serverEntry);
 }

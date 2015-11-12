@@ -641,7 +641,7 @@ bool WriteRegistryStringValue(const string& name, const wstring& value, Registry
     HKEY key = 0;
     LONG returnCode = 0;
     reason = REGISTRY_FAILURE_NO_REASON;
-    wstring wName = NarrowToTString(name);
+    wstring wName = UTF8ToWString(name);
 
     if (ERROR_SUCCESS != (returnCode = RegCreateKeyEx(
         HKEY_CURRENT_USER,
@@ -734,7 +734,7 @@ bool ReadRegistryStringValue(LPCSTR name, wstring& value)
     DWORD bufferLength = 0;
     wchar_t* buffer = 0;
     DWORD type;
-    wstring wName = NarrowToTString(name);
+    wstring wName = UTF8ToWString(name);
 
     if (ERROR_SUCCESS == RegOpenKeyEx(
                             HKEY_CURRENT_USER,
@@ -956,30 +956,6 @@ string Dehexlify(const string& input)
     }
 
     return output;
-}
-
-wstring EscapeSOCKSArg(const char* input)
-{
-    DWORD length = strlen(input);
-    string output;
-    output.reserve(2 * length);
-    for (size_t i = 0; i < length; ++i)
-    {
-        const char c = input[i];
-        /* From goptlib.git/args.go:
-
-        "If any [k=v] items are provided, they are configuration parameters for the
-        proxy: Tor should separate them with semicolons ... If a key or value value
-        must contain [an equals sign or] a semicolon or a backslash, it is escaped
-        with a backslash."
-        */
-        if(c == '=' || c == ';' || c == '\\')
-        {
-            output.push_back('\\');
-        }
-        output.push_back(c);
-    }
-    return NarrowToTString(output).c_str();
 }
 
 

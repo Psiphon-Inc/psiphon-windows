@@ -1044,7 +1044,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
     psiphonInfo["SPONSOR_ID"] = SPONSOR_ID;
     psiphonInfo["CLIENT_VERSION"] = CLIENT_VERSION;
     psiphonInfo["splitTunnel"] = Settings::SplitTunnel();
-    psiphonInfo["selectedTransport"] = TStringToNarrow(Settings::Transport());
+    psiphonInfo["selectedTransport"] = WStringToUTF8(Settings::Transport());
     o_json["SystemInformation"]["PsiphonInfo"] = psiphonInfo;
 
     /*
@@ -1324,13 +1324,13 @@ bool SendFeedbackAndDiagnosticInfo(
         return false;
     }
 
-    tstring uploadLocation = NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
-                                + NarrowToTString(feedbackID);
+    tstring uploadLocation = UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
+                                + UTF8ToWString(feedbackID);
         
     string response;
     HTTPSRequest httpsRequest;
     if (!httpsRequest.MakeRequest(
-            NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
+            UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
             443,
             string(), // Do standard cert validation
             uploadLocation.c_str(),
@@ -1338,7 +1338,7 @@ bool SendFeedbackAndDiagnosticInfo(
             stopInfo,
             false, // don't use local proxy
             true,  // fail over to URL proxy
-            NarrowToTString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
+            UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
             (LPVOID)encryptedPayload.c_str(),
             encryptedPayload.length(),
             _T("PUT")))

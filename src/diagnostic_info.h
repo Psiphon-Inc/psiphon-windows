@@ -60,7 +60,7 @@ template<typename T>
 void AddDiagnosticInfo(const char* message, const T& entry)
 {
     Json::Value json(Json::objectValue);
-    json["timestamp!!timestamp"] = TStringToNarrow(GetISO8601DatetimeString());
+    json["timestamp!!timestamp"] = WStringToUTF8(GetISO8601DatetimeString());
     json["msg"] = message;
     json["data"] = entry;
 
