@@ -70,7 +70,36 @@ bool CoreTransport::Cleanup()
     if (m_processInfo.hProcess != 0
         && m_processInfo.hProcess != INVALID_HANDLE_VALUE)
     {
-        StopProcess(m_processInfo.dwProcessId, m_processInfo.hProcess);
+        bool stoppedGracefully = false;
+
+        // Allows up to 2 seconds for core process to gracefully shutdown.
+        // This gives it an opportunity to send final status requests, and
+        // to persist tunnel stats that cannot yet be reported.
+        // While waiting, continue to consume core process output.
+        // TODO: AttachConsole/FreeConsole sequence not threadsafe?
+        if (AttachConsole(m_processInfo.dwProcessId))
+        {
+            GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_processInfo.dwProcessId);
+            FreeConsole();
+
+            for (int i = 0; i < 2000; i += 10)
+            {
+                ConsumeCoreProcessOutput();
+                if (WAIT_OBJECT_0 == WaitForSingleObject(m_processInfo.hProcess, 10))
+                {
+                    stoppedGracefully = true;
+                    break;
+                }
+            }
+        }
+        if (!stoppedGracefully)
+        {
+            if (!TerminateProcess(m_processInfo.hProcess, 0) ||
+                WAIT_OBJECT_0 != WaitForSingleObject(m_processInfo.hProcess, TERMINATE_PROCESS_WAIT_MS))
+            {
+                my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with PID %d"), m_processInfo.dwProcessId);
+            }
+        }
     }
 
     if (m_processInfo.hProcess != 0
