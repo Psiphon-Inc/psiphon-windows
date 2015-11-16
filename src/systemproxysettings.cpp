@@ -333,19 +333,19 @@ bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connections
         if (!GetCurrentSystemConnectionProxy(ii->name, entry) ||
             entry != *ii)
         {
-            if (entry.name.empty())
+            if (ii->name.empty())
             {
                 // This is the default or LAN connection.
                 UI_Notice("SystemProxySettings::SetProxyError", "");
-                my_print(NOT_SENSITIVE, true, _T("%s:%d: failed to verify proxy setting for default connection"), __TFUNCTION__, __LINE__);
+                my_print(NOT_SENSITIVE, false, _T("%s:%d: failed to verify proxy setting for default connection"), __TFUNCTION__, __LINE__);
                 success = false;
                 break;
             }
             else
             {
                 // Don't force the connection to fail, this might not be an active connection.
-                UI_Notice("SystemProxySettings::SetProxyWarning", WStringToUTF8(entry.name));
-                my_print(SENSITIVE_FORMAT_ARGS, true, _T("%s:%d: failed to verify proxy setting for non-default connection: %s"), __TFUNCTION__, __LINE__, entry.name.c_str());
+                UI_Notice("SystemProxySettings::SetProxyWarning", WStringToUTF8(ii->name));
+                my_print(NOT_SENSITIVE, false, _T("%s:%d: failed to verify proxy setting for non-default connection: %s"), __TFUNCTION__, __LINE__, ii->name.c_str());
             }
         }
     }
