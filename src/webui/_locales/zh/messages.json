@@ -96,7 +96,7 @@
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "请访问网站<strong><a class=\"NewVersionURL\" href=\"#\">下载新版本</a></strong>，或者<strong><a class=\"InfoURL\" href=\"#\">获取相关信息和帮助</a></strong>。Psiphon 在 Android 和 Windows 平台上可用。",
+        "message": "请访问网站<strong><a class=\"NewVersionURL\" href=\"#\">下载最新版本</a></strong>，或者前往<strong><a class=\"InfoURL\" href=\"#\">获取相关信息和帮助</a></strong>。Psiphon 在 Android 和 Windows 平台上可用。",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
@@ -144,7 +144,7 @@
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
     "notice#systemproxysettings-setproxy-error-body": {
-        "message": "<p>Psiphon 设置系统的代理设置失败了。</p>\n<p>这有可能是由于您的防病毒软件。您可能需要手动配置您的应用程序或者系统代理为使用本地的 Psiphon 代理。</p>",
+        "message": "<p>Psiphon 设置系统的代理设置失败了。</p>\n<p>这有可能是由于您的杀毒软件。您可能需要手动修改杀毒软件设置，或者修改系统代理配置以便使用本地的 Psiphon 代理。</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
@@ -252,7 +252,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
-        "message": "Psiphon 设置名为“<%- data %>”的网络连接的代理设置失败了。这有可能是由于您的防病毒软件。您可能需要手动配置您的应用程序或者系统代理为使用本地的 Psiphon 代理。",
+        "message": "Psiphon 设置名为“<%- data %>”的网络连接的代理设置失败了。这有可能是由于您的防病毒软件。这有可能是由于您的杀毒软件。您可能需要手动修改杀毒软件设置，或者修改系统代理配置以便使用本地的 Psiphon 代理。",
         "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
     },
     "connection#stop-btn": {
@@ -268,7 +268,7 @@
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "settings#upstream-proxy#reason": {
-        "message": "有些用户如学校、大学或企业必须使用上层代理。如果您知道自己的网络必须使用上层代理，请设置它们以成功连接。",
+        "message": "有些用户如学校、大学或企业必须使用上层代理。如果您知道自己的网络必须使用上层代理，请设置它们以便成功连接。",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#local-proxy-ports#error-modal-title": {
