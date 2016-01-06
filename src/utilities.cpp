@@ -350,14 +350,20 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
 
 void StopProcess(DWORD processID, HANDLE process)
 {
-    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, processID);
-    if (WAIT_OBJECT_0 != WaitForSingleObject(process, 100))
+    // TODO: AttachConsole/FreeConsole sequence not threadsafe?
+    if (AttachConsole(processID))
     {
-        if (!TerminateProcess(process, 0) ||
-            WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, processID);
+        FreeConsole();
+        if (WAIT_OBJECT_0 == WaitForSingleObject(process, 100))
         {
-            my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with PID %d"), processID);
+            return;
         }
+    }
+    if (!TerminateProcess(process, 0) ||
+        WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
+    {
+        my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with PID %d"), processID);
     }
 }
 
