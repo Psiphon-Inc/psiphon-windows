@@ -358,6 +358,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["DataStoreTempDirectory"] = WStringToUTF8(shortTempPath);
+    config["UseIndistinguishableTLS"] = true;
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
