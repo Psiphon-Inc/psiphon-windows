@@ -648,6 +648,19 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
     return true;
 }
 
+bool GetCountryDialingCode(wstring& o_countryDialingCode)
+{
+    o_countryDialingCode.clear();
+
+    SystemInfo sysInfo;
+    if (!GetSystemInfo(sysInfo))
+    {
+        return false;
+    }
+
+    o_countryDialingCode = sysInfo.countryCode;
+    return true;
+}
 
 // Not all of these fields will be used, depending on the OS version
 struct SecurityInfo

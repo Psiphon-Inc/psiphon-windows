@@ -144,7 +144,7 @@ static void AddStringTableEntry(const string& utf8EntryJson)
         return;
     }
 
-    string key, narrowStr;
+    string locale, key, narrowStr;
 
     try
     {
@@ -154,6 +154,8 @@ static void AddStringTableEntry(const string& utf8EntryJson)
             // The stored values are invalid
             return;
         }
+
+        locale = json.get("locale", "").asString();
 
         key = json.get("key", "").asString();
         narrowStr = json.get("string", "").asString();
@@ -168,9 +170,9 @@ static void AddStringTableEntry(const string& utf8EntryJson)
         return;
     }
 
-    wstring str = UTF8ToWString(narrowStr.c_str());
+    g_stringTable[key] = UTF8ToWString(narrowStr);
 
-    g_stringTable[key] = str;
+    SetUiLocale(UTF8ToWString(locale));
 }
 
 // Returns true if the string table entry is found, false otherwise. 
