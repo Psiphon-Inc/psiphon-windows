@@ -100,6 +100,15 @@ DWORD GetTickCountDiff(DWORD start, DWORD end);
 tstring UrlEncode(const tstring& input);
 tstring UrlDecode(const tstring& input);
 
+// Should be called (by psiclient) when the UI locale is set.
+// (This is to help GetDeviceRegion().)
+void SetUiLocale(const wstring& uiLocale);
+
+// Makes best guess as the country that the application/device is currently 
+// running in. Returns ISO 3166-1 alpha-2 format.
+wstring GetDeviceRegion();
+
+
 /*
 String Utilities
 */
@@ -127,6 +136,17 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 #define __STRINGIZEX(x) #x
 #define STRINGIZE(x) __STRINGIZEX(x)
 #endif
+
+
+/*
+Resource Utilities
+*/
+
+// Returns success. o_pBytes points to resource data; o_size is the size of that data.
+bool GetResourceBytes(DWORD name, DWORD type, BYTE*& o_pBytes, DWORD& o_size);
+bool GetResourceBytes(DWORD name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size);
+bool GetResourceBytes(LPCTSTR name, DWORD type, BYTE*& o_pBytes, DWORD& o_size);
+bool GetResourceBytes(LPCTSTR name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size);
 
 
 /*
