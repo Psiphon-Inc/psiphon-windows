@@ -36,6 +36,7 @@
 #include "osrng.h"
 #include "modes.h"
 #include "hmac.h"
+#include "diagnostic_info.h"
 
 
 extern HINSTANCE g_hInst;
@@ -78,27 +79,14 @@ bool ExtractExecutable(
 {
     // Extract executable from resources and write to temporary file
 
-    HRSRC res;
-    HGLOBAL handle = INVALID_HANDLE_VALUE;
     BYTE* data;
     DWORD size;
 
-    res = FindResource(g_hInst, MAKEINTRESOURCE(resourceID), RT_RCDATA);
-    if (!res)
+    if (!GetResourceBytes(resourceID, RT_RCDATA, data, size))
     {
-        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - FindResource failed (%d)"), GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - GetResourceBytes failed (%d)"), GetLastError());
         return false;
     }
-
-    handle = LoadResource(NULL, res);
-    if (!handle)
-    {
-        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - LoadResource failed (%d)"), GetLastError());
-        return false;
-    }
-
-    data = (BYTE*)LockResource(handle);
-    size = SizeofResource(NULL, res);
 
     tstring tempPath;
     if (!GetTempPath(tempPath))
@@ -1064,6 +1052,225 @@ tstring GetISO8601DatetimeString()
         systime.wMilliseconds);
 
     return ret;
+}
+
+
+static wstring g_uiLocale;
+void SetUiLocale(const wstring& uiLocale)
+{
+    g_uiLocale = uiLocale;
+}
+
+wstring GetDeviceRegion()
+{
+    // There are a few different indicators of the device region, none of which
+    // are perfect. So we'll look at what indicators we have and take a best guess.
+
+    //
+    // Read the system dialing code and convert to a country code.
+    // Based on comparing user feedback language to dialing code, we have found
+    // that dialing code is correct about 65% of the time.
+    //
+
+    // Multiple countries can have the same dialing code (such as 
+    // the US, Canada, and Puerto Rico all using '1'), so we'll need
+    // a vector of possibilities.
+    vector<wstring> dialingCodeCountries;
+
+    wstring countryDialingCode;
+    if (GetCountryDialingCode(countryDialingCode)
+        && countryDialingCode.length() > 0)
+    {
+        BYTE* countryDialingCodesBytes = 0;
+        DWORD countryDialingCodesLen = 0;
+        if (GetResourceBytes(
+            _T("COUNTRY_DIALING_CODES.JSON"), RT_RCDATA,
+            countryDialingCodesBytes, countryDialingCodesLen))
+        {
+            Json::Value json;
+            Json::Reader reader;
+
+            string utf8JSON((char*)countryDialingCodesBytes, countryDialingCodesLen);
+            bool parsingSuccessful = reader.parse(utf8JSON, json);
+            if (parsingSuccessful)
+            {
+                // Sometimes (for some reason) the country dialing code given by the system
+                // has an additional trailing digit. So we'll also match against a truncated
+                // version of that value. If we don't get a match on the full value, we'll
+                // use the matches on the truncated value.
+                wstring countryDialingCodeTruncated;
+                vector<wstring> dialingCodeCountriesTruncatedMatch;
+                if (countryDialingCode.length() > 1)
+                {
+                    countryDialingCodeTruncated = countryDialingCode.substr(0, countryDialingCode.length() - 1);
+                }
+
+                for (const Json::Value& entry : json)
+                {
+                    wstring entryDialingCode = UTF8ToWString(entry.get("dialing_code", "").asString());
+                    if (!entryDialingCode.empty() 
+                        && entryDialingCode == countryDialingCode)
+                    {
+                        wstring entryCountryCode = UTF8ToWString(entry.get("country_code", "").asString());
+                        if (!entryCountryCode.empty())
+                        {
+                            std::transform(entryCountryCode.begin(), entryCountryCode.end(), entryCountryCode.begin(), ::toupper);
+                            dialingCodeCountries.push_back(entryCountryCode);
+                        }
+                    }
+
+                    if (!entryDialingCode.empty()
+                        && entryDialingCode == countryDialingCodeTruncated)
+                    {
+                        wstring entryCountryCode = UTF8ToWString(entry.get("country_code", "").asString());
+                        if (!entryCountryCode.empty())
+                        {
+                            std::transform(entryCountryCode.begin(), entryCountryCode.end(), entryCountryCode.begin(), ::toupper);
+                            dialingCodeCountriesTruncatedMatch.push_back(entryCountryCode);
+                        }
+                    }
+                }
+
+                if (dialingCodeCountries.empty() && !dialingCodeCountriesTruncatedMatch.empty())
+                {
+                    // We failed to match on the full country dialing code, but
+                    // we did get matches on the truncated form.
+                    dialingCodeCountries = dialingCodeCountriesTruncatedMatch;
+                }
+            }
+            else
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d: Failed to parse country dialing codes JSON"), __TFUNCTION__, __LINE__);
+            }
+        }
+        else
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d: Failed to load country dialing codes JSON resource"), __TFUNCTION__, __LINE__);
+        }
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d: GetCountryDialingCode failed"), __TFUNCTION__, __LINE__);
+    }
+
+    // At this point, dialingCodeCountries either has a value or is unusable.
+    
+    //
+    // Derive region from UI locale.
+    //
+
+    // Country information defaults to "US", so that tells us very little.
+    const wstring GENERIC_COUNTRY = L"US";
+
+    wstring uiLocaleUpper = g_uiLocale;
+    std::transform(uiLocaleUpper.begin(), uiLocaleUpper.end(), uiLocaleUpper.begin(), ::toupper);
+
+    // This is hand-wavy, imperfect, and will need to be expanded in the future.
+    std::map<wstring, wstring> localeToCountryMap = { 
+        { L"AR", L"SA" },
+        { L"EN", L"US" },
+        { L"FA", L"IR" },
+        { L"RU", L"RU" },
+        { L"TK", L"TM" },
+        { L"TR", L"TR" },
+        { L"VI", L"VN" },
+        { L"ZH", L"CN" },
+    };
+
+    wstring uiLocaleCountry = localeToCountryMap[uiLocaleUpper];
+
+    //
+    // Combine values to make best guess.
+    //
+
+    // If we have a non-generic dialing code country, use that.
+    // We'll prefer using this over the locale, because many of our two-letter
+    // locale/language codes (e.g., "FA") might be used by multiple countries
+    // (e.g., Iran, Afghanistan, Tajikistan, Uzbekistan, etc.).
+
+    auto genericCountryPos = std::find(
+        dialingCodeCountries.begin(), dialingCodeCountries.end(),
+        GENERIC_COUNTRY);
+    bool genericCountryInDialingCodeCountries = (genericCountryPos != dialingCodeCountries.end());
+    if (!dialingCodeCountries.empty() && !genericCountryInDialingCodeCountries)
+    {
+        // We'll use the locale to help us pick which among the dialing code countries
+        // we should use.
+
+        auto localePos = std::find(
+            dialingCodeCountries.begin(), dialingCodeCountries.end(),
+            uiLocaleCountry);
+
+        if (!uiLocaleCountry.empty() && localePos != dialingCodeCountries.end())
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d: uiLocaleCountry found in dialingCodeCountries: %s"), __TFUNCTION__, __LINE__, (*localePos).c_str());
+            return *localePos;
+        }
+
+        // The locale didn't help, and there's no other way of distinguishing
+        // between the matched countries, so just use the first one.
+        my_print(NOT_SENSITIVE, true, _T("%s:%d: using first dialingCodeCountries: %s"), __TFUNCTION__, __LINE__, (*dialingCodeCountries.begin()).c_str());
+        return *dialingCodeCountries.begin();
+    }
+
+    // If we have a UI locale value, use it, even if it's generic.
+    if (!uiLocaleCountry.empty())
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d: using uiLocaleCountry: %s"), __TFUNCTION__, __LINE__, uiLocaleCountry.c_str());
+        return uiLocaleCountry;
+    }
+
+    // We have no info to work with.
+    my_print(NOT_SENSITIVE, true, _T("%s:%d: uiLocaleCountry and dialingCodeCountries are empty"), __TFUNCTION__, __LINE__);
+    return L"";
+}
+
+
+/*
+Resource Utilities
+*/
+
+bool GetResourceBytes(DWORD name, DWORD type, BYTE*& o_pBytes, DWORD& o_size)
+{
+    return GetResourceBytes(MAKEINTRESOURCE(name), MAKEINTRESOURCE(type), o_pBytes, o_size);
+}
+
+bool GetResourceBytes(DWORD name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size)
+{
+    return GetResourceBytes(MAKEINTRESOURCE(name), type, o_pBytes, o_size);
+}
+
+bool GetResourceBytes(LPCTSTR name, DWORD type, BYTE*& o_pBytes, DWORD& o_size)
+{
+    return GetResourceBytes(name, MAKEINTRESOURCE(type), o_pBytes, o_size);
+}
+
+bool GetResourceBytes(LPCTSTR name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size)
+{
+    o_pBytes = NULL;
+    o_size = 0;
+
+    HRSRC res;
+    HGLOBAL handle = INVALID_HANDLE_VALUE;
+
+    res = FindResource(g_hInst, name, type);
+    if (!res)
+    {
+        my_print(NOT_SENSITIVE, false, _T("GetResourceBytes - FindResource failed (%d)"), GetLastError());
+        return false;
+    }
+
+    handle = LoadResource(NULL, res);
+    if (!handle)
+    {
+        my_print(NOT_SENSITIVE, false, _T("GetResourceBytes - LoadResource failed (%d)"), GetLastError());
+        return false;
+    }
+
+    o_pBytes = (BYTE*)LockResource(handle);
+    o_size = SizeofResource(NULL, res);
+
+    return true;
 }
 
 

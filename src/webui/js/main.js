@@ -1588,7 +1588,7 @@ function switchLocale(locale, initial) {
     }
   }
 
-  HtmlCtrlInterface_AddStringTableItem(appBackendStringTable);
+  HtmlCtrlInterface_AddStringTableItem(locale, appBackendStringTable);
 }
 
 function populateLocales() {
@@ -2279,16 +2279,18 @@ function HtmlCtrlInterface_AppReady() {
 }
 
 // Give the C code a string table entry in the appropriate language.
+// `locale` is the locale for this string table.
 // The `stringtable` can and should be a full set of key:string mappings, but
 // the strings will be sent to the C code one at a time, to prevent URL size
 // overflow.
-function HtmlCtrlInterface_AddStringTableItem(stringtable) {
+function HtmlCtrlInterface_AddStringTableItem(locale, stringtable) {
   for (var key in stringtable) {
     if (!stringtable.hasOwnProperty(key)) {
       continue;
     }
 
     var item = {
+      locale: locale,
       key: key,
       string: stringtable[key]
     };

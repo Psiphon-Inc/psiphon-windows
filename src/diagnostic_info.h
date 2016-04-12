@@ -50,7 +50,6 @@ void AddDiagnosticInfoJson(const char* message, const Json::Value& jsonValue);
 void AddDiagnosticInfoJson(const char* message, const char* jsonString);
 
 
-
 /**
 `message` is the identifier for this entry.
 `entry` can be of any type that can a Json::Value can handle -- see docs:
@@ -73,3 +72,11 @@ void AddDiagnosticInfo(const char* message, const T& entry)
     AutoMUTEX mutex(g_diagnosticHistoryMutex);
     g_diagnosticHistory.append(json);
 }
+
+
+// 
+// Utilities
+// Some diagnostic info is useful outside of feedback
+//
+
+bool GetCountryDialingCode(wstring& o_countryDialingCode);

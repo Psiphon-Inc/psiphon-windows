@@ -636,7 +636,7 @@ void ServerEntry::FromString(const string& str)
             }
         }
         
-        if(HasCapability("FRONTED-MEEK") ||  HasCapability("UNFRONTED-MEEK"))
+        if (HasCapability("FRONTED-MEEK") || HasCapability("UNFRONTED-MEEK") || HasCapability("UNFRONTED-MEEK-HTTPS"))
         {
             meekServerPort = json_entry.get("meekServerPort", 0).asInt();
             meekObfuscatedKey = json_entry.get("meekObfuscatedKey", "").asString();
@@ -649,7 +649,7 @@ void ServerEntry::FromString(const string& str)
             meekCookieEncryptionPublicKey = "";
         }
 
-        if(HasCapability("FRONTED-MEEK"))
+        if (HasCapability("FRONTED-MEEK"))
         {
             meekFrontingDomain = json_entry.get("meekFrontingDomain", "").asString();
             meekFrontingHost  = json_entry.get("meekFrontingHost", "").asString();
