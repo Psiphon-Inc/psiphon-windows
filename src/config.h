@@ -26,6 +26,7 @@ static const TCHAR* LOCAL_SETTINGS_APPDATA_SUBDIRECTORY = _T("Psiphon3");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME = _T("psiphon.config");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME = _T("url_proxy.config");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME = _T("server_list.dat");
+static const TCHAR* LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME = _T("remote_server_list");
 static const TCHAR* LOCAL_SETTINGS_REGISTRY_KEY = _T("Software\\Psiphon3");
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS = "Servers";
 static const char* LOCAL_SETTINGS_REGISTRY_VALUE_LAST_CONNECTED = "LastConnected";

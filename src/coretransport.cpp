@@ -33,6 +33,8 @@
 #include "embeddedvalues.h"
 #include "utilities.h"
 
+using namespace std::experimental;
+
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
@@ -317,13 +319,9 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
-    if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_SUBDIRECTORY))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
-    }
-    tstring dataStoreDirectory = path;
+    filesystem::path appDataPath(path);
 
+    auto dataStoreDirectory = filesystem::path(appDataPath).append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY);
     if (!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
     {
         my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
@@ -338,10 +336,9 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     }
 
     // Passing short path names for data store directories due to sqlite3 incompatibility
-    // with exetended Unicode characters in paths (e.g., unicode user name in AppData or
+    // with extended Unicode characters in paths (e.g., unicode user name in AppData or
     // Temp path)
-    tstring shortDataStoreDirectory;
-    tstring shortTempPath;
+    tstring shortDataStoreDirectory, shortTempPath;
     if (!GetShortPathName(dataStoreDirectory, shortDataStoreDirectory) ||
         !GetShortPathName(tempPath, shortTempPath))
     {
@@ -412,6 +409,10 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["EgressRegion"] = Settings::EgressRegion();
         config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
         config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+
+        auto remoteServerListFilename = filesystem::path(dataStoreDirectory)
+                                                    .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
+        config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
     }
 
     ostringstream configDataStream;
@@ -425,15 +426,16 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // TODO: there's still a remote chance that concurrently spawned url
     // proxy instances could clobber each other's config file?
 
-    if (!PathAppend(path,
-            RequestingUrlProxyWithoutTunnel() ?
-                LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME :
-                LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME))
+    auto configPath = filesystem::path(dataStoreDirectory);
+    if (RequestingUrlProxyWithoutTunnel()) 
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
+        configPath.append(LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME);
     }
-    configFilename = path;
+    else
+    {
+        configPath.append(LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME);
+    }
+    configFilename = configPath;
 
     if (!WriteFile(configFilename, configDataStream.str()))
     {
@@ -443,13 +445,9 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
     if (!RequestingUrlProxyWithoutTunnel())
     {
-        _tcsncpy_s(path, dataStoreDirectory.c_str(), _TRUNCATE);
-        if (!PathAppend(path, LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME))
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s - PathAppend failed (%d)"), __TFUNCTION__, GetLastError());
-            return false;
-        }
-        serverListFilename = path;
+        auto serverListPath = filesystem::path(dataStoreDirectory)
+                                          .append(LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME);
+        serverListFilename = serverListPath;
 
         string serverList = EMBEDDED_SERVER_LIST;
 

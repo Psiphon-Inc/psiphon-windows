@@ -47,6 +47,7 @@
 #include <map>
 #include <regex>
 #include <sstream>
+#include <filesystem>
 #include <json/json.h>
 #include <mshtmhst.h>
 #include <urlmon.h>
