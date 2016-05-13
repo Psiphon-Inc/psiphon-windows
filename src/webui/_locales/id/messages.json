@@ -1,174 +1,174 @@
 {
     "appbackend#state-starting-body": {
-        "message": "잠시만 기다려주세요...",
+        "message": "Silakan tunggu...",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\n현재 Psiphon이 HTTP 프록시를 위해 특정한 로컬 포트를 사용하도록 설정되어 있습니다.<br>\n하지만, 해당 포트는 이미 사용되고 있는 것 같으며 Psiphon이 사용할 수 없습니다.\n</p>\n<p>\nHTTP 프록시 포트를 변경하고 다시 시도해 주세요. 값을 모두 지우면 Psiphon이 자동으로 사용 가능한 포트를 지정할 수 있으니 값을 지우는 방법을 추천합니다.\n</p>",
+        "message": "<p>\nAnda telah mengatur Psiphon agar menggunakan port lokal tertentu sebagai proksi HTTP.<br>\nAkan tetapi, port itu sepertinya telah terpakai sehingga Psiphon tidak dapat menggunakannya.\n</p>\n<p>\nHarap ubah parameter port proksi HTTP Anda, lalu coba lagi. Kami anjurkan agar Anda mengosongkannya saja sehingga Psiphon bisa memilih port yang lowong secara otomatis.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
     },
     "settings#upstream-proxy#set-both-error-msg": {
-        "message": "호스트 이름과 포트를 반드시 설정해야합니다, 또는 두 칸을 모두 빈칸으로 두면 자동으로 선택되도록 할 수 있습니다.",
+        "message": "Anda harus menentukan Nama Host dan Port atau kosongkan keduanya agar ditentukan otomatis.",
         "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
     },
     "settings#egress-region#select-jp": {
-        "message": "일본",
+        "message": "Jepang",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
     },
     "settings#upstream-proxy#error-modal-body-configured": {
-        "message": "Psiphon이 현재 시스템 “upstream proxy\"를 사용하도록 설정되어 있습니다.<br>\n하지만, 현재 해당 프록시를 통해 Psiphon 서버로 접속할 수 없는 것 같습니다.<br>\n“업스트림 프록시 사용 안 함”을 선택하고 다시 시도하십시오.",
+        "message": "Anda telah mengatur Psiphon agar menggunakan “proksi hulu”.<br>\nAkan tetapi, sepertinya kami tidak dapat tersambung ke server Psiphon lewat proksi itu.<br>\nHarap benahi dulu pengaturannya, lalu coba lagi.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
     "logs#show-debug-label": {
-        "message": "디버그 로그 보이기",
+        "message": "Tampilkan catatan debug",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
     },
     "nav#logs": {
-        "message": "로그",
+        "message": "Catatan",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "settings#error-alert": {
-        "message": "<strong>오류가 발생했습니다!</strong> 진행하기 전에 잘못된 값을 고쳐주세요.",
+        "message": "<strong>Error!</strong> Ubah parameter yang salah sebelum melanjutkan.",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
     "settings#local-proxy-ports#reason": {
-        "message": "만약 직접 구성한 설정을 사용하는 Psiphon과 함께 작동하는 도구를 사용하는 경우, 아마 Psiphon이 일관되도록 작동하게 하기 위해 같은 로컬 포트 숫자를 쓰는 것이 좋습니다. 만약 특정 포트 숫자를 쓸 이유가 없다면, 충돌 문제를 방지하기 위해 Psiphon이 자동으로 포트 숫자를 선택할 수 있도록 설정해야 합니다.",
+        "message": "JIka Anda menggunakan aplikasi di komputer yang memerlukan konfigurasi manual agar bisa berfungsi dengan Psiphon, Anda harus mengatur Psiphon agar menggunakan nomor port lokal yang sama secara konsisten. Jika Anda tidak harus menentukan nomor port, izinkan Psiphon untuk memilihnya secara otomatis agar tidak terjadi konflik.",
         "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
     },
     "appbackend#minimized-to-systray-body": {
-        "message": "아이콘을 클릭하면 어플리케이션을 표시합니다",
+        "message": "Klik ikon untuk memunculkan kembali aplikasi",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "banner#sponsored-by": {
-        "message": "후원자",
+        "message": "Didukung oleh",
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "appbackend#state-connected-body": {
-        "message": "국경을 넘어 탐색하세요!",
+        "message": "Jelajahi dunia di luar batasmu!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "connection#connected-msg": {
-        "message": "Psiphon에 <span class=\"state-word\">연결됨</span>",
+        "message": "Psiphon telah <span class=\"state-word\">tersambung</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "settings#split-tunnel#reason": {
-        "message": "자국 내에 있는 웹 사이트는 일반적으로 막히지 않은 경우가 많습니다. 이 옵션을 활성화하면 자국 내 사이트에 대해서 접속 속도를 높일 수 있으며 어떤 경우는 ISP의 데이터 사용료를 줄일 수 있습니다.",
+        "message": "Situs web di dalam negeri Anda umumnya tidak diblokir, jadi dengan mengaktifkan opsi ini, Anda akan mendapat akses yang lebih cepat ke situs-situs tersebut dan terkadang bisa mengurangi biaya penggunaan data.",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#settings": {
-        "message": "설정",
+        "message": "Setelan",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "nav#connection#connected": {
-        "message": "연결됨",
+        "message": "Tersambung",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "해당 위치의 서버를 사용할 수 없음",
+        "message": "Wilayah Server Tak Tersedia",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#upstream-proxy#error-modal-title": {
-        "message": "업 스트림 프록시 오류",
+        "message": "Galat Proksi Hulu",
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#egress-region#default": {
-        "message": "<strong>“가장 빠른 국가”</strong> 기본 옵션을 선택하면 Psiphon 이 자동으로 가장 좋은 네트워크 연결을 찾아 연결합니다. ",
+        "message": "Dengan memilih opsi standar <strong>“Negara Tercepat”</strong>, Psiphon akan memilihkan server secara otomatis yang umumnya memberi Anda sambungan jaringan yang lebih baik.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
     },
     "connection#stopping-msg": {
-        "message": "Psiphon <span class=\"state-word\">연결 끊는 중</span>...",
+        "message": "Psiphon sedang <span class=\"state-word\">memutus sambungan</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon이 현재 시스템 “upstream proxy\"를 사용하도록 설정되어 있습니다.<br>\n하지만, 현재 해당 프록시를 통해 Psiphon 서버로 접속할 수 없는 것 같습니다.<br>\n“업스트림 프록시 사용 안 함”을 선택하고 다시 시도하십시오.",
+        "message": "Saat ini Psiphon diatur untuk menggunakan proksi sistem Anda sebagai \"proksi hulu\".<br>\nAkan tetapi, sepertinya kami tidak dapat tersambung ke server Psiphon lewat proksi itu.<br>\nHarap aktifkan “Jangan gunakan proksi hulu”, lalu coba lagi.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
     },
     "feedback#success-message": {
-        "message": "<strong>감사합니다!</strong> 당신의 피드백이 보내졌습니다.",
+        "message": "<strong>Terima kasih!</strong> Kritik dan saran Anda telah terkirim.",
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "appbackend#state-stopped-title": {
-        "message": "Psiphon 연결 끊김",
+        "message": "Psiphon tidak tersambung",
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
     },
     "settings#split-tunnel#help-text": {
-        "message": "활성화되어 있으면, 요청을 자국 내의 서버로 보냅니다, 반대로 비활성화시 Psiphon 서버로 터널링 됩니다.",
+        "message": "Jika diaktifkan, permintaan menuju server di dalam negeri Anda tidak akan dialihkan melalui terowongan Psiphon.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
-        "message": "웹 사이트를 방문하여 <strong><a class=\"NewVersionURL\" href=\"#\">새로운 버전</a></strong>을 다운로드 하거나 <strong><a class=\"InfoURL\" href=\"#\">도움말</a></strong>을 얻을 수 있습니다. Psiphon은 Android와 Windows에서 사용할 수 있습니다.",
+        "message": "Silakan kunjungi situs web kami untuk <strong><a class=\"NewVersionURL\" href=\"#\">mengunduh versi terbaru</a></strong> atau <strong><a class=\"InfoURL\" href=\"#\">mencari bantuan dan informasi</a></strong>. Psiphon tersedia untuk Android dan Windows.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "settings#upstream-proxy#skip-label": {
-        "message": "업 스트림 프록시 사용 안 함",
+        "message": "Jangan gunakan proksi hulu",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "settings#systray-minimize#help-text": {
-        "message": "활성화되어 있으면, 최소화 할 때 Psiphon 어플리케이션 창을 알림 영역으로 최소화 합니다. (이는 \"시스템 트레이\" 또는 \"시스트레이\"로 알려져 있으며 Windows 작업 표시줄의 시계 근처에 있습니다)",
+        "message": "Jika diaktifkan, jendela aplikasi Psiphon saat diminimalkan akan disembunyikan di area notifikasi (juga dikenal sebagai \"baki sistem\" atau \"system tray\", terletak di dekat jam di bilah tugas Windows Anda).",
         "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
     },
     "settings#upstream-proxy#port-label": {
-        "message": "포트",
+        "message": "Port",
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#port-value-error-msg": {
-        "message": "1부터 65535사이의 값이여야합니다.",
+        "message": "Harus diisi antara 1 sampai 65535.",
         "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
     },
     "nav#feedback": {
-        "message": "피드백",
+        "message": "Kritik dan Saran",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "Psiphon에 <span class=\"state-word\">연결 하는 중</span>...",
+        "message": "Psiphon sedang <span class=\"state-word\">menyambung</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
-        "message": "다시 연결하면 설정이 적용됩니다.",
+        "message": "Menyambungkan ulang untuk menerapkan setelan Anda.",
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "appbackend#state-starting-title": {
-        "message": "Psiphon 연결 중",
+        "message": "Psiphon sedang menyambung",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#unapplied-changes-prompt#title": {
-        "message": "설정 변경됨",
+        "message": "Setelan Diubah",
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#egress-region#select-us": {
-        "message": "미국",
+        "message": "Amerika Serikat",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
     },
     "feedback#top_para_2": {
-        "message": "수 많은 문제들은 대부분 새로운 버전을 설치하면 해결됩니다. <a class=\"NewVersionURL\" href=\"#\">새로운 버전 다운로드</a> 링크를 통해 새로운 버전의 Psiphon을 받을 수 있습니다. 또는 다음의 이메일 주소에 메일을 보내 받을 수도 있습니다: <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "message": "Ada banyak masalah yang terselesaikan dengan mengunduh versi terbaru. Silakan <a class=\"NewVersionURL\" href=\"#\">klik di sini untuk mengunduh versi terbaru</a> atau kirim email ke <a class=\"NewVersionEmail\" href=\"#\"></a>.",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
     "notice#systemproxysettings-setproxy-error-body": {
-        "message": "<p>Psiphon이 시스템 프록시 설정을 적용하는데 실패했습니다.</p>\n<p>이 문제는 바이러스 백신과 충돌을 일으켰을 가능성이 높습니다. 백신을 끄거나 수동으로 시스템 프록시가 Psiphon 프록시를 사용하도록 설정해야 할 수 있습니다.</p>",
+        "message": "<p>Psiphon gagal mengatur setelan proksi sistem.</p>\n<p>Hal ini mungkin terjadi karena ada konflik dengan antivirus Anda. Anda mungkin harus mengatur aplikasi atau setelan proksi sistem secara manual untuk menggunakan proksi lokal Psiphon.</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
-        "message": "<p>\n현재 Psiphon이 SOCKS 프록시를 위해 특정한 로컬 포트를 사용하도록 설정되어 있습니다.<br>\n하지만, 해당 포트는 이미 사용되고 있는 것 같으며 Psiphon이 사용할 수 없습니다.\n</p>\n<p>\nSOCKS 프록시 포트를 변경하고 다시 시도해 주세요. 값을 모두 지우면 Psiphon이 자동으로 사용 가능한 포트를 지정할 수 있으니 값을 지우는 방법을 추천합니다.\n</p>",
+        "message": "<p>\nAnda telah mengatur Psiphon agar menggunakan port lokal tertentu sebagai proksi SOCKS.<br>\nAkan tetapi, port itu sepertinya telah terpakai sehingga Psiphon tidak dapat menggunakannya.\n</p>\n<p>\nHarap ubah parameter port SOCKS Anda, lalu coba lagi. Kami anjurkan agar Anda mengosongkannya saja sehingga Psiphon bisa memilih port yang lowong secara otomatis.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
     },
     "feedback#submit_button": {
-        "message": "확인",
+        "message": "Kirim",
         "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
     },
     "settings#systray-minimize#reason": {
-        "message": "Psiphon을 최소화 하면 빈 공간의 작업 표시줄 알림 영역 (\"시스템 트레이\") 에 표시됩니다. 이는 특히 Psiphon을 오래 사용할 때 유용합니다.",
+        "message": "Meminimalkan Psiphon ke area notifikasi (\"baki sistem\") membebaskan ruang di bilah tugas Anda. Hal ini akan sangat membantu jika Anda sering berlama-lama menggunakan Psiphon.",
         "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
     },
     "settings#unapplied-changes-prompt#discard-button": {
-        "message": "취소",
+        "message": "Batalkan",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
     "notice#systemproxysettings-setproxy-error-title": {
-        "message": "시스템 프록시 에러",
+        "message": "Galat Proksi Sistem",
         "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#egress-region#label": {
-        "message": "다음을 통해 연결",
+        "message": "Sambungkan lewat",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#local-proxy-ports#socks-label": {
@@ -176,23 +176,23 @@
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
     },
     "feedback#top_para_3": {
-        "message": "흔히 일어나는 문제에 대해서는 <a class=\"FaqURL\" href=\"#\">자주 묻는 질문</a>에서도 빠르게 답변을 찾을 수 있습니다.",
+        "message": "Temukan juga solusi masalah-masalah umum di daftar <a class=\"FaqURL\" href=\"#\">Tanya-Jawab</a> kami.",
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "settings#saved-message": {
-        "message": "설정 저장됨.",
+        "message": "Setelan tersimpan.",
         "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
-        "message": "<strong>만약 Psiphon 사이트 접속이 불가능한 경우</strong>, 다음 이메일 주소로 메일을 보내면 최신 버전의 Psiphon 클라이언트를 받을 수 있습니다: ",
+        "message": "<strong>Jika situs web tidak dapat diakses</strong>, Anda bisa mendapatkan versi terbaru Psiphon dengan mengirim email ke:",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
     },
     "settings#egress-region#select-nl": {
-        "message": "네덜란드",
+        "message": "Belanda",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
     },
     "general#modal-close-button": {
-        "message": "닫기",
+        "message": "Tutup",
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
     "settings#local-proxy-ports#http-label": {
@@ -200,35 +200,35 @@
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
     },
     "settings#unapplied-changes-prompt#apply-button": {
-        "message": "적용",
+        "message": "Terapkan",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#reset-button": {
-        "message": "기본값으로 초기화",
+        "message": "Kembalikan ke Awal",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "about#client-version": {
-        "message": "Psiphon Windows 클라이언트 버전:",
+        "message": "Versi aplikasi klien Psiphon untuk Windows:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
     "settings#upstream-proxy#heading": {
-        "message": "업 스트림 프록시",
+        "message": "Proksi Hulu (Upstream)",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon은 수 많은 국가에 서버를 가지고 있습니다. 일반적으로 자신의 국가와 가까운 국가를 선택해야만 Psiphon 서버가 더 좋은 네트워크 연결을 제공할 수 있습니다. 하지만 여전히 직접 지정한 국가를 지정하여 웹 사이트에 연결할 수 있습니다.",
+        "message": "Psiphon memiliki server di banyak negara. Dengan menggunakan server Psiphon di negara yang letaknya tidak jauh dari negara Anda, umumnya Anda akan memperoleh sambungan jaringan yang lebih baik, tetapi tidak menutup kemungkinan Anda ingin mengakses situs dan layanan web dari negara tertentu.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
     },
     "settings#vpn-incompatible-msg": {
-        "message": "(L2TP/IPSec 모드에선 작동하지 않습니다.)",
+        "message": "(Tidak berfungsi dengan mode L2TP/IPSec)",
         "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
     "general#notice-modal-tech-preamble": {
-        "message": "기술적인 오류 정보가 있습니다:",
+        "message": "Berikut ini informasi galat teknisnya:",
         "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
     },
     "settings#local-proxy-ports#unique-error-msg": {
-        "message": "로컬 포트는 반드시 다른 포트와 곂치지 않아야 합니다.",
+        "message": "Port lokal harus berbeda satu sama lain.",
         "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
     },
     "settings#vpn-incompatible-label": {
@@ -236,139 +236,139 @@
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#error-modal#body": {
-        "message": "설정 값에 오류가 있습니다. 진행하기 전에 설정을 확인하세요.",
+        "message": "Ada kesalahan pada parameter setelan Anda. Benahi dulu sebelum melanjutkan.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "nav#connection#stopped": {
-        "message": "연결 끊김",
+        "message": "Tidak tersambung",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "로컬 프록시 포트",
+        "message": "Port Proksi Lokal",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#egress-region#select-de": {
-        "message": "독일",
+        "message": "Jerman",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
-        "message": "Psiphon이 “<%- data %>” 시스템 프록시 설정을 적용하는데 실패했습니다. 이 문제는 바이러스 백신과 충돌을 일으켰을 가능성이 높습니다. 백신을 끄거나 수동으로 시스템 프록시가 Psiphon 프록시를 사용하도록 설정해야 할 수 있습니다.",
+        "message": "Psiphon gagal mengatur setelan proksi sistem untuk sambungan internet “<%- data %>”. Hal ini mungkin terjadi karena ada konflik dengan antivirus Anda. Anda mungkin harus mengatur aplikasi atau setelan proksi sistem secara manual untuk menggunakan proksi lokal Psiphon.",
         "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
     },
     "connection#stop-btn": {
-        "message": "중지",
+        "message": "Hentikan",
         "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "Psiphon이 특정한 지역의 서버를 사용하도록 설정했습니다.<br>\n하지만, 해당 지역의 서버는 더 이상 유효하지 않습니다.<br>\n“가장 빠른 국가”를 선택하거나 다른 새로운 지역으로 변경해야 합니다.",
+        "message": "Anda telah mengatur Psiphon agar menggunakan server di wilayah tertentu.<br>\nAkan tetapi, wilayah tersebut kini tak tersedia lagi.<br>\nAnda harus memilih wilayah baru atau mengubah pilihan ke opsi standar “Negara Tercepat”.",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "feedback#text_feedback_bottom_para": {
-        "message": "폼이 작동하지 않거나 또는 스크린샷을 첨부하고 싶다면, 다음의 이메일로 보내주시면 됩니다: <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
+        "message": "Jika formulir tidak berfungsi atau Anda ingin mengirim cuplikan layar, silakan kirim lewat email ke <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "settings#upstream-proxy#reason": {
-        "message": "업스트림 프록시는 때때로 학교나 대학, 회사에서 요구할 때가 있습니다. 만약 네트워크 제공자가 이미 업스트림 프록시 설정을 주었다면, 연결을 위해 추가적인 설정이 필요할 수 있습니다.",
+        "message": "Penggunaan proksi hulu biasanya diwajibkan oleh sekolah, universitas, atau perusahaan. Jika penyedia jaringan Anda memberi setelan proksi hulu, mengaturnya di sini secara manual mungkin perlu dilakukan agar dapat tersambung.",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#local-proxy-ports#error-modal-title": {
-        "message": "로컬 프록시 포트 충돌",
+        "message": "Konflik Port Proksi Lokal",
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "connection#disconnect-btn": {
-        "message": "연결 끊기",
+        "message": "Putus sambungan",
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "feedback#top_content_title": {
-        "message": "피드백을 제공하세요",
+        "message": "Beri Kami Kritik dan Saran",
         "description": "Title for the Feedback page"
     },
     "banner#long-connecting": {
-        "message": "<strong>오 이런!</strong> 현재 연결에 문제를 겪고있는 것 같군요!<br>\n많은 문제들이 새로운 버전에 고쳐져서 나옵니다. <a class=\"NewVersionURL\" href=\"#\">새로운 버전 다운로드</a> 링크를 통해 새로운 버전의 Psiphon을 받을 수 있습니다. 또는 다음의 이메일 주소에 메일을 보내 받을 수도 있습니다: <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "message": "<strong>Oh, tidak!</strong> Sepertinya Anda mengalami masalah sambungan!<br>\nUnduh versi terbaru Psiphon <a class=\"NewVersionURL\" href=\"#\">di sini</a>\natau dengan mengirim email ke <a class=\"NewVersionEmail\" href=\"#\"></a>",
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "logs#placeholder": {
-        "message": "로그가 없습니다.",
+        "message": "Belum ada catatan",
         "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
     },
     "connection#stopped-msg": {
-        "message": "Psiphon <span class=\"state-word\">연결 끊김</span>",
+        "message": "Psiphon <span class=\"state-word\">tidak tersambung</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
     },
     "nav#about": {
-        "message": "About",
+        "message": "Tentang",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
     },
     "settings#local-proxy-ports#leave-blank": {
-        "message": "<strong>빈칸</strong>으로 두면 자동으로 포트를 선택합니다 (권장됨).",
+        "message": "<strong>Kosongkan</strong> untuk memilih port secara otomatis (dianjurkan).",
         "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
     },
     "settings#systray-minimize#heading": {
-        "message": "알림 영역으로 최소화 (시스템 트레이)",
+        "message": "Minimalkan ke Area Notifikasi (Baki Sistem)",
         "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
     },
     "language#success-message": {
-        "message": "<strong>반갑습니다!</strong> Psiphon에 오신것을 환영합니다.",
+        "message": "<strong>Halo!</strong> Selamat datang di Psiphon!",
         "description": "A welcome message shown to the user when they first switch to the correct UI language"
     },
     "settings#egress-region#select-sg": {
-        "message": "싱가포르",
+        "message": "Singapura",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
     "feedback#diagnostic_check": {
-        "message": "진단 정보를 업로드하세요. 참고로 이 진단 정보는 어떠한 개인 식별 정보도 포함하지 않으며, 이 소중한 정보는 Psiphon이 부드럽게 작동할 수 있도록 도움을 줄 것입니다. <a class=\"DataCollectionInfoURL\" href=\"#\">이곳</a>을 클릭하여 어떤 정보가 수집되는지 확인하세요.",
+        "message": "Unggah data diagnostik. Perlu dicatat bahwa data diagnostik ini tidak bersifat mengenali pribadi Anda dan akan membantu kami melancarkan kinerja Psiphon. <a class=\"DataCollectionInfoURL\" href=\"#\">Klik di sini untuk mengetahui data yang kami kumpulkan</a>.",
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {
-        "message": "전송 모드",
+        "message": "Modus Transpor",
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Psiphon은 <strong>강력한 검열 우회 도구</strong>입니다 — 시대를 역행하는 검열과 방화벽을 뚫고 열린 인터넷에 접속할 수 있도록 디자인되었으며 Toronto, Canada에서 <strong>오픈 소스</strong>로 개발되었습니다.",
+        "message": "Psiphon adalah <strong>aplikasi penembus sensor</strong> — Psiphon dirancang untuk menyediakan akses ke internet terbuka, menerobos sensor dan firewall. Aplikasi ini <strong>bersumber terbuka</strong> dan dikembangkan di Toronto, Kanada.",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "nav#connection#stopping": {
-        "message": "연결 끊는 중",
+        "message": "Memutus sambungan",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
     },
     "settings#error-modal#title": {
-        "message": "설정 오류",
+        "message": "Galat Setelan",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
     },
     "settings#apply-button": {
-        "message": "변경 사항 적용",
+        "message": "Terapkan Perubahan",
         "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
     },
     "appbackend#minimized-to-systray-title": {
-        "message": "Psiphon이 알림 영역에 최소화되었습니다",
+        "message": "Psiphon telah diminimalkan ke area notifikasi",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "settings#split-tunnel#heading": {
-        "message": "터널 분리",
+        "message": "Terowongan Terpisah",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#egress-region#invalid-error-msg": {
-        "message": "Psiphon 서버의 위치를 선택해 주십시오.",
+        "message": "Pilih wilayah server Psiphon yang berlaku.",
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "appbackend#state-connected-title": {
-        "message": "Psiphon 연결됨",
+        "message": "Psiphon tersambung",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
     },
     "settings#upstream-proxy#proxy-reqs": {
-        "message": "HTTPS를 지원하는 HTTP 프록시만 사용할 수 있습니다.",
+        "message": "Hanya mengizinkan proksi HTTP yang mendukung HTTPS.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#transport-mode#check-label": {
-        "message": "L2TP / IPSec 모드를 사용",
+        "message": "Gunakan modus L2TP/IPSec",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "connection#egress-region-combo-label": {
-        "message": "다음을 통해 연결",
+        "message": "Sambungkan lewat",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#egress-region#select-gb": {
-        "message": "영국",
+        "message": "Inggris",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
     },
     "about#wordart-title": {
@@ -376,67 +376,67 @@
         "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
     },
     "settings#upstream-proxy#hostname-label": {
-        "message": "호스트 이름",
+        "message": "Nama host",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "feedback#smiley_sad": {
-        "message": "Psiphon이 가끔 연결에 실패하거나 잘 작동하지 않을 때가 있습니다.",
+        "message": "Psiphon seringkali gagal menyambung atau tidak berfungsi cukup baik.",
         "description": "The text below the 'sad face' feedback choice."
     },
     "settings#unapplied-changes-prompt#body": {
-        "message": "설정을 바꾸었지만 바꾼 설정이 적용되지 않았습니다. <br><br> 바꾼 설정을 바로 적용할까요? 아니면 취소할까요?",
+        "message": "Anda telah mengubah setelan, tetapi belum menerapkannya.<br><br>Ingin menerapkan atau membatalkannya?",
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#systray-minimize#enable-label": {
-        "message": "알림 영역으로 최소화하기 (시스템 트레이)",
+        "message": "Minimalkan ke area notifikasi (baki sistem)",
         "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
     },
     "settings#egress-region#heading": {
-        "message": "Psiphon 서버 위치",
+        "message": "Wilayah Server Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#upstream-proxy#by-default": {
-        "message": "컴퓨터가 이미 프록시 설정이 되어있는 경우, 기본적으로 Psiphon은 터널링을 하기 위해 해당 프록시를 이용합니다. “upstream proxy”를 사용하지 않는 것으로 지정하거나 사용할 프록시를 지정하면 이 동작을 덮어쓸 수 있습니다.",
+        "message": "Jika proksi di komputer Anda telah dikonfigurasi, Psiphon secara standar akan menggunakan proksi tersebut saat membuat terowongan. Anda boleh tidak mematuhi konfigurasi tersebut dengan menentukan proksi yang digunakan atau menyatakan agar tidak menggunakan \"proksi hulu\" seperti itu.",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
     },
     "settings#split-tunnel#enable-label": {
-        "message": "자국 내에서 서비스하는 사이트에 프록시 적용 안 함",
+        "message": "Jangan alihkan situs web dalam negeri ke proksi",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "nav#connection#starting": {
-        "message": "연결 중",
+        "message": "Menyambung",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
     },
     "feedback#text_feedback_email_prompt": {
-        "message": "만약 답변을 받고 싶다면, 여기에 이메일을 남겨주세요:",
+        "message": "Jika Anda ingin kami membalasnya, silakan masukkan alamat email Anda:",
         "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
     },
     "feedback#text_feedback_prompt": {
-        "message": "여기에 코멘트를 입력해 주세요:",
+        "message": "Berikan komentar Anda di sini:",
         "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
     },
     "feedback#smiley_happy": {
-        "message": "Psiphon이 잘 연결되며 원하는 대로 잘 작동하고 있습니다.",
+        "message": "Psiphon tersambung dan berfungsi sesuai keinginan saya.",
         "description": "The text below the 'happy face' feedback choice."
     },
     "about#wordart-tag": {
-        "message": "국경을 넘어",
+        "message": "Melintas Batas",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "connection#wait-btn": {
-        "message": "잠시만 기다려주세요...",
+        "message": "Silakan tunggu...",
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
-        "message": "Windows L2TP/IPSec 가상 네트워킹을 사용합니다. 이 모드는 모든 어플리케이션에 터널링을 적용합니다. 하지만 명료하지 않고 강력한 검열 우회 기능을 가지고 있지 않습니다. 대부분의 방화벽을 뚫는데에는 <strong>추천하지</strong> 않습니다.",
+        "message": "Menggunakan jaringan virtual L2TP/IPSec Windows. Modus ini akan mengalihkan lalu lintas internet semua aplikasi Anda, tetapi tidak dilengkapi pengacak sehingga tidak memiliki kemampuan penembusan sensor yang tangguh. <strong>Tidak dianjurkan</strong> untuk menerobos sebagian besar firewall.",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "가장 빠른 국가",
+        "message": "Negara Tercepat",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "connection#connect-btn": {
-        "message": "연결",
+        "message": "Sambungkan",
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     }
 }

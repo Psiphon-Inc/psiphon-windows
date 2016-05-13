@@ -268,7 +268,7 @@
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "settings#upstream-proxy#reason": {
-        "message": "Uzvodni proxy-i su nekad zahtjevani od strane škola, sveučilišta ili poslova. Ako znate postavke uzvodnog proxy-a zahtjevanog od strane Vašeg mrežnog davatelja, možda ćete ih morati ručno unijeti kako bi se spojili.",
+        "message": "Uzvodni proxy-i su nekad zahtjevani od strane škola, sveučilišta ili tvrtki. Ako znate postavke uzvodnog proxy-a zahtjevanog od strane Vašeg mrežnog davatelja, možda ćete ih morati ručno unijeti kako bi se spojili.",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#local-proxy-ports#error-modal-title": {

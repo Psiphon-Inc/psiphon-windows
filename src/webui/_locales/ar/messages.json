@@ -92,7 +92,7 @@
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
     },
     "settings#split-tunnel#help-text": {
-        "message": "إذا مكنته، لن تمر الطلبات المقدمة  للخوادم في بلدك عبر سايفون.",
+        "message": "إذا مكنته، لن تمر الطلبات المقدمة  للسيرفرات في بلدك عبر سايفون.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
@@ -120,7 +120,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "بسايفون  <span class=\"state-word\">جاري الإتصال </span>…",
+        "message": " <span class=\"state-word\">جاري الإتصال </span> بسايفون …",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
@@ -220,7 +220,7 @@
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
     },
     "settings#vpn-incompatible-msg": {
-        "message": "(لا يعمل مع نمط (مود) L2TP/IPSec) ",
+        "message": "(لا يعمل مع مود (L2TP/IPSec) ",
         "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
     "general#notice-modal-tech-preamble": {
@@ -284,7 +284,7 @@
         "description": "Title for the Feedback page"
     },
     "banner#long-connecting": {
-        "message": "<strong>أوه كلا! </strong> يظهر إنك تواجه مشاكل في الإتصال!  <br>\nنزّل آخر نسخة من سايفون من  <a class=\"NewVersionURL\" href=\"#\">موقع التحميل </a>\nأو عبر إرسال بريد إلكتروني إلى  <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "message": "<strong>للأسف! </strong> يظهر إنك تواجه مشاكل في الإتصال!  <br>\nنزّل آخر نسخة من سايفون من  <a class=\"NewVersionURL\" href=\"#\">موقع التحميل </a>\nأو عبر إرسال بريد إلكتروني إلى  <a class=\"NewVersionEmail\" href=\"#\"></a>",
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "logs#placeholder": {
@@ -292,7 +292,7 @@
         "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
     },
     "connection#stopped-msg": {
-        "message": "بسايفون <span class=\"state-word\">إنقطع الإتصال</span>",
+        "message": "<span class=\"state-word\">إنقطع الإتصال</span> بسايفون",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
     },
     "nav#about": {
@@ -300,7 +300,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
     },
     "settings#local-proxy-ports#leave-blank": {
-        "message": "أتركها  <strong>فارغة </strong> للإنتقاء الأوتوماتيكي للمنافذ (البورتات)  (يوصى  به).",
+        "message": "أتركها  <strong>فارغة </strong> للإنتقاء الأوتوماتيكي للمنافذ (يوصى  به).",
         "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
     },
     "settings#systray-minimize#heading": {
@@ -316,7 +316,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
     "feedback#diagnostic_check": {
-        "message": "حمّل المعلومات التشخيصية .  الرجاء الإنتباه أن هذه المعلومات التشخيصية لا تكشف هويتك، إنما تساعد سايفون على العمل أفضل  <a class=\"DataCollectionInfoURL\" href=\"#\">أنقر هنا لرؤية نوع المعلومات التي نجمعها </a>",
+        "message": "حمّل البيانات التشخيصية.  الرجاء الإنتباه أن هذه البيانات التشخيصية لا تكشف هويتك، إنما تساعد سايفون على العمل أفضل  <a class=\"DataCollectionInfoURL\" href=\"#\">أنقر هنا لرؤية نوع المعلومات التي نجمعها </a>",
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {
@@ -376,7 +376,7 @@
         "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
     },
     "settings#upstream-proxy#hostname-label": {
-        "message": "إسم مضيف ",
+        "message": "إسم المضيف ",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "feedback#smiley_sad": {
