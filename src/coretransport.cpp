@@ -392,7 +392,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
         if (RequestingUrlProxyWithoutTunnel())
         {
-            // The URL proxy can and will be used while the main tunnel is connect, 
+            // The URL proxy can and will be used while the main tunnel is connected, 
             // and multiple URL proxies might be used concurrently. Each one may/will
             // try to open/create the tunnel-core datastore, so conflicts will occur
             // if they try to use the same datastore directory as the main tunnel or
