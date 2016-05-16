@@ -38,6 +38,8 @@
 #include "hmac.h"
 #include "diagnostic_info.h"
 
+using namespace std::experimental;
+
 
 extern HINSTANCE g_hInst;
 
@@ -160,8 +162,10 @@ bool ExtractExecutable(
 
 
 // Caller can check GetLastError() on failure
-bool GetTempPath(tstring& path)
+bool GetTempPath(tstring& o_path)
 {
+    o_path.clear();
+
     DWORD ret;
     TCHAR tempPath[MAX_PATH];
     // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
@@ -172,13 +176,67 @@ bool GetTempPath(tstring& path)
         return false;
     }
 
-    path = tempPath;
+    o_path = tempPath;
+    return true;
+}
+
+
+// Makes an absolute path to a unique temp directory.
+// If `create` is true, the directory will also be created.
+// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
+bool GetUniqueTempDir(tstring& o_path, bool create)
+{
+    o_path.clear();
+
+    tstring tempPath;
+    if (!GetTempPath(tempPath)) 
+    {
+        return false;
+    }
+
+    tstring guid;
+    if (!MakeGUID(guid)) 
+    {
+        return false;
+    }
+
+    auto tempDir = filesystem::path(tempPath).append(guid);
+
+    if (create && !CreateDirectory(tempDir.tstring().c_str(), NULL)) {
+        return false;
+    }
+
+    o_path = tempDir.tstring();
+
+    return true;
+}
+
+
+// Makes a GUID string. Returns true on success, false otherwise.
+bool MakeGUID(tstring& o_guid) {
+    o_guid.clear();
+
+    GUID g;
+    if (CoCreateGuid(&g) != S_OK) 
+    {
+        return false;
+    }
+
+    TCHAR guidString[128];
+
+    if (StringFromGUID2(g, guidString, sizeof(guidString)/sizeof(TCHAR)) <= 0) 
+    {
+        return false;
+    }
+
+    o_guid = guidString;
+    
     return true;
 }
 
 
 // Caller can check GetLastError() on failure
-bool GetShortPathName(const tstring& path, tstring& shortPath)
+bool GetShortPathName(const tstring& path, tstring& o_shortPath)
 {
     DWORD ret = GetShortPathName(path.c_str(), NULL, 0);
     if (ret == 0)
@@ -192,7 +250,7 @@ bool GetShortPathName(const tstring& path, tstring& shortPath)
         delete[] buffer;
         return false;
     }
-    shortPath = buffer;
+    o_shortPath = buffer;
     delete[] buffer;
     return true;
 }

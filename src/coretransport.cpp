@@ -328,19 +328,11 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
-    tstring tempPath;
-    if (!GetTempPath(tempPath))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - GetTempPath failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
-    }
-
     // Passing short path names for data store directories due to sqlite3 incompatibility
     // with extended Unicode characters in paths (e.g., unicode user name in AppData or
     // Temp path)
-    tstring shortDataStoreDirectory, shortTempPath;
-    if (!GetShortPathName(dataStoreDirectory, shortDataStoreDirectory) ||
-        !GetShortPathName(tempPath, shortTempPath))
+    tstring shortDataStoreDirectory;
+    if (!GetShortPathName(dataStoreDirectory, shortDataStoreDirectory))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - GetShortPathName failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
@@ -354,7 +346,6 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
-    config["DataStoreTempDirectory"] = WStringToUTF8(shortTempPath);
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
@@ -399,7 +390,34 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         // Use whichever region the server entry is located in
         config["EgressRegion"] = "";
 
-        if (!RequestingUrlProxyWithoutTunnel())
+        if (RequestingUrlProxyWithoutTunnel())
+        {
+            // The URL proxy can and will be used while the main tunnel is connect, 
+            // and multiple URL proxies might be used concurrently. Each one may/will
+            // try to open/create the tunnel-core datastore, so conflicts will occur
+            // if they try to use the same datastore directory as the main tunnel or
+            // as each other. So we'll give each one a unique, temporary directory.
+
+            tstring tempDir;
+            if (!GetUniqueTempDir(tempDir, true))
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s - GetUniqueTempDir failed (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
+
+            // Passing short path names for data store directories due to sqlite3 incompatibility
+            // with extended Unicode characters in paths (e.g., unicode user name in AppData or
+            // Temp path).
+            tstring shortTempDir;
+            if (!GetShortPathName(tempDir, shortTempDir))
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s - GetShortPathName failed (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
+
+            config["DataStoreDirectory"] = WStringToUTF8(shortTempDir);
+        }
+        else
         {
             config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
         }
