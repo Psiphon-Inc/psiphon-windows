@@ -42,6 +42,8 @@ bool verifySignedDataPackage(
     bool gzipped, 
     string& authenticDataPackage)
 {
+    const int SANITY_CHECK_SIZE = 10 * 1024 * 1024;
+
     authenticDataPackage.clear();
 
     string jsonString;
@@ -49,29 +51,30 @@ bool verifySignedDataPackage(
     // The package is compressed with either gzip or zip.
     if (gzipped)
     {
+        // See https://www.cryptopp.com/wiki/Gunzip#Decompress_to_String_using_Put.2FGet
         CryptoPP::Gunzip unzipper;
         (void)unzipper.Put((const byte*)signedDataPackage, signedDataPackageLen);
-        
-        if (!unzipper.MessageEnd())
+        (void)unzipper.MessageEnd();
+
+        auto jsonSize = unzipper.MaxRetrievable();
+        if (jsonSize == 0) 
         {
-            my_print(NOT_SENSITIVE, false, _T("%s: unzipper.MessageEnd failed (%d)"), __TFUNCTION__, GetLastError());
+            my_print(NOT_SENSITIVE, false, _T("%s: unzipper.MaxRetrievable returned 0 (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
+        else if (jsonSize > SANITY_CHECK_SIZE)
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: Gunzip overflow (%d)"), __TFUNCTION__, GetLastError());
             return false;
         }
 
-        auto jsonSize = (size_t)unzipper.MaxRetrievable();
+        jsonString.resize((size_t)jsonSize);
 
-        // The null terminator is probably in the compressed data, but to be safe...
-        auto jsonData = make_unique<char[]>(jsonSize+1);
-
-        unzipper.Get((byte*)jsonData.get(), jsonSize);
-        jsonData[jsonSize] = '\0';
-
-        jsonString = jsonData.get();
+        unzipper.Get((byte*)&jsonString[0], jsonString.size());
     }
     else // zip compressed
     {
         const int CHUNK_SIZE = 1024;
-        const int SANITY_CHECK_SIZE = 10 * 1024 * 1024;
         int ret;
         z_stream stream;
         char out[CHUNK_SIZE + 1];
