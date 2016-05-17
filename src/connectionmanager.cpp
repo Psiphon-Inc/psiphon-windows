@@ -752,7 +752,7 @@ void ConnectionManager::FetchRemoteServerList()
             REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
             response.c_str(),
             response.length(),
-            false,
+            false, // zipped, not gzipped
             serverEntryList))
     {
         my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
@@ -846,7 +846,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                     UPGRADE_SIGNATURE_PUBLIC_KEY,
                     downloadResponse.c_str(),
                     downloadResponse.length(),
-                    true, // compressed
+                    true, // gzip compressed
                     upgradeData))
             {
                 // Data in the package is Base64 encoded

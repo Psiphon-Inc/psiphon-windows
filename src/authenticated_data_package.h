@@ -25,5 +25,5 @@ bool verifySignedDataPackage(
     const char* signaturePublicKey,
     const char* signedDataPackage, 
     const size_t signedDataPackageLen,
-    bool compressed, 
+    bool gzipped, 
     string& authenticDataPackage);
