@@ -73,7 +73,7 @@ ITransport* TransportRegistry::New(tstring transportProtocolName)
 
 
 // static 
-void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
+void TransportRegistry::NewAll(vector<shared_ptr<ITransport>>& all_transports)
 {
     all_transports.clear();
 
@@ -81,7 +81,7 @@ void TransportRegistry::NewAll(vector<ITransport*>& all_transports)
          it != m_registeredTransports.end();
          ++it)
     {
-        all_transports.push_back(it->transportFactoryFn());
+        all_transports.push_back(shared_ptr<ITransport>(it->transportFactoryFn()));
     }
 }
 

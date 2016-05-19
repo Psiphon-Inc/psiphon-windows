@@ -55,7 +55,7 @@ bool GetUniqueTempDir(tstring& o_path, bool create);
 //  ERROR_OPERATION_ABORTED if cancel event signaled
 // process and cancelEvent can be NULL
 DWORD WaitForConnectability(
-        int port,
+        USHORT port,
         DWORD timeout,
         HANDLE process,
         const StopInfo& stopInfo);

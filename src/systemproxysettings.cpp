@@ -734,7 +734,11 @@ void DoStartupSystemProxyWork()
         decomposedNativeDefaultProxyConfig.httpsProxyPort <= 8090)
     {
         StopInfo stopInfo;
-        if (ERROR_SUCCESS != WaitForConnectability(decomposedNativeDefaultProxyConfig.httpsProxyPort, 100, 0, stopInfo))
+        if (ERROR_SUCCESS != WaitForConnectability(
+                (USHORT)decomposedNativeDefaultProxyConfig.httpsProxyPort, 
+                100, 
+                0, 
+                stopInfo))
         {
             // There is nothing responding on the system https proxy port
             GetCurrentSystemConnectionsProxyInfo(nativeProxyInfo);

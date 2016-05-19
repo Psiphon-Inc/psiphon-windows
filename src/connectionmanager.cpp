@@ -218,7 +218,8 @@ void ConnectionManager::Start()
 
     SetState(CONNECTION_MANAGER_STATE_STARTING);
 
-    if (!(m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0)))
+    m_thread = CreateThread(0, 0, ConnectionManagerStartThread, (void*)this, 0, 0);
+    if (!m_thread)
     {
         my_print(NOT_SENSITIVE, false, _T("Start: CreateThread failed (%d)"), GetLastError());
 
@@ -330,7 +331,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                 if (!manager->m_upgradeThread ||
                     WAIT_OBJECT_0 == WaitForSingleObject(manager->m_upgradeThread, 0))
                 {
-                    if (!(manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0)))
+                    manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0);
+                    if (!manager->m_upgradeThread)
                     {
                         my_print(NOT_SENSITIVE, false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
                     }
@@ -473,7 +475,6 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
 
         tstring connectedRequestPath = GetConnectRequestPath(m_transport);
 
-        DWORD start = GetTickCount();
         string response;
         if (ServerRequest::MakeRequest(
                             ServerRequest::ONLY_IF_TRANSPORT,
@@ -812,7 +813,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
         manager->GetUpgradeRequestInfo(sessionInfo, downloadRequestPath);
 
         // Download new binary
-        DWORD start = GetTickCount();
         HTTPSRequest httpsRequest;
         if (!httpsRequest.MakeRequest(
                 UTF8ToWString(UPGRADE_ADDRESS).c_str(),
@@ -966,10 +966,20 @@ void ConnectionManager::UpdateCurrentSessionInfo(const SessionInfo& sessionInfo)
 
     try
     {
-        TransportRegistry::AddServerEntries(
-            m_currentSessionInfo.GetDiscoveredServerEntries(),
-            // CoreTransport does not provide a ServerEntry, but VPNTransport does.
-            m_currentSessionInfo.HasServerEntry() ? &m_currentSessionInfo.GetServerEntry() : 0);
+        // CoreTransport does not provide a ServerEntry, but VPNTransport does.
+        if (m_currentSessionInfo.HasServerEntry())
+        {
+            const auto& currentServerEntry = m_currentSessionInfo.GetServerEntry();
+            TransportRegistry::AddServerEntries(
+                m_currentSessionInfo.GetDiscoveredServerEntries(),
+                &currentServerEntry);
+        }
+        else
+        {
+            TransportRegistry::AddServerEntries(
+                m_currentSessionInfo.GetDiscoveredServerEntries(),
+                nullptr);
+        }
     }
     catch (std::exception &ex)
     {
@@ -992,11 +1002,12 @@ void ConnectionManager::SendFeedback(LPCWSTR unicodeFeedbackJSON)
     if (!m_feedbackThread ||
         WAIT_OBJECT_0 == WaitForSingleObject(m_feedbackThread, 0))
     {
-        if (!(m_feedbackThread = CreateThread(
-                                    0,
-                                    0,
-                                    ConnectionManager::ConnectionManagerFeedbackThread,
-                                    (void*)&g_feedbackThreadData, 0, 0)))
+        m_feedbackThread = CreateThread(
+            0,
+            0,
+            ConnectionManager::ConnectionManagerFeedbackThread,
+            (void*)&g_feedbackThreadData, 0, 0);
+        if (!m_feedbackThread)
         {
             my_print(NOT_SENSITIVE, false, _T("%s: CreateThread failed (%d)"), __TFUNCTION__, GetLastError());
             PostMessage(g_hWnd, WM_PSIPHON_FEEDBACK_FAILED, 0, 0);

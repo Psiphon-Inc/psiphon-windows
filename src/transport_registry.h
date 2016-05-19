@@ -51,7 +51,7 @@ public:
     static ITransport* New(tstring transportProtocolName);
     
     // Create new instances of all available transports.
-    static void NewAll(vector<ITransport*>& all_transports);
+    static void NewAll(vector<shared_ptr<ITransport>>& all_transports);
 
     // Add new server entries to all transports.
     static void AddServerEntries(

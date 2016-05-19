@@ -459,7 +459,7 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
             WinHttpConnect(
                 hSession,
                 serverAddress,
-                serverWebPort,
+                (INTERNET_PORT)serverWebPort,
                 0);
 
     if (NULL == hConnect)
