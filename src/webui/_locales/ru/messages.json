@@ -316,7 +316,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
     "feedback#diagnostic_check": {
-        "message": "Отослать диагностические данные. Собранные данные не содержат идентифицирующей Вас информации и помогают нам сделать систему лучше и надежнее.<a class=\"DataCollectionInfoURL\" href=\"#\">Кликните здесь, чтобы узнать какие данные мы собираем.</a>",
+        "message": "Отослать диагностические данные. Собранные данные не содержат идентифицирующей Вас информации и помогают нам сделать систему лучше и надежнее. <a class=\"DataCollectionInfoURL\" href=\"#\">Кликните здесь, чтобы узнать какие данные мы собираем.</a>",
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {

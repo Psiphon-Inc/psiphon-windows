@@ -206,12 +206,6 @@ void ConnectionManager::Start()
 
     m_transport = TransportRegistry::New(Settings::Transport());
 
-    if (!m_transport->ServerWithCapabilitiesExists())
-    {
-        my_print(NOT_SENSITIVE, false, _T("No servers support this protocol."));
-        return;
-    }
-
     m_startSplitTunnel = Settings::SplitTunnel();
 
     GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
@@ -247,6 +241,9 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
     // We only want to open the home page once per retry loop.
     // This prevents auto-reconnect from opening the home page again.
     bool homePageOpened = false;
+
+    // Keep track of whether we've already hit a NoServers exception.
+    bool noServers = false;
 
     //
     // Repeatedly attempt to connect.
@@ -288,15 +285,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             if (!manager->m_transport->ServerWithCapabilitiesExists())
             {
                 my_print(NOT_SENSITIVE, false, _T("No known servers support this transport"), __TFUNCTION__);
-                if (manager->m_transport->RetryOnProtocolNotSupported())
-                {
-                    manager->m_transport->RotateTargetProtocols();
-                    throw TransportConnection::TryNextServer();
-                }
-                else
-                {
-                    throw ConnectionManager::Abort();
-                }
+                throw TransportConnection::NoServers();
             }
 
             //
@@ -385,6 +374,19 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
         }
+        catch (TransportConnection::NoServers&)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: caught NoServers"), __TFUNCTION__);
+            // On the first NoServers we fall through so that we can FetchRemoteServerList.
+            // On the second NoServers we bail out.
+            if (noServers)
+            {
+                manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
+                break;
+            }
+            // else fall through
+            noServers = true;
+        }
         catch (StopSignal::UnexpectedDisconnectStopException& ex)
         {
             my_print(NOT_SENSITIVE, true, _T("%s: caught StopSignal::UnexpectedDisconnectStopException"), __TFUNCTION__);
@@ -418,13 +420,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: caught ConnectionManager::Abort"), __TFUNCTION__);
             manager->SetState(CONNECTION_MANAGER_STATE_STOPPED);
             break;
-        }
-
-        // Rotate target protocols on unexpected disconnect -- when the tunnel connected, but only for a short time
-        if (tunnelStartTime != 0 &&
-            GetTickCountDiff(tunnelStartTime, GetTickCount()) < TARGET_PROTOCOL_ROTATION_SESSION_DURATION_THRESHOLD_MS)
-        {
-            manager->m_transport->RotateTargetProtocols();
         }
 
         // Failed to connect to the server. Try the next one.
@@ -701,7 +696,7 @@ void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring&
 
 // ==== General Session Functions =============================================
 
-void ConnectionManager::FetchRemoteServerList(void)
+void ConnectionManager::FetchRemoteServerList()
 {
     // Note: not used by CoreTransport
 
@@ -757,7 +752,7 @@ void ConnectionManager::FetchRemoteServerList(void)
             REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY,
             response.c_str(),
             response.length(),
-            false,
+            false, // zipped, not gzipped
             serverEntryList))
     {
         my_print(NOT_SENSITIVE, false, _T("Verify remote server list failed"));
@@ -851,7 +846,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                     UPGRADE_SIGNATURE_PUBLIC_KEY,
                     downloadResponse.c_str(),
                     downloadResponse.length(),
-                    true, // compressed
+                    true, // gzip compressed
                     upgradeData))
             {
                 // Data in the package is Base64 encoded

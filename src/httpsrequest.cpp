@@ -310,8 +310,12 @@ bool HTTPSRequest::MakeRequest(
         false, // useURLProxy
         additionalHeaders, additionalData, additionalDataLength, httpVerb);
 
+    my_print(NOT_SENSITIVE, true, _T("%s:%d - MakeRequestWithURLProxyOption %s : %d"), __TFUNCTION__, __LINE__, (success ? _T("succeeded") : _T("failed")), GetLastError());
+
     if (!success && failoverToURLProxy)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - failing over to URL proxy"), __TFUNCTION__, __LINE__);
+
         // This is the broken SSL WinHTTP client case.
         // Use a URL proxy to make the HTTPS request for us instead.
         try
@@ -324,7 +328,7 @@ bool HTTPSRequest::MakeRequest(
                 TransportRegistry::New(CORE_TRANSPORT_PROTOCOL_NAME),
                 NULL, // not receiving reconnection notifications
                 NULL, // not collecting stats
-                new ServerEntry(), // we don't need to connect to a specific server
+                new ServerEntry(), // this empty ServerEntry is the flag for URL proxy mode; we don't need to connect to a specific server
                 true);// don't apply system proxy settings (or write to the Psiphon proxy settings registry key)
                         // as another transport might currently be running
 

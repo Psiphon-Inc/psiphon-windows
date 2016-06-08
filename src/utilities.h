@@ -22,17 +22,31 @@
 struct StopInfo;
 
 
+/*
+ * File Utilities
+ */
+
 bool ExtractExecutable(
     DWORD resourceID,
     const TCHAR* exeFilename,
     tstring& path,
     bool succeedIfExists=false);
 
-bool GetTempPath(tstring& path);
-
-bool GetShortPathName(const tstring& path, tstring& shortPath);
+bool GetShortPathName(const tstring& path, tstring& o_shortPath);
 
 bool WriteFile(const tstring& filename, const string& data);
+
+bool GetTempPath(tstring& o_path);
+
+// Makes an absolute path to a unique temp directory.
+// If `create` is true, the directory will also be created.
+// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
+bool GetUniqueTempDir(tstring& o_path, bool create);
+
+
+/*
+ * Network and IPC Utilities
+ */
 
 // Possible return values:
 //  ERROR_SUCCESS on success
@@ -58,6 +72,11 @@ bool CreateSubprocessPipes(
         HANDLE& o_childStdoutPipe,  // Child's stdout pipe
         HANDLE& o_childStderrPipe);  // Child's stderr pipe (dup of stdout)
 
+
+/*
+ * Registry Utilities
+ */
+
 enum RegistryFailureReason
 {
     REGISTRY_FAILURE_NO_REASON = 0,
@@ -71,6 +90,11 @@ bool WriteRegistryStringValue(const string& name, const wstring& value, Registry
 bool ReadRegistryStringValue(LPCSTR name, string& value);
 bool ReadRegistryStringValue(LPCSTR name, wstring& value);
 
+
+/*
+ * Text Display Utilities
+ */
+
 // Text metrics are relative to default font
 
 int TextHeight(void);
@@ -82,6 +106,11 @@ int LongestTextWidth(const TCHAR* texts[], int count);
 // Returns true if at least one item in the array is true.
 bool TestBoolArray(const vector<const bool*>& boolArray);
 
+
+/*
+ * Data Encoding Utilities
+ */
+
 string Hexlify(const unsigned char* input, size_t length);
 
 string Dehexlify(const string& input);
@@ -89,16 +118,19 @@ string Dehexlify(const string& input);
 string Base64Encode(const unsigned char* input, size_t length);
 string Base64Decode(const string& input);
 
-tstring GetLocaleName();
-
-tstring GetISO8601DatetimeString();
-
 bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
-
-DWORD GetTickCountDiff(DWORD start, DWORD end);
 
 tstring UrlEncode(const tstring& input);
 tstring UrlDecode(const tstring& input);
+
+
+/*
+ * System Utilities
+ */
+
+DWORD GetTickCountDiff(DWORD start, DWORD end);
+
+tstring GetLocaleName();
 
 // Should be called (by psiclient) when the UI locale is set.
 // (This is to help GetDeviceRegion().)
@@ -108,10 +140,19 @@ void SetUiLocale(const wstring& uiLocale);
 // running in. Returns ISO 3166-1 alpha-2 format.
 wstring GetDeviceRegion();
 
+/*
+ * Miscellaneous Utilities
+ */
+
+tstring GetISO8601DatetimeString();
+
+// Makes a GUID string. Returns true on success, false otherwise.
+bool MakeGUID(tstring& o_guid);
+
 
 /*
-String Utilities
-*/
+ * String Utilities
+ */
 
 // Adapted from http://stackoverflow.com/questions/236129/splitting-a-string-in-c
 
@@ -139,8 +180,8 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 
 
 /*
-Resource Utilities
-*/
+ * Resource Utilities
+ */
 
 // Returns success. o_pBytes points to resource data; o_size is the size of that data.
 bool GetResourceBytes(DWORD name, DWORD type, BYTE*& o_pBytes, DWORD& o_size);
@@ -150,8 +191,8 @@ bool GetResourceBytes(LPCTSTR name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size
 
 
 /*
-AutoHANDLE and AutoMUTEX
-*/
+ * AutoHANDLE and AutoMUTEX
+ */
 class AutoHANDLE
 {
 public:
@@ -200,8 +241,8 @@ FinalAction<F> finally(F f) {
 
 
 /*
-DPI Awareness Utilities
-*/
+ * DPI Awareness Utilities
+ */
 
 // From ShellScalingAPI.h
 #ifndef DPI_ENUMS_DECLARED

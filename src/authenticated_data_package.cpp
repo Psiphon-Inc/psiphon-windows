@@ -21,12 +21,17 @@
 #include "logging.h"
 #include "psiclient.h"
 #include "authenticated_data_package.h"
-#include "cryptlib.h"
+#include "embeddedvalues.h"
+#include "utilities.h"
+
+#pragma warning(push, 0)
+#pragma warning(disable: 4244)
 #include "cryptlib.h"
 #include "rsa.h"
 #include "base64.h"
-#include "embeddedvalues.h"
 #include "gzip.h"
+#include "zlib.h"
+#pragma warning(pop)
 
 
 // signedDataPackage may be binary, so we also need the length.
@@ -34,35 +39,82 @@ bool verifySignedDataPackage(
     const char* signaturePublicKey,
     const char* signedDataPackage, 
     const size_t signedDataPackageLen,
-    bool compressed, 
+    bool gzipped, 
     string& authenticDataPackage)
 {
-    char* jsonData = NULL;
-    size_t jsonSize = 0;
-    bool jsonDataAllocated = false;
+    const int SANITY_CHECK_SIZE = 10 * 1024 * 1024;
 
-    // The package may be compressed.
-    if (compressed)
+    authenticDataPackage.clear();
+
+    string jsonString;
+
+    // The package is compressed with either gzip or zip.
+    if (gzipped)
     {
+        // See https://www.cryptopp.com/wiki/Gunzip#Decompress_to_String_using_Put.2FGet
         CryptoPP::Gunzip unzipper;
-        size_t n = unzipper.Put((const byte*)signedDataPackage, signedDataPackageLen);
-        unzipper.MessageEnd();
+        (void)unzipper.Put((const byte*)signedDataPackage, signedDataPackageLen);
+        (void)unzipper.MessageEnd();
 
-        jsonSize = (size_t)unzipper.MaxRetrievable();
+        auto jsonSize = unzipper.MaxRetrievable();
+        if (jsonSize == 0) 
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: unzipper.MaxRetrievable returned 0 (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
+        else if (jsonSize > SANITY_CHECK_SIZE)
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: Gunzip overflow (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
 
-        // The null terminator is probably in the compressed data, but to be safe...
-        jsonData = new char[jsonSize+1];
+        jsonString.resize((size_t)jsonSize);
 
-        unzipper.Get((byte*)jsonData, jsonSize);
-        jsonData[jsonSize] = '\0';
-
-        jsonDataAllocated = true;
+        unzipper.Get((byte*)&jsonString[0], jsonString.size());
     }
-    else
+    else // zip compressed
     {
-        jsonData = (char*)signedDataPackage;
-        jsonSize = signedDataPackageLen;
-        jsonDataAllocated = false;
+        const int CHUNK_SIZE = 1024;
+        int ret;
+        z_stream stream;
+        char out[CHUNK_SIZE + 1];
+
+        stream.zalloc = Z_NULL;
+        stream.zfree = Z_NULL;
+        stream.opaque = Z_NULL;
+        stream.avail_in = signedDataPackageLen;
+        stream.next_in = (unsigned char*)signedDataPackage;
+
+        if (Z_OK != inflateInit(&stream))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: inflateInit failed (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
+
+        auto cleanup = finally([&]() { inflateEnd(&stream); });
+
+        do
+        {
+            stream.avail_out = CHUNK_SIZE;
+            stream.next_out = (unsigned char*)out;
+            ret = inflate(&stream, Z_NO_FLUSH);
+            if (ret != Z_OK && ret != Z_STREAM_END)
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: inflate failed (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
+
+            out[CHUNK_SIZE - stream.avail_out] = '\0';
+
+            jsonString += out;
+
+            if (jsonString.length() > SANITY_CHECK_SIZE)
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: inflate overflow (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
+
+        } while (ret != Z_STREAM_END);
     }
 
     // Read the values out of the JSON-formatted jsonData
@@ -70,10 +122,9 @@ bool verifySignedDataPackage(
 
     Json::Value json_entry;
     Json::Reader reader;
-    bool parsingSuccessful = reader.parse(jsonData, jsonData+jsonSize, json_entry);
+    bool parsingSuccessful = reader.parse(jsonString, json_entry);
     if (!parsingSuccessful)
     {
-        if (jsonDataAllocated) delete[] jsonData;
         string fail = reader.getFormattedErrorMessages();
         my_print(NOT_SENSITIVE, false, _T("%s: JSON parse failed: %S"), __TFUNCTION__, fail.c_str());
         return false;
@@ -91,12 +142,9 @@ bool verifySignedDataPackage(
     }
     catch (exception& e)
     {
-        if (jsonDataAllocated) delete[] jsonData;
         my_print(NOT_SENSITIVE, false, _T("%s: JSON parse exception: %S"), __TFUNCTION__, e.what());
         return false;
     }
-
-    if (jsonDataAllocated) delete[] jsonData;
 
     // Match the presented public key digest against the embedded public key
 
@@ -115,11 +163,14 @@ bool verifySignedDataPackage(
 
     // Verify the signature of the data and output the data
 
+#pragma warning(push, 0)
+#pragma warning(disable: 4239)
     CryptoPP::RSASS<CryptoPP::PKCS1v15, CryptoPP::SHA256>::Verifier verifier(
         CryptoPP::StringSource(
             signaturePublicKey,
             true,
             new CryptoPP::Base64Decoder()));
+#pragma warning(pop)
 
     bool result = false;
 
