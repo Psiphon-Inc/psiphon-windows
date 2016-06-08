@@ -143,6 +143,10 @@
     "message": "United States",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
   },
+  "settings#egress-region#select-ca": {
+    "message": "Canada",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+  },
   "settings#egress-region#select-gb": {
     "message": "United Kingdom",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
@@ -162,6 +166,10 @@
   "settings#egress-region#select-de": {
     "message": "Germany",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+  },
+  "settings#egress-region#select-in": {
+    "message": "India",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
   },
   "settings#egress-region#description": {
     "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
