@@ -63,6 +63,6 @@ public:
 
 private:
     static void GetTempTransports(
-                const ServerEntry& serverEntry,
-                vector<boost::shared_ptr<ITransport>>& o_tempTransports);
+                    const ServerEntry& serverEntry,
+                    vector<shared_ptr<ITransport>>& o_tempTransports);
 };

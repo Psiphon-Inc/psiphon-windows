@@ -527,19 +527,19 @@ string ServerEntry::ToString() const
     entry["meekCookieEncryptionPublicKey"] = meekCookieEncryptionPublicKey;
     entry["meekFrontingAddressesRegex"] = meekFrontingAddressesRegex;
 
-    Json::Value capabilities(Json::arrayValue);
-    for (vector<string>::const_iterator i = this->capabilities.begin(); i != this->capabilities.end(); i++)
+    Json::Value capabilitiesJson(Json::arrayValue);
+    for (const auto& i : this->capabilities)
     {
-        capabilities.append(*i);
+        capabilitiesJson.append(i);
     }
-    entry["capabilities"] = capabilities;
+    entry["capabilities"] = capabilitiesJson;
 
-    Json::Value meekFrontingAddresses(Json::arrayValue);
-    for (vector<string>::const_iterator i = this->meekFrontingAddresses.begin(); i != this->meekFrontingAddresses.end(); i++)
+    Json::Value meekFrontingAddressesJson(Json::arrayValue);
+    for (const auto& i : this->meekFrontingAddresses)
     {
-        meekFrontingAddresses.append(*i);
+        meekFrontingAddressesJson.append(i);
     }
-    entry["meekFrontingAddresses"] = meekFrontingAddresses;
+    entry["meekFrontingAddresses"] = meekFrontingAddressesJson;
 
     Json::FastWriter jsonWriter;
     ss << jsonWriter.write(entry);
@@ -623,13 +623,13 @@ void ServerEntry::FromString(const string& str)
         sshObfuscatedPort = json_entry.get("sshObfuscatedPort", 0).asInt();
         sshObfuscatedKey = json_entry.get("sshObfuscatedKey", "").asString();
 
-        Json::Value capabilities;
-        capabilities = json_entry.get("capabilities", defaultCapabilities);
+        Json::Value capabilitiesJson;
+        capabilitiesJson = json_entry.get("capabilities", defaultCapabilities);
 
         this->capabilities.clear();
-        for (Json::ArrayIndex i = 0; i < capabilities.size(); i++)
+        for (Json::ArrayIndex i = 0; i < capabilitiesJson.size(); i++)
         {
-            string item = capabilities.get(i, "").asString();
+            string item = capabilitiesJson.get(i, "").asString();
             if (!item.empty())
             {
                 this->capabilities.push_back(item);
@@ -654,13 +654,13 @@ void ServerEntry::FromString(const string& str)
             meekFrontingDomain = json_entry.get("meekFrontingDomain", "").asString();
             meekFrontingHost  = json_entry.get("meekFrontingHost", "").asString();
             meekFrontingAddressesRegex = json_entry.get("meekFrontingAddressesRegex", "").asString();
-            Json::Value meekFrontingAddresses;
+            Json::Value meekFrontingAddressesJson;
             Json::Value emptyArray(Json::arrayValue);
-            meekFrontingAddresses = json_entry.get("meekFrontingAddresses", emptyArray);
+            meekFrontingAddressesJson = json_entry.get("meekFrontingAddresses", emptyArray);
             this->meekFrontingAddresses.clear();
-            for (Json::ArrayIndex i = 0; i < meekFrontingAddresses.size(); i++)
+            for (Json::ArrayIndex i = 0; i < meekFrontingAddressesJson.size(); i++)
             {
-                string item = meekFrontingAddresses.get(i, "").asString();
+                string item = meekFrontingAddressesJson.get(i, "").asString();
                 if (!item.empty())
                 {
                     this->meekFrontingAddresses.push_back(item);

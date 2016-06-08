@@ -9,6 +9,8 @@ Messages are passed from C (backend) to JavaScript (frontend) via called to expo
 
 ## Prerequisites
 
+Install [Node](https://nodejs.org/). v6.x works, and v4.x will probably also work.
+
 ```
 $ npm install -g grunt-cli
 # In the webui directory...
@@ -37,9 +39,19 @@ $ node fake-translations.js
 ```
 
 
+## Adding new egress regions
+
+1. **`main.html`:** Search for `gb`. You will find two instances: The egress combo in the Settings tab, and the `AvailableEgressRegions` notice tester in the Debug tab. In both those sections, copy-paste one of the existing entries, and change the country code and country name to fit the new country.
+
+2. **`_locales/en/messages.json`**: Search for `gb`. You will find the country name string table entries. Copy-paste one of them and modify the country code and name to fit the new country.
+
+3. Run `grunt`, as indicated in the "Building" section.
+
+4. Test `main.html` in your browser. Commit.
+
+
 ## TODO
 
-* Automation: Switch to VS2015.
 * Update user guide on website.
 
 

@@ -66,7 +66,7 @@ void ITransport::Connect(
                     const StopInfo& stopInfo,
                     IReconnectStateReceiver* reconnectStateReceiver,
                     WorkerThreadSynch* workerThreadSynch,
-                    ServerEntry* tempConnectServerEntry/*=NULL*/)
+                    const ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;

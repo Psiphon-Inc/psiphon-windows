@@ -22,6 +22,9 @@
 #include <string>
 #include <sstream>
 
+#pragma warning(push, 0)
+#pragma warning(disable: 4505)
+
 using namespace std;
 
 #ifdef _UNICODE
@@ -97,3 +100,5 @@ static wstring WidenUTF8(LPCTSTR utf8String)
     #define __TFILE__ __FILE__
     #define __TFILE__ __FUNCTION__
 #endif
+
+#pragma warning(pop)
