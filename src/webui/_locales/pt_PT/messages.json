@@ -1,6 +1,6 @@
 {
     "appbackend#state-starting-body": {
-        "message": "Please wait…",
+        "message": "Por favor, aguarde...",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#local-proxy-ports#error-modal-body-http": {
@@ -20,11 +20,11 @@
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
     "logs#show-debug-label": {
-        "message": "Show debug logs",
+        "message": "Mostrar registos de depuração",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
     },
     "nav#logs": {
-        "message": "Logs",
+        "message": "Registos",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "settings#error-alert": {
@@ -47,8 +47,12 @@
         "message": "Explore beyond your borders!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
+    "settings#egress-region#select-in": {
+        "message": "India",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
     "connection#connected-msg": {
-        "message": "Psiphon is <span class=\"state-word\">connected</span>",
+        "message": "Psiphon está <span class=\"state-word\">ligado</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
     },
     "settings#split-tunnel#reason": {
@@ -56,15 +60,15 @@
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#settings": {
-        "message": "Settings",
+        "message": "Configurações",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "nav#connection#connected": {
-        "message": "Connected",
+        "message": "Ligado",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "Server Region Unavailable",
+        "message": "Região do Servidor Indisponível",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#upstream-proxy#error-modal-title": {
@@ -76,7 +80,7 @@
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
     },
     "connection#stopping-msg": {
-        "message": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
+        "message": "Psiphon está a <span class=\"state-word\">desligar</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "settings#upstream-proxy#error-modal-body-default": {
@@ -84,11 +88,11 @@
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
     },
     "feedback#success-message": {
-        "message": "<strong>Thank you!</strong> Your feedback has been sent.",
+        "message": "<strong>Obrigado!</strong> A sua opinião foi enviada.",
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "appbackend#state-stopped-title": {
-        "message": "Psiphon is disconnected",
+        "message": "Psiphon está desligado",
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
     },
     "settings#split-tunnel#help-text": {
@@ -103,6 +107,10 @@
         "message": "Don't use upstream proxy",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
+    "settings#egress-region#select-ca": {
+        "message": "Canada",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+    },
     "settings#systray-minimize#help-text": {
         "message": "If enabled, when minimized the Psiphon application window will hide in the notification area (also known as the “system tray” or “systray”, located near the clock on your Windows task bar).",
         "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
@@ -112,7 +120,7 @@
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#port-value-error-msg": {
-        "message": "Must be between 1 and 65535.",
+        "message": "Deve estar entre 1 e 65535.",
         "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
     },
     "nav#feedback": {
@@ -120,7 +128,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "Psiphon is <span class=\"state-word\">connecting</span>…",
+        "message": "Psiphon está a <span class=\"state-word\">ligar</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
@@ -128,11 +136,11 @@
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "appbackend#state-starting-title": {
-        "message": "Psiphon is connecting",
+        "message": "Psiphon está a ligar",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#unapplied-changes-prompt#title": {
-        "message": "Settings Changed",
+        "message": "Configurações Guardadas",
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#egress-region#select-us": {
@@ -160,15 +168,15 @@
         "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
     },
     "settings#unapplied-changes-prompt#discard-button": {
-        "message": "Discard",
+        "message": "Rejeitar",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
     "notice#systemproxysettings-setproxy-error-title": {
-        "message": "System Proxy Error",
+        "message": "Erro de Proxy do Sistema",
         "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#egress-region#label": {
-        "message": "Connect via",
+        "message": "Ligar via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#local-proxy-ports#socks-label": {
@@ -180,7 +188,7 @@
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "settings#saved-message": {
-        "message": "Settings saved.",
+        "message": "Configurações guardadas.",
         "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "about#get-by-email": {
@@ -200,11 +208,11 @@
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
     },
     "settings#unapplied-changes-prompt#apply-button": {
-        "message": "Apply",
+        "message": "Aplicar",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#reset-button": {
-        "message": "Reset to Default",
+        "message": "Repor para Predefinição",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "about#client-version": {
@@ -220,7 +228,7 @@
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
     },
     "settings#vpn-incompatible-msg": {
-        "message": "(Doesn't work with L2TP/IPSec mode.)",
+        "message": "(Não funciona com o modo L2TP/IPSec)",
         "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
     },
     "general#notice-modal-tech-preamble": {
@@ -240,11 +248,11 @@
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "nav#connection#stopped": {
-        "message": "Disconnected",
+        "message": "Desligado",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "Local Proxy Ports",
+        "message": "Portas de proxy Locais",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#egress-region#select-de": {
@@ -276,7 +284,7 @@
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "connection#disconnect-btn": {
-        "message": "Disconnect",
+        "message": "Desligar",
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "feedback#top_content_title": {
@@ -292,7 +300,7 @@
         "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
     },
     "connection#stopped-msg": {
-        "message": "Psiphon is <span class=\"state-word\">disconnected</span>",
+        "message": "Psiphon está <span class=\"state-word\">desligado</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
     },
     "nav#about": {
@@ -304,11 +312,11 @@
         "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
     },
     "settings#systray-minimize#heading": {
-        "message": "Minimize to Notification Area (System Tray)",
+        "message": "Minimizar para a Área de Notificação (Bandeja do Sistema)",
         "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
     },
     "language#success-message": {
-        "message": "<strong>Hello!</strong> Welcome to Psiphon.",
+        "message": "<strong>Olá!</strong> Bem-vindo ao Psiphon.",
         "description": "A welcome message shown to the user when they first switch to the correct UI language"
     },
     "settings#egress-region#select-sg": {
@@ -320,7 +328,7 @@
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
     },
     "settings#transport-mode#heading": {
-        "message": "Transport Mode",
+        "message": "Modo de Transporte",
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
@@ -328,15 +336,15 @@
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "nav#connection#stopping": {
-        "message": "Disconnecting",
+        "message": "A desligar",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
     },
     "settings#error-modal#title": {
-        "message": "Settings Error",
+        "message": "Erro de Configurações",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
     },
     "settings#apply-button": {
-        "message": "Apply Changes",
+        "message": "Aplicar Alterações",
         "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
     },
     "appbackend#minimized-to-systray-title": {
@@ -352,7 +360,7 @@
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "appbackend#state-connected-title": {
-        "message": "Psiphon is connected",
+        "message": "Psiphon está a ligado",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
     },
     "settings#upstream-proxy#proxy-reqs": {
@@ -360,11 +368,11 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#transport-mode#check-label": {
-        "message": "Use L2TP/IPSec mode",
+        "message": "Utilizar modo L2TP/IPSec",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "connection#egress-region-combo-label": {
-        "message": "Connect via",
+        "message": "Ligar via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#egress-region#select-gb": {
@@ -376,7 +384,7 @@
         "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
     },
     "settings#upstream-proxy#hostname-label": {
-        "message": "Hostname",
+        "message": "Nome do Anfitrião",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "feedback#smiley_sad": {
@@ -388,11 +396,11 @@
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#systray-minimize#enable-label": {
-        "message": "Minimize to the notification area (system tray)",
+        "message": "Minimize para a área de notificação (bandeja do sistema)",
         "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
     },
     "settings#egress-region#heading": {
-        "message": "Psiphon Server Region",
+        "message": "Região do Servidor do Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#upstream-proxy#by-default": {
@@ -404,7 +412,7 @@
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "nav#connection#starting": {
-        "message": "Connecting",
+        "message": "A ligar",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
     },
     "feedback#text_feedback_email_prompt": {
@@ -420,11 +428,11 @@
         "description": "The text below the 'happy face' feedback choice."
     },
     "about#wordart-tag": {
-        "message": "Beyond Borders",
+        "message": "Além Fronteiras",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "connection#wait-btn": {
-        "message": "Please wait…",
+        "message": "Por favor, aguarde...",
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
@@ -432,11 +440,11 @@
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Fastest Country",
+        "message": "País Mais Rápido",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "connection#connect-btn": {
-        "message": "Connect",
+        "message": "Ligar",
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     }
 }

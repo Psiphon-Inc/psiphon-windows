@@ -47,6 +47,10 @@
         "message": "국경을 넘어 탐색하세요!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
+    "settings#egress-region#select-in": {
+        "message": "India",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
     "connection#connected-msg": {
         "message": "Psiphon에 <span class=\"state-word\">연결됨</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
@@ -102,6 +106,10 @@
     "settings#upstream-proxy#skip-label": {
         "message": "업 스트림 프록시 사용 안 함",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "Canada",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
         "message": "활성화되어 있으면, 최소화 할 때 Psiphon 어플리케이션 창을 알림 영역으로 최소화 합니다. (이는 \"시스템 트레이\" 또는 \"시스트레이\"로 알려져 있으며 Windows 작업 표시줄의 시계 근처에 있습니다)",
