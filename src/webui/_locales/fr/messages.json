@@ -47,6 +47,10 @@
         "message": "Explorez par-delà vos frontières !",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
+    "settings#egress-region#select-in": {
+        "message": "Inde",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
     "connection#connected-msg": {
         "message": "Psiphon est <span class=\"state-word\">connecté</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
@@ -103,6 +107,10 @@
         "message": "Ne pas utiliser de mandataire ascendant",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
+    "settings#egress-region#select-ca": {
+        "message": "Canada",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+    },
     "settings#systray-minimize#help-text": {
         "message": "Activé, la fenêtre d'application de Psiphon minimisée sera cachée dans la zone de notification (située près de l'horloge dans la barre des tâches de Windows).",
         "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
@@ -116,7 +124,7 @@
         "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
     },
     "nav#feedback": {
-        "message": "Rétroaction\n",
+        "message": "Commentaire",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {

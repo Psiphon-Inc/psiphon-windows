@@ -47,6 +47,10 @@
         "message": "¡Explore más allá de sus fronteras!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
+    "settings#egress-region#select-in": {
+        "message": "India",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
     "connection#connected-msg": {
         "message": "Psiphon está <span class=\"state-word\">conectado</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
@@ -92,7 +96,7 @@
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
     },
     "settings#split-tunnel#help-text": {
-        "message": "Si está habilitado, las peticiones hechas a los servidores dentro de su país de residencia no se encauzarán hacia un túnel mediante Psiphon.",
+        "message": "Si está habilitado, las peticiones hechas a los servidores dentro de su país de residencia no se derivarán hacia un túnel mediante Psiphon.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
@@ -102,6 +106,10 @@
     "settings#upstream-proxy#skip-label": {
         "message": "No usar proxy hacia Internet",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "Canadá",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
         "message": "Si está habilitada, cuando la ventana de la aplicación Psiphon esté minimizada se ocultará en el área de notificación (también conocida como la \"bandeja del sistema\" o \"systray\", localizada junto al reloj en la barra de tareas de su Windows).",
@@ -344,7 +352,7 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "settings#split-tunnel#heading": {
-        "message": "Dividir túnel",
+        "message": "Túnel dividido",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -428,7 +436,7 @@
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#transport-mode#help-text": {
-        "message": "Usa interconexión virtual L2TP/IPSec de Windows (VPN). Este modo pasará por túnel el tráfico de todas sus aplicaciones, pero no proporciona ofuscación y por tanto no tiene capacidades robustas para la elusión de la censura. <strong>No está recomendado</strong> para evitar la mayoría de los cortafuegos (firewalls).",
+        "message": "Usa interconexión virtual L2TP/IPSec de Windows (VPN). Este modo derivará por túnel el tráfico de todas sus aplicaciones, pero no proporciona ofuscación y por tanto no tiene capacidades robustas para la elusión de la censura. <strong>No está recomendado</strong> para evitar la mayoría de los cortafuegos (firewalls).",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#egress-region#select-best-performance": {

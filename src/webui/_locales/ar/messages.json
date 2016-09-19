@@ -47,6 +47,10 @@
         "message": "إكتشف ما وراء حدودك! ",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
+    "settings#egress-region#select-in": {
+        "message": "الهند",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
     "connection#connected-msg": {
         "message": "<span class=\"state-word\">تم الإتصال</span> بسايفون ",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
@@ -102,6 +106,10 @@
     "settings#upstream-proxy#skip-label": {
         "message": "لا تستعمل أبستريم بروكسي  ",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "كندا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
         "message": "إذا طبّق الإعداد المناسب، عندما يصّغر تطبيق سايفون سيختبئ في منطقة الإعلام (كما تعرف أيضا  بلوحة النظام  الموجودة قرب الساعة على شريط المهمة في الويندوز) ",
