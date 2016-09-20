@@ -768,7 +768,12 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
     }
 
     // resize to string length excluding the terminating null character
-    value.resize(bufferLength - 1);
+    DWORD stringLength = bufferLength - 1;
+    if (stringLength < 0)
+    {
+        stringLength = 0;
+    }
+    value.resize(stringLength);
 
     DWORD type;
     if (ERROR_SUCCESS != RegQueryValueExA(
@@ -823,7 +828,12 @@ bool ReadRegistryStringValue(LPCSTR name, wstring& value)
     }
 
     // resize to string length excluding the terminating null character
-    value.resize(bufferLength / sizeof(wchar_t) - 1);
+    DWORD stringLength = (bufferLength / sizeof(wchar_t)) - 1;
+    if (stringLength < 0)
+    {
+        stringLength = 0;
+    }
+    value.resize(stringLength);
 
     DWORD type;
     if (ERROR_SUCCESS != RegQueryValueExW(
