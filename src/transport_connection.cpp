@@ -53,7 +53,7 @@ void TransportConnection::Connect(
                             ITransport* transport,
                             IReconnectStateReceiver* reconnectStateReceiver,
                             ILocalProxyStatsCollector* statsCollector, 
-                            ServerEntry* tempConnectServerEntry/*=NULL*/,
+                            const ServerEntry* tempConnectServerEntry/*=NULL*/,
                             bool skipApplySystemProxySettings/* = false*/)
 {
     assert(m_transport == 0);

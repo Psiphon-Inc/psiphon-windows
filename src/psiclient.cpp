@@ -341,7 +341,7 @@ In order to get the minimize animation, we will delay hiding the window until
 after the minimize animation is complete.
 */
 
-static INT_PTR g_handleMinimizeTimerID = 0;
+static UINT_PTR g_handleMinimizeTimerID = 0;
 
 static VOID CALLBACK HandleMinimizeHelper(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
 {
@@ -1114,13 +1114,13 @@ static LRESULT HandleNotify(HWND hWnd, NMHDR* hdr)
         }
         else if (hdr->code == MC_HN_NEWWINDOW)
         {
-            MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
+            //MC_NMHTMLURL* nmHtmlUrl = (MC_NMHTMLURL*)hdr;
             // Prevent new window from opening
             return 0;
         }
         else if (hdr->code == MC_HN_HTTPERROR)
         {
-            MC_NMHTTPERROR* nmHttpError = (MC_NMHTTPERROR*)hdr;
+            //MC_NMHTTPERROR* nmHttpError = (MC_NMHTTPERROR*)hdr;
             assert(false);
             // Prevent HTTP error from being shown.
             return 0;
@@ -1211,7 +1211,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // This message is received when the window is moved between monitors
         // with different DPI settings. We need to scale our content.
 
-        auto x = LOWORD(wParam), y = HIWORD(wParam);
+        //auto x = LOWORD(wParam);
+        auto y = HIWORD(wParam);
         auto rect = *reinterpret_cast<RECT*>(lParam);
 
         if (g_windowRestored)
@@ -1329,11 +1330,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_MY_PRINT:
     {
         int priority = (int)wParam;
-        TCHAR* message = (TCHAR*)lParam;
-        HtmlUI_AddLog(priority, message);
-        OutputDebugString(message);
+        TCHAR* log = (TCHAR*)lParam;
+        HtmlUI_AddLog(priority, log);
+        OutputDebugString(log);
         OutputDebugString(L"\n");
-        free(message);
+        free(log);
         break;
     }
 

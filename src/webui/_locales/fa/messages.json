@@ -47,6 +47,10 @@
         "message": "کاوش در خارج از مرزهای خود!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
+    "settings#egress-region#select-in": {
+        "message": "هند",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
     "connection#connected-msg": {
         "message": "سایفون<span class=\"state-word\"> وصل شد</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
@@ -102,6 +106,10 @@
     "settings#upstream-proxy#skip-label": {
         "message": "پروکسی بالادست استفاده نکنید",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "کانادا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
         "message": "در صورت فعال کردن این گزینه، پس از مینیمایز کردن پنجره نرم افزار، سایفون مخفی شده و به نوار اعلان منتقل می شود. (نوار اعلان یا سیستم تِرِی به نواری در پایین سمت راست صفحه ویندوز گفته می شود که نرم افزارهای فعال در پس زمینه در کنار ساعت نمایش داده می شوند.)",

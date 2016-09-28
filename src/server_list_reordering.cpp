@@ -63,7 +63,8 @@ void ServerListReorder::Start(ServerList* serverList)
 
     Stop(STOP_REASON_CANCEL);
 
-    if (!(m_thread = CreateThread(0, 0, ReorderServerListThread, this, 0, 0)))
+    m_thread = CreateThread(0, 0, ReorderServerListThread, this, 0, 0);
+    if (!m_thread)
     {
         my_print(NOT_SENSITIVE, false, _T("Server List Reorder: CreateThread failed (%d)"), GetLastError());
         return;
@@ -233,8 +234,8 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
         {
             WorkerThreadData* data = new WorkerThreadData(*entry, stopInfo);
 
-            HANDLE threadHandle;
-            if (!(threadHandle = CreateThread(0, 0, CheckServerReachabilityThread, (void*)data, 0, 0)))
+            HANDLE threadHandle = CreateThread(0, 0, CheckServerReachabilityThread, (void*)data, 0, 0);
+            if (!threadHandle)
             {
                 continue;
             }

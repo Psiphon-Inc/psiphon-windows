@@ -335,7 +335,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
     WaitForInputIdle(m_polipoProcessInfo.hProcess, 5000);
 
     DWORD connected = WaitForConnectability(
-                        localHttpProxyPort,
+                        (USHORT)localHttpProxyPort,
                         POLIPO_CONNECTION_TIMEOUT_SECONDS*1000,
                         m_polipoProcessInfo.hProcess,
                         m_stopInfo);

@@ -29,14 +29,18 @@
 #include <WinInet.h>
 #include "utilities.h"
 #include "stopsignal.h"
-#include "cryptlib.h"
+#include "diagnostic_info.h"
+
+#pragma warning(push, 0)
+#pragma warning(disable: 4244)
 #include "cryptlib.h"
 #include "rsa.h"
 #include "base64.h"
 #include "osrng.h"
 #include "modes.h"
 #include "hmac.h"
-#include "diagnostic_info.h"
+#pragma warning(pop)
+
 
 using namespace std::experimental;
 
@@ -276,7 +280,7 @@ bool WriteFile(const tstring& filename, const string& data)
 
 
 DWORD WaitForConnectability(
-        int port,
+        USHORT port,
         DWORD timeout,
         HANDLE process,
         const StopInfo& stopInfo)
@@ -381,7 +385,11 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
     {
         if (targetPort > 0 && targetPort <= 0xFFFF)
         {
-            if (ERROR_SUCCESS != WaitForConnectability(targetPort, 100, 0, stopInfo))
+            if (ERROR_SUCCESS != WaitForConnectability(
+                (USHORT)targetPort, 
+                100, 
+                0, 
+                stopInfo))
             {
                 return true;
             }
@@ -734,95 +742,109 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
 {
     value.clear();
 
-    bool success = false;
     HKEY key = 0;
-    DWORD bufferLength = 0;
-    char* buffer = 0;
-    DWORD type;
-
-    if (ERROR_SUCCESS == RegOpenKeyEx(
+    if (ERROR_SUCCESS != RegOpenKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
                             0,
                             KEY_READ,
-                            &key) &&
+                            &key))
+    {
+        return false;
+    }
 
-        ERROR_SUCCESS == RegQueryValueExA(
+    auto closeKey = finally([=]() { RegCloseKey(key); });
+
+    DWORD bufferLength = 0;
+    if (ERROR_SUCCESS != RegQueryValueExA(
                             key,
                             name,
                             0,
                             0,
                             NULL,
-                            &bufferLength) &&
+                            &bufferLength))
+    {
+        return false;
+    }
 
-        (buffer = new char[bufferLength + 1]) &&
+    // resize to string length excluding the terminating null character
+    if (bufferLength > 0)
+    {
+        value.resize(bufferLength - 1);
+    }
 
-        ERROR_SUCCESS == RegQueryValueExA(
+    DWORD type;
+    if (ERROR_SUCCESS != RegQueryValueExA(
                             key,
                             name,
                             0,
                             &type,
-                            (LPBYTE)buffer,
-                            &bufferLength) &&
-        type == REG_SZ)
+                            (LPBYTE)value.c_str(),
+                            &bufferLength) ||
+        type != REG_SZ)
     {
-        buffer[bufferLength] = '\0';
-        value = buffer;
-        success = true;
+        return false;
     }
-
-    delete[] buffer;
-    RegCloseKey(key);
-
-    return success;
+    
+    return true;
 }
 
 bool ReadRegistryStringValue(LPCSTR name, wstring& value)
 {
     value.clear();
 
-    bool success = false;
-    HKEY key = 0;
-    DWORD bufferLength = 0;
-    wchar_t* buffer = 0;
-    DWORD type;
     wstring wName = UTF8ToWString(name);
 
-    if (ERROR_SUCCESS == RegOpenKeyEx(
+    HKEY key = 0;
+    if (ERROR_SUCCESS != RegOpenKeyEx(
                             HKEY_CURRENT_USER,
                             LOCAL_SETTINGS_REGISTRY_KEY,
                             0,
                             KEY_READ,
-                            &key) &&
-
-        ERROR_SUCCESS == RegQueryValueExW(
+                            &key))
+    {
+        return false;
+    }
+    
+    auto closeKey = finally([=]() { RegCloseKey(key); });
+    
+    DWORD bufferLength = 0;
+    if (ERROR_SUCCESS != RegQueryValueExW(
                             key,
                             wName.c_str(),
                             0,
                             0,
                             NULL,
-                            &bufferLength) &&
+                            &bufferLength))
+    {
+        return false;
+    }
 
-        (buffer = new wchar_t[bufferLength + 1]) &&
+    // bufferLength is the size of the data in bytes.
+    if (bufferLength % sizeof(wchar_t) != 0) {
+        return false;
+    }
 
-        ERROR_SUCCESS == RegQueryValueExW(
+    // resize to string length excluding the terminating null character
+    if (bufferLength > 0)
+    {
+        value.resize((bufferLength / sizeof(wchar_t)) - 1);
+    }
+
+    DWORD type;
+    if (ERROR_SUCCESS != RegQueryValueExW(
                             key,
                             wName.c_str(),
                             0,
                             &type,
-                            (LPBYTE)buffer,
-                            &bufferLength) &&
-        type == REG_SZ)
+                            (LPBYTE)value.c_str(),
+                            &bufferLength) ||
+        type != REG_SZ)
     {
-        buffer[bufferLength] = '\0';
-        value = buffer;
-        success = true;
+        return false;
     }
 
-    delete[] buffer;
-    RegCloseKey(key);
-
-    return success;
+    return true;
 }
 
 
@@ -990,21 +1012,21 @@ string Dehexlify(const string& input)
     output.reserve(len / 2);
     for (size_t i = 0; i < len; i += 2)
     {
-        char a = toupper(input[i]);
+        char a = (char)toupper(input[i]);
         const char* p = std::lower_bound(lut, lut + 16, a);
         if (*p != a)
         {
             throw std::invalid_argument("Dehexlify: not a hex digit");
         }
 
-        char b = toupper(input[i + 1]);
+        char b = (char)toupper(input[i + 1]);
         const char* q = std::lower_bound(lut, lut + 16, b);
         if (*q != b)
         {
             throw std::invalid_argument("Dehexlify: not a hex digit");
         }
 
-        output.push_back(((p - lut) << 4) | (q - lut));
+        output.push_back((char)(((p - lut) << 4) | (q - lut)));
     }
 
     return output;
@@ -1430,11 +1452,14 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
         // Wrap the keys
         //
 
+#pragma warning(push, 0)
+#pragma warning(disable: 4239)
         CryptoPP::RSAES_OAEP_SHA_Encryptor rsaEncryptor(
             CryptoPP::StringSource(
                 publicKey,
                 true,
                 new CryptoPP::Base64Decoder()));
+#pragma warning(pop)
 
         CryptoPP::StringSource(
             encryptionKey.data(),

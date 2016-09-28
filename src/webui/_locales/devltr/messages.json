@@ -243,6 +243,10 @@
     "message": "[Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
   },
+  "settings#egress-region#select-ca": {
+    "message": "[Ƈȧȧƞȧȧḓȧȧ]",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+  },
   "settings#egress-region#select-de": {
     "message": "[Ɠḗḗřḿȧȧƞẏ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
@@ -250,6 +254,10 @@
   "settings#egress-region#select-gb": {
     "message": "[Ŭŭƞīīŧḗḗḓ Ķīīƞɠḓǿǿḿ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
+  },
+  "settings#egress-region#select-in": {
+    "message": "[Īīƞḓīīȧȧ]",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
   },
   "settings#egress-region#select-jp": {
     "message": "[Ĵȧȧƥȧȧƞ]",

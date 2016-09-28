@@ -190,15 +190,12 @@ bool ServerRequest::MakeRequest(
     // Connecting directly via HTTPS failed. 
     // Now we'll try don't-need-handshake transports.
 
-    vector<boost::shared_ptr<ITransport>> tempTransports;
+    vector<shared_ptr<ITransport>> tempTransports;
     GetTempTransports(sessionInfo.GetServerEntry(), tempTransports);
 
     bool success = false;
 
-    vector<boost::shared_ptr<ITransport>>::iterator transport_iter;
-    for (transport_iter = tempTransports.begin(); 
-         transport_iter != tempTransports.end(); 
-         transport_iter++)
+    for (const auto& transport : tempTransports)
     {
         TransportConnection connection;
 
@@ -208,13 +205,15 @@ bool ServerRequest::MakeRequest(
             // collecting stats -- otherwise we could end up with a loop of
             // final /status request attempts.
 
+            const auto& serverEntry = sessionInfo.GetServerEntry();
+
             // Throws on failure
             connection.Connect(
                 stopInfo,
-                (*transport_iter).get(),
+                transport.get(),
                 NULL, // not receiving reconnection notifications
                 NULL, // not collecting stats
-                &sessionInfo.GetServerEntry());  // force use of this server
+                &serverEntry);  // force use of this server
 
             HTTPSRequest httpsRequest;
             if (httpsRequest.MakeRequest(
@@ -234,7 +233,7 @@ bool ServerRequest::MakeRequest(
                 break;
             }
 
-            my_print(NOT_SENSITIVE, true, _T("%s: transport:%s failed"), __TFUNCTION__, (*transport_iter)->GetTransportProtocolName().c_str());
+            my_print(NOT_SENSITIVE, true, _T("%s: transport:%s failed"), __TFUNCTION__, transport->GetTransportProtocolName().c_str());
 
             // Note that when we leave this scope, the TransportConnection will
             // clean up the transport connection.
@@ -267,29 +266,23 @@ our logic more explicit. And not dependent on the internals of another function.
 */
 void ServerRequest::GetTempTransports(
                             const ServerEntry& serverEntry,
-                            vector<boost::shared_ptr<ITransport>>& o_tempTransports)
+                            vector<shared_ptr<ITransport>>& o_tempTransports)
 {
     o_tempTransports.clear();
 
-    vector<ITransport*> all_transports;
+    vector<shared_ptr<ITransport>> all_transports;
     TransportRegistry::NewAll(all_transports);
 
-    ITransport* tempTransport = 0;
-    vector<ITransport*>::iterator it;
-    for (it = all_transports.begin(); it != all_transports.end(); it++)
+    for (const auto& it : all_transports)
     {
         // Only try transports that aren't the same as the current 
         // transport (because there's a reason it's not connected) 
         // and doesn't require a handshake.
-        if (!(*it)->IsHandshakeRequired()
-            && (*it)->ServerHasCapabilities(serverEntry))
+        if (!it->IsHandshakeRequired()
+            && it->ServerHasCapabilities(serverEntry))
         {
-            o_tempTransports.push_back(boost::shared_ptr<ITransport>(*it));
+            o_tempTransports.push_back(it);
             // no early break, so that we delete all the unused transports
-        }
-        else
-        {
-            delete *it;
         }
     }
 }
@@ -304,7 +297,7 @@ bool ServerRequest::ServerHasRequestCapabilities(const ServerEntry& serverEntry)
         return true;
     }
 
-    vector<boost::shared_ptr<ITransport>> tempTransports;
+    vector<shared_ptr<ITransport>> tempTransports;
     GetTempTransports(serverEntry, tempTransports);
 
     return tempTransports.size() > 0;

@@ -534,8 +534,6 @@ bool VPNTransport::WaitForConnectionStateToChangeFrom(ConnectionState state, DWO
 {
     DWORD totalWaitMilliseconds = 0;
 
-    ConnectionState originalState = state;
-
     while (state == GetConnectionState())
     {
         // Wait for RasDialCallback to set a new state, or timeout (to check cancel/termination)
@@ -977,7 +975,6 @@ void FixVPNServices()
 
                     for (int wait = 0; wait < 20; wait++)
                     {
-                        SERVICE_STATUS serviceStatus;
                         if (!QueryServiceStatus(service, &serviceStatus))
                         {
                             error << "QueryServiceStatus failed (" << GetLastError() << ")";
