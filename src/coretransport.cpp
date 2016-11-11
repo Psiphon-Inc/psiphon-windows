@@ -32,6 +32,7 @@
 #include "diagnostic_info.h"
 #include "embeddedvalues.h"
 #include "utilities.h"
+#include "authenticated_data_package.h"
 
 using namespace std::experimental;
 
@@ -349,6 +350,9 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
+	config["UpgradeDownloadUrl"] = string("https://") + UPGRADE_ADDRESS + UPGRADE_REQUEST_PATH;
+	config["UpgradeDownloadFilename"] = WStringToUTF8(dataStoreDirectory) + string("\\psiphon3.exe.upgrade");
+	config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
@@ -700,63 +704,122 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 
     // Parse output to extract data
 
-    try
-    {
-        Json::Value notice;
-        Json::Reader reader;
-        if (!reader.parse(line, notice))
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
-            // This line was not JSON. It's not included in diagnostics
-            // as we can't be sure it doesn't include user private data.
-            return;
-        }
+	try
+	{
+		Json::Value notice;
+		Json::Reader reader;
+		if (!reader.parse(line, notice))
+		{
+			my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+			// This line was not JSON. It's not included in diagnostics
+			// as we can't be sure it doesn't include user private data.
+			return;
+		}
 
-        if (!notice.isObject())
-        {
-            // Ignore this line. The core internals may emit non-notice format
-            // lines, and this confuses the JSON parser. This test filters out
-            // those lines.
-            return;
-        }
+		if (!notice.isObject())
+		{
+			// Ignore this line. The core internals may emit non-notice format
+			// lines, and this confuses the JSON parser. This test filters out
+			// those lines.
+			return;
+		}
 
-        string noticeType = notice["noticeType"].asString();
-        string timestamp = notice["timestamp"].asString();
-        Json::Value data = notice["data"];
+		string noticeType = notice["noticeType"].asString();
+		string timestamp = notice["timestamp"].asString();
+		Json::Value data = notice["data"];
 
-        // Let the UI know about it and decide if something needs to be shown to the user.
-        if (noticeType != "Info")
-        {
-            UI_Notice(line);
-        }
+		// Let the UI know about it and decide if something needs to be shown to the user.
+		if (noticeType != "Info")
+		{
+			UI_Notice(line);
+		}
 
-        if (noticeType == "Tunnels")
-        {
-            // This notice is received when tunnels are connected and disconnected.
-            int count = data["count"].asInt();
-            if (count == 0)
-            {
-                if (m_hasEverConnected && m_reconnectStateReceiver)
-                {
-                    m_reconnectStateReceiver->SetReconnecting();
-                }
-                m_isConnected = false;
-            }
-            else if (count == 1)
-            {
-                if (m_hasEverConnected && m_reconnectStateReceiver)
-                {
-                    m_reconnectStateReceiver->SetReconnected();
-                }
-                m_isConnected = true;
-                m_hasEverConnected = true;
-            }
-        }
-        else if (noticeType == "ClientUpgradeAvailable")
-        {
-            string version = data["version"].asString();
-            m_sessionInfo.SetUpgradeVersion(version.c_str());
-        }
+		if (noticeType == "Tunnels")
+		{
+			// This notice is received when tunnels are connected and disconnected.
+			int count = data["count"].asInt();
+			if (count == 0)
+			{
+				if (m_hasEverConnected && m_reconnectStateReceiver)
+				{
+					m_reconnectStateReceiver->SetReconnecting();
+				}
+				m_isConnected = false;
+			}
+			else if (count == 1)
+			{
+				if (m_hasEverConnected && m_reconnectStateReceiver)
+				{
+					m_reconnectStateReceiver->SetReconnected();
+				}
+				m_isConnected = true;
+				m_hasEverConnected = true;
+			}
+		}
+		else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL) {
+			TCHAR path[MAX_PATH];
+			if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
+			{
+				my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
+			}
+			filesystem::path appDataPath(path);
+
+			auto dataStoreDirectory = filesystem::path(appDataPath).append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY);
+			if (!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+			{
+				my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+			}
+			
+			AutoHANDLE hFile = CreateFile(
+				//dataStoreDirectory.append(UTF8ToWString(data["data"]["filename"].asString())).c_str(),
+				L"C:\\Users\\m.goldberger\\AppData\\Roaming\\Psiphon3\\psiphon3.exe.upgrade",
+				GENERIC_READ,
+				FILE_SHARE_READ,
+				NULL, // default security
+				OPEN_EXISTING, // existing file only
+				FILE_ATTRIBUTE_NORMAL,
+				NULL); // no attr. template
+
+			if (hFile == INVALID_HANDLE_VALUE) {
+				my_print(NOT_SENSITIVE, false, _T("********** Invalid file handle **********"));
+				my_print(NOT_SENSITIVE, false, _T("Could not get a valid file handle: %s - (%d)."), __TFUNCTION__, GetLastError());
+			} else {
+				my_print(NOT_SENSITIVE, false, _T("********** Valid file handle **********"));
+			}
+
+			DWORD dwFileSize = GetFileSize(hFile, NULL);
+			unique_ptr<BYTE> inBuffer(new BYTE[dwFileSize]);
+			if (!inBuffer)
+			{
+				throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
+			}
+
+			DWORD nBytesToRead = dwFileSize;
+			DWORD dwBytesRead = 0;
+			OVERLAPPED stOverlapped = { 0 };
+			string downloadFileString;
+
+			if (TRUE == ReadFile(hFile, inBuffer.get(), nBytesToRead, &dwBytesRead, NULL)) {
+				if (verifySignedDataPackage(
+					UPGRADE_SIGNATURE_PUBLIC_KEY,
+					(const char *)inBuffer.get(),
+					dwFileSize,
+					true, // gzip compressed
+					downloadFileString))
+				{
+					// Data in the package is Base64 encoded
+					downloadFileString = Base64Decode(downloadFileString);
+
+					if (downloadFileString.length() > 0) {
+						m_upgradePaver->PaveUpgrade(downloadFileString);
+					}
+				}
+				else {
+					// Bad package. Log and continue.
+					my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
+				}
+			}
+		}
         else if (noticeType == "Homepage")
         {
             string url = data["url"].asString();

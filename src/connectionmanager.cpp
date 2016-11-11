@@ -47,7 +47,6 @@ extern HWND g_hWnd;
 ConnectionManager::ConnectionManager(void) :
     m_state(CONNECTION_MANAGER_STATE_STOPPED),
     m_thread(0),
-    m_upgradeThread(0),
     m_feedbackThread(0),
     m_transport(0),
     m_upgradePending(false),
@@ -169,14 +168,6 @@ void ConnectionManager::Stop(DWORD reason)
         WaitForSingleObject(m_thread, INFINITE);
         my_print(NOT_SENSITIVE, true, _T("%s: Thread died"), __TFUNCTION__);
         m_thread = 0;
-    }
-
-    if (m_upgradeThread)
-    {
-        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for upgrade thread to die"), __TFUNCTION__);
-        WaitForSingleObject(m_upgradeThread, INFINITE);
-        my_print(NOT_SENSITIVE, true, _T("%s: Upgrade thread died"), __TFUNCTION__);
-        m_upgradeThread = 0;
     }
 
     if (m_feedbackThread)
@@ -305,7 +296,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
                     manager,    // ILocalProxyStatsCollector
-                    manager);   // IReconnectStateReceiver
+                    manager,	// IReconnectStateReceiver
+					manager);   // IUpgradePaver
             }
             catch (TransportConnection::TryNextServer&)
             {
@@ -321,23 +313,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             SessionInfo sessionInfo = transportConnection.GetUpdatedSessionInfo();
             manager->UpdateCurrentSessionInfo(sessionInfo);
-
-            //
-            // If handshake notified of new version, start the upgrade in a (background) thread
-            //
-
-            if (manager->RequireUpgrade())
-            {
-                if (!manager->m_upgradeThread ||
-                    WAIT_OBJECT_0 == WaitForSingleObject(manager->m_upgradeThread, 0))
-                {
-                    manager->m_upgradeThread = CreateThread(0, 0, ConnectionManagerUpgradeThread, manager, 0, 0);
-                    if (!manager->m_upgradeThread)
-                    {
-                        my_print(NOT_SENSITIVE, false, _T("Upgrade: CreateThread failed (%d)"), GetLastError());
-                    }
-                }
-            }
 
             // Before doing post-connect work, make sure there's no stop signal.
             // Throws if there's a signal set.
@@ -681,20 +656,6 @@ tstring ConnectionManager::GetStatusRequestPath(ITransport* transport, bool conn
            _T("&connected=") + (connected ? _T("1") : _T("0"));
 }
 
-void ConnectionManager::GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath)
-{
-    AutoMUTEX lock(m_mutex);
-
-    sessionInfo = m_currentSessionInfo;
-    requestPath = tstring(HTTP_DOWNLOAD_REQUEST_PATH) +
-                    _T("?client_session_id=") + UTF8ToWString(m_currentSessionInfo.GetClientSessionID()) +
-                    _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
-                    _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
-                    _T("&client_version=") + UTF8ToWString(m_currentSessionInfo.GetUpgradeVersion()) +
-                    _T("&server_secret=") + UTF8ToWString(m_currentSessionInfo.GetWebServerSecret());
-}
-
-
 // ==== General Session Functions =============================================
 
 void ConnectionManager::FetchRemoteServerList()
@@ -783,94 +744,6 @@ void ConnectionManager::FetchRemoteServerList()
         my_print(NOT_SENSITIVE, false, string("Corrupt remote server list: ") + ex.what());
         // This isn't fatal.
     }
-}
-
-bool ConnectionManager::RequireUpgrade(void)
-{
-    AutoMUTEX lock(m_mutex);
-
-    return !m_upgradePending && m_currentSessionInfo.GetUpgradeVersion().size() > 0;
-}
-
-DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
-{
-    my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
-
-    my_print(NOT_SENSITIVE, false, _T("Downloading new version..."));
-
-    ConnectionManager* manager = (ConnectionManager*)object;
-
-    try
-    {
-        SessionInfo sessionInfo;
-        tstring downloadRequestPath;
-        string downloadResponse;
-        // Note that this is getting the current session info, which is set
-        // by LoadNextServer.  So it's unlikely but possible that we may be
-        // loading the next server after the first one that notified us of an
-        // upgrade failed to connect.  This still should not be a problem, since
-        // all servers should have the same upgrades available.
-        manager->GetUpgradeRequestInfo(sessionInfo, downloadRequestPath);
-
-        // Download new binary
-        HTTPSRequest httpsRequest;
-        if (!httpsRequest.MakeRequest(
-                UTF8ToWString(UPGRADE_ADDRESS).c_str(),
-                443,
-                "",
-                UTF8ToWString(UPGRADE_REQUEST_PATH).c_str(),
-                downloadResponse,
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                true, // tunnel request
-                true) // fail over to URL proxy
-            || downloadResponse.length() <= 0)
-        {
-            // If the download failed, we simply do nothing.
-            // Rationale:
-            // - The server is (and hopefully will remain) backwards compatible.
-            // - The failure is likely a configuration one, as the handshake worked.
-            // - A configuration failure could be common across all servers, so the
-            //   client will never connect.
-            // - Fail-over exposes new server IPs to hostile networks, so we don't
-            //   like doing it in the case where we know the handshake already succeeded.
-        }
-        else
-        {
-            my_print(NOT_SENSITIVE, false, _T("Download complete"));
-
-            // Perform upgrade.
-
-            string upgradeData;
-
-            if (verifySignedDataPackage(
-                    UPGRADE_SIGNATURE_PUBLIC_KEY,
-                    downloadResponse.c_str(),
-                    downloadResponse.length(),
-                    true, // gzip compressed
-                    upgradeData))
-            {
-                // Data in the package is Base64 encoded
-                upgradeData = Base64Decode(upgradeData);
-
-                if (upgradeData.length() > 0)
-                {
-                    manager->PaveUpgrade(upgradeData);
-                }
-            }
-            else
-            {
-                // Bad package. Log and continue.
-                my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
-            }
-        }
-    }
-    catch (StopSignal::StopException&)
-    {
-        // do nothing, just exit
-    }
-
-    my_print(NOT_SENSITIVE, true, _T("%s: exiting thread"), __TFUNCTION__);
-    return 0;
 }
 
 void ConnectionManager::PaveUpgrade(const string& download)

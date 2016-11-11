@@ -40,7 +40,6 @@ SessionInfo::SessionInfo()
 void SessionInfo::Clear()
 {
     m_clientSessionID.clear();
-    m_upgradeVersion.clear();
     m_psk.clear();
     m_sshPort = 0;
     m_sshUsername.clear();
@@ -116,7 +115,6 @@ bool SessionInfo::ParseHandshakeResponse(const string& response)
 
 bool SessionInfo::ProcessConfig(const string& config_json)
 {
-    m_upgradeVersion.clear();
     m_psk.clear();
     m_sshPort = 0;
     m_sshUsername.clear();
@@ -152,9 +150,6 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         {
             m_homepages.push_back(UTF8ToWString(homepages[i].asString()));
         }
-
-        // Upgrade
-        m_upgradeVersion = config.get("upgrade_client_version", "").asString();
 
         // Servers
         Json::Value servers = config["encoded_server_list"];
@@ -221,11 +216,6 @@ void SessionInfo::SetHomepage(const char* homepage)
     {
         m_homepages.push_back(newHomepage);
     }
-}
-
-void SessionInfo::SetUpgradeVersion(const char* upgradeVersion)
-{
-    m_upgradeVersion = upgradeVersion;
 }
 
 void SessionInfo::SetLocalProxyPorts(int http, int https, int socks)

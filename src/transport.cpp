@@ -40,6 +40,7 @@ ITransport::ITransport(LPCTSTR transportProtocolName)
       m_serverList(WStringToUTF8(transportProtocolName).c_str()),
       m_firstConnectionAttempt(true),
       m_reconnectStateReceiver(NULL),
+	  m_upgradePaver(NULL),
       m_connectRetryOkay(true)
 {
 }
@@ -65,12 +66,14 @@ void ITransport::Connect(
                     SystemProxySettings* systemProxySettings,
                     const StopInfo& stopInfo,
                     IReconnectStateReceiver* reconnectStateReceiver,
+					IUpgradePaver* upgradePaver,
                     WorkerThreadSynch* workerThreadSynch,
                     const ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
     m_systemProxySettings = systemProxySettings;
     m_tempConnectServerEntry = tempConnectServerEntry;
     m_reconnectStateReceiver = reconnectStateReceiver;
+	m_upgradePaver = upgradePaver;
     m_connectRetryOkay = true;
 
     assert(m_systemProxySettings);

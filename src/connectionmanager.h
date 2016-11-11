@@ -38,7 +38,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver
+class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver, public IUpgradePaver
 {
 public:
     ConnectionManager();
@@ -63,6 +63,9 @@ public:
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
 
+	// IUpgradePaver implementation
+	void PaveUpgrade(const string& download);
+
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
     // NOTE: The JSON string must contain wide unicode codepoints, not UTF-8.
@@ -77,7 +80,6 @@ public:
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
-    static DWORD WINAPI ConnectionManagerUpgradeThread(void* object);
 
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };
@@ -88,12 +90,8 @@ private:
     tstring GetConnectRequestPath(ITransport* transport);
     // May return empty string, which indicates that status can't be sent.
     tstring GetStatusRequestPath(ITransport* transport, bool connected);
-    void GetUpgradeRequestInfo(SessionInfo& sessionInfo, tstring& requestPath);
 
     void FetchRemoteServerList();
-
-    bool RequireUpgrade();
-    void PaveUpgrade(const string& download);
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
@@ -107,7 +105,6 @@ private:
     ConnectionManagerState m_state;
     SessionInfo m_currentSessionInfo;
     HANDLE m_thread;
-    HANDLE m_upgradeThread;
     HANDLE m_feedbackThread;
     ITransport* m_transport;
     bool m_upgradePending;

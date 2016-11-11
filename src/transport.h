@@ -39,6 +39,11 @@ public:
     virtual void SetReconnected() = 0;
 };
 
+class IUpgradePaver
+{
+public:
+	virtual void PaveUpgrade(const string&) = 0;
+};
 
 // All transport implementations must implement this interface
 class ITransport : public IWorkerThread
@@ -98,6 +103,7 @@ public:
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             IReconnectStateReceiver* reconnectStateReceiver,
+			IUpgradePaver* upgradePaver,
             WorkerThreadSynch* workerThreadSynch,
             const ServerEntry* tempConnectServerEntry=NULL);
 
@@ -167,5 +173,6 @@ protected:
     ServerList m_serverList;
     bool m_firstConnectionAttempt;
     IReconnectStateReceiver* m_reconnectStateReceiver;
+	IUpgradePaver* m_upgradePaver;
     bool m_connectRetryOkay;
 };
