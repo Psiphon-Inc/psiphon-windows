@@ -327,6 +327,7 @@ bool HTTPSRequest::MakeRequest(
                 stopInfo,
                 TransportRegistry::New(CORE_TRANSPORT_PROTOCOL_NAME),
                 NULL, // not receiving reconnection notifications
+                NULL, // not receiving upgrade paver calls
                 NULL, // not collecting stats
                 new ServerEntry(), // this empty ServerEntry is the flag for URL proxy mode; we don't need to connect to a specific server
                 true);// don't apply system proxy settings (or write to the Psiphon proxy settings registry key)

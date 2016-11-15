@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -32,12 +32,14 @@
 #include "diagnostic_info.h"
 #include "embeddedvalues.h"
 #include "utilities.h"
+#include "authenticated_data_package.h"
 
 using namespace std::experimental;
 
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
+#define UPGRADE_EXE_NAME                     _T("psiphon3.exe.upgrade")
 #define URL_PROXY_EXE_NAME                   _T("psiphon-url-proxy.exe")
 #define MAX_LEGACY_SERVER_ENTRIES            30
 #define LEGACY_SERVER_ENTRY_LIST_NAME        (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + "OSSH").c_str()
@@ -150,15 +152,15 @@ void CoreTransport::GetFactory(
 }
 
 
-tstring CoreTransport::GetTransportProtocolName() const 
+tstring CoreTransport::GetTransportProtocolName() const
 {
     return CORE_TRANSPORT_PROTOCOL_NAME;
 }
 
 
-tstring CoreTransport::GetTransportDisplayName() const 
-{ 
-    return CORE_TRANSPORT_DISPLAY_NAME; 
+tstring CoreTransport::GetTransportDisplayName() const
+{
+    return CORE_TRANSPORT_DISPLAY_NAME;
 }
 
 
@@ -261,7 +263,7 @@ bool CoreTransport::RequestingUrlProxyWithoutTunnel()
         m_tempConnectServerEntry->serverAddress.empty();
 }
 
-    
+
 void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
@@ -349,6 +351,9 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
+    config["UpgradeDownloadUrl"] = string("https://") + UPGRADE_ADDRESS + UPGRADE_REQUEST_PATH;
+    config["UpgradeDownloadFilename"] = WStringToUTF8(shortDataStoreDirectory.append(_T("\\")).append(UPGRADE_EXE_NAME));
+    config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
@@ -392,7 +397,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
         if (RequestingUrlProxyWithoutTunnel())
         {
-            // The URL proxy can and will be used while the main tunnel is connected, 
+            // The URL proxy can and will be used while the main tunnel is connected,
             // and multiple URL proxies might be used concurrently. Each one may/will
             // try to open/create the tunnel-core datastore, so conflicts will occur
             // if they try to use the same datastore directory as the main tunnel or
@@ -445,7 +450,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // proxy instances could clobber each other's config file?
 
     auto configPath = filesystem::path(dataStoreDirectory);
-    if (RequestingUrlProxyWithoutTunnel()) 
+    if (RequestingUrlProxyWithoutTunnel())
     {
         configPath.append(LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME);
     }
@@ -492,7 +497,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     return true;
 }
 
-    
+
 string CoreTransport::GetUpstreamProxyAddress()
 {
     // Note: upstream SOCKS proxy and proxy auth currently not supported
@@ -505,7 +510,7 @@ string CoreTransport::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (Settings::UpstreamProxyHostname().length() > 0 && 
+    if (Settings::UpstreamProxyHostname().length() > 0 &&
         Settings::UpstreamProxyPort() &&
         Settings::UpstreamProxyType() == "https")
     {
@@ -620,7 +625,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
     // You need to make sure that no handles to the write end of the
     // output pipe are maintained in this process or else the pipe will
     // not close when the child process exits and the ReadFile will hang.
-    
+
     if (!CloseHandle(startupInfo.hStdOutput))
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
@@ -634,7 +639,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
         CloseHandle(m_pipe);
         return false;
     }
-    
+
     WaitForInputIdle(m_processInfo.hProcess, 5000);
 
     return true;
@@ -752,10 +757,53 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
                 m_hasEverConnected = true;
             }
         }
-        else if (noticeType == "ClientUpgradeAvailable")
-        {
-            string version = data["version"].asString();
-            m_sessionInfo.SetUpgradeVersion(version.c_str());
+        else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL) {
+          AutoHANDLE hFile = CreateFile(
+            UTF8ToWString(data["filename"].asString()).c_str(),
+            GENERIC_READ,
+            FILE_SHARE_READ,
+            NULL, // default security
+            OPEN_EXISTING, // existing file only
+            FILE_ATTRIBUTE_NORMAL,
+            NULL); // no attr. template
+
+          if (hFile == INVALID_HANDLE_VALUE) {
+            my_print(NOT_SENSITIVE, false, _T("Could not get a valid file handle: %s - (%d)."), __TFUNCTION__, GetLastError());
+			return;
+          }
+
+          DWORD dwFileSize = GetFileSize(hFile, NULL);
+          unique_ptr<BYTE> inBuffer(new BYTE[dwFileSize]);
+          if (!inBuffer)
+          {
+            throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
+          }
+
+          DWORD nBytesToRead = dwFileSize;
+          DWORD dwBytesRead = 0;
+          OVERLAPPED stOverlapped = { 0 };
+          string downloadFileString;
+
+          if (TRUE == ReadFile(hFile, inBuffer.get(), nBytesToRead, &dwBytesRead, NULL)) {
+            if (verifySignedDataPackage(
+              UPGRADE_SIGNATURE_PUBLIC_KEY,
+              (const char *)inBuffer.get(),
+              dwFileSize,
+              true, // gzip compressed
+              downloadFileString))
+            {
+              // Data in the package is Base64 encoded
+              downloadFileString = Base64Decode(downloadFileString);
+
+              if (downloadFileString.length() > 0) {
+                m_upgradePaver->PaveUpgrade(downloadFileString);
+              }
+            }
+            else {
+              // Bad package. Log and continue.
+              my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
+            }
+          }
         }
         else if (noticeType == "Homepage")
         {
