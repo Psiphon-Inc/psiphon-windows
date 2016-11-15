@@ -212,7 +212,6 @@ bool ServerRequest::MakeRequest(
                 stopInfo,
                 transport.get(),
                 NULL, // not receiving reconnection notifications
-				NULL, // not receiving upgrade paver requests
                 NULL, // not collecting stats
                 &serverEntry);  // force use of this server
 

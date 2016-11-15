@@ -28,7 +28,6 @@
 class LocalProxy;
 class ILocalProxyStatsCollector;
 class IReconnectStateReceiver;
-class IUpgradePaver;
 class ITransport;
 
 
@@ -59,7 +58,6 @@ public:
             const StopInfo& stopInfo,
             ITransport* transport,
             IReconnectStateReceiver* reconnectStateReceiver,
-			IUpgradePaver* upgradePaver,
             ILocalProxyStatsCollector* statsCollector,
             const ServerEntry* tempConnectServerEntry=NULL,
             bool skipApplySystemProxySettings=false);

@@ -60,6 +60,7 @@ public:
     string GetMeekCookieEncryptionPublicKey() const;
 
     string GetSSHSessionID() const {return m_sshSessionID;}
+    string GetUpgradeVersion() const {return m_upgradeVersion;}
     string GetPSK() const {return m_psk;}
     vector<tstring> GetHomepages() const {return m_homepages;}
     vector<string> GetDiscoveredServerEntries() const;
@@ -82,6 +83,7 @@ public:
     bool ProcessConfig(const string& config_json);
 
     void SetHomepage(const char* homepage);
+    void SetUpgradeVersion(const char* upgradeVersion);
 
     void SetLocalProxyPorts(int http, int https, int socks);
 
@@ -92,6 +94,7 @@ private:
     ServerEntry m_serverEntry;
 
     string m_clientSessionID;
+    string m_upgradeVersion;
     string m_psk;
     int m_sshPort;
     string m_sshUsername;
