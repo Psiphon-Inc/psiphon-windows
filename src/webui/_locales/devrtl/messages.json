@@ -251,6 +251,10 @@
     "message": "‮פǝɹɯɐuʎ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
   },
+  "settings#egress-region#select-es": {
+    "message": "‮Sdɐıu‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+  },
   "settings#egress-region#select-gb": {
     "message": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
