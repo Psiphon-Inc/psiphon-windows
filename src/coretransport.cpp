@@ -340,6 +340,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
+    auto upgradeFilePath = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
+
     Json::Value config;
     config["ClientPlatform"] = CLIENT_PLATFORM;
     config["ClientVersion"] = CLIENT_VERSION;
@@ -352,7 +354,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
     config["UpgradeDownloadUrl"] = string("https://") + UPGRADE_ADDRESS + UPGRADE_REQUEST_PATH;
-    config["UpgradeDownloadFilename"] = WStringToUTF8(shortDataStoreDirectory.append(_T("\\")).append(UPGRADE_EXE_NAME));
+    config["UpgradeDownloadFilename"] = WStringToUTF8(upgradeFilePath);
     config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
