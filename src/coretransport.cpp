@@ -760,7 +760,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             }
         }
         else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL) {
-          AutoHANDLE hFile = CreateFile(
+          HANDLE hFile = CreateFile(
             UTF8ToWString(data["filename"].asString()).c_str(),
             GENERIC_READ,
             FILE_SHARE_READ,
@@ -771,7 +771,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 
           if (hFile == INVALID_HANDLE_VALUE) {
             my_print(NOT_SENSITIVE, false, _T("Could not get a valid file handle: %s - (%d)."), __TFUNCTION__, GetLastError());
-			return;
+            return;
           }
 
           DWORD dwFileSize = GetFileSize(hFile, NULL);
@@ -781,12 +781,12 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
           }
 
-          DWORD nBytesToRead = dwFileSize;
+          DWORD dwBytesToRead = dwFileSize;
           DWORD dwBytesRead = 0;
           OVERLAPPED stOverlapped = { 0 };
           string downloadFileString;
 
-          if (TRUE == ReadFile(hFile, inBuffer.get(), nBytesToRead, &dwBytesRead, NULL)) {
+          if (TRUE == ReadFile(hFile, inBuffer.get(), dwBytesToRead, &dwBytesRead, NULL)) {
             if (verifySignedDataPackage(
               UPGRADE_SIGNATURE_PUBLIC_KEY,
               (const char *)inBuffer.get(),
@@ -805,6 +805,18 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
               // Bad package. Log and continue.
               my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
             }
+          }
+
+          // If the extract and verify succeeds, delete it since it's no longer
+          // required and we don't want to re-install it.
+          // If the file isn't working and we think we have the complete file,
+          // there may be corrupt bytes. So delete it and next time we'll start over.
+          // NOTE: this means if the failure was due to not enough free space
+          // to write the extracted file... we still re-download.
+          CloseHandle(hFile);
+          if (!DeleteFile(UTF8ToWString(data["filename"].asString()).c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+          {
+              throw std::exception("Upgrade - DeleteFile failed");
           }
         }
         else if (noticeType == "Homepage")
