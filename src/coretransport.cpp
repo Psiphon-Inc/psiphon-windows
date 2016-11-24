@@ -344,6 +344,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
+    config["ObfuscatedServerListRootURL"] = OBFUSCATED_SERVER_LIST_ROOT_URL;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
@@ -431,6 +432,16 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         auto remoteServerListFilename = filesystem::path(dataStoreDirectory)
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
         config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
+
+        auto oslDownloadDirectory = filesystem::path(appDataPath)
+                                                .append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY).append("osl");
+        if (!CreateDirectory(oslDownloadDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+            // TODO: proceed anyway?
+            return false;
+        }
+        config["ObfusatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
     }
 
     ostringstream configDataStream;
