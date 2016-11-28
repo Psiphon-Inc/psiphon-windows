@@ -127,6 +127,22 @@
     "message": "Don't proxy websites within your country",
     "description": "The label on the checkbox that enables 'Split Tunnel'."
   },
+  "settings#disable-timeouts#heading": {
+    "message": "Disable Timeouts for Slow Networks",
+    "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, psiphon will disable all network based timeouts, allowing very slow requests to eventually complete."
+  },
+  "settings#disable-timeouts#help-text": {
+    "message": "If enabled, requests made via Psiphon will never timeout",
+    "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+  },
+  "settings#disable-timeouts#reason": {
+    "message": "Enabling this means that over very slow network connections, you are more likely to have your request succeed.",
+    "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
+  },
+  "settings#disable-timeouts#enable-label": {
+    "message": "Disable timeouts for slow networks",
+    "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+  },
   "settings#egress-region#heading": {
     "message": "Psiphon Server Region",
     "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
@@ -247,6 +263,14 @@
     "message": "Only HTTP proxies that support HTTPS are allowed.",
     "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
   },
+   "settings#upstream-proxy#username-label": {
+    "message": "Username",
+    "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+  },
+  "settings#upstream-proxy#password-label": {
+    "message": "Password",
+    "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+  },
   "settings#upstream-proxy#hostname-label": {
     "message": "Hostname",
     "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
@@ -259,7 +283,11 @@
     "message": "Don't use upstream proxy",
     "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
   },
-  "settings#upstream-proxy#set-both-error-msg": {
+  "settings#upstream-proxy#set-username-password-error-msg": {
+    "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+    "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+  },
+  "settings#upstream-proxy#set-hostname-port-error-msg": {
     "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
     "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
   },

@@ -541,20 +541,26 @@ $(function settingsInit() {
   {
     g_initObj.Settings = {
       SplitTunnel: 0,
+      DisableTimeouts: 0,
       VPN: 0,
       LocalHttpProxyPort: 7771,
       LocalSocksProxyPort: 7770,
       SkipUpstreamProxy: 1,
+      UpstreamProxyUsername: 'user',
+      UpstreamProxyPassword: 'password',
       UpstreamProxyHostname: 'upstreamhost',
       UpstreamProxyPort: 234,
       EgressRegion: 'GB',
       SystrayMinimize: 0,
       defaults: {
         SplitTunnel: 0,
+        DisableTimeouts: 0,
         VPN: 0,
         LocalHttpProxyPort: '',
         LocalSocksProxyPort: '',
         SkipUpstreamProxy: 0,
+        UpstreamProxyUsername: '',
+        UpstreamProxyPassword: '',
         UpstreamProxyHostname: '',
         UpstreamProxyPort: '',
         EgressRegion: '',
@@ -602,6 +608,7 @@ $(function settingsInit() {
 
   systrayMinimizeSetup();
   splitTunnelSetup();
+  disableTimeoutsSetup();
   egressRegionSetup();
   localProxySetup();
   upstreamProxySetup();
@@ -805,6 +812,10 @@ function fillSettingsValues(obj) {
     $('#SplitTunnel').prop('checked', !!obj.SplitTunnel);
   }
 
+  if (typeof(obj.DisableTimeouts) !== 'undefined') {
+    $('#DisableTimeouts').prop('checked', !!obj.DisableTimeouts);
+  }
+  
   if (typeof(obj.VPN) !== 'undefined') {
     $('#VPN').prop('checked', obj.VPN);
   }
@@ -820,6 +831,14 @@ function fillSettingsValues(obj) {
 
   localProxyValid(false);
 
+  if (typeof(obj.UpstreamProxyUsername) !== 'undefined') {
+    $('#UpstreamProxyUsername').val(obj.UpstreamProxyUsername);
+  }
+  
+  if (typeof(obj.UpstreamProxyPassword) !== 'undefined') {
+    $('#UpstreamProxyPassword').val(obj.UpstreamProxyPassword);
+  }
+  
   if (typeof(obj.UpstreamProxyHostname) !== 'undefined') {
     $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
   }
@@ -869,8 +888,11 @@ function getSettingsTabValues() {
   var returnValue = {
     VPN: $('#VPN').prop('checked') ? 1 : 0,
     SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
+    DisableTimeouts: $('#DisableTimeouts').prop('checked') ? 1 : 0,
     LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
     LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
+    UpstreamProxyUsername: $('#UpstreamProxyUsername').val(),
+    UpstreamProxyPassword: $('#UpstreamProxyPassword').val(),
     UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
     UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
     SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
@@ -917,6 +939,18 @@ function systrayMinimizeSetup() {
 // Will be called exactly once. Set up event listeners, etc.
 function splitTunnelSetup() {
   $('#SplitTunnel').change(function() {
+    // Tell the settings pane a change was made.
+    $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+  });
+}
+
+//
+// Disable Timeouts
+//
+
+// Will be called exactly once. Set up event listeners, etc.
+function disableTimeoutsSetup() {
+  $('#DisableTimeouts').change(function() {
     // Tell the settings pane a change was made.
     $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
   });
@@ -1129,7 +1163,7 @@ function localProxyPortConflictNotice(noticeType) {
 // Will be called exactly once. Set up event listeners, etc.
 function upstreamProxySetup() {
   // Handle change events
-  $('#UpstreamProxyHostname, #UpstreamProxyPort').on(
+  $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyHostname, #UpstreamProxyPort').on(
       'keyup keydown keypress change blur',
       function(event) {
         // We need to delay this processing so that the change to the text has
@@ -1156,11 +1190,17 @@ function upstreamProxySetup() {
 // Returns true if the upstream proxy values are valid, otherwise false.
 // Shows/hides an error message as appropriate.
 function upstreamProxyValid(finalCheck) {
-  // Either the hostname and port have to both be set, or neither.
+  // Either the hostname and port have to both be set, or neither,
+  // AND either the username and password must be set, or neither.
   // Unless 'skip' is checked.
-  var setMatch =
+  var hostnamePortMatch =
       $('#SkipUpstreamProxy').prop('checked') ||
       Boolean($('#UpstreamProxyHostname').val()) === Boolean($('#UpstreamProxyPort').val());
+       
+  var usernamePasswordMatch =
+    $('#SkipUpstreamProxy').prop('checked') ||
+    Boolean($('#UpstreamProxyUsername').val()) === Boolean($('#UpstreamProxyPassword').val());
+
 
   var portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
 
@@ -1169,17 +1209,25 @@ function upstreamProxyValid(finalCheck) {
     $('.help-inline.UpstreamProxyPort').addClass('hidden');
   }
 
-  if (setMatch) {
+  if (hostnamePortMatch) {
     // Hide the set-match-specific message
-    $('.upstream-proxy-set-match').addClass('hidden');
+    $('.upstream-proxy-hostname-port-match').addClass('hidden');
     // And remove error state from hostname (but not from the port value... yet)
     $('#UpstreamProxyHostname')
       .parents('.control-group').removeClass('error');
   }
+  
+  if (usernamePasswordMatch) {
+    // Hide the set-match-specific message
+    $('.upstream-proxy-username-password-match').addClass('hidden');
+    // And remove error state from username/password fields (but not from the port value... yet)
+    $('#UpstreamProxyUsername, #UpstreamProxyPassword')
+      .parents('.control-group').removeClass('error');
+  }
 
-  if (portOK && setMatch) {
+  if (portOK && hostnamePortMatch && usernamePasswordMatch) {
     // No error at all, remove error state
-    $('#UpstreamProxyHostname, #UpstreamProxyPort')
+    $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyHostname, #UpstreamProxyPort')
       .parents('.control-group').removeClass('error');
   }
 
@@ -1190,17 +1238,25 @@ function upstreamProxyValid(finalCheck) {
       .parents('.control-group').addClass('error');
   }
 
-  if (!setMatch && finalCheck) {
+  if (!hostnamePortMatch && finalCheck) {
     // Value mismatch. Only show error on final check (so as to not prematurely
     // show the error while the user is typing).
     $('#UpstreamProxyHostname, #UpstreamProxyPort')
       .parents('.control-group').addClass('error');
-    $('.upstream-proxy-set-match').removeClass('hidden');
+    $('.upstream-proxy-hostname-port-match').removeClass('hidden');
+  }
+  
+  if (!usernamePasswordMatch && finalCheck) {
+    // Value mismatch. Only show error on final check (so as to not prematurely
+    // show the error while the user is typing).
+    $('#UpstreamProxyUsername, #UpstreamProxyPassword')
+      .parents('.control-group').addClass('error');
+    $('.upstream-proxy-username-password-match').removeClass('hidden');
   }
 
   updateErrorAlert();
 
-  return setMatch && portOK;
+  return hostnamePortMatch && usernamePasswordMatch && portOK;
 }
 
 // The other upstream proxy settings should be disabled if skip-upstream-proxy

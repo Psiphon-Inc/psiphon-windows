@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -33,6 +33,9 @@
 
 #define SPLIT_TUNNEL_NAME               "SplitTunnel"
 #define SPLIT_TUNNEL_DEFAULT            FALSE
+
+#define DISABLE_TIMEOUTS_NAME           "DisableTimeouts"
+#define DISABLE_TIMEOUTS_DEFAULT        FALSE
 
 #define TRANSPORT_NAME                  "Transport"
 // TODO: Don't hardcode transport names? Or get rid of transport registry (since the dynamic-ness is gone anyway).
@@ -61,6 +64,12 @@
 
 #define UPSTREAM_PROXY_TYPE_NAME        "SSHParentProxyType"
 #define UPSTREAM_PROXY_TYPE_DEFAULT     "https"
+
+#define UPSTREAM_PROXY_USERNAME_NAME    "SSHParentProxyUsername"
+#define UPSTREAM_PROXY_USERNAME_DEFAULT ""
+
+#define UPSTREAM_PROXY_PASSWORD_NAME    "SSHParentProxyPassword"
+#define UPSTREAM_PROXY_PASSWORD_DEFAULT ""
 
 #define UPSTREAM_PROXY_HOSTNAME_NAME    "SSHParentProxyHostname"
 #define UPSTREAM_PROXY_HOSTNAME_DEFAULT ""
@@ -141,7 +150,7 @@ wstring GetSettingString(const string& settingName, wstring defaultValue, bool w
 
 void Settings::Initialize()
 {
-    // Write out the default values for our non-exposed (registry-only) settings. 
+    // Write out the default values for our non-exposed (registry-only) settings.
     // This is to help users find and modify them.
     (void)GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT, true);
     (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
@@ -150,37 +159,44 @@ void Settings::Initialize()
 
 void Settings::ToJson(Json::Value& o_json)
 {
-    o_json.clear();
-	o_json["defaults"] = Json::Value();
-	
-	o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
-	o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
-	
-	o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN) ? TRUE : FALSE;
-	o_json["defaults"]["VPN"] = FALSE;
-	
-	o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-	o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
-	o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-	o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
-	
-	o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
-	o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
-	o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
-	o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
-	o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
-	o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
-	
-	o_json["EgressRegion"] = Settings::EgressRegion();
-	o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
-	
-	o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
-	o_json["defaults"]["SystrayMinimize"] = SYSTRAY_MINIMIZE_DEFAULT;
+      o_json.clear();
+      o_json["defaults"] = Json::Value();
+
+      o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
+      o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
+
+      o_json["DisableTimeouts"] = Settings::DisableTimeouts() ? TRUE : FALSE;
+      o_json["defaults"]["DisableTimeouts"] = DISABLE_TIMEOUTS_DEFAULT;
+
+      o_json["VPN"] = (Settings::Transport() == TRANSPORT_VPN) ? TRUE : FALSE;
+      o_json["defaults"]["VPN"] = FALSE;
+
+      o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
+      o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+      o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+      o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+
+      o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
+      o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
+      o_json["UpstreamProxyUsername"] = Settings::UpstreamProxyUsername();
+      o_json["defaults"]["UpstreamProxyUsername"] = UPSTREAM_PROXY_USERNAME_DEFAULT;
+      o_json["UpstreamProxyPassword"] = Settings::UpstreamProxyPassword();
+      o_json["defaults"]["UpstreamProxyPassword"] = UPSTREAM_PROXY_PASSWORD_DEFAULT;
+      o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
+      o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
+      o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
+      o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+
+      o_json["EgressRegion"] = Settings::EgressRegion();
+      o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
+
+      o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
+      o_json["defaults"]["SystrayMinimize"] = SYSTRAY_MINIMIZE_DEFAULT;
 }
 
 // FromJson updates the stores settings from an object stored in JSON format.
 bool Settings::FromJson(
-    const string& utf8JSON, 
+    const string& utf8JSON,
     bool& o_reconnectRequired)
 {
     o_reconnectRequired = false;
@@ -209,6 +225,10 @@ bool Settings::FromJson(
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
 
+        BOOL disableTimeouts = json.get("DisableTimeouts", DISABLE_TIMEOUTS_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!disableTimeouts != Settings::DisableTimeouts();
+        WriteRegistryDwordValue(DISABLE_TIMEOUTS_NAME, disableTimeouts);
+
         wstring transport = json.get("VPN", TRANSPORT_DEFAULT).asUInt() ? TRANSPORT_VPN : TRANSPORT_DEFAULT;
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || transport != Settings::Transport();
         WriteRegistryStringValue(
@@ -224,11 +244,19 @@ bool Settings::FromJson(
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
+        string upstreamProxyUsername = json.get("UpstreamProxyUsername", UPSTREAM_PROXY_USERNAME_DEFAULT).asString();
+        string upstreamProxyPassword = json.get("UpstreamProxyPassword", UPSTREAM_PROXY_PASSWORD_DEFAULT).asString();
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", UPSTREAM_PROXY_HOSTNAME_DEFAULT).asString();
-        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
+        string upstreamProxyAuthenticatedHostname = upstreamProxyHostname;
+
+        if (upstreamProxyUsername.length() > 0 && upstreamProxyPassword.length() > 0) {
+            upstreamProxyAuthenticatedHostname = string("").append(upstreamProxyUsername).append(":").append(upstreamProxyPassword).append("@").append(upstreamProxyHostname);
+        }
+
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyAuthenticatedHostname != Settings::UpstreamProxyAuthenticatedHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
-            upstreamProxyHostname,
+            upstreamProxyAuthenticatedHostname,
             failReason);
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", UPSTREAM_PROXY_PORT_DEFAULT).asUInt();
@@ -264,6 +292,11 @@ bool Settings::FromJson(
 bool Settings::SplitTunnel()
 {
     return !!GetSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
+}
+
+bool Settings::DisableTimeouts()
+{
+    return !!GetSettingDword(DISABLE_TIMEOUTS_NAME, DISABLE_TIMEOUTS_DEFAULT);
 }
 
 tstring Settings::Transport()
@@ -303,7 +336,55 @@ string Settings::UpstreamProxyType()
     return UPSTREAM_PROXY_TYPE_DEFAULT;
 }
 
+string Settings::UpstreamProxyUsername()
+{
+    string username = "";
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    if (upstreamProxyAuthenticatedHostname.length() > 0) {
+        int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+        if (splitIndex != string::npos) {
+            upstreamProxyAuthenticatedHostname = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
+
+            splitIndex = upstreamProxyAuthenticatedHostname.find_first_of(":");
+            username = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
+        }
+    }
+
+   return username;
+}
+
+string Settings::UpstreamProxyPassword()
+{
+    string password = "";
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    if (upstreamProxyAuthenticatedHostname.length() > 0) {
+        int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+        if (splitIndex != string::npos) {
+            upstreamProxyAuthenticatedHostname = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
+
+            splitIndex = upstreamProxyAuthenticatedHostname.find_first_of(":");
+            password = upstreamProxyAuthenticatedHostname.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
+        }
+    }
+
+    return password;
+}
+
 string Settings::UpstreamProxyHostname()
+{
+    string hostname = "";
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    if (upstreamProxyAuthenticatedHostname.length() > 0) {
+        int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+        if (splitIndex != string::npos) {
+            hostname = upstreamProxyAuthenticatedHostname.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
+        }
+    }
+
+    return hostname;
+}
+
+string Settings::UpstreamProxyAuthenticatedHostname()
 {
     return GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
 }
@@ -341,7 +422,7 @@ bool Settings::SkipBrowser()
 {
     return !!GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT);
 }
-    
+
 bool Settings::SkipProxySettings()
 {
     return !!GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT);

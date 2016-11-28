@@ -32,6 +32,7 @@ namespace Settings
     // Returns true if settings changed.
     bool Show(HINSTANCE hInst, HWND hParentWnd);
 
+    bool DisableTimeouts();
     bool SplitTunnel();
     tstring Transport();
     
@@ -42,7 +43,10 @@ namespace Settings
 
     bool SkipUpstreamProxy();
     string UpstreamProxyType();
+    string UpstreamProxyUsername();
+    string UpstreamProxyPassword();
     string UpstreamProxyHostname();
+    string UpstreamProxyAuthenticatedHostname();
     unsigned int UpstreamProxyPort();
 
     string EgressRegion();
