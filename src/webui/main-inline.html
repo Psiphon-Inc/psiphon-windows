@@ -7374,7 +7374,10 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   width: 5em;
 }
 .local-port-unique,
-.upstream-proxy-set-match {
+.upstream-proxy-hostname-port-match,
+.upstream-proxy-username-password-match,
+.upstream-proxy-domain-requires-authentication,
+.upstream-proxy-authentication-requires-hostname-and-port {
   color: #b94a48;
 }
 #EgressRegion {
@@ -12391,7 +12394,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#applying-message": "[Řḗḗƈǿǿƞƞḗḗƈŧīīƞɠ ŧǿǿ ȧȧƥƥŀẏ ẏǿǿŭŭř şḗḗŧŧīīƞɠş.]",
       "settings#disable-timeouts#enable-label": "[Ḓīīşȧȧƀŀḗḗ ŧīīḿḗḗǿǿŭŭŧş ƒǿǿř şŀǿǿẇ ƞḗḗŧẇǿǿřķş]",
       "settings#disable-timeouts#heading": "[Ḓīīşȧȧƀŀḗḗ Ŧīīḿḗḗǿǿŭŭŧş ƒǿǿř Şŀǿǿẇ Ƞḗḗŧẇǿǿřķş]",
-      "settings#disable-timeouts#help-text": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ƈǿǿḿḿŭŭƞīīƈȧȧŧīīǿǿƞ ẇīīŧħ ŧħḗḗ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ẇīīŀŀ ƞǿǿŧ ŧīīḿḗḗ ǿǿŭŭŧ]",
+      "settings#disable-timeouts#help-text": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ƈǿǿḿḿŭŭƞīīƈȧȧŧīīǿǿƞ ẇīīŧħ ŧħḗḗ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ẇīīŀŀ ƞǿǿŧ ŧīīḿḗḗ ǿǿŭŭŧ.]",
       "settings#disable-timeouts#reason": "[Ẇħḗḗƞ ḗḗƞȧȧƀŀīīƞɠ ŧħīīş ǿǿṽḗḗř ȧȧ ṽḗḗřẏ şŀǿǿẇ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ẏǿǿŭŭ ȧȧřḗḗ ŀḗḗşş ŀīīķḗḗŀẏ ŧǿǿ ḗḗẋƥḗḗřīīḗḗƞƈḗḗ ŭŭƞḗḗẋƥḗḗƈŧḗḗḓ ḓīīşƈǿǿƞƞḗḗƈŧīīǿǿƞş.]",
       "settings#egress-region#default": "[Ƈħǿǿǿǿşīīƞɠ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ <strong>“Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ”</strong> ǿǿƥŧīīǿǿƞ ȧȧŀŀǿǿẇş Ƥşīīƥħǿǿƞ ŧǿǿ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƈħǿǿǿǿşḗḗ ȧȧ şḗḗřṽḗḗř, ẇħīīƈħ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ řḗḗşŭŭŀŧ īīƞ ŧħḗḗ ƀḗḗşŧ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ.]",
       "settings#egress-region#description": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ŭŭşīīƞɠ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř īīƞ ȧȧ ƈǿǿŭŭƞŧřẏ ƈŀǿǿşḗḗ ŧǿǿ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ ƥřǿǿṽīīḓḗḗ ȧȧ ƀḗḗŧŧḗḗř ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ ẇīīşħ ŧǿǿ ȧȧƈƈḗḗşş ẇḗḗƀşīīŧḗḗş ȧȧƞḓ şḗḗřṽīīƈḗḗş ŀīīķḗḗ ẏǿǿŭŭ ȧȧřḗḗ ṽīīřŧŭŭȧȧŀŀẏ īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
@@ -12441,6 +12444,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#unapplied-changes-prompt#discard-button": "[Ḓīīşƈȧȧřḓ]",
       "settings#unapplied-changes-prompt#title": "[Şḗḗŧŧīīƞɠş Ƈħȧȧƞɠḗḗḓ]",
       "settings#upstream-proxy#by-default": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀḗḗħȧȧṽīīǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ” şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.]",
+      "settings#upstream-proxy#domain-label": "[Ḓǿǿḿȧȧīīƞ]",
       "settings#upstream-proxy#error-modal-body-configured": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧƞ “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ”.<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ƒīīẋ ŧħḗḗ şḗḗŧŧīīƞɠş ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
       "settings#upstream-proxy#error-modal-body-default": "[Ƥşīīƥħǿǿƞ īīş ƈŭŭřřḗḗƞŧŀẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ ŧǿǿ ŭŭşḗḗ ẏǿǿŭŭř şẏşŧḗḗḿ ƥřǿǿẋẏ ȧȧş īīŧş “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ”.<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ḗḗƞȧȧƀŀḗḗ “Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ” ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
       "settings#upstream-proxy#error-modal-title": "[Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ Ḗḗřřǿǿř]",
@@ -12450,8 +12454,10 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#upstream-proxy#port-label": "[Ƥǿǿřŧ]",
       "settings#upstream-proxy#proxy-reqs": "[Ǿǿƞŀẏ ĦŦŦƤ ƥřǿǿẋīīḗḗş ŧħȧȧŧ şŭŭƥƥǿǿřŧ ĦŦŦƤŞ ȧȧřḗḗ ȧȧŀŀǿǿẇḗḗḓ.]",
       "settings#upstream-proxy#reason": "[Ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋīīḗḗş ȧȧřḗḗ şǿǿḿḗḗŧīīḿḗḗş řḗḗɋŭŭīīřḗḗḓ ƀẏ şƈħǿǿǿǿŀş, ŭŭƞīīṽḗḗřşīīŧīīḗḗş, ǿǿř ƀŭŭşīīƞḗḗşşḗḗş. Īīƒ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ ƥřǿǿṽīīḓḗḗř ħȧȧş ɠīīṽḗḗƞ ẏǿǿŭŭ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş, ŧħḗḗƞ ḿȧȧƞŭŭȧȧŀŀẏ şḗḗŧŧīīƞɠ ŧħḗḗḿ ħḗḗřḗḗ ḿȧȧẏ ƀḗḗ řḗḗɋŭŭīīřḗḗḓ ŧǿǿ ƈǿǿƞƞḗḗƈŧ.]",
+      "settings#upstream-proxy#set-domain-without-authentication-error-msg": "[Şḗḗŧŧīīƞɠ ȧȧ Ḓǿǿḿȧȧīīƞ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ]",
       "settings#upstream-proxy#set-hostname-port-error-msg": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
-      "settings#upstream-proxy#set-username-password-error-msg": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ƥřǿǿẋīīḗḗş ẇħīīƈħ ḓǿǿ ƞǿǿŧ řḗḗɋŭŭīīřḗḗ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
+      "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": "[Şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ ȧȧŀşǿǿ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ]",
+      "settings#upstream-proxy#set-username-password-error-msg": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ƞǿǿ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
       "settings#upstream-proxy#skip-label": "[Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ]",
       "settings#upstream-proxy#username-label": "[Ŭŭşḗḗřƞȧȧḿḗḗ]",
       "settings#vpn-incompatible-label": "[Ŀ2ŦƤ/ĪīƤŞḗḗƈ]",
@@ -12516,7 +12522,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#applying-message": "‮ᴚǝɔouuǝɔʇıuƃ‬ ‮ʇo‬ ‮ɐddʅʎ‬ ‮ʎonɹ‬ ‮sǝʇʇıuƃs‬.",
       "settings#disable-timeouts#enable-label": "‮pısɐqʅǝ‬ ‮ʇıɯǝonʇs‬ ‮ɟoɹ‬ ‮sʅoʍ‬ ‮uǝʇʍoɹʞs‬",
       "settings#disable-timeouts#heading": "‮pısɐqʅǝ‬ ‮⊥ıɯǝonʇs‬ ‮ɟoɹ‬ ‮Sʅoʍ‬ ‮Nǝʇʍoɹʞs‬",
-      "settings#disable-timeouts#help-text": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɔoɯɯnuıɔɐʇıou‬ ‮ʍıʇɥ‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮ʇıɯǝ‬ ‮onʇ‬",
+      "settings#disable-timeouts#help-text": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɔoɯɯnuıɔɐʇıou‬ ‮ʍıʇɥ‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮ʇıɯǝ‬ ‮onʇ‬.",
       "settings#disable-timeouts#reason": "‮Ｍɥǝu‬ ‮ǝuɐqʅıuƃ‬ ‮ʇɥıs‬ ‮oʌǝɹ‬ ‮ɐ‬ ‮ʌǝɹʎ‬ ‮sʅoʍ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮ʎon‬ ‮ɐɹǝ‬ ‮ʅǝss‬ ‮ʅıʞǝʅʎ‬ ‮ʇo‬ ‮ǝxdǝɹıǝuɔǝ‬ ‮nuǝxdǝɔʇǝp‬ ‮pısɔouuǝɔʇıous‬.",
       "settings#egress-region#default": "‮Ↄɥoosıuƃ‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ <strong>“‮ɟɐsʇǝsʇ‬ ‮Ↄonuʇɹʎ‬”</strong> ‮odʇıou‬ ‮ɐʅʅoʍs‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬, ‮ʍɥıɔɥ‬ ‮ʍıʅʅ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮ɹǝsnʅʇ‬ ‮ıu‬ ‮ʇɥǝ‬ ‮qǝsʇ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬.",
       "settings#egress-region#description": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮∩sıuƃ‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮ɔonuʇɹʎ‬ ‮ɔʅosǝ‬ ‮ʇo‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮dɹoʌıpǝ‬ ‮ɐ‬ ‮qǝʇʇǝɹ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ʍısɥ‬ ‮ʇo‬ ‮ɐɔɔǝss‬ ‮ʍǝqsıʇǝs‬ ‮ɐup‬ ‮sǝɹʌıɔǝs‬ ‮ʅıʞǝ‬ ‮ʎon‬ ‮ɐɹǝ‬ ‮ʌıɹʇnɐʅʅʎ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
@@ -12566,6 +12572,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#unapplied-changes-prompt#discard-button": "‮pısɔɐɹp‬",
       "settings#unapplied-changes-prompt#title": "‮Sǝʇʇıuƃs‬ ‮Ↄɥɐuƃǝp‬",
       "settings#upstream-proxy#by-default": "‮Iɟ‬ ‮ʎonɹ‬ ‮ɔoɯdnʇǝɹ‬ ‮ɐʅɹǝɐpʎ‬ ‮ɥɐs‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ɔouɟıƃnɹǝp‬, ‮qʎ‬ ‮pǝɟɐnʅʇ‬ ‮Ԁsıdɥou‬ ‮ʍıʅʅ‬ ‮nsǝ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬ ‮ʍɥǝu‬ ‮ǝsʇɐqʅısɥıuƃ‬ ‮ɐ‬ ‮ʇnuuǝʅ‬. ‮ʎon‬ ‮ɔɐu‬ ‮oʌǝɹɹıpǝ‬ ‮ʇɥɐʇ‬ ‮qǝɥɐʌıoɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ɐ‬ ‮dɹoxʎ‬ ‮ʇo‬ ‮nsǝ‬, ‮oɹ‬ ‮qʎ‬ ‮sdǝɔıɟʎıuƃ‬ ‮ʇɥɐʇ‬ ‮uo‬ ‮snɔɥ‬ “‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬” ‮sɥonʅp‬ ‮qǝ‬ ‮nsǝp‬.",
+      "settings#upstream-proxy#domain-label": "‮poɯɐıu‬",
       "settings#upstream-proxy#error-modal-body-configured": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐu‬ “‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬”.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ɟıx‬ ‮ʇɥǝ‬ ‮sǝʇʇıuƃs‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
       "settings#upstream-proxy#error-modal-body-default": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔnɹɹǝuʇʅʎ‬ ‮ɔouɟıƃnɹǝp‬ ‮ʇo‬ ‮nsǝ‬ ‮ʎonɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮ɐs‬ ‮ıʇs‬ “‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬”.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʍǝ‬ ‮sǝǝɯ‬ ‮ʇo‬ ‮qǝ‬ ‮nuɐqʅǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮ʇo‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ʇɥɹonƃɥ‬ ‮ʇɥɐʇ‬ ‮dɹoxʎ‬.<br>\n‮Ԁʅǝɐsǝ‬ ‮ǝuɐqʅǝ‬ “‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬” ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
       "settings#upstream-proxy#error-modal-title": "‮∩dsʇɹǝɐɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
@@ -12575,8 +12582,10 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#upstream-proxy#port-label": "‮Ԁoɹʇ‬",
       "settings#upstream-proxy#proxy-reqs": "‮Ouʅʎ‬ ‮H⊥⊥Ԁ‬ ‮dɹoxıǝs‬ ‮ʇɥɐʇ‬ ‮snddoɹʇ‬ ‮H⊥⊥ԀS‬ ‮ɐɹǝ‬ ‮ɐʅʅoʍǝp‬.",
       "settings#upstream-proxy#reason": "‮∩dsʇɹǝɐɯ‬ ‮dɹoxıǝs‬ ‮ɐɹǝ‬ ‮soɯǝʇıɯǝs‬ ‮ɹǝbnıɹǝp‬ ‮qʎ‬ ‮sɔɥooʅs‬, ‮nuıʌǝɹsıʇıǝs‬, ‮oɹ‬ ‮qnsıuǝssǝs‬. ‮Iɟ‬ ‮ʎonɹ‬ ‮uǝʇʍoɹʞ‬ ‮dɹoʌıpǝɹ‬ ‮ɥɐs‬ ‮ƃıʌǝu‬ ‮ʎon‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬, ‮ʇɥǝu‬ ‮ɯɐunɐʅʅʎ‬ ‮sǝʇʇıuƃ‬ ‮ʇɥǝɯ‬ ‮ɥǝɹǝ‬ ‮ɯɐʎ‬ ‮qǝ‬ ‮ɹǝbnıɹǝp‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬.",
+      "settings#upstream-proxy#set-domain-without-authentication-error-msg": "‮Sǝʇʇıuƃ‬ ‮ɐ‬ ‮poɯɐıu‬ ‮ɹǝbnıɹǝs‬ ‮sǝʇʇıuƃ‬ ‮ɐ‬ ‮∩sǝɹuɐɯǝ‬ ‮ɐup‬ ‮Ԁɐssʍoɹp‬",
       "settings#upstream-proxy#set-hostname-port-error-msg": "‮ʎon‬ ‮ɯnsʇ‬ ‮sǝʇ‬ ‮qoʇɥ‬ ‮Hosʇuɐɯǝ‬ ‮ɐup‬ ‮Ԁoɹʇ‬, ‮oɹ‬ ‮ʅǝɐʌǝ‬ ‮qoʇɥ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮ɐnʇoɯɐʇıɔ‬ ‮sǝʅǝɔʇıou‬.",
-      "settings#upstream-proxy#set-username-password-error-msg": "‮ʎon‬ ‮ɯnsʇ‬ ‮sǝʇ‬ ‮qoʇɥ‬ ‮∩sǝɹuɐɯǝ‬ ‮ɐup‬ ‮Ԁɐssʍoɹp‬, ‮oɹ‬ ‮ʅǝɐʌǝ‬ ‮qoʇɥ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮dɹoxıǝs‬ ‮ʍɥıɔɥ‬ ‮po‬ ‮uoʇ‬ ‮ɹǝbnıɹǝ‬ ‮ɐnʇɥǝuʇıɔɐʇıou‬.",
+      "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": "‮Sǝʇʇıuƃ‬ ‮ɐ‬ ‮∩sǝɹuɐɯǝ‬ ‮ɐup‬ ‮Ԁɐssʍoɹp‬ ‮ɐʅso‬ ‮ɹǝbnıɹǝs‬ ‮sǝʇʇıuƃ‬ ‮ɐ‬ ‮Hosʇuɐɯǝ‬ ‮ɐup‬ ‮Ԁoɹʇ‬",
+      "settings#upstream-proxy#set-username-password-error-msg": "‮ʎon‬ ‮ɯnsʇ‬ ‮sǝʇ‬ ‮qoʇɥ‬ ‮∩sǝɹuɐɯǝ‬ ‮ɐup‬ ‮Ԁɐssʍoɹp‬, ‮oɹ‬ ‮ʅǝɐʌǝ‬ ‮qoʇɥ‬ ‮qʅɐuʞ‬ ‮ɟoɹ‬ ‮uo‬ ‮ɐnʇɥǝuʇıɔɐʇıou‬.",
       "settings#upstream-proxy#skip-label": "‮pou‬'‮ʇ‬ ‮nsǝ‬ ‮ndsʇɹǝɐɯ‬ ‮dɹoxʎ‬",
       "settings#upstream-proxy#username-label": "‮∩sǝɹuɐɯǝ‬",
       "settings#vpn-incompatible-label": "‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬",
@@ -12736,7 +12745,7 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#split-tunnel#reason": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
       "settings#split-tunnel#enable-label": "Don't proxy websites within your country",
       "settings#disable-timeouts#heading": "Disable Timeouts for Slow Networks",
-      "settings#disable-timeouts#help-text": "If enabled, communication with the Psiphon server will not time out",
+      "settings#disable-timeouts#help-text": "If enabled, communication with the Psiphon server will not time out.",
       "settings#disable-timeouts#reason": "When enabling this over a very slow network connection, you are less likely to experience unexpected disconnections.",
       "settings#disable-timeouts#enable-label": "Disable timeouts for slow networks",
       "settings#egress-region#heading": "Psiphon Server Region",
@@ -12770,13 +12779,16 @@ return t.parent().is(".ui-effects-wrapper")&&(t.parent().replaceWith(t),(t[0]===
       "settings#upstream-proxy#by-default": "If your computer already has a proxy configured, by default Psiphon will use that proxy when establishing a tunnel. You can override that behavior by specifying a proxy to use, or by specifying that no such “upstream proxy” should be used.",
       "settings#upstream-proxy#reason": "Upstream proxies are sometimes required by schools, universities, or businesses. If your network provider has given you upstream proxy settings, then manually setting them here may be required to connect.",
       "settings#upstream-proxy#proxy-reqs": "Only HTTP proxies that support HTTPS are allowed.",
-      "settings#upstream-proxy#username-label": "Username",
-      "settings#upstream-proxy#password-label": "Password",
       "settings#upstream-proxy#hostname-label": "Hostname",
       "settings#upstream-proxy#port-label": "Port",
+      "settings#upstream-proxy#username-label": "Username",
+      "settings#upstream-proxy#password-label": "Password",
+      "settings#upstream-proxy#domain-label": "Domain",
       "settings#upstream-proxy#skip-label": "Don't use upstream proxy",
-      "settings#upstream-proxy#set-username-password-error-msg": "You must set both Username and Password, or leave both blank for proxies which do not require authentication.",
+      "settings#upstream-proxy#set-username-password-error-msg": "You must set both Username and Password, or leave both blank for no authentication.",
       "settings#upstream-proxy#set-hostname-port-error-msg": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+      "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": "Setting a Username and Password also requires setting a Hostname and Port",
+      "settings#upstream-proxy#set-domain-without-authentication-error-msg": "Setting a Domain requires setting a Username and Password",
       "settings#upstream-proxy#error-modal-title": "Upstream Proxy Error",
       "settings#upstream-proxy#error-modal-body-default": "Psiphon is currently configured to use your system proxy as its “upstream proxy”.<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease enable “Don't use upstream proxy” and try again.",
       "settings#upstream-proxy#error-modal-body-configured": "You have configured Psiphon to use an “upstream proxy”.<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease fix the settings and try again.",
@@ -15021,10 +15033,11 @@ $(function settingsInit() {
       LocalHttpProxyPort: 7771,
       LocalSocksProxyPort: 7770,
       SkipUpstreamProxy: 1,
-      UpstreamProxyUsername: 'user',
-      UpstreamProxyPassword: 'password',
       UpstreamProxyHostname: 'upstreamhost',
       UpstreamProxyPort: 234,
+      UpstreamProxyUsername: 'user',
+      UpstreamProxyPassword: 'password',
+      UpstreamProxyDomain: 'domain',
       EgressRegion: 'GB',
       SystrayMinimize: 0,
       defaults: {
@@ -15034,10 +15047,11 @@ $(function settingsInit() {
         LocalHttpProxyPort: '',
         LocalSocksProxyPort: '',
         SkipUpstreamProxy: 0,
-        UpstreamProxyUsername: '',
-        UpstreamProxyPassword: '',
         UpstreamProxyHostname: '',
         UpstreamProxyPort: '',
+        UpstreamProxyUsername: '',
+        UpstreamProxyPassword: '',
+        UpstreamProxyDomain: '',
         EgressRegion: '',
         SystrayMinimize: 0
       }
@@ -15306,6 +15320,14 @@ function fillSettingsValues(obj) {
 
   localProxyValid(false);
 
+  if (typeof(obj.UpstreamProxyHostname) !== 'undefined') {
+    $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
+  }
+
+  if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
+    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : '');
+  }
+  
   if (typeof(obj.UpstreamProxyUsername) !== 'undefined') {
     $('#UpstreamProxyUsername').val(obj.UpstreamProxyUsername);
   }
@@ -15314,12 +15336,8 @@ function fillSettingsValues(obj) {
     $('#UpstreamProxyPassword').val(obj.UpstreamProxyPassword);
   }
   
-  if (typeof(obj.UpstreamProxyHostname) !== 'undefined') {
-    $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
-  }
-
-  if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
-    $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : '');
+  if (typeof(obj.UpstreamProxyDomain) !== 'undefined') {
+    $('#UpstreamProxyDomain').val(obj.UpstreamProxyDomain);
   }
 
   if (typeof(obj.SkipUpstreamProxy) !== 'undefined') {
@@ -15366,10 +15384,11 @@ function getSettingsTabValues() {
     DisableTimeouts: $('#DisableTimeouts').prop('checked') ? 1 : 0,
     LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
     LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
-    UpstreamProxyUsername: $('#UpstreamProxyUsername').val(),
-    UpstreamProxyPassword: $('#UpstreamProxyPassword').val(),
     UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
     UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
+    UpstreamProxyUsername: $('#UpstreamProxyUsername').val(),
+    UpstreamProxyPassword: $('#UpstreamProxyPassword').val(),
+    UpstreamProxyDomain: $('#UpstreamProxyDomain').val(),
     SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
     EgressRegion: egressRegion === BEST_REGION_VALUE ? '' : egressRegion,
     SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0
@@ -15638,7 +15657,7 @@ function localProxyPortConflictNotice(noticeType) {
 // Will be called exactly once. Set up event listeners, etc.
 function upstreamProxySetup() {
   // Handle change events
-  $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyHostname, #UpstreamProxyPort').on(
+  $('#UpstreamProxyHostname, #UpstreamProxyPort, #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain').on(
       'keyup keydown keypress change blur',
       function(event) {
         // We need to delay this processing so that the change to the text has
@@ -15666,7 +15685,9 @@ function upstreamProxySetup() {
 // Shows/hides an error message as appropriate.
 function upstreamProxyValid(finalCheck) {
   // Either the hostname and port have to both be set, or neither,
-  // AND either the username and password must be set, or neither.
+  // AND either the username and password must be set, or neither,
+  // BUT, if the username and password are set, hostname and port must be too
+  // AND if the domain is set, the username and password must be set
   // Unless 'skip' is checked.
   var hostnamePortMatch =
       $('#SkipUpstreamProxy').prop('checked') ||
@@ -15675,7 +15696,30 @@ function upstreamProxyValid(finalCheck) {
   var usernamePasswordMatch =
     $('#SkipUpstreamProxy').prop('checked') ||
     Boolean($('#UpstreamProxyUsername').val()) === Boolean($('#UpstreamProxyPassword').val());
-
+  
+  var domainRequiresAuthentication = true;
+  // skip proxy is not set
+  if (!$('#SkipUpstreamProxy').prop('checked')) {
+    // domain is set
+    if (Boolean($('#UpstreamProxyDomain').val()) === true) {
+      // username and password are not both set
+      if (!(Boolean($('#UpstreamProxyUsername').val()) === true && Boolean($('#UpstreamProxyPassword').val()) === true)) {
+        domainRequiresAuthentication = false;
+      }
+    }
+  }
+  
+  var authenticationRequiresHostnameAndPort = true;
+  // skip proxy is not set
+  if (!$('#SkipUpstreamProxy').prop('checked')) {
+    // username and password are both set
+    if (Boolean($('#UpstreamProxyUsername').val()) === true && Boolean($('#UpstreamProxyPassword').val()) === true) {
+      //hostname and port are not set
+      if (!(Boolean($('#UpstreamProxyHostname').val()) === true && Boolean($('#UpstreamProxyPort').val()) === true)) {
+        authenticationRequiresHostnameAndPort = false;
+      }
+    }
+  }
 
   var portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
 
@@ -15699,18 +15743,28 @@ function upstreamProxyValid(finalCheck) {
     $('#UpstreamProxyUsername, #UpstreamProxyPassword')
       .parents('.control-group').removeClass('error');
   }
+  
+  if (domainRequiresAuthentication) {
+    // Hide the set-match-specific message
+    $('.upstream-proxy-domain-requires-authentication').addClass('hidden');
+  }
+  
+  if (authenticationRequiresHostnameAndPort) {
+    // Hide the set-match-specific message
+    $('.upstream-proxy-authentication-requires-hostname-and-port').addClass('hidden');
+  }
 
-  if (portOK && hostnamePortMatch && usernamePasswordMatch) {
+  if (portOK && hostnamePortMatch && usernamePasswordMatch && domainRequiresAuthentication && authenticationRequiresHostnameAndPort) {
     // No error at all, remove error state
-    $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyHostname, #UpstreamProxyPort')
+    $('#UpstreamProxyHostname, #UpstreamProxyPort, #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
       .parents('.control-group').removeClass('error');
   }
 
   if (!portOK) {
     // Port value bad. Show error while typing
-    $('.help-inline.UpstreamProxyPort')
-      .removeClass('hidden')
+    $('#UpstreamProxyHostname, #UpstreamProxyPort')
       .parents('.control-group').addClass('error');
+    $('.upstream-proxy-hostname-port-match').removeClass('hidden');
   }
 
   if (!hostnamePortMatch && finalCheck) {
@@ -15728,10 +15782,29 @@ function upstreamProxyValid(finalCheck) {
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-username-password-match').removeClass('hidden');
   }
-
+  
+  if (!authenticationRequiresHostnameAndPort && finalCheck) {
+    // Username and password are set, but hostname and port aren't
+    $('#UpstreamProxyHostname, #UpstreamProxyPort')
+      .parents('.control-group').addClass('error');
+    $('.upstream-proxy-authentication-requires-hostname-and-port').removeClass('hidden');
+  }
+  
+  if (!domainRequiresAuthentication && finalCheck) {
+    // Domain is set, but Username and password aren't
+    $('#UpstreamProxyDomain')
+      .parents('.control-group').addClass('error');
+    $('.upstream-proxy-domain-requires-authentication').removeClass('hidden');
+  }
+  
   updateErrorAlert();
 
-  return hostnamePortMatch && usernamePasswordMatch && portOK;
+  return hostnamePortMatch &&
+  portOK &&
+  usernamePasswordMatch &&
+  authenticationRequiresHostnameAndPort &&
+  domainRequiresAuthentication;
+  
 }
 
 // The other upstream proxy settings should be disabled if skip-upstream-proxy
@@ -17587,26 +17660,6 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
                         Only HTTP proxies that support HTTPS are allowed.
                       </p>
                       <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
-                        <label for="UpstreamProxyUsername" class="control-label vpn-incompatible-label"
-                                data-i18n="settings#upstream-proxy#username-label">
-                          Username
-                        </label>
-                        <div class="controls">
-                          <input type="text" id="UpstreamProxyUsername"
-                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-                        </div>
-                      </div>
-                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
-                        <label for="UpstreamProxyPassword" class="control-label vpn-incompatible-label"
-                                data-i18n="settings#upstream-proxy#password-label">
-                          Password
-                        </label>
-                        <div class="controls">
-                          <input type="text" id="UpstreamProxyPassword"
-                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-                        </div>
-                      </div>
-                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
                         <label for="UpstreamProxyHostname" class="control-label vpn-incompatible-label"
                                 data-i18n="settings#upstream-proxy#hostname-label">
                           Hostname
@@ -17629,6 +17682,36 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
                           </span>
                         </div>
                       </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyUsername" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#username-label">
+                          Username
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyUsername"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyPassword" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#password-label">
+                          Password
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyPassword"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyDomain" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#domain-label">
+                          Domain
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyDomain"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
                       <div class="control-group vpn-incompatible">
                         <div class="controls">
                           <div class="checkbox-container">
@@ -17644,13 +17727,23 @@ window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
                         </div>
                       </div>
                       <span class="help-block upstream-proxy-hostname-port-match">
-                        <span data-i18n="settings#upstream-proxy#set-both-hostname-port-error-msg">
+                        <span data-i18n="settings#upstream-proxy#set-hostname-port-error-msg">
                           You must set both Hostname and Port, or leave both blank for automatic selection.
                         </span>
                       </span>
                       <span class="help-block upstream-proxy-username-password-match">
-                        <span data-i18n="settings#upstream-proxy#set-both-username-password-error-msg">
-                          You must set both a Username and Password, or leave both blank.
+                        <span data-i18n="settings#upstream-proxy#set-username-password-error-msg">
+                          You must set both a Username and Password, or leave both blank for no authentication.
+                        </span>
+                      </span>
+                      <span class="help-block upstream-proxy-domain-requires-authentication">
+                        <span data-i18n="settings#upstream-proxy#set-domain-without-authentication-error-msg">
+                          Setting a Domain requires setting a Username and Password.
+                        </span>
+                      </span>
+                      <span class="help-block upstream-proxy-authentication-requires-hostname-and-port">
+                        <span data-i18n="settings#upstream-proxy#set-hostname-port-without-authentication-error-msg">
+                          Setting a Username and Password requires setting a Hostname and Port.
                         </span>
                       </span>
                       <span class="help-block">

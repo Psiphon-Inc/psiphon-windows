@@ -220,7 +220,7 @@
     "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
   },
   "settings#disable-timeouts#help-text": {
-    "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ƈǿǿḿḿŭŭƞīīƈȧȧŧīīǿǿƞ ẇīīŧħ ŧħḗḗ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ẇīīŀŀ ƞǿǿŧ ŧīīḿḗḗ ǿǿŭŭŧ]",
+    "message": "[Īīƒ ḗḗƞȧȧƀŀḗḗḓ, ƈǿǿḿḿŭŭƞīīƈȧȧŧīīǿǿƞ ẇīīŧħ ŧħḗḗ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ẇīīŀŀ ƞǿǿŧ ŧīīḿḗḗ ǿǿŭŭŧ.]",
     "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
   },
   "settings#disable-timeouts#reason": {
@@ -419,6 +419,10 @@
     "message": "[Īīƒ ẏǿǿŭŭř ƈǿǿḿƥŭŭŧḗḗř ȧȧŀřḗḗȧȧḓẏ ħȧȧş ȧȧ ƥřǿǿẋẏ ƈǿǿƞƒīīɠŭŭřḗḗḓ, ƀẏ ḓḗḗƒȧȧŭŭŀŧ Ƥşīīƥħǿǿƞ ẇīīŀŀ ŭŭşḗḗ ŧħȧȧŧ ƥřǿǿẋẏ ẇħḗḗƞ ḗḗşŧȧȧƀŀīīşħīīƞɠ ȧȧ ŧŭŭƞƞḗḗŀ. Ẏǿǿŭŭ ƈȧȧƞ ǿǿṽḗḗřřīīḓḗḗ ŧħȧȧŧ ƀḗḗħȧȧṽīīǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ȧȧ ƥřǿǿẋẏ ŧǿǿ ŭŭşḗḗ, ǿǿř ƀẏ şƥḗḗƈīīƒẏīīƞɠ ŧħȧȧŧ ƞǿǿ şŭŭƈħ “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ” şħǿǿŭŭŀḓ ƀḗḗ ŭŭşḗḗḓ.]",
     "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
   },
+  "settings#upstream-proxy#domain-label": {
+    "message": "[Ḓǿǿḿȧȧīīƞ]",
+    "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+  },
   "settings#upstream-proxy#error-modal-body-configured": {
     "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧƞ “ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ”.<br>\nĦǿǿẇḗḗṽḗḗř, ẇḗḗ şḗḗḗḗḿ ŧǿǿ ƀḗḗ ŭŭƞȧȧƀŀḗḗ ŧǿǿ ƈǿǿƞƞḗḗƈŧ ŧǿǿ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř ŧħřǿǿŭŭɠħ ŧħȧȧŧ ƥřǿǿẋẏ.<br>\nƤŀḗḗȧȧşḗḗ ƒīīẋ ŧħḗḗ şḗḗŧŧīīƞɠş ȧȧƞḓ ŧřẏ ȧȧɠȧȧīīƞ.]",
     "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
@@ -455,12 +459,20 @@
     "message": "[Ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋīīḗḗş ȧȧřḗḗ şǿǿḿḗḗŧīīḿḗḗş řḗḗɋŭŭīīřḗḗḓ ƀẏ şƈħǿǿǿǿŀş, ŭŭƞīīṽḗḗřşīīŧīīḗḗş, ǿǿř ƀŭŭşīīƞḗḗşşḗḗş. Īīƒ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ ƥřǿǿṽīīḓḗḗř ħȧȧş ɠīīṽḗḗƞ ẏǿǿŭŭ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş, ŧħḗḗƞ ḿȧȧƞŭŭȧȧŀŀẏ şḗḗŧŧīīƞɠ ŧħḗḗḿ ħḗḗřḗḗ ḿȧȧẏ ƀḗḗ řḗḗɋŭŭīīřḗḗḓ ŧǿǿ ƈǿǿƞƞḗḗƈŧ.]",
     "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
   },
+  "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+    "message": "[Şḗḗŧŧīīƞɠ ȧȧ Ḓǿǿḿȧȧīīƞ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ]",
+    "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+  },
   "settings#upstream-proxy#set-hostname-port-error-msg": {
     "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
     "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
   },
+  "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+    "message": "[Şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ ȧȧŀşǿǿ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ]",
+    "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+  },
   "settings#upstream-proxy#set-username-password-error-msg": {
-    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ƥřǿǿẋīīḗḗş ẇħīīƈħ ḓǿǿ ƞǿǿŧ řḗḗɋŭŭīīřḗḗ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
+    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ƞǿǿ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
     "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
   },
   "settings#upstream-proxy#skip-label": {
