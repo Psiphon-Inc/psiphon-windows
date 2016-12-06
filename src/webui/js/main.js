@@ -1197,7 +1197,7 @@ function upstreamProxySetup() {
 // Returns true if the upstream proxy values are valid, otherwise false.
 // Shows/hides an error message as appropriate.
 function upstreamProxyValid(finalCheck) {
-  // Either the hostname and port have to both be set, or neither,
+  // Either the hostname and port (which must be an integer in the range 1-65535) have to both be set, or neither,
   // AND either the username and password must be set, or neither,
   // BUT, if the username and password are set, hostname and port must be too
   // AND if the domain is set, the username and password must be set
@@ -1239,6 +1239,10 @@ function upstreamProxyValid(finalCheck) {
   if (portOK) {
     // Hide the port-specific message
     $('.help-inline.UpstreamProxyPort').addClass('hidden');
+  } else {
+    // Port value bad. Show error while typing
+    $('.help-inline.UpstreamProxyPort').removeClass('hidden')
+      .parents('.control-group').addClass('error');
   }
 
   if (hostnamePortMatch) {
@@ -1257,27 +1261,23 @@ function upstreamProxyValid(finalCheck) {
       .parents('.control-group').removeClass('error');
   }
   
-  if (domainRequiresAuthentication) {
-    // Hide the set-match-specific message
-    $('.upstream-proxy-domain-requires-authentication').addClass('hidden');
-  }
-  
   if (authenticationRequiresHostnameAndPort) {
     // Hide the set-match-specific message
     $('.upstream-proxy-authentication-requires-hostname-and-port').addClass('hidden');
   }
-
-  if (portOK && hostnamePortMatch && usernamePasswordMatch && domainRequiresAuthentication && authenticationRequiresHostnameAndPort) {
-    // No error at all, remove error state
-    $('#UpstreamProxyHostname, #UpstreamProxyPort, #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
-      .parents('.control-group').removeClass('error');
+  
+  if (domainRequiresAuthentication) {
+    // Hide the set-match-specific message
+    $('.upstream-proxy-domain-requires-authentication').addClass('hidden');
   }
 
-  if (!portOK) {
-    // Port value bad. Show error while typing
-    $('#UpstreamProxyHostname, #UpstreamProxyPort')
-      .parents('.control-group').addClass('error');
-    $('.upstream-proxy-hostname-port-match').removeClass('hidden');
+  if (portOK &&
+      hostnamePortMatch && usernamePasswordMatch &&
+      domainRequiresAuthentication && authenticationRequiresHostnameAndPort) {
+    // No error at all, remove error state
+    $('#UpstreamProxyHostname, #UpstreamProxyPort, 
+      #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
+      .parents('.control-group').removeClass('error');
   }
 
   if (!hostnamePortMatch && finalCheck) {
@@ -1288,35 +1288,32 @@ function upstreamProxyValid(finalCheck) {
     $('.upstream-proxy-hostname-port-match').removeClass('hidden');
   }
   
-  if (!usernamePasswordMatch && finalCheck) {
-    // Value mismatch. Only show error on final check (so as to not prematurely
-    // show the error while the user is typing).
+  if (!usernamePasswordMatch) {
+    // Username and password aren't both set or unset
     $('#UpstreamProxyUsername, #UpstreamProxyPassword')
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-username-password-match').removeClass('hidden');
   }
   
-  if (!authenticationRequiresHostnameAndPort && finalCheck) {
+  if (!authenticationRequiresHostnameAndPort) {
     // Username and password are set, but hostname and port aren't
     $('#UpstreamProxyHostname, #UpstreamProxyPort')
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-authentication-requires-hostname-and-port').removeClass('hidden');
   }
   
-  if (!domainRequiresAuthentication && finalCheck) {
+  if (!domainRequiresAuthentication) {
     // Domain is set, but Username and password aren't
-    $('#UpstreamProxyDomain')
+    $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-domain-requires-authentication').removeClass('hidden');
   }
   
   updateErrorAlert();
 
-  return hostnamePortMatch &&
-  portOK &&
-  usernamePasswordMatch &&
-  authenticationRequiresHostnameAndPort &&
-  domainRequiresAuthentication;
+  return portOK &&
+  hostnamePortMatch && usernamePasswordMatch &&
+  authenticationRequiresHostnameAndPort && domainRequiresAuthentication;
   
 }
 
