@@ -7,10 +7,6 @@
         "message": "<p>\nVous avez configuré Psiphon pour qu'il utilise un port local spécifique pour son serveur mandataire HTTP.<br>\nCependant, il semble que ce port est déjà utilisé et donc, Psiphon ne peut pas s'en servir.\n</p>\n<p>\nVeuillez changer la valeur de port de mandataire HTTP configurée et ressayer. Nous vous recommandons de supprimer la valeur afin que Psiphon puisse choisir automatiquement un port disponible.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
     },
-    "settings#upstream-proxy#set-both-error-msg": {
-        "message": "Vous devez définir à la fois le nom d'hôte et le port, ou laisser les deux vides pour un choix automatique.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
     "settings#egress-region#select-jp": {
         "message": "Japon",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
@@ -46,6 +42,10 @@
     "appbackend#state-connected-body": {
         "message": "Explorez par-delà vos frontières !",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#disable-timeouts#enable-label": {
+        "message": "Désactiver les dépassements de temps pour les réseaux lents",
+        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
     },
     "settings#egress-region#select-in": {
         "message": "Inde",
@@ -91,12 +91,16 @@
         "message": "<strong>Merci !</strong> Vos commentaires ont été envoyés.",
         "description": "Message shown to user after their feedback has been sent successufully"
     },
+    "settings#upstream-proxy#password-label": {
+        "message": "Mot de passe",
+        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+    },
     "appbackend#state-stopped-title": {
         "message": "Psiphon est déconnecté",
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
     },
     "settings#split-tunnel#help-text": {
-        "message": "Activé, les requêtes faites au serveurs dans votre pays d'origine ne seront pas tunnellisées par Psiphon.",
+        "message": "Si cette option est activée, les requêtes faites au serveurs dans votre pays d'origine ne seront pas tunnellisées par Psiphon.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
     },
     "about#visit-download-site": {
@@ -112,7 +116,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
-        "message": "Activé, la fenêtre d'application de Psiphon minimisée sera cachée dans la zone de notification (située près de l'horloge dans la barre des tâches de Windows).",
+        "message": "Si cette option est activée, la fenêtre d'application de Psiphon minimisée sera cachée dans la zone de notification (située près de l'horloge dans la barre des tâches de Windows).",
         "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
     },
     "settings#upstream-proxy#port-label": {
@@ -138,6 +142,10 @@
     "appbackend#state-starting-title": {
         "message": "Psiphon se connecte",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#egress-region#select-es": {
+        "message": "Espagne",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
     "settings#unapplied-changes-prompt#title": {
         "message": "Paramètres modifiés.",
@@ -247,6 +255,10 @@
         "message": "Les valeurs de vos paramètres comportent des erreurs. Veuillez les corriger avant de continuer.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
+    "settings#disable-timeouts#help-text": {
+        "message": "Si cette option est activée, la communication avec le serveur Psiphon n'arrivera jamais au bout de son temps",
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+    },
     "nav#connection#stopped": {
         "message": "Déconnecté",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
@@ -302,6 +314,10 @@
     "connection#stopped-msg": {
         "message": "Psiphon est <span class=\"state-word\">déconnecté</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "settings#disable-timeouts#reason": {
+        "message": "En activant cette option sur une connexion réseau très lente, il est moins probable que vous soyez déconnecté.",
+        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#about": {
         "message": "À propos",
@@ -367,6 +383,10 @@
         "message": "Seuls les mandataires HTTP prenant en charge HTTPS sont permis.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
+    "settings#upstream-proxy#set-username-password-error-msg": {
+        "message": "Vous devez définir à la fois un nom d'utilisateur et un mot de passe, ou laisser les deux vides pour les mandataires qui n'exigent pas d'authentification.",
+        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
     "settings#transport-mode#check-label": {
         "message": "Utiliser le mode L2TP/IPSec",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -403,6 +423,10 @@
         "message": "Région de serveur Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
+    "settings#disable-timeouts#heading": {
+        "message": "Désactiver les dépassements de temps pour les réseaux lents",
+        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
+    },
     "settings#upstream-proxy#by-default": {
         "message": "Si un mandataire est déjà configuré sur votre ordinateur, par défaut Psiphon utilisera ce mandataire lors de la mise en place d'un tunnel. Vous pouvez passer outre ce comportement en spécifiant un mandataire à utiliser, ou en spécifiant qu'aucun « mandataire ascendant » ne devrait être utilisé.",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
@@ -431,9 +455,17 @@
         "message": "Par-delà les frontières",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
+    "settings#upstream-proxy#username-label": {
+        "message": "Nom d'utilisateur",
+        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+    },
     "connection#wait-btn": {
         "message": "Veuillez patientez...",
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#upstream-proxy#set-hostname-port-error-msg": {
+        "message": "Vous devez définir à la fois le nom d'hôte et le port, ou laisser les deux vides pour une sélection automatique.",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
     },
     "settings#transport-mode#help-text": {
         "message": "Utilise le réseautage virtuel L2TP/IPSec de Windows. Ce mode tunnellisera toutes vos applis, mais ne fournit pas de brouillage, ni de réelle capacité de contournement de la censure. Il <strong>n'est pas recommandé</strong> pour passer outre la plupart des pare-feu.",

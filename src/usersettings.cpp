@@ -65,17 +65,20 @@
 #define UPSTREAM_PROXY_TYPE_NAME        "SSHParentProxyType"
 #define UPSTREAM_PROXY_TYPE_DEFAULT     "https"
 
+#define UPSTREAM_PROXY_HOSTNAME_NAME    "SSHParentProxyHostname"
+#define UPSTREAM_PROXY_HOSTNAME_DEFAULT ""
+
+#define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
+#define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
+
 #define UPSTREAM_PROXY_USERNAME_NAME    "SSHParentProxyUsername"
 #define UPSTREAM_PROXY_USERNAME_DEFAULT ""
 
 #define UPSTREAM_PROXY_PASSWORD_NAME    "SSHParentProxyPassword"
 #define UPSTREAM_PROXY_PASSWORD_DEFAULT ""
 
-#define UPSTREAM_PROXY_HOSTNAME_NAME    "SSHParentProxyHostname"
-#define UPSTREAM_PROXY_HOSTNAME_DEFAULT ""
-
-#define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
-#define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
+#define UPSTREAM_PROXY_DOMAIN_NAME      "SSHParentProxyDomain"
+#define UPSTREAM_PROXY_DOMAIN_DEFAULT   ""
 
 #define SYSTRAY_MINIMIZE_NAME           "SystrayMinimize"
 #define SYSTRAY_MINIMIZE_DEFAULT        FALSE
@@ -178,14 +181,16 @@ void Settings::ToJson(Json::Value& o_json)
 
       o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
       o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
-      o_json["UpstreamProxyUsername"] = Settings::UpstreamProxyUsername();
-      o_json["defaults"]["UpstreamProxyUsername"] = UPSTREAM_PROXY_USERNAME_DEFAULT;
-      o_json["UpstreamProxyPassword"] = Settings::UpstreamProxyPassword();
-      o_json["defaults"]["UpstreamProxyPassword"] = UPSTREAM_PROXY_PASSWORD_DEFAULT;
       o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
       o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
       o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
       o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+      o_json["UpstreamProxyUsername"] = Settings::UpstreamProxyUsername();
+      o_json["defaults"]["UpstreamProxyUsername"] = UPSTREAM_PROXY_USERNAME_DEFAULT;
+      o_json["UpstreamProxyPassword"] = Settings::UpstreamProxyPassword();
+      o_json["defaults"]["UpstreamProxyPassword"] = UPSTREAM_PROXY_PASSWORD_DEFAULT;
+      o_json["UpstreamProxyDomain"] = Settings::UpstreamProxyDomain();
+      o_json["defaults"]["UpstreamProxyDomain"] = UPSTREAM_PROXY_DOMAIN_DEFAULT;
 
       o_json["EgressRegion"] = Settings::EgressRegion();
       o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
@@ -246,11 +251,16 @@ bool Settings::FromJson(
 
         string upstreamProxyUsername = json.get("UpstreamProxyUsername", UPSTREAM_PROXY_USERNAME_DEFAULT).asString();
         string upstreamProxyPassword = json.get("UpstreamProxyPassword", UPSTREAM_PROXY_PASSWORD_DEFAULT).asString();
+        string upstreamProxyDomain = json.get("UpstreamProxyDomain", UPSTREAM_PROXY_DOMAIN_DEFAULT).asString();
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", UPSTREAM_PROXY_HOSTNAME_DEFAULT).asString();
         string upstreamProxyAuthenticatedHostname = upstreamProxyHostname;
 
         if (upstreamProxyUsername.length() > 0 && upstreamProxyPassword.length() > 0) {
-            upstreamProxyAuthenticatedHostname = string("").append(upstreamProxyUsername).append(":").append(upstreamProxyPassword).append("@").append(upstreamProxyHostname);
+            if (upstreamProxyDomain.length() > 0) {
+                upstreamProxyUsername = upstreamProxyDomain + "\\" + upstreamProxyUsername;
+            }
+
+            upstreamProxyAuthenticatedHostname = upstreamProxyUsername + ":" + upstreamProxyPassword + "@" + upstreamProxyHostname;
         }
 
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyAuthenticatedHostname != Settings::UpstreamProxyAuthenticatedHostname();
@@ -336,49 +346,14 @@ string Settings::UpstreamProxyType()
     return UPSTREAM_PROXY_TYPE_DEFAULT;
 }
 
-string Settings::UpstreamProxyUsername()
-{
-    string username = "";
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
-    if (upstreamProxyAuthenticatedHostname.length() > 0) {
-        int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
-        if (splitIndex != string::npos) {
-            upstreamProxyAuthenticatedHostname = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
-
-            splitIndex = upstreamProxyAuthenticatedHostname.find_first_of(":");
-            username = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
-        }
-    }
-
-   return username;
-}
-
-string Settings::UpstreamProxyPassword()
-{
-    string password = "";
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
-    if (upstreamProxyAuthenticatedHostname.length() > 0) {
-        int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
-        if (splitIndex != string::npos) {
-            upstreamProxyAuthenticatedHostname = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
-
-            splitIndex = upstreamProxyAuthenticatedHostname.find_first_of(":");
-            password = upstreamProxyAuthenticatedHostname.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
-        }
-    }
-
-    return password;
-}
-
 string Settings::UpstreamProxyHostname()
 {
     string hostname = "";
     string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
-    if (upstreamProxyAuthenticatedHostname.length() > 0) {
-        int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
-        if (splitIndex != string::npos) {
-            hostname = upstreamProxyAuthenticatedHostname.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
-        }
+    
+    int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+    if (splitIndex != string::npos) {
+        hostname = upstreamProxyAuthenticatedHostname.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
     }
 
     return hostname;
@@ -397,6 +372,56 @@ unsigned int Settings::UpstreamProxyPort()
         port = UPSTREAM_PROXY_PORT_DEFAULT;
     }
     return (unsigned int)port;
+}
+
+string Settings::UpstreamProxyUsername()
+{
+    string username = "";
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+
+    int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+    if (splitIndex != string::npos) {
+        string splitString = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
+
+        splitIndex = splitString.find_first_of(":");
+        username = splitString.substr(0, splitIndex);
+
+        splitIndex = username.find_first_of("\\");
+        if (splitIndex != string::npos) {
+            username = username.substr(splitIndex + 1, username.length() - 1);
+        }
+    }
+
+    return username;
+}
+
+string Settings::UpstreamProxyPassword()
+{
+    string password = "";
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+
+    int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+    if (splitIndex != string::npos) {
+        string splitString = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
+
+        splitIndex = splitString.find_first_of(":");
+        password = splitString.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
+    }
+
+    return password;
+}
+
+string Settings::UpstreamProxyDomain()
+{
+    string domain = "";
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+
+    int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("\\");
+    if (splitIndex != string::npos) {
+        domain = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
+    }
+
+    return domain;
 }
 
 bool Settings::SkipUpstreamProxy()
