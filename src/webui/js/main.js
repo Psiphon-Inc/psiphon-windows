@@ -817,7 +817,7 @@ function fillSettingsValues(obj) {
   if (typeof(obj.DisableTimeouts) !== 'undefined') {
     $('#DisableTimeouts').prop('checked', !!obj.DisableTimeouts);
   }
-  
+
   if (typeof(obj.VPN) !== 'undefined') {
     $('#VPN').prop('checked', obj.VPN);
   }
@@ -840,15 +840,15 @@ function fillSettingsValues(obj) {
   if (typeof(obj.UpstreamProxyPort) !== 'undefined') {
     $('#UpstreamProxyPort').val(obj.UpstreamProxyPort > 0 ? obj.UpstreamProxyPort : '');
   }
-  
+
   if (typeof(obj.UpstreamProxyUsername) !== 'undefined') {
     $('#UpstreamProxyUsername').val(obj.UpstreamProxyUsername);
   }
-  
+
   if (typeof(obj.UpstreamProxyPassword) !== 'undefined') {
     $('#UpstreamProxyPassword').val(obj.UpstreamProxyPassword);
   }
-  
+
   if (typeof(obj.UpstreamProxyDomain) !== 'undefined') {
     $('#UpstreamProxyDomain').val(obj.UpstreamProxyDomain);
   }
@@ -1205,11 +1205,11 @@ function upstreamProxyValid(finalCheck) {
   var hostnamePortMatch =
       $('#SkipUpstreamProxy').prop('checked') ||
       Boolean($('#UpstreamProxyHostname').val()) === Boolean($('#UpstreamProxyPort').val());
-       
+
   var usernamePasswordMatch =
     $('#SkipUpstreamProxy').prop('checked') ||
     Boolean($('#UpstreamProxyUsername').val()) === Boolean($('#UpstreamProxyPassword').val());
-  
+
   var domainRequiresAuthentication = true;
   // skip proxy is not set
   if (!$('#SkipUpstreamProxy').prop('checked')) {
@@ -1221,7 +1221,7 @@ function upstreamProxyValid(finalCheck) {
       }
     }
   }
-  
+
   var authenticationRequiresHostnameAndPort = true;
   // skip proxy is not set
   if (!$('#SkipUpstreamProxy').prop('checked')) {
@@ -1252,7 +1252,7 @@ function upstreamProxyValid(finalCheck) {
     $('#UpstreamProxyHostname')
       .parents('.control-group').removeClass('error');
   }
-  
+
   if (usernamePasswordMatch) {
     // Hide the set-match-specific message
     $('.upstream-proxy-username-password-match').addClass('hidden');
@@ -1260,12 +1260,12 @@ function upstreamProxyValid(finalCheck) {
     $('#UpstreamProxyUsername, #UpstreamProxyPassword')
       .parents('.control-group').removeClass('error');
   }
-  
+
   if (authenticationRequiresHostnameAndPort) {
     // Hide the set-match-specific message
     $('.upstream-proxy-authentication-requires-hostname-and-port').addClass('hidden');
   }
-  
+
   if (domainRequiresAuthentication) {
     // Hide the set-match-specific message
     $('.upstream-proxy-domain-requires-authentication').addClass('hidden');
@@ -1275,8 +1275,7 @@ function upstreamProxyValid(finalCheck) {
       hostnamePortMatch && usernamePasswordMatch &&
       domainRequiresAuthentication && authenticationRequiresHostnameAndPort) {
     // No error at all, remove error state
-    $('#UpstreamProxyHostname, #UpstreamProxyPort, 
-      #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
+    $('#UpstreamProxyHostname, #UpstreamProxyPort, #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
       .parents('.control-group').removeClass('error');
   }
 
@@ -1287,34 +1286,34 @@ function upstreamProxyValid(finalCheck) {
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-hostname-port-match').removeClass('hidden');
   }
-  
+
   if (!usernamePasswordMatch) {
     // Username and password aren't both set or unset
     $('#UpstreamProxyUsername, #UpstreamProxyPassword')
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-username-password-match').removeClass('hidden');
   }
-  
+
   if (!authenticationRequiresHostnameAndPort) {
     // Username and password are set, but hostname and port aren't
     $('#UpstreamProxyHostname, #UpstreamProxyPort')
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-authentication-requires-hostname-and-port').removeClass('hidden');
   }
-  
+
   if (!domainRequiresAuthentication) {
     // Domain is set, but Username and password aren't
     $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain')
       .parents('.control-group').addClass('error');
     $('.upstream-proxy-domain-requires-authentication').removeClass('hidden');
   }
-  
+
   updateErrorAlert();
 
   return portOK &&
   hostnamePortMatch && usernamePasswordMatch &&
   authenticationRequiresHostnameAndPort && domainRequiresAuthentication;
-  
+
 }
 
 // The other upstream proxy settings should be disabled if skip-upstream-proxy
