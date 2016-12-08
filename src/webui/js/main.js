@@ -1227,7 +1227,7 @@ function upstreamProxyValid(finalCheck) {
   if (!$('#SkipUpstreamProxy').prop('checked')) {
     // username and password are both set
     if (Boolean($('#UpstreamProxyUsername').val()) === true && Boolean($('#UpstreamProxyPassword').val()) === true) {
-      //hostname and port are not set
+      // hostname and port are not set
       if (!(Boolean($('#UpstreamProxyHostname').val()) === true && Boolean($('#UpstreamProxyPort').val()) === true)) {
         authenticationRequiresHostnameAndPort = false;
       }
@@ -1251,6 +1251,12 @@ function upstreamProxyValid(finalCheck) {
     $('.upstream-proxy-hostname-port-match').addClass('hidden');
     // And remove error state from hostname (but not from the port value... yet)
     $('#UpstreamProxyHostname')
+
+    if (portOK) {
+      // Remove the error state from the port value
+      $('#UpstreamProxyPort')
+        .parents('.control-group').removeClass('error');
+    }
       .parents('.control-group').removeClass('error');
   }
 
@@ -1269,6 +1275,8 @@ function upstreamProxyValid(finalCheck) {
 
   if (domainRequiresAuthentication) {
     // Hide the domain requires username and passowrd message
+    $('#UpstreamProxyDomain')
+      .parents('.control-group').removeClass('error');
     $('.upstream-proxy-domain-requires-authentication').addClass('hidden')
     // And remove error state from domain field
     $('#UpstreamProxyDomain')
