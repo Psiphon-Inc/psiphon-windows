@@ -1238,7 +1238,8 @@ function upstreamProxyValid(finalCheck) {
 
   if (portOK) {
     // Hide the port-specific message
-    $('.help-inline.UpstreamProxyPort').addClass('hidden');
+    $('.help-inline.UpstreamProxyPort').addClass('hidden')
+      .parents('.control-group').removeClass('error');
   } else {
     // Port value bad. Show error while typing
     $('.help-inline.UpstreamProxyPort').removeClass('hidden')
@@ -1246,7 +1247,7 @@ function upstreamProxyValid(finalCheck) {
   }
 
   if (hostnamePortMatch) {
-    // Hide the set-match-specific message
+    // Hide the hostname and port match message
     $('.upstream-proxy-hostname-port-match').addClass('hidden');
     // And remove error state from hostname (but not from the port value... yet)
     $('#UpstreamProxyHostname')
@@ -1254,21 +1255,24 @@ function upstreamProxyValid(finalCheck) {
   }
 
   if (usernamePasswordMatch) {
-    // Hide the set-match-specific message
+    // Hide the username and password match message
     $('.upstream-proxy-username-password-match').addClass('hidden');
-    // And remove error state from username/password fields (but not from the port value... yet)
+    // And remove error state from username/password fields
     $('#UpstreamProxyUsername, #UpstreamProxyPassword')
       .parents('.control-group').removeClass('error');
   }
 
   if (authenticationRequiresHostnameAndPort) {
-    // Hide the set-match-specific message
+    // Hide the authentication requires hostname and port message
     $('.upstream-proxy-authentication-requires-hostname-and-port').addClass('hidden');
   }
 
   if (domainRequiresAuthentication) {
-    // Hide the set-match-specific message
-    $('.upstream-proxy-domain-requires-authentication').addClass('hidden');
+    // Hide the domain requires username and passowrd message
+    $('.upstream-proxy-domain-requires-authentication').addClass('hidden')
+    // And remove error state from domain field
+    $('#UpstreamProxyDomain')
+      .parents('.control-group').removeClass('error');
   }
 
   if (portOK &&
