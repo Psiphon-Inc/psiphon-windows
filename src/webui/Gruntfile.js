@@ -78,7 +78,7 @@ module.exports = function(grunt) {
         dest: 'js/locales.js'
       }
     },
-    
+
     // When any of the main files change, rebuild everything. This could be
     // improved by splitting off what's changed and doing different things
     watch: {
@@ -88,14 +88,17 @@ module.exports = function(grunt) {
             options: {},
         }
     },
-    
+
     connect: {
         server: {
             options: {
+                hostname: '0.0.0.0',
                 port: 9000,
-                base: '.',
-                options: {
-                    index: 'main-inline.html'
+                base: {
+                    path: '.',
+                    options: {
+                        index: 'main-inline.html'
+                    }
                 }
             }
         }

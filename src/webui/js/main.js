@@ -1251,13 +1251,13 @@ function upstreamProxyValid(finalCheck) {
     $('.upstream-proxy-hostname-port-match').addClass('hidden');
     // And remove error state from hostname (but not from the port value... yet)
     $('#UpstreamProxyHostname')
+      .parents('.control-group').removeClass('error');
 
     if (portOK) {
       // Remove the error state from the port value
       $('#UpstreamProxyPort')
         .parents('.control-group').removeClass('error');
     }
-      .parents('.control-group').removeClass('error');
   }
 
   if (usernamePasswordMatch) {
@@ -1274,7 +1274,7 @@ function upstreamProxyValid(finalCheck) {
   }
 
   if (domainRequiresAuthentication) {
-    // Hide the domain requires username and passowrd message
+    // Hide the domain requires username and password message
     $('#UpstreamProxyDomain')
       .parents('.control-group').removeClass('error');
     $('.upstream-proxy-domain-requires-authentication').addClass('hidden')
@@ -1291,7 +1291,7 @@ function upstreamProxyValid(finalCheck) {
       .parents('.control-group').removeClass('error');
   }
 
-  if (!hostnamePortMatch && finalCheck) {
+  if (!hostnamePortMatch) {
     // Value mismatch. Only show error on final check (so as to not prematurely
     // show the error while the user is typing).
     $('#UpstreamProxyHostname, #UpstreamProxyPort')
