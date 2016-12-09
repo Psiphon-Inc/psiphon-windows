@@ -23,6 +23,10 @@
         "message": "Логи",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "Setting a Domain requires setting a Username and Password",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
     "settings#error-alert": {
         "message": "<strong>Ошибка!</strong> Для продолжения исправьте неверные значения.",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
@@ -256,7 +260,7 @@
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "settings#disable-timeouts#help-text": {
-        "message": "При включении этой настройки, связь с сервером Psiphon не разъединится.",
+        "message": "If enabled, communication with the Psiphon server will not time out.",
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
     },
     "nav#connection#stopped": {
@@ -384,7 +388,7 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Вы должны установить Логин и Пароль, либо оставить оба поля пустыми для прокси-серверов, которые не требуют аутентификации.",
+        "message": "You must set both Username and Password, or leave both blank for no authentication.",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#transport-mode#check-label": {
@@ -423,6 +427,10 @@
         "message": "Регион сервера Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "Setting a Username and Password also requires setting a Hostname and Port",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
     "settings#disable-timeouts#heading": {
         "message": "Отключение лимита времени соединения для медленных сетей",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
@@ -450,6 +458,10 @@
     "feedback#smiley_happy": {
         "message": "Psiphon соединяется и работает так, как мне нужно.",
         "description": "The text below the 'happy face' feedback choice."
+    },
+    "settings#upstream-proxy#domain-label": {
+        "message": "Domain",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
     },
     "about#wordart-tag": {
         "message": "Без Границ",

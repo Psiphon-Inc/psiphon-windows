@@ -23,6 +23,10 @@
         "message": "Journaux",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "En définissant un nom d'hôte, il est aussi exigé de définir un nom d'utilisateur et un mot de passe",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
     "settings#error-alert": {
         "message": "<strong>Erreur !</strong> Veuillez corriger les valeurs erronées avant de continuer.",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
@@ -256,7 +260,7 @@
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "settings#disable-timeouts#help-text": {
-        "message": "Si cette option est activée, la communication avec le serveur Psiphon n'arrivera jamais au bout de son temps",
+        "message": "Si cette option est activée, la communication avec le serveur Psiphon n'arrivera jamais au bout de son délai.",
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
     },
     "nav#connection#stopped": {
@@ -384,7 +388,7 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Vous devez définir à la fois un nom d'utilisateur et un mot de passe, ou laisser les deux vides pour les mandataires qui n'exigent pas d'authentification.",
+        "message": "Vous devez définir à la fois un nom d'utilisateur et un mot de passe, ou laisser les deux vides s'il n'y a pas d'authentification.",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#transport-mode#check-label": {
@@ -423,6 +427,10 @@
         "message": "Région de serveur Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "En définissant un nom d'utilisateur et un mot de passe, il est aussi exigé de définir un nom d'hôte et un port",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
     "settings#disable-timeouts#heading": {
         "message": "Désactiver les dépassements de temps pour les réseaux lents",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
@@ -450,6 +458,10 @@
     "feedback#smiley_happy": {
         "message": "Psiphon se connecte et fonctionne comme je le veux.",
         "description": "The text below the 'happy face' feedback choice."
+    },
+    "settings#upstream-proxy#domain-label": {
+        "message": "Domaine",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
     },
     "about#wordart-tag": {
         "message": "Par-delà les frontières",
