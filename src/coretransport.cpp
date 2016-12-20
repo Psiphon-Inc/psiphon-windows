@@ -453,7 +453,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             // TODO: proceed anyway?
             return false;
         }
-        config["ObfusatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
+        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
     }
 
     ostringstream configDataStream;
