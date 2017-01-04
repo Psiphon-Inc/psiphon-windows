@@ -77,16 +77,43 @@ module.exports = function(grunt) {
         src: '_locales/',
         dest: 'js/locales.js'
       }
-    }
+    },
 
+    // When any of the main files change, rebuild everything. This could be
+    // improved by splitting off what's changed and doing different things
+    watch: {
+        inline: {
+            files: ['main.html', 'js/*.js', 'css/main.css', 'css/main.less', '_locales/**/*.json'],
+            tasks: ['default'],
+            options: {},
+        }
+    },
+
+    connect: {
+        server: {
+            options: {
+                hostname: '0.0.0.0',
+                port: 9000,
+                base: {
+                    path: '.',
+                    options: {
+                        index: 'main-inline.html'
+                    }
+                }
+            }
+        }
+    }
   });
 
   grunt.loadNpmTasks('grunt-execute');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-inline');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   grunt.registerTask('default', ['execute', 'concat', 'less', 'locales', 'inline']);
+  grunt.registerTask('serve', ['default', 'connect', 'watch']);
 
   grunt.registerMultiTask(
     'locales',
