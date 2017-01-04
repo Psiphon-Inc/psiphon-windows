@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -150,15 +150,15 @@ void CoreTransport::GetFactory(
 }
 
 
-tstring CoreTransport::GetTransportProtocolName() const 
+tstring CoreTransport::GetTransportProtocolName() const
 {
     return CORE_TRANSPORT_PROTOCOL_NAME;
 }
 
 
-tstring CoreTransport::GetTransportDisplayName() const 
-{ 
-    return CORE_TRANSPORT_DISPLAY_NAME; 
+tstring CoreTransport::GetTransportDisplayName() const
+{
+    return CORE_TRANSPORT_DISPLAY_NAME;
 }
 
 
@@ -261,7 +261,7 @@ bool CoreTransport::RequestingUrlProxyWithoutTunnel()
         m_tempConnectServerEntry->serverAddress.empty();
 }
 
-    
+
 void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
@@ -344,6 +344,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
     config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
+    config["ObfuscatedServerListRootURL"] = OBFUSCATED_SERVER_LIST_ROOT_URL;
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
@@ -371,6 +372,18 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["SplitTunnelDnsServer"] = SPLIT_TUNNEL_DNS_SERVER;
     }
 
+    if (Settings::DisableTimeouts())
+    {
+        config["TunnelConnectTimeoutSeconds"] = 0;
+        config["TunnelPortForwardDialTimeoutSeconds"] = 0;
+        config["TunnelSshKeepAliveProbeTimeoutSeconds"] = 0;
+        config["TunnelSshKeepAlivePeriodicTimeoutSeconds"] = 0;
+        config["FetchRemoteServerListTimeoutSeconds"] = 0;
+        config["PsiphonApiServerTimeoutSeconds"] = 0;
+        config["FetchRoutesTimeoutSeconds"] = 0;
+        config["HttpProxyOriginServerTimeoutSeconds"] = 0;
+    }
+
     // In temporary tunnel mode, only the specific server should be connected to,
     // and a handshake is not performed.
     // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
@@ -392,7 +405,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
         if (RequestingUrlProxyWithoutTunnel())
         {
-            // The URL proxy can and will be used while the main tunnel is connected, 
+            // The URL proxy can and will be used while the main tunnel is connected,
             // and multiple URL proxies might be used concurrently. Each one may/will
             // try to open/create the tunnel-core datastore, so conflicts will occur
             // if they try to use the same datastore directory as the main tunnel or
@@ -431,6 +444,16 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         auto remoteServerListFilename = filesystem::path(dataStoreDirectory)
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
         config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
+
+        auto oslDownloadDirectory = filesystem::path(appDataPath)
+                                                .append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY).append("osl");
+        if (!CreateDirectory(oslDownloadDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+            // TODO: proceed anyway?
+            return false;
+        }
+        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
     }
 
     ostringstream configDataStream;
@@ -445,7 +468,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // proxy instances could clobber each other's config file?
 
     auto configPath = filesystem::path(dataStoreDirectory);
-    if (RequestingUrlProxyWithoutTunnel()) 
+    if (RequestingUrlProxyWithoutTunnel())
     {
         configPath.append(LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME);
     }
@@ -492,7 +515,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     return true;
 }
 
-    
+
 string CoreTransport::GetUpstreamProxyAddress()
 {
     // Note: upstream SOCKS proxy and proxy auth currently not supported
@@ -505,12 +528,12 @@ string CoreTransport::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (Settings::UpstreamProxyHostname().length() > 0 && 
+    if (Settings::UpstreamProxyAuthenticatedHostname().length() > 0 &&
         Settings::UpstreamProxyPort() &&
         Settings::UpstreamProxyType() == "https")
     {
         // Use a custom, user-set upstream proxy
-        upstreamProxyAddress << Settings::UpstreamProxyHostname() << ":" << Settings::UpstreamProxyPort();
+        upstreamProxyAddress << Settings::UpstreamProxyAuthenticatedHostname() << ":" << Settings::UpstreamProxyPort();
     }
     else
     {
@@ -620,7 +643,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
     // You need to make sure that no handles to the write end of the
     // output pipe are maintained in this process or else the pipe will
     // not close when the child process exits and the ReadFile will hang.
-    
+
     if (!CloseHandle(startupInfo.hStdOutput))
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
@@ -634,7 +657,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
         CloseHandle(m_pipe);
         return false;
     }
-    
+
     WaitForInputIdle(m_processInfo.hProcess, 5000);
 
     return true;

@@ -434,6 +434,53 @@
 
             <div class="accordion-group">
               <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-disable-timeouts"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#disable-timeouts#heading">
+                    Disable Timeouts for Slow Networks
+                  </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-disable-timeouts" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <p data-i18n="settings#disable-timeouts#help-text">
+                        If enabled, communication with the Psiphon server will not time out
+                      </p>
+                      <p data-i18n="settings#disable-timeouts#reason">
+                        When enabling this over a very slow network connection, you are
+                        less likely to experience unexpected disconnections.
+                      </p>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="DisableTimeouts"/>
+                          <label for="DisableTimeouts">
+                            <span data-i18n="settings#disable-timeouts#enable-label">
+                              Disable timeouts for slow networks
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with L2TP/IPSec mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-egress-region"
                    data-toggle="collapse" data-parent="#settings-accordion">
                   <i class="accordion-expand-icon icon-plus-square"
@@ -633,11 +680,15 @@
                   <span data-i18n="settings#upstream-proxy#heading">
                     Upstream Proxy
                   </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
                 </a>
               </div>
               <div id="settings-accordion-upstream-proxy" class="accordion-body collapse">
                 <div class="accordion-inner">
-                  <form class="form-horizontal">
+                  <form class="form-horizontal vpn-incompatible">
                     <fieldset>
                       <p data-i18n="settings#upstream-proxy#by-default">
                         If your computer already has a proxy configured, by
@@ -655,8 +706,8 @@
                       <p data-i18n="settings#upstream-proxy#proxy-reqs">
                         Only HTTP proxies that support HTTPS are allowed.
                       </p>
-                      <div class="control-group skip-upstream-proxy-incompatible">
-                        <label for="UpstreamProxyHostname" class="control-label"
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyHostname" class="control-label vpn-incompatible-label"
                                 data-i18n="settings#upstream-proxy#hostname-label">
                           Hostname
                         </label>
@@ -665,8 +716,8 @@
                                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                         </div>
                       </div>
-                      <div class="control-group skip-upstream-proxy-incompatible">
-                        <label for="UpstreamProxyPort" class="control-label"
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyPort" class="control-label vpn-incompatible-label"
                                 data-i18n="settings#upstream-proxy#port-label">
                           Port
                         </label>
@@ -678,7 +729,37 @@
                           </span>
                         </div>
                       </div>
-                      <div class="control-group">
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyUsername" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#username-label">
+                          Username
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyUsername"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyPassword" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#password-label">
+                          Password
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyPassword"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyDomain" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#domain-label">
+                          Domain
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyDomain"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group vpn-incompatible">
                         <div class="controls">
                           <div class="checkbox-container">
                             <div class="checkbox">
@@ -692,10 +773,30 @@
                           </div>
                         </div>
                       </div>
-                      <span class="help-block upstream-proxy-set-match">
-                        <span data-i18n="settings#upstream-proxy#set-both-error-msg">
+                      <span class="help-block upstream-proxy-hostname-port-match">
+                        <span data-i18n="settings#upstream-proxy#set-hostname-port-error-msg">
                           You must set both Hostname and Port, or leave both blank for automatic selection.
                         </span>
+                      </span>
+                      <span class="help-block upstream-proxy-username-password-match">
+                        <span data-i18n="settings#upstream-proxy#set-username-password-error-msg">
+                          You must set both a Username and Password, or leave both blank for no authentication.
+                        </span>
+                      </span>
+                      <span class="help-block upstream-proxy-authentication-requires-hostname-and-port">
+                        <span data-i18n="settings#upstream-proxy#set-hostname-port-without-authentication-error-msg">
+                          Setting a Username and Password requires setting a Hostname and Port.
+                        </span>
+                      </span>
+                      <span class="help-block upstream-proxy-domain-requires-authentication">
+                        <span data-i18n="settings#upstream-proxy#set-domain-without-authentication-error-msg">
+                          Setting a Domain requires setting a Username and Password.
+                        </span>
+                      </span>
+                      <span class="help-block">
+                          <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                            (Doesn't work with L2TP/IPSec mode.)
+                          </small>
                       </span>
                     </fieldset>
                   </form>
