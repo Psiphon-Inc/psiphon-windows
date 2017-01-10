@@ -55,7 +55,8 @@ CoreTransport::CoreTransport()
       m_localSocksProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_hasEverConnected(false),
-      m_isConnected(false)
+      m_isConnected(false),
+      m_clientUpgradeDownloadHandled(false)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -268,10 +269,19 @@ void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
 
-    tstring configFilename, serverListFilename;
-    if (!WriteParameterFiles(configFilename, serverListFilename))
+    tstring configFilename, serverListFilename, clientUpgradeFilename;
+    if (!WriteParameterFiles(configFilename, serverListFilename, clientUpgradeFilename))
     {
         throw TransportFailed();
+    }
+
+    // CoreTransport should never restart without the actual application restarting. If there is a pending upgrade,
+    // when disconnect/connect is pressed (or a new region is chosen, upstream proxy settings are changed, etc.)
+    // the application is killed and relaunched with the new image. It is not deleted on a successful pave to prevent
+    // re-download. When CoreTransport starts, we assume it's with the new binary, and deleting the .upgrade file is safe.
+    if (!DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+    {
+        my_print(NOT_SENSITIVE, false, _T("Failed to delete previously applied upgrade package! Please report this error."));
     }
 
     // Run core process; it will begin establishing a tunnel
@@ -313,7 +323,7 @@ void CoreTransport::TransportConnectHelper()
 }
 
 
-bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename)
+bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
 {
     TCHAR path[MAX_PATH];
     if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
@@ -340,7 +350,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
-    auto upgradeFilePath = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
+    clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
     Json::Value config;
     config["ClientPlatform"] = CLIENT_PLATFORM;
@@ -355,7 +365,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
     config["UpgradeDownloadUrl"] = string("https://") + UPGRADE_ADDRESS + UPGRADE_REQUEST_PATH;
-    config["UpgradeDownloadFilename"] = WStringToUTF8(upgradeFilePath);
+    config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
     config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
@@ -721,6 +731,79 @@ void CoreTransport::ConsumeCoreProcessOutput()
     delete buffer;
 }
 
+bool CoreTransport::ValidateAndPaveUpgrade(const tstring clientUpgradeFilename) {
+    bool processingSuccessful = true;
+
+    HANDLE hFile = CreateFile(
+        clientUpgradeFilename.c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        NULL, // default security
+        OPEN_EXISTING, // existing file only
+        FILE_ATTRIBUTE_NORMAL,
+        NULL); // no attr. template
+
+    if (hFile == INVALID_HANDLE_VALUE) {
+        processingSuccessful = false;
+        my_print(NOT_SENSITIVE, false, _T("%s: Could not get a valid file handle: %d."), __TFUNCTION__, GetLastError());
+    }
+
+    if (processingSuccessful) {
+        DWORD dwFileSize = GetFileSize(hFile, NULL);
+        unique_ptr<BYTE> inBuffer(new BYTE[dwFileSize]);
+        if (!inBuffer)
+        {
+            processingSuccessful = false;
+            my_print(NOT_SENSITIVE, false, _T("%s: Could not allocate an input buffer."), __TFUNCTION__);
+        }
+
+        if (processingSuccessful) {
+            DWORD dwBytesToRead = dwFileSize;
+            DWORD dwBytesRead = 0;
+            OVERLAPPED stOverlapped = { 0 };
+            string downloadFileString;
+
+            if (TRUE == ReadFile(hFile, inBuffer.get(), dwBytesToRead, &dwBytesRead, NULL)) {
+                if (verifySignedDataPackage(
+                    UPGRADE_SIGNATURE_PUBLIC_KEY,
+                    (const char *)inBuffer.get(),
+                    dwFileSize,
+                    true, // gzip compressed
+                    downloadFileString))
+                {
+                    // Data in the package is Base64 encoded
+                    downloadFileString = Base64Decode(downloadFileString);
+
+                    if (downloadFileString.length() > 0) {
+                        m_upgradePaver->PaveUpgrade(downloadFileString);
+                    }
+                }
+                else {
+                    // Bad package. Log and continue.
+                    processingSuccessful = false;
+                    my_print(NOT_SENSITIVE, false, _T("%s: Upgrade package verification failed! Please report this error."), __TFUNCTION__);
+                }
+            }
+        }
+    }
+
+    CloseHandle(hFile);
+
+    if (!processingSuccessful) {
+        // If the file isn't working and we think we have the complete file,
+        // there may be corrupt bytes. So delete it and next time we'll start over.
+        // NOTE: this means if the failure was due to not enough free space
+        // to write the extracted file... we still re-download.
+        if (!DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+        {
+            my_print(NOT_SENSITIVE, false, _T("Failed to delete invalid upgrade package! Please report this error."));
+        }
+    }
+
+    // If the extract and verify succeeded, don't delete it to prevent re-downloading.
+    // TransportConnect will check for the existence of this file and delete it itself.
+    return processingSuccessful;
+}
 
 void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 {
@@ -782,65 +865,11 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
                 m_hasEverConnected = true;
             }
         }
-        else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL) {
-          HANDLE hFile = CreateFile(
-            UTF8ToWString(data["filename"].asString()).c_str(),
-            GENERIC_READ,
-            FILE_SHARE_READ,
-            NULL, // default security
-            OPEN_EXISTING, // existing file only
-            FILE_ATTRIBUTE_NORMAL,
-            NULL); // no attr. template
-
-          if (hFile == INVALID_HANDLE_VALUE) {
-            my_print(NOT_SENSITIVE, false, _T("Could not get a valid file handle: %s - (%d)."), __TFUNCTION__, GetLastError());
-            return;
-          }
-
-          DWORD dwFileSize = GetFileSize(hFile, NULL);
-          unique_ptr<BYTE> inBuffer(new BYTE[dwFileSize]);
-          if (!inBuffer)
-          {
-            throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
-          }
-
-          DWORD dwBytesToRead = dwFileSize;
-          DWORD dwBytesRead = 0;
-          OVERLAPPED stOverlapped = { 0 };
-          string downloadFileString;
-
-          if (TRUE == ReadFile(hFile, inBuffer.get(), dwBytesToRead, &dwBytesRead, NULL)) {
-            if (verifySignedDataPackage(
-              UPGRADE_SIGNATURE_PUBLIC_KEY,
-              (const char *)inBuffer.get(),
-              dwFileSize,
-              true, // gzip compressed
-              downloadFileString))
-            {
-              // Data in the package is Base64 encoded
-              downloadFileString = Base64Decode(downloadFileString);
-
-              if (downloadFileString.length() > 0) {
-                m_upgradePaver->PaveUpgrade(downloadFileString);
-              }
+        else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL && m_clientUpgradeDownloadHandled == false) {
+            m_clientUpgradeDownloadHandled = true;
+            if (!ValidateAndPaveUpgrade(UTF8ToWString(data["filename"].asString()))) {
+                m_clientUpgradeDownloadHandled = false;
             }
-            else {
-              // Bad package. Log and continue.
-              my_print(NOT_SENSITIVE, false, _T("Upgrade package verification failed! Please report this error."));
-            }
-          }
-
-          // If the extract and verify succeeds, delete it since it's no longer
-          // required and we don't want to re-install it.
-          // If the file isn't working and we think we have the complete file,
-          // there may be corrupt bytes. So delete it and next time we'll start over.
-          // NOTE: this means if the failure was due to not enough free space
-          // to write the extracted file... we still re-download.
-          CloseHandle(hFile);
-          if (!DeleteFile(UTF8ToWString(data["filename"].asString()).c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
-          {
-              throw std::exception("Upgrade - DeleteFile failed");
-          }
         }
         else if (noticeType == "Homepage")
         {

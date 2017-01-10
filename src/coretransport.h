@@ -61,10 +61,11 @@ protected:
 
     bool RequestingUrlProxyWithoutTunnel();
     void TransportConnectHelper();
-    bool WriteParameterFiles(tstring& configFilename, tstring& serverListFilename);
+    bool WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename);
     string GetUpstreamProxyAddress();
     bool SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename);
     void ConsumeCoreProcessOutput();
+    bool ValidateAndPaveUpgrade(const tstring clientUpgradeFilename);
     void HandleCoreProcessOutputLine(const char* line);
 
 protected:
@@ -76,5 +77,6 @@ protected:
     string m_pipeBuffer;
     bool m_hasEverConnected;
     bool m_isConnected;
+    bool m_clientUpgradeDownloadHandled;
     string m_lastUpstreamProxyErrorMessage;
 };
