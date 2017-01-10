@@ -275,11 +275,11 @@ void CoreTransport::TransportConnectHelper()
         throw TransportFailed();
     }
 
-    // CoreTransport should never restart without the actual application restarting. If there is a pending upgrade,
-    // when disconnect/connect is pressed (or a new region is chosen, upstream proxy settings are changed, etc.)
-    // the application is killed and relaunched with the new image. It is not deleted on a successful pave to prevent
-    // re-download. When CoreTransport starts, we assume it's with the new binary, and deleting the .upgrade file is safe.
-    if (!DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+    // Once a new upgrade has been paved, CoreTransport should never restart without the actual application restarting.
+    // If there is a pending upgrade, when disconnect/connect is pressed (or a new region is chosen, upstream proxy settings change, etc.)
+    // the application is killed and relaunched with the new image. The upgrade package is not immediately deleted on a successful pave
+    // to prevent re-download. When CoreTransport starts, we assume it's with the new binary, and deleting the .upgrade file is safe.
+    if (!clientUpgradeFilename.empty() && !DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to delete previously applied upgrade package! Please report this error."));
     }
@@ -732,7 +732,7 @@ void CoreTransport::ConsumeCoreProcessOutput()
 }
 
 bool CoreTransport::ValidateAndPaveUpgrade(const tstring clientUpgradeFilename) {
-    bool processingSuccessful = true;
+    bool processingSuccessful = false;
 
     HANDLE hFile = CreateFile(
         clientUpgradeFilename.c_str(),
@@ -744,20 +744,16 @@ bool CoreTransport::ValidateAndPaveUpgrade(const tstring clientUpgradeFilename) 
         NULL); // no attr. template
 
     if (hFile == INVALID_HANDLE_VALUE) {
-        processingSuccessful = false;
         my_print(NOT_SENSITIVE, false, _T("%s: Could not get a valid file handle: %d."), __TFUNCTION__, GetLastError());
     }
-
-    if (processingSuccessful) {
+    else {
         DWORD dwFileSize = GetFileSize(hFile, NULL);
         unique_ptr<BYTE> inBuffer(new BYTE[dwFileSize]);
-        if (!inBuffer)
-        {
+        if (!inBuffer) {
             processingSuccessful = false;
             my_print(NOT_SENSITIVE, false, _T("%s: Could not allocate an input buffer."), __TFUNCTION__);
         }
-
-        if (processingSuccessful) {
+        else {
             DWORD dwBytesToRead = dwFileSize;
             DWORD dwBytesRead = 0;
             OVERLAPPED stOverlapped = { 0 };
@@ -777,25 +773,24 @@ bool CoreTransport::ValidateAndPaveUpgrade(const tstring clientUpgradeFilename) 
                     if (downloadFileString.length() > 0) {
                         m_upgradePaver->PaveUpgrade(downloadFileString);
                     }
-                }
-                else {
-                    // Bad package. Log and continue.
-                    processingSuccessful = false;
-                    my_print(NOT_SENSITIVE, false, _T("%s: Upgrade package verification failed! Please report this error."), __TFUNCTION__);
+
+                    processingSuccessful = true;
                 }
             }
         }
+
+        CloseHandle(hFile);
     }
 
-    CloseHandle(hFile);
-
     if (!processingSuccessful) {
+        // Bad package. Log and continue.
+        my_print(NOT_SENSITIVE, false, _T("%s: Upgrade package verification failed! Please report this error."), __TFUNCTION__);
+
         // If the file isn't working and we think we have the complete file,
         // there may be corrupt bytes. So delete it and next time we'll start over.
         // NOTE: this means if the failure was due to not enough free space
         // to write the extracted file... we still re-download.
-        if (!DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
-        {
+        if (!DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND) {
             my_print(NOT_SENSITIVE, false, _T("Failed to delete invalid upgrade package! Please report this error."));
         }
     }
