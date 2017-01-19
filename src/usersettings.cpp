@@ -348,14 +348,13 @@ string Settings::UpstreamProxyType()
 
 string Settings::UpstreamProxyHostname()
 {
-    string hostname = "";
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    string hostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
     
-    int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
+    int splitIndex = hostname.find_first_of("@");
     if (splitIndex != string::npos) {
-        hostname = upstreamProxyAuthenticatedHostname.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
+        hostname = hostname.substr(splitIndex + 1, hostname.length() - 1);
     }
-
+    
     return hostname;
 }
 
