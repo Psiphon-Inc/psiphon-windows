@@ -862,9 +862,15 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         }
         else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL && m_clientUpgradeDownloadHandled == false) {
             m_clientUpgradeDownloadHandled = true;
+
+            my_print(NOT_SENSITIVE, false, _T("A client upgrade has been downloaded..."));
             if (!ValidateAndPaveUpgrade(UTF8ToWString(data["filename"].asString()))) {
                 m_clientUpgradeDownloadHandled = false;
             }
+            my_print(NOT_SENSITIVE, false, _T("Psiphon has been updated. The new version will launch the next time Psiphon starts."));
+
+            // Don't include in diagnostics as "filename" is private user data
+            logOutputToDiagnostics = false;
         }
         else if (noticeType == "Homepage")
         {
