@@ -36,7 +36,8 @@ static const int IGNORE_SYSTEM_SERVER_LIST = 0;
 static const char* REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY = "";
 static const char* REMOTE_SERVER_LIST_ADDRESS = "s3.amazonaws.com";
 static const char* REMOTE_SERVER_LIST_REQUEST_PATH = "invalid_bucket_name/server_list";
-static const char* OBFUSCATED_SERVER_LIST_ROOT_URL = "";
+static const char* REMOTE_SERVER_LIST_URLS_JSON = "{}";
+static const char* OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON = "{}";
 
 // These values are used when uploading diagnostic info
 static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
@@ -51,6 +52,7 @@ static const TCHAR* INFO_LINK_URL
 static const char* UPGRADE_SIGNATURE_PUBLIC_KEY = "";
 static const char* UPGRADE_ADDRESS = "s3.amazonaws.com";
 static const char* UPGRADE_REQUEST_PATH = "invalid_bucket_name/psiphon3.exe.upgrade";
+static const char* UPGRADE_URLS_JSON = "{}";
 
 // To be shown to the user in the feedback page.
 // The English page should be used for the URLs.
