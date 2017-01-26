@@ -53,24 +53,30 @@ bool verifySignedDataPackage(
     {
         // See https://www.cryptopp.com/wiki/Gunzip#Decompress_to_String_using_Put.2FGet
         CryptoPP::Gunzip unzipper;
-        (void)unzipper.Put((const byte*)signedDataPackage, signedDataPackageLen);
-        (void)unzipper.MessageEnd();
+        try {
+            (void)unzipper.Put((const byte*)signedDataPackage, signedDataPackageLen);
+            (void)unzipper.MessageEnd();
 
-        auto jsonSize = unzipper.MaxRetrievable();
-        if (jsonSize == 0) 
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s: unzipper.MaxRetrievable returned 0 (%d)"), __TFUNCTION__, GetLastError());
+            auto jsonSize = unzipper.MaxRetrievable();
+            if (jsonSize == 0)
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: unzipper.MaxRetrievable returned 0 (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
+            else if (jsonSize > SANITY_CHECK_SIZE)
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: Gunzip overflow (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
+
+            jsonString.resize((size_t)jsonSize);
+
+            unzipper.Get((byte*)&jsonString[0], jsonString.size());
+        }
+        catch (exception& e) {
+            my_print(NOT_SENSITIVE, false, _T("%s: Gunzip exception: %S"), __TFUNCTION__, e.what());
             return false;
         }
-        else if (jsonSize > SANITY_CHECK_SIZE)
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s: Gunzip overflow (%d)"), __TFUNCTION__, GetLastError());
-            return false;
-        }
-
-        jsonString.resize((size_t)jsonSize);
-
-        unzipper.Get((byte*)&jsonString[0], jsonString.size());
     }
     else // zip compressed
     {
