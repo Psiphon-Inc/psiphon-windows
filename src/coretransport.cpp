@@ -382,7 +382,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["ClientVersion"] = CLIENT_VERSION;
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
-    config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_ROOT_URLS_JSON);
+    config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_URLS_JSON);
     config["ObfuscatedServerListRootURLs"] = loadJSONArray(OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON);
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
