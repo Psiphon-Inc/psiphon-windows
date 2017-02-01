@@ -323,6 +323,33 @@ void CoreTransport::TransportConnectHelper()
 }
 
 
+Json::Value loadJSONArray(const char* jsonArrayString)
+{
+    try
+    {
+        Json::Reader reader;
+        Json::Value array;
+        if (!reader.parse(jsonArrayString, array))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        }
+        else if (!array.isArray())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: unexpected type"), __TFUNCTION__);
+        }
+        else
+        {
+            return array;
+        }
+    }
+    catch (exception& e)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s: JSON exception: %S"), __TFUNCTION__, e.what());
+    }
+    return Json::nullValue;
+}
+
+
 bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
 {
     TCHAR path[MAX_PATH];
@@ -350,22 +377,19 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         return false;
     }
 
-    clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
-
     Json::Value config;
     config["ClientPlatform"] = CLIENT_PLATFORM;
     config["ClientVersion"] = CLIENT_VERSION;
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
-    config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
-    config["ObfuscatedServerListRootURL"] = OBFUSCATED_SERVER_LIST_ROOT_URL;
+    config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_URLS_JSON);
+    config["ObfuscatedServerListRootURLs"] = loadJSONArray(OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON);
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
-    config["UpgradeDownloadUrl"] = string("https://") + UPGRADE_ADDRESS + UPGRADE_REQUEST_PATH;
-    config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
+    config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
     config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
@@ -451,6 +475,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         {
             config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
         }
+
+        clientUpgradeFilename.clear();
     }
     else
     {
@@ -471,6 +497,10 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             return false;
         }
         config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
+
+        clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
+
+        config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
     }
 
     ostringstream configDataStream;
