@@ -56,7 +56,8 @@ CoreTransport::CoreTransport()
       m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_hasEverConnected(false),
       m_isConnected(false),
-      m_clientUpgradeDownloadHandled(false)
+      m_clientUpgradeDownloadHandled(false),
+      m_panicked(false)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -844,9 +845,26 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         Json::Reader reader;
         if (!reader.parse(line, notice))
         {
-            my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
-            // This line was not JSON. It's not included in diagnostics
-            // as we can't be sure it doesn't include user private data.
+            // If the line starts with "panic", assume the core is crashing and add all further output to diagnostics
+            static const char* PANIC = "panic";
+            if (0 == _strnicmp(line, PANIC, strlen(PANIC)))
+            {
+                m_panicked = true;
+            }
+
+            if (m_panicked)
+            {
+                // We do not think that a panic will contain private data
+                my_print(NOT_SENSITIVE, false, _T("core panic: %S"), line);
+                AddDiagnosticInfoJson("CorePanic", line);
+            }
+            else
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+                // This line was not JSON. It's not included in diagnostics
+                // as we can't be sure it doesn't include user private data.
+            }
+
             return;
         }
 
