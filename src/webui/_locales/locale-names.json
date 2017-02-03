@@ -24,7 +24,7 @@
   "pt_PT": "Português (Portugal)",
   "ru": "Русский",
   "sv": "Svenska",
-  "zh": "中文",
+  "zh": "简体中文",
   "uz@cyrillic": "Ўзбекча",
   "uz@Latn": "O'zbekcha",
   "tk": "Türkmençe",
@@ -33,5 +33,6 @@
   "ug@Latn": "Uyghurche",
   "kk": "қазақ тілі",
   "vi": "Tiếng Việt",
-  "tr": "Türkçe"
+  "tr": "Türkçe",
+  "zh_TW": "繁体中文"
 }
