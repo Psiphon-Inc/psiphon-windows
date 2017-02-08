@@ -148,7 +148,7 @@
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#egress-region#select-es": {
-        "message": "Spain",
+        "message": "إسبانيا",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
     "settings#unapplied-changes-prompt#title": {

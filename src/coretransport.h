@@ -79,4 +79,5 @@ protected:
     bool m_isConnected;
     bool m_clientUpgradeDownloadHandled;
     string m_lastUpstreamProxyErrorMessage;
+    bool m_panicked;
 };
