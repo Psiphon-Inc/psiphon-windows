@@ -305,6 +305,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                     manager->m_transport,
                     manager,    // ILocalProxyStatsCollector
+                    manager,    // IUpgradePaver
                     manager);   // IReconnectStateReceiver
             }
             catch (TransportConnection::TryNextServer&)
