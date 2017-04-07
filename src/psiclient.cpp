@@ -491,22 +491,40 @@ static void UpdateSystrayConnectedState()
     }
 }
 
-UINT CONNECTED_REMINDER_INTERVAL_MS = 60 * 1000;
+UINT CONNECTED_REMINDER_LONG_INTERVAL_MS = 5 * 60 * 1000;
+UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 30 * 1000;
+static UINT g_connectedReminderIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_MS;
 static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
 static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
 static void StartConnectedReminderTimer()
 {
-    g_showConnectedReminderBalloonTimerID = ::SetTimer(
-        g_hWnd,
-        TIMER_ID_CONNECTED_REMINDER,
-        CONNECTED_REMINDER_INTERVAL_MS,
-        ShowConnectedReminderBalloonTimer);
+    if (g_showConnectedReminderBalloonTimerID == 0)
+    {
+        g_showConnectedReminderBalloonTimerID = ::SetTimer(
+            g_hWnd,
+            TIMER_ID_CONNECTED_REMINDER,
+            g_connectedReminderIntervalMs,
+            ShowConnectedReminderBalloonTimer);
+    }
 }
 
 static void StopConnectedReminderTimer()
 {
-    ::KillTimer( g_hWnd, TIMER_ID_CONNECTED_REMINDER);
+    ::KillTimer(g_hWnd, TIMER_ID_CONNECTED_REMINDER);
+    g_showConnectedReminderBalloonTimerID = 0;
+}
+
+static void ResetConnectedReminderTimer()
+{
+    StopConnectedReminderTimer();
+    g_connectedReminderIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_MS;
+}
+
+static void RestartConnectedReminderTimer()
+{
+    ResetConnectedReminderTimer();
+    StartConnectedReminderTimer();
 }
 
 static void ShowConnectedReminderBalloon()
@@ -528,12 +546,13 @@ static void ShowConnectedReminderBalloon()
 
 static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
 {
-    assert(g_showConnectedReminderBalloonTimerID == idEvent);
-    ::KillTimer(hWnd, idEvent);
-    g_showConnectedReminderBalloonTimerID = 0;
+    assert(TIMER_ID_CONNECTED_REMINDER == idEvent);
+    StopConnectedReminderTimer();
 
     ShowConnectedReminderBalloon();
 
+    // Show the balloon again after a short interval
+    g_connectedReminderIntervalMs = CONNECTED_REMINDER_SHORT_INTERVAL_MS;
     StartConnectedReminderTimer();
 }
 
@@ -884,6 +903,7 @@ done:
 void UI_SetStateStopped()
 {
     UpdateSystrayConnectedState();
+    ResetConnectedReminderTimer();
 
     Json::Value json;
     json["state"] = "stopped";
@@ -895,7 +915,7 @@ void UI_SetStateStopped()
 void UI_SetStateStopping()
 {
     UpdateSystrayConnectedState();
-    StopConnectedReminderTimer();
+    ResetConnectedReminderTimer();
 
     Json::Value json;
     json["state"] = "stopping";
@@ -1365,6 +1385,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
             g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+            RestartConnectedReminderTimer();
         }
         // Restore/foreground the app on any kind of click
         else if (lParam == WM_LBUTTONUP || 
