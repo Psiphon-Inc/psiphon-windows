@@ -252,7 +252,7 @@ static void InitSystrayIcon() {
 // UpdateSystrayIcon sets the current systray icon. 
 // If infoTitle is non-empty, then it will also display a balloon.
 // If hIcon is NULL, then the icon will not be changed.
-static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody)
+static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody, boolean allowDuplicates = false)
 {
     if (g_htmlUiFinished)
     {
@@ -268,7 +268,10 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     if (hIcon == s_lastIcon && infoTitle == s_lastInfoTitle && infoBody == s_lastInfoBody)
     {
-        return;
+        if (!allowDuplicates)
+        {
+            return;
+        }
     }
     s_lastIcon = hIcon;
     s_lastInfoTitle = infoTitle;
@@ -488,7 +491,7 @@ static void UpdateSystrayConnectedState()
     }
 }
 
-UINT CONNECTED_REMINDER_INTERVAL_MS = 5 * 60 * 1000;
+UINT CONNECTED_REMINDER_INTERVAL_MS = 60 * 1000;
 static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
 static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
@@ -519,7 +522,7 @@ static void ShowConnectedReminderBalloon()
         wstring infoTitle, infoBody;
         GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_TITLE, infoTitle);
         GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
-        UpdateSystrayIcon(hIcon, infoTitle, infoBody);
+        UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
     }
 }
 
