@@ -66,6 +66,7 @@ static bool g_htmlUiFinished = false;
 // Note: Trying to use SetTimer/KillTimer without an explicit ID led to inconsistent behaviour.
 #define TIMER_ID_SYSTRAY_MINIMIZE       100
 #define TIMER_ID_SYSTRAY_STATE_UPDATE   101
+#define TIMER_ID_CONNECTED_REMINDER     102
 
 
 //==== Controls ================================================================
@@ -120,16 +121,18 @@ void OnCreate(HWND hWndParent)
 
 //==== String Table helpers ==================================================
 
-#define STRING_KEY_STATE_STOPPED_TITLE          "appbackend#state-stopped-title"
-#define STRING_KEY_STATE_STOPPED_BODY           "appbackend#state-stopped-body"
-#define STRING_KEY_STATE_STARTING_TITLE         "appbackend#state-starting-title"
-#define STRING_KEY_STATE_STARTING_BODY          "appbackend#state-starting-body"
-#define STRING_KEY_STATE_CONNECTED_TITLE        "appbackend#state-connected-title"
-#define STRING_KEY_STATE_CONNECTED_BODY         "appbackend#state-connected-body"
-#define STRING_KEY_STATE_STOPPING_TITLE         "appbackend#state-stopping-title"
-#define STRING_KEY_STATE_STOPPING_BODY          "appbackend#state-stopping-body"
-#define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE   "appbackend#minimized-to-systray-title"
-#define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY    "appbackend#minimized-to-systray-body"
+#define STRING_KEY_STATE_STOPPED_TITLE              "appbackend#state-stopped-title"
+#define STRING_KEY_STATE_STOPPED_BODY               "appbackend#state-stopped-body"
+#define STRING_KEY_STATE_STARTING_TITLE             "appbackend#state-starting-title"
+#define STRING_KEY_STATE_STARTING_BODY              "appbackend#state-starting-body"
+#define STRING_KEY_STATE_CONNECTED_TITLE            "appbackend#state-connected-title"
+#define STRING_KEY_STATE_CONNECTED_BODY             "appbackend#state-connected-body"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_TITLE   "appbackend#state-connected-reminder-title"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY    "appbackend#state-connected-reminder-body"
+#define STRING_KEY_STATE_STOPPING_TITLE             "appbackend#state-stopping-title"
+#define STRING_KEY_STATE_STOPPING_BODY              "appbackend#state-stopping-body"
+#define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE       "appbackend#minimized-to-systray-title"
+#define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY        "appbackend#minimized-to-systray-body"
 
 static map<string, wstring> g_stringTable;
 
@@ -249,7 +252,7 @@ static void InitSystrayIcon() {
 // UpdateSystrayIcon sets the current systray icon. 
 // If infoTitle is non-empty, then it will also display a balloon.
 // If hIcon is NULL, then the icon will not be changed.
-static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody)
+static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody, boolean allowDuplicates = false)
 {
     if (g_htmlUiFinished)
     {
@@ -265,7 +268,10 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     if (hIcon == s_lastIcon && infoTitle == s_lastInfoTitle && infoBody == s_lastInfoBody)
     {
-        return;
+        if (!allowDuplicates)
+        {
+            return;
+        }
     }
     s_lastIcon = hIcon;
     s_lastInfoTitle = infoTitle;
@@ -483,6 +489,88 @@ static void UpdateSystrayConnectedState()
         // Just update the state now.
         UpdateSystrayConnectedStateHelper();
     }
+}
+
+UINT CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS = 11 * 60 * 1000;
+UINT CONNECTED_REMINDER_LONG_INTERVAL_TWO_MS = 6 * 60 * 60 * 1000;
+UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 33 * 1000;
+static UINT g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
+static UINT g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
+static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
+static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
+
+static void StartConnectedReminderTimer()
+{
+    if (g_showConnectedReminderBalloonTimerID == 0)
+    {
+        g_showConnectedReminderBalloonTimerID = ::SetTimer(
+            g_hWnd,
+            TIMER_ID_CONNECTED_REMINDER,
+            g_connectedReminderIntervalMs,
+            ShowConnectedReminderBalloonTimer);
+    }
+}
+
+static void StopConnectedReminderTimer()
+{
+    ::KillTimer(g_hWnd, TIMER_ID_CONNECTED_REMINDER);
+    g_showConnectedReminderBalloonTimerID = 0;
+}
+
+static void ResetConnectedReminderTimer()
+{
+    StopConnectedReminderTimer();
+    g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
+    g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
+}
+
+static void SwapConnectedReminderLongInterval()
+{
+    if (g_connectedReminderLongIntervalMs == CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS)
+    {
+        g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_TWO_MS;
+    }
+    else
+    {
+        g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
+    }
+}
+
+static void RestartConnectedReminderTimer()
+{
+    StopConnectedReminderTimer();
+    SwapConnectedReminderLongInterval();
+    g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
+    StartConnectedReminderTimer();
+}
+
+static void ShowConnectedReminderBalloon()
+{
+    if (g_htmlUiFinished)
+    {
+        return;
+    }
+
+    if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
+    {
+        HICON hIcon = g_notifyIconConnected;
+        wstring infoTitle, infoBody;
+        GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_TITLE, infoTitle);
+        GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
+        UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
+    }
+}
+
+static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD)
+{
+    assert(TIMER_ID_CONNECTED_REMINDER == idEvent);
+    StopConnectedReminderTimer();
+
+    ShowConnectedReminderBalloon();
+
+    // Show the balloon again after a short interval
+    g_connectedReminderIntervalMs = CONNECTED_REMINDER_SHORT_INTERVAL_MS;
+    StartConnectedReminderTimer();
 }
 
 
@@ -832,6 +920,7 @@ done:
 void UI_SetStateStopped()
 {
     UpdateSystrayConnectedState();
+    ResetConnectedReminderTimer();
 
     Json::Value json;
     json["state"] = "stopped";
@@ -843,6 +932,7 @@ void UI_SetStateStopped()
 void UI_SetStateStopping()
 {
     UpdateSystrayConnectedState();
+    ResetConnectedReminderTimer();
 
     Json::Value json;
     json["state"] = "stopping";
@@ -866,6 +956,7 @@ void UI_SetStateStarting(const tstring& transportProtocolName)
 void UI_SetStateConnected(const tstring& transportProtocolName, int socksPort, int httpPort)
 {
     UpdateSystrayConnectedState();
+    StartConnectedReminderTimer();
 
     Json::Value json;
     json["state"] = "connected";
@@ -1307,8 +1398,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return HandleNotify(hWnd, (NMHDR*)lParam);
 
     case WM_PSIPHON_TRAY_ICON_NOTIFY:
+        if (lParam == NIN_BALLOONUSERCLICK &&
+            CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
+        {
+            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+            RestartConnectedReminderTimer();
+        }
         // Restore/foreground the app on any kind of click
-        if (lParam == WM_LBUTTONUP || 
+        else if (lParam == WM_LBUTTONUP || 
             lParam == WM_LBUTTONDBLCLK ||
             lParam == WM_RBUTTONUP ||
             lParam == WM_RBUTTONDBLCLK ||

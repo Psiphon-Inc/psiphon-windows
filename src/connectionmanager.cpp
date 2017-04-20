@@ -76,7 +76,8 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/, bool a
         {
             urls.push_back(defaultHomePage);
         }
-        OpenBrowser(urls);
+        OpenBrowser(urls[0]);
+        m_currentSessionInfo.RotateHomepages();
     }
 }
 
