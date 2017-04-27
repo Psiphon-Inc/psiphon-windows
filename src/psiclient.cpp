@@ -252,7 +252,7 @@ static void InitSystrayIcon() {
 // UpdateSystrayIcon sets the current systray icon. 
 // If infoTitle is non-empty, then it will also display a balloon.
 // If hIcon is NULL, then the icon will not be changed.
-static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody, boolean allowDuplicates = false)
+static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody, boolean connectedReminder = false)
 {
     if (g_htmlUiFinished)
     {
@@ -261,6 +261,15 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     InitSystrayIcon();
 
+    if (connectedReminder)
+    {
+        g_notifyIconData.dwInfoFlags |= NIIF_NOSOUND;
+    }
+    else
+    {
+        g_notifyIconData.dwInfoFlags &= ~NIIF_NOSOUND;
+    }
+
     // Prevent duplicate updates
     static HICON s_lastIcon = NULL;
     static wstring s_lastInfoTitle;
@@ -268,7 +277,7 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     if (hIcon == s_lastIcon && infoTitle == s_lastInfoTitle && infoBody == s_lastInfoBody)
     {
-        if (!allowDuplicates)
+        if (!connectedReminder)
         {
             return;
         }
