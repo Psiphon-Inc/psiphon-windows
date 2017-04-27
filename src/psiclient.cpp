@@ -261,13 +261,16 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     InitSystrayIcon();
 
+    // InitSystrayIcon only gets called once. Override defaults:
     if (connectedReminder)
     {
         g_notifyIconData.dwInfoFlags |= NIIF_NOSOUND;
+        g_notifyIconData.uCallbackMessage = WM_PSIPHON_CONNECTED_REMINDER_NOTIFY;
     }
     else
     {
         g_notifyIconData.dwInfoFlags &= ~NIIF_NOSOUND;
+        g_notifyIconData.uCallbackMessage = WM_PSIPHON_TRAY_ICON_NOTIFY;
     }
 
     // Prevent duplicate updates
@@ -502,7 +505,7 @@ static void UpdateSystrayConnectedState()
 
 UINT CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS = 11 * 60 * 1000;
 UINT CONNECTED_REMINDER_LONG_INTERVAL_TWO_MS = 6 * 60 * 60 * 1000;
-UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 33 * 1000;
+UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 6 * 1000;
 static UINT g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
 static UINT g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
 static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
@@ -1406,15 +1409,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_NOTIFY:
         return HandleNotify(hWnd, (NMHDR*)lParam);
 
-    case WM_PSIPHON_TRAY_ICON_NOTIFY:
+    case WM_PSIPHON_CONNECTED_REMINDER_NOTIFY:
         if (lParam == NIN_BALLOONUSERCLICK &&
             CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
             g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
             RestartConnectedReminderTimer();
+            break;
         }
+        // fall through to WM_PSIPHON_TRAY_ICON_NOTIFY
+
+    case WM_PSIPHON_TRAY_ICON_NOTIFY:
         // Restore/foreground the app on any kind of click
-        else if (lParam == WM_LBUTTONUP || 
+        if (lParam == WM_LBUTTONUP || 
             lParam == WM_LBUTTONDBLCLK ||
             lParam == WM_RBUTTONUP ||
             lParam == WM_RBUTTONDBLCLK ||
