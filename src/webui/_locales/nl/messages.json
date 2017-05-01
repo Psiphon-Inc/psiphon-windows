@@ -44,7 +44,7 @@
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "appbackend#state-connected-body": {
-        "message": "Verkennen achter de internet grenzen!",
+        "message": "Verkennen voorbij jouw grenzen!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#disable-timeouts#enable-label": {
@@ -115,6 +115,10 @@
         "message": "Gebruik geen upstream proxy",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon houdt je verbonden",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
     "settings#egress-region#select-ca": {
         "message": "Canada",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
@@ -136,7 +140,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "connection#starting-msg": {
-        "message": "Psiphon is aan het<span class=\"state-word\">verbinden</span>…",
+        "message": "Psiphon is aan het <span class=\"state-word\">verbinden</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "settings#applying-message": {
@@ -188,7 +192,7 @@
         "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "settings#egress-region#label": {
-        "message": "Verbind via",
+        "message": "Verbinden via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#local-proxy-ports#socks-label": {
@@ -228,7 +232,7 @@
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "about#client-version": {
-        "message": "Psiphon voor Windows client versie:",
+        "message": "Psiphon voor Windows klant versie:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
     "settings#upstream-proxy#heading": {
@@ -387,6 +391,10 @@
         "message": "Alleen HTTP proxy's die HTTPS ondersteunen, worden toegestaan.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
+    "appbackend#state-connected-reminder-body": {
+        "message": "Klik om nieuwe inhoud te zien van Psiphon! ",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to click to see the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
     "settings#upstream-proxy#set-username-password-error-msg": {
         "message": "U moet zowel gebruikersnaam en wachtwoord instellen, of laat beide leeg voor geen verificatie.",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
@@ -396,7 +404,7 @@
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "connection#egress-region-combo-label": {
-        "message": "Verbind via",
+        "message": "Verbinden via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#egress-region#select-gb": {
@@ -420,7 +428,7 @@
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#systray-minimize#enable-label": {
-        "message": "Minimaliseren naar de plaats (systeemvak)",
+        "message": "Minimaliseren naar het systeemvak (system tray)",
         "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
     },
     "settings#egress-region#heading": {
@@ -464,7 +472,7 @@
         "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
     },
     "about#wordart-tag": {
-        "message": "Achter de Grenzen",
+        "message": "Voorbij de Grenzen",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "settings#upstream-proxy#username-label": {
