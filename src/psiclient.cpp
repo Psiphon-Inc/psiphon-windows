@@ -252,7 +252,8 @@ static void InitSystrayIcon() {
 // UpdateSystrayIcon sets the current systray icon. 
 // If infoTitle is non-empty, then it will also display a balloon.
 // If hIcon is NULL, then the icon will not be changed.
-static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody, boolean connectedReminder = false)
+static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody,
+    boolean noSound = false, boolean connectedReminder = false)
 {
     if (g_htmlUiFinished)
     {
@@ -262,15 +263,17 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
     InitSystrayIcon();
 
     // InitSystrayIcon only gets called once. Override defaults:
-    if (connectedReminder)
+
+    g_notifyIconData.uCallbackMessage = connectedReminder ?
+        WM_PSIPHON_CONNECTED_REMINDER_NOTIFY : WM_PSIPHON_TRAY_ICON_NOTIFY;
+
+    if (noSound)
     {
         g_notifyIconData.dwInfoFlags |= NIIF_NOSOUND;
-        g_notifyIconData.uCallbackMessage = WM_PSIPHON_CONNECTED_REMINDER_NOTIFY;
     }
     else
     {
         g_notifyIconData.dwInfoFlags &= ~NIIF_NOSOUND;
-        g_notifyIconData.uCallbackMessage = WM_PSIPHON_TRAY_ICON_NOTIFY;
     }
 
     // Prevent duplicate updates
@@ -303,7 +306,7 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
         _tcsncpy_s(
             g_notifyIconData.szInfo,
             sizeof(g_notifyIconData.szInfo) / sizeof(TCHAR),
-            infoBody.c_str(),
+            infoBodyToUse.c_str(),
             _TRUNCATE);
 
         g_notifyIconData.uFlags |= NIF_INFO;
@@ -568,8 +571,18 @@ static void ShowConnectedReminderBalloon()
         HICON hIcon = g_notifyIconConnected;
         wstring infoTitle, infoBody;
         GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_TITLE, infoTitle);
-        GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
-        UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
+
+        if (g_connectedReminderLongIntervalMs == CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS)
+        {
+            UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
+            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+            RestartConnectedReminderTimer();
+        }
+        else
+        {
+            GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
+            UpdateSystrayIcon(hIcon, infoTitle, infoBody, true, true);
+        }
     }
 }
 
