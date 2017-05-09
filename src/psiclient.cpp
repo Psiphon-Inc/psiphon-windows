@@ -129,6 +129,7 @@ void OnCreate(HWND hWndParent)
 #define STRING_KEY_STATE_CONNECTED_BODY             "appbackend#state-connected-body"
 #define STRING_KEY_STATE_CONNECTED_REMINDER_TITLE   "appbackend#state-connected-reminder-title"
 #define STRING_KEY_STATE_CONNECTED_REMINDER_BODY    "appbackend#state-connected-reminder-body"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2  "appbackend#state-connected-reminder-body-2"
 #define STRING_KEY_STATE_STOPPING_TITLE             "appbackend#state-stopping-title"
 #define STRING_KEY_STATE_STOPPING_BODY              "appbackend#state-stopping-body"
 #define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE       "appbackend#minimized-to-systray-title"
@@ -574,6 +575,7 @@ static void ShowConnectedReminderBalloon()
 
         if (g_connectedReminderLongIntervalMs == CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS)
         {
+            GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2, infoBody);
             UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
             g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
             RestartConnectedReminderTimer();
