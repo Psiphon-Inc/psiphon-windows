@@ -36,8 +36,12 @@
     "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
   },
   "appbackend#state-connected-reminder-body": {
-    "message": "‮Ↄʅıɔʞ‬ ‮ʇo‬ ‮sǝǝ‬ ‮ɟɹǝsɥ‬ ‮uǝʍ‬ ‮ɔouʇǝuʇ‬ ‮ɟɹoɯ‬ ‮Ԁsıdɥou‬!",
-    "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to click to see the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    "message": "‮Ӽǝǝd‬ ‮Ԁsıdɥou‬ ‮ɟɹǝǝ‬. ‮Ↄʅıɔʞ‬ ‮ɥǝɹǝ‬ ‮ʇo‬ ‮ʌısıʇ‬ ‮onɹ‬ ‮sdousoɹ‬ ‮dɐƃǝs‬!",
+    "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+  },
+  "appbackend#state-connected-reminder-body-2": {
+    "message": "‮Ӽǝǝd‬ ‮Ԁsıdɥou‬ ‮ɟɹǝǝ‬ ‮qʎ‬ ‮ʌısıʇıuƃ‬ ‮onɹ‬ ‮sdousoɹ‬ ‮dɐƃǝs‬!",
+    "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
   },
   "appbackend#state-connected-reminder-title": {
     "message": "‮Ԁsıdɥou‬ ‮ıs‬ ‮ʞǝǝdıuƃ‬ ‮ʎon‬ ‮ɔouuǝɔʇǝp‬",
