@@ -28,7 +28,7 @@
 
 // Creates a process with the given command line and returns a HANDLE to the 
 // resulting process. Returns 0 on error; call GetLastError to find out why.
-HANDLE LaunchApplication(LPCTSTR command)
+PROCESS_INFORMATION LaunchApplication(LPCTSTR command)
 {
     STARTUPINFO startupInfo = {0};
     PROCESS_INFORMATION processInfo = {0};
@@ -47,7 +47,7 @@ HANDLE LaunchApplication(LPCTSTR command)
                            &startupInfo, &processInfo))
         {
             delete[] command_buffer;
-            return processInfo.hProcess;
+            return processInfo;
         }
     }
     catch (...)
@@ -56,7 +56,7 @@ HANDLE LaunchApplication(LPCTSTR command)
     }
 
     delete[] command_buffer;
-    return 0;
+    return{ 0 };
 }
 
 // Wait for the browser to become available for more page launching.
@@ -114,7 +114,7 @@ void OpenBrowser(const vector<tstring>& urls)
         sBuffer,
         &dwSize);
 
-    HANDLE hProcess = 0;
+    PROCESS_INFORMATION processInfo = { 0 };
     if (hr == S_OK)
     {
         tstring command = sBuffer;
@@ -132,12 +132,16 @@ void OpenBrowser(const vector<tstring>& urls)
 
         // Launch the application with the first URL.
 
-        hProcess = LaunchApplication(command.c_str());
+        processInfo = LaunchApplication(command.c_str());
 
-        if (hProcess == 0)
+        if (processInfo.hProcess == 0)
         {
             my_print(NOT_SENSITIVE, true, _T("LaunchApplication failed"));
             // But we'll continue anyway. Hopefully ShellExecute will still succeed.
+        }
+
+        if (BringWindowToTop(FindWindowByPid(processInfo.dwProcessId)) == 0) {
+            my_print(NOT_SENSITIVE, false, _T("%s - BringWindowToTop failed (%d)"), __TFUNCTION__, GetLastError());
         }
     }
 
@@ -145,8 +149,37 @@ void OpenBrowser(const vector<tstring>& urls)
 
     for (; current_url != urls.end(); ++current_url)
     {
-        WaitForProcessToQuiesce(hProcess);
+        WaitForProcessToQuiesce(processInfo.hProcess);
 
         LaunchWebPage(*current_url);
     }
+}
+
+struct BrowserWindowHandleData {
+    unsigned long pid;
+    HWND handle;
+};
+
+HWND FindWindowByPid(unsigned long pid)
+{
+    BrowserWindowHandleData data;
+
+    data.pid = pid;
+    data.handle = 0;
+
+    EnumWindows(EnumWindowsCallback, (LPARAM)&data);
+    
+    return data.handle;
+}
+
+BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
+{
+    BrowserWindowHandleData& data = *(BrowserWindowHandleData*)lParam;
+    unsigned long pid = 0;
+    
+    GetWindowThreadProcessId(handle, &pid);
+    
+    data.handle = handle;
+    
+    return TRUE;
 }
