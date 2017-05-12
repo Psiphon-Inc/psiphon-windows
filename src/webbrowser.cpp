@@ -139,9 +139,16 @@ void OpenBrowser(const vector<tstring>& urls)
             my_print(NOT_SENSITIVE, true, _T("LaunchApplication failed"));
             // But we'll continue anyway. Hopefully ShellExecute will still succeed.
         }
-
-        if (BringWindowToTop(FindWindowByPid(processInfo.dwProcessId)) == 0) {
-            my_print(NOT_SENSITIVE, false, _T("%s - BringWindowToTop failed (%d)"), __TFUNCTION__, GetLastError());
+        else
+        {
+            HWND hBrowserWindow = FindWindowByPid(processInfo.dwProcessId);
+            if (hBrowserWindow != 0)
+            {
+                if (BringWindowToTop(hBrowserWindow) == 0)
+                {
+                    my_print(NOT_SENSITIVE, false, _T("%s - BringWindowToTop failed (%d)"), __TFUNCTION__, GetLastError());
+                }
+            }
         }
     }
 
@@ -155,6 +162,8 @@ void OpenBrowser(const vector<tstring>& urls)
     }
 }
 
+// The below structures and functions for retrieving a window handle by process ID were found
+// here: https://stackoverflow.com/questions/1888863/how-to-get-main-window-handle-from-process-id
 struct BrowserWindowHandleData {
     unsigned long pid;
     HWND handle;
@@ -179,7 +188,13 @@ BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
     
     GetWindowThreadProcessId(handle, &pid);
     
-    data.handle = handle;
+    // GetWindow(handle, GW_OWNER) == 0 checks that the window is not an owned window (e.g. a dialog box or something)
+    // IsWindowVisible(handle) checks that the window is both 'visible' and 'not hidden'
+    // The combination of checks results in the 'main window' being identified as the one that is both visible, and having no owner
+    if (data.pid != pid || !(GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle))) {
+        return TRUE;
+    }
     
-    return TRUE;
+    data.handle = handle;
+    return FALSE;
 }
