@@ -129,6 +129,7 @@ void OnCreate(HWND hWndParent)
 #define STRING_KEY_STATE_CONNECTED_BODY             "appbackend#state-connected-body"
 #define STRING_KEY_STATE_CONNECTED_REMINDER_TITLE   "appbackend#state-connected-reminder-title"
 #define STRING_KEY_STATE_CONNECTED_REMINDER_BODY    "appbackend#state-connected-reminder-body"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2  "appbackend#state-connected-reminder-body-2"
 #define STRING_KEY_STATE_STOPPING_TITLE             "appbackend#state-stopping-title"
 #define STRING_KEY_STATE_STOPPING_BODY              "appbackend#state-stopping-body"
 #define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE       "appbackend#minimized-to-systray-title"
@@ -252,7 +253,8 @@ static void InitSystrayIcon() {
 // UpdateSystrayIcon sets the current systray icon. 
 // If infoTitle is non-empty, then it will also display a balloon.
 // If hIcon is NULL, then the icon will not be changed.
-static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody, boolean allowDuplicates = false)
+static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody,
+    boolean noSound = false, boolean connectedReminder = false)
 {
     if (g_htmlUiFinished)
     {
@@ -261,6 +263,20 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     InitSystrayIcon();
 
+    // InitSystrayIcon only gets called once. Override defaults:
+
+    g_notifyIconData.uCallbackMessage = connectedReminder ?
+        WM_PSIPHON_CONNECTED_REMINDER_NOTIFY : WM_PSIPHON_TRAY_ICON_NOTIFY;
+
+    if (noSound)
+    {
+        g_notifyIconData.dwInfoFlags |= NIIF_NOSOUND;
+    }
+    else
+    {
+        g_notifyIconData.dwInfoFlags &= ~NIIF_NOSOUND;
+    }
+
     // Prevent duplicate updates
     static HICON s_lastIcon = NULL;
     static wstring s_lastInfoTitle;
@@ -268,7 +284,7 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
 
     if (hIcon == s_lastIcon && infoTitle == s_lastInfoTitle && infoBody == s_lastInfoBody)
     {
-        if (!allowDuplicates)
+        if (!connectedReminder)
         {
             return;
         }
@@ -291,7 +307,7 @@ static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstri
         _tcsncpy_s(
             g_notifyIconData.szInfo,
             sizeof(g_notifyIconData.szInfo) / sizeof(TCHAR),
-            infoBody.c_str(),
+            infoBodyToUse.c_str(),
             _TRUNCATE);
 
         g_notifyIconData.uFlags |= NIF_INFO;
@@ -493,7 +509,7 @@ static void UpdateSystrayConnectedState()
 
 UINT CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS = 11 * 60 * 1000;
 UINT CONNECTED_REMINDER_LONG_INTERVAL_TWO_MS = 6 * 60 * 60 * 1000;
-UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 33 * 1000;
+UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 6 * 1000;
 static UINT g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
 static UINT g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
 static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
@@ -556,8 +572,19 @@ static void ShowConnectedReminderBalloon()
         HICON hIcon = g_notifyIconConnected;
         wstring infoTitle, infoBody;
         GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_TITLE, infoTitle);
-        GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
-        UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
+
+        if (g_connectedReminderLongIntervalMs == CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS)
+        {
+            GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2, infoBody);
+            UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
+            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+            RestartConnectedReminderTimer();
+        }
+        else
+        {
+            GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
+            UpdateSystrayIcon(hIcon, infoTitle, infoBody, true, true);
+        }
     }
 }
 
@@ -1397,15 +1424,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_NOTIFY:
         return HandleNotify(hWnd, (NMHDR*)lParam);
 
-    case WM_PSIPHON_TRAY_ICON_NOTIFY:
+    case WM_PSIPHON_CONNECTED_REMINDER_NOTIFY:
         if (lParam == NIN_BALLOONUSERCLICK &&
             CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
             g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
             RestartConnectedReminderTimer();
+            break;
         }
+        // fall through to WM_PSIPHON_TRAY_ICON_NOTIFY
+
+    case WM_PSIPHON_TRAY_ICON_NOTIFY:
         // Restore/foreground the app on any kind of click
-        else if (lParam == WM_LBUTTONUP || 
+        if (lParam == WM_LBUTTONUP || 
             lParam == WM_LBUTTONDBLCLK ||
             lParam == WM_RBUTTONUP ||
             lParam == WM_RBUTTONDBLCLK ||

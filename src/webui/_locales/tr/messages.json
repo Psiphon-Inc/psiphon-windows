@@ -115,6 +115,10 @@
         "message": "Üst vekil sunucusu kullanma",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon is keeping you connected",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
     "settings#egress-region#select-ca": {
         "message": "Kanada",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
@@ -308,7 +312,7 @@
         "description": "Title for the Feedback page"
     },
     "banner#long-connecting": {
-        "message": "<strong>Olamaz!</strong> Bağlanmakta sorun yaşıyorsunuz gigi görünüyor!<br>\nEn son sürümü <a class=\"NewVersionURL\" href=\"#\">indirme sitesinden</a> veya <a class=\"NewVersionEmail\" href=\"#\"></a> adresine e-posta göndererek indirebilirsiniz.",
+        "message": "<strong>Olamaz!</strong> Bağlanmakta sorun yaşıyorsunuz gibi görünüyor!<br>\nEn son sürümü <a class=\"NewVersionURL\" href=\"#\">indirme sitesinden</a> veya <a class=\"NewVersionEmail\" href=\"#\"></a> adresine e-posta göndererek indirebilirsiniz.",
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "logs#placeholder": {
@@ -386,6 +390,10 @@
     "settings#upstream-proxy#proxy-reqs": {
         "message": "Sadece HTTPS destekleyen HTTP vekil sunucularına izin verilmektedir.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+    },
+    "appbackend#state-connected-reminder-body": {
+        "message": "Click to see fresh new content from Psiphon!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to click to see the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
         "message": "Kullanıcı Adı ve Porolayı aynı anda girmeli veya otomatik seçim için boş bırakmalısınız.",

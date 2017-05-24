@@ -115,6 +115,10 @@
         "message": "Don't use upstream proxy",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon is keeping you connected",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
     "settings#egress-region#select-ca": {
         "message": "Canada",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
@@ -386,6 +390,10 @@
     "settings#upstream-proxy#proxy-reqs": {
         "message": "Only HTTP proxies that support HTTPS are allowed.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+    },
+    "appbackend#state-connected-reminder-body": {
+        "message": "Click to see fresh new content from Psiphon!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to click to see the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
         "message": "You must set both Username and Password, or leave both blank for no authentication.",
