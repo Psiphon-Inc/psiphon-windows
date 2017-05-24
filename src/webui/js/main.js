@@ -1717,7 +1717,7 @@ function switchLocale(locale, initial) {
 }
 
 function populateLocales() {
-  var localePriorityGuide = ['en', 'fa', 'zh', 'zh_CN', 'zh_TW'];
+  var localePriorityGuide = ['en', 'fa', 'ar', 'zh', 'zh_CN', 'zh_TW'];
   var locales = $.map(window.PSIPHON.LOCALES, function(val, key) { return key; });
   // Sort the locales according to the priority guide
   locales.sort(function(a, b) {
