@@ -147,6 +147,10 @@
         "message": "다시 연결하면 설정이 적용됩니다.",
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "Keep Psiphon free by visiting our sponsor pages!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
     "appbackend#state-starting-title": {
         "message": "Psiphon 연결 중",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
@@ -392,8 +396,8 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "appbackend#state-connected-reminder-body": {
-        "message": "Click to see fresh new content from Psiphon!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to click to see the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+        "message": "Keep Psiphon free. Click here to visit our sponsor pages!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
         "message": "You must set both Username and Password, or leave both blank for no authentication.",
