@@ -24,7 +24,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "يتطلب ظبط النطاق تعيين اسم مستخدم وكلمة مرور",
+        "message": "يتطلب ضبط النطاق تعيين اسم مستخدم وكلمة مرور",
         "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#error-alert": {
@@ -116,7 +116,7 @@
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "appbackend#state-connected-reminder-title": {
-        "message": "Psiphon is keeping you connected",
+        "message": "سايفون يقوم بالحفاظ على إتصالك",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
     },
     "settings#egress-region#select-ca": {
@@ -146,6 +146,10 @@
     "settings#applying-message": {
         "message": "يتم إعادة الإتصال لتثبيت إعداداتك. ",
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+    },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "ساهم في إبقاء سايفون مجاني بزيارة مواقع داعمينا!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "appbackend#state-starting-title": {
         "message": "سايفون يحاول الإتصال ",
@@ -392,8 +396,8 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "appbackend#state-connected-reminder-body": {
-        "message": "Click to see fresh new content from Psiphon!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to click to see the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+        "message": "ساهم في إبقاء سايفون مجاني. إضغط هنا لزيارة مواقع داعمينا!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
         "message": "يجب أن تحدد كل من إسم المستخدم و كلمة المرور، أو تترك مكانهما خاليين لعدم المصادقة.",
@@ -436,7 +440,7 @@
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "يتطلب تعيين اسم المستخدم وكلمة المرور تعيين اسم المضيف والمنفذ أيضا. ",
+        "message": "يتطلب تعيين اسم المستخدم وكلمة المرور وأيضًا تعيين اسم المضيف والمنفذ",
         "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#disable-timeouts#heading": {
@@ -484,7 +488,7 @@
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "يجب أن تحدد كل من إسم المضيف والمنفذ ، أو تترك مكانهما خاليين للإنتقاء الأوتوماتيكي.  ",
+        "message": "يجب أن تحدد كل من إسم المضيف والمنفذ ، أو تترك مكانهما خاليين للتحديد تلقائيًا.  ",
         "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
     },
     "settings#transport-mode#help-text": {
