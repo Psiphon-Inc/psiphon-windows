@@ -507,11 +507,9 @@ static void UpdateSystrayConnectedState()
     }
 }
 
-UINT CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS = 11 * 60 * 1000;
-UINT CONNECTED_REMINDER_LONG_INTERVAL_TWO_MS = 6 * 60 * 60 * 1000;
+UINT CONNECTED_REMINDER_LONG_INTERVAL_MS = 6 * 60 * 60 * 1000;
 UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 6 * 1000;
-static UINT g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
-static UINT g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
+static UINT g_connectedReminderIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_MS;
 static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
 static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
@@ -536,27 +534,12 @@ static void StopConnectedReminderTimer()
 static void ResetConnectedReminderTimer()
 {
     StopConnectedReminderTimer();
-    g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
-    g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
-}
-
-static void SwapConnectedReminderLongInterval()
-{
-    if (g_connectedReminderLongIntervalMs == CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS)
-    {
-        g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_TWO_MS;
-    }
-    else
-    {
-        g_connectedReminderLongIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS;
-    }
+    g_connectedReminderIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_MS;
 }
 
 static void RestartConnectedReminderTimer()
 {
-    StopConnectedReminderTimer();
-    SwapConnectedReminderLongInterval();
-    g_connectedReminderIntervalMs = g_connectedReminderLongIntervalMs;
+    ResetConnectedReminderTimer();
     StartConnectedReminderTimer();
 }
 
@@ -572,19 +555,8 @@ static void ShowConnectedReminderBalloon()
         HICON hIcon = g_notifyIconConnected;
         wstring infoTitle, infoBody;
         GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_TITLE, infoTitle);
-
-        if (g_connectedReminderLongIntervalMs == CONNECTED_REMINDER_LONG_INTERVAL_ONE_MS)
-        {
-            GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2, infoBody);
-            UpdateSystrayIcon(hIcon, infoTitle, infoBody, true);
-            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
-            RestartConnectedReminderTimer();
-        }
-        else
-        {
-            GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
-            UpdateSystrayIcon(hIcon, infoTitle, infoBody, true, true);
-        }
+        GetStringTableEntry(STRING_KEY_STATE_CONNECTED_REMINDER_BODY, infoBody);
+        UpdateSystrayIcon(hIcon, infoTitle, infoBody, true, true);
     }
 }
 
