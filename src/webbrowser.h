@@ -25,3 +25,6 @@
 // Launch URLs in the default browser.
 void OpenBrowser(const tstring& url);
 void OpenBrowser(const vector<tstring>& urls);
+
+HWND FindWindowByPid(unsigned long process_id);
+BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam);
