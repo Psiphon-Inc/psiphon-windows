@@ -114,7 +114,7 @@ void OpenBrowser(const vector<tstring>& urls)
         sBuffer,
         &dwSize);
 
-    HANDLE hProcessInfo = 0;
+    HANDLE hProcess = 0;
     if (hr == S_OK)
     {
         tstring command = sBuffer;
@@ -150,4 +150,3 @@ void OpenBrowser(const vector<tstring>& urls)
         LaunchWebPage(*current_url);
     }
 }
-
