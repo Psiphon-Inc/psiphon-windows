@@ -28,7 +28,7 @@
 
 // Creates a process with the given command line and returns a HANDLE to the 
 // resulting process. Returns 0 on error; call GetLastError to find out why.
-PROCESS_INFORMATION LaunchApplication(LPCTSTR command)
+HANDLE LaunchApplication(LPCTSTR command)
 {
     STARTUPINFO startupInfo = {0};
     PROCESS_INFORMATION processInfo = {0};
@@ -47,7 +47,7 @@ PROCESS_INFORMATION LaunchApplication(LPCTSTR command)
                            &startupInfo, &processInfo))
         {
             delete[] command_buffer;
-            return processInfo;
+            return processInfo.hProcess;
         }
     }
     catch (...)
@@ -56,7 +56,7 @@ PROCESS_INFORMATION LaunchApplication(LPCTSTR command)
     }
 
     delete[] command_buffer;
-    return{ 0 };
+    return 0;
 }
 
 // Wait for the browser to become available for more page launching.
@@ -114,7 +114,7 @@ void OpenBrowser(const vector<tstring>& urls)
         sBuffer,
         &dwSize);
 
-    PROCESS_INFORMATION processInfo = { 0 };
+    HANDLE hProcessInfo = 0;
     if (hr == S_OK)
     {
         tstring command = sBuffer;
@@ -132,23 +132,12 @@ void OpenBrowser(const vector<tstring>& urls)
 
         // Launch the application with the first URL.
 
-        processInfo = LaunchApplication(command.c_str());
+        hProcess = LaunchApplication(command.c_str());
 
-        if (processInfo.hProcess == 0)
+        if (hProcess == 0)
         {
             my_print(NOT_SENSITIVE, true, _T("LaunchApplication failed"));
             // But we'll continue anyway. Hopefully ShellExecute will still succeed.
-        }
-        else
-        {
-            HWND hBrowserWindow = FindWindowByPid(processInfo.dwProcessId);
-            if (hBrowserWindow != 0)
-            {
-                if (BringWindowToTop(hBrowserWindow) == 0)
-                {
-                    my_print(NOT_SENSITIVE, false, _T("%s - BringWindowToTop failed (%d)"), __TFUNCTION__, GetLastError());
-                }
-            }
         }
     }
 
@@ -156,45 +145,9 @@ void OpenBrowser(const vector<tstring>& urls)
 
     for (; current_url != urls.end(); ++current_url)
     {
-        WaitForProcessToQuiesce(processInfo.hProcess);
+        WaitForProcessToQuiesce(hProcess);
 
         LaunchWebPage(*current_url);
     }
 }
 
-// The below structures and functions for retrieving a window handle by process ID were found
-// here: https://stackoverflow.com/questions/1888863/how-to-get-main-window-handle-from-process-id
-struct BrowserWindowHandleData {
-    unsigned long pid;
-    HWND handle;
-};
-
-HWND FindWindowByPid(unsigned long pid)
-{
-    BrowserWindowHandleData data;
-
-    data.pid = pid;
-    data.handle = 0;
-
-    EnumWindows(EnumWindowsCallback, (LPARAM)&data);
-    
-    return data.handle;
-}
-
-BOOL CALLBACK EnumWindowsCallback(HWND handle, LPARAM lParam)
-{
-    BrowserWindowHandleData& data = *(BrowserWindowHandleData*)lParam;
-    unsigned long pid = 0;
-    
-    GetWindowThreadProcessId(handle, &pid);
-    
-    // GetWindow(handle, GW_OWNER) == 0 checks that the window is not an owned window (e.g. a dialog box or something)
-    // IsWindowVisible(handle) checks that the window is both 'visible' and 'not hidden'
-    // The combination of checks results in the 'main window' being identified as the one that is both visible, and having no owner
-    if (data.pid != pid || !(GetWindow(handle, GW_OWNER) == (HWND)0 && IsWindowVisible(handle))) {
-        return TRUE;
-    }
-    
-    data.handle = handle;
-    return FALSE;
-}
