@@ -390,8 +390,6 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
-    config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
-    config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
@@ -502,6 +500,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
         config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
+        config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
+        config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
     }
 
     ostringstream configDataStream;
