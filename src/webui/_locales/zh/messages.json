@@ -116,7 +116,7 @@
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "appbackend#state-connected-reminder-title": {
-        "message": "Psiphon is keeping you connected",
+        "message": "赛风正在保持您已连接",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
     },
     "settings#egress-region#select-ca": {
@@ -148,7 +148,7 @@
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "appbackend#state-connected-reminder-body-2": {
-        "message": "Keep Psiphon free by visiting our sponsor pages!",
+        "message": "维持赛风免费通过访问我们的赞助商页面！",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "appbackend#state-starting-title": {
@@ -396,7 +396,7 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "appbackend#state-connected-reminder-body": {
-        "message": "Keep Psiphon free. Click here to visit our sponsor pages!",
+        "message": "维持赛风免费。点击这里访问我们的赞助商页面！",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
