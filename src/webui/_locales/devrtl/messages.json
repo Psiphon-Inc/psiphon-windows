@@ -267,29 +267,69 @@
     "message": "‮Ↄouuǝɔʇ‬ ‮ʌıɐ‬",
     "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
   },
+  "settings#egress-region#select-at": {
+    "message": "‮∀nsʇɹıɐ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+  },
+  "settings#egress-region#select-be": {
+    "message": "‮Ԑǝʅƃınɯ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+  },
   "settings#egress-region#select-best-performance": {
     "message": "‮ɟɐsʇǝsʇ‬ ‮Ↄonuʇɹʎ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
+  },
+  "settings#egress-region#select-bg": {
+    "message": "‮Ԑnʅƃɐɹıɐ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
   },
   "settings#egress-region#select-ca": {
     "message": "‮Ↄɐuɐpɐ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
   },
+  "settings#egress-region#select-ch": {
+    "message": "‮Sʍıʇzǝɹʅɐup‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
+  },
+  "settings#egress-region#select-cz": {
+    "message": "‮Ↄzǝɔɥ‬ ‮ᴚǝdnqʅıɔ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
+  },
   "settings#egress-region#select-de": {
     "message": "‮פǝɹɯɐuʎ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+  },
+  "settings#egress-region#select-dk": {
+    "message": "‮pǝuɯɐɹʞ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
   },
   "settings#egress-region#select-es": {
     "message": "‮Sdɐıu‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
   },
+  "settings#egress-region#select-fr": {
+    "message": "‮ɟɹɐuɔǝ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+  },
   "settings#egress-region#select-gb": {
     "message": "‮∩uıʇǝp‬ ‮Ӽıuƃpoɯ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
   },
+  "settings#egress-region#select-hk": {
+    "message": "‮Houƃ‬ ‮Ӽouƃ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
+  },
+  "settings#egress-region#select-hu": {
+    "message": "‮Hnuƃɐɹʎ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
+  },
   "settings#egress-region#select-in": {
     "message": "‮Iupıɐ‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+  },
+  "settings#egress-region#select-it": {
+    "message": "‮Iʇɐʅʎ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
   },
   "settings#egress-region#select-jp": {
     "message": "‮ſɐdɐu‬",
@@ -298,6 +338,18 @@
   "settings#egress-region#select-nl": {
     "message": "‮Nǝʇɥǝɹʅɐups‬",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+  },
+  "settings#egress-region#select-no": {
+    "message": "‮Noɹʍɐʎ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+  },
+  "settings#egress-region#select-ro": {
+    "message": "‮ᴚoɯɐuıɐ‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+  },
+  "settings#egress-region#select-se": {
+    "message": "‮Sʍǝpǝu‬",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
   },
   "settings#egress-region#select-sg": {
     "message": "‮Sıuƃɐdoɹǝ‬",
