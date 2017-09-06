@@ -26,8 +26,12 @@
 #include "systemproxysettings.h"
 #include "utilities.h"
 #include "diagnostic_info.h"
-#include "osrng.h"
 #include "usersettings.h"
+
+#pragma warning(push, 0)
+#pragma warning(disable: 4244)
+#include "osrng.h"
+#pragma warning(pop)
 
 
 HANDLE g_diagnosticHistoryMutex = CreateMutex(NULL, FALSE, 0);
@@ -866,7 +870,6 @@ void GetOSSecurityInfo(
             {
                 securityInfo.version = _T("v2");
 
-                VARIANT vtProp;
                 hr = pclsObj->Get(L"productState", 0, &vtProp, 0, 0);
 
                 if (SUCCEEDED(hr))

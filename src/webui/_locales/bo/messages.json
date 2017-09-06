@@ -1,0 +1,506 @@
+{
+    "appbackend#state-starting-body": {
+        "message": "ཏོག་ཙམ་འགུགས་རོགས།",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#local-proxy-ports#error-modal-body-http": {
+        "message": "<p>\nཁྱེད་རང་གིས་སཡི་ཕོན་ལ་HTTP ངོ་ཚབ་ཀྱི་ཆེད་དུ་བསྟི་གནས་ངོ་ཚབ་མཐུད་སྒོ་བེད་སྤྱོད་བྱེད་རྒྱུར་སྒྲིག་བཀོད་བྱས་འདུག<br>.\nཡིན་ནའང་མཐུད་སྒོ་དེ་ད་ལྟ་གཞན་ཞིག་གིས་བེད་སྤྱོད་གཏོང་བཞིན་པ་ཡིན་སྟབས་སཡི་ཕོན་གྱིས་བེད་སྤྱོད་བྱེད་མི་ཐུབ།\n</p>\n<p>\nསྒྲིག་བཀོད་བྱས་པའི་HTTP ངོ་ཚབ་མཐུད་སྒོ་བརྗེས་ནས་ཡང་སྐྱར་ཐབས་ཤེས་གཅིག་གནང་རོགས། ང་ཚོའི་རེ་བ་་ལ་ཁྱེད་རང་གིས་མཐུད་སྒོ་དེ་གཙང་མ་བཟོས་ཏེ་སཡི་ཕོན་གྱིས་རང་འགུལ་ངང་ནས་མཐུད་སྒོ་གཞན་ཞིག་འདེམས་ཐུབ།\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "ཉི་ཧོང་།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#upstream-proxy#error-modal-body-configured": {
+        "message": "ཁྱེད་རང་གིས་སཡི་ཕོན་ལ་\"ནང་འཇུག་ངོ་ཚབ་\" བེད་སྤྱོད་བྱེད་རྒྱུར་སྒྲིག་བཀོད་བྱས་འདུག<br>\nཡིན་ནའང་ང་ཚོས་ངོ་ཚབ་དེ་རྒྱུད་དེ་སཡི་ཕོན་ཞབས་ཞུ་འཕྲུལ་ཆས་ལ་མཐུད་ཐུབ་ཀྱི་མིན་འདུག<br>\nསྒྲིག་བཀོད་ལ་བཟོ་བཅོས་རྒྱབ་ནས་ཡང་སྐྱར་ཐབས་ཤེས་གནང་རོགས།",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+    },
+    "logs#show-debug-label": {
+        "message": "སྐྱོན་སེལ་གྱི་ཉིན་ཐོ་སྟོན།",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "nav#logs": {
+        "message": "ཉིན་ཐོ།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+    },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "དྲྭ་རྒྱའི་ཁ་བྱང་སྒྲིག་བཀོད་བྱེད་པ་ལ་སྤྱོད་མཁན་གྱི་མིང་དང་གསང་ཨང་གཉིས་དགོས།",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#error-alert": {
+        "message": "<strong>ནོར་སྐྱོན།</strong>ནོར་སྐྱོན་ཤོར་བ་རྣམས་མདུན་བསྐྱོད་མ་བྱས་གོང་དུ་བཅོས་རོགས་གནང་།",
+        "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
+    },
+    "settings#local-proxy-ports#reason": {
+        "message": "གལ་ཏེ་ཁྱེད་རང་གི་གློག་ཀླད་སྒང་ལ་་སཡི་ཕོན་དང་མཉམ་དུ་ལས་ཀ་བྱེད་ཐུབ་པའི་ཆེད་དུ་མཛུབ་འདེབས་སྒྲིག་བཀོད་བྱེད་དགོས་ན། སཡི་ཕོན་གྱིས་ས་ཁུལ་མཐུད་སྒོ་ཨང་གྲངས་གཅིག་པ་ཞིག་ག་དུས་ཡིན་རུང་བེད་སྤྱོད་བྱེད་དགོས། གལ་ཏེ་ཁྱེད་རང་ལ་མཐུད་སྒོའི་ཨང་གྲངས་་དམིགས་སུ་བཀར་ནས་སྟོན་ཐུབ་པའི་རྒྱུ་མཚན་མ་མཐོང་ན། ཁྱེད་རང་གིས་སཡི་ཕོན་རང་འགུལ་ངང་ནས་འདེམས་བཅུག་པའི་ཆོག་མཆན་སྤྲད་ནས་དཀའ་ངལ་སེལ་བར་ཕན་ཐོག་བྱེད་ཀྱི་རེད།",
+        "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
+    },
+    "appbackend#minimized-to-systray-body": {
+        "message": "འདྲ་རྟགས་འདི་ལ་སྣོན་ནས་མཉེན་ཆས་སྐྱར་འཇུག་བྱེད།",
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "banner#sponsored-by": {
+        "message": "སྦྱིན་བདག་བྱེད་མཁན།",
+        "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
+    },
+    "appbackend#state-connected-body": {
+        "message": "རང་གི་བརྒལ་མཚམས་ནས་བརྒལ་ཏེ་བསྐྱོད།",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#disable-timeouts#enable-label": {
+        "message": "དྲྭ་རྒྱ་དལ་པོ་ཡོད་ཚེ་དུས་རྫོགས་མེད་པ་བཟོས།",
+        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+    },
+    "settings#egress-region#select-in": {
+        "message": "རྒྱ་གར།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
+    "connection#connected-msg": {
+        "message": "སཡི་ཕོན་ <span class=\"state-word\">མཐུད་བཞིན་པ།</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "settings#split-tunnel#reason": {
+        "message": "སྤྱིར་བཏང་རང་གི་རྒྱལ་ཁབ་ནང་གི་དྲྭ་ཚིགས་ཁག་ལ་བཀག་འགོག་གང་ཡང་མེད། དེས་ན་གདམ་ག་འདི་བྱས་པའི་རྐྱེན་གྱིས་དྲྭ་ཚིགས་མགྱོགས་པོ་ལྟ་ཐུབ་པ་དང་སྐབས་རེ་ISP dataབེད་སྤྱོད་གཏོང་བའི་རིན་གོང་ཆུང་དུ་འགྲོ་གི་ཡོད།",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "nav#settings": {
+        "message": "སྒྲིག་བཀོད།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "nav#connection#connected": {
+        "message": "མཐུད་ཚར་སོང་།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
+    },
+    "settings#egress-region#error-modal-title": {
+        "message": "ས་གནས་ཞབས་ཞུ་འཕྲུལ་ཆས་རྙེད་མ་སོང་།",
+        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#upstream-proxy#error-modal-title": {
+        "message": "ངོ་ཚབ་ནང་འཇུག་ནོར་སྐྱོན།",
+        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+    },
+    "settings#egress-region#default": {
+        "message": "སོར་བཞག་འདེམས།<strong>“ལུང་པ་མགྱོགས་ཤོས་འདེམས་པས་སཡི་ཕོན་གྱིས་རང་འགུལ་ངང་ནས་ཞབས་ཞུ་འཕྲུལ་ཆས་འདེམས་ལ་དེ་ནི་སྤྱིར་བཏང་དེའི་སྐབས་ཀྱི་དྲྭ་རྒྱ་མགྱོགས་ཤོས་དེ་ཆགས་ཀྱི་ཡོད་པ་རེད།",
+        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
+    },
+    "connection#stopping-msg": {
+        "message": "སཡི་ཕོན་ <span class=\"state-word\">མཐུད་མཚམས་བཞག་བཞིན་པ།</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "settings#upstream-proxy#error-modal-body-default": {
+        "message": "གནས་སྐབས་རིང་ལ་སཡི་ཕོན་ནས་ཁྱེད་རང་གི་ངོ་ཚབ་འགྲོ་ལུགས་དེ་བཞིན་དེའི་\"ནང་འཇུག་ངོ་ཚབ་\"ལ་བཀོད་སྒྲིག་བྱས་ཡོད<br>\nཡིན་ནའང་ང་ཚོས་ངོ་ཚབ་དེ་རྒྱུད་དེ་སཡི་ཕོན་ཞབས་ཞུ་འཕྲུལ་ཆས་ལ་མཐུད་ཐུབ་ཀྱི་མིན་འདུག<br>\n\"ནང་འཇུག་ངོ་ཚབ་བེད་སྤྱོད་མ་བྱེད་\" འདེམས་ནས་ཡང་སྐྱར་ཐབས་ཤེས་གནང་རོགས།",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
+    },
+    "feedback#success-message": {
+        "message": "<strong>ཐུགས་རྗེ་ཆེ། </strong> ཁྱེད་རང་གི་དགོངས་འཆར་སྐུར་ཟིན།",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "settings#upstream-proxy#password-label": {
+        "message": "གསང་ཨང་།",
+        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+    },
+    "appbackend#state-stopped-title": {
+        "message": "སཡི་ཕོན་མཐུད་ཁ་ཆད་སོང་།",
+        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "གལ་ཏེ་སྒོ་གདམ་ན་སོ་སོའི་ལུང་པའི་ནང་གི་ཞབས་ཞུ་འཕྲུལ་ཆས་ལ་འབོད་སྐུལ་བྱས་ཚེ་གནས་ཚུལ་འདི་སཡི་ཕོན་གྱི་ཡུར་བ་རྒྱུད་དེ་འགྲོ་གི་མི་རེད།",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+    },
+    "about#visit-download-site": {
+        "message": "དྲྭ་རྒྱར་གཟིགས་ཞིབ་ <strong><a class=\"NewVersionURL\" href=\"#\">དང་ཐོན་གསར་པ་ཕབ་ལེན་གནང་རོགས། </a></strong> ཡང་ན། <strong><a class=\"InfoURL\" href=\"#\">འདི་ནས་རོགས་རམ་དང་གནས་ཚུལ་ཤེས་ཐུབ་</a></strong> སཡི་ཕོན་ནི་ཨེན་ཀྲོཌ་དང་ཝིན་ཌོ་གཉིས་ཀར་ཡོད། ",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "ངོ་ཚབ་ནང་འཇུག་བེད་སྤྱོད་མ་བྱས།",
+        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "appbackend#state-connected-reminder-title": {
+        "message": "སཡི་ཕོན་མཉེས་ཆས་ཀྱིས་ཁྱེད་རང་མཐུད་ཡོད།",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "ཀེ་ན་ཌ།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+    },
+    "settings#systray-minimize#help-text": {
+        "message": "གལ་ཏེ་འདེམས་ན། སཡི་ཕྷོན་མཉེན་ཆས་སྟིམ་སྐབས་ཝིན་ཌོ་ཡིས་བརྡོ་ཐོ་གནས་ས་སྦས་ཀྱི་ཡོད་ལ། (འདི་ལ་མིང་གཞན་“system tray” or “systray”ཡང་ཟེར་ཞིང་དེ་ནི་དྲྭ་ཤེལ་སྒང་གི་ལས་འགན་ཚན་བྱང་གི་ཆུ་ཚོད་གི་འགྲམ་ལ་ཡོད།)",
+        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "མཐུད་སྒོ།",
+        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+    },
+    "settings#port-value-error-msg": {
+        "message": "ངེས་པར་དུ་1 ནས་ 65535བར་དུ་དགོས།",
+        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
+    },
+    "nav#feedback": {
+        "message": "དགོངས་འཆར།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
+    },
+    "connection#starting-msg": {
+        "message": "སཡི་ཕོན་ <span class=\"state-word\">མཐུད་བཞིན་པ།</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "settings#applying-message": {
+        "message": "ཁྱེད་རང་གིས་སྒྲིག་བཀོད་བྱས་པ་འདི་ཡང་སྐྱར་མཐུད་བཞིན་ཡོད།",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+    },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "ང་ཚོའི་སྦྱིན་བདག་ཁག་གི་དྲྭ་ངོས་གཟིགས་ན་སཡི་ཕོན་དྲ་ཚིགས་རིན་མེད་ཐོག་བཞག་རོགས།!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#state-starting-title": {
+        "message": "སཡི་ཕོན་མཐུད་བཞིན་པ།",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#egress-region#select-es": {
+        "message": "སི་པན།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+    },
+    "settings#unapplied-changes-prompt#title": {
+        "message": "སྒྲིག་བཀོད་བསྒྱུར་བཅོས།",
+        "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#egress-region#select-us": {
+        "message": "ཨ་རི།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
+    },
+    "feedback#top_para_2": {
+        "message": "མཉེན་ཆས་ཐོན་གསར་ཤོས་དེ་ཕབ་ལེན་བྱས་པ་ལ་བརྟེན་ནས་དཀའ་ངལ་མང་དག་ཅིག་བཅོས་ཐུབ་།  ཁྱེད་རང་<a class=\"NewVersionURL\" href=\"#\">འདིར་སྣོན་ནས་ཐོན་གསར་ཤོས་འདི་ཕབ་ལེན་བྱེད།</a>ཡང་ན་ཁྱེད་རང་གིས་ཁ་བྱང་འདིའི་སྒང་ལ་གློག་འཕྲིན་གཏོང་།<a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "notice#systemproxysettings-setproxy-error-body": {
+        "message": "<p>སཡི་ཕོན་གྱི་ལམ་ལུགས་ངོ་ཚབ་སྒྲིག་བཀོད་དེ་སྒྲིག་ཐུབ་མ་སོང་།</p>\n<p>དེ་ནི་ཁྱེད་རང་གི་དྲྭ་འབུ་འགོག་བྱེད་ཀྱི་མཉེན་ཆས་ལ་འགལ་ཟླ་འབྱུང་བའི་རྐྱེན་གྱིས་མིན་ནམ་སྙམ། དེར་ཁྱེད་རང་གི་མཉེན་ཆས་འདི་མཛུབ་འདེམས་སྒྲིག་དགོས་པ་དང་། ཡང་ན་ལམ་ལུགས་སྒྲིག་བཀོད་བེད་སྤྱོད་བྱས་ནས་བསྟི་གནས་སཡི་ཕོན་ངོ་ཚབ་བེད་སྤོྱོད་བྱེད།</p>",
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#local-proxy-ports#error-modal-body-socks": {
+        "message": "<p>\nཁྱེད་རང་གིས་སཡི་ཕོན་སྒྲིག་བཀོད་བྱད་ནས་་SOCKS ངོ་ཚབ་བསྟི་གནས་མཐུད་སྒོ་བེད་སྤྱོད་བྱེ་བྲག་པ་བེད་སྤྱོད་བྱེད་ཆེད་དུ་ཡིན་<br>\nཡིན་ནའང་མཐུད་སྒོ་དེ་ད་ལྟ་བེད་སྤྱོད་གཏོང་བཞིན་པས་སཡི་ཕོན་གྱིས་བེད་སྤྱོད་བཏང་མི་ཐུབ།\n</p>\n<p>\nམཁྱེན་རྟོགས་ཀྱི་སླད་དུ་སྒྲིག་བཀོད་བྱས་པའིSOCKS ངོ་ཚབ་མཐུད་སྒོ་བརྗེས་ནས་ཡང་སྐྱར་ཐབས་ཤེས་གཅིག་གནང་རོགས། ང་ཚོའི་རེ་བ་་ལ་ཁྱེད་རང་གིས་མཐུད་སྒོ་དེ་གཙང་མ་བཟོས་ཏེ་སཡི་ཕོན་གྱིས་རང་འགུལ་ངང་ནས་མཐུད་སྒོ་གཞན་ཞིག་འདེམས་ཐུབ།.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+    },
+    "feedback#submit_button": {
+        "message": "ཐོ་བཀོད་བྱས་པ།",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "settings#systray-minimize#reason": {
+        "message": "སཡི་ཕོན་འདི་ཆུང་དུ་བཏང་ནས་་བརྡ་ཐོ་གནས་སར་“system tray”་བཀོད་ནས་ལས་འགན་ཚན་བྱང་གི་ས་མིག་སྟོང་པ་བཟོས་། འདིས་ཁྱེད་རང་ལ་སཡི་ཕོན་མཉེན་ཆས་དུས་ཡུན་རིང་པོའི་བར་དུ་འཁོར་སྐྱོད་བྱེད་པ་ལ་དམིགས་བསལ་གྱི་ཕན་ཐོག་ཡོད།",
+        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
+    },
+    "settings#unapplied-changes-prompt#discard-button": {
+        "message": "དོར་བ།",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
+    },
+    "notice#systemproxysettings-setproxy-error-title": {
+        "message": "ངོ་ཚབ་འགྲོ་ལུགས་ནོར་བ།",
+        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#egress-region#label": {
+        "message": "རྒྱུད་དེ་མཐུད་པ།",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
+    },
+    "feedback#top_para_3": {
+        "message": "ང་ཚོས་ཁྱེད་རང་ལ་<a class=\"FaqURL\" href=\"#\">ཡང་སེ་དྲིས་པའི་དྲི་བ་</a>ཁག་དང་ཐུན་མོང་ལ་ཕྲད་བཞིན་པའི་དཀའ་ངལ་རྣམས་སེལ་བའི་ཐབས་ལམ་རྣམས་རྙེད་ཐུབ། ",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "settings#saved-message": {
+        "message": "སྒྲིག་བཀོད་ཉར་ཚགས།",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
+    },
+    "about#get-by-email": {
+        "message": "<strong>གལ་ཏེ་དྲྭ་ཚིགས་འདི་བལྟ་མ་ཐུབ་ན་</strong>ཁྱེད་རང་གིས་འདིར་གློག་་འཕྲིན་བཏང་ནས་སཡི་ཕོན་ཐོན་གསར་པ་འདི་རགས་ཐུབ།:",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "settings#egress-region#select-nl": {
+        "message": "ནེ་ཐར་ལེཌ།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "general#modal-close-button": {
+        "message": "སྒོ་རྒྱབ།",
+        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
+    },
+    "settings#unapplied-changes-prompt#apply-button": {
+        "message": "ལག་བསྟར།",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
+    },
+    "settings#reset-button": {
+        "message": "བསྐྱར་དུ་སྒྲིག་སྟེ་རང་སོར་བཞག",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "about#client-version": {
+        "message": "ཝིན་ཌོ་སྒེར་སྤྱོད་གྱི་ཐོན་རིམ་ཆེད་དུ་སཡི་ཕོན་:",
+        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "ངོ་ཚབ་ནང་འཇུག",
+        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
+    },
+    "settings#egress-region#description": {
+        "message": "སཡི་ཕོན་ལ་རྒྱལ་ཁབ་འདྲ་མིན་ནང་ཞབས་ཞུ་འཕྲུལ་ཆས་བཙུགས་ཡོད། དེར་བརྟེན་ཇི་ཙམ་གྱིས་རང་གི་ལུང་པའི་ནང་གི་ཕྷོན་ཞབས་འཕྲུལ་ཆས་ཐག་ཉེ་བ་དེ་སྲིད་ཀྱིས་དྲྭ་རྒྱའི་མཐུད་ཀ་མགྱོགས་པ་ཡོད། ཡིན་ནའི་རང་་ལུང་པ་གཞན་དག་ལ་གནས་ཁུལ་བྱས་ཏེ་དྲྭ་ཚིགས་དང་ཞབས་ཞུ་ལོངས་སྤྱོད་ཐུབ།",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "( L2TP/IPSec མཉམ་དུ་ལས་ཀ་བྱེད་མི་ཐུབ།)",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    },
+    "general#notice-modal-tech-preamble": {
+        "message": "འདིར་འཕྲུལ་ཆས་དང་འབྲེལ་བའི་དཀའ་ངལ་ཕྲད་འདུག:",
+        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+    },
+    "settings#local-proxy-ports#unique-error-msg": {
+        "message": "བསྟི་གནས་མཐུད་སྒོ་རྣམས་ཕན་ཚུན་མི་འདྲ་ངེས་པར་དུ་དགོས།",
+        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+    },
+    "settings#vpn-incompatible-label": {
+        "message": "L2TP/IPSec",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    },
+    "settings#error-modal#body": {
+        "message": "ཁྱེད་རང་གི་སྒྲིག་བཀོད་ནང་ལ་ནོར་སྐྱོན་ཤོར་འདུག རྒྱུན་སྐྱོང་མ་གནང་གོང་ལ་བསྒྱུར་བ་གཏོང་རོགས་གནང་།",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
+    },
+    "settings#disable-timeouts#help-text": {
+        "message": "གལ་ཏེ་ཡོད་ན། སཡི་ཕོན་ཞབས་ཞུ་འཕྲུལ་ཆས་ཁང་དང་འབྲེལ་མོལ་གྱི་དུས་ཚོད་རྫོགས་རྒྱུ་མེད།",
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+    },
+    "nav#connection#stopped": {
+        "message": "མཐུད་མཚམས་བཞག",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "ངོ་ཚབ་བསྟི་གནས་མཐུད་སྒོ།",
+        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
+    },
+    "settings#egress-region#select-de": {
+        "message": "ཇར་མ་ནི།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "notice#systemproxysettings-setproxy-warning-template": {
+        "message": "སཡི་ཕོན་གྱིས་དྲྭ་རྒྱ་མཐུད་མིང་“<%- data %>”འདིར་འགྲོ་ལུགས་ངོ་ཚབ་སྒྲིག་བཀོད་བྱེད་ཐུབ་མ་སོང་། དེ་ནི་ཁྱེད་རང་གི་དྲྭ་འབུ་འགོག་བྱེད་ཀྱི་མཉེན་ཆས་དང་འགལ་ཟླ་ཡོད་པའི་རྐྱེན་གྱིས་ཡིན་སྲིད། དེར་ཁྱེད་རང་གི་མཉེན་ཆས་འདི་མཛུབ་འདེམས་སྒྲིག་དགོས་པ་དང་། ཡང་ན་ལམ་ལུགས་སྒྲིག་བཀོད་བེད་སྤྱོད་བྱས་ནས་བསྟི་གནས་སཡི་ཕོན་ངོ་ཚབ་བེད་སྤོྱོད་བྱེད།",
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+    },
+    "connection#stop-btn": {
+        "message": "མཚམས་འཇོག",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "settings#egress-region#error-modal-body-http": {
+        "message": "ཁྱེད་རང་གིས་སཡི་ཕོན་སྒྲིག་བཀོད་བྱས་ནས་འདི་ས་ཁུལ་བྱེ་བྲག་པའི་ཞབས་ཞུ་འཕྲུལ་ཆས་བེད་སྤྱོད་བྱེདཔའི་ཆེད་དུ་སྒྲིག་འདུག་<br>\nགང་ལྟར་ནའང་ས་ཁུལ་འདི་ད་ལྟ་རྙེད་མ་སོོང་།<br>\nཁྱེད་རང་གིས་ས་ཁུལ་གསར་པ་འདེམ་པའམ་ཡང་ན་སོར་བཞག་བརྗེ་པོ་རྒྱབ་སྟེ་ \"མགྱོགས་ཤོས་ཀྱི་རྒྱལ་ཁབ།\" དེ་ངེས་པར་དུ་འདེམས་དགོས།",
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "གོང་གི་འགེངས་ཤོག་འདི་ལས་ཀ་བྱེད་ཀྱི་མེད་པ་དང་། ཡང་ན་ཁྱེད་རང་གིས་ང་ཚོར་པར་ལེན་བྱེད་འདོད་ན་གཤམ་གྱི་གློག་འཕྲིན་ལ་ཡིག་ལན་སྐུར་རོགས།<a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>.",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "settings#upstream-proxy#reason": {
+        "message": "ངོ་ཚབ་ནང་བཅུག་རྣམས་སྐབས་རེ་སློབ་གྲྭ་ཁག་དང་། མཐོ་སློབ། ཡང་ན་ཚོང་འབྲེལ་སོགས་ལ་དགོས་མཁོ་ཡོད། གལ་ཏེ་ཁྱེད་རང་གི་དྲྭ་རྒྱ་ཞབས་ཞུ་ཁང་གིས་རང་ལ་ངོ་ཚབ་ནང་བཅུག་སྒྲིག་བཀོད་སྤྲད་པ་ན་འདིར་མཐུད་ཐུབ་པའི་ཆེད་དུ་མཛུབ་འདེམས་སྒྲིག་བཀོད་བྱེད་དགོས་ཀྱི་རེད།",
+        "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
+    },
+    "settings#local-proxy-ports#error-modal-title": {
+        "message": "བསྟི་གནས་ངོ་ཚབ་མཐུད་སྒོར་འགལ་ཟླ།",
+        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
+    },
+    "connection#disconnect-btn": {
+        "message": "མཐུད་མཚམས་བཞག",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "feedback#top_content_title": {
+        "message": "སྐུ་ཉིད་ནས་ང་ཚོར་དགོངས་འཆར་གནང་རོགས།",
+        "description": "Title for the Feedback page"
+    },
+    "banner#long-connecting": {
+        "message": "<strong>ཡིན་གྱི་མ་རེད། !</strong> ཁྱེད་རང་མཐུད་པའི་སྐབས་ལ་དཀའ་ངལ་འདུག!<br>\nསཡི་ཕོན་ཐོན་རིམ་གསར་ཤོས་ཕབ་ལེན་དྲྭ་ཚིགས་ནས <a class=\"NewVersionURL\" href=\"#\">ཕབ་ལེན་བྱེད།</a>\nཡང་ན་ང་ཚོར་གློག་འཕྲིན་གཏོང་སྟེ་ཕབ་ལེན་བྱེད། <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+    },
+    "logs#placeholder": {
+        "message": "ད་ལྟ་ཉིན་ཐོ་མིན་འདུག",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
+    "connection#stopped-msg": {
+        "message": "སཡི་ཕོན་ <span class=\"state-word\">མཐུད་མཚམས་བཞག་བཞིན་པ།</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "settings#disable-timeouts#reason": {
+        "message": "དྲྭ་རྒྱའི་མཐུད་ཀ་ཧ་ཅང་གི་སྐྱོ་པོ་ཡོད་པའི་སྐབས་ལ་མཐུད་ཚེ། གློ་བུར་དུ་དྲྭ་རྒྱའི་མཐུད་ཀ་ཆད་པ་དེ་ཉུུང་བ་ཚོར་གྱི་རེད།",
+        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "nav#about": {
+        "message": "སྐོར།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "བཞག <strong>སྟོང་པ། </strong> རང་འགུལ་གྱི་མཐུད་ཁ་གདམ་ག་ (ངོ་སྤྲོད།)",
+        "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
+    },
+    "settings#systray-minimize#heading": {
+        "message": "བརྡ་ཐོ་གནས་ས་སྟིམ་ (System Tray)",
+        "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
+    },
+    "language#success-message": {
+        "message": "<strong>འཚམས་འདྲི་ཞུ།</strong> སཡི་ཕོན་ལ་ཕེབས་པར་དགའ་བསུ་ཞུ།",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "settings#egress-region#select-sg": {
+        "message": "སིངྒ་པུར།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
+    },
+    "feedback#diagnostic_check": {
+        "message": "བརྟག་དཔྱད་བྱས་པའི་ཡིག་ཆ་རྣམས་ནང་འཇུག་བྱེད། མཁྱེན་རྟོགས་ཀྱི་སླད་དུ་བརྟག་དཔྱད་བྱས་པའི་ཡིག་ཆ་ཁག་གིས་རང་ངོས་འཛིན་ཐུབ་ཀྱི་མེད། འདིས་སཡི་ཕོན་ལས་སླ་པོའི་ངང་ནས་འཁོར་སྐྱོད་བྱེད་ཐུབ་པར་ཕན་ཐོག་ཡོང་གི་ཡོད།  <a class=\"DataCollectionInfoURL\" href=\"#\">ང་ཚོས་ཡིག་ཆ་གང་མཁོ་བསྡུ་བྱས་ཡོད་མེད་གཟིགས་ན་འདིར་སྣོན།</a>",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "settings#transport-mode#heading": {
+        "message": "འོར་འདྲེན་བྱེད་ཚུལ།",
+        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
+    },
+    "about#description": {
+        "message": "སཡི་ཕོན་ནི་ <strong>དམ་བསྒྲགས་ཅན་གྱི་ཉེན་གཡོལ་ལག་ཆ་ཞིག་ཡིན། </strong> — བཟོ་བཀོད་འདིས་དྲྭ་རྒྱ་རང་དབང་གིས་ཐོག་ནས་ལྟ་ཐུབ་པ་མ་ཟད་ཞ་སྔར་གྱི་དམ་བསྒྲགས་དང་མེ་གྱང་སོགས་བརྒལ་ནས་ལྟ་ཐུབ། འདི་ནི་<strong>ཕྱི་གསལ་ནང་གསལ་གྱི་ཨང་རྟགས་</strong> དང་ཁེ་ན་ཌའི་རྒྱལ་ས་ཊོ་རོན་ཌོ་ནས་བཟོས་པ་རེད།",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "nav#connection#stopping": {
+        "message": "མཐུད་མཚམས་བཞག་བཞིན་པ།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
+    },
+    "settings#error-modal#title": {
+        "message": "སྒྲིག་བཀོད་ནོར་བ།",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
+    },
+    "settings#apply-button": {
+        "message": "བསྒྱུར་བཅོས་ལག་བསྟར།",
+        "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
+    },
+    "appbackend#minimized-to-systray-title": {
+        "message": "སཡི་ཕོན་དྲྭ་ཚིགས་འདི་བརྡ་གཏོང་སའི་གནས་སུ་ཆུང་དུ་བཏང་ནས་བཞག་ཡོད།",
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "ཡུར་བ་ཁ་གྱེས་པ།",
+        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#egress-region#invalid-error-msg": {
+        "message": "སཡི་ཕོན་ཁུངས་ལྡན་ས་གནས་ཞབས་ཞུ་འཕྲུལ་ཆས་གདམ་ག",
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+    },
+    "appbackend#state-connected-title": {
+        "message": "སཡི་ཕོན་མཐུད་ཡོད།",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+    },
+    "settings#upstream-proxy#proxy-reqs": {
+        "message": "HTTPངོ་ཚབ་ཀྱིས་ HTTPS ལ་རྒྱབ་སྐྱོར་ངོས་ལེན་ཡོད།",
+        "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+    },
+    "appbackend#state-connected-reminder-body": {
+        "message": "སཡི་ཕོན་རིན་མེད་བཞག་རོགས་གནང་། འདིར་སྣོན་ནས་ང་ཚོའི་སྦྱིན་བདག་ཁག་གི་ཐོ་གཞུང་ལ་གཟིགས་།",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#upstream-proxy#set-username-password-error-msg": {
+        "message": "ཁྱེད་རང་གིས་སྤྱོད་མིང་དང་གསང་ཨང་གཉིས་ཀ་ངེས་པར་དུ་སྒྲིག་དགོས། ཡང་ན་ཁུངས་ལྡན་མིན་པའི་ཆེད་དུ་རེའུ་མིག་གཉིས་ཀ་སྟོང་པར་བཞག",
+        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
+    "settings#transport-mode#check-label": {
+        "message": " L2TP/IPSec བེད་སྤྱོད་བྱེད་ཚུལ།",
+        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
+    },
+    "connection#egress-region-combo-label": {
+        "message": "རྒྱུད་དེ་མཐུད་པ།",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "དབྱིན་ཡུལ།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
+    },
+    "about#wordart-title": {
+        "message": "སཡི་ཕོན།",
+        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "དོ་བདག་གི་མིང་།",
+        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
+    },
+    "feedback#smiley_sad": {
+        "message": "སཡི་ཕོན་ཡང་སེ་མཐུད་མི་ཐུབ་པ་དང་ལས་ཀ་ཡག་པོ་ཞེ་དྲག་བྱེད་ཐུབ་ཀྱི་མིན་འདུག",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "settings#unapplied-changes-prompt#body": {
+        "message": "ཁྱེད་རང་གིས་སྒྲིག་བཀོད་ནང་ལ་བསྒྱུར་བ་བཏང་འདུག འོན་ཀྱང་ཁྱེད་རང་གིས་ལག་བསྟར་མཐེབ་གཞོངས་སྣོན་མིན་འདུག<br><br>ཁྱེད་རང་བསྒྱུར་བ་བཏང་བ་དེ་བེད་སྤྱོད་བཏང་འདོད་ཡོད་དམ་ཡང་ན་དོར་གྱི་ཡིན་ནམ།",
+        "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#systray-minimize#enable-label": {
+        "message": "བརྡ་ཁྱབ་གནས་ས་ཆུང་དུ་གཏོང་། ",
+        "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
+    },
+    "settings#egress-region#heading": {
+        "message": "སཡི་ཕོན་ས་ཁུལ་ཞབས་ཞུ་འཕྲུལ་ཆས་",
+        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "སྤྱོད་མིང་དང་གསང་ཨང་སྒྲིག་པ་ལ་དོ་བདག་་བའི་མིང་དང་མཐུད་སྒོ་ཡང་སྒྲིག་དགོས།",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#disable-timeouts#heading": {
+        "message": "དྲྭ་རྒྱ་དལ་པོ་ཡོད་ཚེ་དུས་རྫོགས་མེད་པ་བཟོས",
+        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "གལ་ཏེ་ཁྱེད་རང་གི་གློག་ཀླད་འདི་ལ་ངོ་ཚབ་སྒྲིག་བཀོད་བྱེད་ཚར་ཡོད་ན། ཡུར་བ་གསར་འཛུགས་བྱས་པའི་ཚེ་སཡི་ཕོན་གྱིས་རང་སོར་བཞག་པའི་ཐོག་ལ་ངོ་ཚབ་བེད་སྤྱོད་བྱེད་ཀྱི་རེད། ཁྱེད་རང་གིས་སྤྱོད་ཚུལ་འདི་ལ་སྐྱར་དུ་འཇུག་ཏེ་མིང་ངོ་ཚབ་བྱེ་བྲག་པ་ཞིག་བེད་སྤྱོད་བཏང་བའམ།  ཡང་ན་\"ངོ་ཚབ་ནང་བཅུག\"་འདི་འདྲ་ཞིག་ངེས་པར་དུ་སྤྱོད་དགོས་ཞེས་མིང་སྨོས་བྱེད་དགོས།",
+        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "དྲྭ་རྒྱ་ངོ་ཚབ་འདི་སོ་སོའི་ལུང་པའི་ནང་ལ་མ་བཟོས།",
+        "description": "The label on the checkbox that enables 'Split Tunnel'."
+    },
+    "nav#connection#starting": {
+        "message": "མཐུད་བཞིན་པ།",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "གལ་ཏེ་ང་ཚོས་ཁྱེད་རང་ལ་ལན་འདེབས་བྱེད་དགོས་ན་ཁྱེད་རང་གི་གློག་འཕྲིན་ཁ་བྱང་བཅུག་རོགས་གནང་།",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "ཁྱེད་རང་གི་མཆན་འདིར་བཞག་རོགས།",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#smiley_happy": {
+        "message": "ང་རང་གི་འདོད་མོས་ལྟར་སཡི་ཕོན་བེད་སྤྱོད་བྱེད་ཐུབ་ཀྱི་འདུག",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "settings#upstream-proxy#domain-label": {
+        "message": "དྲྭ་རྒྱའི་ཁ་བྱང་།",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+    },
+    "about#wordart-tag": {
+        "message": "བརྒལ་མཚམས་མེད་པ།",
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
+    },
+    "settings#upstream-proxy#username-label": {
+        "message": "སྤྱོད་མིང་།",
+        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+    },
+    "connection#wait-btn": {
+        "message": "ཏོག་ཙམ་འགུགས་རོགས།...",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#upstream-proxy#set-hostname-port-error-msg": {
+        "message": "ཁྱེད་རང་གིས་དོ་བདག་གི་མིང་དང་མཐུད་སྒོ་གཉིས་ཀ་ངིས་པར་དུ་སྒྲིག་རོགས། ཡང་ན་སྟོང་པ་བཞག་ནས་རང་འགུལ་གྱིས་འདེམས་ཐུབ།",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+    },
+    "settings#transport-mode#help-text": {
+        "message": "ཝིན་ཌོ་ནང་L2TP/IPSec རྟོག་བཟོའི་དྲྭ་རྒྱ་བེད་སྤྱོད་བྱེད།་ འདིས་ཁྱེད་རང་གི་མཉེན་ཆས་ཚང་མ་ཡུར་བའི་ནང་བཅུག་གི་རེད། ཡིན་ནའི་དེས་གནས་ཚུལ་དེ་དག་སྦས་ཀྱི་མེད་ཅིང་ཉེན་གཡོལ་གྱི་ནུས་པའང་ཤུགས་ཆེན་པོ་མེད། འདི་ནི་ <strong>མེ་གྱང་བརྒལ་ནས་འགྲོ་ཐུབ་པའི་ཆེད་དུ་</strong> ང་ཚོས་ངོས་སྦྱོར་བྱེད་ཀྱི་མེད།",
+        "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "རྒྱལ་ཁབ་མགྱོགས་ཤོས།",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
+    },
+    "connection#connect-btn": {
+        "message": "མཐུད།",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    }
+}

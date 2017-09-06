@@ -83,6 +83,7 @@ public:
     bool ProcessConfig(const string& config_json);
 
     void SetHomepage(const char* homepage);
+    void RotateHomepages();
     void SetUpgradeVersion(const char* upgradeVersion);
 
     void SetLocalProxyPorts(int http, int https, int socks);

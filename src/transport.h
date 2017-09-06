@@ -39,6 +39,11 @@ public:
     virtual void SetReconnected() = 0;
 };
 
+class IUpgradePaver
+{
+public:
+    virtual void PaveUpgrade(const string&) = 0;
+};
 
 // All transport implementations must implement this interface
 class ITransport : public IWorkerThread
@@ -98,8 +103,9 @@ public:
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             IReconnectStateReceiver* reconnectStateReceiver,
+            IUpgradePaver* upgradePaver,
             WorkerThreadSynch* workerThreadSynch,
-            ServerEntry* tempConnectServerEntry=NULL);
+            const ServerEntry* tempConnectServerEntry=NULL);
 
     // Returns true if it's okay to retry the connection using the same transport
     // and connection parameters. If it returns false, then the failure is permanent.
@@ -163,9 +169,10 @@ protected:
 protected:
     SessionInfo m_sessionInfo;
     SystemProxySettings* m_systemProxySettings;
-    ServerEntry* m_tempConnectServerEntry;
+    const ServerEntry* m_tempConnectServerEntry;
     ServerList m_serverList;
     bool m_firstConnectionAttempt;
     IReconnectStateReceiver* m_reconnectStateReceiver;
+    IUpgradePaver* m_upgradePaver;
     bool m_connectRetryOkay;
 };

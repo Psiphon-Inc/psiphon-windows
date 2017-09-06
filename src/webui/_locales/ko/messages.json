@@ -7,10 +7,6 @@
         "message": "<p>\n현재 Psiphon이 HTTP 프록시를 위해 특정한 로컬 포트를 사용하도록 설정되어 있습니다.<br>\n하지만, 해당 포트는 이미 사용되고 있는 것 같으며 Psiphon이 사용할 수 없습니다.\n</p>\n<p>\nHTTP 프록시 포트를 변경하고 다시 시도해 주세요. 값을 모두 지우면 Psiphon이 자동으로 사용 가능한 포트를 지정할 수 있으니 값을 지우는 방법을 추천합니다.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
     },
-    "settings#upstream-proxy#set-both-error-msg": {
-        "message": "호스트 이름과 포트를 반드시 설정해야합니다, 또는 두 칸을 모두 빈칸으로 두면 자동으로 선택되도록 할 수 있습니다.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
     "settings#egress-region#select-jp": {
         "message": "일본",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
@@ -26,6 +22,10 @@
     "nav#logs": {
         "message": "로그",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
+    },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "Setting a Domain requires setting a Username and Password",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#error-alert": {
         "message": "<strong>오류가 발생했습니다!</strong> 진행하기 전에 잘못된 값을 고쳐주세요.",
@@ -46,6 +46,14 @@
     "appbackend#state-connected-body": {
         "message": "국경을 넘어 탐색하세요!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#disable-timeouts#enable-label": {
+        "message": "Disable timeouts for slow networks",
+        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+    },
+    "settings#egress-region#select-in": {
+        "message": "India",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
     },
     "connection#connected-msg": {
         "message": "Psiphon에 <span class=\"state-word\">연결됨</span>",
@@ -87,6 +95,10 @@
         "message": "<strong>감사합니다!</strong> 당신의 피드백이 보내졌습니다.",
         "description": "Message shown to user after their feedback has been sent successufully"
     },
+    "settings#upstream-proxy#password-label": {
+        "message": "Password",
+        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+    },
     "appbackend#state-stopped-title": {
         "message": "Psiphon 연결 끊김",
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
@@ -102,6 +114,14 @@
     "settings#upstream-proxy#skip-label": {
         "message": "업 스트림 프록시 사용 안 함",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon is keeping you connected",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "Canada",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
         "message": "활성화되어 있으면, 최소화 할 때 Psiphon 어플리케이션 창을 알림 영역으로 최소화 합니다. (이는 \"시스템 트레이\" 또는 \"시스트레이\"로 알려져 있으며 Windows 작업 표시줄의 시계 근처에 있습니다)",
@@ -127,9 +147,17 @@
         "message": "다시 연결하면 설정이 적용됩니다.",
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "Keep Psiphon free by visiting our sponsor pages!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
     "appbackend#state-starting-title": {
         "message": "Psiphon 연결 중",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#egress-region#select-es": {
+        "message": "Spain",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
     "settings#unapplied-changes-prompt#title": {
         "message": "설정 변경됨",
@@ -239,6 +267,10 @@
         "message": "설정 값에 오류가 있습니다. 진행하기 전에 설정을 확인하세요.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
+    "settings#disable-timeouts#help-text": {
+        "message": "If enabled, communication with the Psiphon server will not time out.",
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+    },
     "nav#connection#stopped": {
         "message": "연결 끊김",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
@@ -294,6 +326,10 @@
     "connection#stopped-msg": {
         "message": "Psiphon <span class=\"state-word\">연결 끊김</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "settings#disable-timeouts#reason": {
+        "message": "When enabling this over a very slow network connection, you are less likely to experience unexpected disconnections.",
+        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#about": {
         "message": "About",
@@ -359,6 +395,14 @@
         "message": "HTTPS를 지원하는 HTTP 프록시만 사용할 수 있습니다.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
+    "appbackend#state-connected-reminder-body": {
+        "message": "Keep Psiphon free. Click here to visit our sponsor pages!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#upstream-proxy#set-username-password-error-msg": {
+        "message": "You must set both Username and Password, or leave both blank for no authentication.",
+        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
     "settings#transport-mode#check-label": {
         "message": "L2TP / IPSec 모드를 사용",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -395,6 +439,14 @@
         "message": "Psiphon 서버 위치",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "Setting a Username and Password also requires setting a Hostname and Port",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#disable-timeouts#heading": {
+        "message": "Disable Timeouts for Slow Networks",
+        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
+    },
     "settings#upstream-proxy#by-default": {
         "message": "컴퓨터가 이미 프록시 설정이 되어있는 경우, 기본적으로 Psiphon은 터널링을 하기 위해 해당 프록시를 이용합니다. “upstream proxy”를 사용하지 않는 것으로 지정하거나 사용할 프록시를 지정하면 이 동작을 덮어쓸 수 있습니다.",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
@@ -419,13 +471,25 @@
         "message": "Psiphon이 잘 연결되며 원하는 대로 잘 작동하고 있습니다.",
         "description": "The text below the 'happy face' feedback choice."
     },
+    "settings#upstream-proxy#domain-label": {
+        "message": "Domain",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+    },
     "about#wordart-tag": {
         "message": "국경을 넘어",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
+    "settings#upstream-proxy#username-label": {
+        "message": "Username",
+        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+    },
     "connection#wait-btn": {
         "message": "잠시만 기다려주세요...",
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#upstream-proxy#set-hostname-port-error-msg": {
+        "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
     },
     "settings#transport-mode#help-text": {
         "message": "Windows L2TP/IPSec 가상 네트워킹을 사용합니다. 이 모드는 모든 어플리케이션에 터널링을 적용합니다. 하지만 명료하지 않고 강력한 검열 우회 기능을 가지고 있지 않습니다. 대부분의 방화벽을 뚫는데에는 <strong>추천하지</strong> 않습니다.",

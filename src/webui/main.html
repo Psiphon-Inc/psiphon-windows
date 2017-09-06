@@ -434,6 +434,53 @@
 
             <div class="accordion-group">
               <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-disable-timeouts"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#disable-timeouts#heading">
+                    Disable Timeouts for Slow Networks
+                  </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-disable-timeouts" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <p data-i18n="settings#disable-timeouts#help-text">
+                        If enabled, communication with the Psiphon server will not time out
+                      </p>
+                      <p data-i18n="settings#disable-timeouts#reason">
+                        When enabling this over a very slow network connection, you are
+                        less likely to experience unexpected disconnections.
+                      </p>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="DisableTimeouts"/>
+                          <label for="DisableTimeouts">
+                            <span data-i18n="settings#disable-timeouts#enable-label">
+                              Disable timeouts for slow networks
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with L2TP/IPSec mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-egress-region"
                    data-toggle="collapse" data-parent="#settings-accordion">
                   <i class="accordion-expand-icon icon-plus-square"
@@ -490,10 +537,64 @@
                                   </strong>
                                 </a>
                             </li>
-                            <li data-region="US">
-                              <a href="#" tabindex="-1" class="flag us"
-                                 data-i18n="settings#egress-region#select-us">
-                                United States
+                            <li data-region="AT">
+                              <a href="#" tabindex="-1" class="flag at"
+                                 data-i18n="settings#egress-region#select-at">
+                                Austria
+                              </a>
+                            </li>
+                            <li data-region="BE">
+                              <a href="#" tabindex="-1" class="flag be"
+                                 data-i18n="settings#egress-region#select-be">
+                                Belgium
+                              </a>
+                            </li>
+                            <li data-region="BG">
+                              <a href="#" tabindex="-1" class="flag bg"
+                                 data-i18n="settings#egress-region#select-bg">
+                                Bulgaria
+                              </a>
+                            </li>
+                            <li data-region="CA">
+                              <a href="#" tabindex="-1" class="flag ca"
+                                 data-i18n="settings#egress-region#select-ca">
+                                Canada
+                              </a>
+                            </li>
+                            <li data-region="CH">
+                              <a href="#" tabindex="-1" class="flag ch"
+                                 data-i18n="settings#egress-region#select-ch">
+                                Switzerland
+                              </a>
+                            </li>
+                            <li data-region="CZ">
+                              <a href="#" tabindex="-1" class="flag cz"
+                                 data-i18n="settings#egress-region#select-cz">
+                                Czech Republic
+                              </a>
+                            </li>
+                            <li data-region="DE">
+                              <a href="#" tabindex="-1" class="flag de"
+                                 data-i18n="settings#egress-region#select-de">
+                                Germany
+                              </a>
+                            </li>
+                            <li data-region="DK">
+                              <a href="#" tabindex="-1" class="flag dk"
+                                 data-i18n="settings#egress-region#select-dk">
+                                Denmark
+                              </a>
+                            </li>
+                            <li data-region="ES">
+                              <a href="#" tabindex="-1" class="flag es"
+                                 data-i18n="settings#egress-region#select-es">
+                                Spain
+                              </a>
+                            </li>
+                            <li data-region="FR">
+                              <a href="#" tabindex="-1" class="flag fr"
+                                 data-i18n="settings#egress-region#select-fr">
+                                France
                               </a>
                             </li>
                             <li data-region="GB">
@@ -502,16 +603,34 @@
                                 United Kingdom
                               </a>
                             </li>
+                            <li data-region="HK">
+                              <a href="#" tabindex="-1" class="flag hk"
+                                 data-i18n="settings#egress-region#select-hk">
+                                Hong Kong
+                              </a>
+                            </li>
+                            <li data-region="HU">
+                              <a href="#" tabindex="-1" class="flag hu"
+                                 data-i18n="settings#egress-region#select-hu">
+                                Hungary
+                              </a>
+                            </li>
+                            <li data-region="IN">
+                              <a href="#" tabindex="-1" class="flag in"
+                                 data-i18n="settings#egress-region#select-in">
+                                India
+                              </a>
+                            </li>
+                            <li data-region="IT">
+                              <a href="#" tabindex="-1" class="flag it"
+                                 data-i18n="settings#egress-region#select-it">
+                                Italy
+                              </a>
+                            </li>
                             <li data-region="JP">
                               <a href="#" tabindex="-1" class="flag jp"
                                  data-i18n="settings#egress-region#select-jp">
                                 Japan
-                              </a>
-                            </li>
-                            <li data-region="SG">
-                              <a href="#" tabindex="-1" class="flag sg"
-                                 data-i18n="settings#egress-region#select-sg">
-                                Singapore
                               </a>
                             </li>
                             <li data-region="NL">
@@ -520,10 +639,34 @@
                                 Netherlands
                               </a>
                             </li>
-                            <li data-region="DE">
-                              <a href="#" tabindex="-1" class="flag de"
-                                 data-i18n="settings#egress-region#select-de">
-                                Germany
+                            <li data-region="NO">
+                              <a href="#" tabindex="-1" class="flag no"
+                                 data-i18n="settings#egress-region#select-no">
+                                Norway
+                              </a>
+                            </li>
+                            <li data-region="RO">
+                              <a href="#" tabindex="-1" class="flag ro"
+                                 data-i18n="settings#egress-region#select-ro">
+                                Romania
+                              </a>
+                            </li>
+                            <li data-region="SE">
+                              <a href="#" tabindex="-1" class="flag se"
+                                 data-i18n="settings#egress-region#select-se">
+                                Sweden
+                              </a>
+                            </li>
+                            <li data-region="SG">
+                              <a href="#" tabindex="-1" class="flag sg"
+                                 data-i18n="settings#egress-region#select-sg">
+                                Singapore
+                              </a>
+                            </li>
+                            <li data-region="US">
+                              <a href="#" tabindex="-1" class="flag us"
+                                 data-i18n="settings#egress-region#select-us">
+                                United States
                               </a>
                             </li>
                           </ul>
@@ -615,11 +758,15 @@
                   <span data-i18n="settings#upstream-proxy#heading">
                     Upstream Proxy
                   </span>
+                  <span class="label label-warning vpn-incompatible-msg">
+                    <i class="icon-prohibited"></i>
+                    <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                  </span>
                 </a>
               </div>
               <div id="settings-accordion-upstream-proxy" class="accordion-body collapse">
                 <div class="accordion-inner">
-                  <form class="form-horizontal">
+                  <form class="form-horizontal vpn-incompatible">
                     <fieldset>
                       <p data-i18n="settings#upstream-proxy#by-default">
                         If your computer already has a proxy configured, by
@@ -637,8 +784,8 @@
                       <p data-i18n="settings#upstream-proxy#proxy-reqs">
                         Only HTTP proxies that support HTTPS are allowed.
                       </p>
-                      <div class="control-group skip-upstream-proxy-incompatible">
-                        <label for="UpstreamProxyHostname" class="control-label"
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyHostname" class="control-label vpn-incompatible-label"
                                 data-i18n="settings#upstream-proxy#hostname-label">
                           Hostname
                         </label>
@@ -647,8 +794,8 @@
                                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
                         </div>
                       </div>
-                      <div class="control-group skip-upstream-proxy-incompatible">
-                        <label for="UpstreamProxyPort" class="control-label"
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyPort" class="control-label vpn-incompatible-label"
                                 data-i18n="settings#upstream-proxy#port-label">
                           Port
                         </label>
@@ -660,7 +807,37 @@
                           </span>
                         </div>
                       </div>
-                      <div class="control-group">
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyUsername" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#username-label">
+                          Username
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyUsername"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyPassword" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#password-label">
+                          Password
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyPassword"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group skip-upstream-proxy-incompatible vpn-incompatible">
+                        <label for="UpstreamProxyDomain" class="control-label vpn-incompatible-label"
+                                data-i18n="settings#upstream-proxy#domain-label">
+                          Domain
+                        </label>
+                        <div class="controls">
+                          <input type="text" id="UpstreamProxyDomain"
+                                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        </div>
+                      </div>
+                      <div class="control-group vpn-incompatible">
                         <div class="controls">
                           <div class="checkbox-container">
                             <div class="checkbox">
@@ -674,10 +851,30 @@
                           </div>
                         </div>
                       </div>
-                      <span class="help-block upstream-proxy-set-match">
-                        <span data-i18n="settings#upstream-proxy#set-both-error-msg">
+                      <span class="help-block upstream-proxy-hostname-port-match">
+                        <span data-i18n="settings#upstream-proxy#set-hostname-port-error-msg">
                           You must set both Hostname and Port, or leave both blank for automatic selection.
                         </span>
+                      </span>
+                      <span class="help-block upstream-proxy-username-password-match">
+                        <span data-i18n="settings#upstream-proxy#set-username-password-error-msg">
+                          You must set both a Username and Password, or leave both blank for no authentication.
+                        </span>
+                      </span>
+                      <span class="help-block upstream-proxy-authentication-requires-hostname-and-port">
+                        <span data-i18n="settings#upstream-proxy#set-hostname-port-without-authentication-error-msg">
+                          Setting a Username and Password requires setting a Hostname and Port.
+                        </span>
+                      </span>
+                      <span class="help-block upstream-proxy-domain-requires-authentication">
+                        <span data-i18n="settings#upstream-proxy#set-domain-without-authentication-error-msg">
+                          Setting a Domain requires setting a Username and Password.
+                        </span>
+                      </span>
+                      <span class="help-block">
+                          <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                            (Doesn't work with L2TP/IPSec mode.)
+                          </small>
                       </span>
                     </fieldset>
                   </form>
@@ -966,6 +1163,12 @@
             </div>
             <div class="checkbox-container">
               <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-CA" value="CA">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-CA">CA</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
                 <input type="checkbox" id="debug-AvailableEgressRegions-JP" value="JP">
                 <label class="checkbox inline" for="debug-AvailableEgressRegions-JP">JP</label>
               </div>
@@ -986,6 +1189,18 @@
               <div class="controls checkbox inline">
                 <input type="checkbox" id="debug-AvailableEgressRegions-DE" value="DE">
                 <label class="checkbox inline" for="debug-AvailableEgressRegions-DE">DE</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-IN" value="IN">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-IN">IN</label>
+              </div>
+            </div>
+            <div class="checkbox-container">
+              <div class="controls checkbox inline">
+                <input type="checkbox" id="debug-AvailableEgressRegions-ES" value="ES">
+                <label class="checkbox inline" for="debug-AvailableEgressRegions-ES">ES</label>
               </div>
             </div>
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>

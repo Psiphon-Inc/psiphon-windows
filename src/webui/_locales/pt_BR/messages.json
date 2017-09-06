@@ -7,10 +7,6 @@
         "message": "<p>\nVocê configurou o Psiphon para usar uma porta local específica para seu proxy HTTP.\n <br>\nNo entanto, parece que esta porta já está em uso e o Psiphon não pode usá-la.\n</p>\n<p>\nPor favor, altere o valor da porta do proxy HTTP e tente novamente. Recomendamos que deixe o valor em branco para que o Psiphon possa escolher automaticamente uma porta disponível.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
     },
-    "settings#upstream-proxy#set-both-error-msg": {
-        "message": "Você deve especificar ambos endereço e porta, ou deixar ambos vazios para seleção automática.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
     "settings#egress-region#select-jp": {
         "message": "Japão",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
@@ -27,6 +23,10 @@
         "message": "Logs",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "Especificar um Domínio requer especificar um Nome de Usuário e Senha",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
     "settings#error-alert": {
         "message": "<strong>Erro!</strong> Por favor corrija os parâmetros incorretos antes de prosseguir.",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
@@ -40,12 +40,20 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "banner#sponsored-by": {
-        "message": "Apoiado por",
+        "message": "Patrocinado por",
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "appbackend#state-connected-body": {
         "message": "Explore além de suas fronteiras!",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#disable-timeouts#enable-label": {
+        "message": "Desabilitar \"Expiração de tempo\" para redes lentas",
+        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+    },
+    "settings#egress-region#select-in": {
+        "message": "Índia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
     },
     "connection#connected-msg": {
         "message": "Psiphon está <span class=\"state-word\">conectado</span>",
@@ -87,6 +95,10 @@
         "message": "<strong>Obrigado!</strong> Seus comentários foram enviados.",
         "description": "Message shown to user after their feedback has been sent successufully"
     },
+    "settings#upstream-proxy#password-label": {
+        "message": "Senha",
+        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+    },
     "appbackend#state-stopped-title": {
         "message": "Psiphon está desconectado",
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
@@ -102,6 +114,14 @@
     "settings#upstream-proxy#skip-label": {
         "message": "Não usar servidor proxy",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon está mantendo você conectado",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "Canadá",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
         "message": "Se habilitado, quando o Psiphon for minimizado, a janela do aplicativo irá esconder na área de notificação (também conhecido como a \"bandeja do sistema\" ou \"systray\", localizado perto do relógio em sua barra de tarefas do Windows).",
@@ -127,9 +147,17 @@
         "message": "Reconectando para aplicar suas configurações.",
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "Mantenha Psiphon gratuito visitando nosso patrocinador!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
     "appbackend#state-starting-title": {
         "message": "Psiphon está conectando",
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "settings#egress-region#select-es": {
+        "message": "Espanha",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
     "settings#unapplied-changes-prompt#title": {
         "message": "Configurações Alteradas",
@@ -204,7 +232,7 @@
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#reset-button": {
-        "message": "Configurações Padrão",
+        "message": "Retornar à Configuração Padrão",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "about#client-version": {
@@ -238,6 +266,10 @@
     "settings#error-modal#body": {
         "message": "Existem erros nos seus parâmetros de configuração. Por favor corrija antes de proceder.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
+    },
+    "settings#disable-timeouts#help-text": {
+        "message": "Se habilitado, a comunicação com o servidor Psiphon não expirará.",
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
     },
     "nav#connection#stopped": {
         "message": "Desconectado",
@@ -276,7 +308,7 @@
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "connection#disconnect-btn": {
-        "message": "Desconectado",
+        "message": "Desconectar",
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "feedback#top_content_title": {
@@ -294,6 +326,10 @@
     "connection#stopped-msg": {
         "message": "Psiphon está <span class=\"state-word\">deconectado</span>",
         "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "settings#disable-timeouts#reason": {
+        "message": "Quando habilitado, usando uma conexão de rede muito lenta, você estará menos exposto a experimentar desconexões inesperadas.",
+        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "nav#about": {
         "message": "Sobre",
@@ -359,6 +395,14 @@
         "message": "Apenas proxies HTTP que suportam HTTPS são permitidos.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
+    "appbackend#state-connected-reminder-body": {
+        "message": "Mantenha Psiphon gratuito. Clique aqui para visitar nosso patrocinador!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "settings#upstream-proxy#set-username-password-error-msg": {
+        "message": "Você deve especificar ambos, Usuário e Senha, ou deixar ambos em branco para não usar autenticação.",
+        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
     "settings#transport-mode#check-label": {
         "message": "Usar modo L2TP/IPSec",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -392,8 +436,16 @@
         "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
     },
     "settings#egress-region#heading": {
-        "message": "Região do Servidor do Psiphon",
+        "message": "Região do Servidor Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "Especificar um Nome de Usuário e Senha também requer especificar um Nome ou Endereço de Host e Porta",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#disable-timeouts#heading": {
+        "message": "Desabilitar \"Expiração de tempo\" para Redes Lentas",
+        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
     },
     "settings#upstream-proxy#by-default": {
         "message": "Se o seu computador já tem um proxy configurado, Psiphon utilizará por padrão este quando estabelecer um túnel. Você pode sobrescrever este comportamento, especificando qual proxy deve ser utilizado.",
@@ -419,13 +471,25 @@
         "message": "Psiphon se conecta e desempenha da maneira que eu quero.",
         "description": "The text below the 'happy face' feedback choice."
     },
+    "settings#upstream-proxy#domain-label": {
+        "message": "Domínio",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+    },
     "about#wordart-tag": {
         "message": "Beyond Borders",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
+    "settings#upstream-proxy#username-label": {
+        "message": "Usuário",
+        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+    },
     "connection#wait-btn": {
         "message": "Por favor aguarde...",
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "settings#upstream-proxy#set-hostname-port-error-msg": {
+        "message": "Você deve especificar ambos, Nome ou Endereço do Host e Porta, ou deixar ambos vazios para seleção automática.",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
     },
     "settings#transport-mode#help-text": {
         "message": "Usa a rede virtual L2TP/IPSec do Windows. Este modo vai tunelar todas as suas aplicações, mas não provê obfuscação. Então não é tão forte para passar por controles e censuras. Este <strong>não é o modo recomendado</strong> para passar a maioria dos firewalls.",

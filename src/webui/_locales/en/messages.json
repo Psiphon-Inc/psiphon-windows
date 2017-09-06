@@ -127,6 +127,22 @@
     "message": "Don't proxy websites within your country",
     "description": "The label on the checkbox that enables 'Split Tunnel'."
   },
+  "settings#disable-timeouts#heading": {
+    "message": "Disable Timeouts for Slow Networks",
+    "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
+  },
+  "settings#disable-timeouts#help-text": {
+    "message": "If enabled, communication with the Psiphon server will not time out.",
+    "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+  },
+  "settings#disable-timeouts#reason": {
+    "message": "When enabling this over a very slow network connection, you are less likely to experience unexpected disconnections.",
+    "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
+  },
+  "settings#disable-timeouts#enable-label": {
+    "message": "Disable timeouts for slow networks",
+    "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+  },
   "settings#egress-region#heading": {
     "message": "Psiphon Server Region",
     "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
@@ -142,6 +158,10 @@
   "settings#egress-region#select-us": {
     "message": "United States",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
+  },
+  "settings#egress-region#select-ca": {
+    "message": "Canada",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
   },
   "settings#egress-region#select-gb": {
     "message": "United Kingdom",
@@ -162,6 +182,66 @@
   "settings#egress-region#select-de": {
     "message": "Germany",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+  },
+  "settings#egress-region#select-in": {
+    "message": "India",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+  },
+  "settings#egress-region#select-es": {
+    "message": "Spain",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+  },
+  "settings#egress-region#select-hk": {
+    "message": "Hong Kong",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
+  },
+  "settings#egress-region#select-at": {
+    "message": "Austria",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+  },
+  "settings#egress-region#select-be": {
+    "message": "Belgium",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+  },
+  "settings#egress-region#select-bg": {
+    "message": "Bulgaria",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
+  },
+  "settings#egress-region#select-ch": {
+    "message": "Switzerland",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
+  },
+  "settings#egress-region#select-cz": {
+    "message": "Czech Republic",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
+  },
+  "settings#egress-region#select-dk": {
+    "message": "Denmark",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
+  },
+  "settings#egress-region#select-fr": {
+    "message": "France",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+  },
+  "settings#egress-region#select-hu": {
+    "message": "Hungary",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
+  },
+  "settings#egress-region#select-it": {
+    "message": "Italy",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+  },
+  "settings#egress-region#select-no": {
+    "message": "Norway",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+  },
+  "settings#egress-region#select-ro": {
+    "message": "Romania",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+  },
+  "settings#egress-region#select-se": {
+    "message": "Sweden",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
   },
   "settings#egress-region#description": {
     "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
@@ -247,13 +327,37 @@
     "message": "Port",
     "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
   },
+  "settings#upstream-proxy#username-label": {
+    "message": "Username",
+    "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+  },
+  "settings#upstream-proxy#password-label": {
+    "message": "Password",
+    "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+  },
+  "settings#upstream-proxy#domain-label": {
+    "message": "Domain",
+    "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+  },
   "settings#upstream-proxy#skip-label": {
     "message": "Don't use upstream proxy",
     "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
   },
-  "settings#upstream-proxy#set-both-error-msg": {
+  "settings#upstream-proxy#set-username-password-error-msg": {
+    "message": "You must set both Username and Password, or leave both blank for no authentication.",
+    "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+  },
+  "settings#upstream-proxy#set-hostname-port-error-msg": {
     "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
     "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+  },
+  "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+    "message": "Setting a Username and Password also requires setting a Hostname and Port",
+    "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+  },
+  "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+    "message": "Setting a Domain requires setting a Username and Password",
+    "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
   },
   "settings#upstream-proxy#error-modal-title": {
     "message": "Upstream Proxy Error",
@@ -431,6 +535,18 @@
   "appbackend#state-connected-body": {
     "message": "Explore beyond your borders!",
     "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+  },
+  "appbackend#state-connected-reminder-title": {
+    "message": "Psiphon is keeping you connected",
+    "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+  },
+  "appbackend#state-connected-reminder-body": {
+    "message": "Keep Psiphon free. Click here to visit our sponsor pages!",
+    "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+  },
+  "appbackend#state-connected-reminder-body-2": {
+    "message": "Keep Psiphon free by visiting our sponsor pages!",
+    "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
   },
   "appbackend#minimized-to-systray-title": {
     "message": "Psiphon has been minimized to the notification area",

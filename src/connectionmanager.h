@@ -38,7 +38,7 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver
+class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver, public IUpgradePaver
 {
 public:
     ConnectionManager();
@@ -62,6 +62,9 @@ public:
             const map<string, int>& pageViewEntries,
             const map<string, int>& httpsRequestEntries,
             unsigned long long bytesTransferred);
+
+    // IUpgradePaver implementation
+    void PaveUpgrade(const string& download);
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
@@ -93,7 +96,6 @@ private:
     void FetchRemoteServerList();
 
     bool RequireUpgrade();
-    void PaveUpgrade(const string& download);
 
     void CopyCurrentSessionInfo(SessionInfo& sessionInfo);
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);

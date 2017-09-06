@@ -52,6 +52,3 @@
 #include <mshtmhst.h>
 #include <urlmon.h>
 #include <shellapi.h>
-
-// Boost stuff
-#include <boost/shared_ptr.hpp>

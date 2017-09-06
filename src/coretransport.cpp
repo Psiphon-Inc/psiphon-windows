@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -32,12 +32,14 @@
 #include "diagnostic_info.h"
 #include "embeddedvalues.h"
 #include "utilities.h"
+#include "authenticated_data_package.h"
 
 using namespace std::experimental;
 
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
 #define EXE_NAME                             _T("psiphon-tunnel-core.exe")
+#define UPGRADE_EXE_NAME                     _T("psiphon3.exe.upgrade")
 #define URL_PROXY_EXE_NAME                   _T("psiphon-url-proxy.exe")
 #define MAX_LEGACY_SERVER_ENTRIES            30
 #define LEGACY_SERVER_ENTRY_LIST_NAME        (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + "OSSH").c_str()
@@ -53,7 +55,9 @@ CoreTransport::CoreTransport()
       m_localSocksProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_localHttpProxyPort(AUTOMATICALLY_ASSIGNED_PORT_NUMBER),
       m_hasEverConnected(false),
-      m_isConnected(false)
+      m_isConnected(false),
+      m_clientUpgradeDownloadHandled(false),
+      m_panicked(false)
 {
     ZeroMemory(&m_processInfo, sizeof(m_processInfo));
 }
@@ -150,15 +154,15 @@ void CoreTransport::GetFactory(
 }
 
 
-tstring CoreTransport::GetTransportProtocolName() const 
+tstring CoreTransport::GetTransportProtocolName() const
 {
     return CORE_TRANSPORT_PROTOCOL_NAME;
 }
 
 
-tstring CoreTransport::GetTransportDisplayName() const 
-{ 
-    return CORE_TRANSPORT_DISPLAY_NAME; 
+tstring CoreTransport::GetTransportDisplayName() const
+{
+    return CORE_TRANSPORT_DISPLAY_NAME;
 }
 
 
@@ -261,15 +265,24 @@ bool CoreTransport::RequestingUrlProxyWithoutTunnel()
         m_tempConnectServerEntry->serverAddress.empty();
 }
 
-    
+
 void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
 
-    tstring configFilename, serverListFilename;
-    if (!WriteParameterFiles(configFilename, serverListFilename))
+    tstring configFilename, serverListFilename, clientUpgradeFilename;
+    if (!WriteParameterFiles(configFilename, serverListFilename, clientUpgradeFilename))
     {
         throw TransportFailed();
+    }
+
+    // Once a new upgrade has been paved, CoreTransport should never restart without the actual application restarting.
+    // If there is a pending upgrade, when disconnect/connect is pressed (or a new region is chosen, upstream proxy settings change, etc.)
+    // the application is killed and relaunched with the new image. The upgrade package is not immediately deleted on a successful pave
+    // to prevent re-download. When CoreTransport starts, we assume it's with the new binary, and deleting the .upgrade file is safe.
+    if (!clientUpgradeFilename.empty() && !DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+    {
+        my_print(NOT_SENSITIVE, false, _T("Failed to delete previously applied upgrade package! Please report this error."));
     }
 
     // Run core process; it will begin establishing a tunnel
@@ -311,7 +324,34 @@ void CoreTransport::TransportConnectHelper()
 }
 
 
-bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename)
+Json::Value loadJSONArray(const char* jsonArrayString)
+{
+    try
+    {
+        Json::Reader reader;
+        Json::Value array;
+        if (!reader.parse(jsonArrayString, array))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        }
+        else if (!array.isArray())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: unexpected type"), __TFUNCTION__);
+        }
+        else
+        {
+            return array;
+        }
+    }
+    catch (exception& e)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s: JSON exception: %S"), __TFUNCTION__, e.what());
+    }
+    return Json::nullValue;
+}
+
+
+bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
 {
     TCHAR path[MAX_PATH];
     if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
@@ -343,7 +383,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["ClientVersion"] = CLIENT_VERSION;
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
-    config["RemoteServerListUrl"] = string("https://") + REMOTE_SERVER_LIST_ADDRESS + "/" + REMOTE_SERVER_LIST_REQUEST_PATH;
+    config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_URLS_JSON);
+    config["ObfuscatedServerListRootURLs"] = loadJSONArray(OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON);
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
     config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
@@ -371,6 +412,18 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["SplitTunnelDnsServer"] = SPLIT_TUNNEL_DNS_SERVER;
     }
 
+    if (Settings::DisableTimeouts())
+    {
+        config["TunnelConnectTimeoutSeconds"] = 0;
+        config["TunnelPortForwardDialTimeoutSeconds"] = 0;
+        config["TunnelSshKeepAliveProbeTimeoutSeconds"] = 0;
+        config["TunnelSshKeepAlivePeriodicTimeoutSeconds"] = 0;
+        config["FetchRemoteServerListTimeoutSeconds"] = 0;
+        config["PsiphonApiServerTimeoutSeconds"] = 0;
+        config["FetchRoutesTimeoutSeconds"] = 0;
+        config["HttpProxyOriginServerTimeoutSeconds"] = 0;
+    }
+
     // In temporary tunnel mode, only the specific server should be connected to,
     // and a handshake is not performed.
     // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
@@ -392,7 +445,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
         if (RequestingUrlProxyWithoutTunnel())
         {
-            // The URL proxy can and will be used while the main tunnel is connected, 
+            // The URL proxy can and will be used while the main tunnel is connected,
             // and multiple URL proxies might be used concurrently. Each one may/will
             // try to open/create the tunnel-core datastore, so conflicts will occur
             // if they try to use the same datastore directory as the main tunnel or
@@ -421,6 +474,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         {
             config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
         }
+
+        clientUpgradeFilename.clear();
     }
     else
     {
@@ -431,6 +486,22 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         auto remoteServerListFilename = filesystem::path(dataStoreDirectory)
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
         config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
+
+        auto oslDownloadDirectory = filesystem::path(appDataPath)
+                                                .append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY).append("osl");
+        if (!CreateDirectory(oslDownloadDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+            // TODO: proceed anyway?
+            return false;
+        }
+        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
+
+        clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
+
+        config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
+        config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
+        config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
     }
 
     ostringstream configDataStream;
@@ -445,7 +516,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // proxy instances could clobber each other's config file?
 
     auto configPath = filesystem::path(dataStoreDirectory);
-    if (RequestingUrlProxyWithoutTunnel()) 
+    if (RequestingUrlProxyWithoutTunnel())
     {
         configPath.append(LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME);
     }
@@ -492,7 +563,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     return true;
 }
 
-    
+
 string CoreTransport::GetUpstreamProxyAddress()
 {
     // Note: upstream SOCKS proxy and proxy auth currently not supported
@@ -505,12 +576,12 @@ string CoreTransport::GetUpstreamProxyAddress()
 
     ostringstream upstreamProxyAddress;
 
-    if (Settings::UpstreamProxyHostname().length() > 0 && 
+    if (Settings::UpstreamProxyAuthenticatedHostname().length() > 0 &&
         Settings::UpstreamProxyPort() &&
         Settings::UpstreamProxyType() == "https")
     {
         // Use a custom, user-set upstream proxy
-        upstreamProxyAddress << Settings::UpstreamProxyHostname() << ":" << Settings::UpstreamProxyPort();
+        upstreamProxyAddress << Settings::UpstreamProxyAuthenticatedHostname() << ":" << Settings::UpstreamProxyPort();
     }
     else
     {
@@ -620,7 +691,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
     // You need to make sure that no handles to the write end of the
     // output pipe are maintained in this process or else the pipe will
     // not close when the child process exits and the ReadFile will hang.
-    
+
     if (!CloseHandle(startupInfo.hStdOutput))
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
@@ -634,7 +705,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
         CloseHandle(m_pipe);
         return false;
     }
-    
+
     WaitForInputIdle(m_processInfo.hProcess, 5000);
 
     return true;
@@ -691,6 +762,74 @@ void CoreTransport::ConsumeCoreProcessOutput()
     delete buffer;
 }
 
+bool CoreTransport::ValidateAndPaveUpgrade(const tstring clientUpgradeFilename) {
+    bool processingSuccessful = false;
+
+    HANDLE hFile = CreateFile(
+        clientUpgradeFilename.c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        NULL, // default security
+        OPEN_EXISTING, // existing file only
+        FILE_ATTRIBUTE_NORMAL,
+        NULL); // no attr. template
+
+    if (hFile == INVALID_HANDLE_VALUE) {
+        my_print(NOT_SENSITIVE, false, _T("%s: Could not get a valid file handle: %d."), __TFUNCTION__, GetLastError());
+    }
+    else {
+        DWORD dwFileSize = GetFileSize(hFile, NULL);
+        unique_ptr<BYTE> inBuffer(new BYTE[dwFileSize]);
+        if (!inBuffer) {
+            processingSuccessful = false;
+            my_print(NOT_SENSITIVE, false, _T("%s: Could not allocate an input buffer."), __TFUNCTION__);
+        }
+        else {
+            DWORD dwBytesToRead = dwFileSize;
+            DWORD dwBytesRead = 0;
+            OVERLAPPED stOverlapped = { 0 };
+            string downloadFileString;
+
+            if (TRUE == ReadFile(hFile, inBuffer.get(), dwBytesToRead, &dwBytesRead, NULL)) {
+                if (verifySignedDataPackage(
+                    UPGRADE_SIGNATURE_PUBLIC_KEY,
+                    (const char *)inBuffer.get(),
+                    dwFileSize,
+                    true, // gzip compressed
+                    downloadFileString))
+                {
+                    // Data in the package is Base64 encoded
+                    downloadFileString = Base64Decode(downloadFileString);
+
+                    if (downloadFileString.length() > 0) {
+                        m_upgradePaver->PaveUpgrade(downloadFileString);
+                    }
+
+                    processingSuccessful = true;
+                }
+            }
+        }
+
+        CloseHandle(hFile);
+    }
+
+    if (!processingSuccessful) {
+        // Bad package. Log and continue.
+        my_print(NOT_SENSITIVE, false, _T("%s: Upgrade package verification failed! Please report this error."), __TFUNCTION__);
+
+        // If the file isn't working and we think we have the complete file,
+        // there may be corrupt bytes. So delete it and next time we'll start over.
+        // NOTE: this means if the failure was due to not enough free space
+        // to write the extracted file... we still re-download.
+        if (!DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND) {
+            my_print(NOT_SENSITIVE, false, _T("Failed to delete invalid upgrade package! Please report this error."));
+        }
+    }
+
+    // If the extract and verify succeeded, don't delete it to prevent re-downloading.
+    // TransportConnect will check for the existence of this file and delete it itself.
+    return processingSuccessful;
+}
 
 void CoreTransport::HandleCoreProcessOutputLine(const char* line)
 {
@@ -706,9 +845,26 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         Json::Reader reader;
         if (!reader.parse(line, notice))
         {
-            my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
-            // This line was not JSON. It's not included in diagnostics
-            // as we can't be sure it doesn't include user private data.
+            // If the line starts with "panic", assume the core is crashing and add all further output to diagnostics
+            static const char* PANIC = "panic";
+            if (0 == _strnicmp(line, PANIC, strlen(PANIC)))
+            {
+                m_panicked = true;
+            }
+
+            if (m_panicked)
+            {
+                // We do not think that a panic will contain private data
+                my_print(NOT_SENSITIVE, false, _T("core panic: %S"), line);
+                AddDiagnosticInfoJson("CorePanic", line);
+            }
+            else
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s: core notice JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+                // This line was not JSON. It's not included in diagnostics
+                // as we can't be sure it doesn't include user private data.
+            }
+
             return;
         }
 
@@ -752,10 +908,17 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
                 m_hasEverConnected = true;
             }
         }
-        else if (noticeType == "ClientUpgradeAvailable")
-        {
-            string version = data["version"].asString();
-            m_sessionInfo.SetUpgradeVersion(version.c_str());
+        else if (noticeType == "ClientUpgradeDownloaded" && m_upgradePaver != NULL && m_clientUpgradeDownloadHandled == false) {
+            m_clientUpgradeDownloadHandled = true;
+
+            my_print(NOT_SENSITIVE, false, _T("A client upgrade has been downloaded..."));
+            if (!ValidateAndPaveUpgrade(UTF8ToWString(data["filename"].asString()))) {
+                m_clientUpgradeDownloadHandled = false;
+            }
+            my_print(NOT_SENSITIVE, false, _T("Psiphon has been updated. The new version will launch the next time Psiphon starts."));
+
+            // Don't include in diagnostics as "filename" is private user data
+            logOutputToDiagnostics = false;
         }
         else if (noticeType == "Homepage")
         {

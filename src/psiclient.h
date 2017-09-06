@@ -31,11 +31,12 @@ extern ConnectionManager g_connectionManager;
 
 //==== global window message constants =================================
 
-#define WM_PSIPHON_MY_PRINT            WM_USER + 100
-#define WM_PSIPHON_FEEDBACK_SUCCESS    WM_USER + 101
-#define WM_PSIPHON_FEEDBACK_FAILED     WM_USER + 102
-#define WM_PSIPHON_CREATED             WM_USER + 103
-#define WM_PSIPHON_TRAY_ICON_NOTIFY    WM_USER + 104
+#define WM_PSIPHON_MY_PRINT                     WM_USER + 100
+#define WM_PSIPHON_FEEDBACK_SUCCESS             WM_USER + 101
+#define WM_PSIPHON_FEEDBACK_FAILED              WM_USER + 102
+#define WM_PSIPHON_CREATED                      WM_USER + 103
+#define WM_PSIPHON_TRAY_ICON_NOTIFY             WM_USER + 104
+#define WM_PSIPHON_CONNECTED_REMINDER_NOTIFY    WM_USER + 105
 
 
 //==== UI Interaction ==================================================
