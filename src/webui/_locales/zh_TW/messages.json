@@ -67,6 +67,10 @@
         "message": "設定",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
+    "settings#egress-region#select-at": {
+        "message": "奧地利",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+    },
     "nav#connection#connected": {
         "message": "已連接",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
@@ -86,6 +90,10 @@
     "connection#stopping-msg": {
         "message": "賽風<span class=\"state-word\">斷開連接中</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "settings#egress-region#select-ch": {
+        "message": "瑞士",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
     },
     "settings#upstream-proxy#error-modal-body-default": {
         "message": "賽風當前使用您的系統代理作為其“上層代理”。<br>\n然而，我們似乎無法通過該代理連接到賽風伺服器。<br>\n請啟用“不使用上層代理”后再試。",
@@ -116,7 +124,7 @@
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "appbackend#state-connected-reminder-title": {
-        "message": "Psiphon is keeping you connected",
+        "message": "賽風可保持連線",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
     },
     "settings#egress-region#select-ca": {
@@ -148,7 +156,7 @@
         "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
     },
     "appbackend#state-connected-reminder-body-2": {
-        "message": "Keep Psiphon free by visiting our sponsor pages!",
+        "message": "透過訪問點擊贊助者頁面來維持免費的賽風。",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "appbackend#state-starting-title": {
@@ -158,6 +166,10 @@
     "settings#egress-region#select-es": {
         "message": "西班牙",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+    },
+    "settings#egress-region#select-dk": {
+        "message": "丹麥",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
     },
     "settings#unapplied-changes-prompt#title": {
         "message": "設置已更改",
@@ -174,6 +186,10 @@
     "notice#systemproxysettings-setproxy-error-body": {
         "message": "<p>Psiphon 更改系統的代理設置失敗了。</p>\n<p>這可能是由於和您的防病毒軟件衝突所致。您可能需要手動修改應用或系統的代理配置以便使用本地的 Psiphon 代理。</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#egress-region#select-hu": {
+        "message": "匈牙利",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\n您已配置賽風使用指定的本地端口開啟 SOCKS 代理。<br>\n然而，此端口似乎已被占用，賽風無法使用之。\n</p>\n<p>\n請更改配置的 SOCKS 代理端口值後再再試。我們建議您清除該值，使賽風自動挑選可用端口。\n</p>",
@@ -198,6 +214,10 @@
     "settings#egress-region#label": {
         "message": "連接經由",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-bg": {
+        "message": "保加利亞",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
     },
     "settings#local-proxy-ports#socks-label": {
         "message": "SOCKS",
@@ -239,6 +259,10 @@
         "message": "賽風 Windows 客戶端版本：",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
+    "settings#egress-region#select-no": {
+        "message": "挪威",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+    },
     "settings#upstream-proxy#heading": {
         "message": "上層代理",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
@@ -263,6 +287,14 @@
         "message": "L2TP/IPSec",
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
+    "settings#egress-region#select-fr": {
+        "message": "法國",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+    },
+    "settings#egress-region#select-it": {
+        "message": "義大利",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+    },
     "settings#error-modal#body": {
         "message": "設定中有錯誤，請先更正再繼續。",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
@@ -282,6 +314,10 @@
     "settings#egress-region#select-de": {
         "message": "德國",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "settings#egress-region#select-hk": {
+        "message": "香港",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
         "message": "Psiphon 更改名為“<%- data %>”的網路連接的系統代理設置失敗了。這可能是由於和您的防病毒軟件衝突所致。您可能需要手動修改應用或系統的代理配置以便使用本地的 Psiphon 代理。",
@@ -396,12 +432,16 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "appbackend#state-connected-reminder-body": {
-        "message": "Keep Psiphon free. Click here to visit our sponsor pages!",
+        "message": "維持免費賽風，請點閱此處來訪問贊助者頁面！",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "settings#upstream-proxy#set-username-password-error-msg": {
         "message": "你必須同時設置帳戶名稱與密碼，不然二者保持空白將不會被授權",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
+    "settings#egress-region#select-be": {
+        "message": "比利時",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
     },
     "settings#transport-mode#check-label": {
         "message": "使用 L2TP/IPSec 模式",
@@ -410,6 +450,10 @@
     "connection#egress-region-combo-label": {
         "message": "連接經由",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-se": {
+        "message": "瑞典",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-gb": {
         "message": "英國",
@@ -438,6 +482,14 @@
     "settings#egress-region#heading": {
         "message": "賽風伺服器區域",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#egress-region#select-ro": {
+        "message": "羅馬尼亞",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+    },
+    "settings#egress-region#select-cz": {
+        "message": "捷克共和國",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
     },
     "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
         "message": "若想設定主機名稱和連接埠號時需要有帳戶名稱和密碼。",
