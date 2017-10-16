@@ -20,7 +20,7 @@
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
     },
     "nav#logs": {
-        "message": "Logs",
+        "message": "Logitiedostot",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
@@ -67,8 +67,12 @@
         "message": "Asetukset",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
+    "settings#egress-region#select-at": {
+        "message": "Austria",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+    },
     "nav#connection#connected": {
-        "message": "Connected",
+        "message": "Yhdistetty",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
     "settings#egress-region#error-modal-title": {
@@ -87,6 +91,10 @@
         "message": "Psiphon is <span class=\"state-word\">disconnecting</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
+    "settings#egress-region#select-ch": {
+        "message": "Switzerland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
+    },
     "settings#upstream-proxy#error-modal-body-default": {
         "message": "Psiphon is currently configured to use your system proxy as its “upstream proxy”.<br>\nHowever, we seem to be unable to connect to a Psiphon server through that proxy.<br>\nPlease enable “Don't use upstream proxy” and try again.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
@@ -96,11 +104,11 @@
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "settings#upstream-proxy#password-label": {
-        "message": "Password",
+        "message": "Salasana",
         "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
     },
     "appbackend#state-stopped-title": {
-        "message": "Psiphon is disconnected",
+        "message": "Psiphon-yhteys on katkaistu",
         "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
     },
     "settings#split-tunnel#help-text": {
@@ -120,7 +128,7 @@
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
     },
     "settings#egress-region#select-ca": {
-        "message": "Canada",
+        "message": "Kanada",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
@@ -159,6 +167,10 @@
         "message": "Spain",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
+    "settings#egress-region#select-dk": {
+        "message": "Denmark",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
+    },
     "settings#unapplied-changes-prompt#title": {
         "message": "Settings Changed",
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
@@ -174,6 +186,10 @@
     "notice#systemproxysettings-setproxy-error-body": {
         "message": "<p>Psiphon failed to set the system’s proxy settings.</p>\n<p>This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#egress-region#select-hu": {
+        "message": "Hungary",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nYou have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
@@ -198,6 +214,10 @@
     "settings#egress-region#label": {
         "message": "Connect via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-bg": {
+        "message": "Bulgaria",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
     },
     "settings#local-proxy-ports#socks-label": {
         "message": "SOCKS",
@@ -239,6 +259,10 @@
         "message": "Psiphon for Windows client version:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
+    "settings#egress-region#select-no": {
+        "message": "Norway",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+    },
     "settings#upstream-proxy#heading": {
         "message": "Upstream Proxy",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
@@ -263,6 +287,14 @@
         "message": "L2TP/IPSec",
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
+    "settings#egress-region#select-fr": {
+        "message": "France",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+    },
+    "settings#egress-region#select-it": {
+        "message": "Italy",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+    },
     "settings#error-modal#body": {
         "message": "There are errors in your settings values. Please correct them before proceeding.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
@@ -272,7 +304,7 @@
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
     },
     "nav#connection#stopped": {
-        "message": "Disconnected",
+        "message": "Yhteys katkaistu",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
     },
     "settings#local-proxy-ports#heading": {
@@ -282,6 +314,10 @@
     "settings#egress-region#select-de": {
         "message": "Saksa",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "settings#egress-region#select-hk": {
+        "message": "Hong Kong",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
         "message": "Psiphon failed to set the system’s proxy settings for the Internet connection named “<%- data %>”. This might be due to a conflict with your antivirus software. You might need to manually configure your application or system proxy settings to use the local Psiphon proxies.",
@@ -388,7 +424,7 @@
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "appbackend#state-connected-title": {
-        "message": "Psiphon is connected",
+        "message": "Psiphon on yhdistetty",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
     },
     "settings#upstream-proxy#proxy-reqs": {
@@ -403,6 +439,10 @@
         "message": "You must set both Username and Password, or leave both blank for no authentication.",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
     },
+    "settings#egress-region#select-be": {
+        "message": "Belgium",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+    },
     "settings#transport-mode#check-label": {
         "message": "Use L2TP/IPSec mode",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -410,6 +450,10 @@
     "connection#egress-region-combo-label": {
         "message": "Connect via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-se": {
+        "message": "Sweden",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-gb": {
         "message": "Yhdistynyt kuningaskunta",
@@ -438,6 +482,14 @@
     "settings#egress-region#heading": {
         "message": "Psiphon Server Region",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#egress-region#select-ro": {
+        "message": "Romania",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+    },
+    "settings#egress-region#select-cz": {
+        "message": "Czech Republic",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
     },
     "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
         "message": "Setting a Username and Password also requires setting a Hostname and Port",
@@ -480,7 +532,7 @@
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "settings#upstream-proxy#username-label": {
-        "message": "Username",
+        "message": "Käyttäjätunnus",
         "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
     },
     "connection#wait-btn": {

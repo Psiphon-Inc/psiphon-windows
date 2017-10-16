@@ -52,7 +52,7 @@
         "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
     },
     "settings#egress-region#select-in": {
-        "message": "India",
+        "message": "인도",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
     },
     "connection#connected-msg": {
@@ -66,6 +66,10 @@
     "nav#settings": {
         "message": "설정",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "settings#egress-region#select-at": {
+        "message": "오스트리아",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
     },
     "nav#connection#connected": {
         "message": "연결됨",
@@ -87,6 +91,10 @@
         "message": "Psiphon <span class=\"state-word\">연결 끊는 중</span>...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
+    "settings#egress-region#select-ch": {
+        "message": "스위스",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
+    },
     "settings#upstream-proxy#error-modal-body-default": {
         "message": "Psiphon이 현재 시스템 “upstream proxy\"를 사용하도록 설정되어 있습니다.<br>\n하지만, 현재 해당 프록시를 통해 Psiphon 서버로 접속할 수 없는 것 같습니다.<br>\n“업스트림 프록시 사용 안 함”을 선택하고 다시 시도하십시오.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
@@ -96,7 +104,7 @@
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "settings#upstream-proxy#password-label": {
-        "message": "Password",
+        "message": "비밀번호",
         "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
     },
     "appbackend#state-stopped-title": {
@@ -120,7 +128,7 @@
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
     },
     "settings#egress-region#select-ca": {
-        "message": "Canada",
+        "message": "캐나다",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
@@ -156,8 +164,12 @@
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#egress-region#select-es": {
-        "message": "Spain",
+        "message": "스페인",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+    },
+    "settings#egress-region#select-dk": {
+        "message": "덴마크",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
     },
     "settings#unapplied-changes-prompt#title": {
         "message": "설정 변경됨",
@@ -174,6 +186,10 @@
     "notice#systemproxysettings-setproxy-error-body": {
         "message": "<p>Psiphon이 시스템 프록시 설정을 적용하는데 실패했습니다.</p>\n<p>이 문제는 바이러스 백신과 충돌을 일으켰을 가능성이 높습니다. 백신을 끄거나 수동으로 시스템 프록시가 Psiphon 프록시를 사용하도록 설정해야 할 수 있습니다.</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#egress-region#select-hu": {
+        "message": "헝가리",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\n현재 Psiphon이 SOCKS 프록시를 위해 특정한 로컬 포트를 사용하도록 설정되어 있습니다.<br>\n하지만, 해당 포트는 이미 사용되고 있는 것 같으며 Psiphon이 사용할 수 없습니다.\n</p>\n<p>\nSOCKS 프록시 포트를 변경하고 다시 시도해 주세요. 값을 모두 지우면 Psiphon이 자동으로 사용 가능한 포트를 지정할 수 있으니 값을 지우는 방법을 추천합니다.\n</p>",
@@ -198,6 +214,10 @@
     "settings#egress-region#label": {
         "message": "다음을 통해 연결",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-bg": {
+        "message": "불가리아",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
     },
     "settings#local-proxy-ports#socks-label": {
         "message": "SOCKS",
@@ -239,6 +259,10 @@
         "message": "Psiphon Windows 클라이언트 버전:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
+    "settings#egress-region#select-no": {
+        "message": "노르웨이",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+    },
     "settings#upstream-proxy#heading": {
         "message": "업 스트림 프록시",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
@@ -263,6 +287,14 @@
         "message": "L2TP/IPSec",
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
+    "settings#egress-region#select-fr": {
+        "message": "프랑스",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+    },
+    "settings#egress-region#select-it": {
+        "message": "이탈리아",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+    },
     "settings#error-modal#body": {
         "message": "설정 값에 오류가 있습니다. 진행하기 전에 설정을 확인하세요.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
@@ -282,6 +314,10 @@
     "settings#egress-region#select-de": {
         "message": "독일",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "settings#egress-region#select-hk": {
+        "message": "홍콩",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
         "message": "Psiphon이 “<%- data %>” 시스템 프록시 설정을 적용하는데 실패했습니다. 이 문제는 바이러스 백신과 충돌을 일으켰을 가능성이 높습니다. 백신을 끄거나 수동으로 시스템 프록시가 Psiphon 프록시를 사용하도록 설정해야 할 수 있습니다.",
@@ -403,6 +439,10 @@
         "message": "You must set both Username and Password, or leave both blank for no authentication.",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
     },
+    "settings#egress-region#select-be": {
+        "message": "벨기에",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+    },
     "settings#transport-mode#check-label": {
         "message": "L2TP / IPSec 모드를 사용",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -410,6 +450,10 @@
     "connection#egress-region-combo-label": {
         "message": "다음을 통해 연결",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-se": {
+        "message": "스웨덴",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-gb": {
         "message": "영국",
@@ -438,6 +482,14 @@
     "settings#egress-region#heading": {
         "message": "Psiphon 서버 위치",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#egress-region#select-ro": {
+        "message": "로마니아",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+    },
+    "settings#egress-region#select-cz": {
+        "message": "체코",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
     },
     "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
         "message": "Setting a Username and Password also requires setting a Hostname and Port",
@@ -472,7 +524,7 @@
         "description": "The text below the 'happy face' feedback choice."
     },
     "settings#upstream-proxy#domain-label": {
-        "message": "Domain",
+        "message": "도메인",
         "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
     },
     "about#wordart-tag": {
@@ -488,7 +540,7 @@
         "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
     },
     "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "You must set both Hostname and Port, or leave both blank for automatic selection.",
+        "message": "호스트 이름과 포트를 반드시 설정해야합니다, 또는 두 칸을 모두 빈칸으로 두면 자동으로 선택되도록 할 수 있습니다.",
         "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
     },
     "settings#transport-mode#help-text": {
