@@ -67,6 +67,10 @@
         "message": "Innstillinger",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
+    "settings#egress-region#select-at": {
+        "message": "Østerrike",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+    },
     "nav#connection#connected": {
         "message": "Tilkoblet",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
@@ -86,6 +90,10 @@
     "connection#stopping-msg": {
         "message": "Psiphon <span class=\"state-word\">kobler fra</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "settings#egress-region#select-ch": {
+        "message": "Sveits",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
     },
     "settings#upstream-proxy#error-modal-body-default": {
         "message": "Psiphon er satt opp til å bruke ditt systems mellomtjener som sin \"oppstrømstjener\".<br>\nDog, lar det seg ikke gjøre å koble til noen Psiphon-tjener på den mellomtjeneren.<br>\nSkru på \"Ikke bruk oppstrømsmellomtjener\" og prøv igjen.",
@@ -120,7 +128,7 @@
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
     },
     "settings#egress-region#select-ca": {
-        "message": "Canada",
+        "message": "Kanada",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
     },
     "settings#systray-minimize#help-text": {
@@ -159,12 +167,16 @@
         "message": "Spania",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
+    "settings#egress-region#select-dk": {
+        "message": "Danmark",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
+    },
     "settings#unapplied-changes-prompt#title": {
         "message": "Innstillinger endret",
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#egress-region#select-us": {
-        "message": "USA",
+        "message": "Amerikas forente stater",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
     },
     "feedback#top_para_2": {
@@ -174,6 +186,10 @@
     "notice#systemproxysettings-setproxy-error-body": {
         "message": "<p>Psiphon klarte ikke å sette systemets mellomtjenerinnstillinger.</p>\n<p>Dette kan være som følge av en konflikt med din antivirusprogramvare. Det kan hende du må sette opp ditt program eller mellomtjener manuelt til bruk med de lokale Psiphon-mellomtjenerne.</p>",
         "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "settings#egress-region#select-hu": {
+        "message": "Ungarn",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nDu har satt opp Psiphon til å bruke en spesifikk port for dets SOCKS-mellomtjener.<br>\nDog, den porten later til å allerede være i bruk, så Psiphon kan ikke bruke den.\n</p>\n<p>\nEndre den oppsatte SOCKS-portverdien og prøv igjen. Det anbefales at du tømmer feltet slik at Psiphon automatisk kan velge en tilgjengelig port.\n</p>",
@@ -198,6 +214,10 @@
     "settings#egress-region#label": {
         "message": "Koble til via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-bg": {
+        "message": "Bulgaria",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
     },
     "settings#local-proxy-ports#socks-label": {
         "message": "SOCKS",
@@ -239,6 +259,10 @@
         "message": "Psiphon for Windows, klientversjon:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
+    "settings#egress-region#select-no": {
+        "message": "Norge",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+    },
     "settings#upstream-proxy#heading": {
         "message": "Oppstrømsmellomtjener",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
@@ -263,6 +287,14 @@
         "message": "L2TP/IPSec",
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
+    "settings#egress-region#select-fr": {
+        "message": "Frankrike",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+    },
+    "settings#egress-region#select-it": {
+        "message": "Italia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+    },
     "settings#error-modal#body": {
         "message": "Det er feil i dine innstillingsverdier. Korriger dem før du fortsetter.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
@@ -282,6 +314,10 @@
     "settings#egress-region#select-de": {
         "message": "Tyskland",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "settings#egress-region#select-hk": {
+        "message": "Hongkong",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
         "message": "<p>Psiphon klarte ikke å sette systemets mellomtjenerinnstillinger for Internettilkoblingen ved navn “<%- data %>. Dette kan være som følge av en konflikt med din antivirusprogramvare. Det kan hende du må sette opp ditt program eller mellomtjener manuelt til bruk med de lokale Psiphon-mellomtjenerne.",
@@ -360,7 +396,7 @@
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "about#description": {
-        "message": "Psiphon er et <strong>sensuromgåelsesverktøy</strong> — det er designet for å gi tilgang til det åpne Internett, forbi sensurorganer og brannmurer. Det er <strong>friprog</strong> utviklet i Toronto, Canada.",
+        "message": "Psiphon er et <strong>sensuromgåelsesverktøy</strong> — det er designet for å gi tilgang til det åpne Internett, forbi sensurorganer og brannmurer. Det er <strong>friprog</strong> utviklet i Toronto, Kanada.",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "nav#connection#stopping": {
@@ -403,6 +439,10 @@
         "message": "Du må velge både brukernavn og passord, eller la begge stå tomme for ingen identitetsbekreftelse.",
         "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
     },
+    "settings#egress-region#select-be": {
+        "message": "Belgia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+    },
     "settings#transport-mode#check-label": {
         "message": "Bruk L2TP/IPSec modus",
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
@@ -410,6 +450,10 @@
     "connection#egress-region-combo-label": {
         "message": "Koble til via",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-se": {
+        "message": "Sverige",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-gb": {
         "message": "Storbritannia",
@@ -439,6 +483,14 @@
         "message": "Region for Psiphon-tjener",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
+    "settings#egress-region#select-ro": {
+        "message": "Romania",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+    },
+    "settings#egress-region#select-cz": {
+        "message": "Tsjekkia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
+    },
     "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
         "message": "Å velge et brukernavn og passord krever også å velge et vertsnavn og en port",
         "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
@@ -460,7 +512,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
     },
     "feedback#text_feedback_email_prompt": {
-        "message": "Hvis du ønsker at vi svarer deg, legg ved din epost-adresse:",
+        "message": "Hvis du ønsker at vi svarer deg, legg ved din e-postadresse:",
         "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
     },
     "feedback#text_feedback_prompt": {
