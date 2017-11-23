@@ -1243,10 +1243,18 @@ static bool FlushDNS()
     // Adapted code from: http://www.codeproject.com/KB/cpp/Setting_DNS.aspx
 
     bool result = false;
-    HINSTANCE hDnsDll;
+    HINSTANCE hDnsDll = NULL;
     DNSFLUSHPROC pDnsFlushProc;
 
-    if ((hDnsDll = LoadLibrary(_T("dnsapi"))) == NULL)
+    static const int maxPathBufferSize = MAX_PATH + 1;
+    TCHAR SystemDirectoryPathBuffer[maxPathBufferSize];
+    if (GetSystemDirectory(SystemDirectoryPathBuffer, maxPathBufferSize))
+    {
+        tstring libraryPath = tstring(SystemDirectoryPathBuffer) + TEXT("\\DNSAPI.DLL");
+        hDnsDll = LoadLibrary(libraryPath.c_str());
+    }
+
+    if (hDnsDll == NULL)
     {
         my_print(NOT_SENSITIVE, false, _T("LoadLibrary DNSAPI failed"));
         return result;

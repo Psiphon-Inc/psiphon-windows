@@ -23,7 +23,6 @@
 #include "psiclient.h"
 #include "usersettings.h"
 #include "utilities.h"
-#include "htmldlg.h"
 #include "coretransport.h"
 #include "vpntransport.h"
 
