@@ -18,33 +18,5 @@
  */
 
 
-/*
- Returns -1 on error, 0 if dialog was cancelled (or dialog return was a 
- non-string), 1 if dialog returns a string. Returned string will be put into
- o_result. args will be passed to dialog if non-null. 
-
- Magic JavaScript values and functions:
-    
-    window.dialogArguments
-        Contains the value passed in args. Will be an empty string if args is NULL.
-
-    window.returnValue
-        Will be retrieved by this function. If it's a string, that value will
-        be put into o_result and this function will return 1 (so, assumes OK
-        or the like was clicked to close the dialog). If it's not a string, 
-        this function will return 0 (so, assumes CANCEL or the like was clicked
-        to close the dialog).
-
-    window.close()
-        Call this to close the dialog.        
-*/
-
-int ShowHTMLDlg(
-        HWND hParentWnd, 
-        LPCTSTR resourceName, 
-        LPCTSTR urlFragment,
-        LPCTSTR args,
-        tstring& o_result);
-
 // Returns a URL that can be used in a HTML control to retrieve the given resource.
 tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlQuery, LPCTSTR urlFragment);

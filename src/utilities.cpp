@@ -1557,8 +1557,16 @@ HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
 {
     // In the no-op/unsupported case we're going to return success.
     HRESULT res = S_OK;
+    
+    HINSTANCE hinstSHCORE = NULL;
 
-    HINSTANCE hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+    static const int maxPathBufferSize = MAX_PATH + 1;
+    TCHAR SystemDirectoryPathBuffer[maxPathBufferSize];
+    if (GetSystemDirectory(SystemDirectoryPathBuffer, maxPathBufferSize))
+    {
+        tstring libraryPath = tstring(SystemDirectoryPathBuffer) + TEXT("\\SHCORE.DLL");
+        hinstSHCORE = LoadLibrary(libraryPath.c_str());
+    }
 
     if (hinstSHCORE)
     {
@@ -1581,7 +1589,15 @@ HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX
 {
     HRESULT res = ERROR_NOT_SUPPORTED;
 
-    HINSTANCE hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+    HINSTANCE hinstSHCORE = NULL;
+    
+    static const int maxPathBufferSize = MAX_PATH + 1;
+    TCHAR SystemDirectoryPathBuffer[maxPathBufferSize];
+    if (GetSystemDirectory(SystemDirectoryPathBuffer, maxPathBufferSize))
+    {
+        tstring libraryPath = tstring(SystemDirectoryPathBuffer) + TEXT("\\SHCORE.DLL");
+        hinstSHCORE = LoadLibrary(TEXT("SHCORE.DLL"));
+    }
 
     if (hinstSHCORE)
     {
