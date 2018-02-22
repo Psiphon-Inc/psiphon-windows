@@ -343,6 +343,10 @@
     "message": "[Ƞǿǿřẇȧȧẏ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
   },
+  "settings#egress-region#select-pl": {
+    "message": "[Ƥǿǿŀȧȧƞḓ]",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+  },
   "settings#egress-region#select-ro": {
     "message": "[Řǿǿḿȧȧƞīīȧȧ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
