@@ -414,14 +414,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
     if (Settings::DisableTimeouts())
     {
-        config["TunnelConnectTimeoutSeconds"] = 0;
-        config["TunnelPortForwardDialTimeoutSeconds"] = 0;
-        config["TunnelSshKeepAliveProbeTimeoutSeconds"] = 0;
-        config["TunnelSshKeepAlivePeriodicTimeoutSeconds"] = 0;
-        config["FetchRemoteServerListTimeoutSeconds"] = 0;
-        config["PsiphonApiServerTimeoutSeconds"] = 0;
-        config["FetchRoutesTimeoutSeconds"] = 0;
-        config["HttpProxyOriginServerTimeoutSeconds"] = 0;
+        config["NetworkLatencyMultiplier"] = 3.0;
     }
 
     // In temporary tunnel mode, only the specific server should be connected to,

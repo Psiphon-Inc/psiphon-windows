@@ -40,7 +40,7 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "banner#sponsored-by": {
-        "message": "Gesponserd Door",
+        "message": "Gesponsord door",
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
     },
     "appbackend#state-connected-body": {
@@ -164,7 +164,7 @@
         "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
     },
     "settings#egress-region#select-es": {
-        "message": "Spain",
+        "message": "Spanje",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
     },
     "settings#egress-region#select-dk": {
@@ -176,7 +176,7 @@
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#egress-region#select-us": {
-        "message": "United States",
+        "message": "Verenigde Staten",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
     },
     "feedback#top_para_2": {
@@ -236,7 +236,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
     },
     "settings#egress-region#select-nl": {
-        "message": "Nederlands",
+        "message": "Nederland",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
     },
     "general#modal-close-button": {
@@ -312,7 +312,7 @@
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#egress-region#select-de": {
-        "message": "Germany",
+        "message": "Duitsland",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
     },
     "settings#egress-region#select-hk": {
@@ -456,7 +456,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-gb": {
-        "message": "United Kingdom",
+        "message": "Verenigd Koningkrijk",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
     },
     "about#wordart-title": {
@@ -480,15 +480,15 @@
         "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
     },
     "settings#egress-region#heading": {
-        "message": "Psiphon Server Regio",
+        "message": "Psiphon Regio Server",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#egress-region#select-ro": {
-        "message": "Roemeenie",
+        "message": "Roemenië",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
     },
     "settings#egress-region#select-cz": {
-        "message": "Czech Republiek",
+        "message": "Tsjechische Republiek",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
     },
     "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {

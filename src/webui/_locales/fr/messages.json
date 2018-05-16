@@ -76,7 +76,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "Région de serveur non proposée",
+        "message": "La région de serveurs n’est pas proposée",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#upstream-proxy#error-modal-title": {
