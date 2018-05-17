@@ -417,6 +417,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["NetworkLatencyMultiplier"] = 3.0;
     }
 
+    config["NetworkID"] = "949F2E962ED7A9165B81E977A3B4758B";
+
     // In temporary tunnel mode, only the specific server should be connected to,
     // and a handshake is not performed.
     // For example, in VPN mode, the temporary tunnel is used by the VPN mode to
