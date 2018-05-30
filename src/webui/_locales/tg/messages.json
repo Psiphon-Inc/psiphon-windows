@@ -15,6 +15,10 @@
         "message": "Шумо Psiphon-ро барои “проксии баромад” истифода бурдан танзим кардаед.<br>\nАммо мо бо истифодаи проксии мазкур ба серверҳои Psiphon пайваст шуда наметавонем.<br>\nТанзимро ислоҳ карда, кӯшишро такрор кунед.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Дафтарҳои қайди ислоҳи нуқсонҳоро нишон додан",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

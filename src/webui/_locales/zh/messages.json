@@ -15,6 +15,10 @@
         "message": "您已配置赛风使用一个“上游代理”。<br>\n然而，我们似乎无法通过该代理连接到赛风服务器。<br>\n请修正设置后再试。",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "波兰",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "显示调试日志",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

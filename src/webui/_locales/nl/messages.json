@@ -15,6 +15,10 @@
         "message": "Je hebt Psiphon geconfigureert voor een “upstream proxy”.<br>\nEchter we lijken niet in staat om verbinding te maken met een Psiphon server via die proxy.<br>\nA.u.b. Corrigeer de instellingen en probeer het opnieuw.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Polen",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Toon debug logbestanden",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

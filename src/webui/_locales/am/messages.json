@@ -15,6 +15,10 @@
         "message": "ሳይፈንዎን “የወደላይ ተኪ” እንዲጠቀም አድርገው አዋቅረውታል ። <br>\nይሁንና ይህንን ተኪ በመጠቀም ከሳይፈን አገልጋይ ጋር መገናኘት አልቻልንም።   <br>\nእባክዎን  መዋቅሩን ያስተካክሉ እና እንደገና ይሞክሩ። ",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "የስሀተት መዝገቦችን አሳይ ",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

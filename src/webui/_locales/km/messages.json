@@ -15,6 +15,10 @@
         "message": "អ្នកបានកំណត់ Psiphon ដើម្បីប្រើជា “ប្រូកស៊ីខាងលើ”។<br>\nទោះយ៉ាងណា, យើងហាក់ដូចជាមិនអាចតភ្ជាប់ទៅកាន់ម៉ាស៊ីនមេ Psiphon តាមរយៈប្រូកស៊ីនោះទេ។<br>\nសូមកែសំរួលការកំណត់ និងសាកល្បងម្តងទៀត។",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "បង្ហាញកំណត់ត្រាកំហុស",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

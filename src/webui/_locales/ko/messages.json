@@ -15,6 +15,10 @@
         "message": "Psiphon이 현재 시스템 “upstream proxy\"를 사용하도록 설정되어 있습니다.<br>\n하지만, 현재 해당 프록시를 통해 Psiphon 서버로 접속할 수 없는 것 같습니다.<br>\n“업스트림 프록시 사용 안 함”을 선택하고 다시 시도하십시오.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "폴란드",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "디버그 로그 보이기",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

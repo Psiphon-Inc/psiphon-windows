@@ -15,6 +15,10 @@
         "message": "သင်သည် Psiphon တွင် \"အင်တာနက်အား ချိတ်ဆက်ရန် ကြားခံ\" အသုံးပြုမည်ဟု ချိန်ညှိထားပါသည်။<br>\nသို့သော်လည်း ထိုကြားခံကို အဖြတ်၍ Psiphon ဆာဗာတစ်ခုခုအား ချိတ်ဆက်မရနိုင်ဖြစ်နေသည်ဟု ယူဆပါသည်။<br>\nကျေးဇူးပြု၍ အပြင်အဆင်တွင်ပြောင်းလဲပြီး နောက်တစ်ကြိမ်ထပ်မံကြိုးစားကြည့်ပါ။",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "ပိုလန်",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "ဖယ်ရှားထားသောမှတ်တမ်းများပြရန်",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

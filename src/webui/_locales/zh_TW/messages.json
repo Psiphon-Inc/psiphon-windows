@@ -15,6 +15,10 @@
         "message": "您已配置賽風使用一個“上層代理”。<br>\n然而，我們似乎無法通過該代理連接到賽風伺服器。<br>\n請修正設置後再試。",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "波蘭",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "顯示調試日誌",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

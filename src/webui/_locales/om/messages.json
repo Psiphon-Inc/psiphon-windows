@@ -15,6 +15,10 @@
         "message": "Psiphon kee \"bakka bu'aa gar olii\" akka inni gargaaramu ta'ee qopheessiteetta. <br>\nHaa ta’u malee, Kara bakka bu'aa sanaa serverii Psiphon ‘tti qabsiisuu hin dandeenye.<br>\nMaaloo qindeessawwan sirreessi akkasumas irra deebi'uun yaali.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Polaand",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Galmeelee sirreessa dogoggoraa mul'isi",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
