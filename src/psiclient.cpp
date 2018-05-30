@@ -508,7 +508,7 @@ static void UpdateSystrayConnectedState()
 }
 
 UINT CONNECTED_REMINDER_LONG_INTERVAL_MS = 6 * 60 * 60 * 1000;
-UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 6 * 1000;
+UINT CONNECTED_REMINDER_SHORT_INTERVAL_MS = 60 * 1000;
 static UINT g_connectedReminderIntervalMs = CONNECTED_REMINDER_LONG_INTERVAL_MS;
 static UINT_PTR g_showConnectedReminderBalloonTimerID = 0;
 static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
