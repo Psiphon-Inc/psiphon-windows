@@ -15,6 +15,10 @@
         "message": "আপনি একটি \"\"আপস্ট্রিম প্রক্সি\" ব্যবহার করার জন্য সাইফন কনফিগার করেছেন।<br> যাইহোক, আমরা সেই প্রক্সির মাধ্যমে একটি সাইফন সার্ভারে সংযোগ করতে অক্ষম বলে মনে হচ্ছে।<br> অনুগ্রহপূর্বক সেটিংস ঠিক করুন এবং আবার চেষ্টা করুন।",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "পোল্যান্ড",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "ডিবাগ লগ দেখান",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

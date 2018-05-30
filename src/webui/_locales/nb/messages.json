@@ -15,6 +15,10 @@
         "message": "Du har satt opp Psiphon til å bruke en \"oppstrømstjener\".<br>\nDog, lar det seg ikke gjøre å koble til noen Psiphon-tjener på den mellomtjeneren.<br>\nFiks innstillingene og prøv igjen.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Polen",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Vis feilrettingslogg",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

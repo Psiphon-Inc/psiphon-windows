@@ -15,6 +15,10 @@
         "message": "Ви налаштували Psiphon для використання \"проксі-сервера вищого рангу\" .<br>\nОднак здається, не можемо підключитися до сервера Psiphon через цей проксі. <br>\nВиправте налаштування та повторіть спробу.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Польща",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Показати журнали налагодження",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

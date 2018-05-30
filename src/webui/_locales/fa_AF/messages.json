@@ -15,6 +15,10 @@
         "message": "سایفون را طوری تنظیم کرده‌اید تا از یک \"پراکسی فوق\" استفاده کند.<br>\nبا این حال، به نظر میرسد نمیتوانیم از طریق این پراکسی به یک سرور سایفون متصل شویم.<br>\nلطفاً تنظیمات را تغییر داده و دوباره امتحان کنید.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "نمایش گزارش‌های ثبت رفع مشکل",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

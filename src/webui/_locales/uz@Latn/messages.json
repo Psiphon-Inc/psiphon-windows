@@ -15,6 +15,10 @@
         "message": "Psiphon hozir tizim proksi-serveridan “tashqi proksi” sifatida foydalanishga sozlangan.<br>\nLekin, bu proksi-server orqali Psiphon serveriga ulanib bo‘lmayapti.<br>\nSozlamani tuzating va qayta urinib ko‘ring.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Xatolarni ko‘rish jurnali ko‘rsatilsin",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

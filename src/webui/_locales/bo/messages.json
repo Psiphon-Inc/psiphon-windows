@@ -15,6 +15,10 @@
         "message": "ཁྱེད་རང་གིས་སཡི་ཕོན་ལ་\"ནང་འཇུག་ངོ་ཚབ་\" བེད་སྤྱོད་བྱེད་རྒྱུར་སྒྲིག་བཀོད་བྱས་འདུག<br>\nཡིན་ནའང་ང་ཚོས་ངོ་ཚབ་དེ་རྒྱུད་དེ་སཡི་ཕོན་ཞབས་ཞུ་འཕྲུལ་ཆས་ལ་མཐུད་ཐུབ་ཀྱི་མིན་འདུག<br>\nསྒྲིག་བཀོད་ལ་བཟོ་བཅོས་རྒྱབ་ནས་ཡང་སྐྱར་ཐབས་ཤེས་གནང་རོགས།",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "སྐྱོན་སེལ་གྱི་ཉིན་ཐོ་སྟོན།",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."

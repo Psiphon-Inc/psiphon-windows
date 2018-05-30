@@ -15,6 +15,10 @@
         "message": "Vous avez configuré Psiphon pour qu’il utilise un serveur «mandataire ascendant ».<br>\nCependant, il nous semble impossible de nous connecter à un serveur Psiphon par ce mandataire.<br>\nVeuillez corriger les paramètres et ressayer.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
     },
+    "settings#egress-region#select-pl": {
+        "message": "Pologne",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
     "logs#show-debug-label": {
         "message": "Montrer les journaux de débogage",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
@@ -76,7 +80,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "Région de serveur non proposée",
+        "message": "La région de serveurs n’est pas proposée",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#upstream-proxy#error-modal-title": {
