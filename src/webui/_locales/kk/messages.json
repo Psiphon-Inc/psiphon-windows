@@ -1,43 +1,555 @@
 {
-    "appbackend#state-starting-body": {
-        "message": "Күте тұрыңыз…",
-        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    "banner#long-connecting": {
+        "message": "<strong>Қап!</strong> Қосылымда қиындық туындаған сияқты!<br>\nPsiphon қолданбасының соңғы нұсқасын <a class=\"NewVersionURL\" href=\"#\">жүктеп алу сайтынан</a> немесе\n<a class=\"NewVersionEmail\" href=\"#\"></a> мекенжайына  хат жіберу арқылы жүктеп алуға болады.",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
-    "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\nPsiphon қолданбасын оның HTTP проксиі үшін арнайы жергілікті портты пайдаланатын етіп баптағансыз.<br>\nАлайда, ол порт қазір пайдаланылуда, сондықтан Psiphon оны пайдалана алмайды.\n</p>\n<p>\nБапталған HTTP прокси портының мәтінін өзгертіп, қайталап көріңіз. Бұл мәнді өшіруді ұсынамыз, сол кезде Psiphon қолданыста бар портты автоматты түрде таңдайды.\n</p>",
-        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    "nav#connection#starting": {
+        "message": "Қосылуда",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
     },
-    "settings#egress-region#select-jp": {
-        "message": "Жапония",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    "nav#connection#connected": {
+        "message": "Қосылулы",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
-    "settings#upstream-proxy#error-modal-body-configured": {
-        "message": "Psiphon қолданбасын “сыртқы проксиді” пайдаланатын етіп баптағансыз.<br>\nАлайда, сол прокси арқылы біз Psiphon серверіне қосылым орната алмайтын сияқтымыз.<br>\nПараметрлерді түзетіп, қайталап көріңіз.",
-        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+    "nav#connection#stopping": {
+        "message": "Қосылым ажырауда",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
     },
-    "settings#egress-region#select-pl": {
-        "message": "Poland",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    "nav#connection#stopped": {
+        "message": "Қосылым үзілді",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
     },
-    "logs#show-debug-label": {
-        "message": "Жөндеу журналдарын көрсету",
-        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    "nav#settings": {
+        "message": "Параметрлер",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "nav#feedback": {
+        "message": "Кері байланыс",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "nav#logs": {
         "message": "Журналдар",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "Доменді орнату пайдаланушы аты мен құпиясөзін де орнатуды талап етеді",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "nav#about": {
+        "message": "Осы туралы",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "connection#starting-msg": {
+        "message": "Psiphon <span class=\"state-word\">қосылым жасауда</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "connection#stop-btn": {
+        "message": "Тоқтату",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "connection#connected-msg": {
+        "message": "Psiphon <span class=\"state-word\">қосылулы</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "connection#disconnect-btn": {
+        "message": "Қосылымды үзу",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "connection#stopping-msg": {
+        "message": "Psiphon <span class=\"state-word\">қосылымды үзуде</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "connection#wait-btn": {
+        "message": "Күте тұрыңыз…",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "connection#stopped-msg": {
+        "message": "Psiphon <span class=\"state-word\">қосылымды үзді</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "connection#connect-btn": {
+        "message": "Қосылу ",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    },
+    "connection#egress-region-combo-label": {
+        "message": "Қосылым жолы",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#error-alert": {
         "message": "<strong>Қате!</strong> Жалғастыру алдында дұрыс емес мәндерді түзетіңіз.",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
+    "settings#reset-button": {
+        "message": "Әдепкі мәндерді қайтару",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "settings#apply-button": {
+        "message": "Өзгерістерді қолдану",
+        "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
+    },
+    "settings#unapplied-changes-prompt#title": {
+        "message": "Параметрлер  өзгерді",
+        "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#unapplied-changes-prompt#body": {
+        "message": "Сіз параметрлерді  өзгерттіңіз, бірақ оларды сақтаған жоқсыз. <br><br>Өзгерістерді қазір қолдануды немесе жоюды қалайсыз ба?",
+        "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#unapplied-changes-prompt#apply-button": {
+        "message": "Қолдану",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
+    },
+    "settings#unapplied-changes-prompt#discard-button": {
+        "message": "Жою",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "(L2TP/IPSec режимімен жұмыс істемейді).",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    },
+    "settings#vpn-incompatible-label": {
+        "message": "L2TP/IPSec",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "Бөлінген туннель",
+        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "Іске қосылған болса, сіздің еліңізде орналасқан серверлерге сұратулар Psiphon арқылы туннельденбейді.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+    },
+    "settings#split-tunnel#reason": {
+        "message": "Сіздің еліңізде орналасқан веб-сайттар әдетте бұғатталмайды, сондықтан, бұл параметрді іске қосу сіздің сол веб-сайттарға жылдамырақ қатынауыңызды қамтамасыз етіп, кейде провайдер деректерін пайдалану бағасын төмендете алады.",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "Сіздің еліңіздегі веб-сайттар үшін проксиді қолданбау",
+        "description": "The label on the checkbox that enables 'Split Tunnel'."
+    },
+    "settings#disable-timeouts#heading": {
+        "message": "Баяу желілердің таймауттарын ажырату",
+        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
+    },
+    "settings#disable-timeouts#help-text": {
+        "message": "Іске қосылған болса, Psiphon серверімен байланыстың уақыты бітпейді.",
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+    },
+    "settings#disable-timeouts#reason": {
+        "message": "Осыны баяу желі қосылымы үшін іске қосқан кезде, күтпеген ажыратылу саны азаяды.",
+        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "settings#disable-timeouts#enable-label": {
+        "message": "Баяу желілер үшін таймауттарды ажырату",
+        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+    },
+    "settings#egress-region#heading": {
+        "message": "Psiphon сервері аймағы",
+        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#egress-region#label": {
+        "message": "Қосылым жолы",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "Ең жылдам ел",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
+    },
+    "settings#egress-region#select-us": {
+        "message": "АҚШ",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "Канада",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "Ұлыбритания",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "Жапония",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#egress-region#select-sg": {
+        "message": "Сингапур",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
+    },
+    "settings#egress-region#select-nl": {
+        "message": "Голландия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "settings#egress-region#select-de": {
+        "message": "Германия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "settings#egress-region#select-in": {
+        "message": "Үндістан",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
+    "settings#egress-region#select-es": {
+        "message": "Испания",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+    },
+    "settings#egress-region#select-hk": {
+        "message": "Гонконг",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
+    },
+    "settings#egress-region#select-at": {
+        "message": "Аустрия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+    },
+    "settings#egress-region#select-be": {
+        "message": "Бельгия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+    },
+    "settings#egress-region#select-bg": {
+        "message": "Болгария",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
+    },
+    "settings#egress-region#select-ch": {
+        "message": "Швейцария",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
+    },
+    "settings#egress-region#select-cz": {
+        "message": "Чехия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
+    },
+    "settings#egress-region#select-dk": {
+        "message": "Дания",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
+    },
+    "settings#egress-region#select-fr": {
+        "message": "Франция",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+    },
+    "settings#egress-region#select-hu": {
+        "message": "Венгрия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
+    },
+    "settings#egress-region#select-it": {
+        "message": "Италия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+    },
+    "settings#egress-region#select-no": {
+        "message": "Норвегия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+    },
+    "settings#egress-region#select-ro": {
+        "message": "Румыния",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+    },
+    "settings#egress-region#select-se": {
+        "message": "Швеция",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
+    "settings#egress-region#select-pl": {
+        "message": "Poland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
+    "settings#egress-region#description": {
+        "message": "Psiphon қызметінің серверлері көптеген елдерде орналасқан. Сіздің еліңізге жақын елде орналасқан Psiphon серверін қолдану әдетте жылдамырақ желілік қосылымға әкеледі, бірақ сіз веб-сайттар мен қызметтерге өзіңіз белгілі бір елде орналасқандай қатынағыңыз келуі мүмкін.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+    },
+    "settings#egress-region#default": {
+        "message": "Әдепкі бойынша <strong>“Ең жылдам ел”</strong> нұсқасы Psiphon қолданбасына серверді автоматты түрде таңдауға мүмкіндік береді, ол әдетте желі қосылымын жақсартады.",
+        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
+    },
+    "settings#egress-region#invalid-error-msg": {
+        "message": "Psiphon серверінің жарамды аймағын таңдаңыз.",
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+    },
+    "settings#egress-region#error-modal-title": {
+        "message": "Сервер аймағы қолжетімді емес",
+        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#egress-region#error-modal-body-http": {
+        "message": "Psiphon қолданбасы арнайы аймақтағы серверді қолдануға бапталған.<br>\nАлайда, ол аймақ енді қолжетімді емес.<br>\nЖаңа аймақты таңдау керек немесе әдепкі бойынша таңдауды “Ең жылдам ел” нұсқасына орнату керек.",
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "Жергілікті прокси порттары",
+        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "Порттарды автоматты түрде таңдау үшін <strong>бос</strong> қалдырыңыз (ұсынылады).",
+        "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
+    },
     "settings#local-proxy-ports#reason": {
         "message": "Егер сіз компьютерде Psiphon қолданбасымен жұмыс істеу үшін қолмен баптауды талап ететін құралдарды пайдалансаңыз, Psiphon қолданбасының белгілі бір жергілікті порттарды пайдалануы керек болады. Егер жергілікті порттар санын көрсету керек болмаса, қайшылыққа жол бермеу үшін Psiphon қолданбасының оларды автоматты түрде таңдауына рұқсат ету керек.",
         "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
+    },
+    "settings#port-value-error-msg": {
+        "message": "1 және 65535 арасында болуы тиіс.",
+        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
+    },
+    "settings#local-proxy-ports#unique-error-msg": {
+        "message": "Жергілікті порттар бір-бірінен бөлек болуы тиіс.",
+        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+    },
+    "settings#local-proxy-ports#error-modal-title": {
+        "message": "Жергілікті прокси порттар қайшылығы",
+        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
+    },
+    "settings#local-proxy-ports#error-modal-body-http": {
+        "message": "<p>\nPsiphon қолданбасын оның HTTP проксиі үшін арнайы жергілікті портты пайдаланатын етіп баптағансыз.<br>\nАлайда, ол порт қазір пайдаланылуда, сондықтан Psiphon оны пайдалана алмайды.\n</p>\n<p>\nБапталған HTTP прокси портының мәтінін өзгертіп, қайталап көріңіз. Бұл мәнді өшіруді ұсынамыз, сол кезде Psiphon қолданыста бар портты автоматты түрде таңдайды.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    },
+    "settings#local-proxy-ports#error-modal-body-socks": {
+        "message": "<p>\nPsiphon қолданбасын оның SOCKS проксиі үшін арнайы жергілікті портты пайдаланатын етіп баптағансыз.<br>\nАлайда, ол порт қазір пайдаланылуда, сондықтан Psiphon оны пайдалана алмайды.\n</p>\n<p>\nБапталған SOCKS прокси портының мәнін өзгертіп, қайталап көріңіз. Бұл мәнді өшіруді ұсынамыз, сол кезде Psiphon қолданыстағы портты автоматты түрде таңдайды.\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "Сыртқы прокси",
+        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "Компьютеріңізде бапталған прокси болса, әдепкі бойынша Psiphon туннельді орнату кезінде сол проксиді қолданады. Пайдаланылатын проксиді көрсету  немесе осындай \"сыртқы прокси\" қолдану керек емес екенін көрсету арқылы осындай әрекетінен бас тартуға  болады.",
+        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
+    },
+    "settings#upstream-proxy#reason": {
+        "message": "Сыртқы проксилерді кейде мектептер, университеттер мен кәсіпорындар пайдаланады. Егер желілік провайдер сыртқы прокси параметрлерін берген болса, қосылым орнату үшін оларды осы жерде қолдан орнату керек болуы мүмкін.",
+        "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
+    },
+    "settings#upstream-proxy#proxy-reqs": {
+        "message": "Тек HTTPS протоколын қолдайтын HTTP проксилеріне рұқсат етіледі.",
+        "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "Хост атауы",
+        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "Порт",
+        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+    },
+    "settings#upstream-proxy#username-label": {
+        "message": "Пайдаланушы аты",
+        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+    },
+    "settings#upstream-proxy#password-label": {
+        "message": "Құпиясөз",
+        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+    },
+    "settings#upstream-proxy#domain-label": {
+        "message": "Домен",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "Сыртқы проксиді қолданбау",
+        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#upstream-proxy#set-username-password-error-msg": {
+        "message": "Пайдаланушы аты мен құпиясөзін бірге көрсету керек немесе аутентификациясыз жағдай үшін оларды бос қалдыру керек.",
+        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
+    "settings#upstream-proxy#set-hostname-port-error-msg": {
+        "message": "Хост аты мен портын бірге көрсету керек немесе автоматты түрде таңдау үшін оларды бос қалдыру керек.",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+    },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "Пайдаланушы аты мен құпиясөзді орнату хост аты мен портты да орнатуды талап етеді",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "Доменді орнату пайдаланушы аты мен құпиясөзін де орнатуды талап етеді",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#upstream-proxy#error-modal-title": {
+        "message": "Сыртқы прокси қатесі",
+        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+    },
+    "settings#upstream-proxy#error-modal-body-default": {
+        "message": "Psiphon қазір жүйелік проксиді “сыртқы прокси” ретінде қолдануға бапталған.<br>\nАлайда, сол прокси арқылы біз Psiphon серверіне қосылым орната алмайтын сияқтымыз.<br>\n“Сыртқы проксиді қолданбау” функциясын іске қосып, қайталап көріңіз.",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
+    },
+    "settings#upstream-proxy#error-modal-body-configured": {
+        "message": "Psiphon қолданбасын “сыртқы проксиді” пайдаланатын етіп баптағансыз.<br>\nАлайда, сол прокси арқылы біз Psiphon серверіне қосылым орната алмайтын сияқтымыз.<br>\nПараметрлерді түзетіп, қайталап көріңіз.",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+    },
+    "settings#transport-mode#heading": {
+        "message": "Тасымалдау режимі",
+        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
+    },
+    "settings#transport-mode#check-label": {
+        "message": "L2TP/IPSec режимін қолдану",
+        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
+    },
+    "settings#transport-mode#help-text": {
+        "message": "Windows жүйесінің L2TP/IPSec виртуалды желісін қолданады. Бұл режим барлық қолданбаларыңызды туннельдейді, бірақ оны цензура құралдары оңай анықтайды және бұғаттай алады. Оны желіаралық қалқандардың көбін айналып өту үшін<strong>пайдаланбаған жөн</strong>.",
+        "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    },
+    "settings#systray-minimize#heading": {
+        "message": "Хабарламалар аймағына қайыру (хабарлау панелі)",
+        "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
+    },
+    "settings#systray-minimize#help-text": {
+        "message": "Іске қосылған болса, Psiphon қолданбасы қайырылған кезде оның терезесі хабарламалар аймағында жасырылады (сонымен қатар, ол “хабарлау панелі” ретінде белгілі, Windows тапсырмалар панелінде сағаттың қасында орналасқан).",
+        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
+    },
+    "settings#systray-minimize#reason": {
+        "message": "Psiphon қолданбасын хабарламалар аймағына (“жүйелік трей”) қайыру тапсырмалар панелінен орын босатады. Бұл әсіресе Psiphon қолданбасын ұзақ уақыт бойы қолданған кезде қолайлы.",
+        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
+    },
+    "settings#systray-minimize#enable-label": {
+        "message": "Хабарламалар аймағына қайыру (хабарлау панелі)",
+        "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
+    },
+    "settings#applying-message": {
+        "message": "Параметрлерді қолдану үшін қайта қосылу.",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+    },
+    "settings#saved-message": {
+        "message": "Параметрлер сақталды.",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
+    },
+    "settings#error-modal#title": {
+        "message": "Параметрлер қатесі",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
+    },
+    "settings#error-modal#body": {
+        "message": "Параметрлерде қателер бар. Жалғастыру алдында оларды түзетіңіз.",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
+    },
+    "feedback#top_content_title": {
+        "message": "Пікіріңізді білдіріңіз",
+        "description": "Title for the Feedback page"
+    },
+    "feedback#top_para_2": {
+        "message": "Ақаулықтардың көбін соңғы нұсқасын жүктеп алу арқылы түзетуге болады. <a class=\"NewVersionURL\" href=\"#\">Осы жерден шерту арқылы соңғы нұсқасын жүктеп алуға</a> немесе бізге эл. пошта хатын жіберуге болады: <a class=\"NewVersionEmail\" href=\"#\"></a>.",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "feedback#top_para_3": {
+        "message": "Сонымен қатар, сіз әдеттегі көп ақаулықтардың шешімін біздің <a class=\"FaqURL\" href=\"#\">Жиі қойылатын сұрақтар</a> бөлімінен таба аласыз.",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "feedback#smiley_happy": {
+        "message": "Psiphon мен қалайтындай түрде қосылым орнатады және жұмыс істейді.",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "feedback#smiley_sad": {
+        "message": "Psiphon көбінесе қосылымды орната алмайды немесе тиісті түрде жұмыс істемейді.",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "Пікірлеріңізді осы жерге енгізіңіз:",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "Біздің сізге жауап беруімізді қаласаңыз, өз эл. пошта мекенжайыңызды енгізіңіз:",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#diagnostic_check": {
+        "message": "Диагностика деректерін жүктеп салыңыз. Есіңізде болсын, бұл диагностика деректері сізді сәйкестендірмейді және бізге Psiphon қызметін жақсартуға көмектеседі. <a class=\"DataCollectionInfoURL\" href=\"#\">Біздің қандай деректерді жинайтымызды білу үшін осы жерден шертіңіз.</a>",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "feedback#submit_button": {
+        "message": "Жіберу",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "Егер жоғарыдағы пішін  немесе скриншот жіберуді қаласаңыз, бізге <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> мекенжайына хат жазыңыз.",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "feedback#success-message": {
+        "message": "<strong>Рахмет!</strong> Сіздің пікіріңіз жіберілді.",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "logs#show-debug-label": {
+        "message": "Жөндеу журналдарын көрсету",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "logs#placeholder": {
+        "message": "Журналдар жоқ",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
+    "language#success-message": {
+        "message": "<strong>Сәлеметсіз бе!</strong> Psiphon қызметіне қош келдіңіз.",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "about#wordart-title": {
+        "message": "Psiphon",
+        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "about#wordart-tag": {
+        "message": "Шекарасыз",
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
+    },
+    "about#description": {
+        "message": "Psiphon – <strong>цензурадан жалтару құралы</strong> – ол цензорлар мен желіаралық қалқандарға қарамай, ашық Интернетке қатынауға мүмкіндік беретін құрал. Оның <strong>бастапқы кодтары ашық</strong> және ол Канада, Торонтода әзірленген.",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "about#visit-download-site": {
+        "message": "<strong><a class=\"NewVersionURL\" href=\"#\">Жаңа нұсқасын жүктеп алу үшін</a></strong> немесе <strong><a class=\"InfoURL\" href=\"#\">көмек пен ақпарат алу үшін</a></strong> веб-сайтқа барыңыз. Psiphon қолданбасы Android және Windows жүйелерінде жұмыс істейді.",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "about#get-by-email": {
+        "message": "<strong>Егер веб-сайтқа кіру мүмкін болмаса,</strong>, Psiphon қолданбасының жаңа нұсқасын келесі адреске эл. хат жіберу арқылы алуға болады:",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "about#client-version": {
+        "message": "Windows жүйесіне арналған Psiphon клиентінің нұсқасы:",
+        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
+    },
+    "general#modal-close-button": {
+        "message": "Жабу",
+        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+    },
+    "general#notice-modal-tech-preamble": {
+        "message": "Қателік туралы техникалық ақпарат:",
+        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+    },
+    "notice#systemproxysettings-setproxy-error-title": {
+        "message": "Жүйелік прокси қателігі",
+        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "notice#systemproxysettings-setproxy-error-body": {
+        "message": "<p>Psiphon жүйелік прокси параметрлерін орната алмады.</p>\n<p>Бұл сіздегі вирусқарсы бағдарламамен қайшылыққа байланысты болуы мүмкін. Жергілікті Psiphon проксилерін қолдану үшін қолданбаңыздың немесе жүйенің прокси параметрлерін қолдан баптау керек болуы мүмкін.</p>",
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "notice#systemproxysettings-setproxy-warning-template": {
+        "message": "Psiphon “<%- data %>” деп аталатын қосылым үшін жүйелік прокси параметрлерін орната алмады. Бұл вирусқарсы бағдарламамен қайшылыққа байланысты болуы мүмкін. Жергілікті Psiphon проксилерін қолдану үшін қолданбаңыздың немесе жүйенің прокси параметрлерін қолдан баптау керек болуы мүмкін.",
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+    },
+    "appbackend#state-stopped-title": {
+        "message": "Psiphon ажырап қалған",
+        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+    },
+    "appbackend#state-starting-title": {
+        "message": "Psiphon қосылуда",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "appbackend#state-starting-body": {
+        "message": "Күте тұрыңыз…",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "appbackend#state-connected-title": {
+        "message": "Psiphon қосылулы",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+    },
+    "appbackend#state-connected-body": {
+        "message": "Шекарадан асыра шарлаңыз!",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon сізді қосылулы күйде ұстайды",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
+    "appbackend#state-connected-reminder-body": {
+        "message": "Psiphon қызметін тегін қалдырыңыз. Демеушіі беттеріне кіру үшін осы жерден шертіңіз!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "Біздің демеушііміздің беттеріне бару арқылы Psiphon қызметінің тегін қалуына көмектесіңіз!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#minimized-to-systray-title": {
+        "message": "Psiphon қолданбасы хабарламалар аймағына қайырылған",
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#minimized-to-systray-body": {
         "message": "Қолданбаны қалпына келтіру үшін белгішені шертіңіз",
@@ -46,517 +558,5 @@
     "banner#sponsored-by": {
         "message": "Демеушілік еткен",
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
-    },
-    "appbackend#state-connected-body": {
-        "message": "Шекарадан асыра шарлаңыз!",
-        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
-    },
-    "settings#disable-timeouts#enable-label": {
-        "message": "Баяу желілер үшін таймауттарды ажырату",
-        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
-    },
-    "settings#egress-region#select-in": {
-        "message": "Үндістан",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
-    },
-    "connection#connected-msg": {
-        "message": "Psiphon <span class=\"state-word\">қосылулы</span>",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
-    },
-    "settings#split-tunnel#reason": {
-        "message": "Сіздің еліңізде орналасқан веб-сайттар әдетте бұғатталмайды, сондықтан, бұл параметрді іске қосу сіздің сол веб-сайттарға жылдамырақ қатынауыңызды қамтамасыз етіп, кейде провайдер деректерін пайдалану бағасын төмендете алады.",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
-    },
-    "nav#settings": {
-        "message": "Параметрлер",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
-    },
-    "settings#egress-region#select-at": {
-        "message": "Аустрия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
-    },
-    "nav#connection#connected": {
-        "message": "Қосылулы",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
-    },
-    "settings#egress-region#error-modal-title": {
-        "message": "Сервер аймағы қолжетімді емес",
-        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
-    },
-    "settings#upstream-proxy#error-modal-title": {
-        "message": "Сыртқы прокси қатесі",
-        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
-    },
-    "settings#egress-region#default": {
-        "message": "Әдепкі бойынша <strong>“Ең жылдам ел”</strong> нұсқасы Psiphon қолданбасына серверді автоматты түрде таңдауға мүмкіндік береді, ол әдетте желі қосылымын жақсартады.",
-        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
-    },
-    "connection#stopping-msg": {
-        "message": "Psiphon <span class=\"state-word\">қосылымды үзуде</span>…",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
-    },
-    "settings#egress-region#select-ch": {
-        "message": "Швейцария",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
-    },
-    "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon қазір жүйелік проксиді “сыртқы прокси” ретінде қолдануға бапталған.<br>\nАлайда, сол прокси арқылы біз Psiphon серверіне қосылым орната алмайтын сияқтымыз.<br>\n“Сыртқы проксиді қолданбау” функциясын іске қосып, қайталап көріңіз.",
-        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
-    },
-    "feedback#success-message": {
-        "message": "<strong>Рахмет!</strong> Сіздің пікіріңіз жіберілді.",
-        "description": "Message shown to user after their feedback has been sent successufully"
-    },
-    "settings#upstream-proxy#password-label": {
-        "message": "Құпиясөз",
-        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
-    },
-    "appbackend#state-stopped-title": {
-        "message": "Psiphon ажырап қалған",
-        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
-    },
-    "settings#split-tunnel#help-text": {
-        "message": "Іске қосылған болса, сіздің еліңізде орналасқан серверлерге сұратулар Psiphon арқылы туннельденбейді.",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
-    },
-    "about#visit-download-site": {
-        "message": "<strong><a class=\"NewVersionURL\" href=\"#\">Жаңа нұсқасын жүктеп алу үшін</a></strong> немесе <strong><a class=\"InfoURL\" href=\"#\">көмек пен ақпарат алу үшін</a></strong> веб-сайтқа барыңыз. Psiphon қолданбасы Android және Windows жүйелерінде жұмыс істейді.",
-        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
-    },
-    "settings#upstream-proxy#skip-label": {
-        "message": "Сыртқы проксиді қолданбау",
-        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
-    },
-    "appbackend#state-connected-reminder-title": {
-        "message": "Psiphon сізді қосылулы күйде ұстайды",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
-    },
-    "settings#egress-region#select-ca": {
-        "message": "Канада",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
-    },
-    "settings#systray-minimize#help-text": {
-        "message": "Іске қосылған болса, Psiphon қолданбасы қайырылған кезде оның терезесі хабарламалар аймағында жасырылады (сонымен қатар, ол “хабарлау панелі” ретінде белгілі, Windows тапсырмалар панелінде сағаттың қасында орналасқан).",
-        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
-    },
-    "settings#upstream-proxy#port-label": {
-        "message": "Порт",
-        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
-    },
-    "settings#port-value-error-msg": {
-        "message": "1 және 65535 арасында болуы тиіс.",
-        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
-    },
-    "nav#feedback": {
-        "message": "Кері байланыс",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
-    },
-    "connection#starting-msg": {
-        "message": "Psiphon <span class=\"state-word\">қосылым жасауда</span>…",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
-    },
-    "settings#applying-message": {
-        "message": "Параметрлерді қолдану үшін қайта қосылу.",
-        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
-    },
-    "appbackend#state-connected-reminder-body-2": {
-        "message": "Біздің демеушііміздің беттеріне бару арқылы Psiphon қызметінің тегін қалуына көмектесіңіз!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
-    },
-    "appbackend#state-starting-title": {
-        "message": "Psiphon қосылуда",
-        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
-    },
-    "settings#egress-region#select-es": {
-        "message": "Испания",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
-    },
-    "settings#egress-region#select-dk": {
-        "message": "Дания",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
-    },
-    "settings#unapplied-changes-prompt#title": {
-        "message": "Параметрлер  өзгерді",
-        "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
-    },
-    "settings#egress-region#select-us": {
-        "message": "АҚШ",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
-    },
-    "feedback#top_para_2": {
-        "message": "Ақаулықтардың көбін соңғы нұсқасын жүктеп алу арқылы түзетуге болады. <a class=\"NewVersionURL\" href=\"#\">Осы жерден шерту арқылы соңғы нұсқасын жүктеп алуға</a> немесе бізге эл. пошта хатын жіберуге болады: <a class=\"NewVersionEmail\" href=\"#\"></a>.",
-        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
-    },
-    "notice#systemproxysettings-setproxy-error-body": {
-        "message": "<p>Psiphon жүйелік прокси параметрлерін орната алмады.</p>\n<p>Бұл сіздегі вирусқарсы бағдарламамен қайшылыққа байланысты болуы мүмкін. Жергілікті Psiphon проксилерін қолдану үшін қолданбаңыздың немесе жүйенің прокси параметрлерін қолдан баптау керек болуы мүмкін.</p>",
-        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
-    },
-    "settings#egress-region#select-hu": {
-        "message": "Венгрия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
-    },
-    "settings#local-proxy-ports#error-modal-body-socks": {
-        "message": "<p>\nPsiphon қолданбасын оның SOCKS проксиі үшін арнайы жергілікті портты пайдаланатын етіп баптағансыз.<br>\nАлайда, ол порт қазір пайдаланылуда, сондықтан Psiphon оны пайдалана алмайды.\n</p>\n<p>\nБапталған SOCKS прокси портының мәнін өзгертіп, қайталап көріңіз. Бұл мәнді өшіруді ұсынамыз, сол кезде Psiphon қолданыстағы портты автоматты түрде таңдайды.\n</p>",
-        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
-    },
-    "feedback#submit_button": {
-        "message": "Жіберу",
-        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
-    },
-    "settings#systray-minimize#reason": {
-        "message": "Psiphon қолданбасын хабарламалар аймағына (“жүйелік трей”) қайыру тапсырмалар панелінен орын босатады. Бұл әсіресе Psiphon қолданбасын ұзақ уақыт бойы қолданған кезде қолайлы.",
-        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
-    },
-    "settings#unapplied-changes-prompt#discard-button": {
-        "message": "Жою",
-        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
-    },
-    "notice#systemproxysettings-setproxy-error-title": {
-        "message": "Жүйелік прокси қателігі",
-        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
-    },
-    "settings#egress-region#label": {
-        "message": "Қосылым жолы",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
-    "settings#egress-region#select-bg": {
-        "message": "Болгария",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
-    },
-    "settings#local-proxy-ports#socks-label": {
-        "message": "SOCKS",
-        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
-    },
-    "feedback#top_para_3": {
-        "message": "Сонымен қатар, сіз әдеттегі көп ақаулықтардың шешімін біздің <a class=\"FaqURL\" href=\"#\">Жиі қойылатын сұрақтар</a> бөлімінен таба аласыз.",
-        "description": "Text telling the user how to get to the Psiphon FAQ."
-    },
-    "settings#saved-message": {
-        "message": "Параметрлер сақталды.",
-        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
-    },
-    "about#get-by-email": {
-        "message": "<strong>Егер веб-сайтқа кіру мүмкін болмаса,</strong>, Psiphon қолданбасының жаңа нұсқасын келесі адреске эл. хат жіберу арқылы алуға болады:",
-        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
-    },
-    "settings#egress-region#select-nl": {
-        "message": "Голландия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
-    },
-    "general#modal-close-button": {
-        "message": "Жабу",
-        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
-    },
-    "settings#local-proxy-ports#http-label": {
-        "message": "HTTP/HTTPS",
-        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
-    },
-    "settings#unapplied-changes-prompt#apply-button": {
-        "message": "Қолдану",
-        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
-    },
-    "settings#reset-button": {
-        "message": "Әдепкі мәндерді қайтару",
-        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
-    },
-    "about#client-version": {
-        "message": "Windows жүйесіне арналған Psiphon клиентінің нұсқасы:",
-        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
-    },
-    "settings#egress-region#select-no": {
-        "message": "Норвегия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
-    },
-    "settings#upstream-proxy#heading": {
-        "message": "Сыртқы прокси",
-        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
-    },
-    "settings#egress-region#description": {
-        "message": "Psiphon қызметінің серверлері көптеген елдерде орналасқан. Сіздің еліңізге жақын елде орналасқан Psiphon серверін қолдану әдетте жылдамырақ желілік қосылымға әкеледі, бірақ сіз веб-сайттар мен қызметтерге өзіңіз белгілі бір елде орналасқандай қатынағыңыз келуі мүмкін.",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
-    },
-    "settings#vpn-incompatible-msg": {
-        "message": "(L2TP/IPSec режимімен жұмыс істемейді).",
-        "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
-    },
-    "general#notice-modal-tech-preamble": {
-        "message": "Қателік туралы техникалық ақпарат:",
-        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
-    },
-    "settings#local-proxy-ports#unique-error-msg": {
-        "message": "Жергілікті порттар бір-бірінен бөлек болуы тиіс.",
-        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
-    },
-    "settings#vpn-incompatible-label": {
-        "message": "L2TP/IPSec",
-        "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
-    },
-    "settings#egress-region#select-fr": {
-        "message": "Франция",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
-    },
-    "settings#egress-region#select-it": {
-        "message": "Италия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
-    },
-    "settings#error-modal#body": {
-        "message": "Параметрлерде қателер бар. Жалғастыру алдында оларды түзетіңіз.",
-        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
-    },
-    "settings#disable-timeouts#help-text": {
-        "message": "Іске қосылған болса, Psiphon серверімен байланыстың уақыты бітпейді.",
-        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
-    },
-    "nav#connection#stopped": {
-        "message": "Қосылым үзілді",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
-    },
-    "settings#local-proxy-ports#heading": {
-        "message": "Жергілікті прокси порттары",
-        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
-    },
-    "settings#egress-region#select-de": {
-        "message": "Германия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
-    },
-    "settings#egress-region#select-hk": {
-        "message": "Гонконг",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
-    },
-    "notice#systemproxysettings-setproxy-warning-template": {
-        "message": "Psiphon “<%- data %>” деп аталатын қосылым үшін жүйелік прокси параметрлерін орната алмады. Бұл вирусқарсы бағдарламамен қайшылыққа байланысты болуы мүмкін. Жергілікті Psiphon проксилерін қолдану үшін қолданбаңыздың немесе жүйенің прокси параметрлерін қолдан баптау керек болуы мүмкін.",
-        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
-    },
-    "connection#stop-btn": {
-        "message": "Тоқтату",
-        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
-    },
-    "settings#egress-region#error-modal-body-http": {
-        "message": "Psiphon қолданбасы арнайы аймақтағы серверді қолдануға бапталған.<br>\nАлайда, ол аймақ енді қолжетімді емес.<br>\nЖаңа аймақты таңдау керек немесе әдепкі бойынша таңдауды “Ең жылдам ел” нұсқасына орнату керек.",
-        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
-    },
-    "feedback#text_feedback_bottom_para": {
-        "message": "Егер жоғарыдағы пішін  немесе скриншот жіберуді қаласаңыз, бізге <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a> мекенжайына хат жазыңыз.",
-        "description": "Message showing the user an email they can use to contact Psiphon Inc."
-    },
-    "settings#upstream-proxy#reason": {
-        "message": "Сыртқы проксилерді кейде мектептер, университеттер мен кәсіпорындар пайдаланады. Егер желілік провайдер сыртқы прокси параметрлерін берген болса, қосылым орнату үшін оларды осы жерде қолдан орнату керек болуы мүмкін.",
-        "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
-    },
-    "settings#local-proxy-ports#error-modal-title": {
-        "message": "Жергілікті прокси порттар қайшылығы",
-        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
-    },
-    "connection#disconnect-btn": {
-        "message": "Қосылымды үзу",
-        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
-    },
-    "feedback#top_content_title": {
-        "message": "Пікіріңізді білдіріңіз",
-        "description": "Title for the Feedback page"
-    },
-    "banner#long-connecting": {
-        "message": "<strong>Қап!</strong> Қосылымда қиындық туындаған сияқты!<br>\nPsiphon қолданбасының соңғы нұсқасын <a class=\"NewVersionURL\" href=\"#\">жүктеп алу сайтынан</a> немесе\n<a class=\"NewVersionEmail\" href=\"#\"></a> мекенжайына  хат жіберу арқылы жүктеп алуға болады.",
-        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
-    },
-    "logs#placeholder": {
-        "message": "Журналдар жоқ",
-        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
-    },
-    "connection#stopped-msg": {
-        "message": "Psiphon <span class=\"state-word\">қосылымды үзді</span>",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
-    },
-    "settings#disable-timeouts#reason": {
-        "message": "Осыны баяу желі қосылымы үшін іске қосқан кезде, күтпеген ажыратылу саны азаяды.",
-        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
-    },
-    "nav#about": {
-        "message": "Осы туралы",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
-    },
-    "settings#local-proxy-ports#leave-blank": {
-        "message": "Порттарды автоматты түрде таңдау үшін <strong>бос</strong> қалдырыңыз (ұсынылады).",
-        "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
-    },
-    "settings#systray-minimize#heading": {
-        "message": "Хабарламалар аймағына қайыру (хабарлау панелі)",
-        "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
-    },
-    "language#success-message": {
-        "message": "<strong>Сәлеметсіз бе!</strong> Psiphon қызметіне қош келдіңіз.",
-        "description": "A welcome message shown to the user when they first switch to the correct UI language"
-    },
-    "settings#egress-region#select-sg": {
-        "message": "Сингапур",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
-    },
-    "feedback#diagnostic_check": {
-        "message": "Диагностика деректерін жүктеп салыңыз. Есіңізде болсын, бұл диагностика деректері сізді сәйкестендірмейді және бізге Psiphon қызметін жақсартуға көмектеседі. <a class=\"DataCollectionInfoURL\" href=\"#\">Біздің қандай деректерді жинайтымызды білу үшін осы жерден шертіңіз.</a>",
-        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
-    },
-    "settings#transport-mode#heading": {
-        "message": "Тасымалдау режимі",
-        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
-    },
-    "about#description": {
-        "message": "Psiphon – <strong>цензурадан жалтару құралы</strong> – ол цензорлар мен желіаралық қалқандарға қарамай, ашық Интернетке қатынауға мүмкіндік беретін құрал. Оның <strong>бастапқы кодтары ашық</strong> және ол Канада, Торонтода әзірленген.",
-        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
-    },
-    "nav#connection#stopping": {
-        "message": "Қосылым ажырауда",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
-    },
-    "settings#error-modal#title": {
-        "message": "Параметрлер қатесі",
-        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
-    },
-    "settings#apply-button": {
-        "message": "Өзгерістерді қолдану",
-        "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
-    },
-    "appbackend#minimized-to-systray-title": {
-        "message": "Psiphon қолданбасы хабарламалар аймағына қайырылған",
-        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
-    },
-    "settings#split-tunnel#heading": {
-        "message": "Бөлінген туннель",
-        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
-    },
-    "settings#egress-region#invalid-error-msg": {
-        "message": "Psiphon серверінің жарамды аймағын таңдаңыз.",
-        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
-    },
-    "appbackend#state-connected-title": {
-        "message": "Psiphon қосылулы",
-        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
-    },
-    "settings#upstream-proxy#proxy-reqs": {
-        "message": "Тек HTTPS протоколын қолдайтын HTTP проксилеріне рұқсат етіледі.",
-        "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
-    },
-    "appbackend#state-connected-reminder-body": {
-        "message": "Psiphon қызметін тегін қалдырыңыз. Демеушіі беттеріне кіру үшін осы жерден шертіңіз!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
-    },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Пайдаланушы аты мен құпиясөзін бірге көрсету керек немесе аутентификациясыз жағдай үшін оларды бос қалдыру керек.",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
-    },
-    "settings#egress-region#select-be": {
-        "message": "Бельгия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
-    },
-    "settings#transport-mode#check-label": {
-        "message": "L2TP/IPSec режимін қолдану",
-        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
-    },
-    "connection#egress-region-combo-label": {
-        "message": "Қосылым жолы",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
-    "settings#egress-region#select-se": {
-        "message": "Швеция",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
-    },
-    "settings#egress-region#select-gb": {
-        "message": "Ұлыбритания",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
-    },
-    "about#wordart-title": {
-        "message": "Psiphon",
-        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
-    },
-    "settings#upstream-proxy#hostname-label": {
-        "message": "Хост атауы",
-        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
-    },
-    "feedback#smiley_sad": {
-        "message": "Psiphon көбінесе қосылымды орната алмайды немесе тиісті түрде жұмыс істемейді.",
-        "description": "The text below the 'sad face' feedback choice."
-    },
-    "settings#unapplied-changes-prompt#body": {
-        "message": "Сіз параметрлерді  өзгерттіңіз, бірақ оларды сақтаған жоқсыз. <br><br>Өзгерістерді қазір қолдануды немесе жоюды қалайсыз ба?",
-        "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
-    },
-    "settings#systray-minimize#enable-label": {
-        "message": "Хабарламалар аймағына қайыру (хабарлау панелі)",
-        "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
-    },
-    "settings#egress-region#heading": {
-        "message": "Psiphon сервері аймағы",
-        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
-    },
-    "settings#egress-region#select-ro": {
-        "message": "Румыния",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
-    },
-    "settings#egress-region#select-cz": {
-        "message": "Чехия",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "Пайдаланушы аты мен құпиясөзді орнату хост аты мен портты да орнатуды талап етеді",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#disable-timeouts#heading": {
-        "message": "Баяу желілердің таймауттарын ажырату",
-        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
-    },
-    "settings#upstream-proxy#by-default": {
-        "message": "Компьютеріңізде бапталған прокси болса, әдепкі бойынша Psiphon туннельді орнату кезінде сол проксиді қолданады. Пайдаланылатын проксиді көрсету  немесе осындай \"сыртқы прокси\" қолдану керек емес екенін көрсету арқылы осындай әрекетінен бас тартуға  болады.",
-        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
-    },
-    "settings#split-tunnel#enable-label": {
-        "message": "Сіздің еліңіздегі веб-сайттар үшін проксиді қолданбау",
-        "description": "The label on the checkbox that enables 'Split Tunnel'."
-    },
-    "nav#connection#starting": {
-        "message": "Қосылуда",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
-    },
-    "feedback#text_feedback_email_prompt": {
-        "message": "Біздің сізге жауап беруімізді қаласаңыз, өз эл. пошта мекенжайыңызды енгізіңіз:",
-        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
-    },
-    "feedback#text_feedback_prompt": {
-        "message": "Пікірлеріңізді осы жерге енгізіңіз:",
-        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
-    },
-    "feedback#smiley_happy": {
-        "message": "Psiphon мен қалайтындай түрде қосылым орнатады және жұмыс істейді.",
-        "description": "The text below the 'happy face' feedback choice."
-    },
-    "settings#upstream-proxy#domain-label": {
-        "message": "Домен",
-        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
-    },
-    "about#wordart-tag": {
-        "message": "Шекарасыз",
-        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
-    },
-    "settings#upstream-proxy#username-label": {
-        "message": "Пайдаланушы аты",
-        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
-    },
-    "connection#wait-btn": {
-        "message": "Күте тұрыңыз…",
-        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
-    },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "Хост аты мен портын бірге көрсету керек немесе автоматты түрде таңдау үшін оларды бос қалдыру керек.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#transport-mode#help-text": {
-        "message": "Windows жүйесінің L2TP/IPSec виртуалды желісін қолданады. Бұл режим барлық қолданбаларыңызды туннельдейді, бірақ оны цензура құралдары оңай анықтайды және бұғаттай алады. Оны желіаралық қалқандардың көбін айналып өту үшін<strong>пайдаланбаған жөн</strong>.",
-        "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
-    },
-    "settings#egress-region#select-best-performance": {
-        "message": "Ең жылдам ел",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
-    },
-    "connection#connect-btn": {
-        "message": "Қосылу ",
-        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     }
 }

@@ -1,43 +1,555 @@
 {
-    "appbackend#state-starting-body": {
-        "message": "សូមរង់ចាំ...",
-        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    "banner#long-connecting": {
+        "message": "<strong>អូ ទេ!</strong> អ្នកហាក់បីដូចជាមានបញ្ហាក្នុងការតភ្ជាប់!<br>\nទាញយកកម្មវិធី Psiphon ជំនាន់ចុងក្រោយពី <a class=\"NewVersionURL\" href=\"#\">គេហទំព័រទាញយក</a>\nឬតាមរយៈការផ្ញើអ៊ីម៉ែលទៅកាន់ <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
-    "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\nអ្នកបានកំណត់ Psiphon ដើម្បីប្រើប្រាស់ច្រកខាងក្នុងជាក់លាក់ណាមួយ សម្រាប់ប្រូកស៊ី HTTP របស់វា។<br>\nទោះយ៉ាងណា, ច្រកនេះហាក់ដូចជាត្រូវបានប្រើ ដូចនេះហើយ Psiphon​ មិនអាចប្រើវាទេ។\n</p>\n<p>\nសូមផ្លាស់ប្តូរការកំណត់តម្លៃច្រកប្រូកស៊ី HTTP និងសាកល្បងម្តងទៀត។ យើងណែនាំ អ្នកឲ្យសំអាតតម្លៃដើម ដូចនេះ Psiphon អាចជ្រើសរើសច្រកទំនេរដោយស្វ័យប្រវត្តិ។\n</p>",
-        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    "nav#connection#starting": {
+        "message": "កំពុងតភ្ជាប់",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
     },
-    "settings#egress-region#select-jp": {
-        "message": "ជប៉ុន",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    "nav#connection#connected": {
+        "message": "បានតភ្ជាប់",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
     },
-    "settings#upstream-proxy#error-modal-body-configured": {
-        "message": "អ្នកបានកំណត់ Psiphon ដើម្បីប្រើជា “ប្រូកស៊ីខាងលើ”។<br>\nទោះយ៉ាងណា, យើងហាក់ដូចជាមិនអាចតភ្ជាប់ទៅកាន់ម៉ាស៊ីនមេ Psiphon តាមរយៈប្រូកស៊ីនោះទេ។<br>\nសូមកែសំរួលការកំណត់ និងសាកល្បងម្តងទៀត។",
-        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+    "nav#connection#stopping": {
+        "message": "កំពុងផ្តាច់",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
     },
-    "settings#egress-region#select-pl": {
-        "message": "Poland",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    "nav#connection#stopped": {
+        "message": "បានផ្តាច់ការតភ្ជាប់",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
     },
-    "logs#show-debug-label": {
-        "message": "បង្ហាញកំណត់ត្រាកំហុស",
-        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    "nav#settings": {
+        "message": "ការកំណត់",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
+    },
+    "nav#feedback": {
+        "message": "មតិយោបល់",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "nav#logs": {
         "message": "កំណត់ត្រា",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "ការកំណត់ដែន ទាមទារការកំណត់ ឈ្មោះអ្នកប្រើ និងពាក្យសម្ងាត់",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "nav#about": {
+        "message": "អំពី",
+        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
+    },
+    "connection#starting-msg": {
+        "message": "Psiphon គឺ <span class=\"state-word\">កំពុងតភ្ជាប់</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+    },
+    "connection#stop-btn": {
+        "message": "បញ្ឈប់",
+        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
+    },
+    "connection#connected-msg": {
+        "message": "Psiphon គឺ <span class=\"state-word\">ត្រូវបានតភ្ជាប់</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+    },
+    "connection#disconnect-btn": {
+        "message": "ផ្តាច់ការតភ្ជាប់",
+        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
+    },
+    "connection#stopping-msg": {
+        "message": "Psiphon គឺ <span class=\"state-word\">កំពុងផ្តាច់ការតភ្ជាប់</span>…",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+    },
+    "connection#wait-btn": {
+        "message": "សូមរង់ចាំ...",
+        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
+    },
+    "connection#stopped-msg": {
+        "message": "Psiphon គឺ <span class=\"state-word\">ត្រូវបានផ្តាច់ការតភ្ជាប់</span>",
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+    },
+    "connection#connect-btn": {
+        "message": "តភ្ជាប់",
+        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
+    },
+    "connection#egress-region-combo-label": {
+        "message": "តភ្ជាប់តាម",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#error-alert": {
         "message": "<strong>បញ្ហា!</strong> សូមជួសជុលតម្លៃដែលមិនត្រឹមត្រូវមុនពេលដំណើរការ។",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
+    "settings#reset-button": {
+        "message": "កំណត់ឡើងវិញទៅលំនាំដើម",
+        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
+    },
+    "settings#apply-button": {
+        "message": "អនុវត្តការផ្លាស់ប្តូរ",
+        "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
+    },
+    "settings#unapplied-changes-prompt#title": {
+        "message": "ការកំណត់បានផ្លាស់ប្តូរ",
+        "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#unapplied-changes-prompt#body": {
+        "message": "អ្នកបានធ្វើការផ្លាស់ប្តូរការកំណត់របស់អ្នក ប៉ុន្តែអ្នកមិនទាន់បានអនុវត្តការផ្លាស់ប្តូរនៅឡើយ។<br><br>តើអ្នកចង់អនុវត្តការផ្លាស់ប្តូរឥលូវ ឬបោះបង់ចោល?",
+        "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
+    },
+    "settings#unapplied-changes-prompt#apply-button": {
+        "message": "អនុវត្ត",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
+    },
+    "settings#unapplied-changes-prompt#discard-button": {
+        "message": "បោះបង់",
+        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
+    },
+    "settings#vpn-incompatible-msg": {
+        "message": "(មិនដំណើរការជាមួយទម្រង់ L2TP/IPSec ទេ។)",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+    },
+    "settings#vpn-incompatible-label": {
+        "message": "L2TP/IPSec",
+        "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
+    },
+    "settings#split-tunnel#heading": {
+        "message": "Split Tunnel",
+        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
+    },
+    "settings#split-tunnel#help-text": {
+        "message": "បើបើក ការស្នើសុំទៅកាន់ម៉ាស៊ីនមេក្នុងប្រទេសដើមរបស់អ្នក នឹងមិនអាចឆ្លងកាត់ Psiphon​ បានទេ។",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+    },
+    "settings#split-tunnel#reason": {
+        "message": "គេហទំព័រក្នុងប្រទេសដើមរបស់អ្នកមិនត្រូវបានហាមឃាត់អ្វីទេ ដូចនេះការបើកជម្រើសនេះ នឹងជួយអ្នកចូលបើកគេហទំព័រលឿនជាងមុន និងពេលខ្លះអាចកាត់បន្ថយការចំណាយការប្រើប្រាស់ ISP បានទៀតផង។",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "settings#split-tunnel#enable-label": {
+        "message": "កុំប្រូស៊ីគេហទំព័រក្នុងប្រទេសរបស់អ្នក",
+        "description": "The label on the checkbox that enables 'Split Tunnel'."
+    },
+    "settings#disable-timeouts#heading": {
+        "message": "បិទ ការហួសម៉ោង សម្រាប់បណ្តាញយឺត",
+        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
+    },
+    "settings#disable-timeouts#help-text": {
+        "message": "ប្រសិនបើបើក ការទំនាក់ទំនងជាមួយម៉ាស៊ីនមេ Psiphon នឹងមិនហួសម៉ោងទេ។",
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+    },
+    "settings#disable-timeouts#reason": {
+        "message": "នៅពេលបើកដំណើរការនេះនៅលើបណ្តាញតភ្ជាប់បណ្តាញយឺត អ្នកនឹងមិនមានការដាច់ចេញពីប្រព័ន្ធដោយមិនរំពឹងទុកនោះទេ។",
+        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
+    },
+    "settings#disable-timeouts#enable-label": {
+        "message": "បិទ ការហួសម៉ោង សម្រាប់បណ្តាញយឺត",
+        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
+    },
+    "settings#egress-region#heading": {
+        "message": "តំបន់ម៉ាស៊ីនមេ Psiphon ",
+        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+    },
+    "settings#egress-region#label": {
+        "message": "តភ្ជាប់តាម",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    },
+    "settings#egress-region#select-best-performance": {
+        "message": "ប្រទេសលឿនជាងគេ",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
+    },
+    "settings#egress-region#select-us": {
+        "message": "សហរដ្ឋអាមេរិក",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
+    },
+    "settings#egress-region#select-ca": {
+        "message": "កាណាដា",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
+    },
+    "settings#egress-region#select-gb": {
+        "message": "ចក្រភពអង់គ្លេស",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
+    },
+    "settings#egress-region#select-jp": {
+        "message": "ជប៉ុន",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Japan will be used."
+    },
+    "settings#egress-region#select-sg": {
+        "message": "សឹង្ហបុរី",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
+    },
+    "settings#egress-region#select-nl": {
+        "message": "ហូឡង់",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
+    },
+    "settings#egress-region#select-de": {
+        "message": "អាល្លឺម៉ង់",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
+    },
+    "settings#egress-region#select-in": {
+        "message": "ឥណ្ឌា",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
+    },
+    "settings#egress-region#select-es": {
+        "message": "អេស៉្បាញ",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
+    },
+    "settings#egress-region#select-hk": {
+        "message": "ហុងកុង",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
+    },
+    "settings#egress-region#select-at": {
+        "message": "អូទ្រីស",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
+    },
+    "settings#egress-region#select-be": {
+        "message": "បែលហ្សិក",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
+    },
+    "settings#egress-region#select-bg": {
+        "message": "ប៊ុលហ្គារី",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
+    },
+    "settings#egress-region#select-ch": {
+        "message": "ស្វីស",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
+    },
+    "settings#egress-region#select-cz": {
+        "message": "សាធារណរដ្ឋ​ឆែក",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
+    },
+    "settings#egress-region#select-dk": {
+        "message": "ដាណឺម៉ាក",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
+    },
+    "settings#egress-region#select-fr": {
+        "message": "បារាំង",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
+    },
+    "settings#egress-region#select-hu": {
+        "message": "ហុងគ្រី",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
+    },
+    "settings#egress-region#select-it": {
+        "message": "អ៊ីតាលី",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
+    },
+    "settings#egress-region#select-no": {
+        "message": "ន័រវែស",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
+    },
+    "settings#egress-region#select-ro": {
+        "message": "រូម៉ានី",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
+    },
+    "settings#egress-region#select-se": {
+        "message": "ស៊ុយអែត",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
+    "settings#egress-region#select-pl": {
+        "message": "ប៉ូឡូញ",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
+    },
+    "settings#egress-region#description": {
+        "message": "Psiphon មានម៉ាស៊ីនមេនៅក្នុងប្រទេសផ្សេងៗជាច្រើន។ ការប្រើម៉ាស៊ីនមេ Psiphon នៅក្នុងប្រទេសដែលនៅជិតប្រទេសរបស់អ្នក ជាទូទៅនឹងផ្តល់នូវការតភ្ជាប់បណ្តាញល្អប្រសើរជាងមុន ប៉ុន្តែអ្នកប្រហែលជាចង់ចូលប្រើគេហទំព័រនិងសេវាកម្ម ដូចអ្នកស្ទើរតែនៅក្នុងប្រទេសជាក់លាក់មួយ។",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+    },
+    "settings#egress-region#default": {
+        "message": "ជម្រើសដើម <strong>“ប្រទេសលឿនបំផុត”</strong> អនុញ្ញាត Psiphon ជ្រើសរើសម៉ាស៊ីនមេដោយស្វ័យប្រវត្តិ ដែលជាទូទៅអាចផ្តល់ការតភ្ជាប់បណ្តាញដែលល្អបំផុត។",
+        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
+    },
+    "settings#egress-region#invalid-error-msg": {
+        "message": "ជ្រើសរើសម៉ាស៊ីនមេ Psiphon​ ក្នុងតំបន់",
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+    },
+    "settings#egress-region#error-modal-title": {
+        "message": "ម៉ាស៊ីនមេក្នុងតំបន់មិនទំនេរ",
+        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#egress-region#error-modal-body-http": {
+        "message": "អ្នកបានកំណត់ Psiphon ដើម្បីប្រើម៉ាស៊ីនមេក្នុងតំបន់ជាក់លាក់ណាមួយ។<br>\nទោះយ៉ាងណា, តំបន់នោះលែងទំនេរហើយ។<br>\nអ្នកត្រូវជ្រើសរើសតំបន់ថ្មីមួយ ឬផ្លាស់ប្តូរទៅជម្រើសដើម “ប្រទេសដែលលឿនជាងគេ” ។",
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+    },
+    "settings#local-proxy-ports#heading": {
+        "message": "ច្រក Proxy ខាងក្នុង",
+        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
+    },
+    "settings#local-proxy-ports#leave-blank": {
+        "message": "ទុក<strong>ទទេរ</strong> សម្រាប់ការជ្រើសរើសច្រកដោយស្វ័យប្រវត្តិ (សូមណែនាំ).",
+        "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
+    },
     "settings#local-proxy-ports#reason": {
         "message": "ប្រសិនបើអ្នកប្រើឧបករណ៍នៅលើកុំព្យូទ័ររបស់អ្នក ដែលតម្រូវឱ្យមានការកំណត់ដោយដៃដើម្បីធ្វើការជាមួយ Psiphon អ្នកនឹងត្រូវការ Psiphon ប្រើលេខច្រកខាងក្នុងដូច ៗ គ្នាជានិច្ច។ ប្រសិនបើអ្នកមិនមានហេតុផលដើម្បីបញ្ជាក់លេខច្រកអ្នកគួរតែអនុញ្ញាតឱ្យ Psiphon ជ្រើសរើសវាដោយស្វ័យប្រវត្តិដើម្បីជួយជៀសវាងច្រកជាន់គ្នា។",
         "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
+    },
+    "settings#local-proxy-ports#http-label": {
+        "message": "HTTP/HTTPS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
+    },
+    "settings#port-value-error-msg": {
+        "message": "ត្រូវតែចន្លោះពី 1 និង 65535។",
+        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
+    },
+    "settings#local-proxy-ports#socks-label": {
+        "message": "SOCKS",
+        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
+    },
+    "settings#local-proxy-ports#unique-error-msg": {
+        "message": "ច្រកខាងក្នុងត្រូវតែមានភាពខុសគ្នាពីគ្នា។",
+        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
+    },
+    "settings#local-proxy-ports#error-modal-title": {
+        "message": "ច្រក Proxy ខាងក្នុងជាន់គ្នា",
+        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
+    },
+    "settings#local-proxy-ports#error-modal-body-http": {
+        "message": "<p>\nអ្នកបានកំណត់ Psiphon ដើម្បីប្រើប្រាស់ច្រកខាងក្នុងជាក់លាក់ណាមួយ សម្រាប់ប្រូកស៊ី HTTP របស់វា។<br>\nទោះយ៉ាងណា, ច្រកនេះហាក់ដូចជាត្រូវបានប្រើ ដូចនេះហើយ Psiphon​ មិនអាចប្រើវាទេ។\n</p>\n<p>\nសូមផ្លាស់ប្តូរការកំណត់តម្លៃច្រកប្រូកស៊ី HTTP និងសាកល្បងម្តងទៀត។ យើងណែនាំ អ្នកឲ្យសំអាតតម្លៃដើម ដូចនេះ Psiphon អាចជ្រើសរើសច្រកទំនេរដោយស្វ័យប្រវត្តិ។\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+    },
+    "settings#local-proxy-ports#error-modal-body-socks": {
+        "message": "<p>\nអ្នកបានកំណត់ Psiphon ដើម្បីប្រើប្រាស់ច្រកខាងក្នុងជាក់លាក់ណាមួយ សម្រាប់ប្រូកស៊ី SOCKS របស់វា។<br>\nទោះយ៉ាងណា, ច្រកនេះហាក់ដូចជាត្រូវបានប្រើ ដូចនេះហើយ Psiphon​ មិនអាចប្រើវាទេ។\n</p>\n<p>\nសូមផ្លាស់ប្តូរការកំណត់តម្លៃច្រកប្រូកស៊ី SOCKS និងសាកល្បងម្តងទៀត។ យើងណែនាំ អ្នកឲ្យសំអាតតម្លៃដើម ដូចនេះ Psiphon អាចជ្រើសរើសច្រកទំនេរដោយស្វ័យប្រវត្តិ។\n</p>",
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+    },
+    "settings#upstream-proxy#heading": {
+        "message": "Upstream Proxy",
+        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
+    },
+    "settings#upstream-proxy#by-default": {
+        "message": "ប្រសិនបើកុំព្យូទ័រអ្នកបានកំណត់ proxy ហើយ ជាលំនាំដើម Psiphon នឹងប្រើប្រាស់ proxy នៅពេលបង្កើតការតភ្ជាប់។ អ្នកអាចបដិសេដទម្លាប់នោះ ដោយកំណត់proxy មួយដើម្បីប្រើប្រាស់, ឬកំណត់ថាគ្មាន “upstream proxy” ដែលគួរប្រើប្រាស់ទេ។",
+        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
+    },
+    "settings#upstream-proxy#reason": {
+        "message": "ជួនកាលប្រូកស៊ីខាងលើត្រូវបានតម្រូវដោយសាលារៀន សាកលវិទ្យាល័យ ឬអាជីវកម្ម។ ប្រសិនបើអ្នកផ្តល់សេវាកម្មបណ្តាញរបស់អ្នក បានផ្តល់ការកំណត់ប្រូកស៊ីខាងលើ នោះអ្នកចាំបាច់កំណត់ដោយខ្លួនឯងនៅទីនេះ ដើម្បីតភ្ជាប់។",
+        "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
+    },
+    "settings#upstream-proxy#proxy-reqs": {
+        "message": "មានតែប្រូកស៊ី HTTP ដែលគាំទ្រ HTTPS ត្រូវបានអនុញ្ញាត។",
+        "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
+    },
+    "settings#upstream-proxy#hostname-label": {
+        "message": "Hostname",
+        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
+    },
+    "settings#upstream-proxy#port-label": {
+        "message": "Port",
+        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
+    },
+    "settings#upstream-proxy#username-label": {
+        "message": "ឈ្មោះអ្នកប្រើប្រាស់",
+        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
+    },
+    "settings#upstream-proxy#password-label": {
+        "message": "ពាក្យសម្ងាត់",
+        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
+    },
+    "settings#upstream-proxy#domain-label": {
+        "message": "ដែន",
+        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
+    },
+    "settings#upstream-proxy#skip-label": {
+        "message": "មិនប្រើ upstream proxy",
+        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
+    },
+    "settings#upstream-proxy#set-username-password-error-msg": {
+        "message": "អ្នកត្រូវកំណត់ឈ្មោះអ្នកប្រើ និងពាក្យសម្ងាត់, ឬទុកទំនេរចោល សម្រាប់ការមិនផ្ទៀងផ្ទាត់។",
+        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    },
+    "settings#upstream-proxy#set-hostname-port-error-msg": {
+        "message": "អ្នកត្រូវកំណត់ Hostname និង Port, ឬទុកទំនេរចោល សម្រាប់ការជ្រើសរើសដោយស្វ័យប្រវត្តិ។",
+        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
+    },
+    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
+        "message": "ការកំណត់ឈ្មោះអ្នកប្រើ និងពាក្យសម្ងាត់ ក៏ទាមទារការកំណត់ Hostname និង Port ដែរ",
+        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
+        "message": "ការកំណត់ដែន ទាមទារការកំណត់ ឈ្មោះអ្នកប្រើ និងពាក្យសម្ងាត់",
+        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    },
+    "settings#upstream-proxy#error-modal-title": {
+        "message": "កំហុសប្រូកស៊ីឡើងលើ",
+        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
+    },
+    "settings#upstream-proxy#error-modal-body-default": {
+        "message": "Psiphon កំពុងត្រូវបានកំណត់ ដើម្បីប្រើប្រូកស៊ីប្រព័ន្ធអ្នកជា “ប្រូកស៊ីខាងលើ”.<br>\nទោះយ៉ាងណា, យើងហាក់ដូចជាមិនអាចតភ្ជាប់ទៅកាន់ម៉ាស៊ីនមេ Psiphon តាមរយៈប្រូកស៊ីនោះទេ។<br>\nសូមបើក “មិនប្រើប្រូកស៊ីខាងលើ” និងសាកល្បងម្តងទៀត។",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
+    },
+    "settings#upstream-proxy#error-modal-body-configured": {
+        "message": "អ្នកបានកំណត់ Psiphon ដើម្បីប្រើជា “ប្រូកស៊ីខាងលើ”។<br>\nទោះយ៉ាងណា, យើងហាក់ដូចជាមិនអាចតភ្ជាប់ទៅកាន់ម៉ាស៊ីនមេ Psiphon តាមរយៈប្រូកស៊ីនោះទេ។<br>\nសូមកែសំរួលការកំណត់ និងសាកល្បងម្តងទៀត។",
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+    },
+    "settings#transport-mode#heading": {
+        "message": "ទម្រង់បញ្ជូន",
+        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
+    },
+    "settings#transport-mode#check-label": {
+        "message": "ប្រើទម្រង់ L2TP/IPSec",
+        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
+    },
+    "settings#transport-mode#help-text": {
+        "message": "ប្រើបណ្តាញនិម្មិត L2TP / IPSec របស់ Windows។ ទម្រង់នេះ​ នឹងប្រើគ្រប់ច្រកកម្មវិធីរបស់អ្នកប៉ុន្តែវាមិនផ្តល់ភាពរំភើបនិងមិនមានសមត្ថភាពទប់ស្កាត់ការត្រួតពិនិត្យខ្លាំង។ វា <strong>មិនត្រូវបានណែនាំ</strong> សម្រាប់ឆ្លងកាត់ firewalls ភាគច្រើនទេ។",
+        "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
+    },
+    "settings#systray-minimize#heading": {
+        "message": "បង្រួមទៅកាន់តំបន់ជូនដំណឹង (System Tray)",
+        "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
+    },
+    "settings#systray-minimize#help-text": {
+        "message": "បើបើកវា, ពេលបង្រួមផ្ទាំងកម្មវិធី Psiphon នឹងលាក់ក្នុងតំបន់ជូនដំណឹង (ឬហៅថា “system tray” ឬ “systray”, ដែលមានទីតាំងក្បែរម៉ោង លើរបារកិច្ចការរបស់ Windows)។",
+        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
+    },
+    "settings#systray-minimize#reason": {
+        "message": "បង្រួម Psiphon ទៅតំបន់ជូនដំណឹង (“system tray”) ដើម្បីទុកប្រឡោះទំនេរលើរបស់កិច្ចការរបស់អ្នក។ វាមានប្រយោជន៍ជាពិសេសពេលអ្នកប្រើ Psiphon រយៈពេលយូរ។",
+        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
+    },
+    "settings#systray-minimize#enable-label": {
+        "message": "បង្រួមទៅកាន់តំបន់ជូនដំណឹង (System Tray)",
+        "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
+    },
+    "settings#applying-message": {
+        "message": "កំពុងតភ្ជាប់ឡើងវិញ ដើម្បីអនុវត្តការកំណត់របស់អ្នក។",
+        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
+    },
+    "settings#saved-message": {
+        "message": "ការកំណត់បានរក្សាទុក។",
+        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
+    },
+    "settings#error-modal#title": {
+        "message": "ការកំណត់មានបញ្ហា",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
+    },
+    "settings#error-modal#body": {
+        "message": "មានបញ្ហាក្នុងការកំណត់តម្លៃ។ សូមកែតម្រូវមុនពេលដំណើរការ។",
+        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
+    },
+    "feedback#top_content_title": {
+        "message": "ប្រាប់ពីមតិយោបល់អ្នក",
+        "description": "Title for the Feedback page"
+    },
+    "feedback#top_para_2": {
+        "message": "បញ្ហាជាច្រើនអាចត្រូវបានដោះស្រាយដោយទាញយកកម្មវិធីជំនាន់ចុងក្រោយ។ អ្នកអាច <a class=\"NewVersionURL\" href=\"#\">ទាញយកជំនាន់ចុងក្រោយដោយចុចទីនេះ</a>, ឬ អ្នកអាចផ្ញើអ៊ីម៉ែលទៅកាន់ <a class=\"NewVersionEmail\" href=\"#\"></a>។",
+        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
+    },
+    "feedback#top_para_3": {
+        "message": "អ្នកអាចស្វែងរកដំណោះស្រាយសម្រាប់បញ្ហាមួយចំនួនក្នុង<a class=\"FaqURL\" href=\"#\">សំនួរទូទៅ</a>របស់យើង។",
+        "description": "Text telling the user how to get to the Psiphon FAQ."
+    },
+    "feedback#smiley_happy": {
+        "message": "Psiphon តភ្ជាប់និងដំណើរការតាមរបៀបដែលខ្ញុំចង់បាន។",
+        "description": "The text below the 'happy face' feedback choice."
+    },
+    "feedback#smiley_sad": {
+        "message": "Psiphon ជាញឹកញយបរាជ័យក្នុងការតភ្ជាប់ ឬមិនដំណើរការដោយប្រក្រតី។",
+        "description": "The text below the 'sad face' feedback choice."
+    },
+    "feedback#text_feedback_prompt": {
+        "message": "សូមបញ្ចូលមតិរបស់អ្នកនៅទីនេះ៖",
+        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
+    },
+    "feedback#text_feedback_email_prompt": {
+        "message": "បើអ្នកចង់ឲ្យយើងឆ្លើយតបទៅអ្នក សូមបញ្ចូលអាសយដ្ឋានអ៊ីម៉ែលរបស់អ្នក៖",
+        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
+    },
+    "feedback#diagnostic_check": {
+        "message": "បញ្ជូនទិន្នន័យវិភាគ។ សូមចំណាំថា ទិន្នន័យវិភាគមិនបង្ហាញអត្តសញ្ញាណអ្នក និងវានឹងជួយយើងរក្សាដំណើរការPsiphon ឲ្យរលូនជាមុន។<a class=\"DataCollectionInfoURL\" href=\"#\">ចុចទីនេះដើម្បីមើលអ្វីដែលយើងប្រមូល។</a>",
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+    },
+    "feedback#submit_button": {
+        "message": "បញ្ជូន",
+        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
+    },
+    "feedback#text_feedback_bottom_para": {
+        "message": "បើទម្រង់មិនដំណើរការ ឬអ្នកចង់បញ្ជូនរូបភាពអេក្រង់ សូមផ្ញើអ៊ីម៉ែលមកយើងតាម <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>។",
+        "description": "Message showing the user an email they can use to contact Psiphon Inc."
+    },
+    "feedback#success-message": {
+        "message": "<strong>អរគុណ!</strong> មតិយោបល់អ្នកត្រូវបានបញ្ជូន។",
+        "description": "Message shown to user after their feedback has been sent successufully"
+    },
+    "logs#show-debug-label": {
+        "message": "បង្ហាញកំណត់ត្រាកំហុស",
+        "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
+    },
+    "logs#placeholder": {
+        "message": "មិនទាន់មានកំណត់ត្រា",
+        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
+    },
+    "language#success-message": {
+        "message": "<strong>សួស្តី!</strong> ស្វាគមន៍មកកាន់ Psiphon។",
+        "description": "A welcome message shown to the user when they first switch to the correct UI language"
+    },
+    "about#wordart-title": {
+        "message": "Psiphon",
+        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+    },
+    "about#wordart-tag": {
+        "message": "លើសព្រំដែន",
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
+    },
+    "about#description": {
+        "message": "Psiphon ជា <strong>ឧបករណ៍បញ្ចៀសការឃ្លាំមើល</strong> — វាត្រូវបានរចនាឡើងដើម្បីផ្តល់អោយអ្នកបើកអ៊ិនធ័រណិតដោយចំហរ, ឆ្លងផុតការឃ្លាំមើល និង firewalls។ វាមាន <strong>កូដបើកចំហរ</strong> ហើយត្រូវបានបង្កើតឡើងនៅតូរ៉ុនតូ ប្រទេសកាណាដា។",
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+    },
+    "about#visit-download-site": {
+        "message": "សូមចូលទៅកាន់គេហទំព័រ <strong><a class=\"NewVersionURL\" href=\"#\">ទាញយកជំនាន់ថ្មី</a></strong> ឬ <strong><a class=\"InfoURL\" href=\"#\">ទទួលជំនួយនិងព័ត៌មាន</a></strong>។ Psiphon មានសម្រាប់ Android និង Windows។",
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+    },
+    "about#get-by-email": {
+        "message": "<strong>បើគេហទំព័របើកអត់ចេញ</strong>, អ្នកអាចទាញយក Psiphon ជំនាន់ថ្មីដោយផ្ញើអ៊ីម៉ែលទៅកាន់៖",
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+    },
+    "about#client-version": {
+        "message": "Psiphon សម្រាប់ Windows ជំនាន់៖",
+        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
+    },
+    "general#modal-close-button": {
+        "message": "បិទ",
+        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
+    },
+    "general#notice-modal-tech-preamble": {
+        "message": "នេះជាព័ត៌មានកំហុសបច្ចេកទេស៖",
+        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
+    },
+    "notice#systemproxysettings-setproxy-error-title": {
+        "message": "ប្រូកស៊ីប្រព័ន្ធមានបញ្ហា",
+        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "notice#systemproxysettings-setproxy-error-body": {
+        "message": "<p>Psiphon បរាជ័យក្នុងការកំណត់ប្រូកស៊ីប្រព័ន្ធ។</p>\n<p>នេះអាចមកពីជាន់គ្នាជាមួយកម្មវិធីកំចាត់មេរោគរបស់អ្នក។ អ្នកអាចត្រូវការកំណត់កម្មវិធីរបស់អ្នក ឬប្រព័ន្ធប្រូកស៊ី ដើម្បីប្រើប្រាស់ប្រូកស៊ី Psiphon ខាងក្នុង។</p>",
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+    },
+    "notice#systemproxysettings-setproxy-warning-template": {
+        "message": "Psiphon បរាជ័យក្នុងការកំណត់ប្រព័ន្ធប្រូកស៊ី សម្រាប់ឈ្មោះការតភ្ជាប់អ៊ីនធឺណិត “<%- data %>”។ នេះអាចមកពីជាន់គ្នាជាមួយកម្មវិធីកំចាត់មេរោគរបស់អ្នក។ អ្នកអាចត្រូវការកំណត់កម្មវិធីរបស់អ្នក ឬប្រព័ន្ធប្រូកស៊ី ដើម្បីប្រើប្រាស់ប្រូកស៊ី Psiphon ខាងក្នុង។",
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+    },
+    "appbackend#state-stopped-title": {
+        "message": "Psiphon ត្រូវបានផ្តាច់",
+        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+    },
+    "appbackend#state-starting-title": {
+        "message": "Psiphon កំពុងភ្ជាប់",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "appbackend#state-starting-body": {
+        "message": "សូមរង់ចាំ...",
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+    },
+    "appbackend#state-connected-title": {
+        "message": "Psiphon បានតភ្ជាប់",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+    },
+    "appbackend#state-connected-body": {
+        "message": "រុករកលើសពីដែនកំណត់របស់អ្នក!",
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#state-connected-reminder-title": {
+        "message": "Psiphon រក្សាការតភ្ជាប់របស់អ្នក",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+    },
+    "appbackend#state-connected-reminder-body": {
+        "message": "រក្សា Psiphon ឲ្យនៅមិនគិតថ្លៃ។ ចុចទីនេះ ដើម្បីចូលទៅកាន់ទំព័ររបស់ម្ចាស់ឧបត្ថម្ភ!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#state-connected-reminder-body-2": {
+        "message": "រក្សា Psiphon ឲ្យនៅឥតគិតថ្លៃ តាមរយៈការចូលទៅកាន់ទំព័រម្ចាស់ឧបត្ថម្ភរបស់យើង!",
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+    },
+    "appbackend#minimized-to-systray-title": {
+        "message": "Psiphon ត្រូវបានបង្រួមទៅកាន់តំបន់ជូនដំណឹង",
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#minimized-to-systray-body": {
         "message": "ចុច លើរូបតំណាងដើម្បីស្តារកម្មវិធីវិញ",
@@ -46,517 +558,5 @@
     "banner#sponsored-by": {
         "message": "ឧបត្ថម្ភដោយ",
         "description": "Text appears above the sponsor banner image. So it kind of reads 'Sponsored by BBC' (for example)."
-    },
-    "appbackend#state-connected-body": {
-        "message": "រុករកលើសពីដែនកំណត់របស់អ្នក!",
-        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
-    },
-    "settings#disable-timeouts#enable-label": {
-        "message": "បិទ ការហួសម៉ោង សម្រាប់បណ្តាញយឺត",
-        "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
-    },
-    "settings#egress-region#select-in": {
-        "message": "ឥណ្ឌា",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in India will be used."
-    },
-    "connection#connected-msg": {
-        "message": "Psiphon គឺ <span class=\"state-word\">ត្រូវបានតភ្ជាប់</span>",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
-    },
-    "settings#split-tunnel#reason": {
-        "message": "គេហទំព័រក្នុងប្រទេសដើមរបស់អ្នកមិនត្រូវបានហាមឃាត់អ្វីទេ ដូចនេះការបើកជម្រើសនេះ នឹងជួយអ្នកចូលបើកគេហទំព័រលឿនជាងមុន និងពេលខ្លះអាចកាត់បន្ថយការចំណាយការប្រើប្រាស់ ISP បានទៀតផង។",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
-    },
-    "nav#settings": {
-        "message": "ការកំណត់",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
-    },
-    "settings#egress-region#select-at": {
-        "message": "អូទ្រីស",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
-    },
-    "nav#connection#connected": {
-        "message": "បានតភ្ជាប់",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connected."
-    },
-    "settings#egress-region#error-modal-title": {
-        "message": "ម៉ាស៊ីនមេក្នុងតំបន់មិនទំនេរ",
-        "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
-    },
-    "settings#upstream-proxy#error-modal-title": {
-        "message": "កំហុសប្រូកស៊ីឡើងលើ",
-        "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
-    },
-    "settings#egress-region#default": {
-        "message": "ជម្រើសដើម <strong>“ប្រទេសលឿនបំផុត”</strong> អនុញ្ញាត Psiphon ជ្រើសរើសម៉ាស៊ីនមេដោយស្វ័យប្រវត្តិ ដែលជាទូទៅអាចផ្តល់ការតភ្ជាប់បណ្តាញដែលល្អបំផុត។",
-        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
-    },
-    "connection#stopping-msg": {
-        "message": "Psiphon គឺ <span class=\"state-word\">កំពុងផ្តាច់ការតភ្ជាប់</span>…",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
-    },
-    "settings#egress-region#select-ch": {
-        "message": "ស្វីស",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
-    },
-    "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon កំពុងត្រូវបានកំណត់ ដើម្បីប្រើប្រូកស៊ីប្រព័ន្ធអ្នកជា “ប្រូកស៊ីខាងលើ”.<br>\nទោះយ៉ាងណា, យើងហាក់ដូចជាមិនអាចតភ្ជាប់ទៅកាន់ម៉ាស៊ីនមេ Psiphon តាមរយៈប្រូកស៊ីនោះទេ។<br>\nសូមបើក “មិនប្រើប្រូកស៊ីខាងលើ” និងសាកល្បងម្តងទៀត។",
-        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
-    },
-    "feedback#success-message": {
-        "message": "<strong>អរគុណ!</strong> មតិយោបល់អ្នកត្រូវបានបញ្ជូន។",
-        "description": "Message shown to user after their feedback has been sent successufully"
-    },
-    "settings#upstream-proxy#password-label": {
-        "message": "ពាក្យសម្ងាត់",
-        "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
-    },
-    "appbackend#state-stopped-title": {
-        "message": "Psiphon ត្រូវបានផ្តាច់",
-        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
-    },
-    "settings#split-tunnel#help-text": {
-        "message": "បើបើក ការស្នើសុំទៅកាន់ម៉ាស៊ីនមេក្នុងប្រទេសដើមរបស់អ្នក នឹងមិនអាចឆ្លងកាត់ Psiphon​ បានទេ។",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
-    },
-    "about#visit-download-site": {
-        "message": "សូមចូលទៅកាន់គេហទំព័រ <strong><a class=\"NewVersionURL\" href=\"#\">ទាញយកជំនាន់ថ្មី</a></strong> ឬ <strong><a class=\"InfoURL\" href=\"#\">ទទួលជំនួយនិងព័ត៌មាន</a></strong>។ Psiphon មានសម្រាប់ Android និង Windows។",
-        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
-    },
-    "settings#upstream-proxy#skip-label": {
-        "message": "មិនប្រើ upstream proxy",
-        "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
-    },
-    "appbackend#state-connected-reminder-title": {
-        "message": "Psiphon រក្សាការតភ្ជាប់របស់អ្នក",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
-    },
-    "settings#egress-region#select-ca": {
-        "message": "កាណាដា",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Canada will be used."
-    },
-    "settings#systray-minimize#help-text": {
-        "message": "បើបើកវា, ពេលបង្រួមផ្ទាំងកម្មវិធី Psiphon នឹងលាក់ក្នុងតំបន់ជូនដំណឹង (ឬហៅថា “system tray” ឬ “systray”, ដែលមានទីតាំងក្បែរម៉ោង លើរបារកិច្ចការរបស់ Windows)។",
-        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
-    },
-    "settings#upstream-proxy#port-label": {
-        "message": "Port",
-        "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
-    },
-    "settings#port-value-error-msg": {
-        "message": "ត្រូវតែចន្លោះពី 1 និង 65535។",
-        "description": "Error text that appears when the user enters an invalid network port number. As indicated, a valid port number must be a number between 1 and 65535, inclusive. This text is not visible until an invalid value is entered."
-    },
-    "nav#feedback": {
-        "message": "មតិយោបល់",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
-    },
-    "connection#starting-msg": {
-        "message": "Psiphon គឺ <span class=\"state-word\">កំពុងតភ្ជាប់</span>…",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
-    },
-    "settings#applying-message": {
-        "message": "កំពុងតភ្ជាប់ឡើងវិញ ដើម្បីអនុវត្តការកំណត់របស់អ្នក។",
-        "description": "Pop-up message shown to users after they have changed their settings and a reconnection is happening to apply the new settings."
-    },
-    "appbackend#state-connected-reminder-body-2": {
-        "message": "រក្សា Psiphon ឲ្យនៅឥតគិតថ្លៃ តាមរយៈការចូលទៅកាន់ទំព័រម្ចាស់ឧបត្ថម្ភរបស់យើង!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
-    },
-    "appbackend#state-starting-title": {
-        "message": "Psiphon កំពុងភ្ជាប់",
-        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
-    },
-    "settings#egress-region#select-es": {
-        "message": "អេស៉្បាញ",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Spain will be used."
-    },
-    "settings#egress-region#select-dk": {
-        "message": "ដាណឺម៉ាក",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Denmark will be used."
-    },
-    "settings#unapplied-changes-prompt#title": {
-        "message": "ការកំណត់បានផ្លាស់ប្តូរ",
-        "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
-    },
-    "settings#egress-region#select-us": {
-        "message": "សហរដ្ឋអាមេរិក",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the United States will be used."
-    },
-    "feedback#top_para_2": {
-        "message": "បញ្ហាជាច្រើនអាចត្រូវបានដោះស្រាយដោយទាញយកកម្មវិធីជំនាន់ចុងក្រោយ។ អ្នកអាច <a class=\"NewVersionURL\" href=\"#\">ទាញយកជំនាន់ចុងក្រោយដោយចុចទីនេះ</a>, ឬ អ្នកអាចផ្ញើអ៊ីម៉ែលទៅកាន់ <a class=\"NewVersionEmail\" href=\"#\"></a>។",
-        "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
-    },
-    "notice#systemproxysettings-setproxy-error-body": {
-        "message": "<p>Psiphon បរាជ័យក្នុងការកំណត់ប្រូកស៊ីប្រព័ន្ធ។</p>\n<p>នេះអាចមកពីជាន់គ្នាជាមួយកម្មវិធីកំចាត់មេរោគរបស់អ្នក។ អ្នកអាចត្រូវការកំណត់កម្មវិធីរបស់អ្នក ឬប្រព័ន្ធប្រូកស៊ី ដើម្បីប្រើប្រាស់ប្រូកស៊ី Psiphon ខាងក្នុង។</p>",
-        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
-    },
-    "settings#egress-region#select-hu": {
-        "message": "ហុងគ្រី",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hungary will be used."
-    },
-    "settings#local-proxy-ports#error-modal-body-socks": {
-        "message": "<p>\nអ្នកបានកំណត់ Psiphon ដើម្បីប្រើប្រាស់ច្រកខាងក្នុងជាក់លាក់ណាមួយ សម្រាប់ប្រូកស៊ី SOCKS របស់វា។<br>\nទោះយ៉ាងណា, ច្រកនេះហាក់ដូចជាត្រូវបានប្រើ ដូចនេះហើយ Psiphon​ មិនអាចប្រើវាទេ។\n</p>\n<p>\nសូមផ្លាស់ប្តូរការកំណត់តម្លៃច្រកប្រូកស៊ី SOCKS និងសាកល្បងម្តងទៀត។ យើងណែនាំ អ្នកឲ្យសំអាតតម្លៃដើម ដូចនេះ Psiphon អាចជ្រើសរើសច្រកទំនេរដោយស្វ័យប្រវត្តិ។\n</p>",
-        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
-    },
-    "feedback#submit_button": {
-        "message": "បញ្ជូន",
-        "description": "Submit button text. If the user clicks it, their feedback will be sent to Psiphon Inc."
-    },
-    "settings#systray-minimize#reason": {
-        "message": "បង្រួម Psiphon ទៅតំបន់ជូនដំណឹង (“system tray”) ដើម្បីទុកប្រឡោះទំនេរលើរបស់កិច្ចការរបស់អ្នក។ វាមានប្រយោជន៍ជាពិសេសពេលអ្នកប្រើ Psiphon រយៈពេលយូរ។",
-        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
-    },
-    "settings#unapplied-changes-prompt#discard-button": {
-        "message": "បោះបង់",
-        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
-    },
-    "notice#systemproxysettings-setproxy-error-title": {
-        "message": "ប្រូកស៊ីប្រព័ន្ធមានបញ្ហា",
-        "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
-    },
-    "settings#egress-region#label": {
-        "message": "តភ្ជាប់តាម",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
-    "settings#egress-region#select-bg": {
-        "message": "ប៊ុលហ្គារី",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Bulgaria will be used."
-    },
-    "settings#local-proxy-ports#socks-label": {
-        "message": "SOCKS",
-        "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
-    },
-    "feedback#top_para_3": {
-        "message": "អ្នកអាចស្វែងរកដំណោះស្រាយសម្រាប់បញ្ហាមួយចំនួនក្នុង<a class=\"FaqURL\" href=\"#\">សំនួរទូទៅ</a>របស់យើង។",
-        "description": "Text telling the user how to get to the Psiphon FAQ."
-    },
-    "settings#saved-message": {
-        "message": "ការកំណត់បានរក្សាទុក។",
-        "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
-    },
-    "about#get-by-email": {
-        "message": "<strong>បើគេហទំព័របើកអត់ចេញ</strong>, អ្នកអាចទាញយក Psiphon ជំនាន់ថ្មីដោយផ្ញើអ៊ីម៉ែលទៅកាន់៖",
-        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
-    },
-    "settings#egress-region#select-nl": {
-        "message": "ហូឡង់",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
-    },
-    "general#modal-close-button": {
-        "message": "បិទ",
-        "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
-    },
-    "settings#local-proxy-ports#http-label": {
-        "message": "HTTP/HTTPS",
-        "description": "Label for the text box where the user will enter their desired local port for the Psiphon HTTP/HTTPS process. The full term for this would be 'Desired HTTP and HTTPS local proxy port', but is shortened."
-    },
-    "settings#unapplied-changes-prompt#apply-button": {
-        "message": "អនុវត្ត",
-        "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
-    },
-    "settings#reset-button": {
-        "message": "កំណត់ឡើងវិញទៅលំនាំដើម",
-        "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
-    },
-    "about#client-version": {
-        "message": "Psiphon សម្រាប់ Windows ជំនាន់៖",
-        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
-    },
-    "settings#egress-region#select-no": {
-        "message": "ន័រវែស",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Norway will be used."
-    },
-    "settings#upstream-proxy#heading": {
-        "message": "Upstream Proxy",
-        "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
-    },
-    "settings#egress-region#description": {
-        "message": "Psiphon មានម៉ាស៊ីនមេនៅក្នុងប្រទេសផ្សេងៗជាច្រើន។ ការប្រើម៉ាស៊ីនមេ Psiphon នៅក្នុងប្រទេសដែលនៅជិតប្រទេសរបស់អ្នក ជាទូទៅនឹងផ្តល់នូវការតភ្ជាប់បណ្តាញល្អប្រសើរជាងមុន ប៉ុន្តែអ្នកប្រហែលជាចង់ចូលប្រើគេហទំព័រនិងសេវាកម្ម ដូចអ្នកស្ទើរតែនៅក្នុងប្រទេសជាក់លាក់មួយ។",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
-    },
-    "settings#vpn-incompatible-msg": {
-        "message": "(មិនដំណើរការជាមួយទម្រង់ L2TP/IPSec ទេ។)",
-        "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
-    },
-    "general#notice-modal-tech-preamble": {
-        "message": "នេះជាព័ត៌មានកំហុសបច្ចេកទេស៖",
-        "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
-    },
-    "settings#local-proxy-ports#unique-error-msg": {
-        "message": "ច្រកខាងក្នុងត្រូវតែមានភាពខុសគ្នាពីគ្នា។",
-        "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
-    },
-    "settings#vpn-incompatible-label": {
-        "message": "L2TP/IPSec",
-        "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
-    },
-    "settings#egress-region#select-fr": {
-        "message": "បារាំង",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in France will be used."
-    },
-    "settings#egress-region#select-it": {
-        "message": "អ៊ីតាលី",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Italy will be used."
-    },
-    "settings#error-modal#body": {
-        "message": "មានបញ្ហាក្នុងការកំណត់តម្លៃ។ សូមកែតម្រូវមុនពេលដំណើរការ។",
-        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
-    },
-    "settings#disable-timeouts#help-text": {
-        "message": "ប្រសិនបើបើក ការទំនាក់ទំនងជាមួយម៉ាស៊ីនមេ Psiphon នឹងមិនហួសម៉ោងទេ។",
-        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
-    },
-    "nav#connection#stopped": {
-        "message": "បានផ្តាច់ការតភ្ជាប់",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnected."
-    },
-    "settings#local-proxy-ports#heading": {
-        "message": "ច្រក Proxy ខាងក្នុង",
-        "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
-    },
-    "settings#egress-region#select-de": {
-        "message": "អាល្លឺម៉ង់",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Germany will be used."
-    },
-    "settings#egress-region#select-hk": {
-        "message": "ហុងកុង",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Hong Kong will be used."
-    },
-    "notice#systemproxysettings-setproxy-warning-template": {
-        "message": "Psiphon បរាជ័យក្នុងការកំណត់ប្រព័ន្ធប្រូកស៊ី សម្រាប់ឈ្មោះការតភ្ជាប់អ៊ីនធឺណិត “<%- data %>”។ នេះអាចមកពីជាន់គ្នាជាមួយកម្មវិធីកំចាត់មេរោគរបស់អ្នក។ អ្នកអាចត្រូវការកំណត់កម្មវិធីរបស់អ្នក ឬប្រព័ន្ធប្រូកស៊ី ដើម្បីប្រើប្រាស់ប្រូកស៊ី Psiphon ខាងក្នុង។",
-        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
-    },
-    "connection#stop-btn": {
-        "message": "បញ្ឈប់",
-        "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
-    },
-    "settings#egress-region#error-modal-body-http": {
-        "message": "អ្នកបានកំណត់ Psiphon ដើម្បីប្រើម៉ាស៊ីនមេក្នុងតំបន់ជាក់លាក់ណាមួយ។<br>\nទោះយ៉ាងណា, តំបន់នោះលែងទំនេរហើយ។<br>\nអ្នកត្រូវជ្រើសរើសតំបន់ថ្មីមួយ ឬផ្លាស់ប្តូរទៅជម្រើសដើម “ប្រទេសដែលលឿនជាងគេ” ។",
-        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
-    },
-    "feedback#text_feedback_bottom_para": {
-        "message": "បើទម្រង់មិនដំណើរការ ឬអ្នកចង់បញ្ជូនរូបភាពអេក្រង់ សូមផ្ញើអ៊ីម៉ែលមកយើងតាម <a id=\"FeedbackEmailAddress\" href=\"mailto:feedback@psiphon.ca\">feedback@psiphon.ca</a>។",
-        "description": "Message showing the user an email they can use to contact Psiphon Inc."
-    },
-    "settings#upstream-proxy#reason": {
-        "message": "ជួនកាលប្រូកស៊ីខាងលើត្រូវបានតម្រូវដោយសាលារៀន សាកលវិទ្យាល័យ ឬអាជីវកម្ម។ ប្រសិនបើអ្នកផ្តល់សេវាកម្មបណ្តាញរបស់អ្នក បានផ្តល់ការកំណត់ប្រូកស៊ីខាងលើ នោះអ្នកចាំបាច់កំណត់ដោយខ្លួនឯងនៅទីនេះ ដើម្បីតភ្ជាប់។",
-        "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
-    },
-    "settings#local-proxy-ports#error-modal-title": {
-        "message": "ច្រក Proxy ខាងក្នុងជាន់គ្នា",
-        "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
-    },
-    "connection#disconnect-btn": {
-        "message": "ផ្តាច់ការតភ្ជាប់",
-        "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
-    },
-    "feedback#top_content_title": {
-        "message": "ប្រាប់ពីមតិយោបល់អ្នក",
-        "description": "Title for the Feedback page"
-    },
-    "banner#long-connecting": {
-        "message": "<strong>អូ ទេ!</strong> អ្នកហាក់បីដូចជាមានបញ្ហាក្នុងការតភ្ជាប់!<br>\nទាញយកកម្មវិធី Psiphon ជំនាន់ចុងក្រោយពី <a class=\"NewVersionURL\" href=\"#\">គេហទំព័រទាញយក</a>\nឬតាមរយៈការផ្ញើអ៊ីម៉ែលទៅកាន់ <a class=\"NewVersionEmail\" href=\"#\"></a>",
-        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
-    },
-    "logs#placeholder": {
-        "message": "មិនទាន់មានកំណត់ត្រា",
-        "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
-    },
-    "connection#stopped-msg": {
-        "message": "Psiphon គឺ <span class=\"state-word\">ត្រូវបានផ្តាច់ការតភ្ជាប់</span>",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
-    },
-    "settings#disable-timeouts#reason": {
-        "message": "នៅពេលបើកដំណើរការនេះនៅលើបណ្តាញតភ្ជាប់បណ្តាញយឺត អ្នកនឹងមិនមានការដាច់ចេញពីប្រព័ន្ធដោយមិនរំពឹងទុកនោះទេ។",
-        "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
-    },
-    "nav#about": {
-        "message": "អំពី",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
-    },
-    "settings#local-proxy-ports#leave-blank": {
-        "message": "ទុក<strong>ទទេរ</strong> សម្រាប់ការជ្រើសរើសច្រកដោយស្វ័យប្រវត្តិ (សូមណែនាំ).",
-        "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
-    },
-    "settings#systray-minimize#heading": {
-        "message": "បង្រួមទៅកាន់តំបន់ជូនដំណឹង (System Tray)",
-        "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
-    },
-    "language#success-message": {
-        "message": "<strong>សួស្តី!</strong> ស្វាគមន៍មកកាន់ Psiphon។",
-        "description": "A welcome message shown to the user when they first switch to the correct UI language"
-    },
-    "settings#egress-region#select-sg": {
-        "message": "សឹង្ហបុរី",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
-    },
-    "feedback#diagnostic_check": {
-        "message": "បញ្ជូនទិន្នន័យវិភាគ។ សូមចំណាំថា ទិន្នន័យវិភាគមិនបង្ហាញអត្តសញ្ញាណអ្នក និងវានឹងជួយយើងរក្សាដំណើរការPsiphon ឲ្យរលូនជាមុន។<a class=\"DataCollectionInfoURL\" href=\"#\">ចុចទីនេះដើម្បីមើលអ្វីដែលយើងប្រមូល។</a>",
-        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
-    },
-    "settings#transport-mode#heading": {
-        "message": "ទម្រង់បញ្ជូន",
-        "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
-    },
-    "about#description": {
-        "message": "Psiphon ជា <strong>ឧបករណ៍បញ្ចៀសការឃ្លាំមើល</strong> — វាត្រូវបានរចនាឡើងដើម្បីផ្តល់អោយអ្នកបើកអ៊ិនធ័រណិតដោយចំហរ, ឆ្លងផុតការឃ្លាំមើល និង firewalls។ វាមាន <strong>កូដបើកចំហរ</strong> ហើយត្រូវបានបង្កើតឡើងនៅតូរ៉ុនតូ ប្រទេសកាណាដា។",
-        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
-    },
-    "nav#connection#stopping": {
-        "message": "កំពុងផ្តាច់",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is disconnecting."
-    },
-    "settings#error-modal#title": {
-        "message": "ការកំណត់មានបញ្ហា",
-        "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
-    },
-    "settings#apply-button": {
-        "message": "អនុវត្តការផ្លាស់ប្តូរ",
-        "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
-    },
-    "appbackend#minimized-to-systray-title": {
-        "message": "Psiphon ត្រូវបានបង្រួមទៅកាន់តំបន់ជូនដំណឹង",
-        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
-    },
-    "settings#split-tunnel#heading": {
-        "message": "Split Tunnel",
-        "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
-    },
-    "settings#egress-region#invalid-error-msg": {
-        "message": "ជ្រើសរើសម៉ាស៊ីនមេ Psiphon​ ក្នុងតំបន់",
-        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
-    },
-    "appbackend#state-connected-title": {
-        "message": "Psiphon បានតភ្ជាប់",
-        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
-    },
-    "settings#upstream-proxy#proxy-reqs": {
-        "message": "មានតែប្រូកស៊ី HTTP ដែលគាំទ្រ HTTPS ត្រូវបានអនុញ្ញាត។",
-        "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
-    },
-    "appbackend#state-connected-reminder-body": {
-        "message": "រក្សា Psiphon ឲ្យនៅមិនគិតថ្លៃ។ ចុចទីនេះ ដើម្បីចូលទៅកាន់ទំព័ររបស់ម្ចាស់ឧបត្ថម្ភ!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
-    },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "អ្នកត្រូវកំណត់ឈ្មោះអ្នកប្រើ និងពាក្យសម្ងាត់, ឬទុកទំនេរចោល សម្រាប់ការមិនផ្ទៀងផ្ទាត់។",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
-    },
-    "settings#egress-region#select-be": {
-        "message": "បែលហ្សិក",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
-    },
-    "settings#transport-mode#check-label": {
-        "message": "ប្រើទម្រង់ L2TP/IPSec",
-        "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
-    },
-    "connection#egress-region-combo-label": {
-        "message": "តភ្ជាប់តាម",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
-    "settings#egress-region#select-se": {
-        "message": "ស៊ុយអែត",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
-    },
-    "settings#egress-region#select-gb": {
-        "message": "ចក្រភពអង់គ្លេស",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the UK will be used."
-    },
-    "about#wordart-title": {
-        "message": "Psiphon",
-        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
-    },
-    "settings#upstream-proxy#hostname-label": {
-        "message": "Hostname",
-        "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
-    },
-    "feedback#smiley_sad": {
-        "message": "Psiphon ជាញឹកញយបរាជ័យក្នុងការតភ្ជាប់ ឬមិនដំណើរការដោយប្រក្រតី។",
-        "description": "The text below the 'sad face' feedback choice."
-    },
-    "settings#unapplied-changes-prompt#body": {
-        "message": "អ្នកបានធ្វើការផ្លាស់ប្តូរការកំណត់របស់អ្នក ប៉ុន្តែអ្នកមិនទាន់បានអនុវត្តការផ្លាស់ប្តូរនៅឡើយ។<br><br>តើអ្នកចង់អនុវត្តការផ្លាស់ប្តូរឥលូវ ឬបោះបង់ចោល?",
-        "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
-    },
-    "settings#systray-minimize#enable-label": {
-        "message": "បង្រួមទៅកាន់តំបន់ជូនដំណឹង (System Tray)",
-        "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."
-    },
-    "settings#egress-region#heading": {
-        "message": "តំបន់ម៉ាស៊ីនមេ Psiphon ",
-        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
-    },
-    "settings#egress-region#select-ro": {
-        "message": "រូម៉ានី",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Romania will be used."
-    },
-    "settings#egress-region#select-cz": {
-        "message": "សាធារណរដ្ឋ​ឆែក",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "ការកំណត់ឈ្មោះអ្នកប្រើ និងពាក្យសម្ងាត់ ក៏ទាមទារការកំណត់ Hostname និង Port ដែរ",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#disable-timeouts#heading": {
-        "message": "បិទ ការហួសម៉ោង សម្រាប់បណ្តាញយឺត",
-        "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
-    },
-    "settings#upstream-proxy#by-default": {
-        "message": "ប្រសិនបើកុំព្យូទ័រអ្នកបានកំណត់ proxy ហើយ ជាលំនាំដើម Psiphon នឹងប្រើប្រាស់ proxy នៅពេលបង្កើតការតភ្ជាប់។ អ្នកអាចបដិសេដទម្លាប់នោះ ដោយកំណត់proxy មួយដើម្បីប្រើប្រាស់, ឬកំណត់ថាគ្មាន “upstream proxy” ដែលគួរប្រើប្រាស់ទេ។",
-        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
-    },
-    "settings#split-tunnel#enable-label": {
-        "message": "កុំប្រូស៊ីគេហទំព័រក្នុងប្រទេសរបស់អ្នក",
-        "description": "The label on the checkbox that enables 'Split Tunnel'."
-    },
-    "nav#connection#starting": {
-        "message": "កំពុងតភ្ជាប់",
-        "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
-    },
-    "feedback#text_feedback_email_prompt": {
-        "message": "បើអ្នកចង់ឲ្យយើងឆ្លើយតបទៅអ្នក សូមបញ្ចូលអាសយដ្ឋានអ៊ីម៉ែលរបស់អ្នក៖",
-        "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
-    },
-    "feedback#text_feedback_prompt": {
-        "message": "សូមបញ្ចូលមតិរបស់អ្នកនៅទីនេះ៖",
-        "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
-    },
-    "feedback#smiley_happy": {
-        "message": "Psiphon តភ្ជាប់និងដំណើរការតាមរបៀបដែលខ្ញុំចង់បាន។",
-        "description": "The text below the 'happy face' feedback choice."
-    },
-    "settings#upstream-proxy#domain-label": {
-        "message": "ដែន",
-        "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
-    },
-    "about#wordart-tag": {
-        "message": "លើសព្រំដែន",
-        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
-    },
-    "settings#upstream-proxy#username-label": {
-        "message": "ឈ្មោះអ្នកប្រើប្រាស់",
-        "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
-    },
-    "connection#wait-btn": {
-        "message": "សូមរង់ចាំ...",
-        "description": "Text on the big connection button telling the user to wait while Psiphon tries to disconnect from the network. When this message is shown, the button is disabled."
-    },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "អ្នកត្រូវកំណត់ Hostname និង Port, ឬទុកទំនេរចោល សម្រាប់ការជ្រើសរើសដោយស្វ័យប្រវត្តិ។",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#transport-mode#help-text": {
-        "message": "ប្រើបណ្តាញនិម្មិត L2TP / IPSec របស់ Windows។ ទម្រង់នេះ​ នឹងប្រើគ្រប់ច្រកកម្មវិធីរបស់អ្នកប៉ុន្តែវាមិនផ្តល់ភាពរំភើបនិងមិនមានសមត្ថភាពទប់ស្កាត់ការត្រួតពិនិត្យខ្លាំង។ វា <strong>មិនត្រូវបានណែនាំ</strong> សម្រាប់ឆ្លងកាត់ firewalls ភាគច្រើនទេ។",
-        "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
-    },
-    "settings#egress-region#select-best-performance": {
-        "message": "ប្រទេសលឿនជាងគេ",
-        "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
-    },
-    "connection#connect-btn": {
-        "message": "តភ្ជាប់",
-        "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     }
 }
