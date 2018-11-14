@@ -30,6 +30,7 @@
 #include "utilities.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
+#include <iomanip>
 
 #pragma warning(push, 0)
 #pragma warning(disable: 4244)
@@ -1035,8 +1036,11 @@ string Dehexlify(const string& input)
 
 // Adapted from:
 // http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+// NOTE that the encode version does not seem to work
 tstring UrlCodec(const tstring& input, bool encode)
 {
+    assert(!encode);
+
     DWORD flags = encode ? 0 : ICU_DECODE;
     tstring encodedURL = _T("");
     DWORD outputBufferSize = input.size() * 2;
@@ -1068,9 +1072,30 @@ tstring UrlCodec(const tstring& input, bool encode)
     return encodedURL;
 }
 
+// Adapted from:
+// http://stackoverflow.com/questions/154536/encode-decode-urls-in-c
 tstring UrlEncode(const tstring& input)
 {
-    return UrlCodec(input, true);
+    tstringstream escapedURL;
+    escapedURL.fill('0');
+    escapedURL << hex;
+
+    for (tstring::const_iterator i = input.begin(), n = input.end(); i != n; ++i) {
+        tstring::value_type c = (*i);
+
+        // Keep alphanumeric and other accepted characters intact
+        if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            escapedURL << c;
+            continue;
+        }
+
+        // Any other characters are percent-encoded
+        escapedURL << uppercase;
+        escapedURL << '%' << setw(2) << int((unsigned char)c);
+        escapedURL << nouppercase;
+    }
+
+    return escapedURL.str();
 }
 
 tstring UrlDecode(const tstring& input)
