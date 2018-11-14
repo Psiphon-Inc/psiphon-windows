@@ -88,7 +88,7 @@
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#body": {
-        "message": "Vous avez apporté des changements à vos paramètres, mais vous ne les avez pas appliqués.\n<br><br>Voulez-vous appliquer ces changements maintenant ou les rejeter ?",
+        "message": "Vous avez apporté des changements à vos paramètres, mais vous ne les avez pas appliqués.\n<br><br>Voulez-vous appliquer ces changements maintenant ou les abandonner ?",
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#apply-button": {
@@ -96,7 +96,7 @@
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#unapplied-changes-prompt#discard-button": {
-        "message": "Rejeter",
+        "message": "Abandonner",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
     "settings#vpn-incompatible-msg": {
@@ -170,6 +170,10 @@
     "settings#egress-region#select-sg": {
         "message": "Singapour",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
+    },
+    "settings#egress-region#select-sk": {
+        "message": "Slovaquie",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Slovakia will be used."
     },
     "settings#egress-region#select-nl": {
         "message": "Pays-Bas",
