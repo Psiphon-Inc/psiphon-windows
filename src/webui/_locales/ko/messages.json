@@ -171,6 +171,10 @@
         "message": "싱가포르",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
+    "settings#egress-region#select-sk": {
+        "message": "슬로바키아",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Slovakia will be used."
+    },
     "settings#egress-region#select-nl": {
         "message": "네덜란드",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in the Netherlands will be used."
