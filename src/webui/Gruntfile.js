@@ -112,7 +112,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
 
-  grunt.registerTask('default', ['execute', 'concat', 'less', 'locales', 'inline']);
+  // Capture the node_modules directory at the time of building. This allows us to build
+  // even if the dependencies disappear. (package-lock.json provides us protection against
+  // dep replacement attacks.)
+  grunt.registerTask('zip-modules', '', function () {
+    var exec = require('child_process').execSync;
+    var result = exec("7z a -mx9 node_modules.7z node_modules");
+    grunt.log.writeln(result);
+  });
+
+  grunt.registerTask('default', ['zip-modules', 'execute', 'concat', 'less', 'locales', 'inline']);
   grunt.registerTask('serve', ['default', 'connect', 'watch']);
 
   grunt.registerMultiTask(
