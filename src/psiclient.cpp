@@ -39,6 +39,7 @@
 #include "stopsignal.h"
 #include "diagnostic_info.h"
 #include "systemproxysettings.h"
+#include "psicash.h"
 
 //==== Globals ================================================================
 
@@ -1035,6 +1036,11 @@ int APIENTRY _tWinMain(
     DoStartupSystemProxyWork();
     DoStartupDiagnosticCollection();
 
+    auto err = psicash::Lib::_().Init();
+    if (err) {
+        my_print(NOT_SENSITIVE, false, _T("%s: PsiCashLib.Init failed: %s"), __TFUNCTION__, err.ToString());
+    }
+
     // Main message loop
 
     MSG msg;
@@ -1287,6 +1293,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         // Set initial state.
         UI_SetStateStopped();
+
+        auto res = psicash::Lib::_().RefreshState({ "speed-boost" });
+        if (!res) {
+            int i = 0;
+            // error!
+        }
 
         // Start a connection
         if (!Settings::SkipAutoConnect())

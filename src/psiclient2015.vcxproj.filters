@@ -49,6 +49,7 @@
     <ClCompile Include="3rdParty\jsoncpp\jsoncpp.cpp">
       <Filter>3rdParty\jsoncpp</Filter>
     </ClCompile>
+    <ClCompile Include="psicash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -516,6 +517,16 @@
     <ClInclude Include="3rdParty\jsoncpp\json\json-forwards.h">
       <Filter>3rdParty\jsoncpp\json</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\psicash\datetime.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\psicash\error.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\psicash\psicash.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
+    <ClInclude Include="psicash.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
@@ -541,6 +552,9 @@
     </Filter>
     <Filter Include="3rdParty\jsoncpp\json">
       <UniqueIdentifier>{50104d07-2601-4ae5-9602-f6340013c2c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\psicash">
+      <UniqueIdentifier>{120d2441-2aa6-42f5-882c-bfb66f5d2233}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
