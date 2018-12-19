@@ -23,6 +23,7 @@
 #include "logging.h"
 #include "config.h"
 #include <Shlwapi.h>
+#include <ShlObj.h>
 #include <WinSock2.h>
 #include <TlHelp32.h>
 #include <WinCrypt.h>
@@ -162,6 +163,31 @@ bool ExtractExecutable(
 
     path = filePath;
 
+    return true;
+}
+
+
+bool GetDataPath(const vector<tstring>& pathSuffixes, tstring& o_path) {
+    TCHAR path[MAX_PATH];
+    if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+    
+    filesystem::path appDataPath(path);
+    auto dataDirectory = filesystem::path(appDataPath);
+
+    for (auto suffix : pathSuffixes) {
+        dataDirectory.append(suffix);
+        if (!CreateDirectory(dataDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+            return false;
+        }
+    }
+
+    o_path = dataDirectory;
     return true;
 }
 

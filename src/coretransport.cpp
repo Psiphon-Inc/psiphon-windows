@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include <shlwapi.h>
 #pragma comment(lib,"shlwapi.lib")
-#include "shlobj.h"
 
 #include "logging.h"
 #include "coretransport.h"
@@ -353,18 +352,9 @@ Json::Value loadJSONArray(const char* jsonArrayString)
 
 bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
 {
-    TCHAR path[MAX_PATH];
-    if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
-    }
-    filesystem::path appDataPath(path);
-
-    auto dataStoreDirectory = filesystem::path(appDataPath).append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY);
-    if (!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+    tstring dataStoreDirectory;
+    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY }, dataStoreDirectory)) {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for dataStoreDirectory (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
 
@@ -482,15 +472,13 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
         config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
 
-        auto oslDownloadDirectory = filesystem::path(appDataPath)
-                                                .append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY).append("osl");
-        if (!CreateDirectory(oslDownloadDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+        tstring oslDownloadDirectory;
+        if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, oslDownloadDirectory)) {
+            my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for oslDownloadDirectory (%d)"), __TFUNCTION__, GetLastError());
             // TODO: proceed anyway?
             return false;
         }
-        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
+        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
 
         clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
