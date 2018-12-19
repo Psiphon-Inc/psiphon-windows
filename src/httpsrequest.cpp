@@ -153,8 +153,37 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
 
-        // Check for HTTP status 200 OK
+        // Get Date header. We're not going to error if we can't get it.
+        // This comes before the status code check, because the Date header
+        // should be valid for all responses.
+        dwLen = sizeof(dwStatusCode);
+        if (!WinHttpQueryHeaders(
+            hRequest,
+            WINHTTP_QUERY_DATE,
+            WINHTTP_HEADER_NAME_BY_INDEX,
+            NULL,
+            &dwLen,
+            WINHTTP_NO_HEADER_INDEX))
+        {
+            // False return is expected, because we're obtaining the required size.
+            if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+                wstring buf;
+                buf.resize(dwLen / sizeof(WCHAR) + 1, '\0');
 
+                if (WinHttpQueryHeaders(
+                    hRequest,
+                    WINHTTP_QUERY_DATE,
+                    WINHTTP_HEADER_NAME_BY_INDEX,
+                    (LPVOID)buf.data(),
+                    &dwLen,
+                    WINHTTP_NO_HEADER_INDEX))
+                {
+                    httpRequest->ResponseSetDateHeader(WStringToUTF8(buf));
+                }
+            }
+        }
+
+        // Check for HTTP status 200 OK
         dwLen = sizeof(dwStatusCode);
         if (!WinHttpQueryHeaders(
                         hRequest, 
@@ -168,6 +197,8 @@ void CALLBACK WinHttpStatusCallback(
             WinHttpCloseHandle(hRequest);
             return;
         }
+
+        httpRequest->ResponseSetCode(dwStatusCode);
 
         if (200 != dwStatusCode)
         {
@@ -217,7 +248,7 @@ void CALLBACK WinHttpStatusCallback(
         // NOTE: response data may be binary; some relevant comments here...
         // http://stackoverflow.com/questions/441203/proper-way-to-store-binary-data-with-c-stl
 
-        httpRequest->AppendResponse(string(string::const_pointer(pBuffer), string::const_pointer((char*)pBuffer + dwLen)));
+        httpRequest->ResponseAppendBody(string(string::const_pointer(pBuffer), string::const_pointer((char*)pBuffer + dwLen)));
 
         HeapFree(GetProcessHeap(), 0, pBuffer);
 
@@ -292,7 +323,7 @@ bool HTTPSRequest::MakeRequest(
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
+        HTTPSRequest::Response& response,
         const StopInfo& stopInfo,
         bool usePsiphonLocalProxy,
         bool failoverToURLProxy/*=false*/,
@@ -374,7 +405,7 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
+        HTTPSRequest::Response& response,
         const StopInfo& stopInfo,
         bool usePsiphonLocalProxy,
         bool useURLProxy,
@@ -525,7 +556,7 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
 
     m_expectedServerCertificate = webServerCertificate;
     m_requestSuccess = false;
-    m_response = "";
+    m_response = Response();
 
     if (FALSE == WinHttpSendRequest(
                     hRequest,
@@ -581,18 +612,30 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
 
     if (m_requestSuccess)
     {
-        response = m_response;
+        response = std::move(m_response);
+        m_response = Response();
         return true;
     }
 
     return false;
 }
 
-void HTTPSRequest::AppendResponse(const string& responseData)
+void HTTPSRequest::ResponseAppendBody(const string& responseData)
 {
     AutoMUTEX lock(m_mutex);
+    m_response.body.append(responseData);
+}
 
-    m_response.append(responseData);
+void HTTPSRequest::ResponseSetCode(int code)
+{
+    AutoMUTEX lock(m_mutex);
+    m_response.code = code;
+}
+
+void HTTPSRequest::ResponseSetDateHeader(const string& dateHeader) 
+{
+    AutoMUTEX lock(m_mutex);
+    m_response.dateHeader = dateHeader;
 }
 
 bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)

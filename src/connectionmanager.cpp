@@ -726,21 +726,23 @@ void ConnectionManager::FetchRemoteServerList()
     try
     {
         HTTPSRequest httpsRequest;
+        HTTPSRequest::Response httpsResponse;
         // NOTE: Not using local proxy
         if (!httpsRequest.MakeRequest(
                 UTF8ToWString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
                 443,
                 "",
                 UTF8ToWString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
-                response,
+                httpsResponse,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
                 false, // don't use local proxy
                 true)  // fail over to URL proxy
-            || response.length() <= 0)
+            || httpsResponse.body.length() <= 0)
         {
             my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
             return;
         }
+        response = httpsResponse.body;
     }
     catch (StopSignal::StopException&)
     {
@@ -806,7 +808,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
     {
         SessionInfo sessionInfo;
         tstring downloadRequestPath;
-        string downloadResponse;
         // Note that this is getting the current session info, which is set
         // by LoadNextServer.  So it's unlikely but possible that we may be
         // loading the next server after the first one that notified us of an
@@ -816,16 +817,17 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
         // Download new binary
         HTTPSRequest httpsRequest;
+        HTTPSRequest::Response httpsResponse;
         if (!httpsRequest.MakeRequest(
                 UTF8ToWString(UPGRADE_ADDRESS).c_str(),
                 443,
                 "",
                 UTF8ToWString(UPGRADE_REQUEST_PATH).c_str(),
-                downloadResponse,
+                httpsResponse,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
                 true, // tunnel request
                 true) // fail over to URL proxy
-            || downloadResponse.length() <= 0)
+            || httpsResponse.body.length() <= 0)
         {
             // If the download failed, we simply do nothing.
             // Rationale:
@@ -846,8 +848,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
             if (verifySignedDataPackage(
                     UPGRADE_SIGNATURE_PUBLIC_KEY,
-                    downloadResponse.c_str(),
-                    downloadResponse.length(),
+                    httpsResponse.body.c_str(),
+                    httpsResponse.body.length(),
                     true, // gzip compressed
                     upgradeData))
             {

@@ -124,19 +124,21 @@ bool ServerRequest::MakeRequest(
 
         // This is the simple case: we just connect through the transport
         HTTPSRequest httpsRequest;
+        HTTPSRequest::Response httpsResponse;
         bool requestSuccess = 
             httpsRequest.MakeRequest(
                 UTF8ToWString(sessionInfo.GetServerAddress()).c_str(),
                 sessionInfo.GetWebPort(),
                 sessionInfo.GetWebServerCertificate(),
                 requestPath,
-                response,
+                httpsResponse,
                 stopInfo,
                 true, // use tunnel?
                 false, // don't fail over to URL proxy
                 additionalHeaders,
                 additionalData,
                 additionalDataLength);
+        response = httpsResponse.body;
         return requestSuccess;
     }
     else if (reqLevel == ONLY_IF_TRANSPORT)
@@ -161,12 +163,13 @@ bool ServerRequest::MakeRequest(
         for (port_iter = ports.begin(); port_iter != ports.end(); port_iter++)
         {
             HTTPSRequest httpsRequest;
+            HTTPSRequest::Response httpsResponse;
             if (httpsRequest.MakeRequest(
                     UTF8ToWString(sessionInfo.GetServerAddress()).c_str(),
                     *port_iter,
                     sessionInfo.GetWebServerCertificate(),
                     requestPath,
-                    response,
+                    httpsResponse,
                     stopInfo,
                     false, // don't try to tunnel -- there's no transport
                     false, // don't fail over to URL proxy
@@ -174,6 +177,7 @@ bool ServerRequest::MakeRequest(
                     additionalData,
                     additionalDataLength))
             {
+                response = httpsResponse.body;
                 return true;
             }
 
@@ -217,12 +221,13 @@ bool ServerRequest::MakeRequest(
                 &serverEntry);  // force use of this server
 
             HTTPSRequest httpsRequest;
+            HTTPSRequest::Response httpsResponse;
             if (httpsRequest.MakeRequest(
                     UTF8ToWString(sessionInfo.GetServerAddress()).c_str(),
                     sessionInfo.GetWebPort(),
                     sessionInfo.GetWebServerCertificate(),
                     requestPath,
-                    response,
+                    httpsResponse,
                     stopInfo,
                     true, // tunnel request
                     false, // don't fail over to URL proxy
@@ -230,6 +235,7 @@ bool ServerRequest::MakeRequest(
                     additionalData,
                     additionalDataLength))
             {
+                response = httpsResponse.body;
                 success = true;
                 break;
             }

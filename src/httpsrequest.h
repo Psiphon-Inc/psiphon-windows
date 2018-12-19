@@ -30,15 +30,26 @@ using namespace std;
 class HTTPSRequest
 {
 public:
+    struct Response {
+        int code;
+        string body;
+        string dateHeader;
+
+        Response() : code(-1) {}
+    };
+
+public:
     HTTPSRequest(bool silentMode=false);
     virtual ~HTTPSRequest();
 
+    // requestPath must include the path, the query parameters, and the anchor, if any.
+    // additionalHeaders must be valid RFC2616, including CRLF separator between multiple items.
     bool MakeRequest(
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
+        HTTPSRequest::Response& response,
         const StopInfo& stopInfo,
         bool usePsiphonLocalProxy,
         bool failoverToURLProxy=false,
@@ -50,15 +61,17 @@ public:
 private:
     void SetClosedEvent() {SetEvent(m_closedEvent);}
     void SetRequestSuccess() {m_requestSuccess = true;}
-      bool ValidateServerCert(PCCERT_CONTEXT pCert);
-    void AppendResponse(const string& responseData);
+    bool ValidateServerCert(PCCERT_CONTEXT pCert);
+    void ResponseAppendBody(const string& responseData);
+    void ResponseSetCode(int code);
+    void ResponseSetDateHeader(const string& dateHeader);
 
     bool MakeRequestWithURLProxyOption(
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
+        HTTPSRequest::Response& response,
         const StopInfo& stopInfo,
         bool usePsiphonLocalProxy,
         bool useURLProxy,
@@ -80,5 +93,5 @@ private:
     HANDLE m_closedEvent;
     bool m_requestSuccess;
     string m_expectedServerCertificate;
-    string m_response;
+    Response m_response;
 };

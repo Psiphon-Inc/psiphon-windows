@@ -1343,14 +1343,14 @@ bool SendFeedbackAndDiagnosticInfo(
     tstring uploadLocation = UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
                                 + UTF8ToWString(feedbackID);
         
-    string response;
     HTTPSRequest httpsRequest;
+    HTTPSRequest::Response httpsResponse;
     if (!httpsRequest.MakeRequest(
             UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
             443,
             string(), // Do standard cert validation
             uploadLocation.c_str(),
-            response,
+            httpsResponse,
             stopInfo,
             false, // don't use local proxy
             true,  // fail over to URL proxy
