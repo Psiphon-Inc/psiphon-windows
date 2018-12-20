@@ -194,8 +194,23 @@
           </a>
         </li>
 
-        <li id="fill-tab"></li>
+        <li id="psicash-block">
+          <div data-match-width=".main-nav a">
+            <div>PsiCash: <span id="psicash-balance">0</span>Ψ</div>
+            <div>
+              <button id="psicash-buy-1hr" type="button" class="btn btn-small">
+                1hr Speed Boost for <span id="psicash-1hr-price">123</span>Ψ
+              </button>
+            </div>
+            <div>
+                <button id="psicash-buy-psi" type="button" class="btn btn-small">
+                  Buy more PsiCash for $
+                </button>
+              </div>
+            </div>
+        </li>
 
+        <li id="fill-tab"></li>
       </ul>
       <div class="tab-content main-height">
 
@@ -1271,6 +1286,15 @@
           <form class="form-inline" id="debug-UpdateDpiScaling">
             <label>UpdateDpiScaling</label>
             <input type="text" placeholder="1.0, 1.2, 1.5, 2.0, ..." style="width:3em">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-UpdatePsiCash">
+            <label>UpdatePsiCash</label>
+            <input id="debug-UpdatePsiCash-balance" type="number" step="0.1" min="0" placeholder="balance in gigapsi" style="width:10em">
+            <input id="debug-UpdatePsiCash-price-1hr" type="number" step="0.1" min="0" placeholder="1hr price in gigapsi" style="width:10em">
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
           </form>
 

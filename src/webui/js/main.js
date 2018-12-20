@@ -1769,6 +1769,53 @@ function populateLocales() {
 // No special code. Sponsor-specific links are set elsewhere.
 
 
+/* PSICASH *******************************************************************/
+
+function updatePsiCash(data) {
+  if (!data) {
+    return;
+  }
+
+  var BILLION = 1000000000;
+  var gPsi;
+
+  var currLang = $('html').attr('lang');
+  // Psiphon-style for locales uses an underscore, but browser-style uses a hyphen.
+  // Convert for use in Number.toLocaleString
+  currLang = currLang.replace('_', '-');
+  // NOTE: If you're testing in Chrome, toLocaleString will behave differently than in IE.
+  // For example, in Chrome locale='ar' doesn't seem to result in any change, but
+  // locale='ar-EG' does. In IE11 they both do.
+
+  if (typeof data.balance !== 'undefined') {
+    gPsi = parseInt(data.balance) / BILLION;
+    // Reduce to two decimal places for display
+    gPsi = Math.floor(gPsi * 100) / 100;
+    // Localize number
+    gPsi = gPsi.toLocaleString(currLang);
+    // TODO: Re-localize on every LANGUAGE_CHANGE_EVENT
+
+    $('#psicash-balance').text(gPsi);
+  }
+
+  var pp;
+  if (typeof data.purchasePrices !== 'undefined') {
+    for (var i = 0; i < data.purchasePrices.length; i++) {
+      pp = data.purchasePrices[i];
+      if (pp.transaction_class === 'speed-boost' && pp.distinguisher === '1hr') {
+        gPsi = parseInt(pp.price) / BILLION;
+        // We are _not_ reducing decimal places, becase we don't wan to mislead the user
+        // Localize number
+        gPsi = gPsi.toLocaleString(currLang);
+        // TODO: Re-localize on every LANGUAGE_CHANGE_EVENT
+
+          $('#psicash-1hr-price').text(gPsi);
+        break;
+      }
+    }
+  }
+}
+
 /* UI HELPERS ****************************************************************/
 
 function displayCornerAlert(elem) {
@@ -2267,14 +2314,14 @@ $(function debugInit() {
     });
   });
 
-  // Wire up the SystemProxySettings::SetProxyError notice
+  // Wire up the SystemProxySettings::SetProxyError test
   $('#debug-SetProxyError a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
       noticeType: 'SystemProxySettings::SetProxyError'
     });
   });
 
-  // Wire up the SystemProxySettings::SetProxyWarning notice
+  // Wire up the SystemProxySettings::SetProxyWarning test
   $('#debug-SetProxyWarning a').on('click', function() {
     HtmlCtrlInterface_AddNotice({
       noticeType: 'SystemProxySettings::SetProxyWarning',
@@ -2282,10 +2329,22 @@ $(function debugInit() {
     });
   });
 
-  // Wire up the SocksProxyPortInUse notice
+  // Wire up the UpdateDpiScaling test
   $('#debug-UpdateDpiScaling a').on('click', function() {
     HtmlCtrlInterface_UpdateDpiScaling({
       dpiScaling: $('#debug-UpdateDpiScaling input').val()
+    });
+  });
+
+  // Wire up the UpdatePsiCash test
+  $('#debug-UpdatePsiCash a').on('click', function() {
+    HtmlCtrlInterface_UpdatePsiCash({
+      balance: parseFloat($('#debug-UpdatePsiCash-balance').val()) * 1000000000,
+      purchasePrices: [{
+        transaction_class: 'speed-boost',
+        distinguisher: '1hr',
+        price: parseFloat($('#debug-UpdatePsiCash-price-1hr').val()) * 1000000000
+      }]
     });
   });
 });
@@ -2385,6 +2444,15 @@ function HtmlCtrlInterface_UpdateDpiScaling(jsonArgs) {
   var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
   nextTick(function() {
     updateDpiScaling(args.dpiScaling);
+  });
+}
+
+// Update PsiCash state.
+function HtmlCtrlInterface_UpdatePsiCash(jsonArgs) {
+  // Allow object as input to assist with debugging
+  var args = (typeof(jsonArgs) === 'object') ? jsonArgs : JSON.parse(jsonArgs);
+  nextTick(function() {
+    updatePsiCash(args);
   });
 }
 
@@ -2540,5 +2608,6 @@ window.HtmlCtrlInterface_SetState = HtmlCtrlInterface_SetState;
 window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
 window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
 window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
+window.HtmlCtrlInterface_UpdatePsiCash = HtmlCtrlInterface_UpdatePsiCash;
 
 })(window);
