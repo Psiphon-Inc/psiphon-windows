@@ -271,8 +271,8 @@ bool WriteFile(const tstring& filename, const string& data)
         || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
         || bytesWritten != data.length())
     {
-        CloseHandle(file);
         my_print(NOT_SENSITIVE, false, _T("%s - write file failed (%d)"), __TFUNCTION__, GetLastError());
+        CloseHandle(file);
         return false;
     }
     CloseHandle(file);
