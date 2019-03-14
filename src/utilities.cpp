@@ -1,21 +1,21 @@
 /*
- * Copyright (c) 2015, Psiphon Inc.
- * All rights reserved.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+* Copyright (c) 2015, Psiphon Inc.
+* All rights reserved.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 
 
 #include "stdafx.h"
@@ -153,8 +153,10 @@ bool ExtractExecutable(
         || written != size
         || !FlushFileBuffers(tempFile))
     {
+        auto lastError = GetLastError();
         CloseHandle(tempFile);
-        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), GetLastError());
+        SetLastError(lastError); // restore the previous error code
+        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - WriteFile/FlushFileBuffers failed (%d)"), lastError);
         return false;
     }
 
@@ -176,7 +178,7 @@ bool GetTempPath(tstring& o_path)
     // http://msdn.microsoft.com/en-us/library/aa364991%28v=vs.85%29.aspx notes
     // tempPath can contain no more than MAX_PATH-14 characters
     ret = GetTempPath(MAX_PATH, tempPath);
-    if (ret > MAX_PATH-14 || ret == 0)
+    if (ret > MAX_PATH - 14 || ret == 0)
     {
         return false;
     }
@@ -194,13 +196,13 @@ bool GetUniqueTempDir(tstring& o_path, bool create)
     o_path.clear();
 
     tstring tempPath;
-    if (!GetTempPath(tempPath)) 
+    if (!GetTempPath(tempPath))
     {
         return false;
     }
 
     tstring guid;
-    if (!MakeGUID(guid)) 
+    if (!MakeGUID(guid))
     {
         return false;
     }
@@ -222,20 +224,20 @@ bool MakeGUID(tstring& o_guid) {
     o_guid.clear();
 
     GUID g;
-    if (CoCreateGuid(&g) != S_OK) 
+    if (CoCreateGuid(&g) != S_OK)
     {
         return false;
     }
 
     TCHAR guidString[128];
 
-    if (StringFromGUID2(g, guidString, sizeof(guidString)/sizeof(TCHAR)) <= 0) 
+    if (StringFromGUID2(g, guidString, sizeof(guidString) / sizeof(TCHAR)) <= 0)
     {
         return false;
     }
 
     o_guid = guidString;
-    
+
     return true;
 }
 
@@ -248,7 +250,7 @@ bool GetShortPathName(const tstring& path, tstring& o_shortPath)
     {
         return false;
     }
-    TCHAR* buffer = new TCHAR [ret];
+    TCHAR* buffer = new TCHAR[ret];
     ret = GetShortPathName(path.c_str(), buffer, ret);
     if (ret == 0)
     {
@@ -266,13 +268,18 @@ bool WriteFile(const tstring& filename, const string& data)
     HANDLE file;
     DWORD bytesWritten;
     if (INVALID_HANDLE_VALUE == (file = CreateFile(
-                                            filename.c_str(), GENERIC_WRITE, 0,
-                                            NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
+        filename.c_str(), GENERIC_WRITE, 0,
+        NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL))
         || !WriteFile(file, data.c_str(), data.length(), &bytesWritten, NULL)
         || bytesWritten != data.length())
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - write file failed (%d)"), __TFUNCTION__, GetLastError());
-        CloseHandle(file);
+        auto lastError = GetLastError();
+        if (file != INVALID_HANDLE_VALUE)
+        {
+            CloseHandle(file);
+            SetLastError(lastError); // restore the previous error code
+        }
+        my_print(NOT_SENSITIVE, false, _T("%s - write file failed (%d)"), __TFUNCTION__, lastError);
         return false;
     }
     CloseHandle(file);
@@ -281,10 +288,10 @@ bool WriteFile(const tstring& filename, const string& data)
 
 
 DWORD WaitForConnectability(
-        USHORT port,
-        DWORD timeout,
-        HANDLE process,
-        const StopInfo& stopInfo)
+    USHORT port,
+    DWORD timeout,
+    HANDLE process,
+    const StopInfo& stopInfo)
 {
     // There are a number of options for monitoring the connected status
     // of plonk/polipo. We're going with a quick and dirty solution of
@@ -387,17 +394,16 @@ bool TestForOpenPort(int& targetPort, int maxIncrement, const StopInfo& stopInfo
         if (targetPort > 0 && targetPort <= 0xFFFF)
         {
             if (ERROR_SUCCESS != WaitForConnectability(
-                (USHORT)targetPort, 
-                100, 
-                0, 
+                (USHORT)targetPort,
+                100,
+                0,
                 stopInfo))
             {
                 return true;
             }
             my_print(NOT_SENSITIVE, false, _T("Localhost port %d is already in use."), targetPort);
         }
-    }
-    while (++targetPort <= maxPort);
+    } while (++targetPort <= maxPort);
 
     return false;
 }
@@ -429,11 +435,11 @@ void StopProcess(DWORD processID, HANDLE process)
 // to come to the same pipe.
 // Returns true on success.
 bool CreateSubprocessPipes(
-        HANDLE& o_parentOutputPipe, // Parent reads the child's stdout/stdin from this
-        HANDLE& o_parentInputPipe,  // Parent writes to the child's stdin with this
-        HANDLE& o_childStdinPipe,   // Child's stdin pipe
-        HANDLE& o_childStdoutPipe,  // Child's stdout pipe
-        HANDLE& o_childStderrPipe)  // Child's stderr pipe (dup of stdout)
+    HANDLE& o_parentOutputPipe, // Parent reads the child's stdout/stdin from this
+    HANDLE& o_parentInputPipe,  // Parent writes to the child's stdin with this
+    HANDLE& o_childStdinPipe,   // Child's stdin pipe
+    HANDLE& o_childStdoutPipe,  // Child's stdout pipe
+    HANDLE& o_childStderrPipe)  // Child's stderr pipe (dup of stdout)
 {
     o_parentOutputPipe = INVALID_HANDLE_VALUE;
     o_parentInputPipe = INVALID_HANDLE_VALUE;
@@ -446,28 +452,28 @@ bool CreateSubprocessPipes(
 
     // Set up the security attributes struct.
     SECURITY_ATTRIBUTES sa;
-    sa.nLength= sizeof(SECURITY_ATTRIBUTES);
+    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
     sa.lpSecurityDescriptor = NULL;
     sa.bInheritHandle = TRUE;
 
-    HANDLE 
-        hParentOutputReadTmp = INVALID_HANDLE_VALUE, 
-        hParentOutputRead = INVALID_HANDLE_VALUE, 
-        hChildStdoutWrite = INVALID_HANDLE_VALUE, 
-        hChildStderrWrite = INVALID_HANDLE_VALUE, 
-        hChildStdinRead = INVALID_HANDLE_VALUE, 
-        hParentInputWriteTmp = INVALID_HANDLE_VALUE, 
+    HANDLE
+        hParentOutputReadTmp = INVALID_HANDLE_VALUE,
+        hParentOutputRead = INVALID_HANDLE_VALUE,
+        hChildStdoutWrite = INVALID_HANDLE_VALUE,
+        hChildStderrWrite = INVALID_HANDLE_VALUE,
+        hChildStdinRead = INVALID_HANDLE_VALUE,
+        hParentInputWriteTmp = INVALID_HANDLE_VALUE,
         hParentInputWrite = INVALID_HANDLE_VALUE;
 
     // Create the child output pipe.
     if (!CreatePipe(&hParentOutputReadTmp, &hChildStdoutWrite, &sa, 0))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -477,16 +483,16 @@ bool CreateSubprocessPipes(
     // write handle. This is necessary in case the child application
     // closes one of its std output handles.
     if (!DuplicateHandle(
-            GetCurrentProcess(), hChildStdoutWrite, 
-            GetCurrentProcess(), &hChildStderrWrite,
-            0, TRUE, DUPLICATE_SAME_ACCESS))
+        GetCurrentProcess(), hChildStdoutWrite,
+        GetCurrentProcess(), &hChildStderrWrite,
+        0, TRUE, DUPLICATE_SAME_ACCESS))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -497,18 +503,18 @@ bool CreateSubprocessPipes(
     // properties and, as a result, non-closeable handles to the pipes
     // are created.
     if (!DuplicateHandle(GetCurrentProcess(), hParentOutputReadTmp,
-                         GetCurrentProcess(),
-                         &hParentOutputRead, // Address of new handle.
-                         0, 
-                         FALSE, // Make it uninheritable.
-                         DUPLICATE_SAME_ACCESS))
+        GetCurrentProcess(),
+        &hParentOutputRead, // Address of new handle.
+        0,
+        FALSE, // Make it uninheritable.
+        DUPLICATE_SAME_ACCESS))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -518,12 +524,12 @@ bool CreateSubprocessPipes(
     // inherited.
     if (!CloseHandle(hParentOutputReadTmp))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -533,12 +539,12 @@ bool CreateSubprocessPipes(
     // Create the pipe the parent can use to write to the child's stdin
     if (!CreatePipe(&hChildStdinRead, &hParentInputWriteTmp, &sa, 0))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CreatePipe failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -546,18 +552,18 @@ bool CreateSubprocessPipes(
 
     // Duplicate the parent's end of the pipe, so the child can't inherit it.
     if (!DuplicateHandle(GetCurrentProcess(), hParentInputWriteTmp,
-                         GetCurrentProcess(),
-                         &hParentInputWrite, // Address of new handle.
-                         0, 
-                         FALSE, // Make it uninheritable.
-                         DUPLICATE_SAME_ACCESS))
+        GetCurrentProcess(),
+        &hParentInputWrite, // Address of new handle.
+        0,
+        FALSE, // Make it uninheritable.
+        DUPLICATE_SAME_ACCESS))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - DuplicateHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -567,12 +573,12 @@ bool CreateSubprocessPipes(
     // inherited.
     if (!CloseHandle(hParentInputWriteTmp))
     {
-        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp); 
-        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead); 
-        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite); 
-        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite); 
-        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead); 
-        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp); 
+        if (hParentOutputReadTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputReadTmp);
+        if (hParentOutputRead != INVALID_HANDLE_VALUE) CloseHandle(hParentOutputRead);
+        if (hChildStdoutWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStdoutWrite);
+        if (hChildStderrWrite != INVALID_HANDLE_VALUE) CloseHandle(hChildStderrWrite);
+        if (hChildStdinRead != INVALID_HANDLE_VALUE) CloseHandle(hChildStdinRead);
+        if (hParentInputWriteTmp != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWriteTmp);
         if (hParentInputWrite != INVALID_HANDLE_VALUE) CloseHandle(hParentInputWrite);
         my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
@@ -594,35 +600,43 @@ bool WriteRegistryDwordValue(const string& name, DWORD value)
     HKEY key = 0;
     DWORD disposition = 0;
     DWORD bufferLength = sizeof(value);
-    LONG returnCode = 0;
 
-    bool success =
-        (ERROR_SUCCESS == (returnCode = RegCreateKeyEx(
-                            HKEY_CURRENT_USER,
-                            LOCAL_SETTINGS_REGISTRY_KEY,
-                            0,
-                            0,
-                            0,
-                            KEY_WRITE,
-                            0,
-                            &key,
-                            &disposition)) &&
-
-         ERROR_SUCCESS == (returnCode = RegSetValueExA(
-                            key,
-                            name.c_str(),
-                            0,
-                            REG_DWORD,
-                            (LPBYTE)&value,
-                            bufferLength)));
-    RegCloseKey(key);
-
-    if (!success)
+    LONG returnCode = RegCreateKeyEx(
+        HKEY_CURRENT_USER,
+        LOCAL_SETTINGS_REGISTRY_KEY,
+        0,
+        0,
+        0,
+        KEY_WRITE,
+        0,
+        &key,
+        &disposition);
+    if (returnCode != ERROR_SUCCESS)
     {
-        my_print(NOT_SENSITIVE, true, _T("%s failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
     }
 
-    return success;
+    auto closeKey = finally([=]() {
+        auto lastError = GetLastError();
+        RegCloseKey(key);
+        SetLastError(lastError); // restore the previous error code
+    });
+
+    returnCode = RegSetValueExA(
+                key,
+                name.c_str(),
+                0,
+                REG_DWORD,
+                (LPBYTE)&value,
+                bufferLength);
+    if (returnCode != ERROR_SUCCESS)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExA failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -632,110 +646,145 @@ bool ReadRegistryDwordValue(const string& name, DWORD& value)
     DWORD bufferLength = sizeof(value);
     DWORD type;
 
-    bool success =
-        (ERROR_SUCCESS == RegOpenKeyEx(
-                            HKEY_CURRENT_USER,
-                            LOCAL_SETTINGS_REGISTRY_KEY,
-                            0,
-                            KEY_READ,
-                            &key) &&
+    LONG returnCode = RegOpenKeyEx(
+                        HKEY_CURRENT_USER,
+                        LOCAL_SETTINGS_REGISTRY_KEY,
+                        0,
+                        KEY_READ,
+                        &key);
+    if (returnCode != ERROR_SUCCESS)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegOpenKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
+    }
 
-         ERROR_SUCCESS == RegQueryValueExA(
-                            key,
-                            name.c_str(),
-                            0,
-                            &type,
-                            (LPBYTE)&value,
-                            &bufferLength) &&
+    auto closeKey = finally([=]() {
+        auto lastError = GetLastError();
+        RegCloseKey(key);
+        SetLastError(lastError); // restore the previous error code
+    });
 
-        type == REG_DWORD);
+    returnCode = RegQueryValueExA(
+                    key,
+                    name.c_str(),
+                    0,
+                    &type,
+                    (LPBYTE)&value,
+                    &bufferLength);
+    if (returnCode != ERROR_SUCCESS)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExA failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
+    }
 
-    RegCloseKey(key);
+    if (type != REG_DWORD)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExA says type of '%hs' is %ld, not REG_DWORD"), __TFUNCTION__, name.c_str(), type);
+        return false;
+    }
 
-    return success;
+    return true;
 }
 
 
 bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason)
 {
     HKEY key = 0;
-    LONG returnCode = 0;
     reason = REGISTRY_FAILURE_NO_REASON;
 
-    if (ERROR_SUCCESS != (returnCode = RegCreateKeyEx(
-                            HKEY_CURRENT_USER,
-                            LOCAL_SETTINGS_REGISTRY_KEY,
-                            0,
-                            0,
-                            0,
-                            KEY_WRITE,
-                            0,
-                            &key,
-                            0)))
+    LONG returnCode = RegCreateKeyEx(
+                        HKEY_CURRENT_USER,
+                        LOCAL_SETTINGS_REGISTRY_KEY,
+                        0,
+                        0,
+                        0,
+                        KEY_WRITE,
+                        0,
+                        &key,
+                        0);
+    if (returnCode != ERROR_SUCCESS)
     {
-        my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
     }
-    else if (ERROR_SUCCESS != (returnCode = RegSetValueExA(
-                            key,
-                            name.c_str(),
-                            0,
-                            REG_SZ,
-                            (LPBYTE)value.c_str(),
-                            value.length() + 1))) // Write the null terminator
+
+    auto closeKey = finally([=]() {
+        auto lastError = GetLastError();
+        RegCloseKey(key);
+        SetLastError(lastError); // restore the previous error code
+    });
+
+    returnCode = RegSetValueExA(
+        key,
+        name.c_str(),
+        0,
+        REG_SZ,
+        (LPBYTE)value.c_str(),
+        value.length() + 1); // Write the null terminator
+    if (returnCode != ERROR_SUCCESS)
     {
-        my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExA failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
-        
+        my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExA failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+
         if (ERROR_NO_SYSTEM_RESOURCES == returnCode)
         {
             reason = REGISTRY_FAILURE_WRITE_TOO_LONG;
         }
+
+        return false;
     }
 
-    RegCloseKey(key);
-
-    return ERROR_SUCCESS == returnCode;
+    return true;
 }
 
 
 bool WriteRegistryStringValue(const string& name, const wstring& value, RegistryFailureReason& reason)
 {
     HKEY key = 0;
-    LONG returnCode = 0;
     reason = REGISTRY_FAILURE_NO_REASON;
     wstring wName = UTF8ToWString(name);
 
-    if (ERROR_SUCCESS != (returnCode = RegCreateKeyEx(
-        HKEY_CURRENT_USER,
-        LOCAL_SETTINGS_REGISTRY_KEY,
-        0,
-        0,
-        0,
-        KEY_WRITE,
-        0,
-        &key,
-        0)))
+    LONG returnCode = RegCreateKeyEx(
+                        HKEY_CURRENT_USER,
+                        LOCAL_SETTINGS_REGISTRY_KEY,
+                        0,
+                        0,
+                        0,
+                        KEY_WRITE,
+                        0,
+                        &key,
+                        0);
+    if (returnCode != ERROR_SUCCESS)
     {
-        my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
     }
-    else if (ERROR_SUCCESS != (returnCode = RegSetValueExW(
+
+    auto closeKey = finally([=]() {
+        auto lastError = GetLastError();
+        RegCloseKey(key);
+        SetLastError(lastError); // restore the previous error code
+    });
+
+    returnCode = RegSetValueExW(
         key,
         wName.c_str(),
         0,
         REG_SZ,
         (LPBYTE)value.c_str(),
-        (value.length()+1)*sizeof(wchar_t)))) // Write the null terminator
+        (value.length() + 1) * sizeof(wchar_t)); // Write the null terminator
+    if (returnCode != ERROR_SUCCESS)
     {
-        my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExW failed for %S with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExW failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
 
         if (ERROR_NO_SYSTEM_RESOURCES == returnCode)
         {
             reason = REGISTRY_FAILURE_WRITE_TOO_LONG;
         }
+        
+        return false;
     }
 
-    RegCloseKey(key);
-
-    return ERROR_SUCCESS == returnCode;
+    return true;
 }
 
 
@@ -744,27 +793,35 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
     value.clear();
 
     HKEY key = 0;
-    if (ERROR_SUCCESS != RegOpenKeyEx(
-                            HKEY_CURRENT_USER,
-                            LOCAL_SETTINGS_REGISTRY_KEY,
-                            0,
-                            KEY_READ,
-                            &key))
+    LONG returnCode = RegOpenKeyEx(
+                        HKEY_CURRENT_USER,
+                        LOCAL_SETTINGS_REGISTRY_KEY,
+                        0,
+                        KEY_READ,
+                        &key);
+    if (returnCode != ERROR_SUCCESS)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegOpenKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name, returnCode);
         return false;
     }
 
-    auto closeKey = finally([=]() { RegCloseKey(key); });
+    auto closeKey = finally([=]() { 
+        auto lastError = GetLastError();
+        RegCloseKey(key); 
+        SetLastError(lastError); // restore the previous error code
+    });
 
     DWORD bufferLength = 0;
-    if (ERROR_SUCCESS != RegQueryValueExA(
-                            key,
-                            name,
-                            0,
-                            0,
-                            NULL,
-                            &bufferLength))
+    returnCode = RegQueryValueExA(
+                    key,
+                    name,
+                    0,
+                    0,
+                    NULL,
+                    &bufferLength);
+    if (returnCode != ERROR_SUCCESS)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExA(1) failed for '%hs' with code %ld"), __TFUNCTION__, name, returnCode);
         return false;
     }
 
@@ -775,18 +832,25 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
     }
 
     DWORD type;
-    if (ERROR_SUCCESS != RegQueryValueExA(
-                            key,
-                            name,
-                            0,
-                            &type,
-                            (LPBYTE)value.c_str(),
-                            &bufferLength) ||
-        type != REG_SZ)
+    returnCode = RegQueryValueExA(
+                    key,
+                    name,
+                    0,
+                    &type,
+                    (LPBYTE)value.c_str(),
+                    &bufferLength);
+    if (returnCode != ERROR_SUCCESS)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExA(2) failed for '%hs' with code %ld"), __TFUNCTION__, name, returnCode);
         return false;
     }
-    
+
+    if (type != REG_SZ)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExA says type of '%hs' is %ld, not REG_SZ"), __TFUNCTION__, name, type);
+        return false;
+    }
+
     return true;
 }
 
@@ -797,32 +861,41 @@ bool ReadRegistryStringValue(LPCSTR name, wstring& value)
     wstring wName = UTF8ToWString(name);
 
     HKEY key = 0;
-    if (ERROR_SUCCESS != RegOpenKeyEx(
-                            HKEY_CURRENT_USER,
-                            LOCAL_SETTINGS_REGISTRY_KEY,
-                            0,
-                            KEY_READ,
-                            &key))
+    LONG returnCode = RegOpenKeyEx(
+                        HKEY_CURRENT_USER,
+                        LOCAL_SETTINGS_REGISTRY_KEY,
+                        0,
+                        KEY_READ,
+                        &key);
+    if (returnCode != ERROR_SUCCESS)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegOpenKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name, returnCode);
         return false;
     }
-    
-    auto closeKey = finally([=]() { RegCloseKey(key); });
-    
+
+    auto closeKey = finally([=]() {
+        auto lastError = GetLastError();
+        RegCloseKey(key);
+        SetLastError(lastError); // restore the previous error code
+    });
+
     DWORD bufferLength = 0;
-    if (ERROR_SUCCESS != RegQueryValueExW(
-                            key,
-                            wName.c_str(),
-                            0,
-                            0,
-                            NULL,
-                            &bufferLength))
+    returnCode = RegQueryValueExW(
+                    key,
+                    wName.c_str(),
+                    0,
+                    0,
+                    NULL,
+                    &bufferLength);
+    if (returnCode != ERROR_SUCCESS)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExW(1) failed for '%hs' with code %ld"), __TFUNCTION__, name, returnCode);
         return false;
     }
 
     // bufferLength is the size of the data in bytes.
     if (bufferLength % sizeof(wchar_t) != 0) {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExW(1) for %hs says bufferLength is not a multiple of sizeof(wchar_t): %ld"), __TFUNCTION__, name, bufferLength);
         return false;
     }
 
@@ -833,15 +906,22 @@ bool ReadRegistryStringValue(LPCSTR name, wstring& value)
     }
 
     DWORD type;
-    if (ERROR_SUCCESS != RegQueryValueExW(
-                            key,
-                            wName.c_str(),
-                            0,
-                            &type,
-                            (LPBYTE)value.c_str(),
-                            &bufferLength) ||
-        type != REG_SZ)
+    returnCode = RegQueryValueExW(
+        key,
+        wName.c_str(),
+        0,
+        &type,
+        (LPBYTE)value.c_str(),
+        &bufferLength);
+    if (returnCode != ERROR_SUCCESS)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExW(2) failed for '%hs' with code %ld"), __TFUNCTION__, name, returnCode);
+        return false;
+    }
+
+    if (type != REG_SZ)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegQueryValueExW says type of '%hs' is %ld, not REG_SZ"), __TFUNCTION__, name, type);
         return false;
     }
 
@@ -909,24 +989,24 @@ string CryptBinaryToStringWrapper(const unsigned char* input, size_t length, DWO
 
     // Get the required size
     if (!CryptBinaryToStringA(
-            input,
-            length,
-            flags | CRYPT_STRING_NOCR,
-            NULL,
-            &outsize))
+        input,
+        length,
+        flags | CRYPT_STRING_NOCR,
+        NULL,
+        &outsize))
     {
         return "";
     }
 
     string output;
-    output.resize(outsize+1);
+    output.resize(outsize + 1);
 
     if (!CryptBinaryToStringA(
-            input,
-            length,
-            flags | CRYPT_STRING_NOCR,
-            (LPSTR)output.c_str(),
-            &outsize))
+        input,
+        length,
+        flags | CRYPT_STRING_NOCR,
+        (LPSTR)output.c_str(),
+        &outsize))
     {
         return "";
     }
@@ -942,13 +1022,13 @@ string CryptStringToBinaryWrapper(const string& input, DWORD flags)
 
     // Get the required size
     if (!CryptStringToBinaryA(
-            input.c_str(),
-            input.length(),
-            flags,
-            NULL,
-            &outsize,
-            NULL,
-            NULL))
+        input.c_str(),
+        input.length(),
+        flags,
+        NULL,
+        &outsize,
+        NULL,
+        NULL))
     {
         return "";
     }
@@ -957,13 +1037,13 @@ string CryptStringToBinaryWrapper(const string& input, DWORD flags)
     output.resize(outsize);
 
     if (!CryptStringToBinaryA(
-            input.c_str(),
-            input.length(),
-            flags,
-            (BYTE*)output.c_str(),
-            &outsize,
-            NULL,
-            NULL))
+        input.c_str(),
+        input.length(),
+        flags,
+        (BYTE*)output.c_str(),
+        &outsize,
+        NULL,
+        NULL))
     {
         return "";
     }
@@ -1062,7 +1142,7 @@ tstring UrlCodec(const tstring& input, bool encode)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: InternetCanonicalizeUrl failed for %s with code %ld"), __TFUNCTION__, input.c_str(), GetLastError());
     }
-    
+
     if (outputBuffer != 0)
     {
         delete[] outputBuffer;
@@ -1107,10 +1187,10 @@ tstring UrlDecode(const tstring& input)
 tstring GetLocaleName()
 {
     int size = GetLocaleInfo(
-                LOCALE_USER_DEFAULT,
-                LOCALE_SISO639LANGNAME,
-                NULL,
-                0);
+        LOCALE_USER_DEFAULT,
+        LOCALE_SISO639LANGNAME,
+        NULL,
+        0);
 
     if (size <= 0)
     {
@@ -1120,10 +1200,10 @@ tstring GetLocaleName()
     LPTSTR buf = new TCHAR[size];
 
     size = GetLocaleInfo(
-                LOCALE_USER_DEFAULT,
-                LOCALE_SISO639LANGNAME,
-                buf,
-                size);
+        LOCALE_USER_DEFAULT,
+        LOCALE_SISO639LANGNAME,
+        buf,
+        size);
 
     if (size <= 0)
     {
@@ -1146,7 +1226,7 @@ tstring GetISO8601DatetimeString()
     TCHAR ret[64];
     _sntprintf_s(
         ret,
-        sizeof(ret)/sizeof(ret[0]),
+        sizeof(ret) / sizeof(ret[0]),
         _T("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"),
         systime.wYear,
         systime.wMonth,
@@ -1213,7 +1293,7 @@ wstring GetDeviceRegion()
                 for (const Json::Value& entry : json)
                 {
                     wstring entryDialingCode = UTF8ToWString(entry.get("dialing_code", "").asString());
-                    if (!entryDialingCode.empty() 
+                    if (!entryDialingCode.empty()
                         && entryDialingCode == countryDialingCode)
                     {
                         wstring entryCountryCode = UTF8ToWString(entry.get("country_code", "").asString());
@@ -1259,7 +1339,7 @@ wstring GetDeviceRegion()
     }
 
     // At this point, dialingCodeCountries either has a value or is unusable.
-    
+
     //
     // Derive region from UI locale.
     //
@@ -1271,7 +1351,7 @@ wstring GetDeviceRegion()
     std::transform(uiLocaleUpper.begin(), uiLocaleUpper.end(), uiLocaleUpper.begin(), ::toupper);
 
     // This is hand-wavy, imperfect, and will need to be expanded in the future.
-    std::map<wstring, wstring> localeToCountryMap = { 
+    std::map<wstring, wstring> localeToCountryMap = {
         { L"AR", L"SA" },
         { L"EN", L"US" },
         { L"FA", L"IR" },
@@ -1380,8 +1460,8 @@ bool GetResourceBytes(LPCTSTR name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size
 
 
 /*
- * Feedback Encryption
- */
+* Feedback Encryption
+*/
 
 bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted)
 {
@@ -1428,7 +1508,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
                 new CryptoPP::StringSink(b64Ciphertext),
                 false));
 
-        size_t ivLength = sizeof(iv)*sizeof(iv[0]);
+        size_t ivLength = sizeof(iv) * sizeof(iv[0]);
         CryptoPP::StringSource(
             iv,
             ivLength,
@@ -1449,7 +1529,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
             return false;
         }
         memcpy(ivPlusCiphertext, iv, ivLength);
-        memcpy(ivPlusCiphertext+ivLength, ciphertext.data(), ciphertextLength);
+        memcpy(ivPlusCiphertext + ivLength, ciphertext.data(), ciphertextLength);
 
         CryptoPP::SecByteBlock macKey(KEY_LENGTH);
         rng.GenerateBlock(macKey, macKey.size());
@@ -1518,7 +1598,7 @@ bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& 
                 new CryptoPP::StringSink(b64WrappedMacKey),
                 false));
     }
-    catch( const CryptoPP::Exception& e )
+    catch (const CryptoPP::Exception& e)
     {
         my_print(NOT_SENSITIVE, false, _T("%s - Encryption failed (%d): %S"), __TFUNCTION__, GetLastError(), e.what());
         return false;
@@ -1559,7 +1639,7 @@ DWORD GetTickCountDiff(DWORD start, DWORD end)
 AutoHANDLE and AutoMUTEX
 */
 
-AutoMUTEX::AutoMUTEX(HANDLE mutex, TCHAR* logInfo/*=0*/) 
+AutoMUTEX::AutoMUTEX(HANDLE mutex, TCHAR* logInfo/*=0*/)
     : m_mutex(mutex)
 {
     if (logInfo) m_logInfo = logInfo;
@@ -1582,7 +1662,7 @@ HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value)
 {
     // In the no-op/unsupported case we're going to return success.
     HRESULT res = S_OK;
-    
+
     HINSTANCE hinstSHCORE = NULL;
 
     static const int maxPathBufferSize = MAX_PATH + 1;
@@ -1615,7 +1695,7 @@ HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX
     HRESULT res = ERROR_NOT_SUPPORTED;
 
     HINSTANCE hinstSHCORE = NULL;
-    
+
     static const int maxPathBufferSize = MAX_PATH + 1;
     TCHAR SystemDirectoryPathBuffer[maxPathBufferSize];
     if (GetSystemDirectory(SystemDirectoryPathBuffer, maxPathBufferSize))
@@ -1668,7 +1748,7 @@ HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi)
 HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale)
 {
     o_scale = 1.0;
-    
+
     UINT dpi = 0;
 
     HRESULT res = GetDpiForCurrentMonitor(hWnd, dpi);
