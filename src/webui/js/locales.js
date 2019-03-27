@@ -5301,7 +5301,7 @@
       "settings#egress-region#select-gb": "Велика Британія",
       "settings#egress-region#select-jp": "Японія",
       "settings#egress-region#select-sg": "Сінгапур",
-      "settings#egress-region#select-sk": "Slovakia",
+      "settings#egress-region#select-sk": "Словаччина",
       "settings#egress-region#select-nl": "Нідерланди",
       "settings#egress-region#select-de": "Німеччина",
       "settings#egress-region#select-in": "Індія",
