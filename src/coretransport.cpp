@@ -840,11 +840,19 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         Json::Reader reader;
         if (!reader.parse(line, notice))
         {
-            // If the line starts with "panic", assume the core is crashing and add all further output to diagnostics
-            static const char* PANIC = "panic";
-            if (0 == _strnicmp(line, PANIC, strlen(PANIC)))
+            // If the line contains "panic" or "fatal error", assume the core is crashing and add all further output to diagnostics
+            static const char* const PANIC_HEADERS[] = {
+                "panic",
+                "fatal error"
+            };
+
+            for (int i = 0; i < (sizeof(PANIC_HEADERS) / sizeof(char*)); ++i)
             {
-                m_panicked = true;
+                if (0 != StrStrIA(line, PANIC_HEADERS[i]))
+                {
+                    m_panicked = true;
+                    break;
+                }
             }
 
             if (m_panicked)
