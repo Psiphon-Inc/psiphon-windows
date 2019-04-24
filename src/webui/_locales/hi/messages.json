@@ -148,7 +148,7 @@
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Fastest Country",
+        "message": "सबसे तेज देश",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
