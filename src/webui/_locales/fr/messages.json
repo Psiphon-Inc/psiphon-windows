@@ -112,12 +112,12 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "Si cette option est activée, les requêtes faites au serveurs dans votre pays d’origine ne seront pas tunnellisées par Psiphon.",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "Si cette option est activée, les requêtes faites aux serveurs qui se trouvent dans votre pays actuel ne seront pas tunnellisées par Psiphon.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#reason": {
-        "message": "Les sites Web de votre pays d’origine ne sont généralement pas bloqués et l’activation de cette option vous donnera un accès plus rapide vers ces sites, pouvant parfois aussi réduire les coûts d’utilisation de données de votre FSI.",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+        "message": "Les sites Web de votre pays actuel ne sont généralement pas bloqués. L’activation de cette option vous donnera un accès plus rapide vers ces sites, et pourrait parfois réduire les coûts d’utilisation de données de votre FAI.",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#enable-label": {
         "message": "Ne pas relayer les sites Web de votre pays",
@@ -248,8 +248,8 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon détient des serveurs dans de nombreux pays différents. L’utilisation d’un serveur Psiphon dans un pays proche de votre pays d’origine fournira habituellement une meilleure connexion réseau, mais vous pourriez souhaiter accéder à des sites Web et des services en prétendant être virtuellement dans un pays particulier.",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "Psiphon a des serveurs dans de nombreux pays différents. L’utilisation d’un serveur Psiphon dans un pays proche de votre pays actuel fournira habituellement une meilleure connexion réseau, mais vous pourriez souhaiter accéder à des sites Web et des services en prétendant être virtuellement dans un pays particulier.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#egress-region#default": {
         "message": "Le choix de l’option du <strong>« Pays le plus rapide »</strong> permet à Psiphon de choisir automatiquement un serveur, ce qui donnera habituellement la meilleure connexion réseau.",

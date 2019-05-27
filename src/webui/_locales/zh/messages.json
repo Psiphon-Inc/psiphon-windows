@@ -112,12 +112,12 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "如果启用，发往您所在国家服务器的请求将不会经过赛风隧道。",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "如果启用，发往您所在国家服务器的请求将不会被赛风代理。",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#reason": {
         "message": "您所在国家的网站一般不会被封锁，因此启用此选项可以让您更快地访问这些网站，有时还可降低 ISP 数据流量费用。",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#enable-label": {
         "message": "不代理您所在国家内的网站",
@@ -248,8 +248,8 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "赛风在多个国家部署了服务器。使用靠近您所在国家的赛风服务器通常网络质量更佳，而您也可能希望访问网站和服务一如您就在某个特定的国家一样。",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "赛风有位于许多不同国家的服务器。使用靠近您所在国家的赛风服务器通常会使网络质量更佳，然而您也可以如临其境般访问网站及服务。",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#egress-region#default": {
         "message": "选择默认的<strong>“最快的国家”</strong>选项以允许赛风自动选择服务器，通常能得到最佳的网络连接质量。",

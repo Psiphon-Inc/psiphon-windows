@@ -112,12 +112,12 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "اگر فعال باشد٬ درخواست های شما به سرورهای داخل کشور از طریق سرورهای سایفون تونل نمی‌شوند.  ",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "در صورت فعال بودن، درخواست‌هایی که به سرورهای در کشور شما ارائه می‌شود از طریق سایفون تونل نمی‌شود.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#reason": {
-        "message": "وب سایت هایی که در کشور خودتان میزبانی می شوند عموما مسدود نیستند، بنابراین فعال کردن این گزینه می تواند سرعت دسترسی به این سایت ها را افزایش داده و گاهی باعث کاهش هزینه مصرف داده شود.",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+        "message": "وب‌سایت‌های موجود در کشور فعلی شما به طور کلی مسدود نیستند، بنابراین فعال کردن این گزینه امکان دسترسی سریع‌تر به این سایت‌ها را فراهم می‌کند و گاهی اوقات می‌تواند هزینه‌های استفاده از داده‌های ISP را کاهش دهد.",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#enable-label": {
         "message": "وبسایت های داخل کشور من را پراکسی نکن. ",
@@ -248,8 +248,8 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "سایفون در کشورهای گوناگون سرور دارد. استفاده از سرور در یکی از کشورهای نزدیک به محل حضور شما، عموما می تواند ارتباط بهتری برایتان به ارمغان آورد، اما ممکن است شما تمایل داشته باشید که از سرویس خاصی استفاده کنید و نیاز باشد که به صورت مجازی در کشور خاصی باشید. ",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "سایفون در کشورهای گوناگون سرور دارد. استفاده از سرور در یکی از کشورهای نزدیک به محل حضور شما، عموما می‌تواند ارتباط شبکه بهتری برایتان به ارمغان آورد، اما ممکن است شما تمایل داشته باشید که از سرویس خاصی استفاده کنید و نیاز باشد که به صورت مجازی در کشور خاصی باشید.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#egress-region#default": {
         "message": "انتخاب گزینه <strong>“سریع ترین کشور”</strong> به سایفون اجازه می دهد که به صورت خودکار یک سرور را انتخاب کند که عموما نتیجه آن یک ارتباط بهتر و پایدارتر است. ",
