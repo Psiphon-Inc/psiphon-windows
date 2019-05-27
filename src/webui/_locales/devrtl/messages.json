@@ -244,8 +244,8 @@
     "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
   },
   "settings#egress-region#description": {
-    "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮∩sıuƃ‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮ɔonuʇɹʎ‬ ‮ɔʅosǝ‬ ‮ʇo‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮dɹoʌıpǝ‬ ‮ɐ‬ ‮qǝʇʇǝɹ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ʍısɥ‬ ‮ʇo‬ ‮ɐɔɔǝss‬ ‮ʍǝqsıʇǝs‬ ‮ɐup‬ ‮sǝɹʌıɔǝs‬ ‮ʅıʞǝ‬ ‮ʎon‬ ‮ɐɹǝ‬ ‮ʌıɹʇnɐʅʅʎ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
-    "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+    "message": "‮Ԁsıdɥou‬ ‮ɥɐs‬ ‮sǝɹʌǝɹs‬ ‮ıu‬ ‮ɯɐuʎ‬ ‮pıɟɟǝɹǝuʇ‬ ‮ɔonuʇɹıǝs‬. ‮∩sıuƃ‬ ‮ɐ‬ ‮Ԁsıdɥou‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮ɔonuʇɹʎ‬ ‮ɔʅosǝ‬ ‮ʇo‬ ‮ʎonɹ‬ ‮dɹǝsǝuʇ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮dɹoʌıpǝ‬ ‮ɐ‬ ‮qǝʇʇǝɹ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮qnʇ‬ ‮ʎon‬ ‮ɯɐʎ‬ ‮ʍısɥ‬ ‮ʇo‬ ‮ɐɔɔǝss‬ ‮ʍǝqsıʇǝs‬ ‮ɐup‬ ‮sǝɹʌıɔǝs‬ ‮ʅıʞǝ‬ ‮ʎon‬ ‮ɐɹǝ‬ ‮ʌıɹʇnɐʅʅʎ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɔonuʇɹʎ‬.",
+    "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
   },
   "settings#egress-region#error-modal-body-http": {
     "message": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬ ‮ıu‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ɹǝƃıou‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮ɹǝƃıou‬ ‮ıs‬ ‮uo‬ ‮ʅouƃǝɹ‬ ‮ɐʌɐıʅɐqʅǝ‬.<br>\n‮ʎon‬ ‮ɯnsʇ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ɹǝƃıou‬ ‮oɹ‬ ‮ɔɥɐuƃǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ “‮ɟɐsʇǝsʇ‬ ‮Ↄonuʇɹʎ‬” ‮ɔɥoıɔǝ‬.",
@@ -436,12 +436,12 @@
     "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
   },
   "settings#split-tunnel#help-text": {
-    "message": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
-    "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+    "message": "‮Iɟ‬ ‮ǝuɐqʅǝp‬, ‮ɹǝbnǝsʇs‬ ‮ɯɐpǝ‬ ‮ʇo‬ ‮sǝɹʌǝɹs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮dɹǝsǝuʇ‬ ‮ɔonuʇɹʎ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮ʇnuuǝʅǝp‬ ‮ʇɥɹonƃɥ‬ ‮Ԁsıdɥou‬.",
+    "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
   },
   "settings#split-tunnel#reason": {
-    "message": "‮Ｍǝqsıʇǝs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮ɥoɯǝ‬ ‮ɔonuʇɹʎ‬ ‮ɐɹǝ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮uoʇ‬ ‮qʅoɔʞǝp‬, ‮so‬ ‮ǝuɐqʅıuƃ‬ ‮ʇɥıs‬ ‮odʇıou‬ ‮ʍıʅʅ‬ ‮ƃıʌǝ‬ ‮ʎon‬ ‮ɟɐsʇǝɹ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥosǝ‬ ‮sıʇǝs‬ ‮ɐup‬ ‮ɔɐu‬ ‮soɯǝʇıɯǝs‬ ‮ɹǝpnɔǝ‬ ‮ISԀ‬ ‮pɐʇɐ‬ ‮nsɐƃǝ‬ ‮ɔosʇs‬.",
-    "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+    "message": "‮Ｍǝqsıʇǝs‬ ‮ʍıʇɥıu‬ ‮ʎonɹ‬ ‮dɹǝsǝuʇ‬ ‮ɔonuʇɹʎ‬ ‮ɐɹǝ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮uoʇ‬ ‮qʅoɔʞǝp‬, ‮so‬ ‮ǝuɐqʅıuƃ‬ ‮ʇɥıs‬ ‮odʇıou‬ ‮ʍıʅʅ‬ ‮ƃıʌǝ‬ ‮ʎon‬ ‮ɟɐsʇǝɹ‬ ‮ɐɔɔǝss‬ ‮ʇo‬ ‮ʇɥosǝ‬ ‮sıʇǝs‬ ‮ɐup‬ ‮ɔɐu‬ ‮soɯǝʇıɯǝs‬ ‮ɹǝpnɔǝ‬ ‮ISԀ‬ ‮pɐʇɐ‬ ‮nsɐƃǝ‬ ‮ɔosʇs‬.",
+    "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
   },
   "settings#systray-minimize#enable-label": {
     "message": "‮Wıuıɯızǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮uoʇıɟıɔɐʇıou‬ ‮ɐɹǝɐ‬ (‮sʎsʇǝɯ‬ ‮ʇɹɐʎ‬)",
