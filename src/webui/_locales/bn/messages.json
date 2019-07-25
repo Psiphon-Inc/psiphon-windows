@@ -112,12 +112,12 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "যদি সক্ষম করা থাকে, তাহলে আপনার দেশের মধ্যে হোমপৃষ্ঠাতে সার্ভারগুলিতে করা অনুরোধগুলি সাইফনের মাধ্যমে সুরক্ষিত হবে না।",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "যদি সক্ষম করা থাকে, আপনার বর্তমান দেশের সার্ভারে করা অনুরোধগুলি Psiphon এর মাধ্যমে টানেল করা হবে না।",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#reason": {
-        "message": "আপনার দেশের ওয়েবসাইট সাধারণত অবরোধ করা হয় না, তাই এই বিকল্পটি সক্ষম করার ফলে ঐ সাইটগুলিতে দ্রুত অ্যাক্সেস করার অনুমতি দেবে এবং কখনও কখনও আপনি আইএসপি ডাটা ব্যবহারের খরচ কমাতে পারেন।",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+        "message": "আপনার দেশের ওয়েবসাইটগুলো সাধারণত ব্লকড থাকেনা, তাই এই বিকল্পটি চালু করার ফলে ঐ সাইটগুলিতে দ্রুত অ্যাক্সেস করার অনুমতি দেবে এবং কখনও কখনও আপনি আইএসপি'র ডাটা ব্যবহারের খরচ কমাতে পারেন।",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#enable-label": {
         "message": "আপনার দেশের মধ্যে ওয়েবসাইটগুলি  প্রক্সি করবেন না",
@@ -248,8 +248,8 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "সাইফন এর বিভিন্ন দেশে সার্ভার আছে। সাধারণত আপনার দেশের কাছাকাছি একটি দেশের সাইফন সার্ভার ব্যবহার করে একটি ভাল নেটওয়ার্ক সংযোগ প্রদান করবে, তবে আপনি যেমন নির্দিষ্ট দেশে কার্যত আছেন তেমনভাবে সেই দেশের ওয়েবসাইট এবং পরিষেবাগুলি অ্যাক্সেস করতে পারেন।",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "Psiphon এর বিভিন্ন দেশে সার্ভার আছে। সাধারণত আপনার দেশের কাছাকাছি একটি দেশের Psiphon সার্ভার ব্যবহার করলে এটি একটি ভাল নেটওয়ার্ক সংযোগ প্রদান করবে, তবে আপনি ভার্চুয়ালি কোন নির্দিষ্ট দেশে অবস্থান করে সেই দেশের ওয়েবসাইট এবং পরিষেবাগুলি অ্যাক্সেস করতে পারেন।",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#egress-region#default": {
         "message": "ডিফল্ট নির্বাচন<strong>\"দ্রুততম দেশ\"</strong> বিকল্পটি সাইফনকে স্বয়ংক্রিয়ভাবে একটি সার্ভার নির্বাচন করতে দেয়, যা সাধারণত সেরা নেটওয়ার্ক সংযোগের ফলে হবে।",
