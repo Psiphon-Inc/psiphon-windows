@@ -1,10 +1,10 @@
 {
     "banner#long-connecting": {
-        "message": "<strong>Oh no!</strong> You seem to be having trouble connecting!<br>\nDownload the latest version of Psiphon from the <a class=\"NewVersionURL\" href=\"#\">download site</a>\nor by sending an email to <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "message": "<strong>Oh no!</strong>\nSembra che tu abbia problemi di connessione!<br>\nScarica l'ultima versione di Psiphon dal <a class=\"NewVersionURL\" href=\"#\">sito download</a>\no inviando un'e-mail a <a class=\"NewVersionEmail\" href=\"#\"></a>",
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
     },
     "nav#connection#starting": {
-        "message": "Connessione",
+        "message": "Connessione in corso",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Connection' view, that has the connect button. This particular text is shown when Psiphon is connecting."
     },
     "nav#connection#connected": {
@@ -24,11 +24,11 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "nav#feedback": {
-        "message": "Commento",
+        "message": "Feedback",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "nav#logs": {
-        "message": "Registrazioni",
+        "message": "Log",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "nav#about": {
@@ -36,11 +36,11 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'About' view. In that view the user can see info about the app, info about Psiphon Inc., and click links for more information."
     },
     "connection#starting-msg": {
-        "message": "Psiphon sta <span class=\"state-word\">connettendosi</span>…",
+        "message": "Psiphon sta <span class=\"state-word\">connettendo</span>...",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
     },
     "connection#stop-btn": {
-        "message": "Stop",
+        "message": "Arresta",
         "description": "Text on the big connection button telling the user that if they click it, they will stop trying to connect to the network. This is shown to the user when they are trying to connect."
     },
     "connection#connected-msg": {
@@ -52,7 +52,7 @@
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "connection#stopping-msg": {
-        "message": "Psiphon stà <span class=\"state-word\">disconnettendosi</span>…",
+        "message": "Psiphon stà <span class=\"state-word\">disconnettendo</span>…",
         "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
     },
     "connection#wait-btn": {
@@ -76,7 +76,7 @@
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
     "settings#reset-button": {
-        "message": "Reimposta ai valori iniziali",
+        "message": "Ripristina configurazione predefinita",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "settings#apply-button": {
@@ -88,7 +88,7 @@
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#body": {
-        "message": "You have made changes to your settings, but you have not applied the changes.<br><br>Do you wish to apply your changes now or discard them?",
+        "message": "Hai apportato modifiche alle tue impostazioni, ma non le hai applicate.<br><br> Desideri applicare le modifiche?",
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#apply-button": {
@@ -96,7 +96,7 @@
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#unapplied-changes-prompt#discard-button": {
-        "message": "Scarta",
+        "message": "Elimina",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
     "settings#vpn-incompatible-msg": {
@@ -112,35 +112,35 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "Se abilitato, le richieste fatte nell'ambito della tua nazione non saranno avviate attraverso i tunnel Psiphon.",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "Se abilitato, le richieste inviate ai server nel tuo paese attuale, non verranno trasferite attraverso Psiphon.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#reason": {
-        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+        "message": "I siti Web nel tuo Paese generalmente non sono bloccati. Questa opzione, ti garantirà un più rapido accesso a tali siti e potrebbe anche ridurre i costi di utilizzo dei dati ISP.",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#enable-label": {
         "message": "Non usare proxy per i siti del tuo paese",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "settings#disable-timeouts#heading": {
-        "message": "Disable Timeouts for Slow Networks",
+        "message": "Disattiva timeout per reti lente",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
     },
     "settings#disable-timeouts#help-text": {
-        "message": "If enabled, communication with the Psiphon server will not time out.",
+        "message": "Se abilitato, la comunicazione con il server Psiphon non terminerà.",
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
     },
     "settings#disable-timeouts#reason": {
-        "message": "When enabling this over a very slow network connection, you are less likely to experience unexpected disconnections.",
+        "message": "Quando abilitato su una connessione di rete molto lenta, è improbabile che si verifichino disconnessioni impreviste.",
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
-        "message": "Disable timeouts for slow networks",
+        "message": "Disattiva timeout per reti lente",
         "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
     },
     "settings#egress-region#heading": {
-        "message": "Regione del server Psiphon",
+        "message": "Regione Server Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
     },
     "settings#egress-region#label": {
@@ -148,7 +148,7 @@
         "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Paese più veloce",
+        "message": "Nazione più veloce",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -248,27 +248,27 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "Psiphon ha server in molte nazioni. L'uso di un server Psiphon in un paese vicino al tuo, fornirà generalmente una migliore connessione di rete, permettendoti di accedere a siti Web e servizi, come se fossi in un paese specifico.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#egress-region#default": {
-        "message": "Choosing the default <strong>“Fastest Country”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "message": "Scegliendo l'opzione <strong>“Nazione più veloce”</strong>, Psiphon può scegliere automaticamente un server, che generalmente porterà alla migliore connessione di rete disponibile.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
     },
     "settings#egress-region#invalid-error-msg": {
-        "message": "Choose a valid Psiphon server region.",
+        "message": "Scegli una Regione Server Psiphon valida.",
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "Server Region Unavailable",
+        "message": "Regione Server non disponibile",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Fastest Country” choice.",
+        "message": "Psiphon è stato configurato per utilizzare un server di una regione specifica.<br>\nLa regione selezionata non è più disponibile.<br>\nÈ necessario scegliere una nuova regione o selezionare l'impostazione predefinita \"Nazione più veloce\".",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "Porte del proxy locale",
+        "message": "Porte Proxy Locale",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#local-proxy-ports#leave-blank": {
@@ -480,7 +480,7 @@
         "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
     },
     "about#wordart-tag": {
-        "message": "Beyond Borders",
+        "message": "Oltre i Confini",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
     },
     "about#description": {

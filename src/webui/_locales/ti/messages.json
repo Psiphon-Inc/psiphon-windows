@@ -112,12 +112,12 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "እንተበሪሁ፣ ኣብ ሃገርካ ንዘሎ ሰርቨር ዝቐረቡ ሕቶታትብሳይፎን ኣይጉሕጉጉን፡፡ ",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "If enabled, requests made to servers within your present country will not be tunneled through Psiphon.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#reason": {
-        "message": "ኣብ ሃገርካ ዘለዉ ወብሳይታት ብሓፈሽኡ ኣይተዓጽዉን። ስለዚ ነዞም ኣማራጽታት ብምኽፋት ናብ`ቶም ሳይታት ቅልጡፍ መሕለፊ ክህበካ `ዩ። ምናልባት`ውን ዋጋ ዳታ ISP ከጉድሎ ይኽእል`ዩ፡፡",
-        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
+        "message": "Websites within your present country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
+        "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#split-tunnel#enable-label": {
         "message": "ነዚ እንተመሪጽካ ኣብ ሃገርካ ንዘሎ ሰርቨራት ንምጥቃም ዝተግብረ ሕቶ ብሳይፎን ኣይመሓላለፍን`ዩ",
@@ -172,7 +172,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Singapore will be used."
     },
     "settings#egress-region#select-sk": {
-        "message": "Slovakia",
+        "message": "ስሎቫክያ",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Slovakia will be used."
     },
     "settings#egress-region#select-nl": {
@@ -248,8 +248,8 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "ሳይፎን (Psiphon) ኣብ ብዙሓት ዘተፈላለያ ሃገራት ሰርቨራት ኣለውኦ። ኣብ ናባኻ ዝቐረበት ሃገር ዘሎ ሰርቨር ዝሓሸ ርክብ ነትወርክ ይህበካ `ዩ። ግን ከም ኣብ ዝተወሰነት ሃገር ዝውሃብ ኣገልግሎት ዝህብ ወብሳይታት ክህልወካ ትደሊ ትኸውን፡፡",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your present country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. 'Present country' is the country that the user is currently in -- i.e., they country they're connecting _from_ with Psiphon."
     },
     "settings#egress-region#default": {
         "message": "<strong>“ዝቐልጠፈት ሃገር”</strong> ዝብል ምምራጽ፡ ሳይፎን (Psiphon) ኣውቶማቲካዊ ሓደ ሰርቨር ክመርጽ የኽእል እዚ ድማ  ብሓፈሽኡ ናብ ዝሓሸ ርክብ ነትወርክ ከሕልፈካ `ውን ይኽእል፡፡",
