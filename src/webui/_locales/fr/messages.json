@@ -488,7 +488,7 @@
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
     },
     "about#visit-download-site": {
-        "message": "Veuillez visiter le site Web pour <strong><a class=\"NewVersionURL\" href=\"#\">télécharger une nouvelle version</a></strong> ou pour <strong><a class=\"InfoURL\" href=\"#\">obtenir de l’aide et des informations</a></strong>. Psiphon est proposé pour Android et Windows.",
+        "message": "Veuillez visiter le site Web pour <strong><a class=\"NewVersionURL\" href=\"#\">télécharger une nouvelle version</a></strong> ou pour <strong><a class=\"InfoURL\" href=\"#\">obtenir de l’aide et des renseignements</a></strong>. Psiphon est proposé pour Android et Windows.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
     },
     "about#get-by-email": {
@@ -496,7 +496,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
     },
     "about#client-version": {
-        "message": "Version du client Psiphon pour Windows :",
+        "message": "Version du client Psiphon pour Windows :",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
     },
     "general#modal-close-button": {
