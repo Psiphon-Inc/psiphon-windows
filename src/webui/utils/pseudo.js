@@ -84,8 +84,8 @@ function makeRTL(val) {
 }
 
 // strftime tokens (%a, %Eb) and template {vars}
-// PSIPHON: And HTML tags, and Lodash template delimiters (https://lodash.com/docs#template)
-var reExcluded = /(%[EO]?\w|\{\s*.+?\s*\}|<\/?\w+[^>]*>|<%[^>]+%>|\$\{[^}]+\})/;
+// PSIPHON: And HTML tags, HTML entities, and Lodash template delimiters (https://lodash.com/docs#template)
+var reExcluded = /(%[EO]?\w|\{\s*.+?\s*\}|<\/?\w+[^>]*>|<%[^>]+%>|\$\{[^}]+\}|&[a-z]+;)/;
 
 function mapContent(fn, val) {
   if (!val) {

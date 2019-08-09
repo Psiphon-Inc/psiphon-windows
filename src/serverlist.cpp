@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -65,7 +65,7 @@ size_t ServerList::AddEntriesToList(
     vector<ServerEntry> decodedServerEntries;
     vector<string>::const_iterator entryStringIter;
     for (entryStringIter = newServerEntryList.begin();
-         entryStringIter != newServerEntryList.end(); 
+         entryStringIter != newServerEntryList.end();
          ++entryStringIter)
     {
         decodedServerEntries.push_back(ParseServerEntry(*entryStringIter));
@@ -78,7 +78,7 @@ size_t ServerList::AddEntriesToList(
     random_shuffle(decodedServerEntries.begin(), decodedServerEntries.end());
 
     ServerEntries oldServerEntryList = GetList();
-    
+
     vector<ServerEntry>::const_iterator decodedEntryIter;
     for (decodedEntryIter = decodedServerEntries.begin();
          decodedEntryIter != decodedServerEntries.end(); ++decodedEntryIter)
@@ -103,9 +103,9 @@ size_t ServerList::AddEntriesToList(
             // Insert the new entry as the second entry, so that the first entry can continue
             // to be used if it is reachable (unless there are no pre-existing entries).
             oldServerEntryList.insert(
-                oldServerEntryList.size() == 0 ? 
+                oldServerEntryList.size() == 0 ?
                     oldServerEntryList.begin() :
-                    oldServerEntryList.begin() + 1, 
+                    oldServerEntryList.begin() + 1,
                 *decodedEntryIter);
 
             entriesAdded++;
@@ -351,12 +351,12 @@ ServerEntries ServerList::GetListFromSystem(const char* listName)
     string serverEntryListString;
 
     if (!ReadRegistryStringValue(
-            listName, 
+            listName,
             serverEntryListString))
     {
         // If we're migrating from an old version, there's no m_name qualifier.
         if (!ReadRegistryStringValue(
-                LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS, 
+                LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS,
                 serverEntryListString))
         {
             return ServerEntries();
@@ -404,8 +404,8 @@ void ServerList::WriteListToSystem(const ServerEntries& serverEntryList)
     RegistryFailureReason reason = REGISTRY_FAILURE_NO_REASON;
 
     if (!WriteRegistryStringValue(
-            GetListName().c_str(), 
-            encodedServerEntryList, 
+            GetListName().c_str(),
+            encodedServerEntryList,
             reason))
     {
         if (REGISTRY_FAILURE_WRITE_TOO_LONG == reason)
@@ -448,9 +448,9 @@ ServerEntry members
 
 ServerEntry::ServerEntry(
     const string& serverAddress, const string& region, int webServerPort,
-    const string& webServerSecret, const string& webServerCertificate, 
-    int sshPort, const string& sshUsername, const string& sshPassword, 
-    const string& sshHostKey, int sshObfuscatedPort, 
+    const string& webServerSecret, const string& webServerCertificate,
+    int sshPort, const string& sshUsername, const string& sshPassword,
+    const string& sshHostKey, int sshObfuscatedPort,
     const string& sshObfuscatedKey,
     const string& meekObfuscatedKey, const int meekServerPort,
     const string& meekCookieEncryptionPublicKey,
@@ -489,7 +489,7 @@ void ServerEntry::Copy(const ServerEntry& src)
 string ServerEntry::ToString() const
 {
     stringstream ss;
-    
+
     //
     // Legacy values are simply space-separated strings
     //
@@ -508,7 +508,7 @@ string ServerEntry::ToString() const
     webServerPortString << webServerPort;
 
     Json::Value entry;
-    
+
     entry["ipAddress"] = serverAddress;
     entry["region"] = region;
     entry["webServerPort"] = webServerPortString.str();
@@ -587,7 +587,7 @@ void ServerEntry::FromString(const string& str)
     if (!getline(lineStream, lineItem, '\0'))
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Extended JSON values not present"), __TFUNCTION__);
-        
+
         // Assumption: we're not reading into a ServerEntry struct that already
         // has values set. So we're relying on the default values being set by
         // the constructor.
@@ -635,7 +635,7 @@ void ServerEntry::FromString(const string& str)
                 this->capabilities.push_back(item);
             }
         }
-        
+
         if (HasCapability("FRONTED-MEEK") || HasCapability("UNFRONTED-MEEK") || HasCapability("UNFRONTED-MEEK-HTTPS"))
         {
             meekServerPort = json_entry.get("meekServerPort", 0).asInt();

@@ -23,7 +23,9 @@
 #include <chrono>
 #include "vendor/nlohmann/json.hpp"
 
+namespace psicash {
 namespace datetime {
+
 using Duration = std::chrono::milliseconds; // millisecond-resolution duration
 using Clock = std::chrono::system_clock;
 using TimePoint = std::chrono::time_point<Clock, Duration>;
@@ -33,7 +35,7 @@ public:
     // By default, initializes to the "zero" value.
     DateTime();
     DateTime(const DateTime& src);
-    DateTime(const TimePoint& src);
+    explicit DateTime(const TimePoint& src);
     DateTime& operator=(const DateTime&) = default;
 
     static DateTime Zero();
@@ -72,7 +74,9 @@ private:
 
 // These are intended to help de/serialization of duration values.
 int64_t DurationToInt64(const Duration& d);
-Duration DurationFromInt64(const int64_t d);
+Duration DurationFromInt64(int64_t d);
+
 } // namespace datetime
+} // namespace psicash
 
 #endif //PSICASHLIB_DATETIME_H

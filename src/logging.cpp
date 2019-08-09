@@ -26,22 +26,22 @@
 /*
 ## Regarding notices, logs, feedback
 
-* `UI_Notice` should be called for: a) messages that need to be shown to user 
-  in a modal, or b) high-priority messages that can go in the log but should be 
-  translated (they may or may not be actionable, but aren't fatal enough to 
+* `UI_Notice` should be called for: a) messages that need to be shown to user
+  in a modal, or b) high-priority messages that can go in the log but should be
+  translated (they may or may not be actionable, but aren't fatal enough to
   show in a modal).
     - Does not have sensitivity flag, since it's not added to feedback.
-* `my_print` is displayed to user (mid-priority) and is added to 
+* `my_print` is displayed to user (mid-priority) and is added to
   `MessageHistory` (and so feedback).
     - Has sensitivity flag.
-* `AddDiagnosticInfoJson` is added to `DiagnosticHistory` (and so feedback) but 
+* `AddDiagnosticInfoJson` is added to `DiagnosticHistory` (and so feedback) but
   is not displayed to user.
     - Does not have sensitivity flag. It's only called with data that needs to go in feedback.
 
-In some cases it may be desirable to pair `UI_Notice` with one of the other 
+In some cases it may be desirable to pair `UI_Notice` with one of the other
 calls, to get information to the user and into feedback.
 
-There is a lot of overlap in meaning between `MessageHistory` and 
+There is a lot of overlap in meaning between `MessageHistory` and
 `DiagnosticHistory` and maybe they should be merged.
 */
 

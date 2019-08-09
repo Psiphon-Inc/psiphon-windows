@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -82,7 +82,7 @@ public:
         virtual DWORD GetType() const { return STOP_REASON_UNEXPECTED_DISCONNECT; }
     };
 
-    // Check if the current state of the stop signal matches any of the 
+    // Check if the current state of the stop signal matches any of the
     // bitwise-OR'd `reasons`. Returns the matching reasons, or 0 if no match.
     // If `throwIfTrue` is true, an exception is thrown.
     virtual DWORD CheckSignal(DWORD reasons, bool throwIfTrue=false) const;
@@ -96,7 +96,7 @@ public:
 
     static void ThrowSignalException(DWORD reason);
 
-    StopSignal(); 
+    StopSignal();
     virtual ~StopSignal();
 
 private:
@@ -125,7 +125,7 @@ public:
 private:
     static void CleanUp();
 
-    GlobalStopSignal(); 
+    GlobalStopSignal();
     ~GlobalStopSignal();
 
     // not copyable

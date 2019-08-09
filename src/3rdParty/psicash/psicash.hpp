@@ -65,7 +65,12 @@ struct HTTPParams {
 };
 // The result from MakeHTTPRequestFn:
 struct HTTPResult {
-    // 200, 404, etc. -1 if unable to talk to server (or other catastrophe).
+    static constexpr int CRITICAL_ERROR = -2;
+    static constexpr int RECOVERABLE_ERROR = -1;
+
+    // On successful request: 200, 404, etc.
+    // If unable to reach server (or some other probably-recoverable error): RECOVERABLE_ERROR
+    // On critical error (e.g., programming fault or out-of-memory): CRITICAL_ERROR
     int code;
 
     // The contents of the response body, if any.
@@ -78,7 +83,7 @@ struct HTTPResult {
     // must be empty if the request succeeded (regardless of status code).
     std::string error;
 
-    HTTPResult() : code(-1) {}
+    HTTPResult() : code(CRITICAL_ERROR) {}
 };
 // This is the signature for the HTTP Requester callback provided by the native consumer.
 using MakeHTTPRequestFn = std::function<HTTPResult(const HTTPParams&)>;
@@ -103,6 +108,22 @@ struct PurchasePrice {
 
 using PurchasePrices = std::vector<PurchasePrice>;
 
+struct Authorization {
+  std::string id;
+  std::string access_type;
+  datetime::DateTime expires;
+  std::string encoded;
+
+  friend bool operator==(const Authorization& lhs, const Authorization& rhs);
+  friend void to_json(nlohmann::json& j, const Authorization& v);
+  friend void from_json(const nlohmann::json& j, Authorization& v);
+};
+
+using Authorizations = std::vector<Authorization>;
+
+// May be used for for decoding non-PsiCash authorizations.
+error::Result<Authorization> DecodeAuthorization(const std::string& encoded);
+
 using TransactionID = std::string;
 extern const char* const kTransactionIDZero; // The "zero value" for a TransactionID
 
@@ -112,7 +133,7 @@ struct Purchase {
     std::string distinguisher;
     nonstd::optional<datetime::DateTime> server_time_expiry;
     nonstd::optional<datetime::DateTime> local_time_expiry;
-    nonstd::optional<std::string> authorization;
+    nonstd::optional<Authorization> authorization;
 
     friend bool operator==(const Purchase& lhs, const Purchase& rhs);
     friend void to_json(nlohmann::json& j, const Purchase& p);
@@ -180,7 +201,14 @@ public:
     Purchases GetPurchases() const;
 
     /// Returns the set of active purchases that are not expired, if any.
-    Purchases ValidPurchases() const;
+    Purchases ActivePurchases() const;
+
+    /// Returns all purchase authorizations. If activeOnly is true, only authorizations
+    /// for non-expired purchases will be returned.
+    Authorizations GetAuthorizations(bool activeOnly=false) const;
+
+    /// Returns all purchases that match the given set of Authorization IDs.
+    Purchases GetPurchasesByAuthorizationID(std::vector<std::string> authorization_ids) const;
 
     /// Get the next expiring purchase (with local_time_expiry populated).
     /// The returned optional will false if there is no outstanding expiring purchase (or
@@ -193,13 +221,19 @@ public:
     /// Force removal of purchases with the given transaction IDs.
     /// This is to be called when the Psiphon server indicates that a purchase has
     /// expired (even if the local clock hasn't yet indicated it).
-    error::Error RemovePurchases(const std::vector<TransactionID>& ids);
+    /// Returns the removed purchases.
+    /// No error results if some or all of the transaction IDs are not found.
+    error::Result<Purchases> RemovePurchases(const std::vector<TransactionID>& ids);
 
     /// Utilizes stored tokens and metadata to craft a landing page URL.
     /// Returns an error if modification is impossible. (In that case the error
     /// should be logged -- and added to feedback -- and home page opening should
     /// proceed with the original URL.)
     error::Result<std::string> ModifyLandingPage(const std::string& url) const;
+
+    /// Utilizes stored tokens and metadata (and a configured base URL) to craft a URL
+    /// where the user can buy PsiCash for real money.
+    error::Result<std::string> GetBuyPsiURL() const;
 
     /// Creates a data package that should be included with a webhook for a user
     /// action that should be rewarded (such as watching a rewarded video).
@@ -338,6 +372,7 @@ protected:
     RefreshState(const std::vector<std::string>& purchase_classes, bool allow_recursion);
 
 protected:
+    bool test_;
     std::string user_agent_;
     std::string server_scheme_;
     std::string server_hostname_;

@@ -25,6 +25,8 @@ var path = require('path');
 
 
 module.exports = function(grunt) {
+  require("load-grunt-tasks")(grunt);
+
   grunt.initConfig({
 
     concat: {
@@ -55,21 +57,20 @@ module.exports = function(grunt) {
     inline: {
       dist: {
         options:{
-          //cssmin: true,
-          //uglify: true
+          cssmin: true,
+          uglify: true
+        },
+        src: 'main.html',
+        dest: 'main-inline.html'
+      },
+      quick: {
+        options:{
+          cssmin: false,
+          uglify: false
         },
         src: 'main.html',
         dest: 'main-inline.html'
       }
-    },
-
-    execute: {
-        dist: {
-            options: {
-              cwd: './utils'
-            },
-            src: ['./utils/fake-translations.js']
-        }
     },
 
     locales: {
@@ -84,7 +85,7 @@ module.exports = function(grunt) {
     watch: {
         inline: {
             files: ['main.html', 'js/*.js', 'css/main.css', 'css/main.less', '_locales/**/*.json'],
-            tasks: ['default'],
+            tasks: ['quick'],
             options: {},
         }
     },
@@ -102,10 +103,21 @@ module.exports = function(grunt) {
                 }
             }
         }
+    },
+
+    babel: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          'dist/app.js': 'js/main.js',
+          'dist/plugins.js': 'js/plugins.js'
+        }
+      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-execute');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-inline');
@@ -117,17 +129,22 @@ module.exports = function(grunt) {
   // dep replacement attacks.)
   grunt.registerTask('zip-modules', '', function () {
     var exec = require('child_process').execSync;
-    var result = exec("7z a -mx9 node_modules.7z node_modules");
+    var result = exec("7z a -mx5 node_modules.7z node_modules");
     grunt.log.writeln(result);
   });
 
-  grunt.registerTask('default', ['zip-modules', 'execute', 'concat', 'less', 'locales', 'inline']);
-  grunt.registerTask('serve', ['default', 'connect', 'watch']);
+  grunt.registerTask('default', ['zip-modules', 'babel', 'concat', 'less', 'locales', 'inline:dist']);
+  grunt.registerTask('quick', ['babel', 'concat', 'less', 'locales', 'inline:quick']); // skips the slow zip step
+  grunt.registerTask('serve', ['quick', 'connect', 'watch']);
 
   grunt.registerMultiTask(
     'locales',
     'Process locale files for use in dev and production',
     function() {
+      var exec = require('child_process').execSync;
+      var result = exec("node fake-translations.js", {cwd: './utils'});
+      grunt.log.writeln(result);
+
       var localeNames = grunt.file.readJSON(this.data.src + 'locale-names.json');
       var locales = {};
       grunt.file.recurse(this.data.src, function localesDirRecurse(abspath, rootdir, subdir, filename) {

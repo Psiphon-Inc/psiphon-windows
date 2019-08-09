@@ -244,12 +244,13 @@
     <ClInclude Include="coretransport.h" />
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="embeddedvalues.h" />
+    <ClInclude Include="dispatch_queue.h" />
     <ClInclude Include="htmldlg.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="limitsingleinstance.h" />
     <ClInclude Include="local_proxy.h" />
     <ClInclude Include="logging.h" />
-    <ClInclude Include="psicash.h" />
+    <ClInclude Include="psicashlib.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="resource.h" />
@@ -316,7 +317,8 @@
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="local_proxy.cpp" />
     <ClCompile Include="logging.cpp" />
-    <ClCompile Include="psicash.cpp" />
+    <ClCompile Include="psicashlib.cpp" />
+    <ClCompile Include="dispatch_queue.cpp" />
     <ClCompile Include="wininet_network_check.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -347,7 +349,6 @@
   <ItemGroup>
     <Image Include="psiclient.ico" />
     <Image Include="systray-stopped.ico" />
-    <Image Include="webui\flag_unknown_16.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

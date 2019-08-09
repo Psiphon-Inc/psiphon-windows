@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -29,9 +29,9 @@ struct ServerEntry
     ServerEntry(const ServerEntry& src) { Copy(src); }
     ServerEntry(
         const string& serverAddress, const string& region, int webServerPort,
-        const string& webServerSecret, const string& webServerCertificate, 
-        int sshPort, const string& sshUsername, const string& sshPassword, 
-        const string& sshHostKey, int sshObfuscatedPort, 
+        const string& webServerSecret, const string& webServerCertificate,
+        int sshPort, const string& sshUsername, const string& sshPassword,
+        const string& sshHostKey, int sshObfuscatedPort,
         const string& sshObfuscatedKey,
         const string& meekObfuscatedKey, const int meekServerPort,
         const string& meekCookieEncryptionPublicKey,
@@ -85,7 +85,7 @@ public:
     // stored. Typically this is the current server with additional info.
     // Returns the number of new entries added.
     size_t AddEntriesToList(
-        const vector<string>& newServerEntryList, 
+        const vector<string>& newServerEntryList,
         const ServerEntry* serverEntry);
 
     void MarkServersFailed(const ServerEntries& failedServerEntries);

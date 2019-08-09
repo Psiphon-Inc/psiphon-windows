@@ -53,3 +53,6 @@ void UI_Notice(const string& noticeID, const string& techInfo);
 
 // Indicate that the settings have change and should be refreshed in the UI
 void UI_RefreshSettings(const string& settingsJSON);
+
+// Refreshes the PsiCash-related info in the UI.
+void UI_RefreshPsiCash(const string& commandID);

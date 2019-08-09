@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -38,7 +38,9 @@ enum ConnectionManagerState
 };
 
 
-class ConnectionManager : public ILocalProxyStatsCollector, public IReconnectStateReceiver, public IUpgradePaver
+class ConnectionManager :
+    public ILocalProxyStatsCollector, public IReconnectStateReceiver,
+    public IUpgradePaver, public IAuthorizationsProvider
 {
 public:
     ConnectionManager();
@@ -46,14 +48,17 @@ public:
 
     void Toggle();
     void Stop(DWORD reason);
-    void Start();
+    void Start(bool isReconnect=false);
+    void Reconnect();
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
-    void OpenHomePages(const TCHAR* defaultHomePage=0, bool allowSkip=true);
+    void OpenHomePages(const TCHAR* defaultHomePage=0);
 
     // IReconnectStateReceiver implementation
     virtual void SetReconnecting();
     virtual void SetReconnected();
+
+    bool IsWholeSystemTunneled() const;
 
     // ILocalProxyStatsCollector implementation
     // May throw StopSignal::StopException subclass if not `final`
@@ -66,17 +71,16 @@ public:
     // IUpgradePaver implementation
     void PaveUpgrade(const string& download);
 
+    // IAuthorizationsProvider implementation
+    psicash::Authorizations GetAuthorizations() const override;
+    void ActiveAuthorizationIDs(
+        const std::vector<std::string>& activeIDs,
+        const std::vector<std::string>& inactiveIDs) override;
+
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
     // NOTE: The JSON string must contain wide unicode codepoints, not UTF-8.
     void SendFeedback(LPCWSTR unicodeFeedbackJSON);
-
-    bool IsWholeSystemTunneled()
-    {
-        return m_transport
-            && m_transport->IsWholeSystemTunneled()
-            && m_transport->IsConnected(true);
-    }
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
@@ -85,6 +89,7 @@ private:
     // Exception classes to help with the ConnectionManagerStartThread control flow
     class Abort { };
 
+    // Throws StopSignal::StopException if stop was signaled.
     void DoPostConnect(const SessionInfo& sessionInfo, bool openHomePages);
 
     tstring GetFailedRequestPath(ITransport* transport);
@@ -115,4 +120,5 @@ private:
     bool m_upgradePending;
     bool m_startSplitTunnel;
     time_t m_nextFetchRemoteServerListAttempt;
+    bool m_suppressHomePages;
 };

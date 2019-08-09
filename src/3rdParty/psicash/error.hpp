@@ -26,6 +26,7 @@
 #include "vendor/nonstd/expected.hpp"
 
 
+namespace psicash {
 namespace error {
 
 /*
@@ -34,21 +35,26 @@ namespace error {
 
 /// Represents an error value.
 /// Boolean cast can be used to check if the Error is actually set.
+/// If an error is "critical", then is results from something probably-unrecoverable, such
+/// as a programming fault or an out-of-memory condition.
 class Error {
 public:
     Error();
-    Error(const Error& src);
-    Error(const std::string& message,
+    Error(const Error& src) = default;
+    Error(bool critical, const std::string& message,
           const std::string& filename, const std::string& function, int line);
     Error& operator=(const Error&) = default;
 
-    // Wrapping a non-error results in a non-error (i.e., is a no-op). This allows it to be done
-    // unconditionally without introducing an error where there isn't one.
-    // Returns *this.
+    /// Wrapping a non-error results in a non-error (i.e., is a no-op). This allows it to be done
+    /// unconditionally without introducing an error where there isn't one.
+    /// Criticality isn't specified here -- only at the creation of the initial error.
+    /// Returns *this.
     Error& Wrap(const std::string& message,
                 const std::string& filename, const std::string& function, int line);
 
     Error& Wrap(const std::string& filename, const std::string& function, int line);
+
+    bool Critical() const { return critical_; }
 
     /// Used to check if the current instance is an error or not.
     bool HasValue() const { return is_error_; }
@@ -61,6 +67,8 @@ public:
 private:
     // Indicates that this error is actually set. (There must be a more elegant way to do this...)
     bool is_error_;
+
+    bool critical_;
 
     struct StackFrame {
         std::string message;
@@ -79,16 +87,19 @@ const Error nullerr;
 #ifndef __PRETTY_FUNCTION__
 #define __PRETTY_FUNCTION__ __func__
 #endif
-#define MakeError(message)         (error::Error((message), __FILE__, __PRETTY_FUNCTION__, __LINE__))
-#define WrapError(err, message)    (err.Wrap((message), __FILE__, __PRETTY_FUNCTION__, __LINE__))
-#define PassError(err)             (err.Wrap(__FILE__, __PRETTY_FUNCTION__, __LINE__))
+// Should be prefixed with namespaces: psicash::error::
+#define MakeNoncriticalError(message)   Error(false, (message), __FILE__, __PRETTY_FUNCTION__, __LINE__)
+#define MakeCriticalError(message)      Error(true, (message), __FILE__, __PRETTY_FUNCTION__, __LINE__)
+#define WrapError(err, message)         ((err).Wrap((message), __FILE__, __PRETTY_FUNCTION__, __LINE__))
+#define PassError(err)                  ((err).Wrap(__FILE__, __PRETTY_FUNCTION__, __LINE__))
 
 
 /*
  * Result
  */
 
-/// Result holds an error-or-value. For usage, see nonstd::expected
+/// Result holds an error-or-value. For usage, see nonstd::expected at
+/// https://github.com/martinmoene/expected-lite
 /// or actual current usage.
 template<typename T>
 class Result : public nonstd::expected<T, Error> {
@@ -101,6 +112,7 @@ public:
             (nonstd::unexpected_type<Error>)err) {}
 };
 
-}
+} // namespace error
+} // namespace psicash
 
 #endif //PSICASHLIB_ERROR_H

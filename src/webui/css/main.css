@@ -6205,7 +6205,10 @@ body[dir="rtl"] .nav-tabs > li.active {
   color: #444444;
   font-weight: bold;
   text-transform: uppercase;
-  transition: background-color 300ms, color 300ms;
+  -moz-transition: background-color 300ms ease, color 300ms ease;
+  -webkit-transition: background-color 300ms ease, color 300ms ease;
+  -o-transition: background-color 300ms ease, color 300ms ease;
+  transition: background-color 300ms ease, color 300ms ease;
   white-space: nowrap;
 }
 .nav-tabs > li > a:hover,
@@ -6805,12 +6808,83 @@ body[dir="rtl"] #language-pane .language-item {
   padding-top: 0.1em;
 }
 /* PSICASH */
-#psicash-block > div {
-  border-top: thick red solid;
-  border-bottom: thick red solid;
+#psicash-block {
+  position: absolute;
+  bottom: 0;
 }
-#psicash-block .button {
-  width: 100%;
+body[dir="ltr"] #psicash-block {
+  left: 0;
+}
+body[dir="rtl"] #psicash-block {
+  right: 0;
+}
+#psicash-block > div {
+  padding: 5px;
+  border-top: 3px solid #1B7B9C;
+}
+#psicash-block > div .psicash-title-balance {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 5px;
+  *zoom: 1;
+}
+#psicash-block > div .psicash-title-balance:before,
+#psicash-block > div .psicash-title-balance:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+#psicash-block > div .psicash-title-balance:after {
+  clear: both;
+}
+#psicash-block > div .psicash-title-balance .psicash-balance-coin {
+  white-space: nowrap;
+  max-height: 1.6em;
+}
+body[dir="ltr"] #psicash-block > div .psicash-title-balance > span {
+  float: right;
+}
+body[dir="rtl"] #psicash-block > div .psicash-title-balance > span {
+  float: left;
+}
+#psicash-block > div .psicash-title-balance .psicash-balance-delta {
+  pointer-events: none;
+  position: relative;
+  height: 0;
+  width: 0;
+  overflow: visible;
+  display: list-item;
+  z-index: -999;
+  visibility: hidden;
+  top: -23px;
+  left: 3px;
+  opacity: 1;
+}
+#psicash-block > div .psicash-title-balance .psicash-balance-delta.credit {
+  color: gold;
+  font-size: 600%;
+  opacity: 1;
+}
+#psicash-block > div .psicash-title-balance .psicash-balance-delta.debit {
+  color: silver;
+  font-size: 1em;
+}
+#psicash-block > div .psicash-title-balance .psicash-balance-delta.balance-changing {
+  visibility: visible;
+  z-index: 99999;
+}
+#psicash-block > div img.coin {
+  height: 1.5em;
+  vertical-align: text-top;
+}
+#psicash-block > div .btn {
+  max-width: 95%;
+}
+#psicash-block > div .button-container {
+  text-align: center;
+}
+#psicash-block > div .psicash-buy-psi {
+  margin-top: 4px;
 }
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {

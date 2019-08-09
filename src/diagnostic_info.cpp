@@ -27,6 +27,8 @@
 #include "utilities.h"
 #include "diagnostic_info.h"
 #include "usersettings.h"
+#include "config.h"
+#include "psicashlib.h"
 
 #pragma warning(push, 0)
 #pragma warning(disable: 4244)
@@ -309,6 +311,79 @@ Cleanup:
     return true;
 }
 
+// Returns empty string if now found.
+wstring GetDLLVersion(const string& dllFileName)
+{
+    // Cache lookups to avoid redundant work
+    static map<string, wstring> dllVersions;
+    auto existing = dllVersions.find(dllFileName);
+    if (existing != dllVersions.end()) {
+        return existing->second;
+    }
+
+    DWORD dw;
+    DWORD fileVersionInfoSize = GetFileVersionInfoSizeA(dllFileName.c_str(), &dw);
+    if (fileVersionInfoSize > 0)
+    {
+        LPVOID fileVersionInfoBytes = new byte[fileVersionInfoSize];
+        if (!fileVersionInfoBytes)
+        {
+            throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
+        }
+
+        auto cleanup = finally([fileVersionInfoBytes] {
+            delete[] fileVersionInfoBytes;
+        });
+
+        if (GetFileVersionInfoA(
+            dllFileName.c_str(),
+            0,
+            fileVersionInfoSize,
+            fileVersionInfoBytes))
+        {
+            struct LANGANDCODEPAGE {
+                WORD wLanguage;
+                WORD wCodePage;
+            } *langAndCodePages;
+            UINT langAndCodePagesSize = 0;
+
+            // Read the list of languages and code pages.
+
+            if (VerQueryValueW(fileVersionInfoBytes,
+                TEXT("\\VarFileInfo\\Translation"),
+                (LPVOID*)&langAndCodePages,
+                &langAndCodePagesSize))
+            {
+                WCHAR subBlock[50];
+                for (size_t i = 0; i < (langAndCodePagesSize / sizeof(struct LANGANDCODEPAGE)); i++)
+                {
+                    if (langAndCodePages[i].wLanguage == 0x0409)
+                    {
+                        swprintf_s(
+                            subBlock,
+                            sizeof(subBlock) / sizeof(TCHAR),
+                            TEXT("\\StringFileInfo\\%04x%04x\\FileVersion"),
+                            langAndCodePages[i].wLanguage,
+                            langAndCodePages[i].wCodePage);
+
+                        LPCWSTR fileVersion = NULL;
+                        UINT fvLen = 0;
+                        if (VerQueryValueW(fileVersionInfoBytes,
+                            subBlock,
+                            (LPVOID*)&fileVersion,
+                            &fvLen))
+                        {
+                            dllVersions[dllFileName] = fileVersion;
+                            return fileVersion;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return L"";
+}
 
 struct SystemInfo
 {
@@ -586,70 +661,41 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
         o_sysInfo.groupInfo_success = true;
     }
 
-    // System DLL versions
-
-    LPCTSTR filename = TEXT("MSHTML.DLL");
-    DWORD dw;
-    DWORD fileVersionInfoSize = GetFileVersionInfoSize(filename, &dw);
-    if (fileVersionInfoSize > 0)
-    {
-        LPVOID fileVersionInfoBytes = new byte[fileVersionInfoSize];
-        if (!fileVersionInfoBytes)
-        {
-	        throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
-        }
-
-        auto cleanup = finally([fileVersionInfoBytes] {
-            delete[] fileVersionInfoBytes;
-        });
-
-        if (GetFileVersionInfo(
-            filename,
-            0,
-            fileVersionInfoSize,
-            fileVersionInfoBytes))
-        {
-            struct LANGANDCODEPAGE {
-                WORD wLanguage;
-                WORD wCodePage;
-            } *langAndCodePages;
-            UINT langAndCodePagesSize = 0;
-
-            // Read the list of languages and code pages.
-
-            if (VerQueryValue(fileVersionInfoBytes,
-                TEXT("\\VarFileInfo\\Translation"),
-                (LPVOID*)&langAndCodePages,
-                &langAndCodePagesSize))
-            {
-                TCHAR subBlock[50];
-                for (size_t i = 0; i < (langAndCodePagesSize / sizeof(struct LANGANDCODEPAGE)); i++)
-                {
-                    if (langAndCodePages[i].wLanguage == 0x0409)
-                    {
-                        swprintf_s(
-                            subBlock,
-                            sizeof(subBlock) / sizeof(TCHAR),
-                            TEXT("\\StringFileInfo\\%04x%04x\\FileVersion"),
-                            langAndCodePages[i].wLanguage,
-                            langAndCodePages[i].wCodePage);
-
-                        LPCTSTR fileVersion = NULL;
-                        UINT fvLen = 0;
-                        if (VerQueryValue(fileVersionInfoBytes,
-                            subBlock,
-                            (LPVOID*)&fileVersion,
-                            &fvLen))
-                        {                            
-                            o_sysInfo.mshtmlDLLVersion = fileVersion;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    o_sysInfo.mshtmlDLLVersion = GetDLLVersion("MSHTML.DLL");
     
     return true;
+}
+
+string GetClientPlatform()
+{
+    static string cachedResult;
+    if (!cachedResult.empty()) {
+        return cachedResult;
+    }
+
+    SystemInfo sysInfo;
+    if (!GetSystemInfo(sysInfo)) {
+        return CLIENT_PLATFORM;
+    }
+
+    // The full MSHTML.DLL version string looks like "11.00.17763.1 (WinBuild.160101.0800)",
+    // which is much more information than we need -- we'll shorten to "11".
+    auto mshtmlVersion = sysInfo.mshtmlDLLVersion;
+    auto firstDot = mshtmlVersion.find(L'.');
+    if (mshtmlVersion.empty()) {
+        // Windows Vista seems unable to find this value.
+        mshtmlVersion = L"0";
+    }
+    else if (firstDot != string::npos) {
+        mshtmlVersion = mshtmlVersion.substr(0, firstDot);
+    }
+
+    // This will look like "Windows_10.0.17763_11"
+    cachedResult = 
+        string(CLIENT_PLATFORM) 
+        + "_" + WStringToUTF8(sysInfo.version)
+        + "_" + WStringToUTF8(mshtmlVersion);
+    return cachedResult;
 }
 
 bool GetCountryDialingCode(wstring& o_countryDialingCode)
@@ -1270,6 +1316,32 @@ void GetDiagnosticInfo(Json::Value& o_json)
     o_json["StatusHistory"] = statusHistory;
 }
 
+Json::Value GetPsiCashDiagnosticData() {
+    // Get the diagnostic data in nlohmann::json format
+    auto psicashJSON = psicash::Lib::_().GetDiagnosticInfo();
+    // Dump it to string
+    string jsonString;
+    try {
+        jsonString = psicashJSON.dump(-1, ' ',  // disable indent
+                                      true);    // ensure ASCII
+    }
+    catch (nlohmann::json::exception& e) {
+        my_print(NOT_SENSITIVE, true, _T("%s: JSON dump failed: %S; id: %d"), __TFUNCTION__, e.what(), e.id);
+        return Json::nullValue;
+    }
+
+    // Load the string into a Json::Value
+    Json::Value jsonValue;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(jsonString, jsonValue);
+    if (!parsingSuccessful)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: JSON parse failed"), __TFUNCTION__);
+        return Json::nullValue;
+    }
+
+    return jsonValue;
+}
 
 bool SendFeedbackAndDiagnosticInfo(
         const string& feedback, 
@@ -1306,6 +1378,8 @@ bool SendFeedbackAndDiagnosticInfo(
         
         outJson["DiagnosticInfo"]["DiagnosticHistory"] = Json::Value(Json::arrayValue);
         GetDiagnosticHistory(outJson["DiagnosticInfo"]["DiagnosticHistory"]);
+
+        outJson["DiagnosticInfo"]["PsiCash"] = GetPsiCashDiagnosticData();
     }
 
     // Feedback
@@ -1350,14 +1424,15 @@ bool SendFeedbackAndDiagnosticInfo(
             443,
             string(), // Do standard cert validation
             uploadLocation.c_str(),
-            httpsResponse,
             stopInfo,
-            false, // don't use local proxy
+            HTTPSRequest::PsiphonProxy::DONT_USE,
+            httpsResponse,
             true,  // fail over to URL proxy
             UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
             (LPVOID)encryptedPayload.c_str(),
             encryptedPayload.length(),
-            _T("PUT")))
+            _T("PUT")) 
+        || httpsResponse.code != HTTPSRequest::OK)
     {
         return false;
     }

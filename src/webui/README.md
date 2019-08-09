@@ -1,3 +1,42 @@
+## PsiCash
+
+### TODO
+
+* "learn more" button/link (in-app)
+* Add alt text to coin images
+* on-boarding
+* prompt OTF-l10n: missing moment.js locales: am, fa-AF, om, ti, tk
+
+### Done
+
+* try different approach to animating balance change
+* proper i18n of everything
+  - Including string descriptions
+* buy Psi for $
+  - post-$purchase behaviour? optimistic? refresh loop? nothing?
+* BUG: purchase queued when refresh in-flight will be silently abandoned, causing spinner to go forever; Lib::MakeLimitedRequest
+* BUG: HTTPSRequest::MakeRequestWithURLProxyOption throws on stop signal
+* Sometimes earn animation doesn't trigger?
+* improve silver coin (so it doesn't look disabled)
+* earn animation
+* all strings in string table (out of HTML)
+* Button wording
+* Purchase countdown wording
+* add a FAQ entry for clearing Windows data; link to it from `psicash#transaction-InvalidTokens-body`
+* SBPurchase attempt error message texts
+* add "dev" to diagnostics in core lib
+* No UI on fresh run or if psicashdatastore deleted
+* Buy disabled if NSF
+* Buy enabled if SF
+* Buy via temp tunnel if not connected (desired?)
+* Eugene's purchase removal logic (is it?)
+* Purchase works
+* SB countdown works
+* Disable when VPN mode on
+* Messages are shown for all non-successful purchase attempts (but the text in them isn't written)
+
+
+
 ## Design
 
 Communication in both directions is enabled by the [`mctrl`](https://github.com/Psiphon-Inc/mctrl) HTML control that we are using (and some changes we have made to it).
@@ -16,6 +55,40 @@ $ npm install -g grunt-cli
 # In the webui directory...
 $ npm install .
 ```
+
+## Developing
+
+This is what I use for quickly showing the UI in a browser. It just grabs the source from Bitbucket and returns it with appropriate Content-Types to display it.
+https://bb.githack.com/psiphon/psiphon-circumvention-system/raw/default/Client/psiclient/webui/main.html
+
+You can serve it locally with:
+```
+$ grunt serve
+# then go to http://localhost:9000/main.html
+```
+
+To verify in an IE8 VM:
+```
+$ grunt
+$ python -m http.server
+# then go to http://hostvmip:8000/main-inline.html
+```
+
+The UI "web site" is in the [webui](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/default/Client/psiclient/webui/) directory. [main.html](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/default/Client/psiclient/webui/main.html) is the... main HTML. You'll see main-inline.html as well; that's the file that's actually used in the app and is generated from main.html by the [Gruntfile](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/default/Client/psiclient/webui/Gruntfile.js).
+
+The UI uses jQuery, lodash, Bootstrap, and a few other libs. App executable size is very important, so don't get crazy with new libs, but a tiny bit of bloat might be okay.
+
+You'll notice that old versions of Bootstrap and jQuery are being used. We NEED TO SUPPORT INTERNET EXPLORER 7. Because we need to support Windows XP SP3 or whatever. MS Edge and new IE allow for mimicking old IE (F12 and then upper right of new pane), which is essential for testing. MS used to provide VMs with old OS and IE versions, but they're difficult to find now. Try out the existing UI githack link in pseudo-old IE, so you can get a feel for the still-usable degradation.
+
+If we end up feeling that functional old IE support is untenable, then we may come to the decision to just hide the UI for them.
+
+The UI logic is all in main.js. For example, [here's the code](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/e36a48574442c739ea68e72f253c1eea73d5f559/Client/psiclient/webui/js/main.js?at=default&fileviewer=file-view-default#main.js-2456) that triggers the tunnel to stop (after the user clicks the button). It basically makes a request for `psi:stop`.
+
+The other important part of this is the C++ code that talks to the UI. The [`HTMLUI_BeforeNavigateHandler`](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/7b94cbff1644bf93edce4f7088f4b73d8d58e60e/Client/psiclient/psiclient.cpp?at=default&fileviewer=file-view-default#psiclient.cpp-769) function watches for our special command URLs and takes the appropriate action (like stopping the tunnel).
+
+There are lots more UI communications helper functions here. In order to push info into the UI they call JS functions (via the HTML control).
+
+(Copy-pasted from email.)
 
 ## Building
 
@@ -121,6 +194,8 @@ $ node fake-translations.js
   - Related: `change` event doesn't fire for text boxes until focus is lost.
 
 * IE7: Can't use `float:right` on an element that's a child/grandchild of a `postition:absolute` element. See the comment for `#settings-accordion` in `lteIE7.css` for details.
+
+* IE8 can't cope with the babel-ization for `for (let x of arr)`. Don't use it.
 
 
 ## Links to tools used

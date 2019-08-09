@@ -49,7 +49,6 @@
 #define EGRESS_REGION_NAME              "EgressRegion"
 #define EGRESS_REGION_DEFAULT           ""
 
-#define SKIP_BROWSER_NAME               "SkipBrowser"
 #define SKIP_BROWSER_DEFAULT            FALSE
 
 #define SKIP_PROXY_SETTINGS_NAME        "SkipProxySettings"
@@ -154,7 +153,6 @@ void Settings::Initialize()
 {
     // Write out the default values for our non-exposed (registry-only) settings.
     // This is to help users find and modify them.
-    (void)GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT, true);
     (void)GetSettingDword(SKIP_PROXY_SETTINGS_NAME, SKIP_PROXY_SETTINGS_DEFAULT, true);
     (void)GetSettingDword(SKIP_AUTO_CONNECT_NAME, SKIP_AUTO_CONNECT_DEFAULT, true);
 }
@@ -440,11 +438,6 @@ bool Settings::SystrayMinimize()
 /*
 Settings that are not exposed in the UI.
 */
-
-bool Settings::SkipBrowser()
-{
-    return !!GetSettingDword(SKIP_BROWSER_NAME, SKIP_BROWSER_DEFAULT);
-}
 
 bool Settings::SkipProxySettings()
 {

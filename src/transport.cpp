@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -67,6 +67,7 @@ void ITransport::Connect(
                     const StopInfo& stopInfo,
                     IReconnectStateReceiver* reconnectStateReceiver,
                     IUpgradePaver* upgradePaver,
+                    IAuthorizationsProvider* authorizationsProvider,
                     WorkerThreadSynch* workerThreadSynch,
                     const ServerEntry* tempConnectServerEntry/*=NULL*/)
 {
@@ -74,6 +75,7 @@ void ITransport::Connect(
     m_tempConnectServerEntry = tempConnectServerEntry;
     m_reconnectStateReceiver = reconnectStateReceiver;
     m_upgradePaver = upgradePaver;
+    m_authorizationsProvider = authorizationsProvider;
     m_connectRetryOkay = true;
 
     assert(m_systemProxySettings);
@@ -136,11 +138,11 @@ void ITransport::DoStop(bool cleanly)
         my_print(NOT_SENSITIVE, false, _T("%s disconnected."), GetTransportDisplayName().c_str());
     }
 
-    // Set the "unexpected disconnect" signal, so logic higher up can 
+    // Set the "unexpected disconnect" signal, so logic higher up can
     // respond accordingly (e.g., attempt to reconnect).
     // But don't set it if this is a temporary transport, because that will
     // mess up the higher logic. (Bit of a hack.)
-    if (!cleanly && !m_tempConnectServerEntry && IsConnected(true)) 
+    if (!cleanly && !m_tempConnectServerEntry && IsConnected(true))
     {
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
     }
@@ -152,7 +154,7 @@ void ITransport::DoStop(bool cleanly)
 
 bool ITransport::IsConnected(bool andNotTemporary) const
 {
-    return IsRunning() && 
+    return IsRunning() &&
            !(andNotTemporary && m_tempConnectServerEntry);
 }
 
@@ -185,7 +187,7 @@ void ITransport::MarkServerFailed(const ServerEntry& serverEntry)
 tstring ITransport::GetHandshakeRequestPath(const SessionInfo& sessionInfo)
 {
     tstring handshakeRequestPath;
-    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) + 
+    handshakeRequestPath = tstring(HTTP_HANDSHAKE_REQUEST_PATH) +
                            _T("?client_session_id=") + UTF8ToWString(sessionInfo.GetClientSessionID()) +
                            _T("&propagation_channel_id=") + UTF8ToWString(PROPAGATION_CHANNEL_ID) +
                            _T("&sponsor_id=") + UTF8ToWString(SPONSOR_ID) +
@@ -244,7 +246,7 @@ bool ITransport::DoHandshake(bool preTransport, SessionInfo& sessionInfo)
 // static
 size_t ITransport::AddServerEntries(
         LPCTSTR transportProtocolName,
-        const vector<string>& newServerEntryList, 
+        const vector<string>& newServerEntryList,
         const ServerEntry* serverEntry)
 {
     ServerList serverList(WStringToUTF8(transportProtocolName).c_str());

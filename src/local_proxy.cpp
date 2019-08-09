@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -34,10 +34,10 @@
 
 
 LocalProxy::LocalProxy(
-                ILocalProxyStatsCollector* statsCollector, 
-                LPCSTR serverAddress, 
+                ILocalProxyStatsCollector* statsCollector,
+                LPCSTR serverAddress,
                 SystemProxySettings* systemProxySettings,
-                int parentPort, 
+                int parentPort,
                 const tstring& splitTunnelingFilePath)
     : m_statsCollector(statsCollector),
       m_systemProxySettings(systemProxySettings),
@@ -99,7 +99,7 @@ bool LocalProxy::DoStart()
 
     // Ensure we start from a disconnected/clean state
     Cleanup(false);
-    
+
     int localHttpProxyPort = Settings::LocalHttpProxyPort();
     if (localHttpProxyPort == 0)
     {
@@ -186,7 +186,7 @@ void LocalProxy::StopImminent()
 
 void LocalProxy::DoStop(bool cleanly)
 {
-    if (!cleanly) 
+    if (!cleanly)
     {
         m_stopInfo.stopSignal->SignalStop(STOP_REASON_UNEXPECTED_DISCONNECT);
     }
@@ -222,15 +222,15 @@ void LocalProxy::Cleanup(bool doStats)
     // Reset reporting of split tunnel status
     m_reportedUnproxiedDomains.clear();
 
-    // If we have stats, and we didn't get a chance to send our final stats, 
+    // If we have stats, and we didn't get a chance to send our final stats,
     // we'll try one last time.
     if (doStats && !m_finalStatsSent && m_statsCollector && m_bytesTransferred > 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Stopped dirtily. Sending final stats."), __TFUNCTION__);
         if (m_statsCollector->SendStatusMessage(
                                 true, // Note: there's a timeout side-effect when final=false
-                                m_pageViewEntries, 
-                                m_httpsRequestEntries, 
+                                m_pageViewEntries,
+                                m_httpsRequestEntries,
                                 m_bytesTransferred))
         {
             m_finalStatsSent = true;
@@ -263,7 +263,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
                       << _T(" logLevel=1");
 
     // Use the parent proxy, if one is available for the current transport
-    // also do split tunneling if there is a parent proxy 
+    // also do split tunneling if there is a parent proxy
     if (m_parentPort > 0)
     {
         polipoCommandLine << _T(" socksParentProxy=127.0.0.1:") << m_parentPort;
@@ -271,7 +271,7 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
         {
             polipoCommandLine << _T(" splitTunnelingFile=\"") << m_splitTunnelingFilePath << _T("\"");
 
-            //TODO: the DNS for split tunneling is hardcoded. Make it a part of handshake or 
+            //TODO: the DNS for split tunneling is hardcoded. Make it a part of handshake or
             //create another tunnel for DNS in the future?
             polipoCommandLine << _T(" splitTunnelingDnsServer=8.8.8.8");
         }
@@ -354,9 +354,9 @@ bool LocalProxy::StartPolipo(int localHttpProxyPort)
 }
 
 
-// Create the pipe that will be used to communicate between the Polipo child 
+// Create the pipe that will be used to communicate between the Polipo child
 // process and this process. o_outputPipe write handle should be used as the stdout
-// of the Polipo process, and o_errorPipe as stderr. 
+// of the Polipo process, and o_errorPipe as stderr.
 // (Both pipes are really the same, but duplicated.)
 // Returns true on success.
 bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
@@ -383,7 +383,7 @@ bool LocalProxy::CreatePolipoPipe(HANDLE& o_outputPipe, HANDLE& o_errorPipe)
     return true;
 }
 
-// Check Polipo pipe for page view, bytes transferred, etc., info waiting to 
+// Check Polipo pipe for page view, bytes transferred, etc., info waiting to
 // be processed; gather info; process; send to server.
 // If connected is true, the stats will only be sent to the server if certain
 // time or size limits have been exceeded; if connected is false, the stats will
@@ -443,7 +443,7 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
     DWORD now = GetTickCount();
     if (now < m_lastStatusSendTimeMS) m_lastStatusSendTimeMS = 0;
 
-    // If the time or size thresholds have been exceeded, or if we're being 
+    // If the time or size thresholds have been exceeded, or if we're being
     // forced to, send the stats.
     if (final
         || (m_lastStatusSendTimeMS + s_send_interval_ms) < now
@@ -454,8 +454,8 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
 
         if (m_statsCollector->SendStatusMessage(
                                 final, // Note: there's a timeout side-effect when final=false
-                                m_pageViewEntries, 
-                                m_httpsRequestEntries, 
+                                m_pageViewEntries,
+                                m_httpsRequestEntries,
                                 m_bytesTransferred))
         {
             my_print(NOT_SENSITIVE, true, _T("%s: Stats send success"), __TFUNCTION__);
@@ -489,8 +489,8 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
     return true;
 }
 
-/* Store page view info. Some transformation may be done depending on the 
-   contents of m_pageViewRegexes. 
+/* Store page view info. Some transformation may be done depending on the
+   contents of m_pageViewRegexes.
 */
 void LocalProxy::UpsertPageView(const string& entry)
 {
@@ -507,8 +507,8 @@ void LocalProxy::UpsertPageView(const string& entry)
         if (regex_match(entry, m_pageViewRegexes[i].regex))
         {
             store_entry = regex_replace(
-                            entry, 
-                            m_pageViewRegexes[i].regex, 
+                            entry,
+                            m_pageViewRegexes[i].regex,
                             m_pageViewRegexes[i].replace);
             break;
         }
@@ -528,8 +528,8 @@ void LocalProxy::UpsertPageView(const string& entry)
     }
 }
 
-/* Store HTTPS request info. Some transformation may be done depending on the 
-   contents of m_httpsRequestRegexes. 
+/* Store HTTPS request info. Some transformation may be done depending on the
+   contents of m_httpsRequestRegexes.
 */
 void LocalProxy::UpsertHttpsRequest(string entry)
 {
@@ -553,8 +553,8 @@ void LocalProxy::UpsertHttpsRequest(string entry)
         if (regex_match(entry, m_httpsRequestRegexes[i].regex))
         {
             store_entry = regex_replace(
-                            entry, 
-                            m_httpsRequestRegexes[i].regex, 
+                            entry,
+                            m_httpsRequestRegexes[i].regex,
                             m_httpsRequestRegexes[i].replace);
             break;
         }
@@ -618,7 +618,7 @@ void LocalProxy::ParsePolipoStatsBuffer(const char* page_view_buffer)
         {
             const char* entry_start = next + strlen(HTTP_PREFIX);
             entry_end = strstr(entry_start, ENTRY_END);
-            
+
             if (!entry_end)
             {
                 // Something is rather wrong. Maybe an incomplete entry.
