@@ -54,7 +54,6 @@ namespace Settings
 
     bool SystrayMinimize();
 
-    bool SkipBrowser();
     bool SkipProxySettings();
     bool SkipAutoConnect();
 

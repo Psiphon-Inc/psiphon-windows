@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -44,15 +44,15 @@ public:
     // If statsCollector is null, no stats will be collected. (This should only
     // be the case for temporary connections.)
     LocalProxy(
-        ILocalProxyStatsCollector* statsCollector, 
-        LPCSTR serverAddress, 
+        ILocalProxyStatsCollector* statsCollector,
+        LPCSTR serverAddress,
         SystemProxySettings* systemProxySettings,
-        int parentPort, 
+        int parentPort,
         const tstring& splitTunnelingFilePath);
     virtual ~LocalProxy();
 
     // Sometimes SessionInfo gets updated after the LocalProxy starts (i.e.,
-    // a handshake happens afterwards, with new page view regexes); in that 
+    // a handshake happens afterwards, with new page view regexes); in that
     // case we need to update the SessionInfo here.
     void UpdateSessionInfo(const SessionInfo& sessionInfo);
 

@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -66,14 +66,14 @@ public:
     vector<string> GetDiscoveredServerEntries() const;
     vector<RegexReplace> GetPageViewRegexes() const {return m_pageViewRegexes;}
     vector<RegexReplace> GetHttpsRequestRegexes() const {return m_httpsRequestRegexes;}
-    
+
     // A value of zero means disabled.
     DWORD GetPreemptiveReconnectLifetimeMilliseconds() const {return m_preemptiveReconnectLifetimeMilliseconds;}
 
     int GetLocalHttpProxyPort() const { return m_localHttpProxyPort; }
     int GetLocalHttpsProxyPort() const { return m_localHttpsProxyPort; }
     int GetLocalSocksProxyPort() const { return m_localSocksProxyPort; }
-    
+
     // Will be false if Set() never called with a valid ServerEntry.
     bool HasServerEntry() const;
     // Will throw exception if this instance does not have a ServerEntry.

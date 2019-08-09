@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -36,7 +36,7 @@ static const int INTERNET_OPTIONS_NUMBER = 3;
 bool GetCurrentSystemConnectionsProxyInfo(vector<ConnectionProxy>& o_proxyInfo);
 bool GetCurrentSystemConnectionProxy(tstring connectionName, ConnectionProxy& o_proxyInfo);
 bool SetCurrentSystemConnectionsProxy(const vector<ConnectionProxy>& connectionsProxies);
-void SetPsiphonProxyForConnections(vector<ConnectionProxy>& io_connectionsProxies, 
+void SetPsiphonProxyForConnections(vector<ConnectionProxy>& io_connectionsProxies,
                                    const tstring& psiphonProxyAddress);
 void ClearRegistryProxyInfo(const char* regKey);
 void ReadRegistryProxyInfo(const char* regKey, vector<ConnectionProxy>& o_proxyInfo);
@@ -123,7 +123,7 @@ bool SystemProxySettings::Apply(bool allowedToSkipProxySettings)
     {
         return false;
     }
-    
+
     m_settingsApplied = true;
 
     return true;
@@ -170,7 +170,7 @@ bool SystemProxySettings::Revert()
 
     vector<ConnectionProxy> originalProxySettings;
     ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, originalProxySettings);
-    
+
     bool success = SetCurrentSystemConnectionsProxy(originalProxySettings);
 
     if (success)
@@ -300,7 +300,7 @@ bool SetCurrentSystemConnectionProxy(const ConnectionProxy& setting)
     bool success = (0 != InternetSetOption(0, INTERNET_OPTION_PER_CONNECTION_OPTION, &list, list.dwSize)) &&
                    (0 != InternetSetOption(NULL, INTERNET_OPTION_SETTINGS_CHANGED, NULL, 0)) &&
                    (0 != InternetSetOption(NULL, INTERNET_OPTION_REFRESH , NULL, 0));
-    
+
     if (!success)
     {
         my_print(NOT_SENSITIVE, false, _T("InternetSetOption error: %d"), GetLastError());
@@ -407,7 +407,7 @@ bool GetCurrentSystemConnectionsProxyInfo(vector<ConnectionProxy>& o_proxyInfo)
 
     // Get a list of connections, starting with the dial-up connections
     connections = GetRasConnectionNames();
-    
+
     // NULL indicates the default or LAN connection
     connections.push_back(DEFAULT_CONNECTION_NAME);
 
@@ -432,7 +432,7 @@ bool GetCurrentSystemConnectionsProxyInfo(vector<ConnectionProxy>& o_proxyInfo)
 }
 
 
-void SetPsiphonProxyForConnections(vector<ConnectionProxy>& io_connectionsProxies, 
+void SetPsiphonProxyForConnections(vector<ConnectionProxy>& io_connectionsProxies,
                                    const tstring& psiphonProxyAddress)
 {
     for (vector<ConnectionProxy>::iterator ii = io_connectionsProxies.begin();
@@ -495,7 +495,7 @@ tstring GetNativeDefaultHttpsProxyHost()
 {
     ConnectionProxy proxyInfo;
     GetNativeDefaultProxyInfo(proxyInfo);
-    
+
     DecomposedProxyConfig decomposedProxyConfig;
     DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
 
@@ -525,7 +525,7 @@ tstring GetTunneledDefaultHttpsProxyHost()
 {
     ConnectionProxy proxyInfo;
     GetTunneledDefaultProxyInfo(proxyInfo);
-    
+
     DecomposedProxyConfig decomposedProxyConfig;
     DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
 
@@ -556,23 +556,23 @@ void GetSanitizedOriginalProxyInfo(vector<ConnectionProxy>& o_originalProxyInfo)
     // There are a number of forms (of interest to us) that a proxy server entry can take:
     // localhost or 127.0.0.1
     tregex localhost_regex = tregex(
-                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:(?:localhost)|(?:127\\.0\\.0\\.1))(:[0-9]+)$"), 
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:(?:localhost)|(?:127\\.0\\.0\\.1))(:[0-9]+)$"),
                     regex::ECMAScript | regex::icase);
     // IPv4 (Note: very rough, but probably good enough)
     tregex ipv4_regex = tregex(
-                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(:[0-9]+)$"), 
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\d+\\.\\d+\\.\\d+\\.\\d+)(:[0-9]+)$"),
                     regex::ECMAScript | regex::icase);
     // IPv6 (Note: also very rough but probably good enough)
     tregex ipv6_regex = tregex(
-                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\[[a-fA-F0-9:]+\\])(:[0-9]+)$"), 
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:\\[[a-fA-F0-9:]+\\])(:[0-9]+)$"),
                     regex::ECMAScript | regex::icase);
     // not-fully-qualified domain name
     tregex nonfqdn_regex = tregex(
-                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-]+)(:[0-9]+)$"), 
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-]+)(:[0-9]+)$"),
                     regex::ECMAScript | regex::icase);
     // fully qualified domain name
     tregex fqdn_regex = tregex(
-                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-\\.]+)(:[0-9]+)$"), 
+                    _T("^([\\w]+=)?([a-z]+:\\/\\/)?(?:[\\w\\-\\.]+)(:[0-9]+)$"),
                     regex::ECMAScript | regex::icase);
 
     for (vector<ConnectionProxy>::iterator it = rawOriginalProxyInfo.begin();
@@ -676,7 +676,7 @@ void GetSanitizedOriginalProxyInfo(vector<ConnectionProxy>& o_originalProxyInfo)
         else if (it->flags & PROXY_TYPE_AUTO_DETECT)
         {
             ss << _T("PROXY_TYPE_AUTO_DETECT|");
-        }        
+        }
 
         info.flagsString = ss.str();
         if (info.flagsString.length() > 0)
@@ -735,9 +735,9 @@ void DoStartupSystemProxyWork()
     {
         StopInfo stopInfo;
         if (ERROR_SUCCESS != WaitForConnectability(
-                (USHORT)decomposedNativeDefaultProxyConfig.httpsProxyPort, 
-                100, 
-                0, 
+                (USHORT)decomposedNativeDefaultProxyConfig.httpsProxyPort,
+                100,
+                0,
                 stopInfo))
         {
             // There is nothing responding on the system https proxy port
@@ -812,7 +812,7 @@ void WriteRegistryProxyInfo(const char* regKey, const vector<ConnectionProxy>& p
 {
     Json::Value json;
     Json::Value proxies(Json::arrayValue);
-    
+
     for (vector<ConnectionProxy>::const_iterator ii = proxyInfo.begin();
          ii != proxyInfo.end();
          ++ii)
@@ -827,14 +827,14 @@ void WriteRegistryProxyInfo(const char* regKey, const vector<ConnectionProxy>& p
 
     json["proxies"] = proxies;
 
-    ostringstream jsonStringStream; 
+    ostringstream jsonStringStream;
     Json::FastWriter jsonWriter;
-    jsonStringStream << jsonWriter.write(json); 
+    jsonStringStream << jsonWriter.write(json);
     string jsonString = jsonStringStream.str();
 
     RegistryFailureReason registryFailureReason;
-    if (!WriteRegistryStringValue(regKey, 
-                                  jsonString, 
+    if (!WriteRegistryStringValue(regKey,
+                                  jsonString,
                                   registryFailureReason))
     {
         my_print(NOT_SENSITIVE, false, _T("%s:%d: WriteRegistryStringValue error: %d, %d"), __TFUNCTION__, __LINE__, registryFailureReason, GetLastError());
@@ -941,7 +941,7 @@ void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxy
     {
         o_proxyConfig.httpProxy.clear();
     }
-    
+
     proxy_str = o_proxyConfig.httpsProxy;
     colon_pos = proxy_str.find(':');
     if(colon_pos != tstring::npos)
@@ -954,7 +954,7 @@ void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxy
     {
         o_proxyConfig.httpsProxy.clear();
     }
-    
+
     proxy_str = o_proxyConfig.socksProxy;
     colon_pos = proxy_str.find(':');
     if(colon_pos != tstring::npos)

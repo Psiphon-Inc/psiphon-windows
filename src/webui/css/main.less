@@ -307,7 +307,7 @@ textarea {
     color: @psiNavTextColor;
     font-weight: bold;
     text-transform: uppercase;
-    transition: background-color 300ms, color 300ms;
+    .transition(~"background-color 300ms ease, color 300ms ease");
     white-space: nowrap; // IE7 hack
   }
 
@@ -889,6 +889,112 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
   }
 }
 
+/* PSICASH */
+
+#psicash-block {
+  // We want the PsiCash block to be bottom-left (for LTR)
+  position: absolute;
+  bottom: 0;
+  body[dir="ltr"] & {
+    left: 0;
+  }
+  body[dir="rtl"] & {
+    right: 0;
+  }
+
+  > div {
+    padding: 5px;
+    border-top: 3px solid #1B7B9C;
+
+    .psicash-title-balance {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-bottom: 5px;
+      .clearfix;
+
+      .psicash-balance-coin {
+        // These rules help old-IE clients look okay
+        white-space: nowrap;
+        max-height: 1.6em;
+      }
+
+      > span {
+        body[dir="ltr"] & {
+          .pull-right;
+        }
+        body[dir="rtl"] & {
+          .pull-left;
+        }
+      }
+
+      .psicash-balance-delta {
+        // Prevent mouse interaction, to allow click-through to elements behind.
+        // Note that this only works in IE11.
+        pointer-events: none;
+
+        // Prevent it from interfering with the layout of other elements
+        position: relative;
+        height: 0;
+        width: 0;
+        overflow: visible;
+        display: list-item;
+        z-index: -999;
+
+        // Not visible when not changing
+        visibility: hidden;
+
+        // Tweak to center on the balance.
+        // TODO: Figure out how to prevent jumping when the number of digits in the balance changes.
+        top: -23px;
+        left: 3px;
+
+        // Starts opaque
+        opacity: 1;
+
+        &.credit {
+          color: gold;
+
+          // Font will start big and shrink
+          font-size: 600%;
+          opacity: 1;
+
+        }
+        &.debit {
+          color: silver;
+
+          // Font will start small-ish and grow
+          font-size: 1em;
+        }
+
+        &.balance-changing {
+          // Show it
+          visibility: visible;
+
+          // On top of all other elements
+          z-index: 99999;
+        }
+      }
+    }
+
+    img.coin {
+      height: 1.5em;
+      vertical-align: text-top;
+    }
+
+    .btn {
+      // A full-width button doesn't look enough like a button
+      max-width: 95%;
+    }
+
+    .button-container {
+      .text-center;
+    }
+
+    .psicash-buy-psi {
+      margin-top: 4px;
+    }
+  }
+}
 
 /* MISCELLANEOUS AND HELPERS */
 

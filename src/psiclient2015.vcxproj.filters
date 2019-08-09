@@ -49,6 +49,8 @@
     <ClCompile Include="3rdParty\jsoncpp\jsoncpp.cpp">
       <Filter>3rdParty\jsoncpp</Filter>
     </ClCompile>
+    <ClCompile Include="psicashlib.cpp" />
+    <ClCompile Include="dispatch_queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -516,6 +518,17 @@
     <ClInclude Include="3rdParty\jsoncpp\json\json-forwards.h">
       <Filter>3rdParty\jsoncpp\json</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\psicash\datetime.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\psicash\error.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\psicash\psicash.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
+    <ClInclude Include="psicashlib.h" />
+    <ClInclude Include="dispatch_queue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
@@ -523,9 +536,6 @@
   <ItemGroup>
     <Filter Include="WebCtrl">
       <UniqueIdentifier>{9cab73d3-bc74-49ac-b02d-501929a49dd6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI">
-      <UniqueIdentifier>{7d4a24ae-9f52-44b6-8849-5c893ad559b8}</UniqueIdentifier>
     </Filter>
     <Filter Include="3rdParty">
       <UniqueIdentifier>{be7fd6a6-10d9-466d-b2a4-1e4f7089e26c}</UniqueIdentifier>
@@ -542,12 +552,12 @@
     <Filter Include="3rdParty\jsoncpp\json">
       <UniqueIdentifier>{50104d07-2601-4ae5-9602-f6340013c2c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdParty\psicash">
+      <UniqueIdentifier>{120d2441-2aa6-42f5-882c-bfb66f5d2233}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="psiclient.ico" />
-    <Image Include="webui\flag_unknown_16.png">
-      <Filter>UI</Filter>
-    </Image>
     <Image Include="systray-stopped.ico" />
   </ItemGroup>
 </Project>

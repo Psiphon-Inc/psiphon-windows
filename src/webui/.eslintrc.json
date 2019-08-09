@@ -1,0 +1,31 @@
+{
+  "env": {
+      "browser": true,
+      "jquery": true,
+      "commonjs": false,
+      "es6": true,
+      "node": false
+  },
+  "parserOptions": {
+      "ecmaFeatures": {
+          "jsx": false
+      },
+      "sourceType": "script"
+  },
+  "plugins": ["lodash"],
+  "extends": ["eslint:recommended", "plugin:lodash/recommended"],
+  "globals": {
+      "_": false,
+      "i18n": false,
+      "Spinner": false,
+      "moment": false,
+      "base64": false,
+      "Datastore": false,
+      "objectPathImmutable": false,
+      "Modernizr": false
+  },
+  "rules": {
+      "no-console": "off",
+      "lodash/prefer-lodash-method": "off"
+  }
+}

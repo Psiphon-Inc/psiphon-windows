@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -79,9 +79,9 @@ void CALLBACK WinHttpStatusCallback(
                 DWORD dwStatusInformationLength)
 {
     // From: http://msdn.microsoft.com/en-us/library/windows/desktop/aa384068%28v=vs.85%29.aspx
-    // "...it is possible in WinHTTP for a notification to occur before a context 
-    // value is set. If the callback function receives a notification before the 
-    // context value is set, the application must be prepared to receive NULL in 
+    // "...it is possible in WinHTTP for a notification to occur before a context
+    // value is set. If the callback function receives a notification before the
+    // context value is set, the application must be prepared to receive NULL in
     // the dwContext parameter of the callback function."
     if (dwContext == NULL)
     {
@@ -153,15 +153,44 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
 
-        // Check for HTTP status 200 OK
-
+        // Get Date header. We're not going to error if we can't get it.
+        // This comes before the status code check, because the Date header
+        // should be valid for all responses.
         dwLen = sizeof(dwStatusCode);
         if (!WinHttpQueryHeaders(
-                        hRequest, 
+            hRequest,
+            WINHTTP_QUERY_DATE,
+            WINHTTP_HEADER_NAME_BY_INDEX,
+            NULL,
+            &dwLen,
+            WINHTTP_NO_HEADER_INDEX))
+        {
+            // False return is expected, because we're obtaining the required size.
+            if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+                wstring buf;
+                buf.resize(dwLen / sizeof(WCHAR) + 1, '\0');
+
+                if (WinHttpQueryHeaders(
+                    hRequest,
+                    WINHTTP_QUERY_DATE,
+                    WINHTTP_HEADER_NAME_BY_INDEX,
+                    (LPVOID)buf.data(),
+                    &dwLen,
+                    WINHTTP_NO_HEADER_INDEX))
+                {
+                    httpRequest->ResponseSetDateHeader(WStringToUTF8(buf));
+                }
+            }
+        }
+
+        // Check for HTTP status 200 OK
+        dwLen = sizeof(dwStatusCode);
+        if (!WinHttpQueryHeaders(
+                        hRequest,
                         WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-                        NULL, 
-                        &dwStatusCode, 
-                        &dwLen, 
+                        NULL,
+                        &dwStatusCode,
+                        &dwLen,
                         NULL))
         {
             my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpQueryHeaders failed (%d)"), GetLastError());
@@ -169,12 +198,8 @@ void CALLBACK WinHttpStatusCallback(
             return;
         }
 
-        if (200 != dwStatusCode)
-        {
-            my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("Bad HTTP GET request status code: %d"), dwStatusCode);
-            WinHttpCloseHandle(hRequest);
-            return;
-        }
+        httpRequest->ResponseSetCode(dwStatusCode);
+        my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("HTTP request status code: %d"), dwStatusCode);
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
@@ -205,7 +230,7 @@ void CALLBACK WinHttpStatusCallback(
             WinHttpCloseHandle(hRequest);
             return;
         }
-    
+
         if (!WinHttpReadData(hRequest, pBuffer, dwLen, &dwLen))
         {
             my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("WinHttpReadData failed (%d)"), GetLastError());
@@ -217,7 +242,7 @@ void CALLBACK WinHttpStatusCallback(
         // NOTE: response data may be binary; some relevant comments here...
         // http://stackoverflow.com/questions/441203/proper-way-to-store-binary-data-with-c-stl
 
-        httpRequest->AppendResponse(string(string::const_pointer(pBuffer), string::const_pointer((char*)pBuffer + dwLen)));
+        httpRequest->ResponseAppendBody(string(string::const_pointer(pBuffer), string::const_pointer((char*)pBuffer + dwLen)));
 
         HeapFree(GetProcessHeap(), 0, pBuffer);
 
@@ -234,7 +259,7 @@ void CALLBACK WinHttpStatusCallback(
         // Get error value as per http://msdn.microsoft.com/en-us/library/aa383917%28v=VS.85%29.aspx
         if (ERROR_WINHTTP_OPERATION_CANCELLED != ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError)
         {
-            my_print(NOT_SENSITIVE, 
+            my_print(NOT_SENSITIVE,
                      httpRequest->m_silentMode, _T("HTTP request error (%d, %d)"),
                      ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwResult,
                      ((WINHTTP_ASYNC_RESULT*)lpvStatusInformation)->dwError);
@@ -292,9 +317,9 @@ bool HTTPSRequest::MakeRequest(
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
         const StopInfo& stopInfo,
-        bool usePsiphonLocalProxy,
+        PsiphonProxy usePsiphonLocalProxy,
+        HTTPSRequest::Response& response,
         bool failoverToURLProxy/*=false*/,
         LPCWSTR additionalHeaders/*=NULL*/,
         LPVOID additionalData/*=NULL*/,
@@ -305,8 +330,9 @@ bool HTTPSRequest::MakeRequest(
     // http://stackoverflow.com/questions/29801450/winhttp-doesnt-download-from-amazon-s3-on-winxp
     // In this case, we can use the tunnel core URL proxy to make the request using a different http client stack.
 
-    bool success = MakeRequestWithURLProxyOption(serverAddress, serverWebPort, webServerCertificate, requestPath,
-        response, stopInfo, usePsiphonLocalProxy,
+    bool success = MakeRequestWithURLProxyOption(
+        serverAddress, serverWebPort, webServerCertificate, requestPath,
+        stopInfo, usePsiphonLocalProxy, response,
         false, // useURLProxy
         additionalHeaders, additionalData, additionalDataLength, httpVerb);
 
@@ -329,6 +355,7 @@ bool HTTPSRequest::MakeRequest(
                 NULL, // not receiving reconnection notifications
                 NULL, // not receiving upgrade paver calls
                 NULL, // not collecting stats
+                NULL, // not supplying authorizations
                 new ServerEntry(), // this empty ServerEntry is the flag for URL proxy mode; we don't need to connect to a specific server
                 true);// don't apply system proxy settings (or write to the Psiphon proxy settings registry key)
                         // as another transport might currently be running
@@ -337,18 +364,19 @@ bool HTTPSRequest::MakeRequest(
             // http://localhost:URL_proxy_port/<direct|tunneled>/urlencode(https://destination:port/requestPath)
             tstringstream URL;
             URL << _T("https://") << serverAddress << _T(":") << serverWebPort << requestPath;
-            
+
             // NOTE that we will always make "direct" requests since this URL proxy will not establish a tunnel
             tstringstream urlProxyRequestPath;
             urlProxyRequestPath << _T("/") << _T("direct") << _T("/") << UrlEncode(URL.str());
-            
+
             serverAddress = _T("127.0.0.1");
             serverWebPort = connection.GetTransportLocalHttpProxy();
 
             my_print(NOT_SENSITIVE, true, _T("Using URL proxy port %d"), serverWebPort);
 
-            success = MakeRequestWithURLProxyOption(serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
-                response, stopInfo, usePsiphonLocalProxy,
+            success = MakeRequestWithURLProxyOption(
+                serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
+                stopInfo, usePsiphonLocalProxy, response,
                 true, // useURLProxy
                 additionalHeaders, additionalData, additionalDataLength, httpVerb);
 
@@ -365,18 +393,19 @@ bool HTTPSRequest::MakeRequest(
             success = false;
         }
     }
-    
+
     return success;
 }
 
+// Throws StopSignal::StopException if stop was signaled.
 bool HTTPSRequest::MakeRequestWithURLProxyOption(
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
         const StopInfo& stopInfo,
-        bool usePsiphonLocalProxy,
+        PsiphonProxy usePsiphonLocalProxy,
+        HTTPSRequest::Response& response,
         bool useURLProxy,
         LPCWSTR additionalHeaders,
         LPVOID additionalData,
@@ -387,7 +416,7 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
     stopInfo.stopSignal->CheckSignal(stopInfo.stopReasons, true);
 
     DWORD dwFlags = 0;
-    
+
     if (webServerCertificate.length() > 0)
     {
         // We're doing our own validation, so don't choke on cert errors.
@@ -402,9 +431,16 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         // The URL proxy (tunnelcore) will pick up a system proxy setting and will use it if necessary.
         // So leave proxyHost blank here.
     }
-    else if (usePsiphonLocalProxy)
+    else if (usePsiphonLocalProxy != PsiphonProxy::DONT_USE)
     {
         proxyHost = GetTunneledDefaultHttpsProxyHost();
+
+        if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE && proxyHost == _T(""))
+        {
+            // We are required to proxy through Psiphon, but there's no Psiphon
+            // proxy to use.
+            return false;
+        }
     }
     else
     {
@@ -523,14 +559,29 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         throw std::exception(error.str().c_str());
     }
 
+    // Tunnel-core drop idle connections after 30 seconds. If this is faster
+    // than the server indicated to the client on the last request, we can get
+    // an error that won't be auto-retried by WinHTTP.
+    // For example, PsiCash's ELB idle connection timeout was 60 seconds. So
+    // any repeat PsiCash request made between 30 and 60 seconds of the
+    // previous one would result in a hard error (not retried anywhere).
+    // We're going to specify Connection:close in all our requests to avoid
+    // this problem.
+    wstring headers = L"Connection: close\r\n";
+    if (additionalHeaders)
+    {
+        headers += additionalHeaders;
+    }
+
+
     m_expectedServerCertificate = webServerCertificate;
     m_requestSuccess = false;
-    m_response = "";
+    m_response = Response();
 
     if (FALSE == WinHttpSendRequest(
                     hRequest,
-                    additionalHeaders ? additionalHeaders : WINHTTP_NO_ADDITIONAL_HEADERS,
-                    additionalHeaders ? wcslen(additionalHeaders) : 0,
+                    headers.c_str(),
+                    headers.length(),
                     additionalData ? additionalData : WINHTTP_NO_REQUEST_DATA,
                     additionalDataLength,
                     additionalDataLength,
@@ -581,18 +632,30 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
 
     if (m_requestSuccess)
     {
-        response = m_response;
+        response = std::move(m_response);
+        m_response = Response();
         return true;
     }
 
     return false;
 }
 
-void HTTPSRequest::AppendResponse(const string& responseData)
+void HTTPSRequest::ResponseAppendBody(const string& responseData)
 {
     AutoMUTEX lock(m_mutex);
+    m_response.body.append(responseData);
+}
 
-    m_response.append(responseData);
+void HTTPSRequest::ResponseSetCode(int code)
+{
+    AutoMUTEX lock(m_mutex);
+    m_response.code = code;
+}
+
+void HTTPSRequest::ResponseSetDateHeader(const string& dateHeader)
+{
+    AutoMUTEX lock(m_mutex);
+    m_response.dateHeader = dateHeader;
 }
 
 bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
@@ -613,7 +676,7 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
     bool bResult = false;
 
     //Base64 decode pem string to BYTE*
-    
+
     //Get the expected pbBinary length
     if (!CryptStringToBinaryA(
             (LPCSTR)m_expectedServerCertificate.c_str(), m_expectedServerCertificate.length(),
@@ -638,7 +701,7 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
         my_print(NOT_SENSITIVE, m_silentMode, _T("HTTPSRequest::ValidateServerCert:%d - CryptStringToBinaryA failed (%d)"), __LINE__, GetLastError());
         return false;
     }
-    
+
     // Check if the certificate in pCert matches the expectedServerCertificate
     if (pCert->cbCertEncoded == cbBinary)
     {
@@ -653,7 +716,7 @@ bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)
             }
         }
     }
-    
+
     delete pbBinary;
 
     return bResult;

@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -27,7 +27,7 @@
 
 
 // This value determines whether or not we will perform preemptive reconnect
-// behaviour if the handshake fails. If it's zero (or MAXDWORD, really), then 
+// behaviour if the handshake fails. If it's zero (or MAXDWORD, really), then
 // we won't, if it's something like 60000, then we will.
 #define PREEMPTIVE_RECONNECT_LIFETIME_MILLISECONDS_DEFAULT MAXDWORD
 
@@ -175,26 +175,26 @@ bool SessionInfo::ProcessConfig(const string& config_json)
         // VPN PSK
         m_psk = config.get("l2tp_ipsec_psk", "").asString();
 
-        // Page view regexes        
+        // Page view regexes
         Json::Value regexes = config["page_view_regexes"];
         for (Json::Value::ArrayIndex i = 0; i < regexes.size(); i++)
         {
             RegexReplace rx_re;
             rx_re.regex = regex(
-                            regexes[i].get("regex", "").asString(), 
+                            regexes[i].get("regex", "").asString(),
                             regex::ECMAScript | regex::icase | regex::optimize);
             rx_re.replace = regexes[i].get("replace", "").asString();
 
             m_pageViewRegexes.push_back(rx_re);
         }
 
-        // HTTPS request regexes        
+        // HTTPS request regexes
         regexes = config["https_request_regexes"];
         for (Json::Value::ArrayIndex i = 0; i < regexes.size(); i++)
         {
             RegexReplace rx_re;
             rx_re.regex = regex(
-                            regexes[i].get("regex", "").asString(), 
+                            regexes[i].get("regex", "").asString(),
                             regex::ECMAScript | regex::icase | regex::optimize);
             rx_re.replace = regexes[i].get("replace", "").asString();
 
@@ -240,7 +240,7 @@ void SessionInfo::SetLocalProxyPorts(int http, int https, int socks)
     m_localSocksProxyPort = socks;
 }
 
-string SessionInfo::GetServerAddress() const 
+string SessionInfo::GetServerAddress() const
 {
     return m_serverEntry.serverAddress;
 }
@@ -255,13 +255,13 @@ int SessionInfo::GetWebPort() const
     return m_serverEntry.webServerPort;
 }
 
-string SessionInfo::GetWebServerSecret() const 
+string SessionInfo::GetWebServerSecret() const
 {
     return m_serverEntry.webServerSecret;
 }
 
-string SessionInfo::GetWebServerCertificate() const 
-{ 
+string SessionInfo::GetWebServerCertificate() const
+{
     return m_serverEntry.webServerCertificate;
 }
 
@@ -277,32 +277,32 @@ static string Coalesce(const string& x, const string& y)
     return !x.empty() ? x : y;
 }
 
-int SessionInfo::GetSSHPort() const 
+int SessionInfo::GetSSHPort() const
 {
     return Coalesce(m_sshPort, m_serverEntry.sshPort);
 }
 
-string SessionInfo::GetSSHUsername() const 
+string SessionInfo::GetSSHUsername() const
 {
     return Coalesce(m_sshUsername, m_serverEntry.sshUsername);
 }
 
-string SessionInfo::GetSSHPassword() const 
+string SessionInfo::GetSSHPassword() const
 {
     return Coalesce(m_sshPassword, m_serverEntry.sshPassword);
 }
 
-string SessionInfo::GetSSHHostKey() const 
+string SessionInfo::GetSSHHostKey() const
 {
     return Coalesce(m_sshHostKey, m_serverEntry.sshHostKey);
 }
 
-int SessionInfo::GetSSHObfuscatedPort() const 
+int SessionInfo::GetSSHObfuscatedPort() const
 {
     return Coalesce(m_sshObfuscatedPort, m_serverEntry.sshObfuscatedPort);
 }
 
-string SessionInfo::GetSSHObfuscatedKey() const 
+string SessionInfo::GetSSHObfuscatedKey() const
 {
     return Coalesce(m_sshObfuscatedKey, m_serverEntry.sshObfuscatedKey);
 }
@@ -332,7 +332,7 @@ string SessionInfo::GetMeekCookieEncryptionPublicKey() const
     return Coalesce(m_meekCookieEncryptionPublicKey, m_serverEntry.meekCookieEncryptionPublicKey);
 }
 
-vector<string> SessionInfo::GetDiscoveredServerEntries() const 
+vector<string> SessionInfo::GetDiscoveredServerEntries() const
 {
     return m_servers;
 }
@@ -342,7 +342,7 @@ bool SessionInfo::HasServerEntry() const
     return m_serverEntry.serverAddress.length() > 0;
 }
 
-ServerEntry SessionInfo::GetServerEntry() const 
+ServerEntry SessionInfo::GetServerEntry() const
 {
     if (!HasServerEntry()) {
         assert(false);
@@ -354,10 +354,10 @@ ServerEntry SessionInfo::GetServerEntry() const
     // we'll construct a new ServerEntry with the best info we have.
 
     ServerEntry newServerEntry(
-        GetServerAddress(), GetRegion(), GetWebPort(), 
-        GetWebServerSecret(), GetWebServerCertificate(), 
-        GetSSHPort(), GetSSHUsername(), GetSSHPassword(), 
-        GetSSHHostKey(), GetSSHObfuscatedPort(), 
+        GetServerAddress(), GetRegion(), GetWebPort(),
+        GetWebServerSecret(), GetWebServerCertificate(),
+        GetSSHPort(), GetSSHUsername(), GetSSHPassword(),
+        GetSSHHostKey(), GetSSHObfuscatedPort(),
         GetSSHObfuscatedKey(),
         GetMeekObfuscatedKey(), GetMeekServerPort(),
         GetMeekCookieEncryptionPublicKey(),

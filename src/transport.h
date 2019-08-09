@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -19,7 +19,7 @@
 
 /*
 NOTES
-- Make behaviour consistent when user cancels connect. 
+- Make behaviour consistent when user cancels connect.
   Right now it might throw abort or might exit cleanly (SSH for sure).
 */
 
@@ -27,6 +27,7 @@ NOTES
 
 #include "worker_thread.h"
 #include "sessioninfo.h"
+#include "psicashlib.h"
 
 
 class SystemProxySettings;
@@ -45,28 +46,42 @@ public:
     virtual void PaveUpgrade(const string&) = 0;
 };
 
+class IAuthorizationsProvider
+{
+public:
+    // Retrieves the Authorizations that should be supplied to a (tunnel-core) connection.
+    virtual psicash::Authorizations GetAuthorizations() const = 0;
+
+    // Called to indicate what authorization IDs were validated and used by the server,
+    // as well as all authorizations that were rejected by the server.
+    // "Active" here depends on tunnel-core's judgement, but it really means "not expired".
+    virtual void ActiveAuthorizationIDs(
+        const std::vector<std::string>& activeIDs, 
+        const std::vector<std::string>& inactiveIDs) = 0;
+};
+
 // All transport implementations must implement this interface
 class ITransport : public IWorkerThread
 {
 public:
     ITransport(LPCTSTR transportProtocolName);
 
-    //returns immutable transport protocol name 
+    //returns immutable transport protocol name
     virtual tstring GetTransportProtocolName() const = 0;
 
-    //returns immutable transport display name 
+    //returns immutable transport display name
     virtual tstring GetTransportDisplayName() const = 0;
 
-    //transport request name can be changed by the class methods, 
+    //transport request name can be changed by the class methods,
     //this is the one used in psiphon web requests
     virtual tstring GetTransportRequestName() const = 0;
 
-    // TransportRegistry functions. 
+    // TransportRegistry functions.
     // Every implementing class must have a static function with this signature:
     //static void GetFactory(
     //              tstring& o_transportDisplayName,
     //              tstring& o_transportProtocolName,
-    //              TransportFactoryFn& o_transportFactoryFn, 
+    //              TransportFactoryFn& o_transportFactoryFn,
     //              AddServerEntriesFn& o_addServerEntriesFn);
 
     // Only valid when connected
@@ -83,9 +98,13 @@ public:
     virtual bool IsHandshakeRequired() const = 0;
 
     // Returns true if all system traffic is tunneled, rather than only traffic
-    // routed through the local Psiphon proxy. 
+    // routed through the local Psiphon proxy.
     // In other words, this is true for VPN, false for SSH.
     virtual bool IsWholeSystemTunneled() const = 0;
+
+    // Returns true iff the transport accepts and supports authorizations,
+    // such as tunnel-core's support of Speed Boost authorizations.
+    virtual bool SupportsAuthorizations() const = 0;
 
     // Returns true if at least one server supports this transport.
     virtual bool ServerWithCapabilitiesExists();
@@ -97,13 +116,14 @@ public:
     // A failed attempt must clean itself up as needed.
     // May throw TransportFailed or Abort.
     // Subclasses must not override.
-    // remoteServerListFetcher is optional. If NULL, no remote server list 
-    //   fetch will be triggered.
+    // remoteServerListFetcher is optional. If NULL, no remote server list
+    // fetch will be triggered.
     void Connect(
             SystemProxySettings* systemProxySettings,
             const StopInfo& stopInfo,
             IReconnectStateReceiver* reconnectStateReceiver,
             IUpgradePaver* upgradePaver,
+            IAuthorizationsProvider* authorizationsProvider,
             WorkerThreadSynch* workerThreadSynch,
             const ServerEntry* tempConnectServerEntry=NULL);
 
@@ -111,7 +131,7 @@ public:
     // and connection parameters. If it returns false, then the failure is permanent.
     bool IsConnectRetryOkay() const;
 
-    // Do any necessary final cleanup. 
+    // Do any necessary final cleanup.
     // Must be safe to call even if a connection was never established.
     virtual bool Cleanup() = 0;
 
@@ -119,27 +139,27 @@ public:
     // connected if it's not just a temporary connection.
     bool IsConnected(bool andNotTemporary) const;
 
-    // Must be called after connecting, if there has been a handshake that 
+    // Must be called after connecting, if there has been a handshake that
     // added more data to sessionInfo.
     SessionInfo GetSessionInfo() const;
 
     static size_t AddServerEntries(
             LPCTSTR transportProtocolName,
-            const vector<string>& newServerEntryList, 
+            const vector<string>& newServerEntryList,
             const ServerEntry* serverEntry);
 
     //
     // Exception classes
     //
     // Generally speaking, any of these, or IWorkerThread::Abort, or
-    // IWorkerThread::Error may be thrown at any time. 
+    // IWorkerThread::Error may be thrown at any time.
     // (Except in const members?)
     //
     // Indicates that this transport was not successful.
     // If connectRetryOkay is not true, then there should not be another connection
     // attempt made with the transport using the same parameters.
-    class TransportFailed 
-    { 
+    class TransportFailed
+    {
         friend class ITransport;
     public:
         TransportFailed() : m_connectRetryOkay(true) {}
@@ -174,5 +194,6 @@ protected:
     bool m_firstConnectionAttempt;
     IReconnectStateReceiver* m_reconnectStateReceiver;
     IUpgradePaver* m_upgradePaver;
+    IAuthorizationsProvider* m_authorizationsProvider;
     bool m_connectRetryOkay;
 };

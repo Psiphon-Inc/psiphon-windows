@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>3rdParty\mctrl\Debug2015\mCtrl.lib;3rdParty\cryptopp\Debug2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>3rdParty\psicash\Debug2015\psicash.lib;3rdParty\mctrl\Debug2015\mCtrl.lib;3rdParty\cryptopp\Debug2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,7 +85,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>3rdParty\mctrl\Release2015\mCtrl.lib;3rdParty\cryptopp\Release2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>3rdParty\psicash\Release2015\psicash.lib;3rdParty\mctrl\Release2015\mCtrl.lib;3rdParty\cryptopp\Release2015\cryptlib.lib;Winhttp.lib;rasapi32.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Comctl32.lib;wininet.lib;shlwapi.lib;urlmon.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
     </Link>
@@ -227,6 +227,9 @@
     <ClInclude Include="3rdParty\cryptopp\zlib.h" />
     <ClInclude Include="3rdParty\jsoncpp\json\json-forwards.h" />
     <ClInclude Include="3rdParty\jsoncpp\json\json.h" />
+    <ClInclude Include="3rdParty\psicash\datetime.hpp" />
+    <ClInclude Include="3rdParty\psicash\error.hpp" />
+    <ClInclude Include="3rdParty\psicash\psicash.hpp" />
     <ClInclude Include="3rdParty\zlib\crc32.h" />
     <ClInclude Include="3rdParty\zlib\inffast.h" />
     <ClInclude Include="3rdParty\zlib\inffixed.h" />
@@ -241,11 +244,13 @@
     <ClInclude Include="coretransport.h" />
     <ClInclude Include="diagnostic_info.h" />
     <ClInclude Include="embeddedvalues.h" />
+    <ClInclude Include="dispatch_queue.h" />
     <ClInclude Include="htmldlg.h" />
     <ClInclude Include="httpsrequest.h" />
     <ClInclude Include="limitsingleinstance.h" />
     <ClInclude Include="local_proxy.h" />
     <ClInclude Include="logging.h" />
+    <ClInclude Include="psicashlib.h" />
     <ClInclude Include="wininet_network_check.h" />
     <ClInclude Include="psiclient.h" />
     <ClInclude Include="resource.h" />
@@ -312,6 +317,8 @@
     <ClCompile Include="httpsrequest.cpp" />
     <ClCompile Include="local_proxy.cpp" />
     <ClCompile Include="logging.cpp" />
+    <ClCompile Include="psicashlib.cpp" />
+    <ClCompile Include="dispatch_queue.cpp" />
     <ClCompile Include="wininet_network_check.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -342,7 +349,6 @@
   <ItemGroup>
     <Image Include="psiclient.ico" />
     <Image Include="systray-stopped.ico" />
-    <Image Include="webui\flag_unknown_16.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

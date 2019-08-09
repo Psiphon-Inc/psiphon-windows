@@ -36,9 +36,9 @@
 #include "webbrowser.h"
 #include "limitsingleinstance.h"
 #include "htmldlg.h"
-#include "stopsignal.h"
 #include "diagnostic_info.h"
 #include "systemproxysettings.h"
+#include "psicashlib.h"
 
 //==== Globals ================================================================
 
@@ -67,6 +67,11 @@ static bool g_htmlUiFinished = false;
 #define TIMER_ID_SYSTRAY_MINIMIZE       100
 #define TIMER_ID_SYSTRAY_STATE_UPDATE   101
 #define TIMER_ID_CONNECTED_REMINDER     102
+
+
+//==== Forward declarations ====================================================
+
+bool handlePsiCashCommand(const string& jsonString);
 
 
 //==== Controls ================================================================
@@ -179,7 +184,7 @@ static void AddStringTableEntry(const string& utf8EntryJson)
     SetUiLocale(UTF8ToWString(locale));
 }
 
-// Returns true if the string table entry is found, false otherwise. 
+// Returns true if the string table entry is found, false otherwise.
 static bool GetStringTableEntry(LPSTR key, wstring& o_entry)
 {
     o_entry.clear();
@@ -216,7 +221,7 @@ static HICON g_notifyIconConnected = NULL;
 static bool g_notifyIconAdded = false;
 
 
-// InitSystrayIcon initializes the systray icon/notification. Gets called by 
+// InitSystrayIcon initializes the systray icon/notification. Gets called by
 // UpdateSystrayState and should not be called directly.
 static void InitSystrayIcon() {
     static bool s_initialized = false;
@@ -250,7 +255,7 @@ static void InitSystrayIcon() {
     g_notifyIconData.uVersion = NOTIFYICON_VERSION;
 }
 
-// UpdateSystrayIcon sets the current systray icon. 
+// UpdateSystrayIcon sets the current systray icon.
 // If infoTitle is non-empty, then it will also display a balloon.
 // If hIcon is NULL, then the icon will not be changed.
 static void UpdateSystrayIcon(HICON hIcon, const wstring& infoTitle, const wstring& infoBody,
@@ -371,7 +376,7 @@ static VOID CALLBACK HandleMinimizeHelper(HWND hWnd, UINT, UINT_PTR idEvent, DWO
 
     ::KillTimer(hWnd, idEvent);
     g_handleMinimizeTimerID = 0;
-    
+
     if (g_notifyIconAdded)
     {
         ShowWindow(g_hWnd, SW_HIDE);
@@ -397,23 +402,23 @@ static void HandleMinimize()
     if (g_handleMinimizeTimerID == 0)
     {
         g_handleMinimizeTimerID = ::SetTimer(
-            g_hWnd, 
-            TIMER_ID_SYSTRAY_MINIMIZE, 
-            300, 
+            g_hWnd,
+            TIMER_ID_SYSTRAY_MINIMIZE,
+            300,
             HandleMinimizeHelper);
     }
 }
 
 /*
-The systray state updating is a bit complicated. We want to avoid this: 
-  When Psiphon quickly disconnects and reconnects, we don't want to spam the 
+The systray state updating is a bit complicated. We want to avoid this:
+  When Psiphon quickly disconnects and reconnects, we don't want to spam the
   systray balloon text.
 What we want is:
   When a disconnect occurs, we wait a bit before changing the systray state.
-  When that wait expires, if the state has gone back to connected, we don't 
+  When that wait expires, if the state has gone back to connected, we don't
   show anything. If it has changed, we show the change.
   (Unless the application window is foreground, because otherwise the UI and systray
-  state mismatch will be weird.)  
+  state mismatch will be weird.)
 */
 
 static ConnectionManagerState g_UpdateSystrayConnectedState_LastState = (ConnectionManagerState)0xFFFFFFFF;
@@ -494,9 +499,9 @@ static void UpdateSystrayConnectedState()
         if (g_updateSystrayConnectedStateTimerID == 0)
         {
             g_updateSystrayConnectedStateTimerID = ::SetTimer(
-                g_hWnd, 
-                TIMER_ID_SYSTRAY_STATE_UPDATE, 
-                5000, 
+                g_hWnd,
+                TIMER_ID_SYSTRAY_STATE_UPDATE,
+                5000,
                 UpdateSystrayConnectedStateTimer);
         }
     }
@@ -594,6 +599,7 @@ static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR
 #define WM_PSIPHON_HTMLUI_ADDNOTICE         WM_USER + 203
 #define WM_PSIPHON_HTMLUI_REFRESHSETTINGS   WM_USER + 204
 #define WM_PSIPHON_HTMLUI_UPDATEDPISCALING  WM_USER + 205
+#define WM_PSIPHON_HTMLUI_PSICASHMESSAGE    WM_USER + 206
 
 static void HtmlUI_AddLog(int priority, LPCTSTR message)
 {
@@ -757,6 +763,38 @@ static void HtmlUI_UpdateDpiScalingHandler(LPCWSTR json)
     delete[] json;
 }
 
+static void HtmlUI_PsiCashMessage(const string& psicashJSON)
+{
+    wstring wJson = UTF8ToWString(psicashJSON.c_str());
+
+    size_t bufLen = wJson.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, wJson.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_PSICASHMESSAGE, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_PsiCashMessageHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    if (!SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
+        (WPARAM)_T("HtmlCtrlInterface_PsiCashMessage"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlCtrlInterface_PsiCashMessage not found");
+    }
+    delete[] json;
+}
+
 static void HtmlUI_BeforeNavigate(MC_NMHTMLURL* nmHtmlUrl)
 {
     size_t bufLen = _tcslen(nmHtmlUrl->pszUrl) + 1;
@@ -767,8 +805,8 @@ static void HtmlUI_BeforeNavigate(MC_NMHTMLURL* nmHtmlUrl)
 }
 
 // HtmlUI_BeforeNavigateHandler intercepts all navigation attempts in the HTML control.
-// It is also mechanism that is used for the HTML control to communicate with the
-// back-end code (the code you're looking at now). 
+// It is also this mechanism that is used for the HTML control to communicate
+// with the back-end code (the code you're looking at now).
 #define PSIPHON_LINK_PREFIX     _T("psi:")
 static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 {
@@ -779,8 +817,11 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const LPCTSTR appReady = PSIPHON_LINK_PREFIX _T("ready");
     const LPCTSTR appStringTable = PSIPHON_LINK_PREFIX _T("stringtable?");
     const size_t appStringTableLen = _tcslen(appStringTable);
+    const LPCTSTR appLogCommand = PSIPHON_LINK_PREFIX _T("log?");
+    const size_t appLogCommandLen = _tcslen(appLogCommand);
     const LPCTSTR appStart = PSIPHON_LINK_PREFIX _T("start");
     const LPCTSTR appStop = PSIPHON_LINK_PREFIX _T("stop");
+    const LPCTSTR appReconnect = PSIPHON_LINK_PREFIX _T("reconnect");
     const LPCTSTR appSaveSettings = PSIPHON_LINK_PREFIX _T("savesettings?");
     const size_t appSaveSettingsLen = _tcslen(appSaveSettings);
     const LPCTSTR appSendFeedback = PSIPHON_LINK_PREFIX _T("sendfeedback?");
@@ -788,6 +829,8 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const LPCTSTR appSetCookies = PSIPHON_LINK_PREFIX _T("setcookies?");
     const size_t appSetCookiesLen = _tcslen(appSetCookies);
     const LPCTSTR appBannerClick = PSIPHON_LINK_PREFIX _T("bannerclick");
+    const LPCTSTR psicashCommand = PSIPHON_LINK_PREFIX _T("psicash?");
+    const size_t psicashCommandLen = _tcslen(psicashCommand);
 
     if (_tcscmp(url, appReady) == 0)
     {
@@ -811,6 +854,18 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
         AddStringTableEntry(stringJSON);
     }
+    else if (_tcsncmp(url, appLogCommand, appLogCommandLen) == 0
+        && _tcslen(url) > appLogCommandLen)
+    {
+        tstring urlDecoded = UrlDecode(url);
+        if (urlDecoded.length() < appLogCommandLen + 1)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: Log command too short"), __TFUNCTION__);
+            goto done;
+        }
+
+        my_print(NOT_SENSITIVE, true, _T("UILog: %s"), urlDecoded.c_str() + appLogCommandLen);
+    }
     else if (_tcscmp(url, appStart) == 0)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Start requested"), __TFUNCTION__);
@@ -821,11 +876,16 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         my_print(NOT_SENSITIVE, true, _T("%s: Stop requested"), __TFUNCTION__);
         g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
     }
+    else if (_tcscmp(url, appReconnect) == 0)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Reconnect requested"), __TFUNCTION__);
+        g_connectionManager.Reconnect();
+    }
     else if (_tcsncmp(url, appSaveSettings, appSaveSettingsLen) == 0
         && _tcslen(url) > appSaveSettingsLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Save settings requested"), __TFUNCTION__);
-        
+
         tstring urlDecoded = UrlDecode(url);
         if (urlDecoded.length() < appSaveSettingsLen + 1)
         {
@@ -838,7 +898,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
         bool doReconnect = success && reconnectRequired &&
             (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED
-             || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING);
+                || g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_STARTING);
 
         // refresh the settings in the UI
         Json::Value settingsJSON;
@@ -855,10 +915,10 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
         if (doReconnect)
         {
-            // Reconnect.
+            // Instead of reconnecting here, we could let the JS see that it's
+            // required and then trigger it. But that seems like an unnecessary round-trip.
             my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
-            g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
-            g_connectionManager.Start();
+            g_connectionManager.Reconnect();
         }
     }
     else if (_tcsncmp(url, appSendFeedback, appSendFeedbackLen) == 0
@@ -873,7 +933,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
 
         my_print(NOT_SENSITIVE, false, _T("Sending feedback..."));
 
-        // We will receive UTF-8 encoded data from the JS, so we'll widen it 
+        // We will receive UTF-8 encoded data from the JS, so we'll widen it
         // before sending it on.
         wstring unicodeJSON = WidenUTF8(urlDecoded.c_str() + appSendFeedbackLen);
         g_connectionManager.SendFeedback(unicodeJSON.c_str());
@@ -898,11 +958,32 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         // no sponsor pages. If not connected, open info link.
         if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
-            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+            g_connectionManager.OpenHomePages(INFO_LINK_URL);
         }
         else
         {
             OpenBrowser(INFO_LINK_URL);
+        }
+    }
+    else if (_tcsncmp(url, psicashCommand, psicashCommandLen) == 0
+        && _tcslen(url) > psicashCommandLen)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: PsiCash command requested: %s"), __TFUNCTION__, url);
+
+        tstring urlDecoded = UrlDecode(url);
+        if (urlDecoded.length() < psicashCommandLen + 1)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: PsiCash command too short"), __TFUNCTION__);
+            goto done;
+        }
+
+        // This is already UTF-8 encoded, we just need to narrow it into a string.
+        string stringJSON(WStringToNarrow(urlDecoded).c_str() + psicashCommandLen);
+
+        if (!handlePsiCashCommand(stringJSON))
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: handlePsiCashCommand failed"), __TFUNCTION__);
+            goto done;
         }
     }
     else {
@@ -1035,6 +1116,12 @@ int APIENTRY _tWinMain(
     DoStartupSystemProxyWork();
     DoStartupDiagnosticCollection();
 
+    // Initialize the PsiCash Library
+    auto err = psicash::Lib::_().Init();
+    if (err) {
+        my_print(NOT_SENSITIVE, false, _T("%s: PsiCashLib initialization failed: %s"), __TFUNCTION__, err.ToString());
+    }
+
     // Main message loop
 
     MSG msg;
@@ -1089,9 +1176,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //==== Main window functions ==================================================
 
 #define WINDOW_X_START  780
-#define WINDOW_Y_START  600
+#define WINDOW_Y_START  640
 #define WINDOW_X_MIN    680
-#define WINDOW_Y_MIN    600
+#define WINDOW_Y_MIN    640
 
 static void SaveWindowPlacement()
 {
@@ -1119,9 +1206,9 @@ static void SaveWindowPlacement()
 
 static void RestoreWindowPlacement()
 {
-    auto restoreExit = finally([] { 
+    auto restoreExit = finally([] {
         ShowWindow(g_hWnd, SW_SHOW);
-        g_windowRestored = true; 
+        g_windowRestored = true;
     });
 
     if (!g_hWnd)
@@ -1169,11 +1256,11 @@ static void RestoreWindowPlacement()
 
         wp.rcNormalPosition.top = (LONG)json.get("rcNormalPosition.top", 0).asLargestInt();
         wp.rcNormalPosition.bottom = (LONG)json.get(
-            "rcNormalPosition.bottom", 
+            "rcNormalPosition.bottom",
             (LONG)ceil(WINDOW_Y_START * g_dpiScaling)).asLargestInt();
         wp.rcNormalPosition.left = (LONG)json.get("rcNormalPosition.left", 0).asLargestInt();
         wp.rcNormalPosition.right = (LONG)json.get(
-            "rcNormalPosition.right", 
+            "rcNormalPosition.right",
             (LONG)ceil(WINDOW_X_START * g_dpiScaling)).asLargestInt();
     }
     catch (exception& e)
@@ -1349,6 +1436,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_HTMLUI_UPDATEDPISCALING:
         HtmlUI_UpdateDpiScalingHandler((LPCWSTR)wParam);
         break;
+    case WM_PSIPHON_HTMLUI_PSICASHMESSAGE:
+        HtmlUI_PsiCashMessageHandler((LPCWSTR)wParam);
+        break;
 
     case WM_SIZE:
         if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED)
@@ -1358,6 +1448,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_GETMINMAXINFO:
+
     {
         // This message is received when the system wants to know the minimum
         // window size (etc.) for this application. It needs to take scaling
@@ -1400,7 +1491,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (lParam == NIN_BALLOONUSERCLICK &&
             CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
-            g_connectionManager.OpenHomePages(INFO_LINK_URL, false);
+            g_connectionManager.OpenHomePages(INFO_LINK_URL);
             RestartConnectedReminderTimer();
             break;
         }
@@ -1408,7 +1499,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_PSIPHON_TRAY_ICON_NOTIFY:
         // Restore/foreground the app on any kind of click
-        if (lParam == WM_LBUTTONUP || 
+        if (lParam == WM_LBUTTONUP ||
             lParam == WM_LBUTTONDBLCLK ||
             lParam == WM_RBUTTONUP ||
             lParam == WM_RBUTTONDBLCLK ||
@@ -1432,6 +1523,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         int priority = (int)wParam;
         TCHAR* log = (TCHAR*)lParam;
         HtmlUI_AddLog(priority, log);
+        auto timestamp = UTF8ToWString(psicash::datetime::DateTime::Now().ToISO8601() + ": ");
+        OutputDebugString(timestamp.c_str());
         OutputDebugString(log);
         OutputDebugString(L"\n");
         free(log);
@@ -1463,4 +1556,164 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
+}
+
+
+//
+// PsiCash
+//
+
+enum class PsiCashMessageType {
+    REFRESH,
+    NEW_PURCHASE
+};
+
+static map<PsiCashMessageType, string> PsiCashMessageTypeNames = {
+    { PsiCashMessageType::REFRESH, "refresh" },
+    { PsiCashMessageType::NEW_PURCHASE, "new-purchase" }
+};
+
+struct PsiCashMessage {
+    PsiCashMessageType type;
+    string id; // unused if empty
+    nlohmann::json payload;
+
+    PsiCashMessage(PsiCashMessageType type, const string& id) : type(type), id(id) {}
+
+    bool JSON(string& s) const {
+        try {
+            auto json = nlohmann::json{
+                { "type",    PsiCashMessageTypeNames[this->type] },
+                { "id",      this->id },
+                { "payload", this->payload } };
+            s = json.dump(-1, ' ', true);
+        }
+        catch (nlohmann::json::exception& e) {
+            my_print(NOT_SENSITIVE, true, _T("%s: json dump failed: %hs; id: %d"), __TFUNCTION__, e.what(), e.id);
+            return false;
+        }
+        return true;
+    }
+};
+
+// Exported function.
+// commandID may be empty if not needed.
+void UI_RefreshPsiCash(const string& commandID)
+{
+    auto buyPsiURL = psicash::Lib::_().GetBuyPsiURL();
+
+    PsiCashMessage evt(PsiCashMessageType::REFRESH, commandID);
+    evt.payload = {
+        { "valid_token_types", psicash::Lib::_().ValidTokenTypes() },
+        { "balance",  psicash::Lib::_().Balance() },
+        { "purchase_prices", psicash::Lib::_().GetPurchasePrices() },
+        { "purchases", psicash::Lib::_().GetPurchases() }
+    };
+
+    // Trying to do this with a ternary conditional will cause a crash
+    evt.payload["buy_psi_url"] = nullptr;
+    if (buyPsiURL) {
+        evt.payload["buy_psi_url"] = *buyPsiURL;
+    }
+
+    string jsonString;
+    if (!evt.JSON(jsonString)) {
+        my_print(NOT_SENSITIVE, true, _T("%s: PsiCashMessage.JSON failed"), __TFUNCTION__);
+        return;
+    }
+
+    HtmlUI_PsiCashMessage(jsonString);
+}
+
+bool handlePsiCashCommand(const string& jsonString)
+{
+    Json::Value json;
+    Json::Reader reader;
+
+    bool parsingSuccessful = reader.parse(jsonString, json);
+    if (!parsingSuccessful)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s: Failed to parse PsiCash command"), __TFUNCTION__);
+        return false;
+    }
+
+    string commandID;
+    if (json["id"].isString())
+    {
+        commandID = json["id"].asString();
+    }
+
+    if (json["command"] == "refresh")
+    {
+        if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: hard PsiCash::RefreshState because %S"), __TFUNCTION__, json["reason"].asCString());
+
+            // We're connected, so ask the server for fresh info
+            psicash::Lib::_().RefreshState([commandID](psicash::error::Result<psicash::Status> result)
+            {
+                // NOTE: This callback is (likely) _not_ on the same thread as the original call.
+
+                if (!result) {
+                    my_print(NOT_SENSITIVE, true, _T("%s: PsiCash::RefreshState failed: %S"), __TFUNCTION__, result.error().ToString().c_str());
+                }
+
+                // Refreshing the UI regardless of request result, as there might still
+                // good data cached locally.
+                UI_RefreshPsiCash(commandID);
+            });
+        }
+        else
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: soft PsiCash::RefreshState because %S"), __TFUNCTION__, json["reason"].asCString());
+
+            // Use locally cached info for the refresh.
+            UI_RefreshPsiCash(commandID);
+        }
+    }
+    else if (json["command"] == "purchase")
+    {
+        psicash::Lib::_().NewExpiringPurchase(
+            json["transactionClass"].asString(), json["distinguisher"].asString(), json["expectedPrice"].asInt64(),
+            [commandID](psicash::error::Result<psicash::PsiCash::NewExpiringPurchaseResponse> result)
+        {
+            // NOTE: This callback is (likely) _not_ on the same thread as the original call.
+
+            // Send the result through to the JS to sort out.
+
+            PsiCashMessage evt(PsiCashMessageType::NEW_PURCHASE, commandID);
+
+            nlohmann::json jsonResult;
+            if (!result) {
+                jsonResult["error"] = result.error().ToString();
+                jsonResult["status"] = -1;
+            }
+            else {
+                jsonResult["error"] = nullptr;
+                jsonResult["status"] = result->status;
+                if (result->purchase) {
+                    jsonResult["purchase"] = *result->purchase;
+                }
+                else {
+                    jsonResult["purchase"] = nullptr;
+                }
+            }
+
+            evt.payload = jsonResult;
+
+            string jsonString;
+            if (!evt.JSON(jsonString)) {
+                my_print(NOT_SENSITIVE, true, _T("%s: PsiCashMessage.JSON failed"), __TFUNCTION__);
+                return;
+            }
+
+            HtmlUI_PsiCashMessage(jsonString);
+            my_print(NOT_SENSITIVE, true, _T("%s: NewExpiringPurchase result: %hs"), __TFUNCTION__, jsonString.c_str());
+        });
+    }
+    else {
+        my_print(NOT_SENSITIVE, true, _T("%s: no command match: %hs"), __TFUNCTION__, jsonString.c_str());
+    }
+
+    return true;
 }

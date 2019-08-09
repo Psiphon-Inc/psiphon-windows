@@ -49,27 +49,17 @@
     }
   </script>
 
-  <script src="vendor/base64.js?__inline=true"></script>
-  <script src="vendor/respond.src.js?__inline=true"></script>
   <script src="vendor/modernizr.min.js?__inline=true"></script>
-  <script src="vendor/es5-shim.min.js?__inline=true"></script>
-  <script src="vendor/json2.js?__inline=true"></script>
-  <script src="vendor/jquery-1.11.2.min.js?__inline=true"></script>
-  <script src="vendor/lodash.min.js?__inline=true"></script>
-  <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
-  <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script>
-  <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
-  <script src="vendor/spin.js?__inline=true"></script>
-  <script src="vendor/jquery.textfill.js?__inline=true"></script>
-  <script src="vendor/i18next.min.js?__inline=true"></script>
+  <script src="node_modules/es5-shim/es5-shim.js?__inline=true"></script>
+  <script src="node_modules/es5-shim/es5-sham.js?__inline=true"></script>
+  <script src="node_modules/es6-shim/es6-shim.js?__inline=true"></script>
+  <script src="node_modules/es6-shim/es6-sham.js?__inline=true"></script>
+  <script src="js/unshim.js?__inline=true"></script>
+  <script src="vendor/base64.js?__inline=true"></script><!-- required by our modified respond.js -->
+  <script src="vendor/respond.src.js?__inline=true"></script>
+  <script src="node_modules/jquery/dist/jquery.min.js?__inline=true"></script>
+  <script src="vendor/jqueryui/jquery-ui.min.js?__inline=true"></script><!-- must be above body or icons get messed up in IE8+9 -->
 
-  <!--[if lt IE 8]>
-    <script src="vendor/icomoon/ie7.js?__inline=true"></script>
-  <![endif]-->
-
-  <script src="js/plugins.js?__inline=true"></script>
-  <script src="js/locales.js?__inline=true"></script>
-  <script src="js/main.js?__inline=true"></script>
 </head>
 
 <body dir="ltr">
@@ -176,10 +166,10 @@
 
         <li id="language-tab">
           <a href="#language-pane" data-toggle="tab" data-match-width=".main-nav a">
-            <div class="multiline-tab-icon" style="">
+            <div class="multiline-tab-icon">
               <i class="icon-fixed-width icon-earth"></i>
             </div>
-            <div class="multiline-tab-text" style="">
+            <div class="multiline-tab-text">
               Language<br>
               زبان<br>
               语言
@@ -194,8 +184,116 @@
           </a>
         </li>
 
-        <li id="fill-tab"></li>
+        <li id="psicash-block" class="hidden">
+          <div data-match-width=".main-nav a">
+            <div id="psicash-interface-zerobalance" class="psicash-interface">
+              <div class="psicash-title-balance" data-i18n="[html]psicash#ui-zerobalance-title">Need a Speed&nbsp;Boost?</div>
+              <div class="button-container">
+                <a class="psicash-buy-psi btn btn-primary" href="#">
+                  <span data-i18n="psicash#ui-buypsi">Buy PsiCash</span> <img class="coin" src="psicash_coin.png">
+                </a>
+              </div>
+              <div><small><a href="#">?</a></small></div>
+            </div>
+            <div id="psicash-interface-nsfbalance" class="psicash-interface">
+              <div class="psicash-title-balance">
+                PsiCash
+                <span class="psicash-balance-coin">
+                    <img class="coin" src="psicash_coin.png">
+                    <span class="psicash-balance"></span>
+                  </span>
+                </div>
+              <div class="button-container">
+                <button type="button" class="btn btn-primary disabled" disabled>
+                  <span data-i18n="[html]psicash#ui-nsfbalance-buttontext">Needed for Speed&nbsp;Boost</span><br>
+                  <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-1hr-price"></span>
+                </button>
+              </div>
+              <div class="button-container">
+                <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
+                  Buy More PsiCash
+                </a>
+              </div>
+            </div>
+            <div id="psicash-interface-enoughbalance" class="psicash-interface">
+                <div class="psicash-title-balance">
+                PsiCash
+                <span class="psicash-balance-coin">
+                  <img class="coin" src="psicash_coin.png">
+                  <span class="psicash-balance"></span>
+                </span>
+              </div>
+              <div class="button-container">
+                <button id="psicash-buy-1hr" type="button" class="btn btn-primary">
+                  <span data-i18n="[html]psicash#ui-enoughbalance-buttontext">Start Speed&nbsp;Boost</span><br>
+                  <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-1hr-price"></span>
+                </button>
+              </div>
+              <div class="button-container">
+                <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
+                  Buy More PsiCash
+                </a>
+              </div>
+            </div>
+            <div id="psicash-interface-buyingboost" class="psicash-interface">
+              <div class="psicash-title-balance">
+                PsiCash
+                <span class="psicash-balance-coin">
+                    <img class="coin" src="psicash_coin.png">
+                    <span class="psicash-balance"></span>
+                  </span>
+                </div>
+              <div class="button-container">
+                <button type="button" class="btn btn-primary disabled" disabled>
+                  <i class="icon-spinner2 icon-spin"></i>
+                  <span data-i18n="[html]psicash#ui-buyingboost-buttontext">Starting Speed&nbsp;Boost!</span>
+                </button>
+              </div>
+              <div class="button-container">
+                <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
+                  Buy More PsiCash
+                </a>
+              </div>
+            </div>
+            <div id="psicash-interface-activeboost" class="psicash-interface">
+              <div class="psicash-title-balance">
+                PsiCash
+                <span class="psicash-balance-coin">
+                    <img class="coin" src="psicash_coin.png">
+                    <span class="psicash-balance"></span>
+                  </span>
+                </div>
+              <div class="button-container">
+                <button type="button" class="btn btn-success disabled" disabled>
+                  <span class="speed-boost-time-remaining"></span>
+                </button>
+              </div>
+              <div class="button-container">
+                <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
+                  Buy More PsiCash
+                </a>
+              </div>
+            </div>
+            <div id="psicash-interface-vpndisabled" class="psicash-interface">
+              <div>
+                <span class="label label-warning">
+                  <i class="icon-prohibited"></i>
+                  <span data-i18n="settings#vpn-incompatible-label">L2TP/IPSec</span>
+                </span>
+              </div>
 
+              <div class="psicash-title-balance">
+                PsiCash
+                <span class="psicash-balance-coin">
+                    <img class="coin" src="psicash_coin.png">
+                    <span class="psicash-balance"></span>
+                  </span>
+                </div>
+            </div>
+          </div>
+        </li><!-- /#psicash-block -->
+
+        <li id="fill-tab"></li>
       </ul>
       <div class="tab-content main-height">
 
@@ -1078,7 +1176,7 @@
         <div class="tab-pane fade" id="about-pane">
           <a class="InfoURL wordart-link" href="#">
             <div class="wordart">
-              <div class="wordart-title text-center" data-i18n="about#wordart-title">
+              <div class="wordart-title text-center">
                 Psiphon
               </div>
               <div class="wordart-tag text-center" data-i18n="about#wordart-tag">
@@ -1276,6 +1374,32 @@
 
           <hr>
 
+          <form class="form-inline" id="debug-RefreshPsiCash">
+            <label>RefreshPsiCash</label>
+            <input id="debug-RefreshPsiCash-balance" type="number" step="0.1" min="0" placeholder="balance in gigapsi" style="width:10em">
+            <input id="debug-RefreshPsiCash-price-1hr" type="number" step="0.1" min="0" placeholder="1hr price in gigapsi" style="width:10em">
+            <input id="debug-RefreshPsiCash-boost-remaining" type="number" step="1" placeholder="Boost mins remaining" style="width:10em">
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-PsiCashSpeedBoost">
+            <label>PsiCash SpeedBoost Purchase Response</label>
+            <select id="debug-PsiCashSpeedBoost-response">
+              <option value="error">Error</option>
+              <option value="Success">Success</option>
+              <option value="ExistingTransaction">ExistingTransaction</option>
+              <option value="InsufficientBalance">InsufficientBalance</option>
+              <option value="TransactionAmountMismatch">TransactionAmountMismatch</option>
+              <option value="TransactionTypeNotFound">TransactionTypeNotFound</option>
+              <option value="InvalidTokens">InvalidTokens</option>
+              <option value="ServerError">ServerError</option>
+            </select>
+          </form>
+
+          <hr>
+
           <span class="help-block">
             The contents of this page are not shown to the user and so are not translated.
           </span>
@@ -1309,6 +1433,12 @@
   <div id="settings-save-alert" class="alert alert-success global-alert" style="display:none"
        data-i18n="settings#saved-message">
     Settings saved.
+  </div>
+
+  <!-- Don't use the hidden class for this, otherwise the toggle() won't work. -->
+  <div id="psicash-buyspeedboost-purchase-complete" class="alert alert-success global-alert" style="display:none"
+       data-i18n="psicash#buyspeedboost-purchase-complete">
+    Speed&nbsp;Boost started!
   </div>
 
   <!-- Modal dialog shown to user when there's an upstream proxy error -->
@@ -1379,6 +1509,25 @@
       </div>
     </div>
   </div><!-- /SettingsUnappliedChangesPrompt -->
+
+  <!--[if lt IE 8]>
+  <script src="vendor/json2.js?__inline=true"></script>
+  <![endif]-->
+  <script src="node_modules/lodash-compat/index.js?__inline=true"></script>
+  <script src="vendor/bootstrap-2.3.2/js/bootstrap.js?__inline=true"></script>
+  <script src="vendor/jquery.loadTemplate-1.4.5.min.js?__inline=true"></script>
+  <script src="vendor/jquery.textfill.js?__inline=true"></script>
+  <script src="vendor/i18next.min.js?__inline=true"></script>
+  <script src="vendor/moment-with-locales-2.24.0.min.js?__inline=true"></script>
+  <script src="node_modules/object-path-immutable/dist/object-path-immutable.js?__inline=true"></script>
+
+  <!--[if lt IE 8]>
+    <script src="vendor/icomoon/ie7.js?__inline=true"></script>
+  <![endif]-->
+
+  <script src="dist/plugins.js?__inline=true"></script>
+  <script src="js/locales.js?__inline=true"></script>
+  <script src="dist/app.js?__inline=true"></script>
 
 </body>
 </html>

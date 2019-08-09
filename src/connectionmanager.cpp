@@ -38,6 +38,7 @@
 #include "authenticated_data_package.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
+#include "psicashlib.h"
 
 
 // Upgrade process posts a Quit message
@@ -52,7 +53,8 @@ ConnectionManager::ConnectionManager(void) :
     m_transport(0),
     m_upgradePending(false),
     m_startSplitTunnel(false),
-    m_nextFetchRemoteServerListAttempt(0)
+    m_nextFetchRemoteServerListAttempt(0),
+    m_suppressHomePages(false)
 {
     m_mutex = CreateMutex(NULL, FALSE, 0);
 
@@ -63,22 +65,6 @@ ConnectionManager::~ConnectionManager(void)
 {
     Stop(STOP_REASON_NONE);
     CloseHandle(m_mutex);
-}
-
-void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/, bool allowSkip/*=true*/)
-{
-    AutoMUTEX lock(m_mutex);
-
-    if (!allowSkip || !Settings::SkipBrowser())
-    {
-        vector<tstring> urls = m_currentSessionInfo.GetHomepages();
-        if (urls.size() == 0 && defaultHomePage)
-        {
-            urls.push_back(defaultHomePage);
-        }
-        OpenBrowser(urls[0]);
-        m_currentSessionInfo.RotateHomepages();
-    }
 }
 
 void ConnectionManager::SetState(ConnectionManagerState newState)
@@ -196,7 +182,7 @@ void ConnectionManager::Stop(DWORD reason)
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }
 
-void ConnectionManager::Start()
+void ConnectionManager::Start(bool isReconnect/*=false*/)
 {
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
@@ -204,6 +190,13 @@ void ConnectionManager::Start()
     Stop(STOP_REASON_USER_DISCONNECT);
 
     AutoMUTEX lock(m_mutex);
+
+    if (!isReconnect)
+    {
+        // On reconnect, we'll respect the state of this flag.
+        // Otherwise we'll reset it to get the home page.
+        m_suppressHomePages = false;
+    }
 
     m_transport = TransportRegistry::New(Settings::Transport());
 
@@ -228,6 +221,24 @@ void ConnectionManager::Start()
     }
 
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
+}
+
+void ConnectionManager::Reconnect()
+{
+    if (g_connectionManager.GetState() != CONNECTION_MANAGER_STATE_CONNECTED
+        && g_connectionManager.GetState() != CONNECTION_MANAGER_STATE_STARTING)
+    {
+        // We're not connecting or connected, so there's nothing to do.
+        return;
+    }
+
+    // We don't want to open home pages on a reconnect. This typically results from
+    // applying settings or buying speed boost, and opening a home page after is
+    // a terrible user experience.
+    m_suppressHomePages = true;
+
+    g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
+    g_connectionManager.Start(true);
 }
 
 DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
@@ -307,7 +318,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
                     manager->m_transport,
                     manager,    // ILocalProxyStatsCollector
                     manager,    // IUpgradePaver
-                    manager);   // IReconnectStateReceiver
+                    manager,    // IReconnectStateReceiver
+                    manager);   // IAuthorizationsProvider
             }
             catch (TransportConnection::TryNextServer&)
             {
@@ -437,7 +449,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
         // a lightly more encouraging message.
         my_print(NOT_SENSITIVE, false, _T("Still trying..."));
 
-        // Continue while loop to try next server
+        // Continue while-loop to try next server
 
         manager->FetchRemoteServerList();
 
@@ -521,10 +533,39 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
     // Open home pages in browser
     //
 
-    if (openHomePages)
+    if (openHomePages && !m_suppressHomePages)
     {
         OpenHomePages();
     }
+}
+
+void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
+{
+    AutoMUTEX lock(m_mutex);
+
+    vector<tstring> urls = m_currentSessionInfo.GetHomepages();
+    if (urls.size() == 0 && defaultHomePage)
+    {
+        urls.push_back(defaultHomePage);
+    }
+
+    if (!urls.empty()) {
+        auto url = WStringToUTF8(urls[0]);
+        auto modifiedURL = psicash::Lib::_().ModifyLandingPage(url);
+        if (modifiedURL) {
+            url = *modifiedURL;
+        }
+        OpenBrowser(UTF8ToWString(url));
+    }
+
+    m_currentSessionInfo.RotateHomepages();
+}
+
+bool ConnectionManager::IsWholeSystemTunneled() const
+{
+    return m_transport
+        && m_transport->IsWholeSystemTunneled()
+        && m_transport->IsConnected(true);
 }
 
 bool ConnectionManager::SendStatusMessage(
@@ -726,21 +767,24 @@ void ConnectionManager::FetchRemoteServerList()
     try
     {
         HTTPSRequest httpsRequest;
+        HTTPSRequest::Response httpsResponse;
         // NOTE: Not using local proxy
         if (!httpsRequest.MakeRequest(
                 UTF8ToWString(REMOTE_SERVER_LIST_ADDRESS).c_str(),
                 443,
                 "",
                 UTF8ToWString(REMOTE_SERVER_LIST_REQUEST_PATH).c_str(),
-                response,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_EXIT),
-                false, // don't use local proxy
+                HTTPSRequest::PsiphonProxy::DONT_USE,
+                httpsResponse,
                 true)  // fail over to URL proxy
-            || response.length() <= 0)
+            || httpsResponse.code != HTTPSRequest::OK
+            || httpsResponse.body.length() <= 0)
         {
             my_print(NOT_SENSITIVE, false, _T("Fetch remote server list failed"));
             return;
         }
+        response = httpsResponse.body;
     }
     catch (StopSignal::StopException&)
     {
@@ -806,7 +850,6 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
     {
         SessionInfo sessionInfo;
         tstring downloadRequestPath;
-        string downloadResponse;
         // Note that this is getting the current session info, which is set
         // by LoadNextServer.  So it's unlikely but possible that we may be
         // loading the next server after the first one that notified us of an
@@ -816,16 +859,18 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
         // Download new binary
         HTTPSRequest httpsRequest;
+        HTTPSRequest::Response httpsResponse;
         if (!httpsRequest.MakeRequest(
                 UTF8ToWString(UPGRADE_ADDRESS).c_str(),
                 443,
                 "",
                 UTF8ToWString(UPGRADE_REQUEST_PATH).c_str(),
-                downloadResponse,
                 StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
-                true, // tunnel request
+                HTTPSRequest::PsiphonProxy::USE,
+                httpsResponse,
                 true) // fail over to URL proxy
-            || downloadResponse.length() <= 0)
+            || httpsResponse.code != HTTPSRequest::OK
+            || httpsResponse.body.length() <= 0)
         {
             // If the download failed, we simply do nothing.
             // Rationale:
@@ -846,8 +891,8 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 
             if (verifySignedDataPackage(
                     UPGRADE_SIGNATURE_PUBLIC_KEY,
-                    downloadResponse.c_str(),
-                    downloadResponse.length(),
+                    httpsResponse.body.c_str(),
+                    httpsResponse.body.length(),
                     true, // gzip compressed
                     upgradeData))
             {
@@ -951,6 +996,47 @@ void ConnectionManager::PaveUpgrade(const string& download)
     }
 
     m_upgradePending = true;
+}
+
+psicash::Authorizations ConnectionManager::GetAuthorizations() const
+{
+    return psicash::Lib::_().GetAuthorizations();
+}
+
+void ConnectionManager::ActiveAuthorizationIDs(
+    const std::vector<std::string>& activeIDs,
+    const std::vector<std::string>& inactiveIDs)
+{
+    auto activePurchases = psicash::Lib::_().GetPurchasesByAuthorizationID(activeIDs);
+    auto inactivePurchases = psicash::Lib::_().GetPurchasesByAuthorizationID(inactiveIDs);
+
+    // Output the active purchases
+    if (!activePurchases.empty()) {
+        ostringstream ss;
+        ss << "Authorizations active on connection: ";
+        for (const auto& p : activePurchases) {
+            ss << p.transaction_class + ":" + p.distinguisher + "; ";
+        }
+        my_print(NOT_SENSITIVE, false, _T("%hs"), ss.str().c_str());
+    }
+
+    // Items in inactiveIDs are invalid or expired, so we should modify our
+    // locally stored set of purchases.
+    vector<psicash::TransactionID> purchasesToRemove;
+    for (const auto& p : inactivePurchases) {
+        my_print(NOT_SENSITIVE, false, _T("Removing expired purchase: class:%hs; distinguisher:%hs; expiry:%hs"), p.transaction_class.c_str(), p.distinguisher.c_str(), p.authorization->expires.ToISO8601().c_str());
+        purchasesToRemove.push_back(p.id);
+    }
+
+    auto res = psicash::Lib::_().RemovePurchases(purchasesToRemove);
+    if (!res)
+    {
+        // We'll log, but not take any other action
+        my_print(NOT_SENSITIVE, false, _T("%s: RemovePurchases failed (%d): %hs"), __TFUNCTION__, GetLastError(), res.error().ToString().c_str());
+    }
+
+    // Our active purchase state changed, so update the UI.
+    UI_RefreshPsiCash("");
 }
 
 // Makes a thread-safe copy of m_currentSessionInfo

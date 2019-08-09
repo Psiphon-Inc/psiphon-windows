@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -30,17 +30,41 @@ using namespace std;
 class HTTPSRequest
 {
 public:
+    struct Response {
+        int code;
+        string body;
+        string dateHeader;
+
+        Response() : code(-1) {}
+    };
+
+    // HTTP status code for "OK". This will save us using the magic number everywhere,
+    // but we're not going to provide aliases for any other codes.
+    static constexpr int OK = 200;
+
+public:
     HTTPSRequest(bool silentMode=false);
     virtual ~HTTPSRequest();
 
+    enum class PsiphonProxy {
+        DONT_USE = 0,
+        USE,
+        REQUIRE
+    };
+
+    // requestPath must include the path, the query parameters, and the anchor, if any.
+    // additionalHeaders must be valid RFC2616, including CRLF separator between multiple items.
+    // Returns true if the request succeeded, regardless of response status code. Caller
+    // should check the response.code.
+    // Throws StopSignal::StopException if stop was signaled.
     bool MakeRequest(
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
         const StopInfo& stopInfo,
-        bool usePsiphonLocalProxy,
+        PsiphonProxy usePsiphonLocalProxy,
+        HTTPSRequest::Response& response,
         bool failoverToURLProxy=false,
         LPCWSTR additionalHeaders=NULL,
         LPVOID additionalData=NULL,
@@ -50,17 +74,19 @@ public:
 private:
     void SetClosedEvent() {SetEvent(m_closedEvent);}
     void SetRequestSuccess() {m_requestSuccess = true;}
-      bool ValidateServerCert(PCCERT_CONTEXT pCert);
-    void AppendResponse(const string& responseData);
+    bool ValidateServerCert(PCCERT_CONTEXT pCert);
+    void ResponseAppendBody(const string& responseData);
+    void ResponseSetCode(int code);
+    void ResponseSetDateHeader(const string& dateHeader);
 
     bool MakeRequestWithURLProxyOption(
         const TCHAR* serverAddress,
         int serverWebPort,
         const string& webServerCertificate,
         const TCHAR* requestPath,
-        string& response,
         const StopInfo& stopInfo,
-        bool usePsiphonLocalProxy,
+        PsiphonProxy usePsiphonLocalProxy,
+        HTTPSRequest::Response& response,
         bool useURLProxy,
         LPCWSTR additionalHeaders,
         LPVOID additionalData,
@@ -80,5 +106,5 @@ private:
     HANDLE m_closedEvent;
     bool m_requestSuccess;
     string m_expectedServerCertificate;
-    string m_response;
+    Response m_response;
 };

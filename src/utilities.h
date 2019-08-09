@@ -36,6 +36,11 @@ bool GetShortPathName(const tstring& path, tstring& o_shortPath);
 
 bool WriteFile(const tstring& filename, const string& data);
 
+// Makes a directory that has a path with the given suffix that is suitable for
+// storing data (such as the DataStoreDirectory).
+// pathSuffixes may be empty.
+bool GetDataPath(const vector<tstring>& pathSuffixes, tstring& o_path);
+
 bool GetTempPath(tstring& o_path);
 
 // Makes an absolute path to a unique temp directory.
@@ -212,8 +217,6 @@ private:
     HANDLE m_mutex;
     tstring m_logInfo;
 };
-
-#define AUTOMUTEX(mutex)
 
 
 /*

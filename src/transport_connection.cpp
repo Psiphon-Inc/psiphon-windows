@@ -54,6 +54,7 @@ void TransportConnection::Connect(
                             IReconnectStateReceiver* reconnectStateReceiver,
                             IUpgradePaver* upgradePaver,
                             ILocalProxyStatsCollector* statsCollector, 
+                            IAuthorizationsProvider* authorizationsProvider,
                             const ServerEntry* tempConnectServerEntry/*=NULL*/,
                             bool skipApplySystemProxySettings/* = false*/)
 {
@@ -77,6 +78,7 @@ void TransportConnection::Connect(
                     stopInfo,
                     reconnectStateReceiver,
                     upgradePaver,
+                    authorizationsProvider,
                     &m_workerThreadSynch,
                     tempConnectServerEntry);
 

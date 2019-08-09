@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include <shlwapi.h>
 #pragma comment(lib,"shlwapi.lib")
-#include "shlobj.h"
 
 #include "logging.h"
 #include "coretransport.h"
@@ -183,6 +182,10 @@ bool CoreTransport::IsWholeSystemTunneled() const
     return false;
 }
 
+bool CoreTransport::SupportsAuthorizations() const
+{
+    return true;
+}
 
 bool CoreTransport::ServerWithCapabilitiesExists()
 {
@@ -326,6 +329,10 @@ void CoreTransport::TransportConnectHelper()
 
 Json::Value loadJSONArray(const char* jsonArrayString)
 {
+    if (!jsonArrayString) {
+        return Json::nullValue;
+    }
+
     try
     {
         Json::Reader reader;
@@ -353,18 +360,9 @@ Json::Value loadJSONArray(const char* jsonArrayString)
 
 bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
 {
-    TCHAR path[MAX_PATH];
-    if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
-        return false;
-    }
-    filesystem::path appDataPath(path);
-
-    auto dataStoreDirectory = filesystem::path(appDataPath).append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY);
-    if (!CreateDirectory(dataStoreDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+    tstring dataStoreDirectory;
+    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY }, dataStoreDirectory)) {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for dataStoreDirectory (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
 
@@ -379,7 +377,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     }
 
     Json::Value config;
-    config["ClientPlatform"] = CLIENT_PLATFORM;
+    config["ClientPlatform"] = GetClientPlatform();
     config["ClientVersion"] = CLIENT_VERSION;
     config["PropagationChannelId"] = PROPAGATION_CHANNEL_ID;
     config["SponsorId"] = SPONSOR_ID;
@@ -417,6 +415,17 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["NetworkLatencyMultiplier"] = 3.0;
     }
 
+    if (m_authorizationsProvider) {
+        auto encodedAuthorizations = Json::Value(Json::arrayValue);
+        for (const auto& auth : m_authorizationsProvider->GetAuthorizations()) {
+            encodedAuthorizations.append(auth.encoded);
+            m_authorizationIDs.push_back(auth.id);
+        }
+        config["Authorizations"] = encodedAuthorizations;
+    }
+
+    // TODO: Use a real network IDs
+    // See https://github.com/Psiphon-Inc/psiphon-issues/issues/404
     config["NetworkID"] = "949F2E962ED7A9165B81E977A3B4758B";
 
     // In temporary tunnel mode, only the specific server should be connected to,
@@ -482,15 +491,13 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
         config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
 
-        auto oslDownloadDirectory = filesystem::path(appDataPath)
-                                                .append(LOCAL_SETTINGS_APPDATA_SUBDIRECTORY).append("osl");
-        if (!CreateDirectory(oslDownloadDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+        tstring oslDownloadDirectory;
+        if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, oslDownloadDirectory)) {
+            my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for oslDownloadDirectory (%d)"), __TFUNCTION__, GetLastError());
             // TODO: proceed anyway?
             return false;
         }
-        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory.wstring());
+        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
 
         clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
@@ -1009,6 +1016,36 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         {
             string regions = data["regions"].toStyledString();
             my_print(NOT_SENSITIVE, false, _T("Available egress regions: %S"), regions.c_str());
+        }
+        else if (noticeType == "ActiveAuthorizationIDs")
+        {
+            string authIDs = data["IDs"].toStyledString();
+            my_print(NOT_SENSITIVE, true, _T("Active Authorization IDs: %S"), authIDs.c_str());
+
+            vector<string> activeAuthorizationIDs, inactiveAuthorizationIDs;
+            for (const auto& activeAuthID : data["IDs"])
+            {
+                activeAuthorizationIDs.push_back(activeAuthID.asString());
+            }
+
+            // Figure out which of the authorizations we provided to the server were and were not active.
+            for (const auto& authID : m_authorizationIDs)
+            {
+                if (std::find(activeAuthorizationIDs.cbegin(), activeAuthorizationIDs.cend(), authID) == activeAuthorizationIDs.cend())
+                {
+                    inactiveAuthorizationIDs.push_back(authID);
+                }
+            }
+
+            if (m_authorizationsProvider) {
+                m_authorizationsProvider->ActiveAuthorizationIDs(activeAuthorizationIDs, inactiveAuthorizationIDs);
+            }
+        }
+        else if (noticeType == "ClientRegion")
+        {
+            string region = data["region"].asString();
+            my_print(NOT_SENSITIVE, false, _T("Client region: %S"), region.c_str());
+            psicash::Lib::_().UpdateClientRegion(region);
         }
     }
     catch (exception& e)

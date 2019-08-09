@@ -29,6 +29,7 @@ class LocalProxy;
 class ILocalProxyStatsCollector;
 class IReconnectStateReceiver;
 class IUpgradePaver;
+class IAuthorizationsProvider;
 class ITransport;
 
 
@@ -49,6 +50,7 @@ public:
     but *not* ITransport::TransportFailed. Also throws TryNextServer, in 
     the case of a normal failure. May also throw StopSignal::StopException.
     If statsCollector is null, then stats will not be collected.
+    If authorizationsProvider is null, then authorizations will not be used.
     If tempConnectServerEntry is non-NULL, then that server and only that 
     server will be used. In addition, no handshake will be done. (This 
     means that transports that require a pre-handshake will fail, and others
@@ -61,6 +63,7 @@ public:
             IReconnectStateReceiver* reconnectStateReceiver,
             IUpgradePaver* upgradePaver,
             ILocalProxyStatsCollector* statsCollector,
+            IAuthorizationsProvider* authorizationsProvider,
             const ServerEntry* tempConnectServerEntry=NULL,
             bool skipApplySystemProxySettings=false);
 
