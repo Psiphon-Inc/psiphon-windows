@@ -212,7 +212,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Switzerland will be used."
     },
     "settings#egress-region#select-cz": {
-        "message": "法国",
+        "message": "捷克共和国",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Czech Republic will be used."
     },
     "settings#egress-region#select-dk": {
