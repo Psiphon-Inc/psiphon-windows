@@ -9,6 +9,7 @@
 
 ### Done
 
+* Prevent animation on every startup (only first one)
 * try different approach to animating balance change
 * proper i18n of everything
   - Including string descriptions

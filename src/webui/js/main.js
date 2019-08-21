@@ -1986,7 +1986,8 @@ function psiCashStateInitialized(psicashData) {
     g_PsiCashData = psicashData;
   }
 
-  return psicashData.valid_token_types && psicashData.valid_token_types.length > 0;
+  return psicashData.valid_token_types && psicashData.valid_token_types.length > 0
+    && _.isNumber(psicashData.balance) && !_.isNaN(psicashData.balance);
 }
 
 var PSICASH_ENABLED_COOKIE = 'psicash::Enabled';
@@ -2012,7 +2013,7 @@ function psiCashUIUpdater(psicashData) {
   if (psicashData) {
     if (g_PsiCashData) {
       // For later diagnostics, log if psicashData values changed
-      if (psicashData.balance !== g_PsiCashData.balance) {
+      if (!_.isNaN(psicashData.balance) && psicashData.balance !== g_PsiCashData.balance) {
         HtmlCtrlInterface_Log('PsiCash: balance change:', psicashData.balance - g_PsiCashData.balance);
       }
       // TODO: Log other changes? Kind of a hassle.
@@ -2027,6 +2028,12 @@ function psiCashUIUpdater(psicashData) {
 
   psicashData = g_PsiCashData;
 
+
+  /**
+   * Will be true for the very first update when the UI is enabled. Affects which animations are shown.
+   */
+  let veryFirstUpdate = false;
+
   // The enabled cookie will not be present on the very first run, and is set to true
   // when we first enter a state where the PsiCash UI can be shown (and the onboarding
   // presented).
@@ -2036,10 +2043,8 @@ function psiCashUIUpdater(psicashData) {
     if (!psiCashStateInitialized(psicashData)) {
       setCookie(PSICASH_ENABLED_COOKIE, false);
       // Re-call this function to start all over.
-      return psiCashUIUpdater(psicashData, true);
+      return psiCashUIUpdater(psicashData);
     }
-
-    $('#psicash-block').removeClass('hidden');
   }
   else {
     // Check if we're in a state where the functionality can be enabled.
@@ -2048,8 +2053,9 @@ function psiCashUIUpdater(psicashData) {
         && g_lastState === 'connected')
     {
       // We're in a good state, and this is the very first time.
+      HtmlCtrlInterface_Log('PsiCash: very first update');
+      veryFirstUpdate = true;
       setCookie(PSICASH_ENABLED_COOKIE, true);
-      $('#psicash-block').removeClass('hidden');
       // TODO: onboarding
     }
     else {
@@ -2057,6 +2063,8 @@ function psiCashUIUpdater(psicashData) {
       return;
     }
   }
+
+  $('#psicash-block').removeClass('hidden');
 
   if (psicashData.buy_psi_url) {
     $('a.psicash-buy-psi').prop('href', psicashData.buy_psi_url).removeClass('hidden');
@@ -2098,10 +2106,6 @@ function psiCashUIUpdater(psicashData) {
     }
   }
 
-  /**
-   * This will update/animate the balance, if appropriate.
-   * @type {function}
-   */
   if (_.isNumber(psicashData.balance) && _.isNumber(sb1hrPrice)) {
     if (psicashData.balance >= sb1hrPrice) {
       state = UIState.ENOUGH_BALANCE;
@@ -2150,7 +2154,7 @@ function psiCashUIUpdater(psicashData) {
   $(state.uiSelector).removeClass('hidden');
 
   // Now that the correct interface is showing, update the balance
-  PsiCashBalanceChange.push(psicashData.balance);
+  PsiCashBalanceChange.push(psicashData.balance, veryFirstUpdate);
 
   // When we have an active speed boost, we want this function to be called repeatedly,
   // so that the countdown timer is updated, and so the UI changes when the speed boost
@@ -2169,12 +2173,12 @@ function psiCashUIUpdater(psicashData) {
 /**
  * Update the UI to a new balance, complete with animations.
  * @param {number} newBalance The balance to update the UI to match.
- * @param {boolean} veryFirstRefresh Whether this is the very first balance update
+ * @param {boolean} veryFirstUpdate Whether this is the very first balance update
  *    (determines which animations are used).
  * @returns {jQuery.Promise} A promise that will be resolved when the update animations
  *    are complete.
  */
-function doBalanceChange(newBalance, veryFirstRefresh) {
+function doBalanceChange(newBalance, veryFirstUpdate) {
   const allDoneDefer = $.Deferred();
 
   let previousBalance = parseInt($('.psicash-balance').data('psicash-balance')); // may be NaN
@@ -2182,7 +2186,7 @@ function doBalanceChange(newBalance, veryFirstRefresh) {
     // If this is the very first refresh after the UI is enabled, we want to animate the
     // balance change. But if this is just an app start-up that's restoring a previous
     // balance, then we don't.
-    const startingPoint = veryFirstRefresh ? 0 : newBalance;
+    const startingPoint = veryFirstUpdate ? 0 : newBalance;
     $('.psicash-balance').text(formatPsi(startingPoint)).data('psicash-balance', startingPoint);
     previousBalance = startingPoint;
   }
@@ -2330,16 +2334,22 @@ const PsiCashBalanceChange = {
    * @type {boolean}
    * @private
    */
-  _first: true,
+  _first: false,
 
   /**
    * Enqueues the given balance to change the UI to.
-   * @param {number} newBalance The balance to change to.
+   * @param {!number} newBalance The balance to change to.
+   * @param {!boolean} first Whether this is the very first balance change ever (not just
+   *  a fresh app start-up).
    */
-  push: function PsiCashBalanceChange_push(newBalance) {
+  push: function PsiCashBalanceChange_push(newBalance, first) {
     if (!_.isNumber(newBalance)) {
       return;
     }
+
+    // This properly be stored in the queue, but it doesn't matter. There will only ever
+    // be one "first", and it'll be the first change.
+    this._first = first;
 
     this._queue.push(newBalance);
 
@@ -2492,9 +2502,8 @@ function buySpeedBoostClick() {
             // The user doesn't have enough credit to make this purchase. This is unusual,
             // as we don't allow the user to have make a purchase that they can't afford.
             // It can happen if the user has local "optimistic" credit that hasn't cleared
-            // on the server, or if the user's balance has changed elsewhere.
-            // TODO: retry
-            // TODO: remove optimistic credit
+            // on the server, or if the user's balance has changed elsewhere. (But we
+            // don't actually have optimistic balance usage in the Windows client yet.)
             showNoticeModal(
               'psicash#transaction-InsufficientBalance-title',
               'psicash#transaction-InsufficientBalance-body',
@@ -2910,7 +2919,7 @@ var g_cookies = g_initObj.Cookies ? JSON.parse(g_initObj.Cookies) : {};
  */
 function getCookie(name) {
   if (IS_BROWSER) {
-    return window.localStorage.getItem(name) || g_cookies[name];
+    return JSON.parse(window.localStorage.getItem(name)) || g_cookies[name];
   }
 
   return g_cookies[name];
@@ -2923,7 +2932,7 @@ function getCookie(name) {
  */
 function setCookie(name, value) {
   if (IS_BROWSER) {
-    window.localStorage.setItem(name, value);
+    window.localStorage.setItem(name, JSON.stringify(value));
   }
 
   g_cookies[name] = value;
