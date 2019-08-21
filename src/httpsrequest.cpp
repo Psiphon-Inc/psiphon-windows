@@ -476,20 +476,28 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         return false;
     }
 
-    // WinHTTP defaults to SSLv3 and TLSv1. Exclude SSLv3 due to POODLE flaw:
-    // http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566
-    // TODO: should also enable WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1 and WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
-    // however doing so will require OS version checking as WinHTTP in XP doesn't support these, etc.
-    DWORD dwProtocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1;
-
-    if (FALSE == WinHttpSetOption(
-                    hSession,
-                    WINHTTP_OPTION_SECURE_PROTOCOLS,
-                    &dwProtocols,
-                    sizeof(DWORD)))
+    // SSLv3, TLSv1.0, TLSv1.1 all have security flaws that mean that should be avoided. 
+    // Some of those flaws (like SSLv3's POODLE http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566)
+    // require the client side to not try to use them. So we're going to force use of 
+    // TLS v1.2. We'll try to remember to update these flags when new TLS versions come
+    // out; we think it's too risky to set all bits except the bad ones (like ~(SSL|TLS1.0|TLS1.1)), 
+    // as we might get something we don't want.
+    // When WinHttpSetOption gets flags it doesn't understand -- like WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2
+    // on XP and Vista -- it returns FALSE and sets errno to ERROR_INVALID_PARAMETER (87). When 
+    // that happens we'll fall back to the URL proxy. That's why we're _not_ going
+    // to set the HTTPS protocol for URL proxy requests (and it's HTTP, not HTTPS).
+    DWORD dwProtocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+    if (!useURLProxy)
     {
-        my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption WINHTTP_OPTION_SECURE_PROTOCOLS failed (%d)"), GetLastError());
-        return false;
+        if (FALSE == WinHttpSetOption(
+            hSession,
+            WINHTTP_OPTION_SECURE_PROTOCOLS,
+            &dwProtocols,
+            sizeof(DWORD)))
+        {
+            my_print(NOT_SENSITIVE, m_silentMode, _T("WinHttpSetOption WINHTTP_OPTION_SECURE_PROTOCOLS failed (%d)"), GetLastError());
+            return false;
+        }
     }
 
     AutoHINTERNET hConnect =
