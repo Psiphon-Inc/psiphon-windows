@@ -49,7 +49,7 @@ public:
     void Toggle();
     void Stop(DWORD reason);
     void Start(bool isReconnect=false);
-    void Reconnect();
+    void Reconnect(bool suppressHomePages);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
     void OpenHomePages(const TCHAR* defaultHomePage=0);

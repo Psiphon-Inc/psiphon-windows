@@ -223,7 +223,7 @@ void ConnectionManager::Start(bool isReconnect/*=false*/)
     my_print(NOT_SENSITIVE, true, _T("%s: exit"), __TFUNCTION__);
 }
 
-void ConnectionManager::Reconnect()
+void ConnectionManager::Reconnect(bool suppressHomePages)
 {
     if (g_connectionManager.GetState() != CONNECTION_MANAGER_STATE_CONNECTED
         && g_connectionManager.GetState() != CONNECTION_MANAGER_STATE_STARTING)
@@ -232,10 +232,7 @@ void ConnectionManager::Reconnect()
         return;
     }
 
-    // We don't want to open home pages on a reconnect. This typically results from
-    // applying settings or buying speed boost, and opening a home page after is
-    // a terrible user experience.
-    m_suppressHomePages = true;
+    m_suppressHomePages = suppressHomePages;
 
     g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
     g_connectionManager.Start(true);

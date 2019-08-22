@@ -821,7 +821,8 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const size_t appLogCommandLen = _tcslen(appLogCommand);
     const LPCTSTR appStart = PSIPHON_LINK_PREFIX _T("start");
     const LPCTSTR appStop = PSIPHON_LINK_PREFIX _T("stop");
-    const LPCTSTR appReconnect = PSIPHON_LINK_PREFIX _T("reconnect");
+    const LPCTSTR appReconnect = PSIPHON_LINK_PREFIX _T("reconnect?");
+    const size_t appReconnectLen = _tcslen(appReconnect);
     const LPCTSTR appSaveSettings = PSIPHON_LINK_PREFIX _T("savesettings?");
     const size_t appSaveSettingsLen = _tcslen(appSaveSettings);
     const LPCTSTR appSendFeedback = PSIPHON_LINK_PREFIX _T("sendfeedback?");
@@ -876,10 +877,20 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         my_print(NOT_SENSITIVE, true, _T("%s: Stop requested"), __TFUNCTION__);
         g_connectionManager.Stop(STOP_REASON_USER_DISCONNECT);
     }
-    else if (_tcscmp(url, appReconnect) == 0)
+    else if (_tcsncmp(url, appReconnect, appReconnectLen) == 0
+        && _tcslen(url) > appReconnectLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Reconnect requested"), __TFUNCTION__);
-        g_connectionManager.Reconnect();
+
+        tstring urlDecoded = UrlDecode(url);
+        if (urlDecoded.length() < appReconnectLen + 1)
+        {
+            goto done;
+        }
+
+        // We only need to check the last character, as it's of the form ?suppress=1
+        bool suppressHomePage = *(urlDecoded.end()-1) == _T('1');
+        g_connectionManager.Reconnect(suppressHomePage);
     }
     else if (_tcsncmp(url, appSaveSettings, appSaveSettingsLen) == 0
         && _tcslen(url) > appSaveSettingsLen)
@@ -918,7 +929,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             // Instead of reconnecting here, we could let the JS see that it's
             // required and then trigger it. But that seems like an unnecessary round-trip.
             my_print(NOT_SENSITIVE, false, _T("Settings change detected. Reconnecting."));
-            g_connectionManager.Reconnect();
+            g_connectionManager.Reconnect(false);
         }
     }
     else if (_tcsncmp(url, appSendFeedback, appSendFeedbackLen) == 0

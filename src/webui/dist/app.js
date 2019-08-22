@@ -2314,8 +2314,9 @@
 
           case PsiCashServerResponseStatus.Success:
             // The purchase succeeded. We need to reconnect to apply the authorization.
-            displayCornerAlert($('#psicash-transaction-purchase-complete'));
-            HtmlCtrlInterface_ReconnectTunnel();
+            displayCornerAlert($('#psicash-transaction-purchase-complete')); // Suppress home page opening after reconnect (because it's a terrible UX).
+
+            HtmlCtrlInterface_ReconnectTunnel(true);
             break;
 
           default:
@@ -3285,15 +3286,14 @@
   } // The tunnel should be reconnected (if connected or connecting).
 
 
-  function HtmlCtrlInterface_ReconnectTunnel() {
-    // Prevent duplicate state change attempts
+  function HtmlCtrlInterface_ReconnectTunnel(suppressHomePage) {
+    var appURL = PSIPHON_LINK_PREFIX + 'reconnect?suppress=' + (suppressHomePage ? '1' : '0'); // Prevent duplicate state change attempts
+
     if (g_lastState === 'stopping' || g_lastState === 'disconnected') {
       return;
     }
 
     nextTick(function () {
-      var appURL = PSIPHON_LINK_PREFIX + 'reconnect';
-
       if (IS_BROWSER) {
         console.log(appURL);
       } else {
