@@ -9,6 +9,7 @@
 
 ### Done
 
+* balance not translated on language change
 * Prevent animation on every startup (only first one)
 * try different approach to animating balance change
 * proper i18n of everything

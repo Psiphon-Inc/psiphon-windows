@@ -2190,6 +2190,11 @@ function doBalanceChange(newBalance, veryFirstUpdate) {
     $('.psicash-balance').text(formatPsi(startingPoint)).data('psicash-balance', startingPoint);
     previousBalance = startingPoint;
   }
+  else {
+    // Update the value of the balance field. This is mostly so that a post-language-change
+    // refresh will show the balance in the correct format.
+    $('.psicash-balance').text(formatPsi(previousBalance));
+  }
 
   let balanceDiff = newBalance - previousBalance;
 
@@ -2271,9 +2276,12 @@ function doBalanceChange(newBalance, veryFirstUpdate) {
 
     // We're going to test that $visibleBalanceElem actually exists, otherwise we risk
     // never resolving the animation promise.
-    if (Modernizr.csstransitions && $visibleBalanceElem.length > 0) {
-      // Negative numbers naturally get a '-', but we'll need to add a '+' sign (localized)
-      const psiText = (balanceDiff > 0) ? i18n.t('positive-value-indicator').replace('{Number}', formatPsi(balanceDiff)) : formatPsi(balanceDiff);
+    if ($visibleBalanceElem.length > 0) {
+      let psiText = formatPsi(balanceDiff);
+      if (balanceDiff > 0) {
+        // Negative numbers naturally get a '-', but we'll need to add a '+' sign (localized)
+        psiText = i18n.t('positive-value-indicator').replace('{Number}', formatPsi(balanceDiff));
+      }
 
       // Create and insert the element we'll use for the animation
       const $deltaElem = $('<span class="psicash-balance-delta"></span>')
@@ -2605,6 +2613,7 @@ function formatPsi(nanopsi) {
   var BILLION = 1e9;
 
   var currLang = $('html').attr('lang');
+
   // NOTE: If you're testing in Chrome, toLocaleString will behave differently than in IE.
   // For example, in Chrome locale='ar' doesn't seem to result in any change, but
   // locale='ar-EG' does. In IE11 they both do.

@@ -1989,6 +1989,10 @@
       var startingPoint = veryFirstUpdate ? 0 : newBalance;
       $('.psicash-balance').text(formatPsi(startingPoint)).data('psicash-balance', startingPoint);
       previousBalance = startingPoint;
+    } else {
+      // Update the value of the balance field. This is mostly so that a post-language-change
+      // refresh will show the balance in the correct format.
+      $('.psicash-balance').text(formatPsi(previousBalance));
     }
 
     var balanceDiff = newBalance - previousBalance; // If the diff is 0, we're not going to update anything. Otherwise we're going to
@@ -2065,9 +2069,14 @@
       }, balanceStepTime); // We're going to test that $visibleBalanceElem actually exists, otherwise we risk
       // never resolving the animation promise.
 
-      if (Modernizr.csstransitions && $visibleBalanceElem.length > 0) {
-        // Negative numbers naturally get a '-', but we'll need to add a '+' sign (localized)
-        var psiText = balanceDiff > 0 ? i18n.t('positive-value-indicator').replace('{Number}', formatPsi(balanceDiff)) : formatPsi(balanceDiff); // Create and insert the element we'll use for the animation
+      if ($visibleBalanceElem.length > 0) {
+        var psiText = formatPsi(balanceDiff);
+
+        if (balanceDiff > 0) {
+          // Negative numbers naturally get a '-', but we'll need to add a '+' sign (localized)
+          psiText = i18n.t('positive-value-indicator').replace('{Number}', formatPsi(balanceDiff));
+        } // Create and insert the element we'll use for the animation
+
 
         var $deltaElem = $('<span class="psicash-balance-delta"></span>').addClass(balanceDiff > 0 ? 'credit' : 'debit').text(psiText).insertAfter($visibleBalanceElem); // It's unfortunate that we have to do the animation using jQuery's .animate()
         // rather than CSS transitions, but transitions seem flaky in IE.
