@@ -2378,6 +2378,12 @@
       // Our test locales (like devltr) are no valid and will cause an exception. Just fall
       // back to English.
       psi = psi.toLocaleString('en');
+    } // Old IE seems to always localize to English, with `.00` suffix. We want to strip off
+    // that suffix.
+
+
+    if (psi.substring(psi.length - '.00'.length) === '.00') {
+      psi = psi.substring(0, psi.length - '.00'.length);
     }
 
     return psi;

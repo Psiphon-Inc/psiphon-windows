@@ -9,6 +9,7 @@
 
 ### Done
 
+* Fix old IE number translation (strip .00)
 * balance not translated on language change
 * Prevent animation on every startup (only first one)
 * try different approach to animating balance change
