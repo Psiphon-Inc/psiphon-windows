@@ -9,6 +9,8 @@
 
 ### Done
 
+* make known issue: old IE doesn't preserve psicash URL fragment after ipfounder redirect 30% (old IE) * 14% (IE of Windows)
+* add opened-from-notification QP to home page URL
 * Fix old IE number translation (strip .00)
 * balance not translated on language change
 * Prevent animation on every startup (only first one)

@@ -529,6 +529,9 @@
     </ClInclude>
     <ClInclude Include="psicashlib.h" />
     <ClInclude Include="dispatch_queue.h" />
+    <ClInclude Include="3rdParty\psicash\url.hpp">
+      <Filter>3rdParty\psicash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

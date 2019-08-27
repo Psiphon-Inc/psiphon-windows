@@ -532,11 +532,11 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
 
     if (openHomePages && !m_suppressHomePages)
     {
-        OpenHomePages();
+        OpenHomePages("connect");
     }
 }
 
-void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
+void ConnectionManager::OpenHomePages(const string& reason, const TCHAR* defaultHomePage/*=0*/)
 {
     AutoMUTEX lock(m_mutex);
 
@@ -548,10 +548,23 @@ void ConnectionManager::OpenHomePages(const TCHAR* defaultHomePage/*=0*/)
 
     if (!urls.empty()) {
         auto url = WStringToUTF8(urls[0]);
-        auto modifiedURL = psicash::Lib::_().ModifyLandingPage(url);
-        if (modifiedURL) {
-            url = *modifiedURL;
+
+        psicash::URL urlParser;
+        auto parseErr = urlParser.Parse(url);
+        if (!parseErr) {
+            if (!urlParser.query_.empty()) {
+                urlParser.query_ += "&";
+            }
+            urlParser.query_ += "psireason=" + reason;
+
+            url = urlParser.ToString();
         }
+
+        auto urlWithPsiCash = psicash::Lib::_().ModifyLandingPage(url);
+        if (urlWithPsiCash) {
+            url = *urlWithPsiCash;
+        }
+
         OpenBrowser(UTF8ToWString(url));
     }
 

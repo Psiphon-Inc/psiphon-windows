@@ -28,6 +28,7 @@
 #include "vendor/nlohmann/json.hpp"
 #include "datetime.hpp"
 #include "error.hpp"
+#include "url.hpp"
 
 
 namespace psicash {

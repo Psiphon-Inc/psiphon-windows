@@ -969,7 +969,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         // no sponsor pages. If not connected, open info link.
         if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
-            g_connectionManager.OpenHomePages(INFO_LINK_URL);
+            g_connectionManager.OpenHomePages("banner", INFO_LINK_URL);
         }
         else
         {
@@ -1502,7 +1502,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (lParam == NIN_BALLOONUSERCLICK &&
             CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
         {
-            g_connectionManager.OpenHomePages(INFO_LINK_URL);
+            g_connectionManager.OpenHomePages("notification", INFO_LINK_URL);
             RestartConnectedReminderTimer();
             break;
         }

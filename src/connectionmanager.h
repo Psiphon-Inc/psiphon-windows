@@ -52,7 +52,9 @@ public:
     void Reconnect(bool suppressHomePages);
     void SetState(ConnectionManagerState newState);
     ConnectionManagerState GetState();
-    void OpenHomePages(const TCHAR* defaultHomePage=0);
+
+    /// reason will be included in the URL with no escaping, so it must be simple ASCII.
+    void OpenHomePages(const string& reason, const TCHAR* defaultHomePage=0);
 
     // IReconnectStateReceiver implementation
     virtual void SetReconnecting();

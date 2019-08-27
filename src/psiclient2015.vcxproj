@@ -230,6 +230,7 @@
     <ClInclude Include="3rdParty\psicash\datetime.hpp" />
     <ClInclude Include="3rdParty\psicash\error.hpp" />
     <ClInclude Include="3rdParty\psicash\psicash.hpp" />
+    <ClInclude Include="3rdParty\psicash\url.hpp" />
     <ClInclude Include="3rdParty\zlib\crc32.h" />
     <ClInclude Include="3rdParty\zlib\inffast.h" />
     <ClInclude Include="3rdParty\zlib\inffixed.h" />
