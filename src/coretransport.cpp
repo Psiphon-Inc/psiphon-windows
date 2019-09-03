@@ -388,6 +388,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
+    config["EmitDiagnosticNetworkParameters"] = true;
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
