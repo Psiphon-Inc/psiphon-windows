@@ -44,3 +44,11 @@ child elements.
      the window gets wider. */
   width: 97%;
 }
+
+/* IE7 doesn't wrap <button> text by default. So make the child element inline-block. https://stackoverflow.com/a/17622706/729729 */
+button > span {
+  display: inline-block;
+  /* These styles are from the .ie7-inline-block() mixin */
+  *display: inline;
+  *zoom: 1;
+}
