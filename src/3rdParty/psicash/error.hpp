@@ -91,6 +91,7 @@ const Error nullerr;
 #define MakeNoncriticalError(message)   Error(false, (message), __FILE__, __PRETTY_FUNCTION__, __LINE__)
 #define MakeCriticalError(message)      Error(true, (message), __FILE__, __PRETTY_FUNCTION__, __LINE__)
 #define WrapError(err, message)         ((err).Wrap((message), __FILE__, __PRETTY_FUNCTION__, __LINE__))
+/// Like WrapError, but with no added message
 #define PassError(err)                  ((err).Wrap(__FILE__, __PRETTY_FUNCTION__, __LINE__))
 
 

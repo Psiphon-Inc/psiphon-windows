@@ -654,5 +654,17 @@
   "psicash#mustconnect-modal#body": {
     "message": "In order to use PsiCash, you must be connected to the Psiphon network.",
     "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
+  },
+  "psicash#init-error-title": {
+    "message": "PsiCash initialization error",
+    "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#init-error-body-unrecovered": {
+    "message": "PsiCash failed to initialize. This is probably due a file system problem, such as being out of disk space. Your balance and other state is lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+    "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#init-error-body-recovered": {
+    "message": "PsiCash failed to initialize. This is probably due a file system problem, such as being out of disk space. Your balance and other state is reset.",
+    "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   }
 }

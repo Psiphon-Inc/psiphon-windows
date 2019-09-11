@@ -27,7 +27,7 @@ Lib::~Lib() {
     CloseHandle(m_mutex);
 }
 
-error::Error Lib::Init() {
+error::Error Lib::Init(bool forceReset) {
     AutoMUTEX lock(m_mutex);
 
     tstring dataDir;
@@ -42,10 +42,18 @@ error::Error Lib::Init() {
         return psicash::error::MakeCriticalError("GetShortPathName failed");
     }
 
+    if (forceReset) {
+        auto err = PsiCash::Reset(
+            WStringToNarrow(dataDirShort).c_str(), TESTING);
+        if (err) {
+            return WrapError(err, "PsiCash::Reset failed");
+        }
+    }
+
     auto err = PsiCash::Init(
         USER_AGENT, WStringToNarrow(dataDirShort).c_str(), GetHTTPReqFn(m_requestStopInfo), TESTING);
     if (err) {
-        return WrapError(err, "m_psicash.Init failed");
+        return WrapError(err, "PsiCash::Init failed");
     }
 
     err = PsiCash::SetRequestMetadataItem("client_version", CLIENT_VERSION);

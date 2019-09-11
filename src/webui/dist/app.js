@@ -1613,7 +1613,10 @@
     REFRESH: 'psicash::refresh',
 
     /** Argument is PsiCashPurchaseResponse */
-    NEW_PURCHASE: 'psicash::new-purchase'
+    NEW_PURCHASE: 'psicash::new-purchase',
+
+    /** Argument is PsiCashInitDoneData */
+    INIT_DONE: 'psicash::init-done'
   };
   /**
    * Server response statuses
@@ -1664,6 +1667,13 @@
    * @property {PsiCashPurchasePrice[]} purchase_prices
    * @property {PsiCashPurchase[]} purchases
    * @property {string} buy_psi_url
+   */
+
+  /**
+   * The expected payload passed to HtmlCtrlInterface_PsiCashMessage when PsiCash.Init() is done.
+   * @typedef {Object} PsiCashInitDoneData
+   * @property {?string} error
+   * @property {?boolean} recovered
    */
 
   /**
@@ -1740,7 +1750,8 @@
 
   var PsiCashMessageTypeEnum = {
     REFRESH: 'refresh',
-    NEW_PURCHASE: 'new-purchase'
+    NEW_PURCHASE: 'new-purchase',
+    INIT_DONE: 'init-done'
   };
   /**
    * @typedef {Object} PsiCashMessageData
@@ -1758,11 +1769,7 @@
   $(function psicashInit() {
     // NOTE: "refresh" will not make a server request unless we're connected. If not
     // connected, it just gets locally cached values.
-    // Update the PsiCash UI values as soon as the UI is ready.
-    $window.on(UI_READY_EVENT, function () {
-      HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('ui-ready'));
-    }); // And update the UI values every time the app gets focus.
-
+    // And update the UI values every time the app gets focus.
     addWindowFocusHandler(function () {
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('app-focus'));
     }); // And update the UI values every time we get connected.
@@ -1781,6 +1788,27 @@
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('settings-changed'));
     });
   });
+  /**
+   * Handles the message indicating that the PsiCash library failed to initialize.
+   * @param {*} evt Event. Unused.
+   * @param {PsiCashInitDoneData} data
+   */
+
+  function psiCashLibraryInitDone(evt, data) {
+    if (data.error) {
+      // The library failed to initialize. This is very bad. The user lost their Tracker credit
+      // or their Account logged-in state.
+      if (data.recovered) {
+        showNoticeModal('psicash#init-error-title', 'psicash#init-error-body-recovered', 'general#notice-modal-tech-preamble', data.error, null); // callback
+      } else {
+        showNoticeModal('psicash#init-error-title', 'psicash#init-error-body-unrecovered', 'general#notice-modal-tech-preamble', data.error, null); // callback
+      }
+    }
+
+    HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('init-done'));
+  }
+
+  $window.on(PsiCashEventTypeEnum.INIT_DONE, psiCashLibraryInitDone);
   /**
    * Helper function to determine if PsiCash is ready for use.
    * @param {?PsiCashRefreshData} psicashData The data to use for the check. If not provided,
@@ -2957,6 +2985,10 @@
       HtmlCtrlInterface_PsiCashMessage(msg);
       setCookie('debug-RefreshPsiCash-balance', msg.payload.balance);
       setCookie('debug-RefreshPsiCash-price-1hr', msg.payload.purchase_prices[0].price);
+    }); // Wire up the PsiCash InitDone test
+
+    $('#debug-PsiCashInitDone a').click(function debugPsiCashInitDoneClick() {
+      testInitDoneResponse();
     });
     var BILLION = 1e9; // Populate the PsiCash balance and price
 
@@ -3004,6 +3036,28 @@
       payload: msgPayload
     };
     return msg;
+  }
+  /**
+   * Mimic an init-done message (via C code).
+   */
+
+
+  function testInitDoneResponse() {
+    var error = $('#debug-PsiCashInitDone-error')[0].checked;
+    var recovered = $('#debug-PsiCashInitDone-recovered')[0].checked;
+    /** @type {PsiCashMessageData} */
+
+    var msg = {
+      type: PsiCashMessageTypeEnum.INIT_DONE,
+      id: '',
+      payload: error ? {
+        error: 'test init error message',
+        recovered: recovered
+      } : {}
+    };
+    setTimeout(function () {
+      return HtmlCtrlInterface_PsiCashMessage(msg);
+    }, 200);
   }
   /**
    * Mimic a refresh response from the server (via C code).
@@ -3186,6 +3240,11 @@
         case PsiCashMessageTypeEnum.NEW_PURCHASE:
           // Payload is PsiCashPurchaseResponse
           // Nothing special to be done; the promise will be resolved below
+          break;
+
+        case PsiCashMessageTypeEnum.INIT_DONE:
+          // Payload is PsiCashInitDoneData
+          $window.trigger(PsiCashEventTypeEnum.INIT_DONE, args.payload);
           break;
       } // Resolve any promies that's awaiting this message/response.
 

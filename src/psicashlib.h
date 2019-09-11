@@ -31,8 +31,9 @@ public:
     virtual ~Lib();
 
     /// Initialize the library. Error means all subsequent calls will fail.
-    /// Must only be called once.
-    error::Error Init();
+    /// If `forceReset` is true, the PsiCash state will be reset. This should
+    /// (only) be used to recover from data corruption.
+    error::Error Init(bool forceReset);
 
     /// Update the client region (in the request metadata) as it's better known.
     error::Error UpdateClientRegion(const string& region);

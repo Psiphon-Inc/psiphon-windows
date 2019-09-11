@@ -71,7 +71,8 @@ static bool g_htmlUiFinished = false;
 
 //==== Forward declarations ====================================================
 
-bool handlePsiCashCommand(const string& jsonString);
+bool HandlePsiCashCommand(const string& jsonString);
+void InitPsiCash();
 
 
 //==== Controls ================================================================
@@ -837,6 +838,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: Ready requested"), __TFUNCTION__);
         g_htmlUiReady = true;
+        InitPsiCash();
         PostMessage(g_hWnd, WM_PSIPHON_CREATED, 0, 0);
     }
     else if (_tcsncmp(url, appStringTable, appStringTableLen) == 0
@@ -991,9 +993,9 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
         // This is already UTF-8 encoded, we just need to narrow it into a string.
         string stringJSON(WStringToNarrow(urlDecoded).c_str() + psicashCommandLen);
 
-        if (!handlePsiCashCommand(stringJSON))
+        if (!HandlePsiCashCommand(stringJSON))
         {
-            my_print(NOT_SENSITIVE, true, _T("%s: handlePsiCashCommand failed"), __TFUNCTION__);
+            my_print(NOT_SENSITIVE, true, _T("%s: HandlePsiCashCommand failed"), __TFUNCTION__);
             goto done;
         }
     }
@@ -1126,12 +1128,6 @@ int APIENTRY _tWinMain(
     // If this set of calls gets any longer, we may want to do something generic.
     DoStartupSystemProxyWork();
     DoStartupDiagnosticCollection();
-
-    // Initialize the PsiCash Library
-    auto err = psicash::Lib::_().Init();
-    if (err) {
-        my_print(NOT_SENSITIVE, false, _T("%s: PsiCashLib initialization failed: %s"), __TFUNCTION__, err.ToString());
-    }
 
     // Main message loop
 
@@ -1576,12 +1572,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 enum class PsiCashMessageType {
     REFRESH,
-    NEW_PURCHASE
+    NEW_PURCHASE,
+    INIT_DONE,
 };
 
 static map<PsiCashMessageType, string> PsiCashMessageTypeNames = {
     { PsiCashMessageType::REFRESH, "refresh" },
-    { PsiCashMessageType::NEW_PURCHASE, "new-purchase" }
+    { PsiCashMessageType::NEW_PURCHASE, "new-purchase" },
+    { PsiCashMessageType::INIT_DONE, "init-done" },
 };
 
 struct PsiCashMessage {
@@ -1589,7 +1587,7 @@ struct PsiCashMessage {
     string id; // unused if empty
     nlohmann::json payload;
 
-    PsiCashMessage(PsiCashMessageType type, const string& id) : type(type), id(id) {}
+    PsiCashMessage(PsiCashMessageType type, const string& id) : type(type), id(id), payload({}) {}
 
     bool JSON(string& s) const {
         try {
@@ -1606,6 +1604,40 @@ struct PsiCashMessage {
         return true;
     }
 };
+
+// Initialize the PsiCash library. Must be called after the UI is ready.
+void InitPsiCash() {
+    PsiCashMessage evt(PsiCashMessageType::INIT_DONE, "");
+
+    auto err = psicash::Lib::_().Init(false);
+    if (err) {
+        // Init failed, indicating file corruption or disk access problems. 
+        // We'll try to reset.
+        auto retryErr = psicash::Lib::_().Init(true);
+
+        // At this point Init may have failed again, and we'll be proceeding without any PsiCash support
+
+        my_print(NOT_SENSITIVE, false, _T("%s: PsiCashLib initialization failed, %s: %hs"), __TFUNCTION__, (retryErr ? _T("unrecovered") : _T("recovered")), err.ToString().c_str());
+
+        // Tell the UI about the init failure, so it can display a message
+        nlohmann::json jsonResult;
+        jsonResult["error"] = err.ToString(); // display the origin error, even if the retry succeeded
+        jsonResult["recovered"] = retryErr ? false : true;
+        evt.payload = jsonResult;
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s: PsiCashLib initialization succeeded"), __TFUNCTION__);
+    }
+
+    string jsonString;
+    if (!evt.JSON(jsonString)) {
+        my_print(NOT_SENSITIVE, true, _T("%s: PsiCashMessage.JSON failed"), __TFUNCTION__);
+        return;
+    }
+
+    HtmlUI_PsiCashMessage(jsonString);
+}
 
 // Exported function.
 // commandID may be empty if not needed.
@@ -1636,7 +1668,7 @@ void UI_RefreshPsiCash(const string& commandID)
     HtmlUI_PsiCashMessage(jsonString);
 }
 
-bool handlePsiCashCommand(const string& jsonString)
+bool HandlePsiCashCommand(const string& jsonString)
 {
     Json::Value json;
     Json::Reader reader;

@@ -215,6 +215,18 @@
     "message": "[+{Number}]",
     "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '{Number}' is a placeholder for an integer for decimal value."
   },
+  "psicash#init-error-body-recovered": {
+    "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ īīş řḗḗşḗḗŧ.]",
+    "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#init-error-body-unrecovered": {
+    "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ īīş ŀǿǿşŧ. ƤşīīƇȧȧşħ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŭŭşȧȧƀŀḗḗ. Ẏǿǿŭŭ ƈȧȧƞ ŧřẏ řḗḗşŧȧȧřŧīīƞɠ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ŧǿǿ řḗḗƈǿǿṽḗḗř ƒřǿǿḿ ŧħḗḗ ƥřǿǿƀŀḗḗḿ.]",
+    "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#init-error-title": {
+    "message": "[ƤşīīƇȧȧşħ īīƞīīŧīīȧȧŀīīẑȧȧŧīīǿǿƞ ḗḗřřǿǿř]",
+    "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+  },
   "psicash#mustconnect-modal#body": {
     "message": "[Īīƞ ǿǿřḓḗḗř ŧǿǿ ŭŭşḗḗ ƤşīīƇȧȧşħ, ẏǿǿŭŭ ḿŭŭşŧ ƀḗḗ ƈǿǿƞƞḗḗƈŧḗḗḓ ŧǿǿ ŧħḗḗ Ƥşīīƥħǿǿƞ ƞḗḗŧẇǿǿřķ.]",
     "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
