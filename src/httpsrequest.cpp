@@ -199,7 +199,7 @@ void CALLBACK WinHttpStatusCallback(
         }
 
         httpRequest->ResponseSetCode(dwStatusCode);
-        my_print(NOT_SENSITIVE, httpRequest->m_silentMode, _T("HTTP request status code: %d"), dwStatusCode);
+        my_print(NOT_SENSITIVE, true, _T("HTTP request status code: %d"), dwStatusCode);
 
         if (!WinHttpQueryDataAvailable(hRequest, 0))
         {
