@@ -117,6 +117,11 @@ struct DecomposedProxyConfig
 
 void DoStartupSystemProxyWork();
 tstring GetNativeDefaultHttpsProxyHost();
+/// Returns the hostname:port of the current tunnel, or empty string if there is no tunnel.
 tstring GetTunneledDefaultHttpsProxyHost();
+/// Provides the separate hostname and port of the current tunnel. 
+/// Port will be 0 if it should not be used (like, a default port should be used). 
+/// Returns false if there is no tunnel.
+bool GetTunneledDefaultHttpsProxyHostnamePort(tstring& o_hostname, DWORD& o_port);
 void GetNativeDefaultProxyInfo(DecomposedProxyConfig& o_proxyInfo);
 void GetSanitizedOriginalProxyInfo(vector<ConnectionProxy>& o_originalProxyInfo);

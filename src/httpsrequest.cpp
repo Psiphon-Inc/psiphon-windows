@@ -280,38 +280,6 @@ void CALLBACK WinHttpStatusCallback(
     }
 }
 
-
-/*
-                                  VPN                             SSH
-                            conn         disconn             conn     disconn         generic/ignorant
-                            ----------------------------------------------------------------------------
-FetchRemoteServerList      !matter        native          native*     native            use_native
-DiagnosticData             !matter        native          native*     native            use_native
-
-Upgrade                    !matter        native          tunnel      native            use_tunnel
-
-SpeedTest (non)            n/a            native          native      native            use_native
-
-untunneled server request  n/a            native          n/a         native            use_native
-  - pre-handshake, post-status
-
-tunneled request           !matter        n/a             tunnel      n/a               use_tunnel
-  - post-handshake, /connected, /status
-
-
-!matter: doesn't matter, do whatever, polipo or don't polipo (because it'll be in the VPN tunnel)
-      - but don't use previous system proxy settings if tunnel is up, of course
-native: native internet connection, including any proxy settings
-      - while connected, this means using *previous* system proxy settings
-~native: use native, even though we could in theory use the tunnel
-n/a: can't do it
-tunnel: use polipo
-      - regardless of what system proxy settings are
-
-NOTE: There is a registry setting (UserSkipProxySettings) that prevents setting the system proxy when connected.
-
-Assumption: Remnant system proxy settings from a Psiphon crash will be cleaned up.
-*/
 bool HTTPSRequest::MakeRequest(
         const TCHAR* serverAddress,
         int serverWebPort,
@@ -344,53 +312,95 @@ bool HTTPSRequest::MakeRequest(
 
         // This is the broken SSL WinHTTP client case.
         // Use a URL proxy to make the HTTPS request for us instead.
-        try
+
+        // This is the format of requests to the URL proxy
+        // http://localhost:URL_proxy_port/<direct|tunneled>/urlencode(https://destination:port/requestPath)
+        tstringstream URL;
+        URL << _T("https://") << serverAddress << _T(":") << serverWebPort << requestPath;
+
+        tstring tunneledHostname;
+        DWORD tunneledPort;
+        auto tunneled = GetTunneledDefaultHttpsProxyHostnamePort(tunneledHostname, tunneledPort);
+
+        if (tunneled)
         {
-            TransportConnection connection;
+            // We already have a tunnel, so we'll use that for the URL proxy
 
-            // Throws on failure
-            connection.Connect(
-                stopInfo,
-                TransportRegistry::New(CORE_TRANSPORT_PROTOCOL_NAME),
-                NULL, // not receiving reconnection notifications
-                NULL, // not receiving upgrade paver calls
-                NULL, // not collecting stats
-                NULL, // not supplying authorizations
-                new ServerEntry(), // this empty ServerEntry is the flag for URL proxy mode; we don't need to connect to a specific server
-                true);// don't apply system proxy settings (or write to the Psiphon proxy settings registry key)
-                        // as another transport might currently be running
-
-            // This is the format of requests to the URL proxy
-            // http://localhost:URL_proxy_port/<direct|tunneled>/urlencode(https://destination:port/requestPath)
-            tstringstream URL;
-            URL << _T("https://") << serverAddress << _T(":") << serverWebPort << requestPath;
-
-            // NOTE that we will always make "direct" requests since this URL proxy will not establish a tunnel
             tstringstream urlProxyRequestPath;
-            urlProxyRequestPath << _T("/") << _T("direct") << _T("/") << UrlEncode(URL.str());
+            if (usePsiphonLocalProxy == PsiphonProxy::DONT_USE) 
+            {
+                urlProxyRequestPath << _T("/direct/");
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - Making direct URL proxy request with existing tunnel-core"), __TFUNCTION__, __LINE__);
+            }
+            else // USE or REQUIRE
+            {
+                urlProxyRequestPath << _T("/tunneled/");
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - Making tunneled URL proxy request with existing tunnel-core"), __TFUNCTION__, __LINE__);
+            }
+            urlProxyRequestPath << UrlEncode(URL.str());
 
-            serverAddress = _T("127.0.0.1");
-            serverWebPort = connection.GetTransportLocalHttpProxy();
-
-            my_print(NOT_SENSITIVE, true, _T("Using URL proxy port %d"), serverWebPort);
+            serverAddress = tunneledHostname.c_str();
+            serverWebPort = tunneledPort;            
 
             success = MakeRequestWithURLProxyOption(
                 serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
                 stopInfo, usePsiphonLocalProxy, response,
                 true, // useURLProxy
                 additionalHeaders, additionalData, additionalDataLength, httpVerb);
-
-            // Note that when we leave this scope, the TransportConnection will
-            // clean up the transport connection.
         }
-        catch (StopSignal::StopException&)
+        else if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE)
         {
-            throw;
-        }
-        catch (...)
-        {
-            my_print(NOT_SENSITIVE, true, _T("Failed to start URL proxy"), __TFUNCTION__);
+            // We don't have a tunnel, but we must make the request tunneled, so we can't proceed
             success = false;
+        }
+        else
+        {
+            // We don't have a tunnel, so we'll create an unconnected tunnel-core
+            // instance to use as the direct URL proxy.
+
+            try
+            {
+                TransportConnection connection;
+
+                // Throws on failure
+                connection.Connect(
+                    stopInfo,
+                    TransportRegistry::New(CORE_TRANSPORT_PROTOCOL_NAME),
+                    NULL, // not receiving reconnection notifications
+                    NULL, // not receiving upgrade paver calls
+                    NULL, // not collecting stats
+                    NULL, // not supplying authorizations
+                    new ServerEntry(), // this empty ServerEntry is the flag for URL proxy mode; we don't need to connect to a specific server
+                    true);// don't apply system proxy settings (or write to the Psiphon proxy settings registry key)
+                          // as another transport might currently be running
+
+                // NOTE that we will always make "direct" requests since this URL proxy will not establish a tunnel
+                tstringstream urlProxyRequestPath;
+                urlProxyRequestPath << _T("/") << _T("direct") << _T("/") << UrlEncode(URL.str());
+
+                serverAddress = _T("127.0.0.1");
+                serverWebPort = connection.GetTransportLocalHttpProxy();
+
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - Making direct URL proxy request with temp tunnel-core"), __TFUNCTION__, __LINE__);
+
+                success = MakeRequestWithURLProxyOption(
+                    serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
+                    stopInfo, usePsiphonLocalProxy, response,
+                    true, // useURLProxy
+                    additionalHeaders, additionalData, additionalDataLength, httpVerb);
+
+                // Note that when we leave this scope, the TransportConnection will
+                // clean up the transport connection.
+            }
+            catch (StopSignal::StopException&)
+            {
+                throw;
+            }
+            catch (...)
+            {
+                my_print(NOT_SENSITIVE, true, _T("Failed to start URL proxy"), __TFUNCTION__);
+                success = false;
+            }
         }
     }
 

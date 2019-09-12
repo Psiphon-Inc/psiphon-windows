@@ -1627,7 +1627,7 @@ void InitPsiCash() {
     }
     else
     {
-        my_print(NOT_SENSITIVE, false, _T("%s: PsiCashLib initialization succeeded"), __TFUNCTION__);
+        my_print(NOT_SENSITIVE, true, _T("%s: PsiCashLib initialization succeeded"), __TFUNCTION__);
     }
 
     string jsonString;

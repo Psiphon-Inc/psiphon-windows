@@ -521,24 +521,41 @@ void GetTunneledDefaultProxyInfo(ConnectionProxy& o_proxyInfo)
 }
 
 
-tstring GetTunneledDefaultHttpsProxyHost()
+bool GetTunneledDefaultHttpsProxyHostnamePort(tstring& o_hostname, DWORD& o_port)
 {
+    o_hostname.clear();
+    o_port = 0;
+
     ConnectionProxy proxyInfo;
     GetTunneledDefaultProxyInfo(proxyInfo);
 
     DecomposedProxyConfig decomposedProxyConfig;
     DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
 
-    tstringstream host;
-    host << decomposedProxyConfig.httpsProxy;
-    if (!host.str().empty() && decomposedProxyConfig.httpsProxyPort != 0)
-    {
-        host << _T(":") << decomposedProxyConfig.httpsProxyPort;
-    }
+    o_hostname = decomposedProxyConfig.httpsProxy;
+    o_port = decomposedProxyConfig.httpsProxyPort;
 
-    return host.str();
+    return !o_hostname.empty();
 }
 
+tstring GetTunneledDefaultHttpsProxyHost()
+{
+    tstring hostname;
+    DWORD port;
+    if (!GetTunneledDefaultHttpsProxyHostnamePort(hostname, port))
+    {
+        return _T("");
+    }
+
+    if (port != 0)
+    {
+        tstringstream hostport;
+        hostport << hostname << _T(":") << port;
+        hostname = hostport.str();
+    }
+
+    return hostname;
+}
 
 /**
 Returns a santized/de-personalized copy of the original proxy info.
