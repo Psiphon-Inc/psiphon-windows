@@ -628,7 +628,7 @@
     "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user has no PsiCash at all. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#ui-buymorepsi": {
-    "message": "Buy More PsiCash",
+    "message": "Buy more PsiCash",
     "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user already has some PsiCash, but may wish to buy more. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#ui-nsfbalance-buttontext": {

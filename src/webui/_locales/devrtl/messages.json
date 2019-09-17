@@ -296,7 +296,7 @@
     "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "psicash#ui-buymorepsi": {
-    "message": "‮Ԑnʎ‬ ‮Woɹǝ‬ ‮ԀsıↃɐsɥ‬",
+    "message": "‮Ԑnʎ‬ ‮ɯoɹǝ‬ ‮ԀsıↃɐsɥ‬",
     "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user already has some PsiCash, but may wish to buy more. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#ui-buypsi": {
