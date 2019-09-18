@@ -1,47 +1,5 @@
 ## PsiCash
 
-### TODO
-
-* "learn more" button/link (in-app)
-* Add alt text to coin images
-* on-boarding
-* prompt OTF-l10n: missing moment.js locales: am, fa-AF, om, ti, tk
-
-### Done
-
-* make known issue: old IE doesn't preserve psicash URL fragment after ipfounder redirect 30% (old IE) * 14% (IE of Windows)
-* add opened-from-notification QP to home page URL
-* Fix old IE number translation (strip .00)
-* balance not translated on language change
-* Prevent animation on every startup (only first one)
-* try different approach to animating balance change
-* proper i18n of everything
-  - Including string descriptions
-* buy Psi for $
-  - post-$purchase behaviour? optimistic? refresh loop? nothing?
-* BUG: purchase queued when refresh in-flight will be silently abandoned, causing spinner to go forever; Lib::MakeLimitedRequest
-* BUG: HTTPSRequest::MakeRequestWithURLProxyOption throws on stop signal
-* Sometimes earn animation doesn't trigger?
-* improve silver coin (so it doesn't look disabled)
-* earn animation
-* all strings in string table (out of HTML)
-* Button wording
-* Purchase countdown wording
-* add a FAQ entry for clearing Windows data; link to it from `psicash#transaction-InvalidTokens-body`
-* SBPurchase attempt error message texts
-* add "dev" to diagnostics in core lib
-* No UI on fresh run or if psicashdatastore deleted
-* Buy disabled if NSF
-* Buy enabled if SF
-* Buy via temp tunnel if not connected (desired?)
-* Eugene's purchase removal logic (is it?)
-* Purchase works
-* SB countdown works
-* Disable when VPN mode on
-* Messages are shown for all non-successful purchase attempts (but the text in them isn't written)
-
-
-
 ## Design
 
 Communication in both directions is enabled by the [`mctrl`](https://github.com/Psiphon-Inc/mctrl) HTML control that we are using (and some changes we have made to it).
