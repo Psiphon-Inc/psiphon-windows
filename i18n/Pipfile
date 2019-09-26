@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+beautifulsoup4 = "*"
+ruamel-yaml = "*"
+localizable = {git = "https://github.com/chrisballinger/python-localizable.git",ref = "15d3bf2466d0de1a826d3f0ff1f365b0c1910f56"}
+requests = "*"
+
+[requires]
+python_version = "3.7"
