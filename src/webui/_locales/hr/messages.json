@@ -1,7 +1,7 @@
 {
     "banner#long-connecting": {
         "message": "<strong>O ne!</strong> Čini se da imate problema sa spajanjem!<br>\nPreuzmite najnoviju verziju Psiphona sa <a class=\"NewVersionURL\" href=\"#\">stranice za preuzimanje</a>\nili pošaljite email na <a class=\"NewVersionEmail\" href=\"#\"></a>",
-        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version."
+        "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version. The word 'Psiphon' must not be translated or transliterated."
     },
     "nav#connection#starting": {
         "message": "Spajanje",
@@ -37,7 +37,7 @@
     },
     "connection#starting-msg": {
         "message": "Psiphon se <span class=\"state-word\">spaja</span>…",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network."
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to connect to the network. The word 'Psiphon' must not be translated or transliterated."
     },
     "connection#stop-btn": {
         "message": "Stop",
@@ -45,7 +45,7 @@
     },
     "connection#connected-msg": {
         "message": "Psiphon je <span class=\"state-word\">spojen</span>",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network."
+        "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network. The word 'Psiphon' must not be translated or transliterated."
     },
     "connection#disconnect-btn": {
         "message": "Odspoji",
@@ -53,7 +53,7 @@
     },
     "connection#stopping-msg": {
         "message": "Psiphon se <span class=\"state-word\">odspaja</span>…",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network."
+        "description": "Message in the big connection status box telling the user that Psiphon is currently trying to disconnect from the network. The word 'Psiphon' must not be translated or transliterated."
     },
     "connection#wait-btn": {
         "message": "Molimo pričekajte...",
@@ -61,7 +61,7 @@
     },
     "connection#stopped-msg": {
         "message": "Psiphon je <span class=\"state-word\">odspojen</span>",
-        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network."
+        "description": "Message in the big connection status box telling the user that Psiphon is currently not connected to the network. The word 'Psiphon' must not be translated or transliterated."
     },
     "connection#connect-btn": {
         "message": "Spoji",
@@ -112,11 +112,11 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "Ako je ovo omogućeno, zahtjevi prema poslužiteljima unutar Vaše države neće biti tunelirani kroz Psiphon.",
-        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled."
+        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#split-tunnel#reason": {
-        "message": "Stranice unutar Vaše države u pravilu nisu blokirane, tako da će Vam omogućavanje ove opcije dati brži pristup tim stranicama. Također, ova opcija ponekad može smanjiti troškove prijenosa podataka.",
+        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#split-tunnel#enable-label": {
@@ -129,7 +129,7 @@
     },
     "settings#disable-timeouts#help-text": {
         "message": "Ako je ovo omgućeno, komunikacija sa Psiphon poslužiteljem neće pauzirati.",
-        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled."
+        "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#disable-timeouts#reason": {
         "message": "Omogućavanjem ove opcije na sporim mrežama smanjujete mogućnost nenadanih odspajanja.",
@@ -141,7 +141,7 @@
     },
     "settings#egress-region#heading": {
         "message": "Regija Psiphon poslužitelja",
-        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). "
+        "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#label": {
         "message": "Spoji se putem",
@@ -248,16 +248,16 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon ima poslužitelje u mnogim državama. Koristeći Psiphon poslužitelj u državi koja Vam je blizu će u pravilu pružiti bolju mrežnu povezanost, ali možda želite pristupati stranicama i uslugama kao da ste virtualno u određenoj državi.",
-        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value."
+        "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
+        "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
         "message": "Odabirom zadane <strong>\"Najbrža država\"</strong> opcije dozvoljavate Psiphonu da automatski odabere poslužitelj, što će generalno rezultirati najboljom mrežnom povezanosti.",
-        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is."
+        "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
         "message": "Odaberite ispravnu regiju Psiphon poslužitelja.",
-        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set."
+        "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#error-modal-title": {
         "message": "Regija poslužitelja nedostupna",
@@ -265,7 +265,7 @@
     },
     "settings#egress-region#error-modal-body-http": {
         "message": "Konfigurirali ste Psiphon da koristi poslužitelj u specifičnoj regiji.<br>\nKako bilo, ta regija više nije dostupna.<br>\nMorate odabrati novu regiju ili promijeniti na zadani izbor: \"Najbrža država\".",
-        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
+        "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
         "message": "Lokalni proxy portovi",
@@ -277,7 +277,7 @@
     },
     "settings#local-proxy-ports#reason": {
         "message": "Ako koristite alate na svom računalu koji zahtjevaju ručno konfiguriranje kako bi radili sa Psiphonom, želite da Psiphon konzistentno koristi iste brojeve lokalnih portova. Ako nema razloga specificirati brojeve portova, trebali bi dopustiti Psiphonu da ih odabere automatski kako bi izbjegli konflikte.",
-        "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values."
+        "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#http-label": {
         "message": "HTTP/HTTPS",
@@ -301,11 +301,11 @@
     },
     "settings#local-proxy-ports#error-modal-body-http": {
         "message": "<p>\nKonfigurirali ste Psiphon da koristi specifičan lokalni port za HTTP proxy.<br>\nKako bilo, čini se da se taj port već koristi tako da ga Psiphon ne može koristiti.\n</p>\n<p>\nMolimo promijenite konfiguriranu HTTP proxy port vrijednost i pokušajte ponovo. Preporučamo da očistiti tu vrijednost tako da Psiphon može automatski odabrati dostupan port.\n</p>",
-        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port."
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nKonfigurirali ste Psiphon da koristi specifičan lokalni port za SOCKS proxy.<br>\nKako bilo, čini se da se taj port već koristi tako da ga Psiphon ne može koristiti.\n</p>\n<p>\nMolimo promijenite konfiguriranu SOCKS proxy port vrijednost i pokušajte ponovo. Preporučamo da očistite tu vrijednost tako da Psiphon može automatski odabrati dostupan port.\n</p>",
-        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port."
+        "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#heading": {
         "message": "Uzvodni proxy",
@@ -313,7 +313,7 @@
     },
     "settings#upstream-proxy#by-default": {
         "message": "Ako vaše računalo već ima konfiguriran proxy, Psiphon će pod zadano koristiti taj proxy kad uspostavlja tunel. Ovo ponašanje možete zaobići specificirajući proxy koji će se koristiti, ili specificirajući da se nijedan takav \"uzvodni proxy\" ne koristi.",
-        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled."
+        "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#reason": {
         "message": "Uzvodni proxyi su nekad zahtjevani od strane škola, sveučilišta ili tvrtki. Ako znate postavke uzvodnog proxya zahtjevanog od strane Vašeg mrežnog davatelja, možda ćete ih morati ručno unijeti kako bi se spojili.",
@@ -369,11 +369,11 @@
     },
     "settings#upstream-proxy#error-modal-body-default": {
         "message": "Psiphon je trenutno konfiguriran da koristi proxy Vašeg sustava kao svoj \"uzvodni proxy\". <br>\nKako bilo, čini se da nismo u mogućnosti spojiti se sa Psiphon poslužiteljem kroz taj proxy.<br>\nMolimo Vas da omogućite \"Ne koristi uzvodni proxy\" i pokušate ponovno.",
-        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem."
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#error-modal-body-configured": {
         "message": "Konfigurirali ste Psiphon da koristi \"uzvodni proxy\".<br>\nKako bilo, čini se da nismo u mogućnosti spojiti se sa Psiphon poslužiteljem kroz taj proxy.<br>\nMolimo Vas da to popravite i pokušate ponovno.",
-        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous."
+        "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#transport-mode#heading": {
         "message": "Transportni način rada",
@@ -393,11 +393,11 @@
     },
     "settings#systray-minimize#help-text": {
         "message": "Ako je ovo omogućeno, smanjivanjem prozora Psiphona, aplikacija će se sakriti u područje obavijesti (također poznato kao traka zadataka, smješteno blizu sata).",
-        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled."
+        "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#systray-minimize#reason": {
         "message": "Minimaliziranje Psiphona u obavijesni prostor (sistemska ploča) oslobađa prostor na Vašoj traci zadataka. Ovo je naročito korisno ako često koristite Psiphon u dužim periodima.",
-        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it."
+        "description": "Help text in the 'Minimize to Systray' settings section explaining to the user why they might want to enable it. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#systray-minimize#enable-label": {
         "message": "Smanji u područja obavijesti (traka zadataka)",
@@ -433,11 +433,11 @@
     },
     "feedback#smiley_happy": {
         "message": "Psiphon se spaja i radi onako kako to i želim.",
-        "description": "The text below the 'happy face' feedback choice."
+        "description": "The text below the 'happy face' feedback choice. The word 'Psiphon' must not be translated or transliterated."
     },
     "feedback#smiley_sad": {
         "message": "Psiphon se često ne uspijeva spojiti ili ne radi dovoljno dobro.",
-        "description": "The text below the 'sad face' feedback choice."
+        "description": "The text below the 'sad face' feedback choice. The word 'Psiphon' must not be translated or transliterated."
     },
     "feedback#text_feedback_prompt": {
         "message": "Molimo unesite svoje komentare ovdje:",
@@ -449,7 +449,7 @@
     },
     "feedback#diagnostic_check": {
         "message": "Postavite dijagnostičke podatke. Ovi dijagnostički podatci Vas ne identificiraju, a nama će pomoći da održimo Psiphonov rad glatkim. <a class=\"DataCollectionInfoURL\" href=\"#\">Kliknite ovdje kako bi vidjeli koje podatke prikupljamo.</a>",
-        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc."
+        "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc. The word 'Psiphon' must not be translated or transliterated."
     },
     "feedback#submit_button": {
         "message": "Podnesi",
@@ -473,31 +473,27 @@
     },
     "language#success-message": {
         "message": "<strong>Bok!</strong> Dobro došli u Psiphon.",
-        "description": "A welcome message shown to the user when they first switch to the correct UI language"
-    },
-    "about#wordart-title": {
-        "message": "Psiphon",
-        "description": "The application/product/tool name part of the fancy title at the top of the 'About' page. 'Psiphon' can be translated or transliterated if appropriate for your language. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. If appropriate for your language, it should be in all capital letters."
+        "description": "A welcome message shown to the user when they first switch to the correct UI language. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#wordart-tag": {
         "message": "Izvan granica",
-        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in."
+        "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#description": {
         "message": "Psiphon je <strong>alat za obilaženje cenzure</strong> - dizajniran je da pruži pristup otvorenom Internetu, mimo cenzura i vatrozida. <strong>Otvoren je</strong> i razvija se u Torontu, Kanada.",
-        "description": "Paragraph on the 'About' page telling users generally what Psiphon is."
+        "description": "Paragraph on the 'About' page telling users generally what Psiphon is. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#visit-download-site": {
         "message": "Molimo Vas da posjetite stranicu kako bi <strong><a class=\"NewVersionURL\" href=\"#\">preuzeli novu verziju</a></strong> ili kako bi <strong><a class=\"InfoURL\" href=\"#\">dobili pomoć i informacije</a></strong>. Psiphon je dostupan za Android i Windows.",
-        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it."
+        "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#get-by-email": {
         "message": "<strong>Ako je stranica nedostupna</strong>, možete dobiti novu verziju Psiphona slanjem emaila na:",
-        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address."
+        "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
         "message": "Psiphon za Windows verzija klijenta:",
-        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'."
+        "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'. The word 'Psiphon' must not be translated or transliterated."
     },
     "general#modal-close-button": {
         "message": "Zatvori",
@@ -513,27 +509,27 @@
     },
     "notice#systemproxysettings-setproxy-error-body": {
         "message": "<p>Psiphon nije uspio postaviti postavke proxya sustava.</p>\n<p>To bi moglo biti zbog konflikta s Vašim antivirusnim softare-om. Možda ćete morati ručno postaviti aplikaciju ili postavke proxya sustava da koriste lokalne Psiphon proxye.</p>",
-        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
+        "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon. The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#systemproxysettings-setproxy-warning-template": {
         "message": "Psiphon nije uspio postaviti postavke proxya sustava za Internet vezu \"<%- data %>\". To bi moglo biti zbog konflikta s Vašim antivirusnim softwareom. Možda ćete morati ručno postaviti aplikaciju ili postavke proxya sustava da koriste lokalne Psiphon proxye.",
-        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention."
+        "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-stopped-title": {
         "message": "Psiphon nije spojen",
-        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected)"
+        "description": "Appears in the notification area balloon when Psiphon is disconnected (or has lost its connection, or has been disconnected). The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-starting-title": {
         "message": "Psiphon se spaja",
-        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-starting-body": {
         "message": "Molimo pričekajte...",
-        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server"
+        "description": "Appears in the notification area balloon when Psiphon is in the process of connecting to a server. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-title": {
         "message": "Psiphon je spojen",
-        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed."
+        "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-body": {
         "message": "Istražite van svojih granica!",
@@ -541,23 +537,131 @@
     },
     "appbackend#state-connected-reminder-title": {
         "message": "Psiphon Vas drži spojene",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server."
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-reminder-body": {
         "message": "Nek Psiphon ostane besplatan. Kliknite ovdje kako bi posjetili stranice naših sponzora!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-reminder-body-2": {
         "message": "Održite Psiphon besplatnim posjećivanjem stranica naših sponzora!",
-        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
+        "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#minimized-to-systray-title": {
         "message": "Psiphon je smanjen u područje obavijesti",
-        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+        "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons). The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#minimized-to-systray-body": {
         "message": "Kliknite ikonu da bi ponovno otvorili aplikaciju",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "psicash#transaction-error-title": {
+        "message": "PsiCash transaction error",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-error-body": {
+        "message": "Your PsiCash transaction attempt failed unexpectedly.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-ExistingTransaction-title": {
+        "message": "PsiCash purchase already exists",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-ExistingTransaction-body": {
+        "message": "You have an existing PsiCash purchase of this type. Another purchase of this type is not allowed until the previous one expires. Your PsiCash state will be refreshed now.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InsufficientBalance-title": {
+        "message": "Insufficient PsiCash balance",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InsufficientBalance-body": {
+        "message": "You do not have sufficient PsiCash balance for this purchase.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-TransactionAmountMismatch-title": {
+        "message": "PsiCash purchase price mismatch",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-TransactionAmountMismatch-body": {
+        "message": "PsiCash purchase prices are out-of-date. Your PsiCash state will be refreshed now.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-TransactionTypeNotFound-title": {
+        "message": "PsiCash purchase type not found",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-TransactionTypeNotFound-body": {
+        "message": "The product you are trying to buy no longer exists. You may need to update or reinstall the application.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title": {
+        "message": "Invalid PsiCash tokens",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-body": {
+        "message": "Your PsiCash tokens are invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-ServerError-title": {
+        "message": "PsiCash server error",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-ServerError-body": {
+        "message": "The PsiCash server responded with an error while trying to make the purchase. Retry your purchase later.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#ui-speedboost-active": {
+        "message": "Speed&nbsp;Boost active for {TimeRemaining}",
+        "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '{TimeRemaining}' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#ui-zerobalance-title": {
+        "message": "Need a Speed&nbsp;Boost?",
+        "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '{TimeRemaining}' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#ui-buypsi": {
+        "message": "Buy PsiCash",
+        "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user has no PsiCash at all. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#ui-buymorepsi": {
+        "message": "Buy more PsiCash",
+        "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user already has some PsiCash, but may wish to buy more. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#ui-nsfbalance-buttontext": {
+        "message": "Needed for Speed&nbsp;Boost",
+        "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#ui-enoughbalance-buttontext": {
+        "message": "Start Speed&nbsp;Boost",
+        "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#ui-buyingboost-buttontext": {
+        "message": "Starting Speed&nbsp;Boost!",
+        "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "positive-value-indicator": {
+        "message": "+{Number}",
+        "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '{Number}' is a placeholder for an integer for decimal value."
+    },
+    "psicash#mustconnect-modal#title": {
+        "message": "Psiphon Connection Required",
+        "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
+    },
+    "psicash#mustconnect-modal#body": {
+        "message": "In order to use PsiCash, you must be connected to the Psiphon network.",
+        "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
+    },
+    "psicash#init-error-title": {
+        "message": "PsiCash initialization error",
+        "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#init-error-body-unrecovered": {
+        "message": "PsiCash failed to initialize. This is probably due a file system problem, such as being out of disk space. Your balance and other state is lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+        "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#init-error-body-recovered": {
+        "message": "PsiCash failed to initialize. This is probably due a file system problem, such as being out of disk space. Your balance and other state is reset.",
+        "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "banner#sponsored-by": {
         "message": "Sponzorira",

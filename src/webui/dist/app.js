@@ -1465,7 +1465,7 @@
   /* LANGUAGE ******************************************************************/
 
 
-  var RTL_LOCALES = ['devrtl', 'fa', 'fa_AF', 'ar'];
+  var RTL_LOCALES = ['devrtl', 'fa', 'fa_AF', 'ar', 'ur'];
   $(function () {
     var fallbackLanguage = 'en'; // Language priority: cookie, system locale, fallback
 

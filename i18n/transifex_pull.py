@@ -20,7 +20,12 @@
 '''
 Pulls and massages our translations from Transifex.
 
-Run with `pipenv run python transifex_pull.py`
+Run with
+# If you don't already have pipenv:
+$ pip install pipenv
+
+$ pipenv install --ignore-pipfile
+$ pipenv run python transifex_pull.py
 '''
 
 import os
@@ -70,16 +75,17 @@ DEFAULT_LANGS = {
     'pt_BR': 'pt_BR',   # Portuguese-Brazil
     'pt_PT': 'pt_PT',   # Portuguese-Portugal
     'ru': 'ru',         # Russian
-    'sn': 'sn',         # Shona
+    #'sn': 'sn',         # Shona
     'tg': 'tg',         # Tajik
     'th': 'th',         # Thai
     'ti': 'ti',         # Tigrinya
     'tk': 'tk',         # Turkmen
     'tr': 'tr',         # Turkish
-    'ug': 'ug@Latn',    # Uighur (latin script)
+    #'ug': 'ug@Latn',    # Uighur (latin script)
     'uk': 'uk',         # Ukrainian
+    'ur': 'ur',         # Urdu
     'uz': 'uz@Latn',    # Uzbek (latin script)
-    'uz@Cyrl': 'uz@Cyrl',    # Uzbek (latin script)
+    #'uz@Cyrl': 'uz@Cyrl',    # Uzbek (latin script)
     'vi': 'vi',         # Vietnamese
     'zh': 'zh',         # Chinese (simplified)
     'zh_TW': 'zh_TW'    # Chinese (traditional)
