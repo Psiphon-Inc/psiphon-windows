@@ -43,7 +43,7 @@ import localizable
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 
-import transifex_lib
+import transifexlib
 
 
 DEFAULT_LANGS = {
@@ -98,7 +98,7 @@ def pull_app_translations():
     )
 
     for resname in resources:
-        transifex_lib.process_resource(
+        transifexlib.process_resource(
             resname,
             DEFAULT_LANGS,
             '../src/webui/_locales/en/messages.json',
