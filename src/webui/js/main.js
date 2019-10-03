@@ -1474,23 +1474,6 @@
     switchToTab('#settings-tab', onTabShown);
   }
 
-  /**
-   * To be used as a JSON reviver. Will hydrate moment (date) types, and others,
-   * in the future.
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse#Using_the_reviver_parameter
-   * @param {string} key
-   * @param {any} value
-   */
-  function jsonReviver(key, value) {
-    if (_.isString(value)) {
-      let m = moment(value, moment.ISO_8601, true);
-      if (m.isValid()) {
-        return m;
-      }
-    }
-    return value;
-  }
-
 
   /* FEEDBACK ******************************************************************/
 
@@ -2155,13 +2138,15 @@
 
     if (psicashData.purchases) {
       for (let i = 0; i < psicashData.purchases.length; i++) {
+        const localTimeExpiry = moment(psicashData.purchases[i].localTimeExpiry);
+
         // We're making no special effort to check for multiple active Speed Boosts.
         // This should not happen, per server rules.
         if (psicashData.purchases[i]['class'] == 'speed-boost' &&
-            psicashData.purchases[i].localTimeExpiry.isAfter(moment()))
+            localTimeExpiry.isAfter(moment()))
         {
           state = UIState.ACTIVE_BOOST;
-          millisOfSpeedBoostRemaining = psicashData.purchases[i].localTimeExpiry.diff(moment());
+          millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
           const boostRemainingTime = moment
               .duration(millisOfSpeedBoostRemaining)
               .locale(momentLocale())
@@ -3282,7 +3267,7 @@
         id: 'purchase-id',
         'class': 'speed-boost',
         distinguisher: '1hr',
-        localTimeExpiry: moment().add(parseFloat($('#debug-RefreshPsiCash-boost-remaining').val()), 'minutes')
+        localTimeExpiry: moment().add(parseFloat($('#debug-RefreshPsiCash-boost-remaining').val()), 'minutes').toISOString()
       };
     }
 
@@ -3372,8 +3357,8 @@
         id: 'debugpurchaseid',
         'class': command.transactionClass, // quoting b/c it's a keyword and old IE will complain
         distinguisher: command.distinguisher,
-        localTimeExpiry: moment().add(1, 'hour'),
-        serverTimeExpiry: moment().add(1, 'hour')
+        localTimeExpiry: moment().add(1, 'hour').toISOString(),
+        serverTimeExpiry: moment().add(1, 'hour').toISOString()
       };
       msg.payload.purchase = purchase;
 
@@ -3502,8 +3487,15 @@
     nextTick(function() {
       DEBUG_LOG('HtmlCtrlInterface_PsiCashMessage', jsonArgs);
 
-      // Allow object as input to assist with debugging
-      var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs, jsonReviver);
+      let args;
+      try {
+        // Allow object as input to assist with debugging
+        args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
+      }
+      catch(e) {
+        HtmlCtrlInterface_Log('HtmlCtrlInterface_PsiCashMessage: JSON parse failed: ' + e);
+        return;
+      }
 
       switch (args.type) {
         case PsiCashMessageTypeEnum.REFRESH:

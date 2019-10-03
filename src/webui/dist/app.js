@@ -1308,26 +1308,6 @@
 
     switchToTab('#settings-tab', onTabShown);
   }
-  /**
-   * To be used as a JSON reviver. Will hydrate moment (date) types, and others,
-   * in the future.
-   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse#Using_the_reviver_parameter
-   * @param {string} key
-   * @param {any} value
-   */
-
-
-  function jsonReviver(key, value) {
-    if (_.isString(value)) {
-      var m = moment(value, moment.ISO_8601, true);
-
-      if (m.isValid()) {
-        return m;
-      }
-    }
-
-    return value;
-  }
   /* FEEDBACK ******************************************************************/
 
 
@@ -1954,11 +1934,12 @@
 
     if (psicashData.purchases) {
       for (var _i = 0; _i < psicashData.purchases.length; _i++) {
-        // We're making no special effort to check for multiple active Speed Boosts.
+        var localTimeExpiry = moment(psicashData.purchases[_i].localTimeExpiry); // We're making no special effort to check for multiple active Speed Boosts.
         // This should not happen, per server rules.
-        if (psicashData.purchases[_i]['class'] == 'speed-boost' && psicashData.purchases[_i].localTimeExpiry.isAfter(moment())) {
+
+        if (psicashData.purchases[_i]['class'] == 'speed-boost' && localTimeExpiry.isAfter(moment())) {
           state = UIState.ACTIVE_BOOST;
-          millisOfSpeedBoostRemaining = psicashData.purchases[_i].localTimeExpiry.diff(moment());
+          millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
           var boostRemainingTime = moment.duration(millisOfSpeedBoostRemaining).locale(momentLocale()).humanize().replace(' ', '&nbsp;'); // avoid splitting the time portion
 
           var boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('{TimeRemaining}', boostRemainingTime);
@@ -3010,7 +2991,7 @@
         id: 'purchase-id',
         'class': 'speed-boost',
         distinguisher: '1hr',
-        localTimeExpiry: moment().add(parseFloat($('#debug-RefreshPsiCash-boost-remaining').val()), 'minutes')
+        localTimeExpiry: moment().add(parseFloat($('#debug-RefreshPsiCash-boost-remaining').val()), 'minutes').toISOString()
       };
     }
 
@@ -3106,8 +3087,8 @@
         'class': command.transactionClass,
         // quoting b/c it's a keyword and old IE will complain
         distinguisher: command.distinguisher,
-        localTimeExpiry: moment().add(1, 'hour'),
-        serverTimeExpiry: moment().add(1, 'hour')
+        localTimeExpiry: moment().add(1, 'hour').toISOString(),
+        serverTimeExpiry: moment().add(1, 'hour').toISOString()
       };
       msg.payload.purchase = purchase;
       debugSetPsiCashData({
@@ -3227,9 +3208,16 @@
 
   function HtmlCtrlInterface_PsiCashMessage(jsonArgs) {
     nextTick(function () {
-      DEBUG_LOG('HtmlCtrlInterface_PsiCashMessage', jsonArgs); // Allow object as input to assist with debugging
+      DEBUG_LOG('HtmlCtrlInterface_PsiCashMessage', jsonArgs);
+      var args;
 
-      var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs, jsonReviver);
+      try {
+        // Allow object as input to assist with debugging
+        args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
+      } catch (e) {
+        HtmlCtrlInterface_Log('HtmlCtrlInterface_PsiCashMessage: JSON parse failed: ' + e);
+        return;
+      }
 
       switch (args.type) {
         case PsiCashMessageTypeEnum.REFRESH:
