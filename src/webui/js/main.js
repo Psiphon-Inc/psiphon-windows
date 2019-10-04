@@ -2301,7 +2301,7 @@
         let psiText = formatPsi(balanceDiff);
         if (balanceDiff > 0) {
           // Negative numbers naturally get a '-', but we'll need to add a '+' sign (localized)
-          psiText = i18n.t('positive-value-indicator').replace('{Number}', formatPsi(balanceDiff));
+          psiText = i18n.t('positive-value-indicator').replace('%d', formatPsi(balanceDiff));
         }
 
         // Create and insert the element we'll use for the animation

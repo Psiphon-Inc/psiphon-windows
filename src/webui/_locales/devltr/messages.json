@@ -212,8 +212,8 @@
     "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention. The word 'Psiphon' must not be translated or transliterated."
   },
   "positive-value-indicator": {
-    "message": "[+{Number}]",
-    "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '{Number}' is a placeholder for an integer for decimal value."
+    "message": "[+%d]",
+    "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
   },
   "psicash#init-error-body-recovered": {
     "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ īīş řḗḗşḗḗŧ.]",
