@@ -212,8 +212,8 @@
     "description": "'<%- data %>' is a placeholder and must not be modified. Log message emitted when Psiphon can't fully configure the system to use Psiphon. It may or may not be a fatal state, and may or may not need human intervention. The word 'Psiphon' must not be translated or transliterated."
   },
   "positive-value-indicator": {
-    "message": "+{Number}",
-    "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '{Number}' is a placeholder for an integer for decimal value."
+    "message": "+%d",
+    "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
   },
   "psicash#init-error-body-recovered": {
     "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ıs‬ ‮ɹǝsǝʇ‬.",
@@ -317,7 +317,7 @@
   },
   "psicash#ui-zerobalance-title": {
     "message": "‮Nǝǝp‬ ‮ɐ‬ ‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬?",
-    "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '{TimeRemaining}' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    "description": "When the user has no PsiCash available, this message will be shown on the disabled 'Buy Speed Boost' button. This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "settings#apply-button": {
     "message": "‮∀ddʅʎ‬ ‮Ↄɥɐuƃǝs‬",

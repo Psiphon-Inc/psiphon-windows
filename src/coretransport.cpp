@@ -1045,7 +1045,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         else if (noticeType == "ClientRegion")
         {
             string region = data["region"].asString();
-            my_print(NOT_SENSITIVE, false, _T("Client region: %S"), region.c_str());
+            my_print(NOT_SENSITIVE, true, _T("Client region: %S"), region.c_str());
             psicash::Lib::_().UpdateClientRegion(region);
         }
     }
