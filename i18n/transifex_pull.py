@@ -26,22 +26,11 @@ $ pip install pipenv
 
 $ pipenv install --ignore-pipfile
 $ pipenv run python transifex_pull.py
+
+# To reset your pipenv state (e.g., after a Python upgrade):
+$ pipenv --rm
 '''
 
-import os
-import sys
-import errno
-import json
-import codecs
-import argparse
-import requests
-import localizable
-
-# To install this dependency on macOS:
-# pip install --upgrade setuptools --user python
-# pip install --upgrade ruamel.yaml --user python
-from ruamel.yaml import YAML
-from ruamel.yaml.compat import StringIO
 
 import transifexlib
 
