@@ -660,7 +660,7 @@
     "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-body-unrecovered": {
-    "message": "PsiCash failed to initialize. This is probably due a file system problem, such as being out of disk space. Your balance and other state is lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+    "message": "PsiCash failed to initialize. This is probably due a file system problem, such as being out of disk space. Your balance and other state are lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
     "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-body-recovered": {
