@@ -413,7 +413,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
     if (Settings::DisableTimeouts())
     {
-        config["NetworkLatencyMultiplier"] = 3.0;
+        config["NetworkLatencyMultiplierLambda"] = 0.1;
     }
 
     if (m_authorizationsProvider) {
