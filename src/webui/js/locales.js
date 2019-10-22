@@ -1260,8 +1260,8 @@
       "notice#systemproxysettings-setproxy-error-title": "[Şẏşŧḗḗḿ Ƥřǿǿẋẏ Ḗḗřřǿǿř]",
       "notice#systemproxysettings-setproxy-warning-template": "[Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ƒǿǿř ŧħḗḗ Īīƞŧḗḗřƞḗḗŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ ƞȧȧḿḗḗḓ “<%- data %>”. Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.]",
       "positive-value-indicator": "[+%d]",
-      "psicash#init-error-body-recovered": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ īīş řḗḗşḗḗŧ.]",
-      "psicash#init-error-body-unrecovered": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ȧȧřḗḗ ŀǿǿşŧ. ƤşīīƇȧȧşħ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŭŭşȧȧƀŀḗḗ. Ẏǿǿŭŭ ƈȧȧƞ ŧřẏ řḗḗşŧȧȧřŧīīƞɠ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ŧǿǿ řḗḗƈǿǿṽḗḗř ƒřǿǿḿ ŧħḗḗ ƥřǿǿƀŀḗḗḿ.]",
+      "psicash#init-error-body-recovered": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ħȧȧṽḗḗ ƀḗḗḗḗƞ řḗḗşḗḗŧ.]",
+      "psicash#init-error-body-unrecovered": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ħȧȧṽḗḗ ƀḗḗḗḗƞ ŀǿǿşŧ. ƤşīīƇȧȧşħ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŭŭşȧȧƀŀḗḗ. Ẏǿǿŭŭ ƈȧȧƞ ŧřẏ řḗḗşŧȧȧřŧīīƞɠ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ŧǿǿ řḗḗƈǿǿṽḗḗř ƒřǿǿḿ ŧħḗḗ ƥřǿǿƀŀḗḗḿ.]",
       "psicash#init-error-title": "[ƤşīīƇȧȧşħ īīƞīīŧīīȧȧŀīīẑȧȧŧīīǿǿƞ ḗḗřřǿǿř]",
       "psicash#mustconnect-modal#body": "[Īīƞ ǿǿřḓḗḗř ŧǿǿ ŭŭşḗḗ ƤşīīƇȧȧşħ, ẏǿǿŭŭ ḿŭŭşŧ ƀḗḗ ƈǿǿƞƞḗḗƈŧḗḗḓ ŧǿǿ ŧħḗḗ Ƥşīīƥħǿǿƞ ƞḗḗŧẇǿǿřķ.]",
       "psicash#mustconnect-modal#title": "[Ƥşīīƥħǿǿƞ Ƈǿǿƞƞḗḗƈŧīīǿǿƞ Řḗḗɋŭŭīīřḗḗḓ]",
@@ -1432,8 +1432,8 @@
       "notice#systemproxysettings-setproxy-error-title": "‮Sʎsʇǝɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
       "notice#systemproxysettings-setproxy-warning-template": "‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮Iuʇǝɹuǝʇ‬ ‮ɔouuǝɔʇıou‬ ‮uɐɯǝp‬ “<%- data %>”. ‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.",
       "positive-value-indicator": "+%d",
-      "psicash#init-error-body-recovered": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ıs‬ ‮ɹǝsǝʇ‬.",
-      "psicash#init-error-body-unrecovered": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɐɹǝ‬ ‮ʅosʇ‬. ‮ԀsıↃɐsɥ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮nsɐqʅǝ‬. ‮ʎon‬ ‮ɔɐu‬ ‮ʇɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬ ‮ʇo‬ ‮ɹǝɔoʌǝɹ‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ ‮dɹoqʅǝɯ‬.",
+      "psicash#init-error-body-recovered": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɥɐʌǝ‬ ‮qǝǝu‬ ‮ɹǝsǝʇ‬.",
+      "psicash#init-error-body-unrecovered": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɥɐʌǝ‬ ‮qǝǝu‬ ‮ʅosʇ‬. ‮ԀsıↃɐsɥ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮nsɐqʅǝ‬. ‮ʎon‬ ‮ɔɐu‬ ‮ʇɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬ ‮ʇo‬ ‮ɹǝɔoʌǝɹ‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ ‮dɹoqʅǝɯ‬.",
       "psicash#init-error-title": "‮ԀsıↃɐsɥ‬ ‮ıuıʇıɐʅızɐʇıou‬ ‮ǝɹɹoɹ‬",
       "psicash#mustconnect-modal#body": "‮Iu‬ ‮oɹpǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ԀsıↃɐsɥ‬, ‮ʎon‬ ‮ɯnsʇ‬ ‮qǝ‬ ‮ɔouuǝɔʇǝp‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮uǝʇʍoɹʞ‬.",
       "psicash#mustconnect-modal#title": "‮Ԁsıdɥou‬ ‮Ↄouuǝɔʇıou‬ ‮ᴚǝbnıɹǝp‬",
@@ -1887,8 +1887,8 @@
       "psicash#mustconnect-modal#title": "Psiphon Connection Required",
       "psicash#mustconnect-modal#body": "In order to use PsiCash, you must be connected to the Psiphon network.",
       "psicash#init-error-title": "PsiCash initialization error",
-      "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state are lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
-      "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state is reset."
+      "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+      "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset."
     }
   },
   "es": {

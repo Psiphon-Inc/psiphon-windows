@@ -216,11 +216,11 @@
     "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
   },
   "psicash#init-error-body-recovered": {
-    "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ īīş řḗḗşḗḗŧ.]",
+    "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ħȧȧṽḗḗ ƀḗḗḗḗƞ řḗḗşḗḗŧ.]",
     "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-body-unrecovered": {
-    "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ȧȧřḗḗ ŀǿǿşŧ. ƤşīīƇȧȧşħ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŭŭşȧȧƀŀḗḗ. Ẏǿǿŭŭ ƈȧȧƞ ŧřẏ řḗḗşŧȧȧřŧīīƞɠ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ŧǿǿ řḗḗƈǿǿṽḗḗř ƒřǿǿḿ ŧħḗḗ ƥřǿǿƀŀḗḗḿ.]",
+    "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ħȧȧṽḗḗ ƀḗḗḗḗƞ ŀǿǿşŧ. ƤşīīƇȧȧşħ ẇīīŀŀ ƞǿǿŧ ƀḗḗ ŭŭşȧȧƀŀḗḗ. Ẏǿǿŭŭ ƈȧȧƞ ŧřẏ řḗḗşŧȧȧřŧīīƞɠ ŧħḗḗ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ŧǿǿ řḗḗƈǿǿṽḗḗř ƒřǿǿḿ ŧħḗḗ ƥřǿǿƀŀḗḗḿ.]",
     "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-title": {
