@@ -136,7 +136,7 @@
     "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#disable-timeouts#reason": {
-    "message": "When enabling this over a very slow network connection, you are less likely to experience unexpected disconnections.",
+    "message": "When enabling this for a very slow network connection, you are less likely to experience unexpected disconnections.",
     "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
   },
   "settings#disable-timeouts#enable-label": {
@@ -612,7 +612,7 @@
     "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#transaction-ServerError-body": {
-    "message": "The PsiCash server responded with an error while trying to make the purchase. Retry your purchase later.",
+    "message": "The PsiCash server responded with an error while trying to make the purchase. Please retry your purchase later.",
     "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#ui-speedboost-active": {

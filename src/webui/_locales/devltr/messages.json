@@ -260,7 +260,7 @@
     "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#transaction-ServerError-body": {
-    "message": "[Ŧħḗḗ ƤşīīƇȧȧşħ şḗḗřṽḗḗř řḗḗşƥǿǿƞḓḗḗḓ ẇīīŧħ ȧȧƞ ḗḗřřǿǿř ẇħīīŀḗḗ ŧřẏīīƞɠ ŧǿǿ ḿȧȧķḗḗ ŧħḗḗ ƥŭŭřƈħȧȧşḗḗ. Řḗḗŧřẏ ẏǿǿŭŭř ƥŭŭřƈħȧȧşḗḗ ŀȧȧŧḗḗř.]",
+    "message": "[Ŧħḗḗ ƤşīīƇȧȧşħ şḗḗřṽḗḗř řḗḗşƥǿǿƞḓḗḗḓ ẇīīŧħ ȧȧƞ ḗḗřřǿǿř ẇħīīŀḗḗ ŧřẏīīƞɠ ŧǿǿ ḿȧȧķḗḗ ŧħḗḗ ƥŭŭřƈħȧȧşḗḗ. Ƥŀḗḗȧȧşḗḗ řḗḗŧřẏ ẏǿǿŭŭř ƥŭŭřƈħȧȧşḗḗ ŀȧȧŧḗḗř.]",
     "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#transaction-ServerError-title": {
@@ -340,7 +340,7 @@
     "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#disable-timeouts#reason": {
-    "message": "[Ẇħḗḗƞ ḗḗƞȧȧƀŀīīƞɠ ŧħīīş ǿǿṽḗḗř ȧȧ ṽḗḗřẏ şŀǿǿẇ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ẏǿǿŭŭ ȧȧřḗḗ ŀḗḗşş ŀīīķḗḗŀẏ ŧǿǿ ḗḗẋƥḗḗřīīḗḗƞƈḗḗ ŭŭƞḗḗẋƥḗḗƈŧḗḗḓ ḓīīşƈǿǿƞƞḗḗƈŧīīǿǿƞş.]",
+    "message": "[Ẇħḗḗƞ ḗḗƞȧȧƀŀīīƞɠ ŧħīīş ƒǿǿř ȧȧ ṽḗḗřẏ şŀǿǿẇ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ẏǿǿŭŭ ȧȧřḗḗ ŀḗḗşş ŀīīķḗḗŀẏ ŧǿǿ ḗḗẋƥḗḗřīīḗḗƞƈḗḗ ŭŭƞḗḗẋƥḗḗƈŧḗḗḓ ḓīīşƈǿǿƞƞḗḗƈŧīīǿǿƞş.]",
     "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
   },
   "settings#egress-region#default": {
