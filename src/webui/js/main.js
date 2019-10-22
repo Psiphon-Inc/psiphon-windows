@@ -2152,7 +2152,7 @@
               .locale(momentLocale())
               .humanize()
               .replace(' ', '&nbsp;'); // avoid splitting the time portion
-          const boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('{TimeRemaining}', boostRemainingTime);
+          const boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('%s', boostRemainingTime);
           $('.speed-boost-time-remaining').html(boostRemainingText);
           break;
         }
