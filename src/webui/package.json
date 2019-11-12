@@ -7,7 +7,7 @@
     "grunt-contrib-connect": "^2.0.0",
     "grunt-contrib-less": "^2.0.0",
     "grunt-contrib-watch": "^1.1.0",
-    "jquery": "^1.12.4",
+    "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
     "lodash-compat": "^3.10.2",
     "object-path-immutable": "^3.0.2"
