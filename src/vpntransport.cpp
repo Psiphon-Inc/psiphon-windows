@@ -445,14 +445,11 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
                            RASEO2_SecureClientForMSNet |
                            RASEO2_DisableNbtOverIP;
     rasEntry.dwVpnStrategy = VS_L2tpOnly;
+    lstrcpy(rasEntry.szLocalPhoneNumber, serverAddress.c_str());
     rasEntry.dwfNetProtocols = RASNP_Ip;
     rasEntry.dwFramingProtocol = RASFP_Ppp;
     rasEntry.dwEncryptionType = ET_Require;
-    if (wcscpy_s(rasEntry.szLocalPhoneNumber, serverAddress.c_str()) ||
-        wcscpy_s(rasEntry.szDeviceType, RASDT_Vpn))
-    {
-        throw std::exception("failed to copy PSK");
-    }
+    lstrcpy(rasEntry.szDeviceType, RASDT_Vpn);
         
     // The RasSetEntryProperties function changes the connection information
     // for an entry in the phone book or creates a new phone-book entry.
@@ -471,10 +468,7 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     memset(&vpnCredentials, 0, sizeof(vpnCredentials));
     vpnCredentials.dwSize = sizeof(vpnCredentials);
     vpnCredentials.dwMask = RASCM_PreSharedKey;
-    if (wcscpy_s(vpnCredentials.szPassword, PSK.c_str())) 
-    {
-        throw std::exception("failed to copy PSK");
-    }
+    lstrcpy(vpnCredentials.szPassword, PSK.c_str());
     returnCode = RasSetCredentials(0, VPN_CONNECTION_NAME, &vpnCredentials, FALSE);
     if (ERROR_SUCCESS != returnCode)
     {
@@ -487,12 +481,11 @@ bool VPNTransport::Establish(const tstring& serverAddress, const tstring& PSK)
     RASDIALPARAMS vpnParams;
     memset(&vpnParams, 0, sizeof(vpnParams));
     vpnParams.dwSize = sizeof(vpnParams);
-    if (wcscpy_s(vpnParams.szEntryName, VPN_CONNECTION_NAME) ||
-        wcscpy_s(vpnParams.szUserName, _T("user")) || // The server does not care about username
-        wcscpy_s(vpnParams.szPassword, _T("password"))) // This can also be hardcoded because the server authentication (which we really care about) is in IPSec using PSK
-    {
-        throw std::exception("failed to copy VPN params");
-    }
+    lstrcpy(vpnParams.szEntryName, VPN_CONNECTION_NAME);
+    lstrcpy(vpnParams.szUserName, _T("user")); // The server does not care about username
+    lstrcpy(vpnParams.szPassword, _T("password")); // This can also be hardcoded because
+                                                   // the server authentication (which we
+                                                   // really care about) is in IPSec using PSK
 
     // Pass pointer to this object to callback for state change updates
     vpnParams.dwCallbackId = (ULONG_PTR)this;

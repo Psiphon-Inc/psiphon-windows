@@ -69,8 +69,6 @@ struct ConnectionProxy
     tstring proxy;
     tstring bypass;
 
-    ConnectionProxy() : flags(0) {}
-
     bool operator==(const ConnectionProxy& rhs)
     {
         return 

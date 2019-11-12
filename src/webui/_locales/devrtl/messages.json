@@ -216,11 +216,11 @@
     "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
   },
   "psicash#init-error-body-recovered": {
-    "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɥɐʌǝ‬ ‮qǝǝu‬ ‮ɹǝsǝʇ‬.",
+    "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ıs‬ ‮ɹǝsǝʇ‬.",
     "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-body-unrecovered": {
-    "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɥɐʌǝ‬ ‮qǝǝu‬ ‮ʅosʇ‬. ‮ԀsıↃɐsɥ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮nsɐqʅǝ‬. ‮ʎon‬ ‮ɔɐu‬ ‮ʇɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬ ‮ʇo‬ ‮ɹǝɔoʌǝɹ‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ ‮dɹoqʅǝɯ‬.",
+    "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ıs‬ ‮ʅosʇ‬. ‮ԀsıↃɐsɥ‬ ‮ʍıʅʅ‬ ‮uoʇ‬ ‮qǝ‬ ‮nsɐqʅǝ‬. ‮ʎon‬ ‮ɔɐu‬ ‮ʇɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬ ‮ʇo‬ ‮ɹǝɔoʌǝɹ‬ ‮ɟɹoɯ‬ ‮ʇɥǝ‬ ‮dɹoqʅǝɯ‬.",
     "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-title": {
@@ -260,7 +260,7 @@
     "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#transaction-ServerError-body": {
-    "message": "‮⊥ɥǝ‬ ‮ԀsıↃɐsɥ‬ ‮sǝɹʌǝɹ‬ ‮ɹǝsdoupǝp‬ ‮ʍıʇɥ‬ ‮ɐu‬ ‮ǝɹɹoɹ‬ ‮ʍɥıʅǝ‬ ‮ʇɹʎıuƃ‬ ‮ʇo‬ ‮ɯɐʞǝ‬ ‮ʇɥǝ‬ ‮dnɹɔɥɐsǝ‬. ‮Ԁʅǝɐsǝ‬ ‮ɹǝʇɹʎ‬ ‮ʎonɹ‬ ‮dnɹɔɥɐsǝ‬ ‮ʅɐʇǝɹ‬.",
+    "message": "‮⊥ɥǝ‬ ‮ԀsıↃɐsɥ‬ ‮sǝɹʌǝɹ‬ ‮ɹǝsdoupǝp‬ ‮ʍıʇɥ‬ ‮ɐu‬ ‮ǝɹɹoɹ‬ ‮ʍɥıʅǝ‬ ‮ʇɹʎıuƃ‬ ‮ʇo‬ ‮ɯɐʞǝ‬ ‮ʇɥǝ‬ ‮dnɹɔɥɐsǝ‬. ‮ᴚǝʇɹʎ‬ ‮ʎonɹ‬ ‮dnɹɔɥɐsǝ‬ ‮ʅɐʇǝɹ‬.",
     "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#transaction-ServerError-title": {
@@ -312,8 +312,8 @@
     "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "psicash#ui-speedboost-active": {
-    "message": "‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬ ‮ɐɔʇıʌǝ‬ ‮ɟoɹ‬ %s",
-    "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    "message": "‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬ ‮ɐɔʇıʌǝ‬ ‮ɟoɹ‬ {TimeRemaining}",
+    "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '{TimeRemaining}' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "psicash#ui-zerobalance-title": {
     "message": "‮Nǝǝp‬ ‮ɐ‬ ‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬?",
@@ -340,7 +340,7 @@
     "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#disable-timeouts#reason": {
-    "message": "‮Ｍɥǝu‬ ‮ǝuɐqʅıuƃ‬ ‮ʇɥıs‬ ‮ɟoɹ‬ ‮ɐ‬ ‮ʌǝɹʎ‬ ‮sʅoʍ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮ʎon‬ ‮ɐɹǝ‬ ‮ʅǝss‬ ‮ʅıʞǝʅʎ‬ ‮ʇo‬ ‮ǝxdǝɹıǝuɔǝ‬ ‮nuǝxdǝɔʇǝp‬ ‮pısɔouuǝɔʇıous‬.",
+    "message": "‮Ｍɥǝu‬ ‮ǝuɐqʅıuƃ‬ ‮ʇɥıs‬ ‮oʌǝɹ‬ ‮ɐ‬ ‮ʌǝɹʎ‬ ‮sʅoʍ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮ʎon‬ ‮ɐɹǝ‬ ‮ʅǝss‬ ‮ʅıʞǝʅʎ‬ ‮ʇo‬ ‮ǝxdǝɹıǝuɔǝ‬ ‮nuǝxdǝɔʇǝp‬ ‮pısɔouuǝɔʇıous‬.",
     "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
   },
   "settings#egress-region#default": {
