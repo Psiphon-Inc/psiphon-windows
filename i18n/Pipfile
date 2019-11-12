@@ -9,5 +9,3 @@ pylint = "*"
 [packages]
 transifexlib = {git = "https://github.com/Psiphon-Inc/transifexlib.git"}
 
-[requires]
-python_version = "3.7"

@@ -1942,7 +1942,7 @@
           millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
           var boostRemainingTime = moment.duration(millisOfSpeedBoostRemaining).locale(momentLocale()).humanize().replace(' ', '&nbsp;'); // avoid splitting the time portion
 
-          var boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('{TimeRemaining}', boostRemainingTime);
+          var boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('%s', boostRemainingTime);
           $('.speed-boost-time-remaining').html(boostRemainingText);
           break;
         }

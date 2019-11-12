@@ -111,7 +111,10 @@ void my_print(LogSensitivity sensitivity, bool bDebugMessage, const TCHAR* forma
         length += debugPrefixLength;
     }
     buffer = (TCHAR*)malloc(length * sizeof(TCHAR));
-    if (!buffer) return;
+    if (!buffer) {
+        va_end(args);
+        return;
+    }
     if (bDebugMessage)
     {
         _tcscpy_s(buffer, length, debugPrefix);
