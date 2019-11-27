@@ -225,7 +225,10 @@ void SessionInfo::SetHomepage(const char* homepage)
 
 void SessionInfo::RotateHomepages()
 {
-    std::rotate(m_homepages.begin(), m_homepages.begin() + 1, m_homepages.end());
+    if (!m_homepages.empty())
+    {
+        std::rotate(m_homepages.begin(), m_homepages.begin() + 1, m_homepages.end());
+    }
 }
 
 void SessionInfo::SetUpgradeVersion(const char* upgradeVersion)
