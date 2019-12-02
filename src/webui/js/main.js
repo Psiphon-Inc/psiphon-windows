@@ -603,8 +603,11 @@
 
     updateAvailableEgressRegions(false); // don't force valid -- haven't filled in settings yet
 
-    // Fill in the settings.
-    refreshSettings();
+    $window.one(UI_READY_EVENT, function() {
+      // Fill in the settings. This must be done after the UI is ready, since it might
+      // show an error, requiring i18n to be initialized.
+      refreshSettings();
+    });
   });
 
   //
