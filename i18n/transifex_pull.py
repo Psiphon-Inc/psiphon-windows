@@ -32,6 +32,8 @@ $ pipenv --rm
 '''
 
 
+import os
+import subprocess
 import transifexlib
 
 
@@ -82,25 +84,23 @@ DEFAULT_LANGS = {
 
 
 def pull_app_translations():
-    resources = (
+    transifexlib.process_resource(
         'windows-client-strings',
-    )
+        DEFAULT_LANGS,
+        '../src/webui/_locales/en/messages.json',
+        lambda lang: f'../src/webui/_locales/{lang}/messages.json',
+        None) # no mutator
 
-    for resname in resources:
-        transifexlib.process_resource(
-            resname,
-            DEFAULT_LANGS,
-            '../src/webui/_locales/en/messages.json',
-            lambda lang: f'../src/webui/_locales/{lang}/messages.json',
-            None) # no mutator
-        print(f'{resname}: DONE')
-
+    # We need to run grunt to incorporate the new translations
+    print('Running grunt...')
+    os.chdir('../src/webui')
+    subprocess.run(['grunt'], shell=True, check=True)
 
 
 def go():
     pull_app_translations()
 
-    print('FINISHED')
+    print('\nFinished translation pull and grunt')
 
 
 if __name__ == '__main__':
