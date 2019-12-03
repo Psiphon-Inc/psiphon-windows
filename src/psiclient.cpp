@@ -601,6 +601,7 @@ static VOID CALLBACK ShowConnectedReminderBalloonTimer(HWND hWnd, UINT, UINT_PTR
 #define WM_PSIPHON_HTMLUI_REFRESHSETTINGS   WM_USER + 204
 #define WM_PSIPHON_HTMLUI_UPDATEDPISCALING  WM_USER + 205
 #define WM_PSIPHON_HTMLUI_PSICASHMESSAGE    WM_USER + 206
+#define WM_PSIPHON_HTMLUI_UPDATESYSIDLEINFO WM_USER + 207
 
 static void HtmlUI_AddLog(int priority, LPCTSTR message)
 {
@@ -764,6 +765,36 @@ static void HtmlUI_UpdateDpiScalingHandler(LPCWSTR json)
     delete[] json;
 }
 
+static void HtmlUI_UpdateSysIdleInfo(const wstring& json)
+{
+    size_t bufLen = json.length() + 1;
+    wchar_t* buf = new wchar_t[bufLen];
+    wcsncpy_s(buf, bufLen, json.c_str(), bufLen);
+    buf[bufLen - 1] = L'\0';
+    PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_UPDATESYSIDLEINFO, (WPARAM)buf, 0);
+}
+
+static void HtmlUI_UpdateSysIdleInfoHandler(LPCWSTR json)
+{
+    if (!g_htmlUiReady)
+    {
+        delete[] json;
+        return;
+    }
+
+    MC_HMCALLSCRIPTFUNC argStruct = { 0 };
+    argStruct.cbSize = sizeof(MC_HMCALLSCRIPTFUNC);
+    argStruct.cArgs = 1;
+    argStruct.pszArg1 = json;
+    if (!SendMessage(
+        g_hHtmlCtrl, MC_HM_CALLSCRIPTFUNC,
+        (WPARAM)_T("HtmlCtrlInterface_UpdateSysIdleInfo"), (LPARAM)&argStruct))
+    {
+        throw std::exception("UI: HtmlCtrlInterface_UpdateSysIdleInfo not found");
+    }
+    delete[] json;
+}
+
 static void HtmlUI_PsiCashMessage(const string& psicashJSON)
 {
     wstring wJson = UTF8ToWString(psicashJSON.c_str());
@@ -805,6 +836,9 @@ static void HtmlUI_BeforeNavigate(MC_NMHTMLURL* nmHtmlUrl)
     PostMessage(g_hWnd, WM_PSIPHON_HTMLUI_BEFORENAVIGATE, (WPARAM)buf, 0);
 }
 
+// HtmlUI_BeforeNavigateHandler needs some forward declarations
+void UI_UpdateSysIdleInfo();
+
 // HtmlUI_BeforeNavigateHandler intercepts all navigation attempts in the HTML control.
 // It is also this mechanism that is used for the HTML control to communicate
 // with the back-end code (the code you're looking at now).
@@ -831,6 +865,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const LPCTSTR appSetCookies = PSIPHON_LINK_PREFIX _T("setcookies?");
     const size_t appSetCookiesLen = _tcslen(appSetCookies);
     const LPCTSTR appBannerClick = PSIPHON_LINK_PREFIX _T("bannerclick");
+    const LPCTSTR sysIdleInfo = PSIPHON_LINK_PREFIX _T("sysidleinfo");
     const LPCTSTR psicashCommand = PSIPHON_LINK_PREFIX _T("psicash?");
     const size_t psicashCommandLen = _tcslen(psicashCommand);
 
@@ -978,6 +1013,11 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             OpenBrowser(INFO_LINK_URL);
         }
     }
+    else if (_tcscmp(url, sysIdleInfo) == 0)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Idle time requested"), __TFUNCTION__);
+        UI_UpdateSysIdleInfo();
+    }
     else if (_tcsncmp(url, psicashCommand, psicashCommandLen) == 0
         && _tcslen(url) > psicashCommandLen)
     {
@@ -1090,6 +1130,29 @@ void UI_UpdateDpiScaling(const string& dpiScalingJSON)
 {
     HtmlUI_UpdateDpiScaling(dpiScalingJSON);
 }
+
+void UI_UpdateSysIdleInfo()
+{
+    LASTINPUTINFO lii;
+    lii.cbSize = sizeof(LASTINPUTINFO);
+
+    int64_t systemIdleMillis = 0;
+    if (GetLastInputInfo(&lii)) {
+        systemIdleMillis = GetTickCount() - lii.dwTime;
+    }
+    else {
+        // We're just going to leave systemIdleMillis as 0. We need to respond to the JS UI with something.
+        my_print(NOT_SENSITIVE, false, _T("%s:%d: GetLastInputInfo failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+    }
+
+    Json::Value json;
+    json["idle_millis"] = systemIdleMillis;
+    Json::FastWriter jsonWriter;
+    wstring wJson = UTF8ToWString(jsonWriter.write(json).c_str());
+
+    HtmlUI_UpdateSysIdleInfo(wJson);
+}
+
 
 //==== Win32 boilerplate ======================================================
 
@@ -1443,6 +1506,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_HTMLUI_UPDATEDPISCALING:
         HtmlUI_UpdateDpiScalingHandler((LPCWSTR)wParam);
         break;
+    case WM_PSIPHON_HTMLUI_UPDATESYSIDLEINFO:
+        HtmlUI_UpdateSysIdleInfoHandler((LPCWSTR)wParam);
+        break;
     case WM_PSIPHON_HTMLUI_PSICASHMESSAGE:
         HtmlUI_PsiCashMessageHandler((LPCWSTR)wParam);
         break;
@@ -1611,7 +1677,7 @@ void InitPsiCash() {
 
     auto err = psicash::Lib::_().Init(false);
     if (err) {
-        // Init failed, indicating file corruption or disk access problems. 
+        // Init failed, indicating file corruption or disk access problems.
         // We'll try to reset.
         auto retryErr = psicash::Lib::_().Init(true);
 

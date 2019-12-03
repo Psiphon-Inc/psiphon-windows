@@ -1775,7 +1775,7 @@
     // Set up the click handlers
     $('.language-choice').click(function(e) {
       e.preventDefault();
-      switchLocale($(this).attr('value'));
+      switchLocale($(this).val());
     });
   }
 
@@ -1937,7 +1937,8 @@
   // TODO: Maybe roll this into a more global pubsub? But why?
   /** @type {Datastore} */
   const PsiCashStore = new Datastore({
-    purchaseInProgress: false
+    purchaseInProgress: false,
+    systemIdleMillis: 0
   }, 'PsiCashStore');
 
   $(function psicashInit() {
@@ -1946,6 +1947,10 @@
 
     // And update the UI values every time the app gets focus.
     addWindowFocusHandler(function() {
+      if (IS_BROWSER) {
+        DEBUG_LOG('window got focus but not doing PsiCash refresh because IS_BROWSER');
+        return;
+      }
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('app-focus'));
     });
 
@@ -1964,6 +1969,14 @@
     // disable the UI and indicate why.
     $('#settings-pane').on(SETTING_CHANGED_EVENT, function() {
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('settings-changed'));
+    });
+
+    // Link the checked state of all the "autospend" checkboxes that appear in some
+    // of the PsiCash interfaces
+    $('input[type="checkbox"].autospend').click(function() {
+      // Note that this gets called _after_ the current checkbox state has changed,
+      // so this.checked has our target state.
+      $('input[type="checkbox"].autospend').prop('checked', this.checked)
     });
   });
 
@@ -2025,7 +2038,23 @@
   $window.on(PsiCashEventTypeEnum.REFRESH, refreshPsiCashEventHandler);
 
   /** @type {?PsiCashRefreshData} */
-  var g_PsiCashData = null;
+  let g_PsiCashData = null;
+
+  /**
+   * @enum {object}
+   * @readonly
+   */
+  const PsiCashUIState = {
+    ZERO_BALANCE: {uiSelector: '#psicash-interface-zerobalance'},
+    NSF_BALANCE: {uiSelector: '#psicash-interface-nsfbalance'},
+    ENOUGH_BALANCE: {uiSelector: '#psicash-interface-enoughbalance'},
+    BUYING_BOOST: {uiSelector: '#psicash-interface-buyingboost'},
+    ACTIVE_BOOST: {uiSelector: '#psicash-interface-activeboost'},
+    VPN_MODE_DISABLED: {uiSelector: '#psicash-interface-vpndisabled'}
+  };
+
+  /** @type {?PsiCashUIState} */
+  let g_prevPsiCashUIState;
 
   /**
    * Called from refreshPsiCash and on an interval to update the PsiCash UI.
@@ -2049,7 +2078,6 @@
     }
 
     psicashData = g_PsiCashData;
-
 
     /**
      * Will be true for the very first update when the UI is enabled. Affects which animations are shown.
@@ -2098,20 +2126,7 @@
     }
 
     // The state determines which chunks of UI are visible.
-
-    /**
-     * @enum {object}
-     * @readonly
-     */
-    const UIState = {
-      ZERO_BALANCE: {uiSelector: '#psicash-interface-zerobalance'},
-      NSF_BALANCE: {uiSelector: '#psicash-interface-nsfbalance'},
-      ENOUGH_BALANCE: {uiSelector: '#psicash-interface-enoughbalance'},
-      BUYING_BOOST: {uiSelector: '#psicash-interface-buyingboost'},
-      ACTIVE_BOOST: {uiSelector: '#psicash-interface-activeboost'},
-      VPN_MODE_DISABLED: {uiSelector: '#psicash-interface-vpndisabled'}
-    };
-    let state = UIState.ZERO_BALANCE;
+    let state = PsiCashUIState.ZERO_BALANCE;
 
     let sb1hrPrice = null;
     if (psicashData.purchase_prices) {
@@ -2130,10 +2145,10 @@
 
     if (_.isNumber(psicashData.balance) && _.isNumber(sb1hrPrice)) {
       if (psicashData.balance >= sb1hrPrice) {
-        state = UIState.ENOUGH_BALANCE;
+        state = PsiCashUIState.ENOUGH_BALANCE;
       }
       else if (psicashData.balance > 0) {
-        state = UIState.NSF_BALANCE;
+        state = PsiCashUIState.NSF_BALANCE;
       }
     }
 
@@ -2141,36 +2156,52 @@
 
     if (psicashData.purchases) {
       for (let i = 0; i < psicashData.purchases.length; i++) {
-        const localTimeExpiry = moment(psicashData.purchases[i].localTimeExpiry);
-
-        // We're making no special effort to check for multiple active Speed Boosts.
+        // There are two different contexts/ways of checking for active Speed Boost.
+        // **If we are connected**, then we rely on psiphond to decide that the authorization
+        // is expired, which will result in tunnel-core reconnecting and a signal that the
+        // authorization is now rejected. This is when the purchase is actually removed
+        // from the PsiCash lib datastore. So, if we are connected, its presence in the
+        // purchases array should be interpreted as meaning that the purchase/authorization
+        // is valid.
+        // **If we are not connected**, then we have to rely on the purchase expiry. We're
+        // certainly not going to show a purchase as active for hours too long until the
+        // user happens to connect and refresh PsiCash state.
+        // Note: We're making no special effort to check for multiple active Speed Boosts.
         // This should not happen, per server rules.
-        if (psicashData.purchases[i]['class'] == 'speed-boost' &&
-            localTimeExpiry.isAfter(moment()))
-        {
-          state = UIState.ACTIVE_BOOST;
-          millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
-          const boostRemainingTime = moment
-              .duration(millisOfSpeedBoostRemaining)
-              .locale(momentLocale())
-              .humanize()
-              .replace(' ', '&nbsp;'); // avoid splitting the time portion
-          const boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('%s', boostRemainingTime);
-          $('.speed-boost-time-remaining').html(boostRemainingText);
-          break;
+
+        if (psicashData.purchases[i]['class'] === 'speed-boost') {
+          const localTimeExpiry = moment(psicashData.purchases[i].localTimeExpiry);
+          if (g_lastState === 'connected' || localTimeExpiry.isAfter(moment())) {
+            state = PsiCashUIState.ACTIVE_BOOST;
+
+            millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
+            // Clock skew (between client<->PsiCash server<->psiphond) could result in a
+            // purchase being used past the expiry in the purchase record. Ensure we're
+            // not showing a negative value in the UI.
+            millisOfSpeedBoostRemaining = Math.max(0, millisOfSpeedBoostRemaining);
+
+            const boostRemainingTime = moment
+                .duration(millisOfSpeedBoostRemaining)
+                .locale(momentLocale())
+                .humanize()
+                .replace(' ', '&nbsp;'); // avoid splitting the time portion
+            const boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('%s', boostRemainingTime);
+            $('.speed-boost-time-remaining').html(boostRemainingText);
+            break;
+          }
         }
       }
     }
 
     if (PsiCashStore.data.purchaseInProgress) {
       // We are waiting for a purchase request to complete
-      state = UIState.BUYING_BOOST;
+      state = PsiCashUIState.BUYING_BOOST;
     }
 
     // Speed Boost cannot function in L2TP/IPSec mode. We want to disabled controls and
     // indicate why we're in that state.
     if (g_initObj.Settings.VPN) {
-      state = UIState.VPN_MODE_DISABLED;
+      state = PsiCashUIState.VPN_MODE_DISABLED;
     }
 
     // Show and hide the appropriate parts of the UI
@@ -2183,7 +2214,7 @@
     // When we have an active speed boost, we want this function to be called repeatedly,
     // so that the countdown timer is updated, and so the UI changes when the speed boost
     // ends. But there's no reason to do work on an interval if there's no active boost.
-    if (state === UIState.ACTIVE_BOOST) {
+    if (state === PsiCashUIState.ACTIVE_BOOST) {
       // Wait longer between updates if there's a lot of time left in the boost.
       if (millisOfSpeedBoostRemaining < 120 * 1000) {
         setTimeout(psiCashUIUpdater, 1000);
@@ -2192,6 +2223,13 @@
         setTimeout(psiCashUIUpdater, 60 * 1000);
       }
     }
+
+    if (g_prevPsiCashUIState === PsiCashUIState.ACTIVE_BOOST && state !== PsiCashUIState.ACTIVE_BOOST) {
+      // We were boosting and now we're not. Check if we should auto-boost.
+      nextTick(psicashAutoSpend);
+    }
+
+    g_prevPsiCashUIState = state;
   }
 
   /**
@@ -2603,6 +2641,73 @@
   }
   $('#psicash-buy-1hr').click(buySpeedBoostClick);
 
+  function psicashAutoSpend(freshSystemIdleMillis=null, recursing=false) {
+    // Assumption: We just transitioned from boosting to not.
+
+    // When a Speed Boost authorization ends, tunnel-core reconnects. That means this
+    // function is probably going to be called while the tunnel is "starting". We will
+    // wait for the connection state to change and try again.
+    if (!recursing && g_lastState === 'starting') {
+      DEBUG_LOG('psicashAutoSpend: connected state is "starting"; waiting for state change');
+      $window.one(CONNECTED_STATE_CHANGE_EVENT, nextTickFn(() => {
+        DEBUG_LOG('psicashAutoSpend: got connected state change: ' + g_lastState);
+        // Only re-calling this function if the new state is 'connected', otherwise
+        // giving up.
+        if (g_lastState === 'connected') {
+          DEBUG_LOG('psicashAutoSpend: new connected state is "connected"; trying to authspend again');
+          // Don't pass freshSystemIdleMillis through, since considerable time may
+          // have passed, so the value should be updated.
+          psicashAutoSpend(null, true);
+        }
+      }));
+      return;
+    }
+
+    if (g_lastState !== 'connected') {
+      HtmlCtrlInterface_Log('PsiCash: not connected, cannot autospend');
+      addLog({priority: 1, message: 'Cannot automatically buy Speed Boost when not connected: ' + g_lastState});
+      return;
+    }
+
+    if (!_.isNumber(freshSystemIdleMillis)) {
+      // This function was called with no value for freshSystemIdleMillis, so we need to fetch and re-call.
+      const unsub = PsiCashStore.subscribe('systemIdleMillis', () => {
+        unsub();
+        // We just fetched a fresh systemIdleMillis, so make a recursive call.
+        psicashAutoSpend(PsiCashStore.data.systemIdleMillis, true);
+      });
+      HtmlCtrlInterface_SysIdleInfo(); // initiate async call
+      return;
+    }
+
+    // We're going to log both to the UI and to diagnostics so that the user understands
+    // why autospend did or didn't happen, and so we can see what happened in feedback.
+
+    if (!$('#psicash-interface-enoughbalance-autospend').prop('checked')) {
+      HtmlCtrlInterface_Log('PsiCash: autosped not enabled');
+      // Not making this log visible, as the user shouldn't be surprised it didn't autospend
+      DEBUG_LOG('psicashAutoSpend: autospend not enabled');
+      return;
+    }
+
+    if (g_prevPsiCashUIState !== PsiCashUIState.ENOUGH_BALANCE) {
+      HtmlCtrlInterface_Log('PsiCash: not enough balance to autospend');
+      addLog({priority: 1, message: 'Not enough PsiCash to automatically buy Speed Boost'});
+      return;
+    }
+
+    // If this time value is changd, be sure to update the log messages below
+    if (freshSystemIdleMillis > 10 * 60 * 1000) {
+      HtmlCtrlInterface_Log('PsiCash: not autospending because system idle longer than 10 mins:', freshSystemIdleMillis, 'ms');
+      addLog({priority: 1, message: 'Not automatically buying Speed Boost because system has been idle more than 10 minutes'});
+      return;
+    }
+
+    HtmlCtrlInterface_Log('PsiCash: autospending to buy Speed Boost');
+    addLog({priority: 1, message: 'Automatically buying Speed Boost'});
+
+    buySpeedBoostClick();
+  }
 
   /**
    * Event handler for the "buy PsiCash with real money" button click.
@@ -3471,7 +3576,7 @@
     });
   }
 
-  // Indicate a DPI-based scaling change.
+  // Indicates a DPI-based scaling change.
   function HtmlCtrlInterface_UpdateDpiScaling(jsonArgs) {
     // Allow object as input to assist with debugging
     var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
@@ -3480,6 +3585,16 @@
     });
   }
 
+  /**
+   * Called from C code in response to a request for system user idle info.
+   * @param {string} jsonArgs
+   */
+  function HtmlCtrlInterface_UpdateSysIdleInfo(jsonArgs) {
+    // Allow object as input to assist with debugging
+    var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
+    DEBUG_LOG('HtmlCtrlInterface_UpdateIdleState', args);
+    PsiCashStore.set('systemIdleMillis', args.idle_millis);
+  }
 
   /**
    * Called from C code when something PsiCash-related occurs, such as a data refresh or
@@ -3703,6 +3818,22 @@
     });
   }
 
+  // Request system idle info.
+  function HtmlCtrlInterface_SysIdleInfo() {
+    nextTick(function() {
+      var appURL = PSIPHON_LINK_PREFIX + 'sysidleinfo';
+      if (IS_BROWSER) {
+        console.log(decodeURIComponent(appURL));
+        const val = parseInt($('#debug-SystemIdleMillis input').val());
+        DEBUG_LOG('SysIdleInfo returning debug value: ' + val);
+        HtmlCtrlInterface_UpdateSysIdleInfo({ idle_millis: val });
+      }
+      else {
+        window.location = appURL;
+      }
+    });
+  }
+
   /**
    * Used to communicate Promise resolvers between HtmlCtrlInterface_PsiCashCommand (called
    * locally) and HtmlCtrlInterface_PsiCashMessage (called from C code).
@@ -3757,6 +3888,7 @@
   window.HtmlCtrlInterface_AddNotice = HtmlCtrlInterface_AddNotice;
   window.HtmlCtrlInterface_RefreshSettings = HtmlCtrlInterface_RefreshSettings;
   window.HtmlCtrlInterface_UpdateDpiScaling = HtmlCtrlInterface_UpdateDpiScaling;
+  window.HtmlCtrlInterface_UpdateSysIdleInfo = HtmlCtrlInterface_UpdateSysIdleInfo;
   window.HtmlCtrlInterface_PsiCashMessage = HtmlCtrlInterface_PsiCashMessage;
 
   })(window);

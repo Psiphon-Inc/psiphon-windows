@@ -981,8 +981,8 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
       vertical-align: text-top;
     }
 
-    .btn {
-      // A full-width button doesn't look enough like a button
+    > fieldset {
+      // Full-width buttons don't look enough like buttons
       max-width: 95%;
     }
 
@@ -992,6 +992,22 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
 
     .psicash-buy-psi {
       margin-top: 4px;
+    }
+
+    .autospend-container {
+      // We want the "Start" button and the "Automatic" checkbox to seem connected.
+      .button-container {
+        button {
+          width: 100%;
+        }
+      }
+      .checkbox-container {
+        display: block;
+        text-align: center;
+        border: 1px #ccc solid;
+        margin-top: -3px;
+        padding-top: 3px;
+      }
     }
   }
 }

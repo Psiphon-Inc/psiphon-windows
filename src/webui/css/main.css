@@ -5863,19 +5863,19 @@ body[dir="rtl"] .checkbox label::before {
   width: 16px;
   height: 16px;
   top: 0;
-  padding-top: 1px;
+  padding-top: 0px;
   font-size: 11px;
   color: #555;
 }
 body[dir="ltr"] .checkbox label::after {
   left: 0;
   margin-left: -20px;
-  padding-left: 3px;
+  padding-left: 1px;
 }
 body[dir="rtl"] .checkbox label::after {
   right: 0;
   margin-right: -20px;
-  padding-right: 3px;
+  padding-right: 1px;
 }
 .checkbox input[type="checkbox"] {
   opacity: 0;
@@ -6877,7 +6877,7 @@ body[dir="rtl"] #psicash-block > div .psicash-title-balance > span {
   height: 1.5em;
   vertical-align: text-top;
 }
-#psicash-block > div .btn {
+#psicash-block > div > fieldset {
   max-width: 95%;
 }
 #psicash-block > div .button-container {
@@ -6885,6 +6885,16 @@ body[dir="rtl"] #psicash-block > div .psicash-title-balance > span {
 }
 #psicash-block > div .psicash-buy-psi {
   margin-top: 4px;
+}
+#psicash-block > div .autospend-container .button-container button {
+  width: 100%;
+}
+#psicash-block > div .autospend-container .checkbox-container {
+  display: block;
+  text-align: center;
+  border: 1px #ccc solid;
+  margin-top: -3px;
+  padding-top: 3px;
 }
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {
