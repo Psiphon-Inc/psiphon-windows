@@ -248,7 +248,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-rs": {
-        "message": "Serbia",
+        "message": "塞尔维亚",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Serbia will be used."
     },
     "settings#egress-region#description": {
