@@ -251,6 +251,10 @@
         "message": "Servië",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Serbia will be used."
     },
+    "settings#egress-region#select-au": {
+        "message": "Australië",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon heeft servers in veel verschillende landen. Het gebruik van een Psiphon-server in een land in de buurt van uw thuisland zal over het algemeen een betere netwerkverbinding bieden, maar u wilt misschien toegang krijgen tot websites en diensten alsof u zich vrijwel in een specifiek land bevindt.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
