@@ -384,7 +384,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_URLS_JSON);
     config["ObfuscatedServerListRootURLs"] = loadJSONArray(OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON);
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
-    config["DataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
+    config["DataRootDirectory"] = WStringToUTF8(shortDataStoreDirectory);
+    config["MigrateDataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
@@ -473,7 +474,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
                 return false;
             }
 
-            config["DataStoreDirectory"] = WStringToUTF8(shortTempDir);
+            config["DataRootDirectory"] = WStringToUTF8(shortTempDir);
+            config["MigrateDataStoreDirectory"] = WStringToUTF8(shortTempDir);
         }
         else
         {
@@ -490,19 +492,16 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
         auto remoteServerListFilename = filesystem::path(dataStoreDirectory)
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
-        config["RemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
+        config["MigrateRemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
 
         tstring oslDownloadDirectory;
-        if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, oslDownloadDirectory)) {
-            my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for oslDownloadDirectory (%d)"), __TFUNCTION__, GetLastError());
-            // TODO: proceed anyway?
-            return false;
+        if (GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, oslDownloadDirectory)) {
+            config["MigrateObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
         }
-        config["ObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
 
         clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
-        config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
+        config["MigrateUpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
         config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
         config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
     }
