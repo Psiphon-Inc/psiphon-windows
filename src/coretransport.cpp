@@ -361,7 +361,7 @@ Json::Value loadJSONArray(const char* jsonArrayString)
 bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
 {
     tstring dataStoreDirectory;
-    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY }, dataStoreDirectory)) {
+    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY }, true, dataStoreDirectory)) {
         my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for dataStoreDirectory (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
@@ -495,7 +495,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["MigrateRemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
 
         tstring oslDownloadDirectory;
-        if (GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, oslDownloadDirectory)) {
+        if (GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, false, oslDownloadDirectory)) {
             config["MigrateObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
         }
 

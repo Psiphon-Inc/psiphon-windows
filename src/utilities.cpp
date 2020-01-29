@@ -169,7 +169,7 @@ bool ExtractExecutable(
 }
 
 
-bool GetDataPath(const vector<tstring>& pathSuffixes, tstring& o_path) {
+bool GetDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring& o_path) {
     TCHAR path[MAX_PATH];
     if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
     {
@@ -182,10 +182,13 @@ bool GetDataPath(const vector<tstring>& pathSuffixes, tstring& o_path) {
 
     for (auto suffix : pathSuffixes) {
         dataDirectory.append(suffix);
-        if (!CreateDirectory(dataDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
-        {
-            my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
-            return false;
+
+        if (ensureExists) {
+            if (!CreateDirectory(dataDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+            {
+                my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+                return false;
+            }
         }
     }
 
