@@ -31,7 +31,7 @@ error::Error Lib::Init(bool forceReset) {
     AutoMUTEX lock(m_mutex);
 
     tstring dataDir;
-    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("psicash") }, dataDir)) {
+    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("psicash") }, true, dataDir)) {
         return psicash::error::MakeCriticalError("GetDataPath failed");
     }
 

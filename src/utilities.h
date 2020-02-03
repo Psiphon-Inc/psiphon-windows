@@ -38,8 +38,8 @@ bool WriteFile(const tstring& filename, const string& data);
 
 // Makes a directory that has a path with the given suffix that is suitable for
 // storing data (such as the DataStoreDirectory).
-// pathSuffixes may be empty.
-bool GetDataPath(const vector<tstring>& pathSuffixes, tstring& o_path);
+// pathSuffixes may be empty. Directory will be created if ensureExists is true.
+bool GetDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring& o_path);
 
 bool GetTempPath(tstring& o_path);
 

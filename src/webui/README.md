@@ -77,9 +77,9 @@ $ node fake-translations.js
 
 ## Adding new egress regions
 
-1. **`main.html`:** Search for `gb`. You will find two instances: The egress combo in the Settings tab, and the `AvailableEgressRegions` notice tester in the Debug tab. In both those sections, copy-paste one of the existing entries, and change the country code and country name to fit the new country.
+1. **`main.html`:** Search for `"GB"`. You will find two instances: The egress combo in the Settings tab, and the `AvailableEgressRegions` notice tester in the Debug tab. In both those sections, copy-paste one of the existing entries, and change the country code and country name to fit the new country.
 
-2. **`_locales/en/messages.json`**: Search for `gb`. You will find the country name string table entries. Copy-paste one of them and modify the country code and name to fit the new country.
+2. **`_locales/en/messages.json`**: Search for `"United Kingdom"`. You will find the country name string table entries. Copy-paste one of them and modify the country code and name to fit the new country.
 
 3. Run `grunt`, as indicated in the "Building" section.
 
