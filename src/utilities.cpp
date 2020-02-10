@@ -31,6 +31,7 @@
 #include "utilities.h"
 #include "stopsignal.h"
 #include "diagnostic_info.h"
+#include "webbrowser.h"
 #include <iomanip>
 
 #pragma warning(push, 0)
@@ -176,7 +177,7 @@ bool GetDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring
         my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
-    
+
     filesystem::path appDataPath(path);
     auto dataDirectory = filesystem::path(appDataPath);
 
@@ -459,7 +460,7 @@ void StopProcess(DWORD processID, HANDLE process)
 
 
 // Create the pipe that will be used to communicate between the child process
-// process and this process. 
+// process and this process.
 // Note that this function effectively causes the subprocess's stdout and stderr
 // to come to the same pipe.
 // Returns true on success.
@@ -809,7 +810,7 @@ bool WriteRegistryStringValue(const string& name, const wstring& value, Registry
         {
             reason = REGISTRY_FAILURE_WRITE_TOO_LONG;
         }
-        
+
         return false;
     }
 
@@ -834,9 +835,9 @@ bool ReadRegistryStringValue(LPCSTR name, string& value)
         return false;
     }
 
-    auto closeKey = finally([=]() { 
+    auto closeKey = finally([=]() {
         auto lastError = GetLastError();
-        RegCloseKey(key); 
+        RegCloseKey(key);
         SetLastError(lastError); // restore the previous error code
     });
 
@@ -1286,7 +1287,7 @@ wstring GetDeviceRegion()
     // that dialing code is correct about 65% of the time.
     //
 
-    // Multiple countries can have the same dialing code (such as 
+    // Multiple countries can have the same dialing code (such as
     // the US, Canada, and Puerto Rico all using '1'), so we'll need
     // a vector of possibilities.
     vector<wstring> dialingCodeCountries;
@@ -1437,6 +1438,44 @@ wstring GetDeviceRegion()
     // We have no info to work with.
     my_print(NOT_SENSITIVE, true, _T("%s:%d: uiLocaleCountry and dialingCodeCountries are empty"), __TFUNCTION__, __LINE__);
     return L"";
+}
+
+bool IsOSSupported()
+{
+    static int cachedResult = 0;
+    if (cachedResult != 0) {
+        return cachedResult > 0;
+    }
+
+    OSVERSIONINFO osver = { sizeof(osver) };
+
+    if (!GetVersionEx(&osver))
+    {
+        // Default to true. This is effectively "default to allowing the app to try to work",
+        // since this function is used to determine if we're on an unsupported platform.
+        return true;
+    }
+
+    // Windows 7 is major:6 minor:1. https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoa#remarks
+    bool supported = (osver.dwMajorVersion > 6) || (osver.dwMajorVersion == 6 && osver.dwMinorVersion > 0);
+    cachedResult = supported ? 1 : -1;
+
+    return supported;
+}
+
+void EnforceOSSupport(HWND parentWnd, const wstring& message)
+{
+    if (IsOSSupported())
+    {
+        return;
+    }
+
+    const wstring url = L"https://psiphon3.com/faq.html#windows-xp-eol";
+    const wstring messageURL = message + L"\n" + url;
+
+    ::MessageBoxW(parentWnd, messageURL.c_str(), L"Psiphon", MB_OK | MB_ICONSTOP);
+    OpenBrowser(url);
+    ExitProcess(1);
 }
 
 

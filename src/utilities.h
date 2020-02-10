@@ -141,9 +141,17 @@ tstring GetLocaleName();
 // (This is to help GetDeviceRegion().)
 void SetUiLocale(const wstring& uiLocale);
 
-// Makes best guess as the country that the application/device is currently 
+// Makes best guess as the country that the application/device is currently
 // running in. Returns ISO 3166-1 alpha-2 format.
 wstring GetDeviceRegion();
+
+/// Returns true if the current Windows version is supported by the Psiphon client.
+/// Otherwise Psiphon will not and cannot function and the user should be told.
+bool IsOSSupported();
+
+/// Check is the current Windows version is support. If it's not, show a message
+/// and terminate the app.
+void EnforceOSSupport(HWND parentWnd, const wstring& message);
 
 /*
  * Miscellaneous Utilities
@@ -222,7 +230,7 @@ private:
 /*
 finally function
 
-Pass a (lambda) function to finally(...) to ensure it will be executed when 
+Pass a (lambda) function to finally(...) to ensure it will be executed when
 leaving the current scope. E.g.,
 char* d = new char[...];
 auto deleteOnReturn = finally([d] { delete[] d; });
@@ -266,15 +274,15 @@ typedef enum MONITOR_DPI_TYPE {
 #define WM_DPICHANGED       0x02E0
 #endif
 
-// Unlike the real version of this, it will return ERROR_NOT_SUPPORTED on OS 
+// Unlike the real version of this, it will return ERROR_NOT_SUPPORTED on OS
 // versions that do not support it.
 HRESULT SetProcessDpiAwareness(PROCESS_DPI_AWARENESS value);
 
-// Helper for getting the useful DPI value. 
+// Helper for getting the useful DPI value.
 // Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
 HRESULT GetDpiForCurrentMonitor(HWND hWnd, UINT& o_dpi);
 
-// Helper for getting the useful DPI scaling value. 
+// Helper for getting the useful DPI scaling value.
 // o_scale will be like 1.0, 1.25, 1.5, 2.0, 2.5
 // Returns ERROR_NOT_SUPPORTED on OS versions that do not support it.
 HRESULT GetDpiScalingForCurrentMonitor(HWND hWnd, float& o_scale);
