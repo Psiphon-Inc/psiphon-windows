@@ -145,6 +145,11 @@ void SetUiLocale(const wstring& uiLocale);
 // running in. Returns ISO 3166-1 alpha-2 format.
 wstring GetDeviceRegion();
 
+/// Returns true if the current Windows version is supported by the Psiphon client.
+/// Otherwise the current version of Windows only has "legacy" Psiphon support.
+/// (The naming is due to the same code in the modern codebase.)
+bool IsOSSupported();
+
 /*
  * Miscellaneous Utilities
  */

@@ -1373,7 +1373,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_CREATED:
     {
         // Display client version number
-        my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + UTF8ToWString(CLIENT_VERSION)).c_str());
+        string clientVersion = "Client Version: "s + CLIENT_VERSION + " LEGACY";
+        my_print(NOT_SENSITIVE, false, UTF8ToWString(clientVersion).c_str());
 
         // Content is loaded, so show the window.
         RestoreWindowPlacement();

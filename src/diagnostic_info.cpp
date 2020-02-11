@@ -690,11 +690,12 @@ string GetClientPlatform()
         mshtmlVersion = mshtmlVersion.substr(0, firstDot);
     }
 
-    // This will look like "Windows_10.0.17763_11"
-    cachedResult = 
-        string(CLIENT_PLATFORM) 
+    // This will look like "Windows_10.0.17763_11_LEGACY"
+    cachedResult =
+        string(CLIENT_PLATFORM)
         + "_" + WStringToUTF8(sysInfo.version)
-        + "_" + WStringToUTF8(mshtmlVersion);
+        + "_" + WStringToUTF8(mshtmlVersion)
+        + "_LEGACY";
     return cachedResult;
 }
 

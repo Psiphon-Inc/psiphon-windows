@@ -503,8 +503,17 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
         config["UpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
-        config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
         config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
+
+        // We do not want to upgrade if we're running on a legacy version of Windows.
+        if (IsOSSupported())
+        {
+            config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
+        }
+        else
+        {
+            my_print(NOT_SENSITIVE, false, _T("Legacy OS detected; disabling upgrade via tunnel-core"));
+        }
     }
 
     ostringstream configDataStream;

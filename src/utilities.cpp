@@ -1436,6 +1436,28 @@ wstring GetDeviceRegion()
     return L"";
 }
 
+bool IsOSSupported()
+{
+    static int cachedResult = 0;
+    if (cachedResult != 0) {
+        return cachedResult > 0;
+    }
+
+    OSVERSIONINFO osver = { sizeof(osver) };
+
+    if (!GetVersionEx(&osver))
+    {
+        // Default to true. This is effectively "default to allowing the app to try to work",
+        // since this function is used to determine if we're on an unsupported platform.
+        return true;
+    }
+
+    // Windows 7 is major:6 minor:1. https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoa#remarks
+    bool supported = (osver.dwMajorVersion > 6) || (osver.dwMajorVersion == 6 && osver.dwMinorVersion > 0);
+    cachedResult = supported ? 1 : -1;
+
+    return supported;
+}
 
 /*
 Resource Utilities
