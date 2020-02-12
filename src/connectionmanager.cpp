@@ -850,6 +850,13 @@ bool ConnectionManager::RequireUpgrade(void)
 
 DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
 {
+    // We do not want to upgrade if we're running on a legacy version of Windows.
+    if (!IsOSSupported())
+    {
+        my_print(NOT_SENSITIVE, false, _T("Legacy OS detected; disabling upgrade via VPN"));
+        return 0;
+    }
+
     my_print(NOT_SENSITIVE, true, _T("%s: enter"), __TFUNCTION__);
 
     my_print(NOT_SENSITIVE, false, _T("Downloading new version..."));
