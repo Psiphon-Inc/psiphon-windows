@@ -140,6 +140,7 @@ void OnCreate(HWND hWndParent)
 #define STRING_KEY_STATE_STOPPING_BODY              "appbackend#state-stopping-body"
 #define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE       "appbackend#minimized-to-systray-title"
 #define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY        "appbackend#minimized-to-systray-body"
+#define STRING_KEY_OS_UNSUPPORTED                   "appbackend#os-unsupported"
 
 static map<string, wstring> g_stringTable;
 
@@ -180,9 +181,15 @@ static void AddStringTableEntry(const string& utf8EntryJson)
         return;
     }
 
-    g_stringTable[key] = UTF8ToWString(narrowStr);
+    auto wideStr = UTF8ToWString(narrowStr);
+    g_stringTable[key] = wideStr;
 
     SetUiLocale(UTF8ToWString(locale));
+
+    // As soon as the OS_UNSUPPORTED string is available, do the OS check.
+    if (key == STRING_KEY_OS_UNSUPPORTED) {
+        EnforceOSSupport(g_hWnd, wideStr);
+    }
 }
 
 // Returns true if the string table entry is found, false otherwise.
@@ -1374,6 +1381,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         // Display client version number
         my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + UTF8ToWString(CLIENT_VERSION)).c_str());
+
+        if (!IsOSSupported())
+        {
+            // We're not showing the main app window, as it will probably be garbage
+            // and the app should close momentarily.
+            break;
+        }
 
         // Content is loaded, so show the window.
         RestoreWindowPlacement();
