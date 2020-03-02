@@ -651,6 +651,14 @@
     "message": "Start Speed&nbsp;Boost",
     "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
+  "psicash#1-hour": {
+    "message": "1 hour",
+    "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
+  },
+  "psicash#1-day": {
+    "message": "1 day",
+    "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
+  },
   "psicash#ui-buyingboost-buttontext": {
     "message": "Starting Speed&nbsp;Boost!",
     "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."

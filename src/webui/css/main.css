@@ -2641,21 +2641,21 @@ input[type="submit"].btn.btn-mini {
 }
 .btn-group > .btn:first-child {
   margin-left: 0;
-  -webkit-border-top-left-radius: 1px;
-  -moz-border-radius-topleft: 1px;
-  border-top-left-radius: 1px;
-  -webkit-border-bottom-left-radius: 1px;
-  -moz-border-radius-bottomleft: 1px;
-  border-bottom-left-radius: 1px;
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
 }
 .btn-group > .btn:last-child,
 .btn-group > .dropdown-toggle {
-  -webkit-border-top-right-radius: 1px;
-  -moz-border-radius-topright: 1px;
-  border-top-right-radius: 1px;
-  -webkit-border-bottom-right-radius: 1px;
-  -moz-border-radius-bottomright: 1px;
-  border-bottom-right-radius: 1px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
 }
 .btn-group > .btn.large:first-child {
   margin-left: 0;
@@ -2784,14 +2784,14 @@ input[type="submit"].btn.btn-mini {
   margin-top: -1px;
 }
 .btn-group-vertical > .btn:first-child {
-  -webkit-border-radius: 1px 1px 0 0;
-  -moz-border-radius: 1px 1px 0 0;
-  border-radius: 1px 1px 0 0;
+  -webkit-border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  border-radius: 3px 3px 0 0;
 }
 .btn-group-vertical > .btn:last-child {
-  -webkit-border-radius: 0 0 1px 1px;
-  -moz-border-radius: 0 0 1px 1px;
-  border-radius: 0 0 1px 1px;
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
 }
 .btn-group-vertical > .btn-large:first-child {
   -webkit-border-radius: 1px 1px 0 0;
@@ -6882,6 +6882,63 @@ body[dir="rtl"] #psicash-block > div .psicash-title-balance > span {
 }
 #psicash-block > div .button-container {
   text-align: center;
+}
+#psicash-block > div .boost-container {
+  max-width: 95%;
+  margin: auto;
+}
+#psicash-block > div .boost-container .boost-container-label {
+  width: 100%;
+  margin-bottom: -4px;
+  border-top: 1px #1e84aa solid;
+  border-left: 1px #1e84aa solid;
+  border-right: 1px #1e84aa solid;
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+}
+#psicash-block > div .boost-container .boost-container-label .boost-container-label-inner {
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-bottom: 4px;
+}
+#psicash-block > div .boost-container .boost-container-buttons {
+  /*
+        We're going to mimic a table with the btn-group. That gives us nice layout
+        within and between the buttons.
+        One thing we _lose_ from this approach is height-matching between the buttons.
+        */
+  width: 100%;
+  display: table;
+  overflow: hidden;
+  border-left: 1px #1e84aa solid;
+  border-right: 1px #1e84aa solid;
+  border-bottom: 1px #1e84aa solid;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px;
+}
+#psicash-block > div .boost-container .boost-container-buttons .btn {
+  width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  display: table-row;
+}
+#psicash-block > div .boost-container .boost-container-buttons .btn > span {
+  display: table-cell;
+  width: 1%;
+  vertical-align: middle;
+  padding: 3px;
+}
+#psicash-block > div .psicash-price-container {
+  white-space: nowrap;
 }
 #psicash-block > div .psicash-buy-psi {
   margin-top: 4px;
