@@ -332,7 +332,7 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#upstream-proxy#hostname-label": {
-        "message": "Hostname",
+        "message": "ชื่อโฮสต์",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "settings#upstream-proxy#port-label": {
@@ -348,7 +348,7 @@
         "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
     },
     "settings#upstream-proxy#domain-label": {
-        "message": "Domain",
+        "message": "โดเมน",
         "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
     },
     "settings#upstream-proxy#skip-label": {
@@ -562,6 +562,10 @@
     "appbackend#minimized-to-systray-body": {
         "message": "Click the icon to restore the application",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "appbackend#os-unsupported": {
+        "message": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
         "message": "PsiCash transaction error",
