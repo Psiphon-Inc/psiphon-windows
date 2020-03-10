@@ -155,7 +155,8 @@
   });
 
   function resizeContent() {
-    // Do DPI scaling
+    DEBUG_LOG('resizeContent called'); // Do DPI scaling
+
     updateDpiScaling(g_initObj.Config.DpiScaling, false); // We want the content part of our window to fill the window, we don't want
     // excessive scroll bars, etc. It's difficult to do "fill the remaining height"
     // with just CSS, so we're going to do some on-resize height adjustment in JS.
@@ -1391,9 +1392,9 @@
 
     addLog.priorities = addLog.priorities || {};
     addLog.priorities[obj.priority] = true; // Don't allow the log messages list to grow forever!
-    // We will keep 50 of each priority. (Arbitrarily. May need to revisit.)
+    // We'll set a limit for each priority. (Arbitrarily. May need to revisit.)
 
-    var MAX_LOGS_PER_PRIORITY = 50;
+    var MAX_LOGS_PER_PRIORITY = 200;
 
     var priorities = _.keys(addLog.priorities);
 
@@ -1639,7 +1640,7 @@
    * @typedef {Object} PsiCashPurchaseResponse
    * @property {?string} error
    * @property {!PsiCashServerResponseStatus} status
-   * @property {?PsiCashPurchase} purchase
+   * @property {?PsiCashRefreshData} refresh
    */
 
   /**
@@ -1827,6 +1828,12 @@
    */
 
   function psiCashUIUpdater(psicashData) {
+    // This must be set by any code below that queues up another call to this function via
+    // setTimeout. This is to prevent building up a flood of redundant calls.
+    if (!psiCashUIUpdater.timeout) {
+      psiCashUIUpdater.timeout = null;
+    }
+
     if (psicashData) {
       if (g_PsiCashData) {
         // For later diagnostics, log if psicashData values changed
@@ -1872,7 +1879,12 @@
       }
     }
 
-    $('#psicash-block').removeClass('hidden');
+    if ($('#psicash-block').hasClass('hidden')) {
+      $('#psicash-block').removeClass('hidden'); // Some layout actions like height-matching won't have succeeded while the
+      // UI was hidden. So do a content-resize with the newly visible content.
+
+      nextTick(resizeContent);
+    }
 
     if (psicashData.buy_psi_url) {
       $('a.psicash-buy-psi').prop('href', psicashData.buy_psi_url).removeClass('hidden');
@@ -1909,25 +1921,30 @@
       }
     };
     var state = UIState.ZERO_BALANCE;
-    var sb1hrPrice = null;
+    var sbPrices = {};
 
     if (psicashData.purchase_prices) {
       // NOTE: This does not handle disappearing prices.
       for (var i = 0; i < psicashData.purchase_prices.length; i++) {
         var pp = psicashData.purchase_prices[i];
 
-        if (pp['class'] === 'speed-boost' && pp.distinguisher === '1hr') {
-          sb1hrPrice = pp.price;
-          $('.psicash-1hr-price').text(formatPsi(parseInt(pp.price)));
-          $('.psicash-1hr-price').data('expectedPrice', pp.price);
-          break;
+        if (pp['class'] === 'speed-boost') {
+          sbPrices[pp.distinguisher] = pp.price;
+          $(".psicash-sb-price[data-distinguisher=\"".concat(pp.distinguisher, "\"]")).text(formatPsi(parseInt(pp.price)));
+          $(".psicash-sb-price[data-distinguisher=\"".concat(pp.distinguisher, "\"]")).data('expectedPrice', pp.price);
         }
       }
-    }
+    } // Only the 1-hour Speed Boost is considered for determining if the user has "enough" Psi
 
-    if (_.isNumber(psicashData.balance) && _.isNumber(sb1hrPrice)) {
-      if (psicashData.balance >= sb1hrPrice) {
-        state = UIState.ENOUGH_BALANCE;
+
+    if (_.isNumber(psicashData.balance) && _.isNumber(sbPrices['1hr'])) {
+      if (psicashData.balance >= sbPrices['1hr']) {
+        state = UIState.ENOUGH_BALANCE; // Enable/disable the 1-day button depending on balance.
+        // (Note that this is only a cosmetic disabling, and the button will still respond
+        // to clicks. It will show an appropriate NSF message.)
+
+        var nsf1Day = psicashData.balance < sbPrices['24hr'];
+        $('.psicash-buy[data-distinguisher="24hr"]').prop('disabled', nsf1Day).toggleClass('disabled', nsf1Day);
       } else if (psicashData.balance > 0) {
         state = UIState.NSF_BALANCE;
       }
@@ -1937,17 +1954,34 @@
 
     if (psicashData.purchases) {
       for (var _i = 0; _i < psicashData.purchases.length; _i++) {
-        var localTimeExpiry = moment(psicashData.purchases[_i].localTimeExpiry); // We're making no special effort to check for multiple active Speed Boosts.
+        // There are two different contexts/ways of checking for active Speed Boost.
+        // **If we are connected**, then we rely on psiphond to decide that the
+        // authorization is expired, which will result in tunnel-core reconnecting and a
+        // signal that the authorization is now rejected. This is when the purchase is
+        // actually removed from the PsiCash lib datastore. So, if we are connected, its
+        // presence in the purchases array should be interpreted as meaning that the
+        // purchase/authorization is valid.
+        // **If we are not connected**, then we have to rely on the purchase expiry.
+        // (We're certainly not going to show a purchase as active for hours too long
+        // until the user happens to connect and refresh PsiCash state.)
+        // Note: We're making no special effort to check for multiple active Speed Boosts.
         // This should not happen, per server rules.
+        if (psicashData.purchases[_i]['class'] === 'speed-boost') {
+          var localTimeExpiry = moment(psicashData.purchases[_i].localTimeExpiry);
 
-        if (psicashData.purchases[_i]['class'] == 'speed-boost' && localTimeExpiry.isAfter(moment())) {
-          state = UIState.ACTIVE_BOOST;
-          millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
-          var boostRemainingTime = moment.duration(millisOfSpeedBoostRemaining).locale(momentLocale()).humanize().replace(' ', '&nbsp;'); // avoid splitting the time portion
+          if (g_lastState === 'connected' || localTimeExpiry.isAfter(moment())) {
+            state = UIState.ACTIVE_BOOST;
+            millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment()); // Clock skew (between client<->PsiCash server<->psiphond) could result in a
+            // purchase being used past the expiry in the purchase record. Ensure we're
+            // not showing a negative value in the UI.
 
-          var boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('%s', boostRemainingTime);
-          $('.speed-boost-time-remaining').html(boostRemainingText);
-          break;
+            millisOfSpeedBoostRemaining = Math.max(0, millisOfSpeedBoostRemaining);
+            var boostRemainingTime = moment.duration(millisOfSpeedBoostRemaining).locale(momentLocale()).humanize().replace(' ', '&nbsp;'); // avoid splitting the time portion
+
+            var boostRemainingText = i18n.t('psicash#ui-speedboost-active').replace('%s', boostRemainingTime);
+            $('.speed-boost-time-remaining').html(boostRemainingText);
+            break;
+          }
         }
       }
     }
@@ -1972,11 +2006,15 @@
     // ends. But there's no reason to do work on an interval if there's no active boost.
 
     if (state === UIState.ACTIVE_BOOST) {
-      // Wait longer between updates if there's a lot of time left in the boost.
+      // There are triggers that result in this function being called, and we don't want
+      // to create periodic update timeouts every time, or else we'll end up with updates
+      // happening way too often (multiple times per second).
+      clearTimeout(psiCashUIUpdater.timeout); // Wait longer between updates if there's a lot of time left in the boost.
+
       if (millisOfSpeedBoostRemaining < 120 * 1000) {
-        setTimeout(psiCashUIUpdater, 1000);
+        psiCashUIUpdater.timeout = setTimeout(psiCashUIUpdater, 1000);
       } else {
-        setTimeout(psiCashUIUpdater, 60 * 1000);
+        psiCashUIUpdater.timeout = setTimeout(psiCashUIUpdater, 60 * 1000);
       }
     }
   }
@@ -2186,13 +2224,6 @@
       });
     }
   };
-  $(function () {
-    // Do a soft update of the UI every time the purchase-in-progress state changes (so we
-    // can show the appropriate UI).
-    PsiCashStore.subscribe('purchaseInProgress', function () {
-      return psiCashUIUpdater();
-    });
-  });
   /**
    * Gets the moment locale matching the current UI locale.
    * @returns {!string}
@@ -2262,11 +2293,22 @@
       return;
     }
 
-    PsiCashStore.set('purchaseInProgress', true);
-    HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandPurchase('speed-boost', '1hr', $('.psicash-1hr-price').data('expectedPrice'))).then(function (result) {
-      PsiCashStore.set('purchaseInProgress', false); // All of response cases need a UI refresh.
+    var distinguisher = $(this).data('distinguisher');
+    var expectedPrice = $(".psicash-sb-price[data-distinguisher=\"".concat(distinguisher, "\"]")).data('expectedPrice'); // Set the purchase-in-progress state and update UI.
 
-      HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('purchase-response'));
+    PsiCashStore.set('purchaseInProgress', true);
+    psiCashUIUpdater();
+    HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandPurchase('speed-boost', distinguisher, expectedPrice)).then(function (result) {
+      // Clear the purchase-in-progress state and update UI.
+      PsiCashStore.set('purchaseInProgress', false);
+
+      if (result.refresh) {
+        // The reponse supplied refresh data
+        psiCashUIUpdater(result.refresh);
+      } else {
+        // We need to do a full refresh
+        HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('purchase-response'));
+      }
 
       if (result.error) {
         // Catastrophic failure. Show a modal error and hope the user can figure it out.
@@ -2347,7 +2389,7 @@
     });
   }
 
-  $('#psicash-buy-1hr').click(buySpeedBoostClick);
+  $('.psicash-buy').click(buySpeedBoostClick);
   /**
    * Event handler for the "buy PsiCash with real money" button click.
    */
@@ -2474,7 +2516,7 @@
     });
   }
   /* MISC HELPERS AND UTILITIES ************************************************/
-  // Support the `data-match-height` feature
+  // Support the `data-match-height` feature.
 
 
   function doMatchHeight() {
@@ -2961,14 +3003,19 @@
     }); // Wire up the RefreshPsiCash test
 
     $('#debug-RefreshPsiCash a').click(function debugRefreshPsiCashClick() {
-      if (!$('#debug-RefreshPsiCash-balance').val() || !$('#debug-RefreshPsiCash-price-1hr').val()) {
+      if (!$('#debug-RefreshPsiCash-balance').val() || !$('#debug-RefreshPsiCash-price-1hr').val() || !$('#debug-RefreshPsiCash-price-24hr').val()) {
         return;
       }
 
       var msg = makeTestRefreshMsg(null);
       HtmlCtrlInterface_PsiCashMessage(msg);
       setCookie('debug-RefreshPsiCash-balance', msg.payload.balance);
-      setCookie('debug-RefreshPsiCash-price-1hr', msg.payload.purchase_prices[0].price);
+      setCookie('debug-RefreshPsiCash-price-1hr', msg.payload.purchase_prices.find(function (pp) {
+        return pp.distinguisher === '1hr';
+      }).price);
+      setCookie('debug-RefreshPsiCash-price-24hr', msg.payload.purchase_prices.find(function (pp) {
+        return pp.distinguisher === '24hr';
+      }).price);
     }); // Wire up the PsiCash InitDone test
 
     $('#debug-PsiCashInitDone a').click(function debugPsiCashInitDoneClick() {
@@ -2978,6 +3025,7 @@
 
     $('#debug-RefreshPsiCash-balance').val(getCookie('debug-RefreshPsiCash-balance') ? getCookie('debug-RefreshPsiCash-balance') / BILLION : '');
     $('#debug-RefreshPsiCash-price-1hr').val(getCookie('debug-RefreshPsiCash-price-1hr') ? getCookie('debug-RefreshPsiCash-price-1hr') / BILLION : '');
+    $('#debug-RefreshPsiCash-price-24hr').val(getCookie('debug-RefreshPsiCash-price-24hr') ? getCookie('debug-RefreshPsiCash-price-24hr') / BILLION : '');
   });
   /**
    * Construct a PsiCashMessageData object from the fields in the debug interface.
@@ -2997,29 +3045,40 @@
         localTimeExpiry: moment().add(parseFloat($('#debug-RefreshPsiCash-boost-remaining').val()), 'minutes').toISOString()
       };
     }
+    /** @type {PsiCashMessageData} */
 
+
+    var msg = {
+      type: PsiCashMessageTypeEnum.REFRESH,
+      id: msg_id,
+      payload: makeTestRefreshPayload(purchase)
+    };
+    return msg;
+  }
+  /**
+   *
+   * @param {?PsiCashPurchase} purchase
+   * @returns {PsiCashRefreshData}
+   */
+
+
+  function makeTestRefreshPayload(purchase) {
     var BILLION = 1e9;
-    /** @type {PsiCashRefreshData} */
-
-    var msgPayload = {
+    return {
       valid_token_types: ['spender', 'earner', 'indicator'],
       balance: parseFloat($('#debug-RefreshPsiCash-balance').val()) * BILLION,
       purchase_prices: [{
         'class': 'speed-boost',
         distinguisher: '1hr',
         price: parseFloat($('#debug-RefreshPsiCash-price-1hr').val()) * BILLION
+      }, {
+        'class': 'speed-boost',
+        distinguisher: '24hr',
+        price: parseFloat($('#debug-RefreshPsiCash-price-24hr').val()) * BILLION
       }],
       purchases: purchase ? [purchase] : null,
       buy_psi_url: 'https://buy.psi.cash/#psicash=example'
     };
-    /** @type {PsiCashMessageData} */
-
-    var msg = {
-      type: PsiCashMessageTypeEnum.REFRESH,
-      id: msg_id,
-      payload: msgPayload
-    };
-    return msg;
   }
   /**
    * Mimic an init-done message (via C code).
@@ -3054,7 +3113,7 @@
 
     setTimeout(function () {
       return HtmlCtrlInterface_PsiCashMessage(msg);
-    }, 200);
+    }, 2000);
   }
   /**
    * Mimic a purchase response from the server (via C code).
@@ -3083,17 +3142,23 @@
       msg.payload.error = 'debug error';
     } else if (PsiCashServerResponseStatus[resp] === PsiCashServerResponseStatus.Success) {
       msg.payload.status = PsiCashServerResponseStatus.Success;
+      var expiry = moment().add(1, 'hour').toISOString();
+
+      if (command.distinguisher === '24hr') {
+        expiry = moment().add(24, 'hour').toISOString();
+      }
       /** @type {PsiCashPurchase} */
+
 
       var purchase = {
         id: 'debugpurchaseid',
         'class': command.transactionClass,
-        // quoting b/c it's a keyword and old IE will complain
+        // quoting key b/c it's a keyword and old IE will complain
         distinguisher: command.distinguisher,
-        localTimeExpiry: moment().add(1, 'hour').toISOString(),
-        serverTimeExpiry: moment().add(1, 'hour').toISOString()
+        localTimeExpiry: expiry,
+        serverTimeExpiry: expiry
       };
-      msg.payload.purchase = purchase;
+      msg.payload.refresh = makeTestRefreshPayload(purchase);
       debugSetPsiCashData({
         balance: g_PsiCashData.balance - command.expectedPrice,
         purchases: [purchase]
@@ -3196,7 +3261,8 @@
 
 
   function HtmlCtrlInterface_UpdateDpiScaling(jsonArgs) {
-    // Allow object as input to assist with debugging
+    DEBUG_LOG('HtmlCtrlInterface_UpdateDpiScaling called'); // Allow object as input to assist with debugging
+
     var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
     nextTick(function () {
       updateDpiScaling(args.dpiScaling);
