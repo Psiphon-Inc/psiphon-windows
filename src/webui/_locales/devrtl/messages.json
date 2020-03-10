@@ -219,6 +219,14 @@
     "message": "+%d",
     "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
   },
+  "psicash#1-day": {
+    "message": "1 ‮pɐʎ‬",
+    "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
+  },
+  "psicash#1-hour": {
+    "message": "1 ‮ɥonɹ‬",
+    "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
+  },
   "psicash#init-error-body-recovered": {
     "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɥɐʌǝ‬ ‮qǝǝu‬ ‮ɹǝsǝʇ‬.",
     "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."

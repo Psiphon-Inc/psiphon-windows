@@ -183,6 +183,7 @@
 
         <li id="psicash-block" class="hidden">
           <div data-match-width=".main-nav a">
+
             <div id="psicash-interface-zerobalance" class="psicash-interface hidden">
               <div class="psicash-title-balance" data-i18n="[html]psicash#ui-zerobalance-title">Need a Speed&nbsp;Boost?</div>
               <div class="button-container">
@@ -190,48 +191,98 @@
                   <span data-i18n="psicash#ui-buypsi">Buy PsiCash</span> <img class="coin" src="psicash_coin.png">
                 </a>
               </div>
-              <div><small><a href="#">?</a></small></div>
-            </div>
+            </div><!-- #psicash-interface-zerobalance -->
+
             <div id="psicash-interface-nsfbalance" class="psicash-interface hidden">
               <div class="psicash-title-balance">
-                PsiCash
-                <span class="psicash-balance-coin">
-                    <img class="coin" src="psicash_coin.png">
-                    <span class="psicash-balance"></span>
-                  </span>
-                </div>
-              <div class="button-container">
-                <button type="button" class="btn btn-primary disabled" disabled>
-                  <span data-i18n="[html]psicash#ui-nsfbalance-buttontext">Needed for Speed&nbsp;Boost</span><br>
-                  <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-1hr-price"></span>
-                </button>
-              </div>
-              <div class="button-container">
-                <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
-                  Buy more PsiCash
-                </a>
-              </div>
-            </div>
-            <div id="psicash-interface-enoughbalance" class="psicash-interface hidden">
-                <div class="psicash-title-balance">
                 PsiCash
                 <span class="psicash-balance-coin">
                   <img class="coin" src="psicash_coin.png">
                   <span class="psicash-balance"></span>
                 </span>
               </div>
-              <div class="button-container">
-                <button id="psicash-buy-1hr" type="button" class="btn btn-primary">
-                  <span data-i18n="[html]psicash#ui-enoughbalance-buttontext">Start Speed&nbsp;Boost</span><br>
-                  <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-1hr-price"></span>
-                </button>
-              </div>
+
+              <div class="boost-container">
+                <div class="boost-container-label">
+                  <div class="boost-container-label-inner text-center">
+                    <strong><small>
+                      <span data-i18n="[html]psicash#ui-nsfbalance-buttontext">Needed for Speed&nbsp;Boost</span>
+                    </small></strong>
+                  </div>
+                </div>
+
+                <div class="boost-container-buttons btn-group btn-group-vertical">
+                  <span class="btn btn-small btn-primary psicash-buy disabled"
+                          data-distinguisher="1hr"
+                          disabled>
+                    <span data-i18n="[html]psicash#1-hour">1 hour</span>
+                    <span class="psicash-price-container text-left">
+                      <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-sb-price" data-distinguisher="1hr"></span>
+                    </span>
+                  </span>
+                  <span class="btn btn-small btn-primary psicash-buy disabled"
+                        data-distinguisher="24hr"
+                        disabled>
+                    <span data-i18n="[html]psicash#1-day">1 day</span>
+                    <span class="psicash-price-container text-left">
+                      <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-sb-price" data-distinguisher="24hr"></span>
+                    </span>
+                  </span>
+                </div>
+              </div><!-- .boost-container -->
+
               <div class="button-container">
                 <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
                   Buy more PsiCash
                 </a>
               </div>
-            </div>
+            </div><!-- #psicash-interface-nsfbalance -->
+
+            <div id="psicash-interface-enoughbalance" class="psicash-interface hidden">
+              <div class="psicash-title-balance">
+                PsiCash
+                <span class="psicash-balance-coin">
+                  <img class="coin" src="psicash_coin.png">
+                  <span class="psicash-balance"></span>
+                </span>
+              </div>
+
+              <div class="boost-container">
+                <div class="boost-container-label">
+                  <div class="boost-container-label-inner text-center">
+                    <strong><small>
+                      <span data-i18n="[html]psicash#ui-enoughbalance-buttontext">Start Speed&nbsp;Boost</span>
+                    </small></strong>
+                  </div>
+                </div>
+
+                <div class="boost-container-buttons btn-group btn-group-vertical">
+                  <!-- This should be a `button` element, but it was messing up the table layout for some reason we couldn't figure out -->
+                  <span class="btn btn-small btn-primary psicash-buy"
+                          data-distinguisher="1hr">
+                    <span data-i18n="[html]psicash#1-hour">1 hour</span>
+                    <span class="psicash-price-container text-left">
+                      <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-sb-price" data-distinguisher="1hr"></span>
+                    </span>
+                  </span>
+                  <span class="btn btn-small btn-primary psicash-buy"
+                          data-distinguisher="24hr">
+                    <span data-i18n="[html]psicash#1-day">1 day</span>
+                    <span class="psicash-price-container text-left">
+                      <img class="coin" src="psicash_coin_grey.png">&nbsp;<span class="psicash-sb-price" data-distinguisher="24hr"></span>
+                    </span>
+                  </span>
+                </div>
+
+              </div>
+
+              <div class="button-container">
+                <a class="psicash-buy-psi btn btn-small" data-i18n="psicash#ui-buymorepsi" href="#">
+                  Buy more PsiCash
+                </a>
+              </div>
+            </div><!-- #psicash-interface-enoughbalance -->
+
             <div id="psicash-interface-buyingboost" class="psicash-interface hidden">
               <div class="psicash-title-balance">
                 PsiCash
@@ -251,7 +302,8 @@
                   Buy more PsiCash
                 </a>
               </div>
-            </div>
+            </div><!-- #psicash-interface-buyingboost -->
+
             <div id="psicash-interface-activeboost" class="psicash-interface hidden">
               <div class="psicash-title-balance">
                 PsiCash
@@ -282,11 +334,12 @@
               <div class="psicash-title-balance">
                 PsiCash
                 <span class="psicash-balance-coin">
-                    <img class="coin" src="psicash_coin.png">
-                    <span class="psicash-balance"></span>
-                  </span>
-                </div>
-            </div>
+                  <img class="coin" src="psicash_coin.png">
+                  <span class="psicash-balance"></span>
+                </span>
+              </div>
+            </div><!-- #psicash-interface-activeboost -->
+
           </div>
         </li><!-- /#psicash-block -->
 
@@ -1489,6 +1542,7 @@
             <label>RefreshPsiCash</label>
             <input id="debug-RefreshPsiCash-balance" type="number" step="0.1" min="0" placeholder="balance in gigapsi" style="width:10em">
             <input id="debug-RefreshPsiCash-price-1hr" type="number" step="0.1" min="0" placeholder="1hr price in gigapsi" style="width:10em">
+            <input id="debug-RefreshPsiCash-price-24hr" type="number" step="0.1" min="0" placeholder="24hr price in gigapsi" style="width:10em">
             <input id="debug-RefreshPsiCash-boost-remaining" type="number" step="1" placeholder="Boost mins remaining" style="width:10em">
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
           </form>

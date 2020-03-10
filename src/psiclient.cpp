@@ -1190,9 +1190,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //==== Main window functions ==================================================
 
 #define WINDOW_X_START  780
-#define WINDOW_Y_START  640
+#define WINDOW_Y_START  700
 #define WINDOW_X_MIN    680
-#define WINDOW_Y_MIN    640
+#define WINDOW_Y_MIN    700
 
 static void SaveWindowPlacement()
 {
@@ -1653,14 +1653,8 @@ void InitPsiCash() {
     HtmlUI_PsiCashMessage(jsonString);
 }
 
-// Exported function.
-// commandID may be empty if not needed.
-void UI_RefreshPsiCash(const string& commandID)
-{
-    auto buyPsiURL = psicash::Lib::_().GetBuyPsiURL();
-
-    PsiCashMessage evt(PsiCashMessageType::REFRESH, commandID);
-    evt.payload = {
+nlohmann::json MakeRefreshPsiCashPayload() {
+    nlohmann::json res = {
         { "valid_token_types", psicash::Lib::_().ValidTokenTypes() },
         { "balance",  psicash::Lib::_().Balance() },
         { "purchase_prices", psicash::Lib::_().GetPurchasePrices() },
@@ -1668,10 +1662,21 @@ void UI_RefreshPsiCash(const string& commandID)
     };
 
     // Trying to do this with a ternary conditional will cause a crash
-    evt.payload["buy_psi_url"] = nullptr;
+    auto buyPsiURL = psicash::Lib::_().GetBuyPsiURL();
+    res["buy_psi_url"] = nullptr;
     if (buyPsiURL) {
-        evt.payload["buy_psi_url"] = *buyPsiURL;
+        res["buy_psi_url"] = *buyPsiURL;
     }
+
+    return res;
+}
+
+// Exported function.
+// commandID may be empty if not needed.
+void UI_RefreshPsiCash(const string& commandID)
+{
+    PsiCashMessage evt(PsiCashMessageType::REFRESH, commandID);
+    evt.payload = MakeRefreshPsiCashPayload();
 
     string jsonString;
     if (!evt.JSON(jsonString)) {
@@ -1748,12 +1753,7 @@ bool HandlePsiCashCommand(const string& jsonString)
             else {
                 jsonResult["error"] = nullptr;
                 jsonResult["status"] = result->status;
-                if (result->purchase) {
-                    jsonResult["purchase"] = *result->purchase;
-                }
-                else {
-                    jsonResult["purchase"] = nullptr;
-                }
+                jsonResult["refresh"] = MakeRefreshPsiCashPayload();
             }
 
             evt.payload = jsonResult;
