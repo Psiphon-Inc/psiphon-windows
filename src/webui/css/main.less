@@ -990,6 +990,70 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
       .text-center;
     }
 
+    .boost-container {
+      max-width: 95%;
+      margin: auto;
+
+      .boost-container-label {
+        width: 100%;
+
+        // We want the label to seem like it's part of a single control with
+        // the buttons, so we'll shift its bottom behind the top of the buttons.
+        margin-bottom: -4px;
+
+        border-top: 1px @btnPrimaryBackgroundHighlight solid;
+        border-left: 1px @btnPrimaryBackgroundHighlight solid;
+        border-right: 1px @btnPrimaryBackgroundHighlight solid;
+        .border-top-left-radius(@buttonBorderRadiusBase);
+        .border-top-right-radius(@buttonBorderRadiusBase);
+
+        .boost-container-label-inner {
+          padding-left: 3px;
+          padding-right: 3px;
+          padding-bottom: 4px; // this must be the same as the margin-bottom above
+        }
+      }
+
+      .boost-container-buttons {
+        /*
+        We're going to mimic a table with the btn-group. That gives us nice layout
+        within and between the buttons.
+        One thing we _lose_ from this approach is height-matching between the buttons.
+        */
+
+        width: 100%;
+        display: table;
+        overflow: hidden;
+
+        border-left: 1px @btnPrimaryBackgroundHighlight solid;
+        border-right: 1px @btnPrimaryBackgroundHighlight solid;
+        border-bottom: 1px @btnPrimaryBackgroundHighlight solid;
+        .border-bottom-left-radius(@buttonBorderRadiusBase);
+        .border-bottom-right-radius(@buttonBorderRadiusBase);
+
+        .btn {
+          width: 100%;
+          max-width: 100%;
+          white-space: normal; // override the default for .btn-group
+          overflow-wrap: break-word;
+
+          display: table-row;
+
+          & > span {
+            display: table-cell;
+            width: 1%;
+            vertical-align: middle;
+            padding: 3px;
+          }
+        }
+      }
+    }
+
+    .psicash-price-container {
+      white-space: nowrap;
+    }
+
+    // TODO: Still valid?
     .psicash-buy-psi {
       margin-top: 4px;
     }

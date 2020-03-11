@@ -1,6 +1,6 @@
 {
     "banner#long-connecting": {
-        "message": "<strong>Oh non !</strong> Il semble que vous éprouviez des difficultés de connexion !<br>\nTéléchargez la version la plus récente de Psiphon sur le <a class=\"NewVersionURL\" href=\"#\">\nou en envoyant un courriel à <a class=\"NewVersionEmail\" href=\"#\"></a>",
+        "message": "<strong>Oh non.</strong> Il semble que vous éprouviez des difficultés de connexion.<br>\nTéléchargez la version la plus récente de Psiphon sur le <a class=\"NewVersionURL\" href=\"#\">\nou en envoyant un courriel à <a class=\"NewVersionEmail\" href=\"#\"></a>",
         "description": "Message that appears when Psiphon is having trouble connecting. Often such connection problems can be fixed by downloading a new version. The word 'Psiphon' must not be translated or transliterated."
     },
     "nav#connection#starting": {
@@ -72,7 +72,7 @@
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
     },
     "settings#error-alert": {
-        "message": "<strong>Erreur !</strong> Veuillez corriger les valeurs erronées avant de continuer.",
+        "message": "<strong>Erreur.</strong> Veuillez corriger les valeurs erronées avant de continuer.",
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
     "settings#reset-button": {
@@ -468,7 +468,7 @@
         "description": "Message showing the user an email they can use to contact Psiphon Inc."
     },
     "feedback#success-message": {
-        "message": "<strong>Merci !</strong> Votre rétroaction a été envoyée.",
+        "message": "<strong>Merci.</strong> Votre rétroaction a été envoyée.",
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "logs#show-debug-label": {
@@ -480,7 +480,7 @@
         "description": "Placeholder text shown when there are not yet any log messages to show. This message is removed when the first log message is added."
     },
     "language#success-message": {
-        "message": "<strong>Bonjour !</strong> Bienvenue à Psiphon.",
+        "message": "<strong>Bonjour.</strong> Bienvenue à Psiphon.",
         "description": "A welcome message shown to the user when they first switch to the correct UI language. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#wordart-tag": {
@@ -540,7 +540,7 @@
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-body": {
-        "message": "Explorez par-delà vos frontières !",
+        "message": "Explorez par-delà vos frontières.",
         "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
     },
     "appbackend#state-connected-reminder-title": {
@@ -548,11 +548,11 @@
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-reminder-body": {
-        "message": "Préservez la gratuité de Psiphon. Cliquez ici pour visiter les pages de nos commanditaires !",
+        "message": "Préservez la gratuité de Psiphon. Cliquez ici pour visiter les pages de nos commanditaires.",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#state-connected-reminder-body-2": {
-        "message": "Préservez la gratuité de Psiphon en visitant les pages de nos commanditaires !",
+        "message": "Préservez la gratuité de Psiphon en visitant les pages de nos commanditaires.",
         "description": "Appears in the notification area balloon periodically while Psiphon is connected to a server. This is intended to encourage the user to visit the sponsor's landing page. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system. The word 'Psiphon' must not be translated or transliterated."
     },
     "appbackend#minimized-to-systray-title": {
@@ -562,6 +562,10 @@
     "appbackend#minimized-to-systray-body": {
         "message": "Cliquez sur l’icône pour restaurer l’application",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "appbackend#os-unsupported": {
+        "message": "Psiphon ne prend plus en charge ni Windows XP ni Vista. Veuillez visiter notre site Web pour plus de précisions.",
+        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
         "message": "Erreur transactionnelle PsiCash",

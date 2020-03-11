@@ -563,6 +563,10 @@
         "message": "Klicken Sie auf das Symbol, um die Anwendung wiederherzustellen",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
+    "appbackend#os-unsupported": {
+        "message": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
+    },
     "psicash#transaction-error-title": {
         "message": "PsiCash transaction error",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
@@ -652,7 +656,7 @@
         "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
     },
     "psicash#mustconnect-modal#title": {
-        "message": "Psiphon Connection Required",
+        "message": "Psiphon-Verbindung erforderlich",
         "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
     },
     "psicash#mustconnect-modal#body": {

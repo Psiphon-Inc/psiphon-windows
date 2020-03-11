@@ -140,6 +140,7 @@ void OnCreate(HWND hWndParent)
 #define STRING_KEY_STATE_STOPPING_BODY              "appbackend#state-stopping-body"
 #define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE       "appbackend#minimized-to-systray-title"
 #define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY        "appbackend#minimized-to-systray-body"
+#define STRING_KEY_OS_UNSUPPORTED                   "appbackend#os-unsupported"
 
 static map<string, wstring> g_stringTable;
 
@@ -180,9 +181,15 @@ static void AddStringTableEntry(const string& utf8EntryJson)
         return;
     }
 
-    g_stringTable[key] = UTF8ToWString(narrowStr);
+    auto wideStr = UTF8ToWString(narrowStr);
+    g_stringTable[key] = wideStr;
 
     SetUiLocale(UTF8ToWString(locale));
+
+    // As soon as the OS_UNSUPPORTED string is available, do the OS check.
+    if (key == STRING_KEY_OS_UNSUPPORTED) {
+        EnforceOSSupport(g_hWnd, wideStr);
+    }
 }
 
 // Returns true if the string table entry is found, false otherwise.
@@ -1183,9 +1190,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //==== Main window functions ==================================================
 
 #define WINDOW_X_START  780
-#define WINDOW_Y_START  640
+#define WINDOW_Y_START  700
 #define WINDOW_X_MIN    680
-#define WINDOW_Y_MIN    640
+#define WINDOW_Y_MIN    700
 
 static void SaveWindowPlacement()
 {
@@ -1374,6 +1381,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         // Display client version number
         my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + UTF8ToWString(CLIENT_VERSION)).c_str());
+
+        if (!IsOSSupported())
+        {
+            // We're not showing the main app window, as it will probably be garbage
+            // and the app should close momentarily.
+            break;
+        }
 
         // Content is loaded, so show the window.
         RestoreWindowPlacement();
@@ -1639,14 +1653,8 @@ void InitPsiCash() {
     HtmlUI_PsiCashMessage(jsonString);
 }
 
-// Exported function.
-// commandID may be empty if not needed.
-void UI_RefreshPsiCash(const string& commandID)
-{
-    auto buyPsiURL = psicash::Lib::_().GetBuyPsiURL();
-
-    PsiCashMessage evt(PsiCashMessageType::REFRESH, commandID);
-    evt.payload = {
+nlohmann::json MakeRefreshPsiCashPayload() {
+    nlohmann::json res = {
         { "valid_token_types", psicash::Lib::_().ValidTokenTypes() },
         { "balance",  psicash::Lib::_().Balance() },
         { "purchase_prices", psicash::Lib::_().GetPurchasePrices() },
@@ -1654,10 +1662,21 @@ void UI_RefreshPsiCash(const string& commandID)
     };
 
     // Trying to do this with a ternary conditional will cause a crash
-    evt.payload["buy_psi_url"] = nullptr;
+    auto buyPsiURL = psicash::Lib::_().GetBuyPsiURL();
+    res["buy_psi_url"] = nullptr;
     if (buyPsiURL) {
-        evt.payload["buy_psi_url"] = *buyPsiURL;
+        res["buy_psi_url"] = *buyPsiURL;
     }
+
+    return res;
+}
+
+// Exported function.
+// commandID may be empty if not needed.
+void UI_RefreshPsiCash(const string& commandID)
+{
+    PsiCashMessage evt(PsiCashMessageType::REFRESH, commandID);
+    evt.payload = MakeRefreshPsiCashPayload();
 
     string jsonString;
     if (!evt.JSON(jsonString)) {
@@ -1734,12 +1753,7 @@ bool HandlePsiCashCommand(const string& jsonString)
             else {
                 jsonResult["error"] = nullptr;
                 jsonResult["status"] = result->status;
-                if (result->purchase) {
-                    jsonResult["purchase"] = *result->purchase;
-                }
-                else {
-                    jsonResult["purchase"] = nullptr;
-                }
+                jsonResult["refresh"] = MakeRefreshPsiCashPayload();
             }
 
             evt.payload = jsonResult;

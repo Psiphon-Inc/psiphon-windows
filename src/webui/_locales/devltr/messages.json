@@ -27,6 +27,10 @@
     "message": "[Ƥşīīƥħǿǿƞ ħȧȧş ƀḗḗḗḗƞ ḿīīƞīīḿīīẑḗḗḓ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ]",
     "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons). The word 'Psiphon' must not be translated or transliterated."
   },
+  "appbackend#os-unsupported": {
+    "message": "[Ƥşīīƥħǿǿƞ ƞǿǿ ŀǿǿƞɠḗḗř şŭŭƥƥǿǿřŧş Ẇīīƞḓǿǿẇş ẊƤ ǿǿř Ṽīīşŧȧȧ.\nƤŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř ẇḗḗƀşīīŧḗḗ ƒǿǿř ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ.]",
+    "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
+  },
   "appbackend#state-connected-body": {
     "message": "[Ḗḗẋƥŀǿǿřḗḗ ƀḗḗẏǿǿƞḓ ẏǿǿŭŭř ƀǿǿřḓḗḗřş!]",
     "description": "Appears in the notification area balloon when Psiphon is currently connected to a server. Specifically, it appears when the connection has just completed. This is intended to be a reference to the 'Psiphon: Beyond Borders' tag line. Note for right-to-left languages: You should not use an exclamation mark, as it won't be displayed correct if shown on a left-to-right operating system."
@@ -214,6 +218,14 @@
   "positive-value-indicator": {
     "message": "[+%d]",
     "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
+  },
+  "psicash#1-day": {
+    "message": "[1 ḓȧȧẏ]",
+    "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
+  },
+  "psicash#1-hour": {
+    "message": "[1 ħǿǿŭŭř]",
+    "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
   },
   "psicash#init-error-body-recovered": {
     "message": "[ƤşīīƇȧȧşħ ƒȧȧīīŀḗḗḓ ŧǿǿ īīƞīīŧīīȧȧŀīīẑḗḗ. Ŧħīīş īīş ƥřǿǿƀȧȧƀŀẏ ḓŭŭḗḗ ŧǿǿ ȧȧ ƒīīŀḗḗ şẏşŧḗḗḿ ƥřǿǿƀŀḗḗḿ, şŭŭƈħ ȧȧş ƀḗḗīīƞɠ ǿǿŭŭŧ ǿǿƒ ḓīīşķ şƥȧȧƈḗḗ. Ẏǿǿŭŭř ƀȧȧŀȧȧƞƈḗḗ ȧȧƞḓ ǿǿŧħḗḗř şŧȧȧŧḗḗ ħȧȧṽḗḗ ƀḗḗḗḗƞ řḗḗşḗḗŧ.]",

@@ -563,6 +563,10 @@
         "message": "아이콘을 클릭하면 어플리케이션을 표시합니다",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
+    "appbackend#os-unsupported": {
+        "message": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
+    },
     "psicash#transaction-error-title": {
         "message": "PsiCash transaction error",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."

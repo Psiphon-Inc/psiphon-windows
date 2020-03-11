@@ -59,14 +59,20 @@
 // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
 .btn-group > .btn:first-child {
   margin-left: 0;
-  .border-top-left-radius(@baseBorderRadius);
-  .border-bottom-left-radius(@baseBorderRadius);
+  // PSIPHON: Different border radius for buttons than other boxes
+  //.border-top-left-radius(@baseBorderRadius);
+  //.border-bottom-left-radius(@baseBorderRadius);
+  .border-top-left-radius(@buttonBorderRadiusBase);
+  .border-bottom-left-radius(@buttonBorderRadiusBase);
 }
 // Need .dropdown-toggle since :last-child doesn't apply given a .dropdown-menu immediately after it
 .btn-group > .btn:last-child,
 .btn-group > .dropdown-toggle {
-  .border-top-right-radius(@baseBorderRadius);
-  .border-bottom-right-radius(@baseBorderRadius);
+  // PSIPHON: Different border radius for buttons than other boxes
+  //.border-top-right-radius(@baseBorderRadius);
+  //.border-bottom-right-radius(@baseBorderRadius);
+  .border-top-right-radius(@buttonBorderRadiusBase);
+  .border-bottom-right-radius(@buttonBorderRadiusBase);
 }
 // Reset corners for large buttons
 .btn-group > .btn.large:first-child {
@@ -216,10 +222,14 @@
   margin-top: -1px;
 }
 .btn-group-vertical > .btn:first-child {
-  .border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+  // PSIPHON: Different border radius for buttons than other boxes
+  //.border-radius(@baseBorderRadius @baseBorderRadius 0 0);
+  .border-radius(@buttonBorderRadiusBase @buttonBorderRadiusBase 0 0);
 }
 .btn-group-vertical > .btn:last-child {
-  .border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+  // PSIPHON: Different border radius for buttons than other boxes
+  //.border-radius(0 0 @baseBorderRadius @baseBorderRadius);
+  .border-radius(0 0 @buttonBorderRadiusBase @buttonBorderRadiusBase);
 }
 .btn-group-vertical > .btn-large:first-child {
   .border-radius(@borderRadiusLarge @borderRadiusLarge 0 0);

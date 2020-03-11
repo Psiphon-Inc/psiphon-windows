@@ -252,7 +252,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Serbia will be used."
     },
     "settings#egress-region#select-au": {
-        "message": "Australia",
+        "message": "澳大利亚",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
@@ -562,6 +562,10 @@
     "appbackend#minimized-to-systray-body": {
         "message": "点击图标恢复应用程序",
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
+    },
+    "appbackend#os-unsupported": {
+        "message": "赛风不再支持Windows XP或者Vista。\n详情请访问赛风的网站。",
+        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
         "message": "PsiCash交易错误",
