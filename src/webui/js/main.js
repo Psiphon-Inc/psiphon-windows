@@ -1939,6 +1939,7 @@
   // TODO: Maybe roll this into a more global pubsub? But why?
   /** @type {Datastore} */
   const PsiCashStore = new Datastore({
+    initDone: false,
     purchaseInProgress: false
   }, 'PsiCashStore');
 
@@ -1948,23 +1949,35 @@
 
     // And update the UI values every time the app gets focus.
     addWindowFocusHandler(function() {
+      if (!PsiCashStore.data.initDone) {
+        return;
+      }
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('app-focus'));
     });
 
     // And update the UI values every time we get connected.
     $window.on(CONNECTED_STATE_CHANGE_EVENT, function() {
+      if (!PsiCashStore.data.initDone) {
+        return;
+      }
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('connected-state-change'));
     });
 
     // And update the UI values every time the display language changes, so that the numbers
     // are correctly formatted.
     $window.on(LANGUAGE_CHANGE_EVENT, function() {
+      if (!PsiCashStore.data.initDone) {
+        return;
+      }
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('ui-language-change'));
     });
 
     // And update the UI when the settings change. If we go into/out of VPN mode we need to
     // disable the UI and indicate why.
     $('#settings-pane').on(SETTING_CHANGED_EVENT, function() {
+      if (!PsiCashStore.data.initDone) {
+        return;
+      }
       HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('settings-changed'));
     });
   });
@@ -1996,6 +2009,7 @@
       }
     }
 
+    PsiCashStore.set('initDone', true);
     HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('init-done'));
   }
   $window.on(PsiCashEventTypeEnum.INIT_DONE, psiCashLibraryInitDone);
