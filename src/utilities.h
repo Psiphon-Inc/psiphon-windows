@@ -48,6 +48,11 @@ bool GetTempPath(tstring& o_path);
 // Returns true on success, false otherwise. Caller can check GetLastError() on failure.
 bool GetUniqueTempDir(tstring& o_path, bool create);
 
+// Makes an absolute path for a unique filename. If `extension` is nonempty,
+// the filename will have that extension.
+// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
+bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath);
+
 
 /*
  * Network and IPC Utilities

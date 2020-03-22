@@ -248,6 +248,38 @@ bool GetUniqueTempDir(tstring& o_path, bool create)
     return true;
 }
 
+bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath)
+{
+    o_filepath.clear();
+
+    tstring tempPath;
+    if (!GetTempPath(tempPath))
+    {
+        return false;
+    }
+
+    tstring filename;
+    if (!MakeGUID(filename))
+    {
+        return false;
+    }
+
+    if (!extension.empty()) {
+        if (extension[0] == _T('.')) {
+            filename += extension;
+        }
+        else {
+            filename += _T(".") + extension;
+        }
+    }
+
+    auto tempFile = filesystem::path(tempPath).append(filename);
+
+    o_filepath = tempFile.tstring();
+
+    return true;
+}
+
 
 // Makes a GUID string. Returns true on success, false otherwise.
 bool MakeGUID(tstring& o_guid) {
