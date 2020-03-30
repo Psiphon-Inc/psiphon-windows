@@ -126,6 +126,8 @@ $ node fake-translations.js
 
 ## Technical and compatibility notes
 
+NOTE: We no longer support IE7 (because we no longer support XP or Vista). That means that some of the limitations below can be eased.
+
 * MSVC can't cope with paths in resource names. So anything that needs to be accessed via resource must be in root.
 
 * IE7: Can't use data URIs. But IE8+ okay.

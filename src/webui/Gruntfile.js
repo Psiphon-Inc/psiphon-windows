@@ -57,7 +57,7 @@ module.exports = function(grunt) {
     inline: {
       dist: {
         options:{
-          cssmin: true,
+          cssmin: false,
           uglify: false
         },
         src: 'main.html',
@@ -70,6 +70,27 @@ module.exports = function(grunt) {
         },
         src: 'main.html',
         dest: 'main-inline.html'
+      }
+    },
+
+    htmlmin: {
+      default: {
+        options: {
+          removeComments: true,
+          collapseWhitespace: true,
+          minifyCSS: {
+            compatibility: 'ie8'
+          },
+          minifyJS: {
+            ie8: true,
+            output: {
+              beautify: true
+            }
+          }
+        },
+        files: {
+          'main-inline.html': 'main-inline.html'
+        }
       }
     },
 
@@ -123,6 +144,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-inline');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-htmlmin');
 
   // Capture the node_modules directory at the time of building. This allows us to build
   // even if the dependencies disappear. (package-lock.json provides us protection against
@@ -133,8 +155,8 @@ module.exports = function(grunt) {
     grunt.log.writeln(result);
   });
 
-  grunt.registerTask('default', ['zip-modules', 'babel', 'concat', 'less', 'locales', 'inline:dist']);
-  grunt.registerTask('quick', ['babel', 'concat', 'less', 'locales', 'inline:quick']); // skips the slow zip step
+  grunt.registerTask('default', ['zip-modules', 'babel', 'concat', 'less', 'locales', 'inline:dist', 'htmlmin']);
+  grunt.registerTask('quick', ['babel', 'concat', 'less', 'locales', 'inline:quick', 'htmlmin']); // skips the slow zip step
   grunt.registerTask('serve', ['quick', 'connect', 'watch']);
 
   grunt.registerMultiTask(
