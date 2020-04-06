@@ -24,7 +24,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "nav#feedback": {
-        "message": "Feedback",
+        "message": "การตอบสนอง",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "nav#logs": {
