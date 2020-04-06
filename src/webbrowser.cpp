@@ -91,7 +91,6 @@ bool GetDefaultBrowserCommandLine(tstring& o_commandLine)
         sBuffer,
         &dwSize);
 
-    HANDLE hProcess = 0;
     if (hr != S_OK)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: AssocQueryString failed; hr:%d; GetLastError:%d"), __TFUNCTION__, (int)hr, GetLastError());
