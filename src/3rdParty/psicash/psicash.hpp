@@ -369,6 +369,7 @@ public:
 protected:
     // See implementation for descriptions of non-public methods.
 
+    nlohmann::json GetRequestMetadata(int attempt) const;
     error::Result<HTTPResult> MakeHTTPRequestWithRetry(
             const std::string& method, const std::string& path, bool include_auth_tokens,
             const std::vector<std::pair<std::string, std::string>>& query_params);
