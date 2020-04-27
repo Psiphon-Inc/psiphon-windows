@@ -1289,6 +1289,7 @@
       "psicash#init-error-title": "[ƤşīīƇȧȧşħ īīƞīīŧīīȧȧŀīīẑȧȧŧīīǿǿƞ ḗḗřřǿǿř]",
       "psicash#mustconnect-modal#body": "[Īīƞ ǿǿřḓḗḗř ŧǿǿ ŭŭşḗḗ ƤşīīƇȧȧşħ, ẏǿǿŭŭ ḿŭŭşŧ ƀḗḗ ƈǿǿƞƞḗḗƈŧḗḗḓ ŧǿǿ ŧħḗḗ Ƥşīīƥħǿǿƞ ƞḗḗŧẇǿǿřķ.]",
       "psicash#mustconnect-modal#title": "[Ƥşīīƥħǿǿƞ Ƈǿǿƞƞḗḗƈŧīīǿǿƞ Řḗḗɋŭŭīīřḗḗḓ]",
+      "psicash#psiphon-speed": "[Ƥşīīƥħǿǿƞ<br>Şƥḗḗḗḗḓ]",
       "psicash#transaction-ExistingTransaction-body": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ȧȧƞ ḗḗẋīīşŧīīƞɠ ƤşīīƇȧȧşħ ƥŭŭřƈħȧȧşḗḗ ǿǿƒ ŧħīīş ŧẏƥḗḗ. Ȧȧƞǿǿŧħḗḗř ƥŭŭřƈħȧȧşḗḗ ǿǿƒ ŧħīīş ŧẏƥḗḗ īīş ƞǿǿŧ ȧȧŀŀǿǿẇḗḗḓ ŭŭƞŧīīŀ ŧħḗḗ ƥřḗḗṽīīǿǿŭŭş ǿǿƞḗḗ ḗḗẋƥīīřḗḗş. Ẏǿǿŭŭř ƤşīīƇȧȧşħ şŧȧȧŧḗḗ ẇīīŀŀ ƀḗḗ řḗḗƒřḗḗşħḗḗḓ ƞǿǿẇ.]",
       "psicash#transaction-ExistingTransaction-title": "[ƤşīīƇȧȧşħ ƥŭŭřƈħȧȧşḗḗ ȧȧŀřḗḗȧȧḓẏ ḗḗẋīīşŧş]",
       "psicash#transaction-InsufficientBalance-body": "[Ẏǿǿŭŭ ḓǿǿ ƞǿǿŧ ħȧȧṽḗḗ şŭŭƒƒīīƈīīḗḗƞŧ ƤşīīƇȧȧşħ ƀȧȧŀȧȧƞƈḗḗ ƒǿǿř ŧħīīş ƥŭŭřƈħȧȧşḗḗ.]",
@@ -1466,6 +1467,7 @@
       "psicash#init-error-title": "‮ԀsıↃɐsɥ‬ ‮ıuıʇıɐʅızɐʇıou‬ ‮ǝɹɹoɹ‬",
       "psicash#mustconnect-modal#body": "‮Iu‬ ‮oɹpǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ԀsıↃɐsɥ‬, ‮ʎon‬ ‮ɯnsʇ‬ ‮qǝ‬ ‮ɔouuǝɔʇǝp‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮uǝʇʍoɹʞ‬.",
       "psicash#mustconnect-modal#title": "‮Ԁsıdɥou‬ ‮Ↄouuǝɔʇıou‬ ‮ᴚǝbnıɹǝp‬",
+      "psicash#psiphon-speed": "‮Ԁsıdɥou‬<br>‮Sdǝǝp‬",
       "psicash#transaction-ExistingTransaction-body": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɐu‬ ‮ǝxısʇıuƃ‬ ‮ԀsıↃɐsɥ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬. ‮∀uoʇɥǝɹ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬ ‮ıs‬ ‮uoʇ‬ ‮ɐʅʅoʍǝp‬ ‮nuʇıʅ‬ ‮ʇɥǝ‬ ‮dɹǝʌıons‬ ‮ouǝ‬ ‮ǝxdıɹǝs‬. ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮sʇɐʇǝ‬ ‮ʍıʅʅ‬ ‮qǝ‬ ‮ɹǝɟɹǝsɥǝp‬ ‮uoʍ‬.",
       "psicash#transaction-ExistingTransaction-title": "‮ԀsıↃɐsɥ‬ ‮dnɹɔɥɐsǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ǝxısʇs‬",
       "psicash#transaction-InsufficientBalance-body": "‮ʎon‬ ‮po‬ ‮uoʇ‬ ‮ɥɐʌǝ‬ ‮snɟɟıɔıǝuʇ‬ ‮ԀsıↃɐsɥ‬ ‮qɐʅɐuɔǝ‬ ‮ɟoɹ‬ ‮ʇɥıs‬ ‮dnɹɔɥɐsǝ‬.",
@@ -1927,7 +1929,8 @@
       "psicash#mustconnect-modal#body": "In order to use PsiCash, you must be connected to the Psiphon network.",
       "psicash#init-error-title": "PsiCash initialization error",
       "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
-      "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset."
+      "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+      "psicash#psiphon-speed": "Psiphon<br>Speed"
     }
   },
   "es": {

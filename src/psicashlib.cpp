@@ -11,7 +11,7 @@ using namespace std;
 
 namespace psicash {
 
-static constexpr bool TESTING = false;
+static constexpr bool TESTING = true;
 static constexpr auto USER_AGENT = "Psiphon-PsiCash-Windows";
 
 psicash::MakeHTTPRequestFn GetHTTPReqFn(const StopInfo& stopInfo);

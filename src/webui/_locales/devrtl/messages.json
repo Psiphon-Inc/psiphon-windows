@@ -247,6 +247,10 @@
     "message": "‮Ԁsıdɥou‬ ‮Ↄouuǝɔʇıou‬ ‮ᴚǝbnıɹǝp‬",
     "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
   },
+  "psicash#psiphon-speed": {
+    "message": "‮Ԁsıdɥou‬<br>‮Sdǝǝp‬",
+    "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines and soft break indicators (like <wbr> or &#8203;) to indicate were long words can be broken. The word 'Psiphon' must not be translated or transliterated."
+  },
   "psicash#transaction-ExistingTransaction-body": {
     "message": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɐu‬ ‮ǝxısʇıuƃ‬ ‮ԀsıↃɐsɥ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬. ‮∀uoʇɥǝɹ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬ ‮ıs‬ ‮uoʇ‬ ‮ɐʅʅoʍǝp‬ ‮nuʇıʅ‬ ‮ʇɥǝ‬ ‮dɹǝʌıons‬ ‮ouǝ‬ ‮ǝxdıɹǝs‬. ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮sʇɐʇǝ‬ ‮ʍıʅʅ‬ ‮qǝ‬ ‮ɹǝɟɹǝsɥǝp‬ ‮uoʍ‬.",
     "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
