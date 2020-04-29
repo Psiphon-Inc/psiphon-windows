@@ -564,7 +564,7 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+        "message": "Psiphon (سایفون) دیگر از ویندوز XP و Vista پشتیبانی نمی‌کند.\nلطفا برای اطلاعات بیشتر به وبسایت ما مراجعه کنید.",
         "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
