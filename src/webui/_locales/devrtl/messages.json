@@ -249,7 +249,7 @@
   },
   "psicash#psiphon-speed": {
     "message": "‮Ԁsıdɥou‬<br>‮Sdǝǝp‬",
-    "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines and soft break indicators (like <wbr> or &#8203;) to indicate were long words can be broken. The word 'Psiphon' must not be translated or transliterated."
+    "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
   },
   "psicash#transaction-ExistingTransaction-body": {
     "message": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɐu‬ ‮ǝxısʇıuƃ‬ ‮ԀsıↃɐsɥ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬. ‮∀uoʇɥǝɹ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬ ‮ıs‬ ‮uoʇ‬ ‮ɐʅʅoʍǝp‬ ‮nuʇıʅ‬ ‮ʇɥǝ‬ ‮dɹǝʌıons‬ ‮ouǝ‬ ‮ǝxdıɹǝs‬. ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮sʇɐʇǝ‬ ‮ʍıʅʅ‬ ‮qǝ‬ ‮ɹǝɟɹǝsɥǝp‬ ‮uoʍ‬.",
