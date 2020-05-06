@@ -156,7 +156,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['zip-modules', 'babel', 'concat', 'less', 'locales', 'inline:dist', 'htmlmin']);
-  grunt.registerTask('quick', ['babel', 'concat', 'less', 'locales', 'inline:quick', 'htmlmin']); // skips the slow zip step
+  grunt.registerTask('quick', ['babel', 'concat', 'less', 'locales', 'inline:quick']); // skips the slow zip step
   grunt.registerTask('serve', ['quick', 'connect', 'watch']);
 
   grunt.registerMultiTask(

@@ -1,13 +1,21 @@
 /* To avoid CSS expressions while still supporting IE 7 and IE 6, use this script */
 /* The script tag referencing this file must be placed before the ending body tag. */
 
-
 (function() {
 	function addIcon(el, entity) {
 		var html = el.innerHTML;
 		el.innerHTML = '<span style="font-family: \'icomoon\'">' + entity + '</span>' + html;
 	}
 	var icons = {
+		'icon-speed-fast': '&#xe900;',
+		'icon-gauge': '&#xe900;',
+		'icon-dashboard': '&#xe900;',
+		'icon-speed-medium': '&#xe901;',
+		'icon-gauge1': '&#xe901;',
+		'icon-dashboard1': '&#xe901;',
+		'icon-speed-slow': '&#xe902;',
+		'icon-gauge2': '&#xe902;',
+		'icon-dashboard2': '&#xe902;',
 		'icon-home3': '&#xe602;',
 		'icon-cog': '&#xe672;',
 		'icon-launch': '&#xe7b0;',

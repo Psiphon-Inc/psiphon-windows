@@ -1058,6 +1058,45 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
       margin-top: 4px;
     }
   }
+
+  .speed-limit {
+    .badge {
+      max-width: calc(100% - 18px); /* badges use 9px padding on left and right */
+      text-transform: uppercase;
+      white-space: normal;
+
+      td:first {
+        width: 100%;
+      }
+
+      img {
+        height: 35px;
+        vertical-align: baseline;
+
+        body[dir="ltr"] & {
+          padding-left: 2px;
+        }
+        body[dir="rtl"] & {
+          padding-right: 2px;
+        }
+      }
+
+      // This color is derived (lightened) from the Psiphon logo
+      @speedLimitColor: #cc664c;
+
+      &.speed-slow {
+        background-color: @speedLimitColor;
+        color: @psiNavBackgroundColor;
+      }
+
+      &.speed-fast {
+        color: @psiBaseText;
+        text-shadow: none;
+        background-color: @psiNavBackgroundColor;
+        border: 1px solid @speedLimitColor;
+      }
+    }
+  }
 }
 
 /* MISCELLANEOUS AND HELPERS */

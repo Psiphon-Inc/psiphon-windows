@@ -6943,6 +6943,35 @@ body[dir="rtl"] #psicash-block > div .psicash-title-balance > span {
 #psicash-block > div .psicash-buy-psi {
   margin-top: 4px;
 }
+#psicash-block .speed-limit .badge {
+  max-width: calc(100% - 18px);
+  /* badges use 9px padding on left and right */
+  text-transform: uppercase;
+  white-space: normal;
+}
+#psicash-block .speed-limit .badge td:first {
+  width: 100%;
+}
+#psicash-block .speed-limit .badge img {
+  height: 35px;
+  vertical-align: baseline;
+}
+body[dir="ltr"] #psicash-block .speed-limit .badge img {
+  padding-left: 2px;
+}
+body[dir="rtl"] #psicash-block .speed-limit .badge img {
+  padding-right: 2px;
+}
+#psicash-block .speed-limit .badge.speed-slow {
+  background-color: #cc664c;
+  color: #FFF;
+}
+#psicash-block .speed-limit .badge.speed-fast {
+  color: #222;
+  text-shadow: none;
+  background-color: #FFF;
+  border: 1px solid #cc664c;
+}
 /* MISCELLANEOUS AND HELPERS */
 .global-alert {
   position: fixed;
