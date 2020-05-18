@@ -19,6 +19,14 @@
     "message": "‮Ԑǝʎoup‬ ‮Ԑoɹpǝɹs‬",
     "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. The word 'Psiphon' must not be translated or transliterated."
   },
+  "appbackend#disallowed-traffic-notification-body": {
+    "message": "‮∀ɔʇıʌɐʇǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬ ‮ʇo‬ ‮nuʅoɔʞ‬ ‮ʇɥǝ‬ ‮ɟnʅʅ‬ ‮doʇǝuʇıɐʅ‬ ‮oɟ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ǝxdǝɹıǝuɔǝ‬.",
+    "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  },
+  "appbackend#disallowed-traffic-notification-title": {
+    "message": "‮∀dds‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬?",
+    "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
+  },
   "appbackend#minimized-to-systray-body": {
     "message": "‮Ↄʅıɔʞ‬ ‮ʇɥǝ‬ ‮ıɔou‬ ‮ʇo‬ ‮ɹǝsʇoɹǝ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬",
     "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
@@ -203,6 +211,14 @@
     "message": "‮Sǝʇʇıuƃs‬",
     "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
   },
+  "notice#disallowed-traffic-alert-body": {
+    "message": "<p>‮∀dds‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬?</p>\n<p>‮Soɯǝ‬ ‮ıuʇǝɹuǝʇ‬ ‮ʇɹɐɟɟıɔ‬ ‮ıs‬ ‮uoʇ‬ ‮snddoɹʇǝp‬ ‮ʍıʇɥonʇ‬ ‮ɐu‬ ‮ɐɔʇıʌǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬. ‮∀ɔʇıʌɐʇǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬ ‮ʍıʇɥ‬ ‮ԀsıↃɐsɥ‬ ‮ʇo‬ ‮nuʅoɔʞ‬ ‮ʇɥǝ‬ ‮ɟnʅʅ‬ ‮doʇǝuʇıɐʅ‬ ‮oɟ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ǝxdǝɹıǝuɔǝ‬.</p>",
+    "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  },
+  "notice#disallowed-traffic-alert-title": {
+    "message": "‮∩dƃɹɐpǝ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ɔouuǝɔʇıou‬",
+    "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
+  },
   "notice#systemproxysettings-setproxy-error-body": {
     "message": "<p>‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬.</p>\n<p>‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.</p>",
     "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon. The word 'Psiphon' must not be translated or transliterated."
@@ -358,6 +374,18 @@
   "settings#disable-timeouts#reason": {
     "message": "‮Ｍɥǝu‬ ‮ǝuɐqʅıuƃ‬ ‮ʇɥıs‬ ‮ɟoɹ‬ ‮ɐ‬ ‮ʌǝɹʎ‬ ‮sʅoʍ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬, ‮ʎon‬ ‮ɐɹǝ‬ ‮ʅǝss‬ ‮ʅıʞǝʅʎ‬ ‮ʇo‬ ‮ǝxdǝɹıǝuɔǝ‬ ‮nuǝxdǝɔʇǝp‬ ‮pısɔouuǝɔʇıous‬.",
     "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
+  },
+  "settings#disallowed-traffic-alert#disable-label": {
+    "message": "‮pısɐqʅǝ‬ ‮pısɐʅʅoʍǝp‬ ‮ʇɹɐɟɟıɔ‬ ‮ɐʅǝɹʇs‬",
+    "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
+  },
+  "settings#disallowed-traffic-alert#heading": {
+    "message": "‮pısɐʅʅoʍǝp‬ ‮⊥ɹɐɟɟıɔ‬ ‮∀ʅǝɹʇ‬",
+    "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
+  },
+  "settings#disallowed-traffic-alert#help-text": {
+    "message": "‮Soɯǝ‬ ‮ʇʎdǝs‬ ‮oɟ‬ ‮ıuʇǝɹuǝʇ‬ ‮ʇɹɐɟɟıɔ‬ ‮ɐɹǝ‬ ‮uoʇ‬ ‮snddoɹʇǝp‬ ‮ʍıʇɥonʇ‬ ‮ɐu‬ ‮ɐɔʇıʌǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬. ‮Ｍɥǝu‬ ‮snɔɥ‬ ‮ʇɹɐɟɟıɔ‬ ‮ıs‬ ‮pısɐʅʅoʍǝp‬, ‮ɐu‬ ‮ɐʅǝɹʇ‬ ‮ıs‬ ‮sɥoʍu‬. (‮ᴚǝ‬-‮ǝuɐqʅıuƃ‬ ‮ʍıʅʅ‬ ‮ɹǝbnıɹǝ‬ ‮ɐ‬ ‮ɹǝɔouuǝɔʇıou‬.)",
+    "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "settings#egress-region#default": {
     "message": "‮Ↄɥoosıuƃ‬ ‮ʇɥǝ‬ ‮pǝɟɐnʅʇ‬ <strong>“‮ɟɐsʇǝsʇ‬ ‮Ↄonuʇɹʎ‬”</strong> ‮odʇıou‬ ‮ɐʅʅoʍs‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮ɔɥoosǝ‬ ‮ɐ‬ ‮sǝɹʌǝɹ‬, ‮ʍɥıɔɥ‬ ‮ʍıʅʅ‬ ‮ƃǝuǝɹɐʅʅʎ‬ ‮ɹǝsnʅʇ‬ ‮ıu‬ ‮ʇɥǝ‬ ‮qǝsʇ‬ ‮uǝʇʍoɹʞ‬ ‮ɔouuǝɔʇıou‬.",

@@ -81,6 +81,9 @@
 #define SYSTRAY_MINIMIZE_NAME           "SystrayMinimize"
 #define SYSTRAY_MINIMIZE_DEFAULT        FALSE
 
+#define DISABLE_DISALLOWED_TRAFFIC_ALERT_NAME           "DisableDisallowedTrafficAlert"
+#define DISABLE_DISALLOWED_TRAFFIC_ALERT_DEFAULT        FALSE
+
 #define COOKIES_NAME                    "UICookies"
 #define COOKIES_DEFAULT                 ""
 
@@ -192,8 +195,11 @@ void Settings::ToJson(Json::Value& o_json)
       o_json["EgressRegion"] = Settings::EgressRegion();
       o_json["defaults"]["EgressRegion"] = EGRESS_REGION_DEFAULT;
 
-      o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;;
+      o_json["SystrayMinimize"] = Settings::SystrayMinimize() ? TRUE : FALSE;
       o_json["defaults"]["SystrayMinimize"] = SYSTRAY_MINIMIZE_DEFAULT;
+
+      o_json["DisableDisallowedTrafficAlert"] = Settings::DisableDisallowedTrafficAlert() ? TRUE : FALSE;
+      o_json["defaults"]["DisableDisallowedTrafficAlert"] = DISABLE_DISALLOWED_TRAFFIC_ALERT_DEFAULT;
 }
 
 // FromJson updates the stores settings from an object stored in JSON format.
@@ -284,6 +290,10 @@ bool Settings::FromJson(
         BOOL systrayMinimize = json.get("SystrayMinimize", SYSTRAY_MINIMIZE_DEFAULT).asUInt();
         // Does not require reconnect to apply change.
         WriteRegistryDwordValue(SYSTRAY_MINIMIZE_NAME, systrayMinimize);
+
+        BOOL disableDisallowedTrafficAlert = json.get("DisableDisallowedTrafficAlert", DISABLE_DISALLOWED_TRAFFIC_ALERT_DEFAULT).asUInt();
+        // Does not require reconnect to apply change.
+        WriteRegistryDwordValue(DISABLE_DISALLOWED_TRAFFIC_ALERT_NAME, disableDisallowedTrafficAlert);
     }
     catch (exception& e)
     {
@@ -346,12 +356,12 @@ string Settings::UpstreamProxyType()
 string Settings::UpstreamProxyHostname()
 {
     string hostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
-    
+
     int splitIndex = hostname.find_first_of("@");
     if (splitIndex != string::npos) {
         hostname = hostname.substr(splitIndex + 1, hostname.length() - 1);
     }
-    
+
     return hostname;
 }
 
@@ -433,6 +443,11 @@ string Settings::EgressRegion()
 bool Settings::SystrayMinimize()
 {
     return !!GetSettingDword(SYSTRAY_MINIMIZE_NAME, SYSTRAY_MINIMIZE_DEFAULT);
+}
+
+bool Settings::DisableDisallowedTrafficAlert()
+{
+    return !!GetSettingDword(DISABLE_DISALLOWED_TRAFFIC_ALERT_NAME, DISABLE_DISALLOWED_TRAFFIC_ALERT_DEFAULT);
 }
 
 /*

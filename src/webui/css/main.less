@@ -510,7 +510,7 @@ textarea {
 
 /* SETTINGS */
 
-// This animation gives s slight wiggle followed by motionlessness (the timing
+// This animation gives a slight wiggle followed by motionlessness (the timing
 // can be configured with the `animation` style).
 @keyframes buttonWiggle {
   0% { transform: rotate(0deg); }
@@ -552,6 +552,52 @@ textarea {
     body[dir="rtl"] & {
       .pull-left;
     }
+  }
+}
+
+.draw-attention:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  .translate(-50%,-50%);
+  border-radius: 100%;
+  width: 125%;
+  height: 125%;
+  border: 10000px solid black;
+  z-index: 9999;
+  opacity: 0.65;
+}
+
+.draw-attention {
+  animation: waggle 1s 0s forwards ease-out;
+  z-index: 1;
+}
+
+@keyframes waggle {
+  0% {
+    transform: none;
+  }
+  50% {
+    transform: rotateZ(-20deg) scale(1.2);
+  }
+  60% {
+    transform: rotateZ(25deg) scale(1.2);
+  }
+  67.5% {
+    transform: rotateZ(-15deg) scale(1.2);
+  }
+  75% {
+    transform: rotateZ(15deg) scale(1.2);
+  }
+  82.5% {
+    transform: rotateZ(-12deg) scale(1.2);
+  }
+  85% {
+    transform: rotateZ(0) scale(1.2);
+  }
+  100% {
+    transform: rotateZ(0) scale(1);
   }
 }
 
