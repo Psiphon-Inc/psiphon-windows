@@ -390,6 +390,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
     config["EmitDiagnosticNetworkParameters"] = true;
+    config["EmitServerAlerts"] = true;
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
@@ -594,7 +595,7 @@ string CoreTransport::GetUpstreamProxyAddress()
         if (!proxyConfig.httpsProxy.empty())
         {
             upstreamProxyAddress <<
-				WStringToUTF8(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
+                WStringToUTF8(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
         }
     }
 
@@ -1016,6 +1017,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         {
             string regions = data["regions"].toStyledString();
             my_print(NOT_SENSITIVE, false, _T("Available egress regions: %S"), regions.c_str());
+            // Processing this is left to main.js
         }
         else if (noticeType == "ActiveAuthorizationIDs")
         {

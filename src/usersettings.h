@@ -54,6 +54,8 @@ namespace Settings
 
     bool SystrayMinimize();
 
+    bool DisableDisallowedTrafficAlert();
+
     bool SkipProxySettings();
     bool SkipAutoConnect();
 

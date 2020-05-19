@@ -480,6 +480,7 @@
         UpstreamProxyDomain: 'domain',
         EgressRegion: 'GB',
         SystrayMinimize: 0,
+        DisableDisallowedTrafficAlert: 0,
         defaults: {
           SplitTunnel: 0,
           DisableTimeouts: 0,
@@ -493,7 +494,8 @@
           UpstreamProxyPassword: '',
           UpstreamProxyDomain: '',
           EgressRegion: '',
-          SystrayMinimize: 0
+          SystrayMinimize: 0,
+          DisableDisallowedTrafficAlert: 0
         }
       };
     } // Event handlers
@@ -529,6 +531,7 @@
       $(headingSelector).blur();
     });
     systrayMinimizeSetup();
+    disableDisallowedTrafficSetup();
     splitTunnelSetup();
     disableTimeoutsSetup();
     egressRegionSetup();
@@ -776,6 +779,10 @@
 
     if (!_.isUndefined(obj.SystrayMinimize)) {
       $('#SystrayMinimize').prop('checked', !!obj.SystrayMinimize);
+    }
+
+    if (!_.isUndefined(obj.DisableDisallowedTrafficAlert)) {
+      $('#DisableDisallowedTrafficAlert').prop('checked', !!obj.DisableDisallowedTrafficAlert);
     } // Re-hook the setting-changed event
 
 
@@ -808,7 +815,8 @@
       UpstreamProxyDomain: $('#UpstreamProxyDomain').val(),
       SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
       EgressRegion: egressRegion === BEST_REGION_VALUE ? '' : egressRegion,
-      SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0
+      SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0,
+      DisableDisallowedTrafficAlert: $('#DisableDisallowedTrafficAlert').prop('checked') ? 1 : 0
     };
     return returnValue;
   }
@@ -829,6 +837,17 @@
 
   function systrayMinimizeSetup() {
     $('#SystrayMinimize').change(function () {
+      // Tell the settings pane a change was made.
+      $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+    });
+  } //
+  // Disable disallowed traffic alert
+  //
+  // Will be called exactly once. Set up event listeners, etc.
+
+
+  function disableDisallowedTrafficSetup() {
+    $('#DisableDisallowedTrafficAlert').change(function () {
       // Tell the settings pane a change was made.
       $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
     });
@@ -2460,8 +2479,60 @@
 
     return psi;
   }
-  /* UI HELPERS ****************************************************************/
+  /**
+   * Called when tunnel core indicates that there was an attempt to access a
+   * port disallowed by the current traffic rules. We will show an alert to
+   * encourage the user to buy Speed Boost.
+   */
 
+
+  function handleDisallowedTrafficNotice() {
+    addLog({
+      priority: 2,
+      // high
+      message: 'Disallowed traffic detected; please purchase Speed Boost'
+    });
+
+    if (g_initObj.Settings.DisableDisallowedTrafficAlert) {
+      // User has disabled this alert in the settings
+      DEBUG_LOG('handleDisallowedTrafficNotice: DisableDisallowedTrafficAlert is true');
+      return;
+    }
+
+    if (!handleDisallowedTrafficNotice.alertDisallowedTraffic) {
+      // We have already shown the alert this session.
+      DEBUG_LOG('handleDisallowedTrafficNotice: alert already shown this session');
+      return;
+    } // else show the alert
+
+
+    DEBUG_LOG('handleDisallowedTrafficNotice: showing alert');
+    handleDisallowedTrafficNotice.alertDisallowedTraffic = false;
+    HtmlCtrlInterface_DisallowedTraffic();
+    showNoticeModal('notice#disallowed-traffic-alert-title', 'notice#disallowed-traffic-alert-body', null, null, function () {
+      if (compareIEVersion('gte', 9, true)) {
+        var psicashBlock = $('#psicash-block');
+
+        if (!psicashBlock.hasClass('hidden')) {
+          $('#psicash-block').addClass('draw-attention'); // The animation is 1s of movement, and we want the effect to linger for a bit.
+
+          setTimeout(function () {
+            return $('#psicash-block').removeClass('draw-attention');
+          }, 1500);
+        }
+      }
+    });
+  }
+
+  handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, function () {
+    if (g_lastState === 'stopped') {
+      // After a hard stop, we will again show the "disallowed traffic" alert one time.
+      DEBUG_LOG('Resetting handleDisallowedTrafficNotice.alertDisallowedTraffic to true');
+      handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
+    }
+  });
+  /* UI HELPERS ****************************************************************/
 
   function displayCornerAlert(elem) {
     // Show -- and then hide -- the alert
@@ -3043,7 +3114,11 @@
 
     $('#debug-RefreshPsiCash-balance').val(getCookie('debug-RefreshPsiCash-balance') ? getCookie('debug-RefreshPsiCash-balance') / BILLION : '');
     $('#debug-RefreshPsiCash-price-1hr').val(getCookie('debug-RefreshPsiCash-price-1hr') ? getCookie('debug-RefreshPsiCash-price-1hr') / BILLION : '');
-    $('#debug-RefreshPsiCash-price-24hr').val(getCookie('debug-RefreshPsiCash-price-24hr') ? getCookie('debug-RefreshPsiCash-price-24hr') / BILLION : '');
+    $('#debug-RefreshPsiCash-price-24hr').val(getCookie('debug-RefreshPsiCash-price-24hr') ? getCookie('debug-RefreshPsiCash-price-24hr') / BILLION : ''); // Wire up the Disallowed Traffic test
+
+    $('#debug-DisallowedTraffic a').click(function debugPsiCashInitDoneClick() {
+      handleDisallowedTrafficNotice();
+    });
   });
   /**
    * Construct a PsiCashMessageData object from the fields in the debug interface.
@@ -3224,6 +3299,10 @@
         setCookie('AvailableEgressRegions', args.data.regions); // Update the UI.
 
         updateAvailableEgressRegions(true);
+      } else if (args.noticeType === 'ServerAlert') {
+        if (args.data.reason === 'disallowed-traffic') {
+          handleDisallowedTrafficNotice();
+        }
       } else if (args.noticeType === 'SystemProxySettings::SetProxyError') {
         showNoticeModal('notice#systemproxysettings-setproxy-error-title', 'notice#systemproxysettings-setproxy-error-body', null, null, null);
       } else if (args.noticeType === 'SystemProxySettings::SetProxyWarning') {
@@ -3504,6 +3583,24 @@
       if (IS_BROWSER) {
         console.log(decodeURIComponent(appURL));
         alert('Call from JS to C to launch banner URL');
+      } else {
+        window.location = appURL;
+      }
+    });
+  }
+  /**
+   * Called when a "disallowed traffic" server alert is encountered. The C code will take
+   * steps to make the window visible.
+   */
+
+
+  function HtmlCtrlInterface_DisallowedTraffic() {
+    nextTick(function () {
+      var appURL = PSIPHON_LINK_PREFIX + 'disallowedtraffic';
+
+      if (IS_BROWSER) {
+        console.log(decodeURIComponent(appURL));
+        alert('Call from JS to C in response to disallowed traffic');
       } else {
         window.location = appURL;
       }
