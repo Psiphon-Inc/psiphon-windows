@@ -541,22 +541,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
                                           .append(LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME);
         serverListFilename = serverListPath;
 
-        string serverList = EMBEDDED_SERVER_LIST;
-
-        // Retain some existing server entries that were used by the legacy client
-        ServerEntries legacyEntries = ServerList::GetListFromSystem(LEGACY_SERVER_ENTRY_LIST_NAME);
-        if (legacyEntries.size() > MAX_LEGACY_SERVER_ENTRIES)
-        {
-            legacyEntries.resize(MAX_LEGACY_SERVER_ENTRIES);
-        }
-        if (legacyEntries.size() > 0 && serverList.length() > 0)
-        {
-            // EMBEDDED_SERVER_LIST may be LF-delimited, not LF-terminated
-            serverList += "\n";
-        }
-        serverList += ServerList::EncodeServerEntries(legacyEntries);
-
-        if (!WriteFile(serverListFilename, serverList))
+        if (!WriteFile(serverListFilename, EMBEDDED_SERVER_LIST))
         {
             my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
             return false;
