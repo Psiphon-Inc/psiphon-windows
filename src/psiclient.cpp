@@ -566,7 +566,14 @@ static void ShowConnectedReminderBalloon()
         return;
     }
 
-    if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
+    // We'll interpret the presence of an authorization as an indication that
+    // we have an active Speed Boost. (At this time there are no other uses
+    // for authorizations in Windows. In the future we may need to examine
+    // active purchases.)
+    bool boosting = (g_connectionManager.GetAuthorizations().size() > 0);
+
+    if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED &&
+        !boosting)
     {
         HICON hIcon = g_notifyIconConnected;
         wstring infoTitle, infoBody;

@@ -2064,6 +2064,21 @@
   var g_PsiCashData = null;
 
   /**
+   * The state determines which chunks of UI are visible.
+   * @enum {object}
+   * @readonly
+   */
+  const PsiCashUIState = {
+    ZERO_BALANCE: {uiSelector: '#psicash-interface-zerobalance'},
+    NSF_BALANCE: {uiSelector: '#psicash-interface-nsfbalance'},
+    ENOUGH_BALANCE: {uiSelector: '#psicash-interface-enoughbalance'},
+    BUYING_BOOST: {uiSelector: '#psicash-interface-buyingboost'},
+    ACTIVE_BOOST: {uiSelector: '#psicash-interface-activeboost'},
+    VPN_MODE_DISABLED: {uiSelector: '#psicash-interface-vpndisabled'}
+  };
+  PsiCashStore.set('uiState', PsiCashUIState.ZERO_BALANCE);
+
+  /**
    * Called from refreshPsiCash and on an interval to update the PsiCash UI.
    * @param {?PsiCashRefreshData} psicashData Will be undefined when called on a timer.
    */
@@ -2144,22 +2159,6 @@
       $('a.psicash-buy-psi').addClass('hidden');
     }
 
-    // The state determines which chunks of UI are visible.
-
-    /**
-     * @enum {object}
-     * @readonly
-     */
-    const UIState = {
-      ZERO_BALANCE: {uiSelector: '#psicash-interface-zerobalance'},
-      NSF_BALANCE: {uiSelector: '#psicash-interface-nsfbalance'},
-      ENOUGH_BALANCE: {uiSelector: '#psicash-interface-enoughbalance'},
-      BUYING_BOOST: {uiSelector: '#psicash-interface-buyingboost'},
-      ACTIVE_BOOST: {uiSelector: '#psicash-interface-activeboost'},
-      VPN_MODE_DISABLED: {uiSelector: '#psicash-interface-vpndisabled'}
-    };
-    let state = UIState.ZERO_BALANCE;
-
     let sbPrices = {};
     if (psicashData.purchase_prices) {
       // NOTE: This does not handle disappearing prices.
@@ -2175,10 +2174,13 @@
       }
     }
 
+    let state = PsiCashUIState.ZERO_BALANCE;
+    // DO NOT return early from this point. state must be updated in PsiCashStore.uiState.
+
     // Only the 1-hour Speed Boost is considered for determining if the user has "enough" Psi
     if (_.isNumber(psicashData.balance) && _.isNumber(sbPrices['1hr'])) {
       if (psicashData.balance >= sbPrices['1hr']) {
-        state = UIState.ENOUGH_BALANCE;
+        state = PsiCashUIState.ENOUGH_BALANCE;
 
         // Enable/disable the 1-day button depending on balance.
         // (Note that this is only a cosmetic disabling, and the button will still respond
@@ -2187,7 +2189,7 @@
         $('.psicash-buy[data-distinguisher="24hr"]').prop('disabled', nsf1Day).toggleClass('disabled', nsf1Day)
       }
       else if (psicashData.balance > 0) {
-        state = UIState.NSF_BALANCE;
+        state = PsiCashUIState.NSF_BALANCE;
       }
     }
 
@@ -2211,7 +2213,7 @@
         if (psicashData.purchases[i]['class'] === 'speed-boost') {
           const localTimeExpiry = moment(psicashData.purchases[i].localTimeExpiry);
           if (g_lastState === 'connected' || localTimeExpiry.isAfter(moment())) {
-            state = UIState.ACTIVE_BOOST;
+            state = PsiCashUIState.ACTIVE_BOOST;
 
             millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
             // Clock skew (between client<->PsiCash server<->psiphond) could result in a
@@ -2234,13 +2236,13 @@
 
     if (PsiCashStore.data.purchaseInProgress) {
       // We are waiting for a purchase request to complete
-      state = UIState.BUYING_BOOST;
+      state = PsiCashUIState.BUYING_BOOST;
     }
 
     // Speed Boost cannot function in L2TP/IPSec mode. We want to disabled controls and
     // indicate why we're in that state.
     if (g_initObj.Settings.VPN) {
-      state = UIState.VPN_MODE_DISABLED;
+      state = PsiCashUIState.VPN_MODE_DISABLED;
     }
 
     // Show and hide the appropriate parts of the UI
@@ -2253,7 +2255,7 @@
     // When we have an active speed boost, we want this function to be called repeatedly,
     // so that the countdown timer is updated, and so the UI changes when the speed boost
     // ends. But there's no reason to do work on an interval if there's no active boost.
-    if (state === UIState.ACTIVE_BOOST) {
+    if (state === PsiCashUIState.ACTIVE_BOOST) {
       // There are triggers that result in this function being called, and we don't want
       // to create periodic update timeouts every time, or else we'll end up with updates
       // happening way too often (multiple times per second).
@@ -2267,6 +2269,8 @@
         psiCashUIUpdater.timeout = setTimeout(psiCashUIUpdater, 60 * 1000);
       }
     }
+
+    PsiCashStore.set('uiState', state);
   }
 
   /**
@@ -2750,6 +2754,13 @@
    * encourage the user to buy Speed Boost.
    */
   function handleDisallowedTrafficNotice() {
+    if (PsiCashStore.data.uiState === PsiCashUIState.ACTIVE_BOOST) {
+      // If we're boosting, then any disallowed traffic is something that won't
+      // be let through by purchasing speed boost, so logging, etc., is pointless.
+      DEBUG_LOG('handleDisallowedTrafficNotice: already boosting');
+      return;
+    }
+
     addLog({
       priority: 2, // high
       message: 'Disallowed traffic detected; please purchase Speed Boost'
@@ -2792,7 +2803,20 @@
   $window.on(CONNECTED_STATE_CHANGE_EVENT, () => {
     if (g_lastState === 'stopped') {
       // After a hard stop, we will again show the "disallowed traffic" alert one time.
-      DEBUG_LOG('Resetting handleDisallowedTrafficNotice.alertDisallowedTraffic to true');
+      DEBUG_LOG('handleDisallowedTrafficNotice: resetting alertDisallowedTraffic to true because connected state stopped');
+      handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
+    }
+  });
+  PsiCashStore.subscribe('uiState', () => {
+    if (PsiCashStore.data.uiState === PsiCashUIState.ACTIVE_BOOST &&
+        !handleDisallowedTrafficNotice.boosting) {
+      DEBUG_LOG('handleDisallowedTrafficNotice: boost started');
+      handleDisallowedTrafficNotice.boosting = true;
+    }
+    else if (handleDisallowedTrafficNotice.boosting) {
+      // We were boosting and now we're not. Show the "disallowed traffic" alert again.
+      DEBUG_LOG('handleDisallowedTrafficNotice: resetting alertDisallowedTraffic to true because boost ended');
+      handleDisallowedTrafficNotice.boosting = false;
       handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
     }
   });
