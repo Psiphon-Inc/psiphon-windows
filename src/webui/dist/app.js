@@ -1951,7 +1951,9 @@
     }
 
     if (psicashData.buy_psi_url) {
-      $('a.psicash-buy-psi').prop('href', psicashData.buy_psi_url).removeClass('hidden');
+      var urlComp = urlComponents(psicashData.buy_psi_url);
+      urlComp.search += (urlComp.search ? '&' : '?') + 'utm_source=windows_app';
+      $('a.psicash-buy-psi').prop('href', urlComp.href).removeClass('hidden');
     } else {
       // For some states (like zero balance), hiding the "buy" button will look strange, but
       // since that implies there's no earner token, the whole PsiCash UI will be hidden anyway.
@@ -2991,6 +2993,18 @@
 
   function randomID() {
     return base64.encode(Math.random());
+  }
+  /**
+   * Splits the given URL into components that can be accessed with `result.hash`, etc.
+   * @param {string} url
+   * @returns {HTMLAnchorElement}
+   */
+
+
+  function urlComponents(url) {
+    var parser = document.createElement('a');
+    parser.href = url;
+    return parser;
   }
   /* DEBUGGING *****************************************************************/
   // Some functionality to help us debug (and demo) in browser.
