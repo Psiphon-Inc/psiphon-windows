@@ -2151,7 +2151,9 @@
     }
 
     if (psicashData.buy_psi_url) {
-      $('a.psicash-buy-psi').prop('href', psicashData.buy_psi_url).removeClass('hidden');
+      const urlComp = urlComponents(psicashData.buy_psi_url);
+      urlComp.search +=  (urlComp.search ? '&' : '?') + 'utm_source=windows_app';
+      $('a.psicash-buy-psi').prop('href', urlComp.href).removeClass('hidden');
     }
     else {
       // For some states (like zero balance), hiding the "buy" button will look strange, but
@@ -3278,6 +3280,18 @@
   function randomID() {
     return base64.encode(Math.random());
   }
+
+  /**
+   * Splits the given URL into components that can be accessed with `result.hash`, etc.
+   * @param {string} url
+   * @returns {HTMLAnchorElement}
+   */
+  function urlComponents(url) {
+    const parser = document.createElement('a');
+    parser.href = url;
+    return parser;
+  }
+
 
   /* DEBUGGING *****************************************************************/
 
