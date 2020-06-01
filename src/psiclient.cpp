@@ -73,6 +73,7 @@ static bool g_htmlUiFinished = false;
 
 bool HandlePsiCashCommand(const string& jsonString);
 void InitPsiCash();
+void ForegroundWindow(HWND hwnd);
 
 
 //==== Controls ================================================================
@@ -127,20 +128,22 @@ void OnCreate(HWND hWndParent)
 
 //==== String Table helpers ==================================================
 
-#define STRING_KEY_STATE_STOPPED_TITLE              "appbackend#state-stopped-title"
-#define STRING_KEY_STATE_STOPPED_BODY               "appbackend#state-stopped-body"
-#define STRING_KEY_STATE_STARTING_TITLE             "appbackend#state-starting-title"
-#define STRING_KEY_STATE_STARTING_BODY              "appbackend#state-starting-body"
-#define STRING_KEY_STATE_CONNECTED_TITLE            "appbackend#state-connected-title"
-#define STRING_KEY_STATE_CONNECTED_BODY             "appbackend#state-connected-body"
-#define STRING_KEY_STATE_CONNECTED_REMINDER_TITLE   "appbackend#state-connected-reminder-title"
-#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY    "appbackend#state-connected-reminder-body"
-#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2  "appbackend#state-connected-reminder-body-2"
-#define STRING_KEY_STATE_STOPPING_TITLE             "appbackend#state-stopping-title"
-#define STRING_KEY_STATE_STOPPING_BODY              "appbackend#state-stopping-body"
-#define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE       "appbackend#minimized-to-systray-title"
-#define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY        "appbackend#minimized-to-systray-body"
-#define STRING_KEY_OS_UNSUPPORTED                   "appbackend#os-unsupported"
+#define STRING_KEY_STATE_STOPPED_TITLE                      "appbackend#state-stopped-title"
+#define STRING_KEY_STATE_STOPPED_BODY                       "appbackend#state-stopped-body"
+#define STRING_KEY_STATE_STARTING_TITLE                     "appbackend#state-starting-title"
+#define STRING_KEY_STATE_STARTING_BODY                      "appbackend#state-starting-body"
+#define STRING_KEY_STATE_CONNECTED_TITLE                    "appbackend#state-connected-title"
+#define STRING_KEY_STATE_CONNECTED_BODY                     "appbackend#state-connected-body"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_TITLE           "appbackend#state-connected-reminder-title"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY            "appbackend#state-connected-reminder-body"
+#define STRING_KEY_STATE_CONNECTED_REMINDER_BODY_2          "appbackend#state-connected-reminder-body-2"
+#define STRING_KEY_STATE_STOPPING_TITLE                     "appbackend#state-stopping-title"
+#define STRING_KEY_STATE_STOPPING_BODY                      "appbackend#state-stopping-body"
+#define STRING_KEY_MINIMIZED_TO_SYSTRAY_TITLE               "appbackend#minimized-to-systray-title"
+#define STRING_KEY_MINIMIZED_TO_SYSTRAY_BODY                "appbackend#minimized-to-systray-body"
+#define STRING_KEY_OS_UNSUPPORTED                           "appbackend#os-unsupported"
+#define STRING_KEY_DISALLOWED_TRAFFIC_NOTIFICATION_TITLE    "appbackend#disallowed-traffic-notification-title"
+#define STRING_KEY_DISALLOWED_TRAFFIC_NOTIFICATION_BODY     "appbackend#disallowed-traffic-notification-body"
 
 static map<string, wstring> g_stringTable;
 
@@ -563,7 +566,14 @@ static void ShowConnectedReminderBalloon()
         return;
     }
 
-    if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
+    // We'll interpret the presence of an authorization as an indication that
+    // we have an active Speed Boost. (At this time there are no other uses
+    // for authorizations in Windows. In the future we may need to examine
+    // active purchases.)
+    bool boosting = (g_connectionManager.GetAuthorizations().size() > 0);
+
+    if (g_connectionManager.GetState() == CONNECTION_MANAGER_STATE_CONNECTED &&
+        !boosting)
     {
         HICON hIcon = g_notifyIconConnected;
         wstring infoTitle, infoBody;
@@ -840,6 +850,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
     const LPCTSTR appBannerClick = PSIPHON_LINK_PREFIX _T("bannerclick");
     const LPCTSTR psicashCommand = PSIPHON_LINK_PREFIX _T("psicash?");
     const size_t psicashCommandLen = _tcslen(psicashCommand);
+    const LPCTSTR disallowedTraffic = PSIPHON_LINK_PREFIX _T("disallowedtraffic");
 
     if (_tcscmp(url, appReady) == 0)
     {
@@ -1005,6 +1016,18 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR url)
             my_print(NOT_SENSITIVE, true, _T("%s: HandlePsiCashCommand failed"), __TFUNCTION__);
             goto done;
         }
+    }
+    else if (_tcscmp(url, disallowedTraffic) == 0)
+    {
+        // We got a disallowed-traffic alert. Foreground and show systray notification.
+
+        ForegroundWindow(g_hWnd);
+
+        wstring infoTitle, infoBody;
+        (void)GetStringTableEntry(STRING_KEY_DISALLOWED_TRAFFIC_NOTIFICATION_TITLE, infoTitle);
+        (void)GetStringTableEntry(STRING_KEY_DISALLOWED_TRAFFIC_NOTIFICATION_BODY, infoBody);
+
+        UpdateSystrayIcon(NULL, infoTitle, infoBody);
     }
     else {
         // Not one of our links. Open it in an external browser.
@@ -1330,17 +1353,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         HWND otherWindow = FindWindow(g_szWindowClass, g_szTitle);
         if (otherWindow)
         {
-            // Un-minimize if necessary
-            WINDOWPLACEMENT wp = { 0 };
-            wp.length = sizeof(WINDOWPLACEMENT);
-            if (GetWindowPlacement(otherWindow, &wp) &&
-                wp.showCmd == SW_SHOWMINIMIZED || wp.showCmd == SW_HIDE)
-            {
-                ShowWindow(otherWindow, SW_RESTORE);
-            }
-
-            ShowWindow(otherWindow, SW_SHOW);
-            SetForegroundWindow(otherWindow);
+            ForegroundWindow(otherWindow);
         }
         return FALSE;
     }
@@ -1526,16 +1539,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             lParam == WM_RBUTTONDBLCLK ||
             lParam == NIN_BALLOONUSERCLICK)
         {
-            WINDOWPLACEMENT wp = { 0 };
-            wp.length = sizeof(WINDOWPLACEMENT);
-            if (GetWindowPlacement(g_hWnd, &wp) &&
-                wp.showCmd == SW_SHOWMINIMIZED || wp.showCmd == SW_HIDE)
-            {
-                ShowWindow(g_hWnd, SW_RESTORE);
-            }
-
-            ShowWindow(g_hWnd, SW_SHOW);
-            SetForegroundWindow(g_hWnd);
+            ForegroundWindow(g_hWnd);
         }
         break;
 
@@ -1577,6 +1581,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
+}
+
+/// Make the given window visible and foreground
+void ForegroundWindow(HWND hwnd)
+{
+    // Un-minimize if necessary
+    WINDOWPLACEMENT wp = { 0 };
+    wp.length = sizeof(WINDOWPLACEMENT);
+    if (GetWindowPlacement(hwnd, &wp) &&
+        wp.showCmd == SW_SHOWMINIMIZED || wp.showCmd == SW_HIDE)
+    {
+        ShowWindow(hwnd, SW_RESTORE);
+    }
+
+    ShowWindow(hwnd, SW_SHOW);
+    SetForegroundWindow(hwnd);
 }
 
 
@@ -1625,7 +1645,7 @@ void InitPsiCash() {
 
     auto err = psicash::Lib::_().Init(false);
     if (err) {
-        // Init failed, indicating file corruption or disk access problems. 
+        // Init failed, indicating file corruption or disk access problems.
         // We'll try to reset.
         auto retryErr = psicash::Lib::_().Init(true);
 

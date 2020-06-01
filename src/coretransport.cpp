@@ -390,6 +390,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["DeviceRegion"] = WStringToUTF8(GetDeviceRegion());
     config["EmitDiagnosticNotices"] = true;
     config["EmitDiagnosticNetworkParameters"] = true;
+    config["EmitServerAlerts"] = true;
 
     // Don't use an upstream proxy when in VPN mode. If the proxy is on a private network,
     // we may not be able to route to it. If the proxy is on a public network we prefer not
@@ -540,22 +541,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
                                           .append(LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME);
         serverListFilename = serverListPath;
 
-        string serverList = EMBEDDED_SERVER_LIST;
-
-        // Retain some existing server entries that were used by the legacy client
-        ServerEntries legacyEntries = ServerList::GetListFromSystem(LEGACY_SERVER_ENTRY_LIST_NAME);
-        if (legacyEntries.size() > MAX_LEGACY_SERVER_ENTRIES)
-        {
-            legacyEntries.resize(MAX_LEGACY_SERVER_ENTRIES);
-        }
-        if (legacyEntries.size() > 0 && serverList.length() > 0)
-        {
-            // EMBEDDED_SERVER_LIST may be LF-delimited, not LF-terminated
-            serverList += "\n";
-        }
-        serverList += ServerList::EncodeServerEntries(legacyEntries);
-
-        if (!WriteFile(serverListFilename, serverList))
+        if (!WriteFile(serverListFilename, EMBEDDED_SERVER_LIST))
         {
             my_print(NOT_SENSITIVE, false, _T("%s - write server list file failed (%d)"), __TFUNCTION__, GetLastError());
             return false;
@@ -594,7 +580,7 @@ string CoreTransport::GetUpstreamProxyAddress()
         if (!proxyConfig.httpsProxy.empty())
         {
             upstreamProxyAddress <<
-				WStringToUTF8(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
+                WStringToUTF8(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
         }
     }
 
@@ -1016,6 +1002,7 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
         {
             string regions = data["regions"].toStyledString();
             my_print(NOT_SENSITIVE, false, _T("Available egress regions: %S"), regions.c_str());
+            // Processing this is left to main.js
         }
         else if (noticeType == "ActiveAuthorizationIDs")
         {

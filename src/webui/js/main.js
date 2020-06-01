@@ -540,6 +540,7 @@
         UpstreamProxyDomain: 'domain',
         EgressRegion: 'GB',
         SystrayMinimize: 0,
+        DisableDisallowedTrafficAlert: 0,
         defaults: {
           SplitTunnel: 0,
           DisableTimeouts: 0,
@@ -553,7 +554,8 @@
           UpstreamProxyPassword: '',
           UpstreamProxyDomain: '',
           EgressRegion: '',
-          SystrayMinimize: 0
+          SystrayMinimize: 0,
+          DisableDisallowedTrafficAlert: 0
         }
       };
     }
@@ -596,6 +598,7 @@
       });
 
     systrayMinimizeSetup();
+    disableDisallowedTrafficSetup();
     splitTunnelSetup();
     disableTimeoutsSetup();
     egressRegionSetup();
@@ -862,6 +865,10 @@
       $('#SystrayMinimize').prop('checked', !!obj.SystrayMinimize);
     }
 
+    if (!_.isUndefined(obj.DisableDisallowedTrafficAlert)) {
+      $('#DisableDisallowedTrafficAlert').prop('checked', !!obj.DisableDisallowedTrafficAlert);
+    }
+
     // Re-hook the setting-changed event
     $('#settings-pane').on(SETTING_CHANGED_EVENT, onSettingChanged);
   }
@@ -894,7 +901,8 @@
       UpstreamProxyDomain: $('#UpstreamProxyDomain').val(),
       SkipUpstreamProxy: $('#SkipUpstreamProxy').prop('checked') ? 1 : 0,
       EgressRegion: egressRegion === BEST_REGION_VALUE ? '' : egressRegion,
-      SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0
+      SystrayMinimize: $('#SystrayMinimize').prop('checked') ? 1 : 0,
+      DisableDisallowedTrafficAlert: $('#DisableDisallowedTrafficAlert').prop('checked') ? 1 : 0
     };
 
     return returnValue;
@@ -924,6 +932,18 @@
   // Will be called exactly once. Set up event listeners, etc.
   function systrayMinimizeSetup() {
     $('#SystrayMinimize').change(function() {
+      // Tell the settings pane a change was made.
+      $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+    });
+  }
+
+  //
+  // Disable disallowed traffic alert
+  //
+
+  // Will be called exactly once. Set up event listeners, etc.
+  function disableDisallowedTrafficSetup() {
+    $('#DisableDisallowedTrafficAlert').change(function() {
       // Tell the settings pane a change was made.
       $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
     });
@@ -2044,6 +2064,21 @@
   var g_PsiCashData = null;
 
   /**
+   * The state determines which chunks of UI are visible.
+   * @enum {object}
+   * @readonly
+   */
+  const PsiCashUIState = {
+    ZERO_BALANCE: {uiSelector: '#psicash-interface-zerobalance'},
+    NSF_BALANCE: {uiSelector: '#psicash-interface-nsfbalance'},
+    ENOUGH_BALANCE: {uiSelector: '#psicash-interface-enoughbalance'},
+    BUYING_BOOST: {uiSelector: '#psicash-interface-buyingboost'},
+    ACTIVE_BOOST: {uiSelector: '#psicash-interface-activeboost'},
+    VPN_MODE_DISABLED: {uiSelector: '#psicash-interface-vpndisabled'}
+  };
+  PsiCashStore.set('uiState', PsiCashUIState.ZERO_BALANCE);
+
+  /**
    * Called from refreshPsiCash and on an interval to update the PsiCash UI.
    * @param {?PsiCashRefreshData} psicashData Will be undefined when called on a timer.
    */
@@ -2116,29 +2151,15 @@
     }
 
     if (psicashData.buy_psi_url) {
-      $('a.psicash-buy-psi').prop('href', psicashData.buy_psi_url).removeClass('hidden');
+      const urlComp = urlComponents(psicashData.buy_psi_url);
+      urlComp.search +=  (urlComp.search ? '&' : '?') + 'utm_source=windows_app';
+      $('a.psicash-buy-psi').prop('href', urlComp.href).removeClass('hidden');
     }
     else {
       // For some states (like zero balance), hiding the "buy" button will look strange, but
       // since that implies there's no earner token, the whole PsiCash UI will be hidden anyway.
       $('a.psicash-buy-psi').addClass('hidden');
     }
-
-    // The state determines which chunks of UI are visible.
-
-    /**
-     * @enum {object}
-     * @readonly
-     */
-    const UIState = {
-      ZERO_BALANCE: {uiSelector: '#psicash-interface-zerobalance'},
-      NSF_BALANCE: {uiSelector: '#psicash-interface-nsfbalance'},
-      ENOUGH_BALANCE: {uiSelector: '#psicash-interface-enoughbalance'},
-      BUYING_BOOST: {uiSelector: '#psicash-interface-buyingboost'},
-      ACTIVE_BOOST: {uiSelector: '#psicash-interface-activeboost'},
-      VPN_MODE_DISABLED: {uiSelector: '#psicash-interface-vpndisabled'}
-    };
-    let state = UIState.ZERO_BALANCE;
 
     let sbPrices = {};
     if (psicashData.purchase_prices) {
@@ -2155,10 +2176,13 @@
       }
     }
 
+    let state = PsiCashUIState.ZERO_BALANCE;
+    // DO NOT return early from this point. state must be updated in PsiCashStore.uiState.
+
     // Only the 1-hour Speed Boost is considered for determining if the user has "enough" Psi
     if (_.isNumber(psicashData.balance) && _.isNumber(sbPrices['1hr'])) {
       if (psicashData.balance >= sbPrices['1hr']) {
-        state = UIState.ENOUGH_BALANCE;
+        state = PsiCashUIState.ENOUGH_BALANCE;
 
         // Enable/disable the 1-day button depending on balance.
         // (Note that this is only a cosmetic disabling, and the button will still respond
@@ -2167,7 +2191,7 @@
         $('.psicash-buy[data-distinguisher="24hr"]').prop('disabled', nsf1Day).toggleClass('disabled', nsf1Day)
       }
       else if (psicashData.balance > 0) {
-        state = UIState.NSF_BALANCE;
+        state = PsiCashUIState.NSF_BALANCE;
       }
     }
 
@@ -2191,7 +2215,7 @@
         if (psicashData.purchases[i]['class'] === 'speed-boost') {
           const localTimeExpiry = moment(psicashData.purchases[i].localTimeExpiry);
           if (g_lastState === 'connected' || localTimeExpiry.isAfter(moment())) {
-            state = UIState.ACTIVE_BOOST;
+            state = PsiCashUIState.ACTIVE_BOOST;
 
             millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
             // Clock skew (between client<->PsiCash server<->psiphond) could result in a
@@ -2214,13 +2238,13 @@
 
     if (PsiCashStore.data.purchaseInProgress) {
       // We are waiting for a purchase request to complete
-      state = UIState.BUYING_BOOST;
+      state = PsiCashUIState.BUYING_BOOST;
     }
 
     // Speed Boost cannot function in L2TP/IPSec mode. We want to disabled controls and
     // indicate why we're in that state.
     if (g_initObj.Settings.VPN) {
-      state = UIState.VPN_MODE_DISABLED;
+      state = PsiCashUIState.VPN_MODE_DISABLED;
     }
 
     // Show and hide the appropriate parts of the UI
@@ -2233,7 +2257,7 @@
     // When we have an active speed boost, we want this function to be called repeatedly,
     // so that the countdown timer is updated, and so the UI changes when the speed boost
     // ends. But there's no reason to do work on an interval if there's no active boost.
-    if (state === UIState.ACTIVE_BOOST) {
+    if (state === PsiCashUIState.ACTIVE_BOOST) {
       // There are triggers that result in this function being called, and we don't want
       // to create periodic update timeouts every time, or else we'll end up with updates
       // happening way too often (multiple times per second).
@@ -2247,6 +2271,8 @@
         psiCashUIUpdater.timeout = setTimeout(psiCashUIUpdater, 60 * 1000);
       }
     }
+
+    PsiCashStore.set('uiState', state);
   }
 
   /**
@@ -2724,6 +2750,79 @@
     return psi;
   }
 
+  /**
+   * Called when tunnel core indicates that there was an attempt to access a
+   * port disallowed by the current traffic rules. We will show an alert to
+   * encourage the user to buy Speed Boost.
+   */
+  function handleDisallowedTrafficNotice() {
+    if (PsiCashStore.data.uiState === PsiCashUIState.ACTIVE_BOOST) {
+      // If we're boosting, then any disallowed traffic is something that won't
+      // be let through by purchasing speed boost, so logging, etc., is pointless.
+      DEBUG_LOG('handleDisallowedTrafficNotice: already boosting');
+      return;
+    }
+
+    addLog({
+      priority: 2, // high
+      message: 'Disallowed traffic detected; please purchase Speed Boost'
+    });
+
+    if (g_initObj.Settings.DisableDisallowedTrafficAlert) {
+      // User has disabled this alert in the settings
+      DEBUG_LOG('handleDisallowedTrafficNotice: DisableDisallowedTrafficAlert is true');
+      return;
+    }
+
+    if (!handleDisallowedTrafficNotice.alertDisallowedTraffic) {
+      // We have already shown the alert this session.
+      DEBUG_LOG('handleDisallowedTrafficNotice: alert already shown this session');
+      return;
+    }
+    // else show the alert
+
+    DEBUG_LOG('handleDisallowedTrafficNotice: showing alert');
+
+    handleDisallowedTrafficNotice.alertDisallowedTraffic = false;
+
+    HtmlCtrlInterface_DisallowedTraffic()
+
+    showNoticeModal(
+      'notice#disallowed-traffic-alert-title',
+      'notice#disallowed-traffic-alert-body',
+      null, null, () => {
+        if (compareIEVersion('gte', 9, true)) {
+          const psicashBlock = $('#psicash-block');
+          if (!psicashBlock.hasClass('hidden')) {
+            $('#psicash-block').addClass('draw-attention');
+            // The animation is 1s of movement, and we want the effect to linger for a bit.
+            setTimeout(() => $('#psicash-block').removeClass('draw-attention'), 1500);
+          }
+        }
+      });
+  }
+  handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
+  $window.on(CONNECTED_STATE_CHANGE_EVENT, () => {
+    if (g_lastState === 'stopped') {
+      // After a hard stop, we will again show the "disallowed traffic" alert one time.
+      DEBUG_LOG('handleDisallowedTrafficNotice: resetting alertDisallowedTraffic to true because connected state stopped');
+      handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
+    }
+  });
+  PsiCashStore.subscribe('uiState', () => {
+    if (PsiCashStore.data.uiState === PsiCashUIState.ACTIVE_BOOST &&
+        !handleDisallowedTrafficNotice.boosting) {
+      DEBUG_LOG('handleDisallowedTrafficNotice: boost started');
+      handleDisallowedTrafficNotice.boosting = true;
+    }
+    else if (handleDisallowedTrafficNotice.boosting) {
+      // We were boosting and now we're not. Show the "disallowed traffic" alert again.
+      DEBUG_LOG('handleDisallowedTrafficNotice: resetting alertDisallowedTraffic to true because boost ended');
+      handleDisallowedTrafficNotice.boosting = false;
+      handleDisallowedTrafficNotice.alertDisallowedTraffic = true;
+    }
+  });
+
   /* UI HELPERS ****************************************************************/
 
   function displayCornerAlert(elem) {
@@ -3182,6 +3281,18 @@
     return base64.encode(Math.random());
   }
 
+  /**
+   * Splits the given URL into components that can be accessed with `result.hash`, etc.
+   * @param {string} url
+   * @returns {HTMLAnchorElement}
+   */
+  function urlComponents(url) {
+    const parser = document.createElement('a');
+    parser.href = url;
+    return parser;
+  }
+
+
   /* DEBUGGING *****************************************************************/
 
   // Some functionality to help us debug (and demo) in browser.
@@ -3320,6 +3431,12 @@
     $('#debug-RefreshPsiCash-balance').val(getCookie('debug-RefreshPsiCash-balance') ? getCookie('debug-RefreshPsiCash-balance') / BILLION : '');
     $('#debug-RefreshPsiCash-price-1hr').val(getCookie('debug-RefreshPsiCash-price-1hr') ? getCookie('debug-RefreshPsiCash-price-1hr') / BILLION : '');
     $('#debug-RefreshPsiCash-price-24hr').val(getCookie('debug-RefreshPsiCash-price-24hr') ? getCookie('debug-RefreshPsiCash-price-24hr') / BILLION : '');
+
+    // Wire up the Disallowed Traffic test
+    $('#debug-DisallowedTraffic a').click(function debugPsiCashInitDoneClick() {
+      handleDisallowedTrafficNotice();
+    });
+
   });
 
   /**
@@ -3467,7 +3584,7 @@
 
   /* INTERFACE METHODS *********************************************************/
 
-  var PSIPHON_LINK_PREFIX = 'psi:';
+  const PSIPHON_LINK_PREFIX = 'psi:';
 
   /* Calls from C code to JS code. */
 
@@ -3475,7 +3592,7 @@
   function HtmlCtrlInterface_AddLog(jsonArgs) {
     nextTick(function() {
       // Allow object as input to assist with debugging
-      var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
+      const args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
       addLog(args);
     });
   }
@@ -3484,7 +3601,7 @@
   function HtmlCtrlInterface_AddNotice(jsonArgs) {
     nextTick(function() {
       // Allow object as input to assist with debugging
-      var args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
+      const args = _.isObject(jsonArgs) ? jsonArgs : JSON.parse(jsonArgs);
       if (args.noticeType === 'UpstreamProxyError') {
         upstreamProxyErrorNotice(args.data.message);
       }
@@ -3498,6 +3615,11 @@
         // Update the UI.
         updateAvailableEgressRegions(true);
       }
+      else if (args.noticeType === 'ServerAlert') {
+        if (args.data.reason === 'disallowed-traffic') {
+          handleDisallowedTrafficNotice();
+        }
+      }
       else if (args.noticeType === 'SystemProxySettings::SetProxyError') {
         showNoticeModal(
           'notice#systemproxysettings-setproxy-error-title',
@@ -3505,7 +3627,7 @@
           null, null, null);
       }
       else if (args.noticeType === 'SystemProxySettings::SetProxyWarning') {
-        var setProxyWarningTemplate = i18n.t('notice#systemproxysettings-setproxy-warning-template');
+        const setProxyWarningTemplate = i18n.t('notice#systemproxysettings-setproxy-warning-template');
         addLog({
           priority: 2, // high
           message: _.template(setProxyWarningTemplate)({data: args.data})
@@ -3516,7 +3638,7 @@
 
   // Set the connected state.
   // We will de-bounce the state change messages.
-  var g_timeoutSetState = null;
+  let g_timeoutSetState = null;
   function HtmlCtrlInterface_SetState(jsonArgs) {
     // Clear any queued state changes.
     if (g_timeoutSetState !== null) {
@@ -3780,6 +3902,23 @@
       if (IS_BROWSER) {
         console.log(decodeURIComponent(appURL));
         alert('Call from JS to C to launch banner URL');
+      }
+      else {
+        window.location = appURL;
+      }
+    });
+  }
+
+  /**
+   * Called when a "disallowed traffic" server alert is encountered. The C code will take
+   * steps to make the window visible.
+   */
+  function HtmlCtrlInterface_DisallowedTraffic() {
+    nextTick(function() {
+      var appURL = PSIPHON_LINK_PREFIX + 'disallowedtraffic';
+      if (IS_BROWSER) {
+        console.log(decodeURIComponent(appURL));
+        alert('Call from JS to C in response to disallowed traffic');
       }
       else {
         window.location = appURL;

@@ -591,6 +591,43 @@
 
             <div class="accordion-group">
               <div class="accordion-heading">
+                <a class="accordion-toggle" href="#settings-accordion-disallowed-traffic-alert"
+                   data-toggle="collapse" data-parent="#settings-accordion">
+                  <i class="accordion-expand-icon icon-plus-square"
+                     data-icon-closed="icon-plus-square" data-icon-opened="icon-minus-square"></i>
+                  <span data-i18n="settings#disallowed-traffic-alert#heading">
+                    Disallowed Traffic Alert
+                  </span>
+                </a>
+              </div>
+              <div id="settings-accordion-disallowed-traffic-alert" class="accordion-body collapse">
+                <div class="accordion-inner">
+                  <form>
+                    <fieldset>
+                      <p data-i18n="settings#disallowed-traffic-alert#help-text">
+                        Some types of internet traffic are not supported without an active Speed Boost.
+                        When such traffic is disallowed, an alert is shown.
+                        (Re-enabling will require a reconnection.)
+                      </p>
+
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="DisableDisallowedTrafficAlert"/>
+                          <label for="DisableDisallowedTrafficAlert">
+                            <span data-i18n="settings#disallowed-traffic-alert#disable-label">
+                              Disable disallowed traffic alerts
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-group">
+              <div class="accordion-heading">
                 <a class="accordion-toggle" href="#settings-accordion-split-tunnel"
                    data-toggle="collapse" data-parent="#settings-accordion">
                   <i class="accordion-expand-icon icon-plus-square"
@@ -1627,6 +1664,13 @@
             <label>PsiCash Init()</label>
             <label><input type="checkbox" id="debug-PsiCashInitDone-error">error</label>
             <label><input type="checkbox" id="debug-PsiCashInitDone-recovered">recovered</label>
+            <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
+          </form>
+
+          <hr>
+
+          <form class="form-inline" id="debug-DisallowedTraffic">
+            <label>Disallowed Traffic Server Alert</label>
             <a class="btn btn-primary"><i class="icon-arrow-right"></i></a>
           </form>
 
