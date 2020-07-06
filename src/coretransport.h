@@ -62,7 +62,7 @@ protected:
 
     bool RequestingUrlProxyWithoutTunnel();
     void TransportConnectHelper();
-    bool WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename);
+    bool WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& oldClientUpgradeFilename, tstring& newClientUpgradeFilename);
     string GetUpstreamProxyAddress();
     bool SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename);
     void ConsumeCoreProcessOutput();
