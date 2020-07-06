@@ -393,6 +393,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_URLS_JSON);
     config["ObfuscatedServerListRootURLs"] = loadJSONArray(OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON);
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
+    config["ServerEntrySignaturePublicKey"] = SERVER_ENTRY_SIGNATURE_PUBLIC_KEY;
     config["DataRootDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["MigrateDataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
