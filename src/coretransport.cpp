@@ -493,6 +493,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         }
 
         oldClientUpgradeFilename.clear();
+        newClientUpgradeFilename.clear();
     }
     else
     {
