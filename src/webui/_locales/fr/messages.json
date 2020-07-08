@@ -620,7 +620,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-body": {
-        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez ressayer votre achat ultérieurement.",
+        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez ressayer votre achat plus tard.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-speedboost-active": {
@@ -646,6 +646,14 @@
     "psicash#ui-enoughbalance-buttontext": {
         "message": "Lancer la Survitesse",
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#1-hour": {
+        "message": "1 heure",
+        "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
+    },
+    "psicash#1-day": {
+        "message": "1  jour",
+        "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
     },
     "psicash#ui-buyingboost-buttontext": {
         "message": "Lancement de la Survitesse…",
@@ -674,6 +682,38 @@
     "psicash#init-error-body-recovered": {
         "message": "L’initialisation de PsiCash a échoué. Cela est probablement causé par un problème du système de fichiers, tel qu’un manque d’espace disque. Vos solde et autre état sont réinitialisés.",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#psiphon-speed": {
+        "message": "Vitesse<br>Psiphon",
+        "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
+    },
+    "notice#disallowed-traffic-alert-title": {
+        "message": "Surclassez votre connexion Psiphon",
+        "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
+    },
+    "notice#disallowed-traffic-alert-body": {
+        "message": "<p>Les applis ne fonctionnent-elles pas ?</p>\n<p>Une partie du trafic Internet n’est pas prise en charge sans une Survitesse active. Activez la Survitesse avec du PsiCash afin de libérer le plein potentiel de votre expérience Psiphon.</p>",
+        "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "appbackend#disallowed-traffic-notification-title": {
+        "message": "Les applis ne fonctionnent-elles pas ?",
+        "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
+    },
+    "appbackend#disallowed-traffic-notification-body": {
+        "message": "Activez la Survitesse afin de libérer le plein potentiel de votre expérience Psiphon.",
+        "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "settings#disallowed-traffic-alert#heading": {
+        "message": "Alerte de trafic refusé",
+        "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
+    },
+    "settings#disallowed-traffic-alert#help-text": {
+        "message": "Certains types de trafic Internet ne sont pas pris en charge sans une Survitesse active. Quand un tel trafic est refusé, une alerte est affichée. (La réactivation demandera une reconnexion.)",
+        "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "settings#disallowed-traffic-alert#disable-label": {
+        "message": "Désactiver les alertes de trafic refusé",
+        "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "banner#sponsored-by": {
         "message": "Commandité par",

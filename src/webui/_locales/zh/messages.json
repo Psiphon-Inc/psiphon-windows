@@ -647,6 +647,14 @@
         "message": "开始提&nbsp;速",
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
+    "psicash#1-hour": {
+        "message": "1 小时",
+        "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
+    },
+    "psicash#1-day": {
+        "message": "1 天",
+        "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
+    },
     "psicash#ui-buyingboost-buttontext": {
         "message": "正在提&nbsp;速中！",
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
@@ -674,6 +682,38 @@
     "psicash#init-error-body-recovered": {
         "message": "PsiCash初始化失败。这有可能是文件系统的问题，例如没有足够的磁盘空间。您的余额以及其他相关信息已经被重置。",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#psiphon-speed": {
+        "message": "赛风<br>速度",
+        "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
+    },
+    "notice#disallowed-traffic-alert-title": {
+        "message": "升级您的赛风链接",
+        "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
+    },
+    "notice#disallowed-traffic-alert-body": {
+        "message": "<p>程序不能正常工作?</p>\n<p>有些网络流量需要加速的支持。通过PsiCash购买加速从而解锁赛风体验的全部潜能。</p>",
+        "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "appbackend#disallowed-traffic-notification-title": {
+        "message": "程序不能正常工作?",
+        "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
+    },
+    "appbackend#disallowed-traffic-notification-body": {
+        "message": "激活加速从而解锁赛风体验的全部潜能。",
+        "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "settings#disallowed-traffic-alert#heading": {
+        "message": "禁止流量警报",
+        "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
+    },
+    "settings#disallowed-traffic-alert#help-text": {
+        "message": "有些网络流量必须有加速服务的支持。当这样的流量被禁止时，一个警告将会弹出。（重新启用这样的流量需要重新连接。）",
+        "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "settings#disallowed-traffic-alert#disable-label": {
+        "message": "禁止禁用流量警告",
+        "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "banner#sponsored-by": {
         "message": "赞助者：",

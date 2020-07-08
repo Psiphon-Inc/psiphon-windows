@@ -13953,13 +13953,13 @@ if (typeof JSON !== "object") {
 
 </script>
   <![endif]--><script>(function() {
-    var fi, n, t, ci = "3.10.2", li = 1, si = 2, pi = 4, hi = 8, vi = 16, _i = 32, gi = 64, yi = 128, di = 256, wi = 30, mi = "...", xi = 150, bi = 16, Ai = 200, ji = 1, Oi = 2, Ii = "Expected a function", ki = "__lodash_placeholder__", Ri = "[object Arguments]", Ei = "[object Array]", Ci = "[object Boolean]", Si = "[object Date]", Ui = "[object Error]", $i = "[object Function]", r = "[object Map]", Fi = "[object Number]", Wi = "[object Object]", Li = "[object RegExp]", e = "[object Set]", Ni = "[object String]", u = "[object WeakMap]", Ti = "[object ArrayBuffer]", qi = "[object Float32Array]", Pi = "[object Float64Array]", Bi = "[object Int8Array]", zi = "[object Int16Array]", Di = "[object Int32Array]", Mi = "[object Uint8Array]", Ki = "[object Uint8ClampedArray]", Vi = "[object Uint16Array]", Yi = "[object Uint32Array]", Gi = /\b__p \+= '';/g, Ji = /\b(__p \+=) '' \+/g, Xi = /(__e\(.*?\)|\b__t\)) \+\n'';/g, Zi = /&(?:amp|lt|gt|quot|#39|#96);/g, Hi = /[&<>"'`]/g, Qi = RegExp(Zi.source), na = RegExp(Hi.source), ta = /<%-([\s\S]+?)%>/g, ra = /<%([\s\S]+?)%>/g, ea = /<%=([\s\S]+?)%>/g, ua = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, oa = /^\w*$/, ia = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g, aa = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g, fa = RegExp(aa.source), ca = /[\u0300-\u036f\ufe20-\ufe23]/g, la = /\\(\\)?/g, sa = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, pa = /\w*$/, ha = /^0[xX]/, va = /^\[object .+?Constructor\]$/, _a = /^\d+$/, ga = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g, ya = /($^)/, da = /['\n\r\u2028\u2029\\]/g, wa = (n = "[A-Z\\xc0-\\xd6\\xd8-\\xde]", 
-    t = "[a-z\\xdf-\\xf6\\xf8-\\xff]+", RegExp(n + "+(?=" + n + t + ")|" + n + "?" + t + "|" + n + "+|[0-9]+", "g")), ma = [ "Array", "ArrayBuffer", "Date", "Error", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Math", "Number", "Object", "RegExp", "Set", "String", "_", "clearTimeout", "isFinite", "parseFloat", "parseInt", "setTimeout", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "WeakMap" ], xa = [ "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString", "valueOf" ], ba = -1, Aa = {};
-    Aa[qi] = Aa[Pi] = Aa[Bi] = Aa[zi] = Aa[Di] = Aa[Mi] = Aa[Ki] = Aa[Vi] = Aa[Yi] = !0, 
-    Aa[Ri] = Aa[Ei] = Aa[Ti] = Aa[Ci] = Aa[Si] = Aa[Ui] = Aa[$i] = Aa[r] = Aa[Fi] = Aa[Wi] = Aa[Li] = Aa[e] = Aa[Ni] = Aa[u] = !1;
-    var ja = {};
-    ja[Ri] = ja[Ei] = ja[Ti] = ja[Ci] = ja[Si] = ja[qi] = ja[Pi] = ja[Bi] = ja[zi] = ja[Di] = ja[Fi] = ja[Wi] = ja[Li] = ja[Ni] = ja[Mi] = ja[Ki] = ja[Vi] = ja[Yi] = !0, 
-    ja[Ui] = ja[$i] = ja[r] = ja[e] = ja[u] = !1;
+    var fi, n, t, ci = "3.10.2", li = 1, si = 2, pi = 4, hi = 8, vi = 16, _i = 32, gi = 64, yi = 128, di = 256, wi = 30, mi = "...", xi = 150, bi = 16, ji = 200, Ai = 1, Oi = 2, Ii = "Expected a function", ki = "__lodash_placeholder__", Ri = "[object Arguments]", Ei = "[object Array]", Ci = "[object Boolean]", Si = "[object Date]", Ui = "[object Error]", $i = "[object Function]", r = "[object Map]", Fi = "[object Number]", Wi = "[object Object]", Li = "[object RegExp]", e = "[object Set]", Ni = "[object String]", u = "[object WeakMap]", Ti = "[object ArrayBuffer]", Pi = "[object Float32Array]", Bi = "[object Float64Array]", zi = "[object Int8Array]", Di = "[object Int16Array]", qi = "[object Int32Array]", Mi = "[object Uint8Array]", Ki = "[object Uint8ClampedArray]", Vi = "[object Uint16Array]", Yi = "[object Uint32Array]", Gi = /\b__p \+= '';/g, Ji = /\b(__p \+=) '' \+/g, Xi = /(__e\(.*?\)|\b__t\)) \+\n'';/g, Zi = /&(?:amp|lt|gt|quot|#39|#96);/g, Hi = /[&<>"'`]/g, Qi = RegExp(Zi.source), na = RegExp(Hi.source), ta = /<%-([\s\S]+?)%>/g, ra = /<%([\s\S]+?)%>/g, ea = /<%=([\s\S]+?)%>/g, ua = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, oa = /^\w*$/, ia = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g, aa = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g, fa = RegExp(aa.source), ca = /[\u0300-\u036f\ufe20-\ufe23]/g, la = /\\(\\)?/g, sa = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, pa = /\w*$/, ha = /^0[xX]/, va = /^\[object .+?Constructor\]$/, _a = /^\d+$/, ga = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g, ya = /($^)/, da = /['\n\r\u2028\u2029\\]/g, wa = (n = "[A-Z\\xc0-\\xd6\\xd8-\\xde]", 
+    t = "[a-z\\xdf-\\xf6\\xf8-\\xff]+", RegExp(n + "+(?=" + n + t + ")|" + n + "?" + t + "|" + n + "+|[0-9]+", "g")), ma = [ "Array", "ArrayBuffer", "Date", "Error", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Math", "Number", "Object", "RegExp", "Set", "String", "_", "clearTimeout", "isFinite", "parseFloat", "parseInt", "setTimeout", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "WeakMap" ], xa = [ "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString", "valueOf" ], ba = -1, ja = {};
+    ja[Pi] = ja[Bi] = ja[zi] = ja[Di] = ja[qi] = ja[Mi] = ja[Ki] = ja[Vi] = ja[Yi] = !0, 
+    ja[Ri] = ja[Ei] = ja[Ti] = ja[Ci] = ja[Si] = ja[Ui] = ja[$i] = ja[r] = ja[Fi] = ja[Wi] = ja[Li] = ja[e] = ja[Ni] = ja[u] = !1;
+    var Aa = {};
+    Aa[Ri] = Aa[Ei] = Aa[Ti] = Aa[Ci] = Aa[Si] = Aa[Pi] = Aa[Bi] = Aa[zi] = Aa[Di] = Aa[qi] = Aa[Fi] = Aa[Wi] = Aa[Li] = Aa[Ni] = Aa[Mi] = Aa[Ki] = Aa[Vi] = Aa[Yi] = !0, 
+    Aa[Ui] = Aa[$i] = Aa[r] = Aa[e] = Aa[u] = !1;
     var o = {
         "À": "A",
         "Á": "A",
@@ -14130,7 +14130,7 @@ if (typeof JSON !== "object") {
         }
         return -1;
     }
-    var qa = function() {
+    var Pa = function() {
         try {
             Object({
                 toString: 0
@@ -14144,22 +14144,22 @@ if (typeof JSON !== "object") {
             return "function" != typeof n.toString && "string" == typeof (n + "");
         };
     }();
-    function Pa(n) {
+    function Ba(n) {
         return !!n && "object" == typeof n;
     }
     function y(n) {
         return n <= 160 && 9 <= n && n <= 13 || 32 == n || 160 == n || 5760 == n || 6158 == n || 8192 <= n && (n <= 8202 || 8232 == n || 8233 == n || 8239 == n || 8287 == n || 12288 == n || 65279 == n);
     }
-    function Ba(n, t) {
+    function za(n, t) {
         for (var r = -1, e = n.length, u = -1, o = []; ++r < e; ) n[r] === t && (n[r] = ki, 
         o[++u] = r);
         return o;
     }
-    function za(n) {
+    function Da(n) {
         for (var t = -1, r = n.length; ++t < r && y(n.charCodeAt(t)); ) ;
         return t;
     }
-    function Da(n) {
+    function qa(n) {
         for (var t = n.length; t-- && y(n.charCodeAt(t)); ) ;
         return t;
     }
@@ -14167,15 +14167,15 @@ if (typeof JSON !== "object") {
         return a[n];
     }
     var Ka = function Va(n) {
-        var C = (n = n ? Ka.defaults(Oa.Object(), n, Ka.pick(Oa, ma)) : Oa).Array, t = n.Date, _ = n.Error, g = n.Function, e = n.Math, r = n.Number, y = n.Object, d = n.RegExp, u = n.String, w = n.TypeError, i = C.prototype, m = _.prototype, x = y.prototype, b = u.prototype, o = g.prototype.toString, A = x.hasOwnProperty, a = 0, j = x.toString, f = Oa._, c = d("^" + o.call(A).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), l = n.ArrayBuffer, O = n.clearTimeout, s = n.parseFloat, p = e.pow, h = x.propertyIsEnumerable, v = Bt(n, "Set"), I = n.setTimeout, k = i.splice, R = n.Uint8Array, E = Bt(n, "WeakMap"), S = e.ceil, U = Bt(y, "create"), $ = e.floor, F = Bt(C, "isArray"), W = n.isFinite, L = Bt(y, "keys"), N = e.max, T = e.min, q = Bt(t, "now"), P = n.parseInt, B = e.random, z = r.NEGATIVE_INFINITY, D = r.POSITIVE_INFINITY, M = 4294967295, K = M - 1, V = M >>> 1, Y = 9007199254740991, G = E && new E(), J = {}, X = {};
-        X[qi] = n.Float32Array, X[Pi] = n.Float64Array, X[Bi] = n.Int8Array, X[zi] = n.Int16Array, 
-        X[Di] = n.Int32Array, X[Mi] = R, X[Ki] = n.Uint8ClampedArray, X[Vi] = n.Uint16Array, 
+        var C = (n = n ? Ka.defaults(Oa.Object(), n, Ka.pick(Oa, ma)) : Oa).Array, t = n.Date, _ = n.Error, g = n.Function, e = n.Math, r = n.Number, y = n.Object, d = n.RegExp, u = n.String, w = n.TypeError, i = C.prototype, m = _.prototype, x = y.prototype, b = u.prototype, o = g.prototype.toString, j = x.hasOwnProperty, a = 0, A = x.toString, f = Oa._, c = d("^" + o.call(j).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), l = n.ArrayBuffer, O = n.clearTimeout, s = n.parseFloat, p = e.pow, h = x.propertyIsEnumerable, v = zt(n, "Set"), I = n.setTimeout, k = i.splice, R = n.Uint8Array, E = zt(n, "WeakMap"), S = e.ceil, U = zt(y, "create"), $ = e.floor, F = zt(C, "isArray"), W = n.isFinite, L = zt(y, "keys"), N = e.max, T = e.min, P = zt(t, "now"), B = n.parseInt, z = e.random, D = r.NEGATIVE_INFINITY, q = r.POSITIVE_INFINITY, M = 4294967295, K = M - 1, V = M >>> 1, Y = 9007199254740991, G = E && new E(), J = {}, X = {};
+        X[Pi] = n.Float32Array, X[Bi] = n.Float64Array, X[zi] = n.Int8Array, X[Di] = n.Int16Array, 
+        X[qi] = n.Int32Array, X[Mi] = R, X[Ki] = n.Uint8ClampedArray, X[Vi] = n.Uint16Array, 
         X[Yi] = n.Uint32Array;
         var Z = {};
         function H(n) {
-            if (Pa(n) && !_e(n) && !(n instanceof rn)) {
+            if (Ba(n) && !_e(n) && !(n instanceof rn)) {
                 if (n instanceof nn) return n;
-                if (A.call(n, "__chain__") && A.call(n, "__wrapped__")) return or(n);
+                if (j.call(n, "__chain__") && j.call(n, "__wrapped__")) return or(n);
             }
             return new nn(n);
         }
@@ -14198,15 +14198,15 @@ if (typeof JSON !== "object") {
         }, Z[Wi] = {
             constructor: !0
         }, fn(xa, function(n) {
-            for (var t in Z) if (A.call(Z, t)) {
+            for (var t in Z) if (j.call(Z, t)) {
                 var r = Z[t];
-                r[n] = A.call(r, n);
+                r[n] = j.call(r, n);
             }
         });
         var tn = H.support = {};
         function rn(n) {
             this.__wrapped__ = n, this.__actions__ = [], this.__dir__ = 1, this.__filtered__ = !1, 
-            this.__iteratees__ = [], this.__takeCount__ = D, this.__views__ = [];
+            this.__iteratees__ = [], this.__takeCount__ = q, this.__views__ = [];
         }
         function en() {
             this.__data__ = {};
@@ -14260,20 +14260,20 @@ if (typeof JSON !== "object") {
             return !1;
         }
         function _n(n, t, r, e) {
-            return n !== fi && A.call(e, r) ? n : t;
+            return n !== fi && j.call(e, r) ? n : t;
         }
         function gn(n, t, r) {
-            for (var e = -1, u = Pe(t), o = u.length; ++e < o; ) {
+            for (var e = -1, u = Be(t), o = u.length; ++e < o; ) {
                 var i = u[e], a = n[i], f = r(a, t[i], i, n, t);
                 (f == f ? f === a : a != a) && (a !== fi || i in n) || (n[i] = f);
             }
             return n;
         }
         function yn(n, t) {
-            return null == t ? n : wn(t, Pe(t), n);
+            return null == t ? n : wn(t, Be(t), n);
         }
         function dn(n, t) {
-            for (var r = -1, e = null == n, u = !e && Dt(n), o = u ? n.length : 0, i = t.length, a = C(i); ++r < i; ) {
+            for (var r = -1, e = null == n, u = !e && qt(n), o = u ? n.length : 0, i = t.length, a = C(i); ++r < i; ) {
                 var f = t[r];
                 a[r] = u ? Mt(f, o) ? n[f] : fi : e ? fi : n[f];
             }
@@ -14289,7 +14289,7 @@ if (typeof JSON !== "object") {
         }
         function mn(n, t, r) {
             var e = typeof n;
-            return "function" == e ? t === fi ? n : ut(n, t, r) : null == n ? iu : "object" == e ? zn(n) : t === fi ? pu(n) : Dn(n, t);
+            return "function" == e ? t === fi ? n : ut(n, t, r) : null == n ? iu : "object" == e ? Dn(n) : t === fi ? pu(n) : qn(n, t);
         }
         function xn(r, e, u, n, t, o, i) {
             var a;
@@ -14299,12 +14299,12 @@ if (typeof JSON !== "object") {
             if (f) {
                 if (a = function p(n) {
                     var t = n.length, r = new n.constructor(t);
-                    return t && "string" == typeof n[0] && A.call(n, "index") && (r.index = n.index, 
+                    return t && "string" == typeof n[0] && j.call(n, "index") && (r.index = n.index, 
                     r.input = n.input), r;
                 }(r), !e) return an(r, a);
             } else {
-                var c = j.call(r), l = c == $i;
-                if (c != Wi && c != Ri && (!l || t)) return ja[c] ? function h(n, t, r) {
+                var c = A.call(r), l = c == $i;
+                if (c != Wi && c != Ri && (!l || t)) return Aa[c] ? function h(n, t, r) {
                     var e = n.constructor;
                     switch (t) {
                       case Ti:
@@ -14314,11 +14314,11 @@ if (typeof JSON !== "object") {
                       case Si:
                         return new e(+n);
 
-                      case qi:
                       case Pi:
                       case Bi:
                       case zi:
                       case Di:
+                      case qi:
                       case Mi:
                       case Ki:
                       case Vi:
@@ -14337,7 +14337,7 @@ if (typeof JSON !== "object") {
                     }
                     return o;
                 }(r, c, e) : t ? r : {};
-                if (qa(r)) return t ? r : {};
+                if (Pa(r)) return t ? r : {};
                 if (a = function v(n) {
                     var t = n.constructor;
                     return "function" == typeof t && t instanceof t || (t = y), new t();
@@ -14374,14 +14374,14 @@ if (typeof JSON !== "object") {
         };
         var bn = function(n) {
             if (we(n)) {
-                An.prototype = n;
-                var t = new An();
-                An.prototype = fi;
+                jn.prototype = n;
+                var t = new jn();
+                jn.prototype = fi;
             }
             return t || {};
         };
-        function An() {}
-        function jn(n, t, r) {
+        function jn() {}
+        function An(n, t, r) {
             if ("function" != typeof n) throw new w(Ii);
             return I(function() {
                 n.apply(fi, r);
@@ -14390,7 +14390,7 @@ if (typeof JSON !== "object") {
         function On(n, t) {
             var r = n ? n.length : 0, e = [];
             if (!r) return e;
-            var u = -1, o = Tt(), i = o === Ra, a = i && t.length >= Ai ? pt(t) : null, f = t.length;
+            var u = -1, o = Tt(), i = o === Ra, a = i && t.length >= ji ? pt(t) : null, f = t.length;
             a && (o = on, i = !1, t = a);
             n: for (;++u < r; ) {
                 var c = n[u];
@@ -14424,19 +14424,19 @@ if (typeof JSON !== "object") {
             e = e || [];
             for (var u = -1, o = n.length; ++u < o; ) {
                 var i = n[u];
-                Pa(i) && Dt(i) && (r || _e(i) || ve(i)) ? t ? Sn(i, t, r, e) : pn(e, i) : r || (e[e.length] = i);
+                Ba(i) && qt(i) && (r || _e(i) || ve(i)) ? t ? Sn(i, t, r, e) : pn(e, i) : r || (e[e.length] = i);
             }
             return e;
         }
         var Un = st(), $n = st(!0);
         function Fn(n, t) {
-            return Un(n, t, Be);
+            return Un(n, t, ze);
         }
         function Wn(n, t) {
-            return Un(n, t, Pe);
+            return Un(n, t, Be);
         }
         function Ln(n, t) {
-            return $n(n, t, Pe);
+            return $n(n, t, Be);
         }
         function Nn(n, t) {
             for (var r = -1, e = t.length, u = -1, o = []; ++r < e; ) {
@@ -14452,11 +14452,11 @@ if (typeof JSON !== "object") {
                 return e && e == u ? n : fi;
             }
         }
-        function qn(n, t, r, e, u, o) {
-            return n === t || (null == n || null == t || !we(n) && !Pa(t) ? n != n && t != t : function x(n, t, r, e, u, o, i) {
+        function Pn(n, t, r, e, u, o) {
+            return n === t || (null == n || null == t || !we(n) && !Ba(t) ? n != n && t != t : function x(n, t, r, e, u, o, i) {
                 var a = _e(n), f = _e(t), c = Ei, l = Ei;
-                a || ((c = j.call(n)) == Ri ? c = Wi : c != Wi && (a = Oe(n))), f || ((l = j.call(t)) == Ri ? l = Wi : l != Wi && (f = Oe(t)));
-                var s = c == Wi && !qa(n), p = l == Wi && !qa(t), h = c == l;
+                a || ((c = A.call(n)) == Ri ? c = Wi : c != Wi && (a = Oe(n))), f || ((l = A.call(t)) == Ri ? l = Wi : l != Wi && (f = Oe(t)));
+                var s = c == Wi && !Pa(n), p = l == Wi && !Pa(t), h = c == l;
                 if (h && !a && !s) return function d(n, t, r) {
                     switch (r) {
                       case Ci:
@@ -14476,7 +14476,7 @@ if (typeof JSON !== "object") {
                     return !1;
                 }(n, t, c);
                 if (!u) {
-                    var v = s && A.call(n, "__wrapped__"), _ = p && A.call(t, "__wrapped__");
+                    var v = s && j.call(n, "__wrapped__"), _ = p && j.call(t, "__wrapped__");
                     if (v || _) return r(v ? n.value() : n, _ ? t.value() : t, e, u, o, i);
                 }
                 if (!h) return !1;
@@ -14500,11 +14500,11 @@ if (typeof JSON !== "object") {
                     }
                     return !0;
                 } : function m(n, t, r, e, u, o, i) {
-                    var a = Pe(n), f = a.length, c = Pe(t).length;
+                    var a = Be(n), f = a.length, c = Be(t).length;
                     if (f != c && !u) return !1;
                     for (var l = f; l--; ) {
                         var s = a[l];
-                        if (!(u ? s in t : A.call(t, s))) return !1;
+                        if (!(u ? s in t : j.call(t, s))) return !1;
                     }
                     for (var p = u; ++l < f; ) {
                         s = a[l];
@@ -14519,9 +14519,9 @@ if (typeof JSON !== "object") {
                     return !0;
                 })(n, t, r, e, u, o, i);
                 return o.pop(), i.pop(), y;
-            }(n, t, qn, r, e, u, o));
+            }(n, t, Pn, r, e, u, o));
         }
-        function Pn(n, t, r) {
+        function Bn(n, t, r) {
             var e = t.length, u = e, o = !r;
             if (null == n) return !u;
             for (n = er(n); e--; ) {
@@ -14534,19 +14534,19 @@ if (typeof JSON !== "object") {
                     if (f === fi && !(a in n)) return !1;
                 } else {
                     var l = r ? r(f, c, a) : fi;
-                    if (!(l === fi ? qn(c, f, r, !0) : l)) return !1;
+                    if (!(l === fi ? Pn(c, f, r, !0) : l)) return !1;
                 }
             }
             return !0;
         }
-        function Bn(n, e) {
-            var u = -1, o = Dt(n) ? C(n.length) : [];
+        function zn(n, e) {
+            var u = -1, o = qt(n) ? C(n.length) : [];
             return In(n, function(n, t, r) {
                 o[++u] = e(n, t, r);
             }), o;
         }
-        function zn(n) {
-            var t = Pt(n);
+        function Dn(n) {
+            var t = Bt(n);
             if (1 == t.length && t[0][2]) {
                 var r = t[0][0], e = t[0][1];
                 return function(n) {
@@ -14554,10 +14554,10 @@ if (typeof JSON !== "object") {
                 };
             }
             return function(n) {
-                return Pn(n, t);
+                return Bn(n, t);
             };
         }
-        function Dn(r, e) {
+        function qn(r, e) {
             var u = _e(r), o = Vt(r) && Jt(e), i = r + "";
             return r = ur(r), function(n) {
                 if (null == n) return !1;
@@ -14566,7 +14566,7 @@ if (typeof JSON !== "object") {
                     if (null == (n = 1 == r.length ? n : Tn(n, Gn(r, 0, -1)))) return !1;
                     t = vr(r), n = er(n);
                 }
-                return n[t] === e ? e !== fi || t in n : qn(e, n[t], fi, !0);
+                return n[t] === e ? e !== fi || t in n : Pn(e, n[t], fi, !0);
             };
         }
         function Mn(t) {
@@ -14585,7 +14585,7 @@ if (typeof JSON !== "object") {
             return n;
         }
         function Vn(n, t) {
-            return n + $(B() * (t - n + 1));
+            return n + $(z() * (t - n + 1));
         }
         var Yn = G ? function(n, t) {
             return G.set(n, t), n;
@@ -14612,7 +14612,7 @@ if (typeof JSON !== "object") {
             var t = Wt(), u = -1;
             return r = sn(r, function(n) {
                 return t(n);
-            }), Xn(Bn(n, function(t) {
+            }), Xn(zn(n, function(t) {
                 return {
                     criteria: sn(r, function(n) {
                         return n(t);
@@ -14635,7 +14635,7 @@ if (typeof JSON !== "object") {
             });
         }
         function Hn(n, t) {
-            var r = -1, e = Tt(), u = n.length, o = e === Ra, i = o && Ai <= u, a = i ? pt() : null, f = [];
+            var r = -1, e = Tt(), u = n.length, o = e === Ra, i = o && ji <= u, a = i ? pt() : null, f = [];
             a ? (e = on, o = !1) : (i = !1, a = t ? [] : f);
             n: for (;++r < u; ) {
                 var c = n[r], l = t ? t(c, r, n) : c;
@@ -14752,7 +14752,7 @@ if (typeof JSON !== "object") {
         }
         function lt(o, i) {
             return function(n, t) {
-                var r = n ? qt(n) : 0;
+                var r = n ? Pt(n) : 0;
                 if (!Gt(r)) return o(n, t);
                 for (var e = i ? r : -1, u = er(n); (i ? e-- : ++e < r) && !1 !== t(u[e], e, u); ) ;
                 return n;
@@ -14874,7 +14874,7 @@ if (typeof JSON !== "object") {
                 }
                 return function() {
                     var n = arguments, t = n[0];
-                    if (u && 1 == n.length && _e(t) && t.length >= Ai) return u.plant(t).value();
+                    if (u && 1 == n.length && _e(t) && t.length >= ji) return u.plant(t).value();
                     for (var r = 0, e = o ? i[r].apply(this, n) : t; ++r < o; ) e = i[r].call(this, e);
                     return e;
                 };
@@ -14885,12 +14885,12 @@ if (typeof JSON !== "object") {
                 return "function" == typeof t && r === fi && _e(n) ? e(n, t) : u(n, ut(t, r, 3));
             };
         }
-        function At(e) {
+        function jt(e) {
             return function(n, t, r) {
-                return "function" == typeof t && r === fi || (t = ut(t, r, 3)), e(n, t, Be);
+                return "function" == typeof t && r === fi || (t = ut(t, r, 3)), e(n, t, ze);
             };
         }
-        function jt(e) {
+        function At(e) {
             return function(n, t, r) {
                 return "function" == typeof t && r === fi || (t = ut(t, r, 3)), e(n, t);
             };
@@ -14911,7 +14911,7 @@ if (typeof JSON !== "object") {
         }
         function kt(e) {
             var u = pe(function(n, t) {
-                var r = Ba(t, u.placeholder);
+                var r = za(t, u.placeholder);
                 return Ft(n, e, fi, t, r);
             });
             return u;
@@ -14927,11 +14927,11 @@ if (typeof JSON !== "object") {
             };
         }
         function Et(p, h, v, _, g, y, d, w, m, x) {
-            var b = h & yi, A = h & li, j = h & si, O = h & hi, I = h & pi, k = h & vi, R = j ? fi : vt(p);
+            var b = h & yi, j = h & li, A = h & si, O = h & hi, I = h & pi, k = h & vi, R = A ? fi : vt(p);
             return function E() {
                 for (var n = arguments.length, t = n, r = C(n); t--; ) r[t] = arguments[t];
                 if (_ && (r = it(r, _, g)), y && (r = at(r, y, d)), O || k) {
-                    var e = E.placeholder, u = Ba(r, e);
+                    var e = E.placeholder, u = za(r, e);
                     if ((n -= u.length) < x) {
                         var o = w ? an(w) : fi, i = N(x - n, 0);
                         h |= O ? _i : gi, h &= ~(O ? gi : _i), I || (h &= ~(li | si));
@@ -14939,7 +14939,7 @@ if (typeof JSON !== "object") {
                         return Yt(p) && nr(f, a), f.placeholder = e, f;
                     }
                 }
-                var c = A ? v : this, l = j ? c[p] : p;
+                var c = j ? v : this, l = A ? c[p] : p;
                 return w && (r = function s(n, t) {
                     for (var r = n.length, e = T(t.length, r), u = an(n); e--; ) {
                         var o = t[e];
@@ -14992,9 +14992,9 @@ if (typeof JSON !== "object") {
                 var a = t[3];
                 if (a) {
                     var f = n[3];
-                    n[3] = f ? it(f, a, t[4]) : an(a), n[4] = f ? Ba(n[3], ki) : an(t[4]);
+                    n[3] = f ? it(f, a, t[4]) : an(a), n[4] = f ? za(n[3], ki) : an(t[4]);
                 }
-                return (a = t[5]) && (f = n[5], n[5] = f ? at(f, a, t[6]) : an(a), n[6] = f ? Ba(n[5], ki) : an(t[6])), 
+                return (a = t[5]) && (f = n[5], n[5] = f ? at(f, a, t[6]) : an(a), n[6] = f ? za(n[5], ki) : an(t[6])), 
                 (a = t[7]) && (n[7] = an(a)), e & yi && (n[8] = null == n[8] ? t[8] : T(n[8], t[8])), 
                 null == n[9] && (n[9] = t[9]), n[0] = t[0], n[1] = u, n;
             }(h, p), t = h[1], a = h[9]), h[9] = null == a ? f ? 0 : n.length : N(a - c, 0) || 0, 
@@ -15024,23 +15024,23 @@ if (typeof JSON !== "object") {
             var e = H.indexOf || pr;
             return e = e === pr ? Ra : e, n ? e(n, t, r) : e;
         }
-        var qt = Mn("length");
-        function Pt(n) {
+        var Pt = Mn("length");
+        function Bt(n) {
             for (var t = Ke(n), r = t.length; r--; ) t[r][2] = Jt(t[r][1]);
             return t;
         }
-        function Bt(n, t) {
+        function zt(n, t) {
             var r = null == n ? fi : n[t];
             return me(r) ? r : fi;
         }
-        function zt(n, t, r) {
+        function Dt(n, t, r) {
             null == n || Vt(t, n) || (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1)), 
             t = vr(t));
             var e = null == n ? n : n[t];
             return null == e ? fi : e.apply(n, r);
         }
-        function Dt(n) {
-            return null != n && Gt(qt(n));
+        function qt(n) {
+            return null != n && Gt(Pt(n));
         }
         function Mt(n, t) {
             return n = "number" == typeof n || _a.test(n) ? +n : -1, t = null == t ? Y : t, 
@@ -15049,7 +15049,7 @@ if (typeof JSON !== "object") {
         function Kt(n, t, r) {
             if (we(r)) {
                 var e = typeof t;
-                if ("number" == e ? Dt(r) && Mt(t, r.length) : "string" == e && t in r) {
+                if ("number" == e ? qt(r) && Mt(t, r.length) : "string" == e && t in r) {
                     var u = r[t];
                     return n == n ? n === u : u != u;
                 }
@@ -15095,17 +15095,17 @@ if (typeof JSON !== "object") {
             return Yn(n, t);
         });
         function tr(n) {
-            for (var t = Be(n), r = t.length, e = r && n.length, u = !!e && Gt(e) && (_e(n) || ve(n) || je(n)), o = -1, i = []; ++o < r; ) {
+            for (var t = ze(n), r = t.length, e = r && n.length, u = !!e && Gt(e) && (_e(n) || ve(n) || Ae(n)), o = -1, i = []; ++o < r; ) {
                 var a = t[o];
-                (u && Mt(a, e) || A.call(n, a)) && i.push(a);
+                (u && Mt(a, e) || j.call(n, a)) && i.push(a);
             }
             return i;
         }
         function rr(n) {
-            return null == n ? [] : Dt(n) ? H.support.unindexedChars && je(n) ? n.split("") : we(n) ? n : y(n) : Ye(n);
+            return null == n ? [] : qt(n) ? H.support.unindexedChars && Ae(n) ? n.split("") : we(n) ? n : y(n) : Ye(n);
         }
         function er(n) {
-            if (H.support.unindexedChars && je(n)) {
+            if (H.support.unindexedChars && Ae(n)) {
                 for (var t = -1, r = n.length, e = y(n); ++t < r; ) e[t] = n.charAt(t);
                 return e;
             }
@@ -15122,7 +15122,7 @@ if (typeof JSON !== "object") {
             return n instanceof rn ? n.clone() : new nn(n.__wrapped__, n.__chain__, an(n.__actions__));
         }
         var ir = pe(function(n, t) {
-            return Pa(n) && Dt(n) ? On(n, Sn(t, !1, !0)) : [];
+            return Ba(n) && qt(n) ? On(n, Sn(t, !1, !0)) : [];
         });
         function ar(n, t, r) {
             return n && n.length ? ((r ? Kt(n, t, r) : null == t) && (t = 1), Gn(n, t < 0 ? 0 : t)) : [];
@@ -15146,7 +15146,7 @@ if (typeof JSON !== "object") {
         }
         var hr = pe(function(n) {
             for (var t = n.length, r = t, e = C(l), u = Tt(), o = u === Ra, i = []; r--; ) {
-                var a = n[r] = Dt(a = n[r]) ? a : [];
+                var a = n[r] = qt(a = n[r]) ? a : [];
                 e[r] = o && 120 <= a.length ? pt(r && a) : null;
             }
             var f = n[0], c = -1, l = f ? f.length : 0, s = e[0];
@@ -15190,7 +15190,7 @@ if (typeof JSON !== "object") {
             if (!n || !n.length) return [];
             var t = -1, r = 0;
             n = ln(n, function(n) {
-                return Dt(n) && (r = N(n.length, r), 1);
+                return qt(n) && (r = N(n.length, r), 1);
             });
             for (var e = C(r); ++t < r; ) e[t] = sn(n, Mn(t));
             return e;
@@ -15202,10 +15202,10 @@ if (typeof JSON !== "object") {
                 return hn(n, t, fi, !0);
             }));
         }
-        var Ar = pe(function(n, t) {
-            return Dt(n) ? On(n, t) : [];
+        var jr = pe(function(n, t) {
+            return qt(n) ? On(n, t) : [];
         });
-        var jr = pe(xr);
+        var Ar = pe(xr);
         function Or(n, t) {
             var r = -1, e = n ? n.length : 0, u = {};
             for (!e || t || _e(n[0]) || (t = []); ++r < e; ) {
@@ -15236,9 +15236,9 @@ if (typeof JSON !== "object") {
             });
         });
         var Cr = pe(function(n, t) {
-            return Dt(n) && (n = rr(n)), dn(n, Sn(t));
+            return qt(n) && (n = rr(n)), dn(n, Sn(t));
         }), Sr = ft(function(n, t, r) {
-            A.call(n, r) ? ++n[r] : n[r] = 1;
+            j.call(n, r) ? ++n[r] : n[r] = 1;
         });
         function Ur(n, t, r) {
             var e = _e(n) ? cn : Rn;
@@ -15253,26 +15253,26 @@ if (typeof JSON !== "object") {
             for (var r = n.length; r-- && !1 !== t(n[r], r, n); ) ;
             return n;
         }, kn), Tr = ft(function(n, t, r) {
-            A.call(n, r) ? n[r].push(t) : n[r] = [ t ];
+            j.call(n, r) ? n[r].push(t) : n[r] = [ t ];
         });
-        function qr(n, t, r, e) {
-            var u = n ? qt(n) : 0;
+        function Pr(n, t, r, e) {
+            var u = n ? Pt(n) : 0;
             return Gt(u) || (u = (n = Ye(n)).length), r = "number" != typeof r || e && Kt(t, r, e) ? 0 : r < 0 ? N(u + r, 0) : r || 0, 
-            "string" == typeof n || !_e(n) && je(n) ? r <= u && -1 < n.indexOf(t, r) : !!u && -1 < Tt(n, t, r);
+            "string" == typeof n || !_e(n) && Ae(n) ? r <= u && -1 < n.indexOf(t, r) : !!u && -1 < Tt(n, t, r);
         }
-        var Pr = ft(function(n, t, r) {
+        var Br = ft(function(n, t, r) {
             n[r] = t;
-        }), Br = pe(function(n, r, e) {
-            var u = -1, o = "function" == typeof r, i = Vt(r), a = Dt(n) ? C(n.length) : [];
+        }), zr = pe(function(n, r, e) {
+            var u = -1, o = "function" == typeof r, i = Vt(r), a = qt(n) ? C(n.length) : [];
             return In(n, function(n) {
                 var t = o ? r : i && null != n ? n[r] : fi;
-                a[++u] = t ? t.apply(n, e) : zt(n, r, e);
+                a[++u] = t ? t.apply(n, e) : Dt(n, r, e);
             }), a;
         });
-        function zr(n, t, r) {
-            return (_e(n) ? sn : Bn)(n, t = Wt(t, r, 3));
+        function Dr(n, t, r) {
+            return (_e(n) ? sn : zn)(n, t = Wt(t, r, 3));
         }
-        var Dr = ft(function(n, t, r) {
+        var qr = ft(function(n, t, r) {
             n[r ? 0 : 1].push(t);
         }, function() {
             return [ [], [] ];
@@ -15301,7 +15301,7 @@ if (typeof JSON !== "object") {
             var r = t[2];
             return r && Kt(t[0], t[1], r) && (t.length = 1), Zn(n, Sn(t), []);
         });
-        var Jr = q || function() {
+        var Jr = P || function() {
             return new t().getTime();
         };
         function Xr(n, t) {
@@ -15318,12 +15318,12 @@ if (typeof JSON !== "object") {
         var Zr = pe(function(n, t, r) {
             var e = li;
             if (r.length) {
-                var u = Ba(r, Zr.placeholder);
+                var u = za(r, Zr.placeholder);
                 e |= _i;
             }
             return Ft(n, e, t, r, u);
         }), Hr = pe(function(n, t) {
-            for (var r = -1, e = (t = t.length ? Sn(t) : qe(n)).length; ++r < e; ) {
+            for (var r = -1, e = (t = t.length ? Sn(t) : Pe(n)).length; ++r < e; ) {
                 var u = t[r];
                 n[u] = Ft(n[u], li, n);
             }
@@ -15331,7 +15331,7 @@ if (typeof JSON !== "object") {
         }), Qr = pe(function(n, t, r) {
             var e = li | si;
             if (r.length) {
-                var u = Ba(r, Qr.placeholder);
+                var u = za(r, Qr.placeholder);
                 e |= _i;
             }
             return Ft(t, e, n, r, u);
@@ -15367,9 +15367,9 @@ if (typeof JSON !== "object") {
             }, r;
         }
         var ee = pe(function(n, t) {
-            return jn(n, 1, t);
+            return An(n, 1, t);
         }), ue = pe(function(n, t, r) {
-            return jn(n, t, r);
+            return An(n, t, r);
         }), oe = xt(), ie = xt(!0);
         function ae(u, o) {
             if ("function" != typeof u || o && "function" != typeof o) throw new w(Ii);
@@ -15415,66 +15415,66 @@ if (typeof JSON !== "object") {
             return t < n;
         }
         function ve(n) {
-            return Pa(n) && Dt(n) && A.call(n, "callee") && !h.call(n, "callee");
+            return Ba(n) && qt(n) && j.call(n, "callee") && !h.call(n, "callee");
         }
         var _e = F || function(n) {
-            return Pa(n) && Gt(n.length) && j.call(n) == Ei;
+            return Ba(n) && Gt(n.length) && A.call(n) == Ei;
         };
         function ge(n, t, r, e) {
             var u = (r = "function" == typeof r ? ut(r, e, 3) : fi) ? r(n, t) : fi;
-            return u === fi ? qn(n, t, r) : !!u;
+            return u === fi ? Pn(n, t, r) : !!u;
         }
         function ye(n) {
-            return Pa(n) && "string" == typeof n.message && j.call(n) == Ui;
+            return Ba(n) && "string" == typeof n.message && A.call(n) == Ui;
         }
         function de(n) {
-            return we(n) && j.call(n) == $i;
+            return we(n) && A.call(n) == $i;
         }
         function we(n) {
             var t = typeof n;
             return !!n && ("object" == t || "function" == t);
         }
         function me(n) {
-            return null != n && (de(n) ? c.test(o.call(n)) : Pa(n) && (qa(n) ? c : va).test(n));
+            return null != n && (de(n) ? c.test(o.call(n)) : Ba(n) && (Pa(n) ? c : va).test(n));
         }
         function xe(n) {
-            return "number" == typeof n || Pa(n) && j.call(n) == Fi;
+            return "number" == typeof n || Ba(n) && A.call(n) == Fi;
         }
         function be(n) {
             var t, e;
-            return !(!Pa(n) || j.call(n) != Wi || qa(n) || ve(n) || !(A.call(n, "constructor") || "function" != typeof (t = n.constructor) || t instanceof t)) && (H.support.ownLast ? (Fn(n, function(n, t, r) {
-                return e = A.call(r, t), !1;
+            return !(!Ba(n) || A.call(n) != Wi || Pa(n) || ve(n) || !(j.call(n, "constructor") || "function" != typeof (t = n.constructor) || t instanceof t)) && (H.support.ownLast ? (Fn(n, function(n, t, r) {
+                return e = j.call(r, t), !1;
             }), !1 !== e) : (Fn(n, function(n, t) {
                 e = t;
-            }), e === fi || A.call(n, e)));
-        }
-        function Ae(n) {
-            return we(n) && j.call(n) == Li;
+            }), e === fi || j.call(n, e)));
         }
         function je(n) {
-            return "string" == typeof n || Pa(n) && j.call(n) == Ni;
+            return we(n) && A.call(n) == Li;
+        }
+        function Ae(n) {
+            return "string" == typeof n || Ba(n) && A.call(n) == Ni;
         }
         function Oe(n) {
-            return Pa(n) && Gt(n.length) && !!Aa[j.call(n)];
+            return Ba(n) && Gt(n.length) && !!ja[A.call(n)];
         }
         function Ie(n, t) {
             return n < t;
         }
         function ke(n) {
-            var t = n ? qt(n) : 0;
-            return Gt(t) ? t ? H.support.unindexedChars && je(n) ? n.split("") : an(n) : [] : Ye(n);
+            var t = n ? Pt(n) : 0;
+            return Gt(t) ? t ? H.support.unindexedChars && Ae(n) ? n.split("") : an(n) : [] : Ye(n);
         }
         function Re(n) {
-            return wn(n, Be(n));
+            return wn(n, ze(n));
         }
         var Ee = ct(function xu(o, i, a, f, c) {
             if (!we(o)) return o;
-            var l = Dt(i) && (_e(i) || Oe(i)), s = l ? fi : Pe(i);
+            var l = qt(i) && (_e(i) || Oe(i)), s = l ? fi : Be(i);
             return fn(s || i, function(n, t) {
-                if (s && (n = i[t = n]), Pa(n)) !function p(n, t, r, e, u, o, i) {
+                if (s && (n = i[t = n]), Ba(n)) !function p(n, t, r, e, u, o, i) {
                     for (var a = o.length, f = t[r]; a--; ) if (o[a] == f) return void (n[r] = i[a]);
                     var c = n[r], l = u ? u(c, f, r, n, t) : fi, s = l === fi;
-                    s && (Dt(l = f) && (_e(f) || Oe(f)) ? l = _e(c) ? c : Dt(c) ? an(c) : [] : be(f) || ve(f) ? l = ve(c) ? Re(c) : be(c) ? c : {} : s = !1), 
+                    s && (qt(l = f) && (_e(f) || Oe(f)) ? l = _e(c) ? c : qt(c) ? an(c) : [] : be(f) || ve(f) ? l = ve(c) ? Re(c) : be(c) ? c : {} : s = !1), 
                     o.push(f), i.push(l), s ? n[r] = e(l, f, u, o, i) : (l == l ? l !== c : c == c) && (n[r] = l);
                 }(o, i, t, xu, a, f = f || [], c = c || []); else {
                     var r = o[t], e = a ? a(r, n, t, o, i) : fi, u = e === fi;
@@ -15486,35 +15486,35 @@ if (typeof JSON !== "object") {
         });
         var Se = gt(Ce, function bu(n, t) {
             return n === fi ? t : n;
-        }), Ue = gt(Ee, function Au(n, t) {
-            return n === fi ? t : Ee(n, t, Au);
-        }), $e = mt(Wn), Fe = mt(Ln), We = At(Un), Le = At($n), Ne = jt(Wn), Te = jt(Ln);
-        function qe(n) {
-            return Nn(n, Be(n));
+        }), Ue = gt(Ee, function ju(n, t) {
+            return n === fi ? t : Ee(n, t, ju);
+        }), $e = mt(Wn), Fe = mt(Ln), We = jt(Un), Le = jt($n), Ne = At(Wn), Te = At(Ln);
+        function Pe(n) {
+            return Nn(n, ze(n));
         }
-        var Pe = L ? function(n) {
+        var Be = L ? function(n) {
             var t = null == n ? fi : n.constructor;
-            return "function" == typeof t && t.prototype === n || ("function" == typeof n ? H.support.enumPrototypes : Dt(n)) ? tr(n) : we(n) ? L(n) : [];
+            return "function" == typeof t && t.prototype === n || ("function" == typeof n ? H.support.enumPrototypes : qt(n)) ? tr(n) : we(n) ? L(n) : [];
         } : tr;
-        function Be(n) {
+        function ze(n) {
             if (null == n) return [];
             we(n) || (n = y(n));
             var t = n.length, r = H.support;
-            t = t && Gt(t) && (_e(n) || ve(n) || je(n)) && t || 0;
+            t = t && Gt(t) && (_e(n) || ve(n) || Ae(n)) && t || 0;
             for (var e = n.constructor, u = -1, o = de(e) && e.prototype || x, i = o === n, a = C(t), f = 0 < t, c = r.enumErrorProps && (n === m || n instanceof _), l = r.enumPrototypes && de(n); ++u < t; ) a[u] = u + "";
-            for (var s in n) l && "prototype" == s || c && ("message" == s || "name" == s) || f && Mt(s, t) || "constructor" == s && (i || !A.call(n, s)) || a.push(s);
+            for (var s in n) l && "prototype" == s || c && ("message" == s || "name" == s) || f && Mt(s, t) || "constructor" == s && (i || !j.call(n, s)) || a.push(s);
             if (r.nonEnumShadows && n !== x) {
-                var p = n === b ? Ni : n === m ? Ui : j.call(n), h = Z[p] || Z[Wi];
+                var p = n === b ? Ni : n === m ? Ui : A.call(n), h = Z[p] || Z[Wi];
                 for (p == Wi && (o = x), t = xa.length; t--; ) {
                     var v = h[s = xa[t]];
-                    i && v || (v ? !A.call(n, s) : n[s] === o[s]) || a.push(s);
+                    i && v || (v ? !j.call(n, s) : n[s] === o[s]) || a.push(s);
                 }
             }
             return a;
         }
-        var ze = Ot(!0), De = Ot(), Me = pe(function(n, t) {
+        var De = Ot(!0), qe = Ot(), Me = pe(function(n, t) {
             if (null == n) return {};
-            if ("function" != typeof t[0]) return t = sn(Sn(t), u), Xt(n, On(Be(n), t));
+            if ("function" != typeof t[0]) return t = sn(Sn(t), u), Xt(n, On(ze(n), t));
             var e = ut(t[0], t[1], 3);
             return Zt(n, function(n, t, r) {
                 return !e(n, t, r);
@@ -15522,7 +15522,7 @@ if (typeof JSON !== "object") {
         });
         function Ke(n) {
             n = er(n);
-            for (var t = -1, r = Pe(n), e = r.length, u = C(e); ++t < e; ) {
+            for (var t = -1, r = Be(n), e = r.length, u = C(e); ++t < e; ) {
                 var o = r[t];
                 u[t] = [ o, n[o] ];
             }
@@ -15532,7 +15532,7 @@ if (typeof JSON !== "object") {
             return null == n ? {} : "function" == typeof t[0] ? Zt(n, ut(t[0], t[1], 3)) : Xt(n, Sn(t));
         });
         function Ye(n) {
-            return Qn(n, Pe(n));
+            return Qn(n, Be(n));
         }
         var Ge = ht(function(n, t, r) {
             return t = t.toLowerCase(), n + (r ? t.charAt(0).toUpperCase() + t.slice(1) : t);
@@ -15557,7 +15557,7 @@ if (typeof JSON !== "object") {
         });
         function ru(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(za(n), Da(n) + 1) : (t += "", 
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(Da(n), qa(n) + 1) : (t += "", 
             n.slice(Sa(n, t), Ua(n, t) + 1)) : n;
         }
         function eu(n, t, r) {
@@ -15571,29 +15571,29 @@ if (typeof JSON !== "object") {
             }
         });
         function ou(n, t, r) {
-            return r && Kt(n, t, r) && (t = fi), Pa(n) ? au(n) : mn(n, t);
+            return r && Kt(n, t, r) && (t = fi), Ba(n) ? au(n) : mn(n, t);
         }
         function iu(n) {
             return n;
         }
         function au(n) {
-            return zn(xn(n, !0));
+            return Dn(xn(n, !0));
         }
         var fu = pe(function(t, r) {
             return function(n) {
-                return zt(n, t, r);
+                return Dt(n, t, r);
             };
         }), cu = pe(function(t, r) {
             return function(n) {
-                return zt(t, n, r);
+                return Dt(t, n, r);
             };
         });
         function lu(e, n, t) {
             if (null == t) {
-                var r = we(n), u = r ? Pe(n) : fi, o = u && u.length ? Nn(n, u) : fi;
+                var r = we(n), u = r ? Be(n) : fi, o = u && u.length ? Nn(n, u) : fi;
                 (o ? o.length : r) || (o = !1, t = n, n = e, e = this);
             }
-            o = o || Nn(n, Pe(n));
+            o = o || Nn(n, Be(n));
             var i = !0, a = -1, f = de(e), c = o.length;
             !1 === t ? i = !1 : we(t) && "chain" in t && (i = t.chain);
             for (;++a < c; ) {
@@ -15624,14 +15624,14 @@ if (typeof JSON !== "object") {
                 };
             })(n);
         }
-        var hu, vu = Ut("ceil"), _u = Ut("floor"), gu = yt(he, z), yu = yt(Ie, D), du = Ut("round");
+        var hu, vu = Ut("ceil"), _u = Ut("floor"), gu = yt(he, D), yu = yt(Ie, q), du = Ut("round");
         return H.prototype = Q.prototype, (nn.prototype = bn(Q.prototype)).constructor = nn, 
-        (rn.prototype = bn(Q.prototype)).constructor = rn, en.prototype["delete"] = function ju(n) {
+        (rn.prototype = bn(Q.prototype)).constructor = rn, en.prototype["delete"] = function Au(n) {
             return this.has(n) && delete this.__data__[n];
         }, en.prototype.get = function Ou(n) {
             return "__proto__" == n ? fi : this.__data__[n];
         }, en.prototype.has = function Iu(n) {
-            return "__proto__" != n && A.call(this.__data__, n);
+            return "__proto__" != n && j.call(this.__data__, n);
         }, en.prototype.set = function ku(n, t) {
             return "__proto__" != n && (this.__data__[n] = t), this;
         }, un.prototype.push = function Ru(n) {
@@ -15683,33 +15683,33 @@ if (typeof JSON !== "object") {
         }, H.filter = $r, H.flatten = function Tu(n, t, r) {
             var e = n ? n.length : 0;
             return r && Kt(n, t, r) && (t = !1), e ? Sn(n, t) : [];
-        }, H.flattenDeep = function qu(n) {
+        }, H.flattenDeep = function Pu(n) {
             return n && n.length ? Sn(n, !0) : [];
         }, H.flow = oe, H.flowRight = ie, H.forEach = Lr, H.forEachRight = Nr, H.forIn = We, 
-        H.forInRight = Le, H.forOwn = Ne, H.forOwnRight = Te, H.functions = qe, H.groupBy = Tr, 
-        H.indexBy = Pr, H.initial = function Pu(n) {
+        H.forInRight = Le, H.forOwn = Ne, H.forOwnRight = Te, H.functions = Pe, H.groupBy = Tr, 
+        H.indexBy = Br, H.initial = function Bu(n) {
             return fr(n, 1);
-        }, H.intersection = hr, H.invert = function Bu(n, t, r) {
+        }, H.intersection = hr, H.invert = function zu(n, t, r) {
             r && Kt(n, t, r) && (t = fi);
-            for (var e = -1, u = Pe(n), o = u.length, i = {}; ++e < o; ) {
+            for (var e = -1, u = Be(n), o = u.length, i = {}; ++e < o; ) {
                 var a = u[e], f = n[a];
-                t ? A.call(i, f) ? i[f].push(a) : i[f] = [ a ] : i[f] = a;
+                t ? j.call(i, f) ? i[f].push(a) : i[f] = [ a ] : i[f] = a;
             }
             return i;
-        }, H.invoke = Br, H.keys = Pe, H.keysIn = Be, H.map = zr, H.mapKeys = ze, H.mapValues = De, 
-        H.matches = au, H.matchesProperty = function zu(n, t) {
-            return Dn(n, xn(t, !0));
+        }, H.invoke = zr, H.keys = Be, H.keysIn = ze, H.map = Dr, H.mapKeys = De, H.mapValues = qe, 
+        H.matches = au, H.matchesProperty = function Du(n, t) {
+            return qn(n, xn(t, !0));
         }, H.memoize = ae, H.merge = Ee, H.method = fu, H.methodOf = cu, H.mixin = lu, H.modArgs = fe, 
-        H.negate = function Du(n) {
+        H.negate = function qu(n) {
             if ("function" != typeof n) throw new w(Ii);
             return function() {
                 return !n.apply(this, arguments);
             };
         }, H.omit = Me, H.once = function Mu(n) {
             return Xr(2, n);
-        }, H.pairs = Ke, H.partial = ce, H.partialRight = le, H.partition = Dr, H.pick = Ve, 
+        }, H.pairs = Ke, H.partial = ce, H.partialRight = le, H.partition = qr, H.pick = Ve, 
         H.pluck = function Ku(n, t) {
-            return zr(n, pu(t));
+            return Dr(n, pu(t));
         }, H.property = pu, H.propertyOf = function Vu(t) {
             return function(n) {
                 return Tn(t, ur(n), n + "");
@@ -15747,7 +15747,7 @@ if (typeof JSON !== "object") {
             }
             return n;
         }, H.shuffle = function Hu(n) {
-            return Vr(n, D);
+            return Vr(n, q);
         }, H.slice = function Qu(n, t, r) {
             var e = n ? n.length : 0;
             return e ? (r && "number" != typeof r && Kt(n, t, r) && (t = 0, r = e), Gn(n, t, r)) : [];
@@ -15755,7 +15755,7 @@ if (typeof JSON !== "object") {
             if (null == n) return [];
             t && Kt(n, e, t) && (e = fi);
             var u = -1;
-            return e = Wt(e, t, 3), Xn(Bn(n, function(n, t, r) {
+            return e = Wt(e, t, 3), Xn(zn(n, function(n, t, r) {
                 return {
                     criteria: e(n, t, r),
                     index: ++u,
@@ -15805,19 +15805,19 @@ if (typeof JSON !== "object") {
                 return e(u, n, t, r);
             }), u;
         }, H.union = wr, H.uniq = mr, H.unzip = xr, H.unzipWith = br, H.values = Ye, H.valuesIn = function so(n) {
-            return Qn(n, Be(n));
+            return Qn(n, ze(n));
         }, H.where = function po(n, t) {
-            return $r(n, zn(t));
-        }, H.without = Ar, H.wrap = function ho(n, t) {
+            return $r(n, Dn(t));
+        }, H.without = jr, H.wrap = function ho(n, t) {
             return Ft(t = null == t ? iu : t, _i, fi, [ n ], []);
         }, H.xor = function vo() {
             for (var n = -1, t = arguments.length; ++n < t; ) {
                 var r = arguments[n];
-                if (Dt(r)) var e = e ? pn(On(e, r), On(r, e)) : r;
+                if (qt(r)) var e = e ? pn(On(e, r), On(r, e)) : r;
             }
             return e ? Hn(e) : [];
-        }, H.zip = jr, H.zipObject = Or, H.zipWith = Ir, H.backflow = ie, H.collect = zr, 
-        H.compose = ie, H.each = Lr, H.eachRight = Nr, H.extend = Ce, H.iteratee = ou, H.methods = qe, 
+        }, H.zip = Ar, H.zipObject = Or, H.zipWith = Ir, H.backflow = ie, H.collect = Dr, 
+        H.compose = ie, H.each = Lr, H.eachRight = Nr, H.extend = Ce, H.iteratee = ou, H.methods = Pe, 
         H.object = Or, H.select = $r, H.tail = gr, H.unique = mr, lu(H, H), H.add = function _o(n, t) {
             return (+n || 0) + (+t || 0);
         }, H.attempt = uu, H.camelCase = Ge, H.capitalize = function go(n) {
@@ -15836,40 +15836,40 @@ if (typeof JSON !== "object") {
         }, H.escapeRegExp = function bo(n) {
             return (n = Ca(n)) && fa.test(n) ? n.replace(aa, La) : n || "(?:)";
         }, H.every = Ur, H.find = Fr, H.findIndex = cr, H.findKey = $e, H.findLast = Wr, 
-        H.findLastIndex = lr, H.findLastKey = Fe, H.findWhere = function Ao(n, t) {
-            return Fr(n, zn(t));
-        }, H.first = sr, H.floor = _u, H.get = function jo(n, t, r) {
+        H.findLastIndex = lr, H.findLastKey = Fe, H.findWhere = function jo(n, t) {
+            return Fr(n, Dn(t));
+        }, H.first = sr, H.floor = _u, H.get = function Ao(n, t, r) {
             var e = null == n ? fi : Tn(n, ur(t), t + "");
             return e === fi ? r : e;
         }, H.gt = he, H.gte = function Oo(n, t) {
             return t <= n;
         }, H.has = function Io(n, t) {
             if (null == n) return !1;
-            var r = A.call(n, t);
+            var r = j.call(n, t);
             if (!r && !Vt(t)) {
                 if (null == (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1)))) return !1;
-                t = vr(t), r = A.call(n, t);
+                t = vr(t), r = j.call(n, t);
             }
-            return r || Gt(n.length) && Mt(t, n.length) && (_e(n) || ve(n) || je(n));
-        }, H.identity = iu, H.includes = qr, H.indexOf = pr, H.inRange = function ko(n, t, r) {
+            return r || Gt(n.length) && Mt(t, n.length) && (_e(n) || ve(n) || Ae(n));
+        }, H.identity = iu, H.includes = Pr, H.indexOf = pr, H.inRange = function ko(n, t, r) {
             return t = +t || 0, r === fi ? (r = t, t = 0) : r = +r || 0, n >= T(t, r) && n < N(t, r);
         }, H.isArguments = ve, H.isArray = _e, H.isBoolean = function Ro(n) {
-            return !0 === n || !1 === n || Pa(n) && j.call(n) == Ci;
+            return !0 === n || !1 === n || Ba(n) && A.call(n) == Ci;
         }, H.isDate = function Eo(n) {
-            return Pa(n) && j.call(n) == Si;
+            return Ba(n) && A.call(n) == Si;
         }, H.isElement = function Co(n) {
-            return !!n && 1 === n.nodeType && Pa(n) && !be(n);
+            return !!n && 1 === n.nodeType && Ba(n) && !be(n);
         }, H.isEmpty = function So(n) {
-            return null == n || (Dt(n) && (_e(n) || je(n) || ve(n) || Pa(n) && de(n.splice)) ? !n.length : !Pe(n).length);
+            return null == n || (qt(n) && (_e(n) || Ae(n) || ve(n) || Ba(n) && de(n.splice)) ? !n.length : !Be(n).length);
         }, H.isEqual = ge, H.isError = ye, H.isFinite = function Uo(n) {
             return "number" == typeof n && W(n);
         }, H.isFunction = de, H.isMatch = function $o(n, t, r, e) {
-            return r = "function" == typeof r ? ut(r, e, 3) : fi, Pn(n, Pt(t), r);
+            return r = "function" == typeof r ? ut(r, e, 3) : fi, Bn(n, Bt(t), r);
         }, H.isNaN = function Fo(n) {
             return xe(n) && n != +n;
         }, H.isNative = me, H.isNull = function Wo(n) {
             return null === n;
-        }, H.isNumber = xe, H.isObject = we, H.isPlainObject = be, H.isRegExp = Ae, H.isString = je, 
+        }, H.isNumber = xe, H.isObject = we, H.isPlainObject = be, H.isRegExp = je, H.isString = Ae, 
         H.isTypedArray = Oe, H.isUndefined = function Lo(n) {
             return n === fi;
         }, H.kebabCase = Xe, H.last = vr, H.lastIndexOf = function No(n, t, r) {
@@ -15885,33 +15885,33 @@ if (typeof JSON !== "object") {
             return -1;
         }, H.lt = Ie, H.lte = function To(n, t) {
             return n <= t;
-        }, H.max = gu, H.min = yu, H.noConflict = function qo() {
+        }, H.max = gu, H.min = yu, H.noConflict = function Po() {
             return Oa._ = f, this;
-        }, H.noop = su, H.now = Jr, H.pad = function Po(n, t, r) {
+        }, H.noop = su, H.now = Jr, H.pad = function Bo(n, t, r) {
             t = +t;
             var e = (n = Ca(n)).length;
             if (t <= e || !W(t)) return n;
             var u = (t - e) / 2, o = $(u);
             return (r = Ct("", S(u), r)).slice(0, o) + n + r;
-        }, H.padLeft = Ze, H.padRight = He, H.parseInt = function Bo(n, t, r) {
-            return t = (r ? Kt(n, t, r) : null == t) ? 0 : t && +t, n = ru(n), P(n, t || (ha.test(n) ? 16 : 10));
-        }, H.random = function zo(n, t, r) {
+        }, H.padLeft = Ze, H.padRight = He, H.parseInt = function zo(n, t, r) {
+            return t = (r ? Kt(n, t, r) : null == t) ? 0 : t && +t, n = ru(n), B(n, t || (ha.test(n) ? 16 : 10));
+        }, H.random = function Do(n, t, r) {
             r && Kt(n, t, r) && (t = r = fi);
             var e = null == n, u = null == t;
             if (null == r && (u && "boolean" == typeof n ? (r = n, n = 1) : "boolean" == typeof t && (r = t, 
             u = !0)), e && u && (u = !(t = 1)), n = +n || 0, u ? (t = n, n = 0) : t = +t || 0, 
             r || n % 1 || t % 1) {
-                var o = B();
+                var o = z();
                 return T(n + o * (t - n + s("1e-" + ((o + "").length - 1))), t);
             }
             return Vn(n, t);
-        }, H.reduce = Mr, H.reduceRight = Kr, H.repeat = Qe, H.result = function Do(n, t, r) {
+        }, H.reduce = Mr, H.reduceRight = Kr, H.repeat = Qe, H.result = function qo(n, t, r) {
             var e = null == n ? fi : er(n)[t];
             return e === fi && (null == n || Vt(t, n) || (e = null == (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1))) ? fi : er(n)[vr(t)]), 
             e = e === fi ? r : e), de(e) ? e.call(n) : e;
         }, H.round = du, H.runInContext = Va, H.size = function Mo(n) {
-            var t = n ? qt(n) : 0;
-            return Gt(t) ? t : Pe(n).length;
+            var t = n ? Pt(n) : 0;
+            return Gt(t) ? t : Be(n).length;
         }, H.snakeCase = nu, H.some = Yr, H.sortedIndex = yr, H.sortedLastIndex = dr, H.startCase = tu, 
         H.startsWith = function Ko(n, t, r) {
             return n = Ca(n), r = null == r ? 0 : T(!(r < 0) && +r || 0, n.length), n.lastIndexOf(t, r) == r;
@@ -15928,7 +15928,7 @@ if (typeof JSON !== "object") {
         }, H.template = function Yo(i, n, t) {
             var r = H.templateSettings;
             t && Kt(i, n, t) && (n = t = fi), i = Ca(i), n = gn(yn({}, t || n), r, _n);
-            var a, f, e = gn(yn({}, n.imports), r.imports, _n), u = Pe(e), o = Qn(e, u), c = 0, l = n.interpolate || ya, s = "__p += '", p = d((n.escape || ya).source + "|" + l.source + "|" + (l === ea ? sa : ya).source + "|" + (n.evaluate || ya).source + "|$", "g"), h = "//# sourceURL=" + ("sourceURL" in n ? n.sourceURL : "lodash.templateSources[" + ++ba + "]") + "\n";
+            var a, f, e = gn(yn({}, n.imports), r.imports, _n), u = Be(e), o = Qn(e, u), c = 0, l = n.interpolate || ya, s = "__p += '", p = d((n.escape || ya).source + "|" + l.source + "|" + (l === ea ? sa : ya).source + "|" + (n.evaluate || ya).source + "|$", "g"), h = "//# sourceURL=" + ("sourceURL" in n ? n.sourceURL : "lodash.templateSources[" + ++ba + "]") + "\n";
             i.replace(p, function(n, t, r, e, u, o) {
                 return r = r || e, s += i.slice(c, o).replace(da, Na), t && (a = !0, s += "' +\n__e(" + t + ") +\n'"), 
                 u && (f = !0, s += "';\n" + u + ";\n__p += '"), r && (s += "' +\n((__t = (" + r + ")) == null ? '' : __t) +\n'"), 
@@ -15944,10 +15944,10 @@ if (typeof JSON !== "object") {
             return _;
         }, H.trim = ru, H.trimLeft = function Go(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(za(n)) : n.slice(Sa(n, t + "")) : n;
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(Da(n)) : n.slice(Sa(n, t + "")) : n;
         }, H.trimRight = function Jo(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(0, Da(n) + 1) : n.slice(0, Ua(n, t + "") + 1) : n;
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(0, qa(n) + 1) : n.slice(0, Ua(n, t + "") + 1) : n;
         }, H.trunc = function Xo(n, t, r) {
             r && Kt(n, t, r) && (t = fi);
             var e = wi, u = mi;
@@ -15960,7 +15960,7 @@ if (typeof JSON !== "object") {
             if (i < 1) return u;
             var a = n.slice(0, i);
             if (null == o) return a + u;
-            if (Ae(o)) {
+            if (je(o)) {
                 if (n.slice(i).search(o)) {
                     var f, c, l = n.slice(0, i);
                     for (o.global || (o = d(o.source, (pa.exec(o) || "") + "g")), o.lastIndex = 0; f = o.exec(l); ) c = f.index;
@@ -15976,8 +15976,8 @@ if (typeof JSON !== "object") {
         }, H.uniqueId = function Ho(n) {
             var t = ++a;
             return Ca(n) + t;
-        }, H.words = eu, H.all = Ur, H.any = Yr, H.contains = qr, H.eq = ge, H.detect = Fr, 
-        H.foldl = Mr, H.foldr = Kr, H.head = sr, H.include = qr, H.inject = Mr, lu(H, (hu = {}, 
+        }, H.words = eu, H.all = Ur, H.any = Yr, H.contains = Pr, H.eq = ge, H.detect = Fr, 
+        H.foldl = Mr, H.foldr = Kr, H.head = sr, H.include = Pr, H.inject = Mr, lu(H, (hu = {}, 
         Wn(H, function(n, t) {
             H.prototype[t] || (hu[t] = n);
         }), hu), !1), H.sample = Vr, H.prototype.sample = function(t) {
@@ -16019,7 +16019,7 @@ if (typeof JSON !== "object") {
                 return this.__filtered__ ? new rn(this) : this[r](1);
             };
         }), fn([ "pluck", "where" ], function(n, t) {
-            var r = t ? "filter" : "map", e = t ? zn : pu;
+            var r = t ? "filter" : "map", e = t ? Dn : pu;
             rn.prototype[n] = function(n) {
                 return this[r](e(n));
             };
@@ -16037,7 +16037,7 @@ if (typeof JSON !== "object") {
         }, rn.prototype.takeRightWhile = function(n, t) {
             return this.reverse().takeWhile(n, t).reverse();
         }, rn.prototype.toArray = function() {
-            return this.take(D);
+            return this.take(q);
         }, Wn(rn.prototype, function(s, n) {
             var p = /^(?:filter|map|reject)|While$/.test(n), h = /^(?:first|last)$/.test(n), v = H[h ? "take" + ("last" == n ? "Right" : "") : n];
             v && (H.prototype[n] = function() {
@@ -16116,13 +16116,13 @@ if (typeof JSON !== "object") {
                     end: t
                 };
             }(0, u, this.__views__), i = o.start, a = o.end, f = a - i, c = e ? a : i - 1, l = this.__iteratees__, s = l.length, p = 0, h = T(f, this.__takeCount__);
-            if (!r || u < Ai || u == f && h == f) return tt(n, this.__actions__);
+            if (!r || u < ji || u == f && h == f) return tt(n, this.__actions__);
             var v = [];
             n: for (;f-- && p < h; ) {
                 for (var _ = -1, g = n[c += t]; ++_ < s; ) {
                     var y = l[_], d = y.iteratee, w = y.type, m = d(g);
                     if (w == Oi) g = m; else if (!m) {
-                        if (w == ji) continue n;
+                        if (w == Ai) continue n;
                         break n;
                     }
                 }
@@ -28634,6 +28634,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "ተጨማሪ PsiCash ይግዙ",
             "psicash#ui-nsfbalance-buttontext": "ለፍጥነት&nbsp;ጭማሬ ያስፈልጋል",
             "psicash#ui-enoughbalance-buttontext": "ፍጥነት&nbsp;ጭማሬ ያስጀምሩ",
+            "psicash#1-hour": "1 ሰዓት",
+            "psicash#1-day": "1 ቀን",
             "psicash#ui-buyingboost-buttontext": "ፍጥነት&nbsp;ጭማሬን በማስጀመር ላይ!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon ግንኙነት ያስፈልጋል",
@@ -28641,6 +28643,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "የPsiCash ጅማሬ ስህተት",
             "psicash#init-error-body-unrecovered": "PsiCash ለመጀመር አልቻለም። ይህ ብዙ ግዜ የሚፈጠረው ልክ እንደ የዲስክ ቦታ ማጠር ያለ የፋይል ሥርአት ውስጥ በሚፈጠር ችግር ነው። ቀሪ ሂሳብዎ እና ሌሎችም ዕሴቶች ጠፍተዋል። PsiCash ከጥቅም ውጭ ይሆናል። ችግሩን ለመቅረፍ ለመሞከር መተግበሪያውን ዳግም ማስጀመር ይችላሉ።",
             "psicash#init-error-body-recovered": "PsiCash ለመጀመር አልቻለም። ይህ ብዙ ግዜ የሚፈጠረው ልክ እንደ የዲስክ ቦታ ማጠር ያለ የፋይል ሥርአት ውስጥ በሚፈጠር ችግር ነው። ቀሪ ሂሳብዎ እና ሌሎችም ዕሴቶች ዳግም ተቀናብረዋል።",
+            "psicash#psiphon-speed": "Psiphon<br>ፍጥነት",
+            "notice#disallowed-traffic-alert-title": "የPsiphon ግንኙነትዎን ደረጃ ያልቁ",
+            "notice#disallowed-traffic-alert-body": "<p>መተገበሪያዎች እየሠሩ አይደለም?</p>\n<p>አንዳንድ የኢንተርኔት ትራፊክ በንቁ የፍጥነት ጭማሪ ካልሆነ በቀር እይደገፍም። የPsiphon ተሞክሮዎን ሙሉ እምቅ ኃይል ለመተግበር የፍጥነት ጭማሪን በPsiCash ያንቁ።</p>",
+            "appbackend#disallowed-traffic-notification-title": "መተግበሪያዎች እየሠሩ አይደለም?",
+            "appbackend#disallowed-traffic-notification-body": "የPsiphon ተሞክሮዎን ሙሉ እምቅ ኃይል ለመተግበር የፍጥነት ጭማሪን ያንቁ።",
+            "settings#disallowed-traffic-alert#heading": "የተከለከለ የትራፊክ ማስጠንቀቂያ",
+            "settings#disallowed-traffic-alert#help-text": "አንዳንድ የኢንተርኔት ትራፊክ በንቁ የፍጥነት ጭማሪ ካልሆነ በቀር እይደገፍም። እንደዚህ አይነት ትራፊክ በሚሰናከልበት ወቅት ማስጠቀቂያ ይታያል። (ዳግም ለማንቃት ዳግም መገናኘት ያስፈልጋል።)",
+            "settings#disallowed-traffic-alert#disable-label": "የተከለከሉ የትራፊክ ማስጠንቀቂያዎችን አሰናክል",
             "banner#sponsored-by": "ስፖንሰር ያደረገው"
         }
     },
@@ -28809,6 +28819,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "ساعة",
+            "psicash#1-day": "1 يوم",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -28816,6 +28828,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "برعاية "
         }
     },
@@ -28984,6 +29004,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -28991,6 +29013,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponsoru:"
         }
     },
@@ -29159,6 +29189,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -29166,6 +29198,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Спонсар"
         }
     },
@@ -29334,6 +29374,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 ঘন্টা",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -29341,6 +29383,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "সৌজন্যে"
         }
     },
@@ -29509,6 +29559,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "ཆུ་ཚོད་༡",
+            "psicash#1-day": "ཉིན་༡",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -29516,6 +29568,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "སྦྱིན་བདག་བྱེད་མཁན།"
         }
     },
@@ -29684,6 +29744,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 Stunde",
+            "psicash#1-day": "1 Tag",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon-Verbindung erforderlich",
@@ -29691,6 +29753,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Gefördert durch"
         }
     },
@@ -30229,6 +30299,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 ώρα",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -30236,6 +30308,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Χρηματοδοτείται από"
         }
     },
@@ -30589,6 +30669,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Compre más PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Necesario para Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Arrancar Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hora",
+            "psicash#1-day": "1 día",
             "psicash#ui-buyingboost-buttontext": "Arrancando Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Una conexion a Psiphon es requerida.",
@@ -30596,6 +30678,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "Error de inicialización de PsiCash",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Patrocinado por"
         }
     },
@@ -30764,6 +30854,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "PsiCash بیشتری بخرید.",
             "psicash#ui-nsfbalance-buttontext": "مورد نیاز برای افزایش سرعت",
             "psicash#ui-enoughbalance-buttontext": "شروع افزایش سرعت",
+            "psicash#1-hour": "۱ ساعت",
+            "psicash#1-day": "۱ روز",
             "psicash#ui-buyingboost-buttontext": "در حال افزایش سرعت!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "اتصال Psiphon الزامیست",
@@ -30771,6 +30863,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "خطای آماده‌سازی اولیه PsiCash\n",
             "psicash#init-error-body-unrecovered": "PsiCash در آماده‌سازی اولیه ناموفق بود. این احتمالا به دلیل مشکل سیستم فایل‌ها، مانند پر بودن فضای دیسک است. موجودی و وضعیت شما از دست رفته است. PsiCash قابل استفاده نخواهد بود. برای رهایی از این مشکل می‌توانید دوباره برنامه را راه‌اندازی کنید.",
             "psicash#init-error-body-recovered": "PsiCash در آماده‌سازی اولیه ناموفق بود. این احتمالا به دلیل مشکل سیستم فایل‌ها، مانند پر بودن فضای دیسک است. موجودی و وضعیت شما بازنشانی (reset) شده است.",
+            "psicash#psiphon-speed": "سرعت<br>Psiphon",
+            "notice#disallowed-traffic-alert-title": "اتصال Psiphon خود را ارتقا دهید",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "برنامه‌ها کار نمی‌کنند؟",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "اسپانسر شده با  "
         }
     },
@@ -30939,6 +31039,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -30946,6 +31048,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "تمویل شده توسط"
         }
     },
@@ -31114,6 +31224,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -31121,6 +31233,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponsoroija:"
         }
     },
@@ -31282,13 +31402,15 @@ function Datastore(t, e) {
             "psicash#transaction-InvalidTokens-title": "Les jetons PsiCash sont invalides",
             "psicash#transaction-InvalidTokens-body": 'Vos jetons PsiCash sont invalides. Essayez de redémarrer l’appli. Si cela ne suffit pas, vous devrez <a href="https://psiphon3.com/fr/faq.html#clear-windows-data"> vider votre cache local.</a>.',
             "psicash#transaction-ServerError-title": "Erreur du serveur PsiCash",
-            "psicash#transaction-ServerError-body": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez ressayer votre achat ultérieurement.",
+            "psicash#transaction-ServerError-body": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez ressayer votre achat plus tard.",
             "psicash#ui-speedboost-active": "La Survitesse est active pendant %s",
             "psicash#ui-zerobalance-title": "Avez-vous besoin de plus de vitesse ?",
             "psicash#ui-buypsi": "Acheter du PsiCash",
             "psicash#ui-buymorepsi": "Acheter plus de PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Requis pour la Survitesse",
             "psicash#ui-enoughbalance-buttontext": "Lancer la Survitesse",
+            "psicash#1-hour": "1 heure",
+            "psicash#1-day": "1  jour",
             "psicash#ui-buyingboost-buttontext": "Lancement de la Survitesse…",
             "positive-value-indicator": "+ %d",
             "psicash#mustconnect-modal#title": "La connexion à Psiphon est exigée",
@@ -31296,6 +31418,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "Erreur d’initialisation PsiCash",
             "psicash#init-error-body-unrecovered": "L’initialisation de PsiCash a échoué. Cela est probablement causé par un problème du système de fichiers, tel qu’un manque d’espace disque. Vos solde et autre état sont perdus. PsiCash sera inutilisable. Vous pouvez tenter de redémarrer l’appli pour régler ce problème.",
             "psicash#init-error-body-recovered": "L’initialisation de PsiCash a échoué. Cela est probablement causé par un problème du système de fichiers, tel qu’un manque d’espace disque. Vos solde et autre état sont réinitialisés.",
+            "psicash#psiphon-speed": "Vitesse<br>Psiphon",
+            "notice#disallowed-traffic-alert-title": "Surclassez votre connexion Psiphon",
+            "notice#disallowed-traffic-alert-body": "<p>Les applis ne fonctionnent-elles pas ?</p>\n<p>Une partie du trafic Internet n’est pas prise en charge sans une Survitesse active. Activez la Survitesse avec du PsiCash afin de libérer le plein potentiel de votre expérience Psiphon.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Les applis ne fonctionnent-elles pas ?",
+            "appbackend#disallowed-traffic-notification-body": "Activez la Survitesse afin de libérer le plein potentiel de votre expérience Psiphon.",
+            "settings#disallowed-traffic-alert#heading": "Alerte de trafic refusé",
+            "settings#disallowed-traffic-alert#help-text": "Certains types de trafic Internet ne sont pas pris en charge sans une Survitesse active. Quand un tel trafic est refusé, une alerte est affichée. (La réactivation demandera une reconnexion.)",
+            "settings#disallowed-traffic-alert#disable-label": "Désactiver les alertes de trafic refusé",
             "banner#sponsored-by": "Commandité par"
         }
     },
@@ -31464,6 +31594,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 घंटा",
+            "psicash#1-day": "1 दिन",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -31471,6 +31603,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponsored by"
         }
     },
@@ -31639,6 +31779,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 sat",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -31646,6 +31788,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponzorira"
         }
     },
@@ -31814,6 +31964,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -31821,6 +31973,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Didukung oleh"
         }
     },
@@ -31989,6 +32149,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 ora",
+            "psicash#1-day": "1 giorno",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -31996,6 +32158,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponsorizzato da"
         }
     },
@@ -32164,6 +32334,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -32171,6 +32343,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Демеушілік еткен"
         }
     },
@@ -32239,8 +32419,8 @@ function Datastore(t, e) {
             "settings#egress-region#select-ro": "រូម៉ានី",
             "settings#egress-region#select-se": "ស៊ុយអែត",
             "settings#egress-region#select-pl": "ប៉ូឡូញ",
-            "settings#egress-region#select-rs": "Serbia",
-            "settings#egress-region#select-au": "Australia",
+            "settings#egress-region#select-rs": "ស៊ែប៊ី",
+            "settings#egress-region#select-au": "អូស្ត្រាលី",
             "settings#egress-region#description": "Psiphon មានម៉ាស៊ីនមេនៅក្នុងប្រទេសផ្សេងៗជាច្រើន។ ការប្រើម៉ាស៊ីនមេ នៅក្នុងប្រទេសដែលនៅជិតប្រទេសរបស់អ្នក ជាទូទៅនឹងផ្តល់នូវការតភ្ជាប់បណ្តាញល្អប្រសើរជាងមុន ប៉ុន្តែអ្នកប្រហែលជាចង់ចូលប្រើគេហទំព័រនិងសេវាកម្ម ដូចអ្នកស្ទើរតែនៅក្នុងប្រទេសជាក់លាក់មួយ។",
             "settings#egress-region#default": "ជម្រើសដើម <strong>“ប្រទេសលឿនបំផុត”</strong> អនុញ្ញាត Psiphon ជ្រើសរើសម៉ាស៊ីនមេដោយស្វ័យប្រវត្តិ ដែលជាទូទៅអាចផ្តល់ការតភ្ជាប់បណ្តាញដែលល្អបំផុត។",
             "settings#egress-region#invalid-error-msg": "ជ្រើសរើសម៉ាស៊ីនមេ Psiphon​ ក្នុងតំបន់",
@@ -32323,7 +32503,7 @@ function Datastore(t, e) {
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
             "psicash#transaction-ExistingTransaction-body": "You have an existing PsiCash purchase of this type. Another purchase of this type is not allowed until the previous one expires. Your PsiCash state will be refreshed now.",
-            "psicash#transaction-InsufficientBalance-title": "Insufficient PsiCash balance",
+            "psicash#transaction-InsufficientBalance-title": "សមតុល្យ PsiCash មិនគ្រប់គ្រាន់",
             "psicash#transaction-InsufficientBalance-body": "You do not have sufficient PsiCash balance for this purchase.",
             "psicash#transaction-TransactionAmountMismatch-title": "PsiCash purchase price mismatch",
             "psicash#transaction-TransactionAmountMismatch-body": "PsiCash purchase prices are out-of-date. Your PsiCash state will be refreshed now.",
@@ -32339,6 +32519,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 ម៉ោង",
+            "psicash#1-day": "1 ថ្ងៃ",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -32346,6 +32528,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>ល្បឿន",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "កម្មវិធីមិនដំណើរការ?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "ឧបត្ថម្ភដោយ"
         }
     },
@@ -32514,6 +32704,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1시간",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -32521,6 +32713,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "후원자"
         }
     },
@@ -32689,6 +32889,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -32696,6 +32898,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Демөөрлөндү"
         }
     },
@@ -32864,6 +33074,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -32871,6 +33083,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "ထောက်ပံ့ကူညီပေးသူ"
         }
     },
@@ -33039,6 +33259,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 time",
+            "psicash#1-day": "1 dag",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -33046,6 +33268,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponset av"
         }
     },
@@ -33214,6 +33444,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Koop meer PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Nodig voor Snelheid&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Snelheid&nbsp;Boost",
+            "psicash#1-hour": "1 uur",
+            "psicash#1-day": "1 dag",
             "psicash#ui-buyingboost-buttontext": "Starten Snelheid&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon-verbinding vereist",
@@ -33221,6 +33453,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash-initialisatiefout",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Gesponsord door"
         }
     },
@@ -33389,6 +33629,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -33396,6 +33638,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Spoonserri"
         }
     },
@@ -33564,6 +33814,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hora",
+            "psicash#1-day": "1 dia",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -33571,6 +33823,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Patrocinado por"
         }
     },
@@ -33739,6 +33999,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hora",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -33746,6 +34008,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Patrocinado por"
         }
     },
@@ -33914,6 +34184,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 час",
+            "psicash#1-day": "1 день",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -33921,6 +34193,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "При поддержке"
         }
     },
@@ -34089,6 +34369,8 @@ function Datastore(t, e) {
       "psicash#ui-buymorepsi": "Buy more PsiCash",
       "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
       "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+      "psicash#1-hour": "1 hour",
+      "psicash#1-day": "1 day",
       "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
       "positive-value-indicator": "+%d",
       "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -34096,6 +34378,14 @@ function Datastore(t, e) {
       "psicash#init-error-title": "PsiCash initialization error",
       "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
       "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+      "psicash#psiphon-speed": "Psiphon<br>Speed",
+      "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+      "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+      "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+      "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+      "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+      "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+      "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
       "banner#sponsored-by": "Парасторӣ аз"
     }
   },
@@ -34264,6 +34554,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 ชั่วโมง",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -34271,6 +34563,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Sponsored by"
         }
     },
@@ -34439,6 +34739,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -34446,6 +34748,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "ዝተመወለ ብ"
         }
     },
@@ -34614,6 +34924,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -34621,6 +34933,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Hemaýatkär"
         }
     },
@@ -34789,6 +35109,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Daha fazla PsiCash satın alın",
             "psicash#ui-nsfbalance-buttontext": "Speed&nbsp;Boost! için gereken",
             "psicash#ui-enoughbalance-buttontext": "Speed&nbsp;Boost! Kullanmaya Başla",
+            "psicash#1-hour": "1 saat",
+            "psicash#1-day": "1 gün",
             "psicash#ui-buyingboost-buttontext": "Speed&nbsp;Boost! Başlatılıyor",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Bağlantısı Gerekli",
@@ -34796,6 +35118,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash başlatma sorunu",
             "psicash#init-error-body-unrecovered": "PsiCash hazırlanamadı. Bu durum büyük olasılıkla disk alanının yetersiz olması gibi bir dosya sistemi sorunundan kaynaklanıyor. Bakiyeniz ve diğer durum bilgileriniz kayboldu. PsiCash kullanılamayacak. Sorunu çözmek için uygulamayı yeniden başlatmayı deneyebilirsiniz.",
             "psicash#init-error-body-recovered": "PsiCash hazırlanamadı. Bu durum büyük olasılıkla disk alanının yetersiz olması gibi bir dosya sistemi sorunundan kaynaklanıyor. Bakiyeniz ve diğer durum bilgileriniz sıfırlandı.",
+            "psicash#psiphon-speed": "Psiphon<br>Hızı",
+            "notice#disallowed-traffic-alert-title": "Psiphon bağlantınızı yükseltin",
+            "notice#disallowed-traffic-alert-body": "</p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği etkin olmadan kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Çalışmayan uygulamalar mı var?",
+            "appbackend#disallowed-traffic-notification-body": "Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.",
+            "settings#disallowed-traffic-alert#heading": "İzin Verilmeyen Trafik Uyarısı",
+            "settings#disallowed-traffic-alert#help-text": "İnternet trafiğinin bir kısmı Speed Boost özelliği etkin olmadan kullanılamaz. Böyle bir trafik engellendiğinde bir uyarı görüntülenir (yeniden etkinleştirmek için yeniden bağlanmak gerekir).",
+            "settings#disallowed-traffic-alert#disable-label": "İzin verilmeyen trafik uyarıları kapatılsın",
             "banner#sponsored-by": "Destekleyen"
         }
     },
@@ -34964,6 +35294,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 година",
+            "psicash#1-day": "1 день",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -34971,6 +35303,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Спонсорований"
         }
     },
@@ -35139,6 +35479,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "زیادہ PsiCash خریدیں",
             "psicash#ui-nsfbalance-buttontext": "تیزی کیلئے درکار بوسٹ",
             "psicash#ui-enoughbalance-buttontext": "تیزی کی ابتدا بوسٹ",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "تیزی کی ابتدا ہو رہی ہے بوسٹ",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon (سائفن) کنکشن کی ضرورت تھی",
@@ -35146,6 +35488,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash کی ابتدا میں ایرر",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "تعاون بذریعہ"
         }
     },
@@ -35314,6 +35664,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -35321,6 +35673,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Homiy:"
         }
     },
@@ -35489,6 +35849,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 hour",
+            "psicash#1-day": "1 day",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -35496,6 +35858,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "Được tài trợ bởi"
         }
     },
@@ -35664,6 +36034,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "购买更多的PsiCash",
             "psicash#ui-nsfbalance-buttontext": "需要提&nbsp;速",
             "psicash#ui-enoughbalance-buttontext": "开始提&nbsp;速",
+            "psicash#1-hour": "1 小时",
+            "psicash#1-day": "1 天",
             "psicash#ui-buyingboost-buttontext": "正在提&nbsp;速中！",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "需要连接至赛风",
@@ -35671,6 +36043,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash初始化错误",
             "psicash#init-error-body-unrecovered": "PsiCash初始化失败。这有可能是文件系统的问题，例如没有足够的磁盘空间。您的余额和其他相关信息丢失。PsiCash将会不稳定。您可以通过重启软件从而修复这个问题。",
             "psicash#init-error-body-recovered": "PsiCash初始化失败。这有可能是文件系统的问题，例如没有足够的磁盘空间。您的余额以及其他相关信息已经被重置。",
+            "psicash#psiphon-speed": "赛风<br>速度",
+            "notice#disallowed-traffic-alert-title": "升级您的赛风链接",
+            "notice#disallowed-traffic-alert-body": "<p>程序不能正常工作?</p>\n<p>有些网络流量需要加速的支持。通过PsiCash购买加速从而解锁赛风体验的全部潜能。</p>",
+            "appbackend#disallowed-traffic-notification-title": "程序不能正常工作?",
+            "appbackend#disallowed-traffic-notification-body": "激活加速从而解锁赛风体验的全部潜能。",
+            "settings#disallowed-traffic-alert#heading": "禁止流量警报",
+            "settings#disallowed-traffic-alert#help-text": "有些网络流量必须有加速服务的支持。当这样的流量被禁止时，一个警告将会弹出。（重新启用这样的流量需要重新连接。）",
+            "settings#disallowed-traffic-alert#disable-label": "禁止禁用流量警告",
             "banner#sponsored-by": "赞助者："
         }
     },
@@ -35839,6 +36219,8 @@ function Datastore(t, e) {
             "psicash#ui-buymorepsi": "Buy more PsiCash",
             "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
             "psicash#ui-enoughbalance-buttontext": "Start Speed&nbsp;Boost",
+            "psicash#1-hour": "1 小時",
+            "psicash#1-day": "1 天",
             "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon Connection Required",
@@ -35846,6 +36228,14 @@ function Datastore(t, e) {
             "psicash#init-error-title": "PsiCash initialization error",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+            "psicash#psiphon-speed": "Psiphon<br>Speed",
+            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
+            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
+            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "banner#sponsored-by": "贊助者："
         }
     }

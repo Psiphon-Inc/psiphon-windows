@@ -273,8 +273,8 @@ void CoreTransport::TransportConnectHelper()
 {
     assert(m_systemProxySettings != NULL);
 
-    tstring configFilename, serverListFilename, clientUpgradeFilename;
-    if (!WriteParameterFiles(configFilename, serverListFilename, clientUpgradeFilename))
+    tstring configFilename, serverListFilename, oldClientUpgradeFilename, newClientUpgradeFilename;
+    if (!WriteParameterFiles(configFilename, serverListFilename, oldClientUpgradeFilename, newClientUpgradeFilename))
     {
         throw TransportFailed();
     }
@@ -283,9 +283,18 @@ void CoreTransport::TransportConnectHelper()
     // If there is a pending upgrade, when disconnect/connect is pressed (or a new region is chosen, upstream proxy settings change, etc.)
     // the application is killed and relaunched with the new image. The upgrade package is not immediately deleted on a successful pave
     // to prevent re-download. When CoreTransport starts, we assume it's with the new binary, and deleting the .upgrade file is safe.
-    if (!clientUpgradeFilename.empty() && !DeleteFile(clientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
+    if (!oldClientUpgradeFilename.empty() && !DeleteFile(oldClientUpgradeFilename.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND)
     {
         my_print(NOT_SENSITIVE, false, _T("Failed to delete previously applied upgrade package! Please report this error."));
+    }
+
+    if (!newClientUpgradeFilename.empty() && !DeleteFile(newClientUpgradeFilename.c_str()))
+    {
+        int error = GetLastError();
+        if ((error != ERROR_FILE_NOT_FOUND) && (error != ERROR_PATH_NOT_FOUND))
+        {
+            my_print(NOT_SENSITIVE, false, _T("Failed to delete previously applied upgrade package! Please report this error."));
+        }
     }
 
     // Run core process; it will begin establishing a tunnel
@@ -358,7 +367,7 @@ Json::Value loadJSONArray(const char* jsonArrayString)
 }
 
 
-bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& clientUpgradeFilename)
+bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& oldClientUpgradeFilename, tstring& newClientUpgradeFilename)
 {
     tstring dataStoreDirectory;
     if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY }, true, dataStoreDirectory)) {
@@ -384,6 +393,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     config["RemoteServerListURLs"] = loadJSONArray(REMOTE_SERVER_LIST_URLS_JSON);
     config["ObfuscatedServerListRootURLs"] = loadJSONArray(OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON);
     config["RemoteServerListSignaturePublicKey"] = REMOTE_SERVER_LIST_SIGNATURE_PUBLIC_KEY;
+    config["ServerEntrySignaturePublicKey"] = SERVER_ENTRY_SIGNATURE_PUBLIC_KEY;
     config["DataRootDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["MigrateDataStoreDirectory"] = WStringToUTF8(shortDataStoreDirectory);
     config["UseIndistinguishableTLS"] = true;
@@ -483,7 +493,8 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             config["EstablishTunnelTimeoutSeconds"] = TEMPORARY_TUNNEL_TIMEOUT_SECONDS;
         }
 
-        clientUpgradeFilename.clear();
+        oldClientUpgradeFilename.clear();
+        newClientUpgradeFilename.clear();
     }
     else
     {
@@ -500,11 +511,17 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
             config["MigrateObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
         }
 
-        clientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
+        oldClientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
-        config["MigrateUpgradeDownloadFilename"] = WStringToUTF8(clientUpgradeFilename);
+        config["MigrateUpgradeDownloadFilename"] = WStringToUTF8(oldClientUpgradeFilename);
         config["UpgradeDownloadURLs"] = loadJSONArray(UPGRADE_URLS_JSON);
         config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
+
+        // Newer versions of tunnel-core download the upgrade file to its own data directory. Both oldClientUpgradeFilename and
+        // newClientUpgradeFilename should be deleted when Psiphon starts if they exist.
+        // TODO: when we switch to using tunnel-core as a library instead of a subprocess then we can call UpgradeDownloadFilePath()
+        // rather than constructing the path here.
+        newClientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(_T("ca.psiphon.PsiphonTunnel.tunnel-core")).append(_T("upgrade"));
     }
 
     ostringstream configDataStream;

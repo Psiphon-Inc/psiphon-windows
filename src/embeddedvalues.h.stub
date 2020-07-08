@@ -38,6 +38,7 @@ static const char* REMOTE_SERVER_LIST_ADDRESS = "s3.amazonaws.com";
 static const char* REMOTE_SERVER_LIST_REQUEST_PATH = "invalid_bucket_name/server_list";
 static const char* REMOTE_SERVER_LIST_URLS_JSON = "[]";
 static const char* OBFUSCATED_SERVER_LIST_ROOT_URLS_JSON = "[]";
+static const char* SERVER_ENTRY_SIGNATURE_PUBLIC_KEY = "";
 
 // These values are used when uploading diagnostic info
 static const char* FEEDBACK_ENCRYPTION_PUBLIC_KEY = "";
