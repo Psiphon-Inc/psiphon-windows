@@ -505,7 +505,7 @@
 
             <label for="EgressRegionCombo">
               <a href="#" data-i18n="connection#egress-region-combo-label">
-                Connect via
+                Select server region
               </a>
             </label>
             <div class="btn-group dropup" id="EgressRegionCombo">
@@ -742,14 +742,14 @@
                   <form class="vpn-incompatible">
                     <fieldset>
                       <span class="help-block" data-i18n="settings#egress-region#description">
-                        Psiphon has servers in many different countries. Using a
-                        Psiphon server in a country close to your home country
-                        will generally provide a better network connection, but
-                        you may wish to access websites and services like you
-                        are virtually in a specific country.
+                        Psiphon has servers in many different countries and regions. Using
+                        a Psiphon server in a region close to your home country will
+                        generally provide a better network connection, but you may wish to
+                        access websites and services like you are virtually in a specific
+                        country or region.
                       </span>
                       <span class="help-block" data-i18n="[html]settings#egress-region#default">
-                        Choosing the default <strong>“Fastest Country”</strong>
+                        Choosing the default <strong>“Best Performance”</strong>
                         option allows Psiphon to automatically choose a server,
                         which will generally result in the best network
                         connection.
@@ -766,9 +766,6 @@
                         </span>
                       </span>
                       <div class="controls">
-                        <label for="EgressRegion" data-i18n="settings#egress-region#label">
-                          Connect via
-                        </label>
                         <div class="dropdown clearfix">
                           <!-- Giving this the `control-group` class is a bit of a hack to get its error state working right. -->
                           <ul id="EgressRegion" class="control-group dropdown-menu f32" role="menu"
@@ -776,7 +773,7 @@
                             <li data-region="BEST">
                                 <a tabindex="-1" href="#" class="flag unknown">
                                   <strong data-i18n="settings#egress-region#select-best-performance">
-                                    Fastest Country
+                                    Best Performance
                                   </strong>
                                 </a>
                             </li>
