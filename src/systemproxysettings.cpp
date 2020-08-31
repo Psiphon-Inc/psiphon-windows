@@ -463,98 +463,26 @@ void GetDefaultProxyInfo(const vector<ConnectionProxy>& proxyInfos, ConnectionPr
     }
 }
 
-void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxyConfig& o_proxyConfig);
-
-/**
-Get the proxy info for the original default connection.
-*/
-void GetNativeDefaultProxyInfo(ConnectionProxy& o_proxyInfo)
+ProxyConfig GetNativeDefaultProxyConfig()
 {
-    o_proxyInfo.clear();
-
-    vector<ConnectionProxy> proxyInfo;
-    ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, proxyInfo);
-
-    GetDefaultProxyInfo(proxyInfo, o_proxyInfo);
-}
-
-void GetNativeDefaultProxyInfo(DecomposedProxyConfig& o_proxyInfo)
-{
-    o_proxyInfo.clear();
-
     vector<ConnectionProxy> proxyInfo;
     ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_NATIVE_PROXY_INFO, proxyInfo);
 
     ConnectionProxy undecomposedProxyInfo;
     GetDefaultProxyInfo(proxyInfo, undecomposedProxyInfo);
 
-    DecomposeDefaultProxyInfo(undecomposedProxyInfo, o_proxyInfo);
+    return ProxyConfig::DecomposeProxyInfo(undecomposedProxyInfo);
 }
 
-tstring GetNativeDefaultHttpsProxyHost()
+ProxyConfig GetTunneledDefaultProxyConfig()
 {
-    ConnectionProxy proxyInfo;
-    GetNativeDefaultProxyInfo(proxyInfo);
-
-    DecomposedProxyConfig decomposedProxyConfig;
-    DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
-
-    tstringstream host;
-    host << decomposedProxyConfig.httpsProxy;
-    if (!host.str().empty() && decomposedProxyConfig.httpsProxyPort != 0)
-    {
-        host << _T(":") << decomposedProxyConfig.httpsProxyPort;
-    }
-
-    return host.str();
-}
-
-
-void GetTunneledDefaultProxyInfo(ConnectionProxy& o_proxyInfo)
-{
-    o_proxyInfo.clear();
-
     vector<ConnectionProxy> proxyInfo;
     ReadRegistryProxyInfo(LOCAL_SETTINGS_REGISTRY_VALUE_PSIPHON_PROXY_INFO, proxyInfo);
 
-    GetDefaultProxyInfo(proxyInfo, o_proxyInfo);
-}
+    ConnectionProxy undecomposedProxyInfo;
+    GetDefaultProxyInfo(proxyInfo, undecomposedProxyInfo);
 
-
-bool GetTunneledDefaultHttpsProxyHostnamePort(tstring& o_hostname, DWORD& o_port)
-{
-    o_hostname.clear();
-    o_port = 0;
-
-    ConnectionProxy proxyInfo;
-    GetTunneledDefaultProxyInfo(proxyInfo);
-
-    DecomposedProxyConfig decomposedProxyConfig;
-    DecomposeDefaultProxyInfo(proxyInfo, decomposedProxyConfig);
-
-    o_hostname = decomposedProxyConfig.httpsProxy;
-    o_port = decomposedProxyConfig.httpsProxyPort;
-
-    return !o_hostname.empty();
-}
-
-tstring GetTunneledDefaultHttpsProxyHost()
-{
-    tstring hostname;
-    DWORD port;
-    if (!GetTunneledDefaultHttpsProxyHostnamePort(hostname, port))
-    {
-        return _T("");
-    }
-
-    if (port != 0)
-    {
-        tstringstream hostport;
-        hostport << hostname << _T(":") << port;
-        hostname = hostport.str();
-    }
-
-    return hostname;
+    return ProxyConfig::DecomposeProxyInfo(undecomposedProxyInfo);
 }
 
 /**
@@ -744,15 +672,13 @@ void DoStartupSystemProxyWork()
     // Detect this condition, and check if there is actually anything running on the configured
     // system https proxy port. If there is nothing responding, we assume this case and will
     // ignore (and ultimately reset) the system proxy settings.
-    DecomposedProxyConfig decomposedNativeDefaultProxyConfig;
-    GetNativeDefaultProxyInfo(decomposedNativeDefaultProxyConfig);
-    if (decomposedNativeDefaultProxyConfig.httpsProxy == _T("127.0.0.1") &&
-        8080 <= decomposedNativeDefaultProxyConfig.httpsProxyPort &&
-        decomposedNativeDefaultProxyConfig.httpsProxyPort <= 8090)
+    auto proxyConfig = GetNativeDefaultProxyConfig();
+    if (proxyConfig.HTTPHostname() == _T("127.0.0.1") &&
+        8080 <= proxyConfig.HTTPPort() && proxyConfig.HTTPPort() <= 8090)
     {
         StopInfo stopInfo;
         if (ERROR_SUCCESS != WaitForConnectability(
-                (USHORT)decomposedNativeDefaultProxyConfig.httpsProxyPort,
+                (USHORT)proxyConfig.HTTPPort(),
                 100,
                 0,
                 stopInfo))
@@ -859,13 +785,13 @@ void WriteRegistryProxyInfo(const char* regKey, const vector<ConnectionProxy>& p
 }
 
 
-void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxyConfig& o_proxyConfig)
+ProxyConfig ProxyConfig::DecomposeProxyInfo(const ConnectionProxy& proxyInfo)
 {
-    o_proxyConfig.clear();
+    ProxyConfig proxyConfig;
 
     if (!(proxyInfo.flags & PROXY_TYPE_PROXY))
     {
-        return;
+        return proxyConfig;
     }
 
     tstring proxy_str = proxyInfo.proxy;
@@ -882,7 +808,7 @@ void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxy
     */
     if (tstring::npos == colon_pos)
     {
-        return;
+        return proxyConfig;
     }
 
     /*
@@ -891,12 +817,13 @@ void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxy
     same proxy used for all protocols
     */
     equal_pos = proxy_str.find('=');
-    if(tstring::npos == equal_pos)
+    if (tstring::npos == equal_pos)
     {
-        //store it
-        o_proxyConfig.httpProxy = proxy_str;
-        o_proxyConfig.httpsProxy = proxy_str;
-        o_proxyConfig.socksProxy = proxy_str;
+        // store it
+        proxyConfig.https = proxy_str;
+
+        // We do _not_ also set it as the SOCKS proxy, since it is implicitly
+        // an HTTP proxy.
     }
 
     /*
@@ -928,17 +855,13 @@ void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxy
             prev = pos+1;
         }
 
-        if (protocol == _T("http"))
+        if (protocol == _T("https"))
         {
-            o_proxyConfig.httpProxy = proxy;
-        }
-        else if (protocol == _T("https"))
-        {
-            o_proxyConfig.httpsProxy = proxy;
+            proxyConfig.https = proxy;
         }
         else if (protocol == _T("socks"))
         {
-            o_proxyConfig.socksProxy = proxy;
+            proxyConfig.socksProxy = proxy;
         }
     }
 
@@ -946,43 +869,72 @@ void DecomposeDefaultProxyInfo(const ConnectionProxy& proxyInfo, DecomposedProxy
      * At this point the proxy fields are actually host:port. Decompose.
      */
 
-    proxy_str = o_proxyConfig.httpProxy;
+    proxy_str = proxyConfig.https;
     colon_pos = proxy_str.find(':');
-    if(colon_pos != tstring::npos)
+    if (colon_pos != tstring::npos)
     {
         tstring port_str = proxy_str.substr(colon_pos+1);
-        o_proxyConfig.httpProxyPort = _wtoi(port_str.c_str());
-        o_proxyConfig.httpProxy = proxy_str.substr(0,colon_pos);
+        proxyConfig.httpsPort = _wtoi(port_str.c_str());
+        proxyConfig.https = proxy_str.substr(0,colon_pos);
     }
     else
     {
-        o_proxyConfig.httpProxy.clear();
+        proxyConfig.https.clear();
     }
 
-    proxy_str = o_proxyConfig.httpsProxy;
+    proxy_str = proxyConfig.socksProxy;
     colon_pos = proxy_str.find(':');
-    if(colon_pos != tstring::npos)
+    if (colon_pos != tstring::npos)
     {
         tstring port_str = proxy_str.substr(colon_pos+1);
-        o_proxyConfig.httpsProxyPort = _wtoi(port_str.c_str());
-        o_proxyConfig.httpsProxy = proxy_str.substr(0,colon_pos);
+        proxyConfig.socksProxyPort = _wtoi(port_str.c_str());
+        proxyConfig.socksProxy = proxy_str.substr(0,colon_pos);
     }
     else
     {
-        o_proxyConfig.httpsProxy.clear();
+        proxyConfig.socksProxy.clear();
     }
 
-    proxy_str = o_proxyConfig.socksProxy;
-    colon_pos = proxy_str.find(':');
-    if(colon_pos != tstring::npos)
-    {
-        tstring port_str = proxy_str.substr(colon_pos+1);
-        o_proxyConfig.socksProxyPort = _wtoi(port_str.c_str());
-        o_proxyConfig.socksProxy = proxy_str.substr(0,colon_pos);
-    }
-    else
-    {
-        o_proxyConfig.socksProxy.clear();
-    }
+    return proxyConfig;
 }
 
+bool ProxyConfig::HTTPEnabled() const
+{
+    return !HTTPHostname().empty();
+}
+
+tstring ProxyConfig::HTTPHostname() const
+{
+    return https;
+}
+
+DWORD ProxyConfig::HTTPPort() const
+{
+    return httpsPort;
+}
+
+tstring ProxyConfig::HTTPHostPort() const
+{
+    if (https.empty()) {
+        return tstring();
+    }
+
+    tstringstream host_port;
+    host_port << https;
+    if (httpsPort != 0)
+    {
+        host_port << _T(":") << httpsPort;
+    }
+
+    return host_port.str();
+
+}
+
+tstring ProxyConfig::HTTPHostPortScheme() const
+{
+    auto host_port = HTTPHostPort();
+    if (host_port.empty()) {
+        return tstring();
+    }
+    return _T("http://") + host_port;
+}

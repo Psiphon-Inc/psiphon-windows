@@ -409,11 +409,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     // providing whole system tunneling).
     if (!g_connectionManager.IsWholeSystemTunneled())
     {
-        string proxyAddress = GetUpstreamProxyAddress();
-        if (proxyAddress.length() > 0)
-        {
-            config["UpstreamProxyUrl"] = "http://"+proxyAddress;
-        }
+        config["UpstreamProxyUrl"] = GetUpstreamProxyAddress();
     }
 
     if (Settings::SplitTunnel())
@@ -571,7 +567,7 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
 
 string CoreTransport::GetUpstreamProxyAddress()
 {
-    // Note: upstream SOCKS proxy and proxy auth currently not supported
+    // Note: only HTTP proxies and basic auth are currently supported
 
     if (Settings::SkipUpstreamProxy())
     {
@@ -586,18 +582,16 @@ string CoreTransport::GetUpstreamProxyAddress()
         Settings::UpstreamProxyType() == "https")
     {
         // Use a custom, user-set upstream proxy
-        upstreamProxyAddress << Settings::UpstreamProxyAuthenticatedHostname() << ":" << Settings::UpstreamProxyPort();
+        upstreamProxyAddress << "http://" <<
+            Settings::UpstreamProxyAuthenticatedHostname() << ":" << Settings::UpstreamProxyPort();
     }
     else
     {
         // Use the native default proxy (that is, the one that was set before we tried to connect).
-        DecomposedProxyConfig proxyConfig;
-        GetNativeDefaultProxyInfo(proxyConfig);
-
-        if (!proxyConfig.httpsProxy.empty())
+        auto proxyConfig = GetNativeDefaultProxyConfig();
+        if (proxyConfig.HTTPEnabled())
         {
-            upstreamProxyAddress <<
-                WStringToUTF8(proxyConfig.httpsProxy) << ":" << proxyConfig.httpsProxyPort;
+            upstreamProxyAddress << WStringToUTF8(proxyConfig.HTTPHostPortScheme());
         }
     }
 
