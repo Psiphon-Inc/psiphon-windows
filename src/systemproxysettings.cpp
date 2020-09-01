@@ -796,63 +796,54 @@ ProxyConfig ProxyConfig::DecomposeProxyInfo(const ConnectionProxy& proxyInfo)
 
     tstring proxy_str = proxyInfo.proxy;
 
-    std::size_t colon_pos;
-    std::size_t equal_pos;
-
-    colon_pos = proxy_str.find(':');
-
     /*
-    case 1: no ':' in the proxy_str
-    ""
-    proxy host and port are not set
+    The Windows config string is somewhat complex:
+        universal type = host
+        multiple types = type=host[;type=host ...]
+        host = [scheme://]hostname[:port]
+        type = http | https | socks
+
+    If no type is specific ("universal type"), it is the equivalent of "http=host;https=host".
+    Note that the "http" and "https" types specify traffic types for which the 
+    proxy -- assumed to be an HTTP proxy -- should be used, whereas the "socks"
+    type is a proxy type to be used with all traffic.
     */
-    if (tstring::npos == colon_pos)
+
+    // If the proxy string is empty, there's no proxy configured.
+    if (proxy_str.empty())
     {
         return proxyConfig;
     }
 
-    /*
-    case 2: '=' protocol identifier not found in the proxy_str
-    "host:port"
-    same proxy used for all protocols
-    */
-    equal_pos = proxy_str.find('=');
-    if (tstring::npos == equal_pos)
+    // To make parsing easier, convert the "universal type" to the multiple types format.
+    if (proxy_str.find('=') == tstring::npos) 
     {
-        // store it
-        proxyConfig.https = proxy_str;
-
-        // We do _not_ also set it as the SOCKS proxy, since it is implicitly
-        // an HTTP proxy.
+        tstringstream ss;
+        ss << _T("http=") << proxy_str << _T(";https=") << proxy_str;
+        proxy_str = ss.str();
     }
 
-    /*
-    case 3: '=' protocol identifier found in the proxy_str,
-    "http=host:port;https=host:port;ftp=host:port;socks=host:port"
-    loop through proxy types, pick  https or socks in that order
-    */
-
-    //split by protocol
+    // Split by proxy type
     std::size_t prev = 0, pos;
     tstring protocol, proxy;
     while ((pos = proxy_str.find('=', prev)) != tstring::npos)
     {
         if (pos > prev)
         {
-            protocol = (proxy_str.substr(prev, pos-prev));
+            protocol = (proxy_str.substr(prev, pos - prev));
         }
-        prev = pos+1;
+        prev = pos + 1;
 
         pos = proxy_str.find(';', prev);
 
-        if(pos == tstring::npos)
+        if (pos == tstring::npos)
         {
             proxy = (proxy_str.substr(prev, tstring::npos));
         }
-        else if(pos >= prev)
+        else if (pos >= prev)
         {
-            proxy =  (proxy_str.substr(prev, pos-prev));
-            prev = pos+1;
+            proxy = (proxy_str.substr(prev, pos - prev));
+            prev = pos + 1;
         }
 
         if (protocol == _T("https"))
@@ -863,36 +854,51 @@ ProxyConfig ProxyConfig::DecomposeProxyInfo(const ConnectionProxy& proxyInfo)
         {
             proxyConfig.socksProxy = proxy;
         }
+        // we don't use the "http" type proxy
     }
 
-    /*
-     * At this point the proxy fields are actually host:port. Decompose.
-     */
+    // At this point the proxy fields are actually [http://]host[:port] for https type
+    // and host[:port] for socks type.
+    // TODO: Can the socks type have a scheme? Maybe socks:// socks4a:// socks5://
 
-    proxy_str = proxyConfig.https;
-    colon_pos = proxy_str.find(':');
-    if (colon_pos != tstring::npos)
+    if (!proxyConfig.https.empty())
     {
-        tstring port_str = proxy_str.substr(colon_pos+1);
-        proxyConfig.httpsPort = _wtoi(port_str.c_str());
-        proxyConfig.https = proxy_str.substr(0,colon_pos);
-    }
-    else
-    {
-        proxyConfig.https.clear();
+        tstring http_scheme = _T("http://");
+        auto http_scheme_pos = proxyConfig.https.find(http_scheme);
+        if (http_scheme_pos != tstring::npos)
+        {
+            // strip the scheme
+            proxyConfig.https = proxyConfig.https.substr(http_scheme.length());
+        }
+
+        auto colon_pos = proxyConfig.https.find(':');
+        if (colon_pos != tstring::npos)
+        {
+            tstring port_str = proxyConfig.https.substr(colon_pos + 1);
+            proxyConfig.httpsPort = _wtoi(port_str.c_str());
+            proxyConfig.https = proxyConfig.https.substr(0, colon_pos);
+        }
+        else
+        {
+            // default port
+            proxyConfig.httpsPort = 80;
+        }
     }
 
-    proxy_str = proxyConfig.socksProxy;
-    colon_pos = proxy_str.find(':');
-    if (colon_pos != tstring::npos)
+    if (!proxyConfig.socksProxy.empty())
     {
-        tstring port_str = proxy_str.substr(colon_pos+1);
-        proxyConfig.socksProxyPort = _wtoi(port_str.c_str());
-        proxyConfig.socksProxy = proxy_str.substr(0,colon_pos);
-    }
-    else
-    {
-        proxyConfig.socksProxy.clear();
+        auto colon_pos = proxyConfig.socksProxy.find(':');
+        if (colon_pos != tstring::npos)
+        {
+            tstring port_str = proxyConfig.socksProxy.substr(colon_pos + 1);
+            proxyConfig.socksProxyPort = _wtoi(port_str.c_str());
+            proxyConfig.socksProxy = proxyConfig.socksProxy.substr(0, colon_pos);
+        }
+        else
+        {
+            // default port
+            proxyConfig.socksProxyPort = 1080;
+        }
     }
 
     return proxyConfig;
