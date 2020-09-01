@@ -575,27 +575,19 @@ string CoreTransport::GetUpstreamProxyAddress()
         return "";
     }
 
-    ostringstream upstreamProxyAddress;
-
-    if (Settings::UpstreamProxyAuthenticatedHostname().length() > 0 &&
-        Settings::UpstreamProxyPort() &&
-        Settings::UpstreamProxyType() == "https")
+    string upstreamProxyAddress = Settings::UpstreamProxyFullHostname();
+    if (upstreamProxyAddress.empty())
     {
-        // Use a custom, user-set upstream proxy
-        upstreamProxyAddress << "http://" <<
-            Settings::UpstreamProxyAuthenticatedHostname() << ":" << Settings::UpstreamProxyPort();
-    }
-    else
-    {
-        // Use the native default proxy (that is, the one that was set before we tried to connect).
+        // There's no user-set upstream proxy, so use the native default proxy 
+        // (that is, the one that was set before we tried to connect).
         auto proxyConfig = GetNativeDefaultProxyConfig();
         if (proxyConfig.HTTPEnabled())
         {
-            upstreamProxyAddress << WStringToUTF8(proxyConfig.HTTPHostPortScheme());
+            upstreamProxyAddress = WStringToUTF8(proxyConfig.HTTPHostPortScheme());
         }
     }
 
-    return upstreamProxyAddress.str();
+    return upstreamProxyAddress;
 }
 
 
