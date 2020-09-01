@@ -68,8 +68,8 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "Şununla bağlan",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+        "message": "Sunucu bölgesini seçin",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
         "message": "<strong>Hata!</strong> Lütfen ilerlemeden önce geçersiz değerleri düzeltin.",
@@ -143,12 +143,8 @@
         "message": "Psiphon Sunucu Bölgesi",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
-    "settings#egress-region#label": {
-        "message": "Şununla bağlan",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
     "settings#egress-region#select-best-performance": {
-        "message": "En Hızlı Ülke",
+        "message": "En İyi Başarım",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -256,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Bir çok ülkede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir Psiphon sunucusu seçmeniz daha iyi ağ bağlantısı sağlar ancak belirli bir ülkedeki web sitesi ve hizmetlerine erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
+        "message": "Bir çok ülkede ve bölgede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir bölgedeki Psiphon sunucusunuı seçmeniz daha iyi ağ bağlantısı sağlar. Ancak belirli bir ülkedeki web sitesi ve hizmetlerine erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Varsayılan <strong>“En Hızlı Ülke”</strong> seçeneği seçildiğinde, Psiphon otomatik olarak genellikle en iyi ağ bağlantısına sahip sunucuyu seçer.",
+        "message": "Varsayılan <strong>“En İyi Başarım”</strong> seçeneği seçildiğinde, Psiphon otomatik olarak genellikle en iyi ağ bağlantısına sahip sunucuyu seçer.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -272,7 +268,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "Belirli bir bölgedeki Psiphon sunucusunu kullanmayı seçtiniz.<br>\nAncak bu bölge artık kullanılamıyor.<br>\nYeni bir bölge seçmeli ya da varsayılan \"En Hızlı Ülke\" seçeneğini seçmelisiniz.",
+        "message": "Belirli bir bölgedeki Psiphon sunucusunu kullanmayı seçtiniz.<br>\nAncak bu bölge artık kullanılamıyor.<br>\nYeni bir bölge seçmeli ya da varsayılan \"En İyi Başarım\" seçeneğini seçmelisiniz.",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
