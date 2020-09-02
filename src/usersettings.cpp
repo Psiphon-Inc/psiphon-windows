@@ -159,7 +159,7 @@ bool DoesSettingExist(const string& settingName)
 {
     AutoMUTEX lock(g_registryMutex);
 
-    return DoesRegistryKeyNameExist(settingName);
+    return DoesRegistryValueExist(settingName);
 }
 
 void Settings::Initialize()

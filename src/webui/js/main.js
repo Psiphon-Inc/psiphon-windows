@@ -1224,18 +1224,19 @@
       Boolean($('#UpstreamProxyPassword').val()) ||
       Boolean($('#UpstreamProxyDomain').val());
 
+    let valid = true;
+
     let portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
     if (skip || portOK) {
       // Hide the port-specific message
       $('.help-inline.UpstreamProxyPort').addClass('hidden')
         .parents('.control-group').removeClass('error');
     } else {
+      valid = false;
       // Port value bad. Show error while typing
       $('.help-inline.UpstreamProxyPort').removeClass('hidden')
         .parents('.control-group').addClass('error');
     }
-
-    let valid = true;
 
     if (skip || !needHostname || Boolean($('#UpstreamProxyHostname').val())) {
       // Hide the "hostname required" message
@@ -1393,12 +1394,18 @@
       return 0;
     }
 
-    val = parseInt(val);
-    if (isNaN(val) || val < 1 || val > 65535) {
+    const intVal = parseInt(val);
+    if (isNaN(intVal) || intVal < 1 || intVal > 65535) {
       return false;
     }
 
-    return val;
+    if (intVal.toString() !== val) {
+      // There were extra characters at the end of the string that didn't get converted
+      // into the int.
+      return false;
+    }
+
+    return intVal;
   }
 
   // Show the Settings tab and expand the target section.

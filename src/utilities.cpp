@@ -657,7 +657,7 @@ bool CreateSubprocessPipes(
 }
 
 
-bool DoesRegistryKeyNameExist(const string& name)
+bool DoesRegistryValueExist(const string& name)
 {
     HKEY key = 0;
 

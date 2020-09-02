@@ -1085,17 +1085,17 @@
     var skip = $('#SkipUpstreamProxy').prop('checked');
     var needHostname = Boolean($('#UpstreamProxyPort').val()) || Boolean($('#UpstreamProxyUsername').val()) || Boolean($('#UpstreamProxyPassword').val()) || Boolean($('#UpstreamProxyDomain').val());
     var needUsername = Boolean($('#UpstreamProxyPassword').val()) || Boolean($('#UpstreamProxyDomain').val());
+    var valid = true;
     var portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
 
     if (skip || portOK) {
       // Hide the port-specific message
       $('.help-inline.UpstreamProxyPort').addClass('hidden').parents('.control-group').removeClass('error');
     } else {
-      // Port value bad. Show error while typing
+      valid = false; // Port value bad. Show error while typing
+
       $('.help-inline.UpstreamProxyPort').removeClass('hidden').parents('.control-group').addClass('error');
     }
-
-    var valid = true;
 
     if (skip || !needHostname || Boolean($('#UpstreamProxyHostname').val())) {
       // Hide the "hostname required" message
@@ -1233,13 +1233,19 @@
       return 0;
     }
 
-    val = parseInt(val);
+    var intVal = parseInt(val);
 
-    if (isNaN(val) || val < 1 || val > 65535) {
+    if (isNaN(intVal) || intVal < 1 || intVal > 65535) {
       return false;
     }
 
-    return val;
+    if (intVal.toString() !== val) {
+      // There were extra characters at the end of the string that didn't get converted
+      // into the int.
+      return false;
+    }
+
+    return intVal;
   } // Show the Settings tab and expand the target section.
   // If focusElem is optional; if set, focus will be put in that element.
 
