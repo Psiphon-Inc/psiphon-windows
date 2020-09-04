@@ -683,21 +683,13 @@
     "message": "[Ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋīīḗḗş ȧȧřḗḗ şǿǿḿḗḗŧīīḿḗḗş řḗḗɋŭŭīīřḗḗḓ ƀẏ şƈħǿǿǿǿŀş, ŭŭƞīīṽḗḗřşīīŧīīḗḗş, ǿǿř ƀŭŭşīīƞḗḗşşḗḗş. Īīƒ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ ƥřǿǿṽīīḓḗḗř ħȧȧş ɠīīṽḗḗƞ ẏǿǿŭŭ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş, ŧħḗḗƞ ḿȧȧƞŭŭȧȧŀŀẏ şḗḗŧŧīīƞɠ ŧħḗḗḿ ħḗḗřḗḗ ḿȧȧẏ ƀḗḗ řḗḗɋŭŭīīřḗḗḓ ŧǿǿ ƈǿǿƞƞḗḗƈŧ.]",
     "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
   },
-  "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-    "message": "[Şḗḗŧŧīīƞɠ ȧȧ Ḓǿǿḿȧȧīīƞ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ]",
-    "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+  "settings#upstream-proxy#set-hostname-error-msg": {
+    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ ƥřǿǿṽīīḓḗḗ ȧȧ Ħǿǿşŧƞȧȧḿḗḗ, ǿǿř ŀḗḗȧȧṽḗḗ ȧȧŀŀ Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ ƒīīḗḗŀḓş ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
+    "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
   },
-  "settings#upstream-proxy#set-hostname-port-error-msg": {
-    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
-    "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-  },
-  "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-    "message": "[Şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ ȧȧŀşǿǿ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ]",
-    "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-  },
-  "settings#upstream-proxy#set-username-password-error-msg": {
-    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ƞǿǿ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
-    "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+  "settings#upstream-proxy#set-username-error-msg": {
+    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ ƥřǿǿṽīīḓḗḗ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ īīƒ ẏǿǿŭŭ ȧȧřḗḗ şḗḗŧŧīīƞɠ Ƥȧȧşşẇǿǿřḓ ǿǿř Ḓǿǿḿȧȧīīƞ; ǿǿř ŀḗḗȧȧṽḗḗ ȧȧŀŀ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ ƒīīḗḗŀḓş ƀŀȧȧƞķ ƒǿǿř ƞǿǿ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
+    "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
   },
   "settings#upstream-proxy#skip-label": {
     "message": "[Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ]",

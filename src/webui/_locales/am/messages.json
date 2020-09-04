@@ -68,8 +68,8 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "ተገናኝ በ",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+        "message": "የአገልጋይ ቀጠና ምረጥ",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
         "message": "<strong>ስህተት!</strong> ከመቀጠልዎ በፊት እባክዎ የተሳሳቱ ዕሴቶችን ያስተካክሉ።",
@@ -143,12 +143,8 @@
         "message": "የPsiphon አገልጋይ ቀጠና",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
-    "settings#egress-region#label": {
-        "message": "ተገናኝ በ",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
     "settings#egress-region#select-best-performance": {
-        "message": "ከሁሉም የላቀ ፍጥነት ያለው ሀገር ",
+        "message": "ምርጥ አፈጻጸም ",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -256,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon በተለያዩ ሃገራት አገልጋዮች አሉት። አሁን ላሉበት ሃገር ቅርብ የሆነ፣ የPsiphon አገልጋይ ያለበትን ሃገር መጠቀም አብዛኛውን ግዜ የተሻለ የአውታረመረብ ግንኙነት እንዲኖር ያደርጋል፤ ነገር ግን በመረጡት ሀገር ላይ እንደሆኑ መስለው ድረጣቢያን እና አገልግሎቶቹን ማግኘት ይችላሉ።",
+        "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "በነባሪ <strong>“ከሁሉም የላቀ ፍጥነት ያለው ሀገር” </strong> የሚለውን መምረጥ Psiphon በራሱ አገልጋይ እንዲመርጥ ይፈቅድለታል። ይህ አብዛኛውን ግዜ ይተሻለ የኢንተርኔት ግንኙነትን ያመጣል።",
+        "message": "Choosing the default <strong>“Best Performance”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -272,7 +268,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "Psiphonን በልዩ ቀጠና ያለን አገልጋይ እንዲጠቀም አዋቅረውታል። <br>\nይሁንና ይህ ቀጠና አሁን የለም።  <br>\nአዲስ ቀጠና መምረጥ ወይም ወደ ነባሪው  “ከሁሉም የላቀ ፍጥነት ያለው ሀገር” ምርጫ መቀየር ይኖርብዎታል።",
+        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Best Performance” choice.",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -308,11 +304,11 @@
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\nPsiphonን ለኤችቲቲፒ (የዳበረ ጽሁፍ ማስተላለፊያ ፕሮቶኮል) ወኪል የተለየ የአካባቢ ወደብ እንዲጠቀም አዋቅረውታል።<br>\nይሁንና ይህ ወደብ ጥቅም እየዋለ ስለሆነ Psiphon ሊጠቀመው አልቻለም።\n</p>\n<p>\nእባክዎትን የተዋቀረውን የኤችቲቲፒ (የዳበረ ጽሁፍ ማስተላለፊያ ፕሮቶኮል) ወኪል ወደብ ዕሴት ይቀይሩ እና እንደገና ይሞክሩ። Psiphon በራስሠር ወደብ እንዲመርጥ ዕሴቱን እንዲያጠፉ እንመክራለን።\n</p>",
+        "message": "<p>\nPsiphonን ለኤችቲቲፒ (የዳበረ ጽሁፍ ማስተላለፊያ ፕሮቶኮል) ወኪል የተለየ የአካባቢ ወደብ እንዲጠቀም አዋቅረውታል።<br>\nይሁንና ይህ ወደብ ጥቅም ላይ እይዋለ ይመስል፤ Psiphon ሊጠቀመው አልቻለም።\n</p>\n<p>\nእባክዎትን የተዋቀረውን የኤችቲቲፒ (የዳበረ ጽሁፍ ማስተላለፊያ ፕሮቶኮል) ወኪል ወደብ ዕሴት ይቀይሩ እና እንደገና ይሞክሩ። Psiphon በራስሠር ወደብ እንዲመርጥ ዕሴቱን እንዲያጸዱ እንመክራለን።\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
-        "message": "<p>\nPsiphonን ለSOCKS ወኪል የተለየ የአካባቢ ወደብን እንዲጠቀም አዋቅረውታል።<br>\nይሁን እና ይህ ወደብ ጥቅም እየዋለ ስለሆነ Psiphon ሊጠቀመው አልቻለም።\n</p>\n<p>\nእባክዎን የተዋቀረውን የSOCKS ወኪል ወደብ ዕሴት ይቀይሩ እና እንደገና ይሞክሩ። Psiphon በራስሠር ወደብ እንዲመርጥ ዕሴቱን እንዲያጠፉ እንመክራለን።\n</p>",
+        "message": "<p>\nPsiphonን ለSOCKS ወኪል የተለየ የአካባቢ ወደብን እንዲጠቀም አዋቅረውታል።<br>\nይሁን እና ይህ ወደብ ጥቅም ላይ እየዋለ ይመስላል፤ Psiphon ሊጠቀመው አልቻለም።\n</p>\n<p>\nእባክዎን የተዋቀረውን የSOCKS ወኪል ወደብ ዕሴት ይቀይሩ እና እንደገና ይሞክሩ። Psiphon በራስሠር ወደብ እንዲመርጥ ዕሴቱን እንዲያጸዱ እንመክራለን።\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#heading": {
@@ -320,11 +316,11 @@
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#upstream-proxy#by-default": {
-        "message": "ኮምፒውተርዎ ቀድሞውኑ የተዋቀረ ወኪል ካለው Psiphon በነባሪው ሁነታ ግንኙነቱን ሲፈጽም ያንን ወኪል ይጠቀማል። ይህንን ባህሪ የተለየ ወኪል እንዲጠቀም ወይም እንደዚህ ያለ ”የላይ ወኪል“  እንዳይጠቀም በመወሰን መቀየር ይችላሉ። ",
+        "message": "ኮምፒውተርዎ ቀድሞውኑ የተዋቀረ ወኪል ካለው Psiphon በነባሪው ሁነታ ግንኙነቱን ሲፈጽም ያንን ወኪል ይጠቀማል። ይህንን ባህሪ የተለየ ወኪል እንዲጠቀም ወይም እንደዚህ ያለ ”የላይ ወኪል“  እንዳይጠቀም በመወሰን መቀየር ይችላሉ።",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#reason": {
-        "message": "አንዳንዴ የላይ ወኪልዎች በትምህርት ቤቶች፣ በዩኒቨርስቲዎች ወይም በቢዝነሶች አስፈላጊ ይሆናሉ። የአውታረመረብ አቅራቢዎ የላይ ወኪል ቅንብሮችን የሚሰጥዎት ከሆነ ለመገናኘት እዚህ ጋር በራስዎ ማቀናበር ሊያስፈልግዎ ይችላል። ",
+        "message": "አንዳንዴ የላይ ወኪልዎች በትምህርት ቤቶች፣ በዩኒቨርስቲዎች ወይም በቢዝነሶች አስፈላጊ ይሆናሉ። የአውታረመረብ አቅራቢዎ የላይ ወኪል ቅንብሮችን የሚሰጥዎት ከሆነ ለመገናኘት እዚህ ጋር በራስዎ ማቀናበር ሊያስፈልግዎ ይችላል።",
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#upstream-proxy#proxy-reqs": {
@@ -376,11 +372,11 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon በአሁኑ ሰአት የተዋቀረው የሥርአት ወኪልዎን እንደ “የላይ ወኪል” እንዲጠቀም ተደርጎ ነው። <br>\nይሁንና ያንን ወኪል በመጠቀም ከPsiphon አገልጋይ ጋር መገናኘት አልቻልንም።   <br>\nእባክዎን “የላይ ወኪልን አትጠቀም”  የሚለውን ያንቁ እና እንደገና ይሞክሩ። ",
+        "message": "Psiphon በአሁኑ ሰአት የተዋቀረው የሥርአት ወኪልዎን እንደ “የላይ ወኪል” እንዲጠቀም ተደርጎ ነው። <br>\nይሁንና ያንን ወኪል በመጠቀም ከPsiphon አገልጋይ ጋር መገናኘት አልቻልንም።   <br>\nእባክዎን “የላይ ወኪልን አትጠቀም”  የሚለውን ያንቁ እና እንደገና ይሞክሩ።",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#error-modal-body-configured": {
-        "message": "Psiphonን “የላይ ወኪል” እንዲጠቀም አድርገው አዋቅረውታል ። <br>\nይሁንና ይህንን ወኪል በመጠቀም ከPsiphon አገልጋይ ጋር መገናኘት አልቻልንም።   <br>\nእባክዎን መዋቅሩን ያስተካክሉ እና እንደገና ይሞክሩ። ",
+        "message": "Psiphonን “የላይ ወኪል” እንዲጠቀም አድርገው አዋቅረውታል ። <br>\nይሁንና ይህንን ወኪል በመጠቀም ከPsiphon አገልጋይ ጋር መገናኘት አልቻልንም።   <br>\nእባክዎን መዋቅሩን ያስተካክሉ እና እንደገና ይሞክሩ።",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#transport-mode#heading": {
@@ -392,7 +388,7 @@
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "settings#transport-mode#help-text": {
-        "message": "የWindows L2TP/IPSec ምናባዊ አውታረመረብን ይጠቀማል። ይህ ሁነታ ለሁሉም መተግበሪያዎች መተላለፊያ ይፈጥራል ነገር ግን ጥብቅ ስላልሆነ ጠንካራ ሳንሱርን የማለፊያ ችሎታዎች የሉትም። አብዛኛዎቹን ኬላዎችን ለማለፊያነት መጠቀም <strong>አይመከርም</strong>። ",
+        "message": "የWindows L2TP/IPSec ምናባዊ አውታረመረብን ይጠቀማል። ይህ ሁነታ ለሁሉም መተግበሪያዎች መተላለፊያ ይፈጥራል ነገር ግን ጥብቅ ስላልሆነ ጠንካራ ሳንሱርን የማለፊያ ችሎታዎች የሉትም። አብዛኛዎቹን ኬላዎችን ለማለፊያነት መጠቀም <strong>አይመከርም</strong>።",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#systray-minimize#heading": {
@@ -400,7 +396,7 @@
         "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
     },
     "settings#systray-minimize#help-text": {
-        "message": "ካነቁት ሲያሳንሱት የPsiphon መተግበሪያ መስኮት ወደ ማሳወቂያ ስፍራው ይደበቃል ( ይህ “የሥርአት ትሪ” ወይም “ሢስትሪ” በመባል የሚታወቅ ሲሆን በዊንዶውስ የተግባር አሞሌ ከሰአቱ አጠገብ ይገኛል)። ",
+        "message": "ካነቁት ሲያሳንሱት የPsiphon መተግበሪያ መስኮት ወደ ማሳወቂያ ስፍራው ይደበቃል ( ይህ “የሥርአት ትሪ” ወይም “ሢስትሪ” በመባል የሚታወቅ ሲሆን በዊንዶውስ የተግባር አሞሌ ከሰአቱ አጠገብ ይገኛል)።",
         "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#systray-minimize#reason": {
@@ -424,7 +420,7 @@
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
     },
     "settings#error-modal#body": {
-        "message": "በቅንብርዎት ዕሴትዎች ላይ ስህተቶች አሉ። ከመቀጠልዎ በፊት እባክዎ ያስተካክሏቸው። ",
+        "message": "በቅንብርዎት ዕሴትዎች ላይ ስህተቶች አሉ። ከመቀጠልዎ በፊት እባክዎ ያስተካክሏቸው።",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "feedback#top_content_title": {
@@ -432,11 +428,11 @@
         "description": "Title for the Feedback page"
     },
     "feedback#top_para_2": {
-        "message": "ብዙ ችግሮች የመጨረሻውን ሥሪት በማውረድ ሊፈቱ ይችላሉ። የ<a class=\"NewVersionURL\" href=\"#\">መጨረሻውን ሥሪት ይህንን ጠቅ በማድረግ ማውረድ ይችላሉ</a> ወይም ወደ <a class=\"NewVersionEmail\" href=\"#\"></a> ኤፖስታ መላክ ይችላሉ። ",
+        "message": "ብዙ ችግሮች የመጨረሻውን ሥሪት በማውረድ ሊፈቱ ይችላሉ። የ<a class=\"NewVersionURL\" href=\"#\">የመጨረሻውን ሥሪት ይህንን ጠቅ በማድረግ ማውረድ ይችላሉ</a> ወይም ወደ <a class=\"NewVersionEmail\" href=\"#\"></a> ኤፖስታ መላክ ይችላሉ።",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
     "feedback#top_para_3": {
-        "message": "በተጨማሪም ለብዙ የተለመዱ ችግሮች መፍትሄዎችን<a class=\"FaqURL\" href=\"#\"> በተደጋጋሚ የሚጠየቁ ጥያቄዎች እና መልሶቻቸው</a> ክፍል ሊያገኙ ይችላሉ። ",
+        "message": "በተጨማሪም ለብዙ የተለመዱ ችግሮች መፍትሄዎችን<a class=\"FaqURL\" href=\"#\"> በተደጋጋሚ የሚጠየቁ ጥያቄዎች እና መልሶቻቸው</a> ክፍል ሊያገኙ ይችላሉ።",
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "feedback#smiley_happy": {
@@ -488,11 +484,11 @@
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#description": {
-        "message": "Psiphon <strong> ሳንሱርን የማለፊያ መሣሪያ </strong>ሲሆን ክፍት የኢንተርኔት አገልግሎትን ለማግኘት፣ ሳንሱር እና ኬላን ለማለፍ የተሠራ ነው። <strong>ምንጨክፍት </strong> ሲሆን የበለጸገው በቶሮንቶ፣ ካናዳ ነው። ",
+        "message": "Psiphon <strong> ሳንሱር የማለፊያ መሣሪያ </strong>ሲሆን ክፍት የኢንተርኔት አገልግሎትን ለማግኘት፣ ሳንሱር እና ኬላን ለማለፍ የተሠራ ነው። <strong>ምንጨ ክፍት </strong> ሲሆን የበለጸገው በቶሮንቶ፣ ካናዳ ነው።",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#visit-download-site": {
-        "message": "<strong><a class=\"NewVersionURL\" href=\"#\">አዲስ ሥሪትን ለማውረድ</a></strong> ወይም <strong><a class=\"InfoURL\" href=\"#\">እርዳታ እና መረጃን ለማግኘት</a></strong> እባክዎን ድረጣቢያውን ይጎብኙ። Psiphon ለAndroid እና ለWindows ይገኛል። ",
+        "message": "<strong><a class=\"NewVersionURL\" href=\"#\">አዲስ ሥሪትን ለማውረድ</a></strong> ወይም <strong><a class=\"InfoURL\" href=\"#\">እርዳታ እና መረጃን ለማግኘት</a></strong> እባክዎን ድረጣቢያውን ይጎብኙ። Psiphon ለAndroid እና ለWindows ይገኛል።",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#get-by-email": {
@@ -564,7 +560,7 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphonን በWindows XP እና VISTA መጠቀም አይችሉም። ለተጨማሪ መረጃ ድረጣቢያችንን ይጎብኙ።",
+        "message": "Psiphonን በWindows XP እና VISTA መጠቀም አይችሉም። ለተጨማሪ መረጃ ድር ጣቢያችንን ይጎብኙ።",
         "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
