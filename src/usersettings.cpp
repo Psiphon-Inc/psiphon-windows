@@ -270,7 +270,7 @@ bool Settings::FromJson(
             failReason);
 
         string upstreamProxyPassword = json.get("UpstreamProxyPassword", UPSTREAM_PROXY_PASSWORD_DEFAULT).asString();
-        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyUsername != Settings::UpstreamProxyPassword();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyPassword != Settings::UpstreamProxyPassword();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_PASSWORD_NAME,
             upstreamProxyPassword,
