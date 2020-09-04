@@ -68,6 +68,7 @@
 #define UPSTREAM_PROXY_HOSTNAME_DEFAULT ""
 // We used to store the hostname formatted with authinfo@hostname, but we're migrating away from that
 #define UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT    "SSHParentProxyHostname"
+#define UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT ""
 
 #define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
@@ -378,7 +379,7 @@ string Settings::UpstreamProxyHostname()
 
     // Check the defunct key, as we might have to migrate the old value
     string hostname;
-    string defunctAuthHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, "");
+    string defunctAuthHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
     int splitIndex = defunctAuthHostname.find_first_of("@");
     if (splitIndex != string::npos) {
         hostname = defunctAuthHostname.substr(splitIndex + 1, defunctAuthHostname.length() - 1);
@@ -409,7 +410,7 @@ string Settings::UpstreamProxyUsername()
     }
 
     // Check the defunct key, as we might have to migrate the old value
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
 
     string username;
     int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
@@ -441,7 +442,7 @@ string Settings::UpstreamProxyPassword()
 
     // Check the defunct key, as we might have to migrate the old value
     string password;
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
 
     int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
     if (splitIndex != string::npos) {
@@ -467,7 +468,7 @@ string Settings::UpstreamProxyDomain()
 
     // Check the defunct key, as we might have to migrate the old value
     string domain;
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
 
     int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("\\");
     if (splitIndex != string::npos) {
