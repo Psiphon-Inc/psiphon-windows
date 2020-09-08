@@ -144,7 +144,7 @@
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Best Performance",
+        "message": "Utendaji Mzuri",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -252,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
+        "message": "Psiphon ina seva katika nchi nyingi tofauti tofauti na maeneo. Tumia Psiphon seva kwenye mkoa uliofungwa kwenye nchi ya nyuba yako kwa ujumla itatoamunganiko mzuri wa mtandao, lakini tumaini kufikia tovuti na huduma kama ukiwa karibu kwenye nchi maalumu au mkoa.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Choosing the default <strong>“Best Performance”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "message": "Chagua chaguo msingi <strong>\"Utendaji Mzuri\"</strong> ruhusu chaguo la Psiphonn kiautomatiki chaguaseva, ambayo kwa ujumla matokeo mazuri ya kuunganishwa kwa mtandao.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -268,7 +268,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Best Performance” choice.",
+        "message": "Umesadini Psiphon kwa kutumia seva kwenye mkoa maalumu.<br>\nHataivyo, mkoa huo haipatikani tena.<br>\nUnatakiwa kuchagua mkoa mpya au badili kwenye chaguo-msingi \"Utendaji Mzuri\" chaguo.",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
