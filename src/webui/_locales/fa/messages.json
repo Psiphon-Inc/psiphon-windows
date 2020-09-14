@@ -68,7 +68,7 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "Select server region",
+        "message": "منطقه سرور را انتخاب کنید",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
@@ -252,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
+        "message": "(Psiphon) در بسیاری از کشورها سرور دارد. معمولا استفاده از یک سرور (Psiphon) که به کشور شما نزدیک‌تر است اتصال بهتری به شبکه فراهم می کند، اما شاید شما بخواهید به وبسایت‌ها و خدمات طوری دسترسی داشته باشید که انگار که در کشور خاصی هستید.\n ",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Choosing the default <strong>“Best Performance”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "message": "انتخاب گزینه <strong>“بهترین عملکرد“</strong> به Psiphon اجازه می دهد که به صورت خودکار یک سرور را انتخاب کند که عموما نتیجه آن یک ارتباط بهتر و پایدارتر است.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
