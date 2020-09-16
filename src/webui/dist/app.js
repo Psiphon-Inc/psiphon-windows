@@ -1078,111 +1078,53 @@
   function upstreamProxyValid()
   /*finalCheck*/
   {
-    // Either the hostname and port (which must be an integer in the range 1-65535) have to both be set, or neither,
-    // AND either the username and password must be set, or neither,
-    // BUT, if the username and password are set, hostname and port must be too
-    // AND if the domain is set, the username and password must be set
+    // If any field other than hostname is set, then hostname must be set,
+    // AND if port is set, it must be an integer in the range 1-65535,
+    // AND if either of domain or password is set, then username must be as well.
     // Unless 'skip' is checked.
-    var hostnamePortMatch = $('#SkipUpstreamProxy').prop('checked') || Boolean($('#UpstreamProxyHostname').val()) === Boolean($('#UpstreamProxyPort').val());
-    var usernamePasswordMatch = $('#SkipUpstreamProxy').prop('checked') || Boolean($('#UpstreamProxyUsername').val()) === Boolean($('#UpstreamProxyPassword').val());
-    var domainRequiresAuthentication = true; // skip proxy is not set
-
-    if (!$('#SkipUpstreamProxy').prop('checked')) {
-      // domain is set
-      if (Boolean($('#UpstreamProxyDomain').val()) === true) {
-        // username and password are not both set
-        if (!(Boolean($('#UpstreamProxyUsername').val()) === true && Boolean($('#UpstreamProxyPassword').val()) === true)) {
-          domainRequiresAuthentication = false;
-        }
-      }
-    }
-
-    var authenticationRequiresHostnameAndPort = true; // skip proxy is not set
-
-    if (!$('#SkipUpstreamProxy').prop('checked')) {
-      // username and password are both set
-      if (Boolean($('#UpstreamProxyUsername').val()) === true && Boolean($('#UpstreamProxyPassword').val()) === true) {
-        // hostname and port are not set
-        if (!(Boolean($('#UpstreamProxyHostname').val()) === true && Boolean($('#UpstreamProxyPort').val()) === true)) {
-          authenticationRequiresHostnameAndPort = false;
-        }
-      }
-    }
-
+    var skip = $('#SkipUpstreamProxy').prop('checked');
+    var needHostname = Boolean($('#UpstreamProxyPort').val()) || Boolean($('#UpstreamProxyUsername').val()) || Boolean($('#UpstreamProxyPassword').val()) || Boolean($('#UpstreamProxyDomain').val());
+    var needUsername = Boolean($('#UpstreamProxyPassword').val()) || Boolean($('#UpstreamProxyDomain').val());
+    var valid = true;
     var portOK = validatePort($('#UpstreamProxyPort').val()) !== false;
 
-    if (portOK) {
+    if (skip || portOK) {
       // Hide the port-specific message
       $('.help-inline.UpstreamProxyPort').addClass('hidden').parents('.control-group').removeClass('error');
     } else {
-      // Port value bad. Show error while typing
+      valid = false; // Port value bad. Show error while typing
+
       $('.help-inline.UpstreamProxyPort').removeClass('hidden').parents('.control-group').addClass('error');
     }
 
-    if (hostnamePortMatch) {
-      // Hide the hostname and port match message
-      $('.upstream-proxy-hostname-port-match').addClass('hidden'); // And remove error state from hostname (but not from the port value... yet)
+    if (skip || !needHostname || Boolean($('#UpstreamProxyHostname').val())) {
+      // Hide the "hostname required" message
+      $('.upstream-proxy-set-hostname-error-msg').addClass('hidden'); // And remove error state from the control
 
       $('#UpstreamProxyHostname').parents('.control-group').removeClass('error');
+    } else {
+      valid = false; // Show the "hostname required" message
 
-      if (portOK) {
-        // Remove the error state from the port value
-        $('#UpstreamProxyPort').parents('.control-group').removeClass('error');
-      }
+      $('.upstream-proxy-set-hostname-error-msg').removeClass('hidden'); // And add error state to the control
+
+      $('#UpstreamProxyHostname').parents('.control-group').addClass('error');
     }
 
-    if (usernamePasswordMatch) {
-      // Hide the username and password match message
-      $('.upstream-proxy-username-password-match').addClass('hidden'); // And remove error state from username/password fields
+    if (skip || !needUsername || Boolean($('#UpstreamProxyUsername').val())) {
+      // Hide the "username required" message
+      $('.upstream-proxy-set-username-error-msg').addClass('hidden'); // And remove error state from the control
 
-      $('#UpstreamProxyUsername, #UpstreamProxyPassword').parents('.control-group').removeClass('error');
-    }
+      $('#UpstreamProxyUsername').parents('.control-group').removeClass('error');
+    } else {
+      valid = false; // Show the "username required" message
 
-    if (authenticationRequiresHostnameAndPort) {
-      // Hide the authentication requires hostname and port message
-      $('.upstream-proxy-authentication-requires-hostname-and-port').addClass('hidden');
-    }
+      $('.upstream-proxy-set-username-error-msg').removeClass('hidden'); // And add error state to the control
 
-    if (domainRequiresAuthentication) {
-      // Hide the domain requires username and password message
-      $('#UpstreamProxyDomain').parents('.control-group').removeClass('error');
-      $('.upstream-proxy-domain-requires-authentication').addClass('hidden'); // And remove error state from domain field
-
-      $('#UpstreamProxyDomain').parents('.control-group').removeClass('error');
-    }
-
-    if (portOK && hostnamePortMatch && usernamePasswordMatch && domainRequiresAuthentication && authenticationRequiresHostnameAndPort) {
-      // No error at all, remove error state
-      $('#UpstreamProxyHostname, #UpstreamProxyPort, #UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain').parents('.control-group').removeClass('error');
-    }
-
-    if (!hostnamePortMatch) {
-      // Value mismatch. Only show error on final check (so as to not prematurely
-      // show the error while the user is typing).
-      $('#UpstreamProxyHostname, #UpstreamProxyPort').parents('.control-group').addClass('error');
-      $('.upstream-proxy-hostname-port-match').removeClass('hidden');
-    }
-
-    if (!usernamePasswordMatch) {
-      // Username and password aren't both set or unset
-      $('#UpstreamProxyUsername, #UpstreamProxyPassword').parents('.control-group').addClass('error');
-      $('.upstream-proxy-username-password-match').removeClass('hidden');
-    }
-
-    if (!authenticationRequiresHostnameAndPort) {
-      // Username and password are set, but hostname and port aren't
-      $('#UpstreamProxyHostname, #UpstreamProxyPort').parents('.control-group').addClass('error');
-      $('.upstream-proxy-authentication-requires-hostname-and-port').removeClass('hidden');
-    }
-
-    if (!domainRequiresAuthentication) {
-      // Domain is set, but Username and password aren't
-      $('#UpstreamProxyUsername, #UpstreamProxyPassword, #UpstreamProxyDomain').parents('.control-group').addClass('error');
-      $('.upstream-proxy-domain-requires-authentication').removeClass('hidden');
+      $('#UpstreamProxyUsername').parents('.control-group').addClass('error');
     }
 
     updateErrorAlert();
-    return portOK && hostnamePortMatch && usernamePasswordMatch && authenticationRequiresHostnameAndPort && domainRequiresAuthentication;
+    return valid;
   } // The other upstream proxy settings should be disabled if skip-upstream-proxy
   // is set.
 
@@ -1291,13 +1233,19 @@
       return 0;
     }
 
-    val = parseInt(val);
+    var intVal = parseInt(val);
 
-    if (isNaN(val) || val < 1 || val > 65535) {
+    if (isNaN(intVal) || intVal < 1 || intVal > 65535) {
       return false;
     }
 
-    return val;
+    if (intVal.toString() !== val) {
+      // There were extra characters at the end of the string that didn't get converted
+      // into the int.
+      return false;
+    }
+
+    return intVal;
   } // Show the Settings tab and expand the target section.
   // If focusElem is optional; if set, focus will be put in that element.
 

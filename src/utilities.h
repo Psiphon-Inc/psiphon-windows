@@ -93,6 +93,7 @@ enum RegistryFailureReason
     REGISTRY_FAILURE_WRITE_TOO_LONG
 };
 
+bool DoesRegistryValueExist(const string& name);
 bool WriteRegistryDwordValue(const string& name, DWORD value);
 bool ReadRegistryDwordValue(const string& name, DWORD& value);
 bool WriteRegistryStringValue(const string& name, const string& value, RegistryFailureReason& reason);

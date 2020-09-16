@@ -44,11 +44,11 @@ namespace Settings
     bool SkipUpstreamProxy();
     string UpstreamProxyType();
     string UpstreamProxyHostname();
-    string UpstreamProxyAuthenticatedHostname();
     unsigned int UpstreamProxyPort();
     string UpstreamProxyUsername();
     string UpstreamProxyPassword();
     string UpstreamProxyDomain();
+    string UpstreamProxyFullHostname();
 
     string EgressRegion();
 

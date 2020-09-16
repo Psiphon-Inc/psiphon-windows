@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -73,7 +73,7 @@ struct ConnectionProxy
 
     bool operator==(const ConnectionProxy& rhs)
     {
-        return 
+        return
             this->name == rhs.name &&
             this->flags == rhs.flags &&
             this->proxy == rhs.proxy &&
@@ -96,34 +96,52 @@ struct ConnectionProxy
 };
 
 
-struct DecomposedProxyConfig
+class ProxyConfig
 {
-    tstring httpProxy;
-    DWORD httpProxyPort;
-    tstring httpsProxy;
-    DWORD httpsProxyPort;
-    tstring socksProxy;
-    DWORD socksProxyPort;
-
-    void clear()
+public:
+    ProxyConfig() { Clear(); }
+    void Clear()
     {
-        httpProxy.clear();
-        httpProxyPort = 0;
-        httpsProxy.clear();
-        httpsProxyPort = 0;
+        https.clear();
+        httpsPort = 0;
         socksProxy.clear();
         socksProxyPort = 0;
     }
+
+    static ProxyConfig DecomposeProxyInfo(const ConnectionProxy& proxyInfo);
+
+    /// Returns true if there is an HTTP proxy to use.
+    bool HTTPEnabled() const;
+    /// Returns the hostname to be used for an HTTP proxy connection, or an 
+    /// empty string if no proxy should be used.
+    tstring HTTPHostname() const;
+    /// Returns the server port to be used for an HTTP proxy connection, or zero
+    /// if no port should be used.
+    DWORD HTTPPort() const;
+    /// Returns the `hostname:port` to be used for an HTTP proxy connection, or 
+    /// an empty string if no proxy should be used.
+    tstring HTTPHostPort() const;
+    /// Returns the `scheme://hostname:port` to be used for an HTTP proxy 
+    /// connection, or an empty string if no proxy should be used.
+    tstring HTTPHostPortScheme() const;
+
+private:
+    /// HTTP proxy to be used for HTTPS traffic. This is what we will use for
+    /// our "HTTP" proxy, as we can be sure it supports CONNECT.
+    tstring https;
+    DWORD httpsPort;
+    
+    /// SOCKS proxy to be used for all traffic
+    tstring socksProxy;
+    DWORD socksProxyPort;
 };
 
 
+/// Get the proxy config for the current tunnel
+ProxyConfig GetTunneledDefaultProxyConfig();
+/// Get the proxy info for the original default connection.
+ProxyConfig GetNativeDefaultProxyConfig();
+
+
 void DoStartupSystemProxyWork();
-tstring GetNativeDefaultHttpsProxyHost();
-/// Returns the hostname:port of the current tunnel, or empty string if there is no tunnel.
-tstring GetTunneledDefaultHttpsProxyHost();
-/// Provides the separate hostname and port of the current tunnel. 
-/// Port will be 0 if it should not be used (like, a default port should be used). 
-/// Returns false if there is no tunnel.
-bool GetTunneledDefaultHttpsProxyHostnamePort(tstring& o_hostname, DWORD& o_port);
-void GetNativeDefaultProxyInfo(DecomposedProxyConfig& o_proxyInfo);
 void GetSanitizedOriginalProxyInfo(vector<ConnectionProxy>& o_originalProxyInfo);

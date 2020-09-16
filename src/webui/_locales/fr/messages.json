@@ -68,8 +68,8 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "Se connecté avec",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+        "message": "Sélectionner la région du serveur",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
         "message": "<strong>Erreur.</strong> Veuillez corriger les valeurs erronées avant de continuer.",
@@ -143,12 +143,8 @@
         "message": "Région de serveur Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
-    "settings#egress-region#label": {
-        "message": "Se connecté avec",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
     "settings#egress-region#select-best-performance": {
-        "message": "Pays le plus rapide",
+        "message": "Les meilleures performances",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -256,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon a des serveurs dans de nombreux pays différents. L’utilisation d’un serveur Psiphon dans un pays proche de votre pays de résidence fournira habituellement une meilleure connexion réseau, mais vous pourriez souhaiter accéder à des sites Web et des services en prétendant être virtuellement dans un pays particulier.",
+        "message": "Psiphon a des serveurs dans de nombreux pays et régions différents. L’utilisation d’un serveur Psiphon dans une région proche de votre pays de résidence fournira habituellement une meilleure connexion réseau, mais vous pourriez souhaiter accéder à des sites Web et des services comme si vous étiez virtuellement dans un pays ou une région particuliers.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Le choix de l’option du <strong>« Pays le plus rapide »</strong> permet à Psiphon de choisir automatiquement un serveur, ce qui donnera habituellement la meilleure connexion réseau.",
+        "message": "Le choix de l’option du <strong>« Les meilleures performances »</strong> permet à Psiphon de choisir automatiquement un serveur, ce qui donnera habituellement la meilleure connexion réseau.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -272,7 +268,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "Vous avez configuré Psiphon pour qu’il utilise un serveur dans une région particulière.<br>\nToutefois, cette région n’est plus proposée.<br>\nVous devez choisir une nouvelle région ou changer pour le choix par défaut « Pays le plus rapide ».",
+        "message": "Vous avez configuré Psiphon pour qu’il utilise un serveur dans une région particulière.<br>\nToutefois, cette région n’est plus proposée.<br>\nVous devez choisir une nouvelle région ou changer pour le choix par défaut « Les meilleures performances ».",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -308,11 +304,11 @@
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\nVous avez configuré Psiphon pour qu’il utilise un port local spécifique pour son serveur mandataire HTTP.<br>\nCependant, il semble que ce port est déjà utilisé et donc, Psiphon ne peut pas s’en servir.\n</p>\n<p>\nVeuillez changer la valeur de port de mandataire HTTP configurée et ressayer. Nous vous recommandons de supprimer la valeur afin que Psiphon puisse choisir automatiquement un port disponible.\n</p>",
+        "message": "<p>\nVous avez configuré Psiphon pour qu’il utilise un port local spécifique pour son serveur mandataire HTTP.<br>\nCependant, il semble que ce port est déjà utilisé et donc, Psiphon ne peut pas s’en servir.\n</p>\n<p>\nVeuillez changer la valeur de port de mandataire HTTP configurée et réessayer. Nous vous recommandons de supprimer la valeur afin que Psiphon puisse choisir automatiquement un port disponible.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
-        "message": "<p>\nVous avez configuré Psiphon pour qu’il utilise un port local spécifique pour son serveur mandataire SOCKS.<br>\nCependant, il semble que ce port est déjà utilisé et donc, Psiphon ne peut pas s’en servir.\n</p>\n<p>\nVeuillez changer la valeur de port de mandataire SOCKS configurée et ressayer. Nous vous recommandons de supprimer la valeur afin que Psiphon puisse choisir automatiquement un port disponible.\n</p>",
+        "message": "<p>\nVous avez configuré Psiphon pour qu’il utilise un port local spécifique pour son serveur mandataire SOCKS.<br>\nCependant, il semble que ce port est déjà utilisé et donc, Psiphon ne peut pas s’en servir.\n</p>\n<p>\nVeuillez changer la valeur de port de mandataire SOCKS configurée et réessayer. Nous vous recommandons de supprimer la valeur afin que Psiphon puisse choisir automatiquement un port disponible.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#heading": {
@@ -376,11 +372,11 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon est actuellement configuré pour utiliser le mandataire de votre système comme « mandataire ascendant ».<br>\nCependant, il nous semble impossible de nous connecter à un serveur Psiphon par ce mandataire.<br>\nVeuillez activer « Ne pas utiliser de mandataire ascendant » et ressayer.",
+        "message": "Psiphon est actuellement configuré pour utiliser le mandataire de votre système comme « mandataire ascendant ».<br>\nCependant, il nous semble impossible de nous connecter à un serveur Psiphon par ce mandataire.<br>\nVeuillez activer « Ne pas utiliser de mandataire ascendant » et réessayer.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#error-modal-body-configured": {
-        "message": "Vous avez configuré Psiphon pour qu’il utilise un serveur « mandataire ascendant ».<br>\nCependant, il nous semble impossible de nous connecter à un serveur Psiphon par ce mandataire.<br>\nVeuillez corriger les paramètres et ressayer.",
+        "message": "Vous avez configuré Psiphon pour qu’il utilise un serveur « mandataire ascendant ».<br>\nCependant, il nous semble impossible de nous connecter à un serveur Psiphon par ce mandataire.<br>\nVeuillez corriger les paramètres et réessayer.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#transport-mode#heading": {
@@ -620,7 +616,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-body": {
-        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez ressayer votre achat plus tard.",
+        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez réessayer votre achat plus tard.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-speedboost-active": {

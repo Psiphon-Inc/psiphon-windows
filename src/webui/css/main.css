@@ -6656,10 +6656,8 @@ body[dir="rtl"] .vpn-incompatible-msg.label {
   width: 5em;
 }
 .local-port-unique,
-.upstream-proxy-hostname-port-match,
-.upstream-proxy-username-password-match,
-.upstream-proxy-domain-requires-authentication,
-.upstream-proxy-authentication-requires-hostname-and-port {
+.upstream-proxy-set-hostname-error-msg,
+.upstream-proxy-set-username-error-msg {
   color: #b94a48;
 }
 #EgressRegion {

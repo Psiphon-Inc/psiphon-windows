@@ -68,8 +68,8 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "Conectar vía",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+        "message": "Seleccionar región del servidor",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
         "message": "<strong>¡Error!</strong> Por favor, repare los valores incorrectos antes de proseguir.",
@@ -132,7 +132,7 @@
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#disable-timeouts#reason": {
-        "message": "When enabling this for a very slow network connection, you are less likely to experience unexpected disconnections.",
+        "message": "Al habilitar esto sobre una conexión de red muy lenta, es menos probable que experimentes desconexiones inesperadas.",
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
@@ -143,12 +143,8 @@
         "message": "Región del servidor Psiphon",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
-    "settings#egress-region#label": {
-        "message": "Conectar vía",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
     "settings#egress-region#select-best-performance": {
-        "message": "País más rápido",
+        "message": "Mejor rendimiento",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -256,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon tiene servidores en muchos paises distintos. Usando un servidor Psiphon en un país cercano a su país de residencia generalmente proveerá una mejor conectividad de red, pero puede desear acceder a sitios web y servicios como si estuviese en un país específico.",
+        "message": "Psiphon tiene servidores en muchos países y regiones diferentes. Usar un servidor Psiphon en una región cercana a su país natal generalmente proporcionará una mejor conexión a la red, pero puede que desee acceder a sitios web y servicios como si estuviera virtualmente en un país o región específica.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Elegir la opción <strong>“País más rápido”</strong> predeterminada permite a Psiphon escoger automáticamente un servidor, que generalmente resultará en la mejor conexión posible a la red.",
+        "message": "Elegir la opción predeterminada <strong>“Mejor Desempeño”</strong> permite a Psiphon escoger automáticamente un servidor, que generalmente resultará en la mejor conexión posible a la red.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -272,7 +268,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "Ha configurado Psiphon para que use un servidor en una región específica.<br>\nSin embargo, esa región ya no está disponible.<br>\nTiene que elegir una nueva región o cambiar a la elección \"País más rápido\" predeterminada.",
+        "message": "Ha configurado Psiphon para que use un servidor en una región específica.<br>\nSin embargo, esa región ya no está disponible.<br>\nTiene que elegir una nueva región o cambiar a la opción predeterminada \"Mejor Desempeño\".",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -564,7 +560,7 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+        "message": "Psiphon ya no soporta Windows XP o Vista.\nPor favor visita nuestro sitio web para más información.",
         "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
@@ -620,15 +616,15 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-body": {
-        "message": "The PsiCash server responded with an error while trying to make the purchase. Please retry your purchase later.",
+        "message": "El servidor PsiCash respondió con un error mientras intentaba realizar la compra. Por favor intenta realizar tu compra más tarde.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-speedboost-active": {
-        "message": "Speed&nbsp;Boost active for %s",
+        "message": "Aumento de&nbsp;Velocidad activo por %s",
         "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-zerobalance-title": {
-        "message": "Necesita Speed&nbsp;Boost?",
+        "message": "¿Necesitas Aumento de&nbsp;Velocidad?",
         "description": "When the user has no PsiCash available, this message will be shown on the disabled 'Buy Speed Boost' button. This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-buypsi": {
@@ -640,11 +636,11 @@
         "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user already has some PsiCash, but may wish to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-nsfbalance-buttontext": {
-        "message": "Necesario para Speed&nbsp;Boost",
+        "message": "Necesario para Aumento de&nbsp;Velocidad",
         "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-enoughbalance-buttontext": {
-        "message": "Arrancar Speed&nbsp;Boost",
+        "message": "Arrancar Aumento de&nbsp;Velocidad",
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#1-hour": {
@@ -656,7 +652,7 @@
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
     },
     "psicash#ui-buyingboost-buttontext": {
-        "message": "Arrancando Speed&nbsp;Boost!",
+        "message": "Arrancando Aumento de&nbsp;Velocidad",
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "positive-value-indicator": {
@@ -676,43 +672,43 @@
         "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-unrecovered": {
-        "message": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+        "message": "PsiCash falló al inicializarse. Esto es debido probablemente a un problema del sistema de archivos, como quedarse sin espacio en disco. Tu saldo y otros estados se han perdido. PsiCash no podrá usarse. Puedes intentar reiniciando la aplicación para recuperarse del problema.",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-recovered": {
-        "message": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+        "message": "PsiCash falló al inicializarse. Esto es debido probablemente a un problema del sistema de archivos, como quedarse sin espacio en disco. Tu saldo y otros estados se han restablecido.",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#psiphon-speed": {
-        "message": "Psiphon<br>Speed",
+        "message": "<br>Velocidad de Psiphon",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "notice#disallowed-traffic-alert-title": {
-        "message": "Upgrade your Psiphon connection",
+        "message": "Actualiza tu conexión de Psiphon",
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+        "message": "<p>¿Las aplicaciones no están funcionando?</p>\n<p>Algún tráfico de Internet no está soportado sin un Aumento de Velocidad activo. Activa Aumento de Velocidad con PsiCash para desbloquear el potencial completo de tu experiencia Psiphon.</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
-        "message": "Apps not working?",
+        "message": "¿Las aplicaciones no están funcionando?",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
-        "message": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+        "message": "Activa Aumento de Velocidad para desbloquear el potencial completo de tu experiencia Psiphon.",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "Disallowed Traffic Alert",
+        "message": "Alerta de Tráfico Denegada",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
-        "message": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+        "message": "Algunos tipos de tráfico de Internet no están soportados sin un Aumento de Velocidad activo. Cuando tal tráfico es denegado, se muestra una alerta. (Re-habilitarla requerirá una reconexión.)",
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {
-        "message": "Disable disallowed traffic alerts",
+        "message": "Deshabilitar alertas de tráfico denegado",
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "banner#sponsored-by": {

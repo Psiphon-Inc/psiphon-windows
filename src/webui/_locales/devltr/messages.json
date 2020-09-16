@@ -92,8 +92,8 @@
     "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
   },
   "connection#egress-region-combo-label": {
-    "message": "[Ƈǿǿƞƞḗḗƈŧ ṽīīȧȧ]",
-    "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+    "message": "[Şḗḗŀḗḗƈŧ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ]",
+    "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
   },
   "connection#starting-msg": {
     "message": "[Ƥşīīƥħǿǿƞ īīş <span class=\"state-word\">ƈǿǿƞƞḗḗƈŧīīƞɠ</span>…]",
@@ -388,15 +388,15 @@
     "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "settings#egress-region#default": {
-    "message": "[Ƈħǿǿǿǿşīīƞɠ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ <strong>“Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ”</strong> ǿǿƥŧīīǿǿƞ ȧȧŀŀǿǿẇş Ƥşīīƥħǿǿƞ ŧǿǿ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƈħǿǿǿǿşḗḗ ȧȧ şḗḗřṽḗḗř, ẇħīīƈħ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ řḗḗşŭŭŀŧ īīƞ ŧħḗḗ ƀḗḗşŧ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ.]",
+    "message": "[Ƈħǿǿǿǿşīīƞɠ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ <strong>“Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ”</strong> ǿǿƥŧīīǿǿƞ ȧȧŀŀǿǿẇş Ƥşīīƥħǿǿƞ ŧǿǿ ȧȧŭŭŧǿǿḿȧȧŧīīƈȧȧŀŀẏ ƈħǿǿǿǿşḗḗ ȧȧ şḗḗřṽḗḗř, ẇħīīƈħ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ řḗḗşŭŭŀŧ īīƞ ŧħḗḗ ƀḗḗşŧ ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ.]",
     "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#egress-region#description": {
-    "message": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş. Ŭŭşīīƞɠ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř īīƞ ȧȧ ƈǿǿŭŭƞŧřẏ ƈŀǿǿşḗḗ ŧǿǿ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ ƥřǿǿṽīīḓḗḗ ȧȧ ƀḗḗŧŧḗḗř ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ ẇīīşħ ŧǿǿ ȧȧƈƈḗḗşş ẇḗḗƀşīīŧḗḗş ȧȧƞḓ şḗḗřṽīīƈḗḗş ŀīīķḗḗ ẏǿǿŭŭ ȧȧřḗḗ ṽīīřŧŭŭȧȧŀŀẏ īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ.]",
+    "message": "[Ƥşīīƥħǿǿƞ ħȧȧş şḗḗřṽḗḗřş īīƞ ḿȧȧƞẏ ḓīīƒƒḗḗřḗḗƞŧ ƈǿǿŭŭƞŧřīīḗḗş ȧȧƞḓ řḗḗɠīīǿǿƞş. Ŭŭşīīƞɠ ȧȧ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř īīƞ ȧȧ řḗḗɠīīǿǿƞ ƈŀǿǿşḗḗ ŧǿǿ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ẇīīŀŀ ɠḗḗƞḗḗřȧȧŀŀẏ ƥřǿǿṽīīḓḗḗ ȧȧ ƀḗḗŧŧḗḗř ƞḗḗŧẇǿǿřķ ƈǿǿƞƞḗḗƈŧīīǿǿƞ, ƀŭŭŧ ẏǿǿŭŭ ḿȧȧẏ ẇīīşħ ŧǿǿ ȧȧƈƈḗḗşş ẇḗḗƀşīīŧḗḗş ȧȧƞḓ şḗḗřṽīīƈḗḗş ŀīīķḗḗ ẏǿǿŭŭ ȧȧřḗḗ ṽīīřŧŭŭȧȧŀŀẏ īīƞ ȧȧ şƥḗḗƈīīƒīīƈ ƈǿǿŭŭƞŧřẏ ǿǿř řḗḗɠīīǿǿƞ.]",
     "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#egress-region#error-modal-body-http": {
-    "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ “Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ” ƈħǿǿīīƈḗḗ.]",
+    "message": "[Ẏǿǿŭŭ ħȧȧṽḗḗ ƈǿǿƞƒīīɠŭŭřḗḗḓ Ƥşīīƥħǿǿƞ ŧǿǿ ŭŭşḗḗ ȧȧ şḗḗřṽḗḗř īīƞ ȧȧ şƥḗḗƈīīƒīīƈ řḗḗɠīīǿǿƞ.<br>\nĦǿǿẇḗḗṽḗḗř, ŧħȧȧŧ řḗḗɠīīǿǿƞ īīş ƞǿǿ ŀǿǿƞɠḗḗř ȧȧṽȧȧīīŀȧȧƀŀḗḗ.<br>\nẎǿǿŭŭ ḿŭŭşŧ ƈħǿǿǿǿşḗḗ ȧȧ ƞḗḗẇ řḗḗɠīīǿǿƞ ǿǿř ƈħȧȧƞɠḗḗ ŧǿǿ ŧħḗḗ ḓḗḗƒȧȧŭŭŀŧ “Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ” ƈħǿǿīīƈḗḗ.]",
     "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#egress-region#error-modal-title": {
@@ -411,10 +411,6 @@
     "message": "[Ƈħǿǿǿǿşḗḗ ȧȧ ṽȧȧŀīīḓ Ƥşīīƥħǿǿƞ şḗḗřṽḗḗř řḗḗɠīīǿǿƞ.]",
     "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set. The word 'Psiphon' must not be translated or transliterated."
   },
-  "settings#egress-region#label": {
-    "message": "[Ƈǿǿƞƞḗḗƈŧ ṽīīȧȧ]",
-    "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-  },
   "settings#egress-region#select-at": {
     "message": "[Ȧȧŭŭşŧřīīȧȧ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Austria will be used."
@@ -428,7 +424,7 @@
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Belgium will be used."
   },
   "settings#egress-region#select-best-performance": {
-    "message": "[Ƒȧȧşŧḗḗşŧ Ƈǿǿŭŭƞŧřẏ]",
+    "message": "[Ɓḗḗşŧ Ƥḗḗřƒǿǿřḿȧȧƞƈḗḗ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
   },
   "settings#egress-region#select-bg": {
@@ -687,21 +683,13 @@
     "message": "[Ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋīīḗḗş ȧȧřḗḗ şǿǿḿḗḗŧīīḿḗḗş řḗḗɋŭŭīīřḗḗḓ ƀẏ şƈħǿǿǿǿŀş, ŭŭƞīīṽḗḗřşīīŧīīḗḗş, ǿǿř ƀŭŭşīīƞḗḗşşḗḗş. Īīƒ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ ƥřǿǿṽīīḓḗḗř ħȧȧş ɠīīṽḗḗƞ ẏǿǿŭŭ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş, ŧħḗḗƞ ḿȧȧƞŭŭȧȧŀŀẏ şḗḗŧŧīīƞɠ ŧħḗḗḿ ħḗḗřḗḗ ḿȧȧẏ ƀḗḗ řḗḗɋŭŭīīřḗḗḓ ŧǿǿ ƈǿǿƞƞḗḗƈŧ.]",
     "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
   },
-  "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-    "message": "[Şḗḗŧŧīīƞɠ ȧȧ Ḓǿǿḿȧȧīīƞ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ]",
-    "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+  "settings#upstream-proxy#set-hostname-error-msg": {
+    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ ƥřǿǿṽīīḓḗḗ ȧȧ Ħǿǿşŧƞȧȧḿḗḗ, ǿǿř ŀḗḗȧȧṽḗḗ ȧȧŀŀ Ŭŭƥşŧřḗḗȧȧḿ Ƥřǿǿẋẏ ƒīīḗḗŀḓş ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
+    "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
   },
-  "settings#upstream-proxy#set-hostname-port-error-msg": {
-    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ȧȧŭŭŧǿǿḿȧȧŧīīƈ şḗḗŀḗḗƈŧīīǿǿƞ.]",
-    "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-  },
-  "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-    "message": "[Şḗḗŧŧīīƞɠ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ ȧȧŀşǿǿ řḗḗɋŭŭīīřḗḗş şḗḗŧŧīīƞɠ ȧȧ Ħǿǿşŧƞȧȧḿḗḗ ȧȧƞḓ Ƥǿǿřŧ]",
-    "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-  },
-  "settings#upstream-proxy#set-username-password-error-msg": {
-    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ şḗḗŧ ƀǿǿŧħ Ŭŭşḗḗřƞȧȧḿḗḗ ȧȧƞḓ Ƥȧȧşşẇǿǿřḓ, ǿǿř ŀḗḗȧȧṽḗḗ ƀǿǿŧħ ƀŀȧȧƞķ ƒǿǿř ƞǿǿ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
-    "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+  "settings#upstream-proxy#set-username-error-msg": {
+    "message": "[Ẏǿǿŭŭ ḿŭŭşŧ ƥřǿǿṽīīḓḗḗ ȧȧ Ŭŭşḗḗřƞȧȧḿḗḗ īīƒ ẏǿǿŭŭ ȧȧřḗḗ şḗḗŧŧīīƞɠ Ƥȧȧşşẇǿǿřḓ ǿǿř Ḓǿǿḿȧȧīīƞ; ǿǿř ŀḗḗȧȧṽḗḗ ȧȧŀŀ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ ƒīīḗḗŀḓş ƀŀȧȧƞķ ƒǿǿř ƞǿǿ ȧȧŭŭŧħḗḗƞŧīīƈȧȧŧīīǿǿƞ.]",
+    "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
   },
   "settings#upstream-proxy#skip-label": {
     "message": "[Ḓǿǿƞ'ŧ ŭŭşḗḗ ŭŭƥşŧřḗḗȧȧḿ ƥřǿǿẋẏ]",

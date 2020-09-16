@@ -22,9 +22,9 @@ Pulls and massages our translations from Transifex.
 
 Run with
 # If you don't already have pipenv:
-$ pip install pipenv
+$ python3 -m pip install --upgrade pipenv
 
-$ pipenv install --ignore-pipfile
+$ pipenv install --three --ignore-pipfile
 $ pipenv run python transifex_pull.py
 
 # To reset your pipenv state (e.g., after a Python upgrade):
@@ -67,6 +67,7 @@ DEFAULT_LANGS = {
     'pt_PT': 'pt_PT',   # Portuguese-Portugal
     'ru': 'ru',         # Russian
     #'sn': 'sn',         # Shona
+    'sw': 'sw',         # Swahili
     'tg': 'tg',         # Tajik
     'th': 'th',         # Thai
     'ti': 'ti',         # Tigrinya

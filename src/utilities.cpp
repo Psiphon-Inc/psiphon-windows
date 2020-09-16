@@ -657,6 +657,39 @@ bool CreateSubprocessPipes(
 }
 
 
+bool DoesRegistryValueExist(const string& name)
+{
+    HKEY key = 0;
+
+    LONG returnCode = RegOpenKeyEx(
+        HKEY_CURRENT_USER,
+        LOCAL_SETTINGS_REGISTRY_KEY,
+        0,
+        KEY_READ,
+        &key);
+    if (returnCode != ERROR_SUCCESS)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: RegOpenKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, name.c_str(), returnCode);
+        return false;
+    }
+
+    DWORD type;
+    returnCode = RegQueryValueExA(
+        key,
+        name.c_str(),
+        NULL,
+        &type,
+        NULL,
+        NULL);
+
+    auto lastError = GetLastError();
+    RegCloseKey(key);
+    SetLastError(lastError); // restore the previous error code
+
+    return returnCode == ERROR_SUCCESS;
+}
+
+
 bool WriteRegistryDwordValue(const string& name, DWORD value)
 {
     HKEY key = 0;

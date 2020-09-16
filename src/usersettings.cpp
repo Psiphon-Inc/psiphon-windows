@@ -63,8 +63,12 @@
 #define UPSTREAM_PROXY_TYPE_NAME        "SSHParentProxyType"
 #define UPSTREAM_PROXY_TYPE_DEFAULT     "https"
 
-#define UPSTREAM_PROXY_HOSTNAME_NAME    "SSHParentProxyHostname"
+
+#define UPSTREAM_PROXY_HOSTNAME_NAME    "SSHParentProxyHost"
 #define UPSTREAM_PROXY_HOSTNAME_DEFAULT ""
+// We used to store the hostname formatted with authinfo@hostname, but we're migrating away from that
+#define UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT    "SSHParentProxyHostname"
+#define UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT ""
 
 #define UPSTREAM_PROXY_PORT_NAME        "SSHParentProxyPort"
 #define UPSTREAM_PROXY_PORT_DEFAULT     NULL_PORT
@@ -152,6 +156,13 @@ wstring GetSettingString(const string& settingName, wstring defaultValue, bool w
     return value;
 }
 
+bool DoesSettingExist(const string& settingName)
+{
+    AutoMUTEX lock(g_registryMutex);
+
+    return DoesRegistryValueExist(settingName);
+}
+
 void Settings::Initialize()
 {
     // Write out the default values for our non-exposed (registry-only) settings.
@@ -175,16 +186,16 @@ void Settings::ToJson(Json::Value& o_json)
       o_json["defaults"]["VPN"] = FALSE;
 
       o_json["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-      o_json["defaults"]["LocalHttpProxyPort"] = NULL_PORT;
+      o_json["defaults"]["LocalHttpProxyPort"] = HTTP_PROXY_PORT_DEFAULT;
       o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
-      o_json["defaults"]["LocalSocksProxyPort"] = NULL_PORT;
+      o_json["defaults"]["LocalSocksProxyPort"] = SOCKS_PROXY_PORT_DEFAULT;
 
-      o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;;
+      o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;
       o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
       o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
       o_json["defaults"]["UpstreamProxyHostname"] = UPSTREAM_PROXY_HOSTNAME_DEFAULT;
       o_json["UpstreamProxyPort"] = Settings::UpstreamProxyPort();
-      o_json["defaults"]["UpstreamProxyPort"] = NULL_PORT;
+      o_json["defaults"]["UpstreamProxyPort"] = UPSTREAM_PROXY_PORT_DEFAULT;
       o_json["UpstreamProxyUsername"] = Settings::UpstreamProxyUsername();
       o_json["defaults"]["UpstreamProxyUsername"] = UPSTREAM_PROXY_USERNAME_DEFAULT;
       o_json["UpstreamProxyPassword"] = Settings::UpstreamProxyPassword();
@@ -253,23 +264,31 @@ bool Settings::FromJson(
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
 
         string upstreamProxyUsername = json.get("UpstreamProxyUsername", UPSTREAM_PROXY_USERNAME_DEFAULT).asString();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyUsername != Settings::UpstreamProxyUsername();
+        WriteRegistryStringValue(
+            UPSTREAM_PROXY_USERNAME_NAME,
+            upstreamProxyUsername,
+            failReason);
+
         string upstreamProxyPassword = json.get("UpstreamProxyPassword", UPSTREAM_PROXY_PASSWORD_DEFAULT).asString();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyPassword != Settings::UpstreamProxyPassword();
+        WriteRegistryStringValue(
+            UPSTREAM_PROXY_PASSWORD_NAME,
+            upstreamProxyPassword,
+            failReason);
+
         string upstreamProxyDomain = json.get("UpstreamProxyDomain", UPSTREAM_PROXY_DOMAIN_DEFAULT).asString();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyDomain != Settings::UpstreamProxyDomain();
+        WriteRegistryStringValue(
+            UPSTREAM_PROXY_DOMAIN_NAME,
+            upstreamProxyDomain,
+            failReason);
+
         string upstreamProxyHostname = json.get("UpstreamProxyHostname", UPSTREAM_PROXY_HOSTNAME_DEFAULT).asString();
-        string upstreamProxyAuthenticatedHostname = upstreamProxyHostname;
-
-        if (upstreamProxyUsername.length() > 0 && upstreamProxyPassword.length() > 0) {
-            if (upstreamProxyDomain.length() > 0) {
-                upstreamProxyUsername = upstreamProxyDomain + "\\" + upstreamProxyUsername;
-            }
-
-            upstreamProxyAuthenticatedHostname = upstreamProxyUsername + ":" + upstreamProxyPassword + "@" + upstreamProxyHostname;
-        }
-
-        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyAuthenticatedHostname != Settings::UpstreamProxyAuthenticatedHostname();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyHostname != Settings::UpstreamProxyHostname();
         WriteRegistryStringValue(
             UPSTREAM_PROXY_HOSTNAME_NAME,
-            upstreamProxyAuthenticatedHostname,
+            upstreamProxyHostname,
             failReason);
 
         DWORD upstreamProxyPort = json.get("UpstreamProxyPort", UPSTREAM_PROXY_PORT_DEFAULT).asUInt();
@@ -348,26 +367,29 @@ unsigned int Settings::LocalSocksProxyPort()
 
 string Settings::UpstreamProxyType()
 {
-    // We only support one type, but we'll call this to create the registry entry
-    (void)GetSettingString(UPSTREAM_PROXY_TYPE_NAME, UPSTREAM_PROXY_TYPE_DEFAULT);
     return UPSTREAM_PROXY_TYPE_DEFAULT;
 }
 
 string Settings::UpstreamProxyHostname()
 {
-    string hostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
-
-    int splitIndex = hostname.find_first_of("@");
-    if (splitIndex != string::npos) {
-        hostname = hostname.substr(splitIndex + 1, hostname.length() - 1);
+    if (DoesSettingExist(UPSTREAM_PROXY_HOSTNAME_NAME))
+    {
+        return GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
     }
 
-    return hostname;
-}
+    // Check the defunct key, as we might have to migrate the old value
+    string hostname;
+    string defunctAuthHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
+    int splitIndex = defunctAuthHostname.find_first_of("@");
+    if (splitIndex != string::npos) {
+        hostname = defunctAuthHostname.substr(splitIndex + 1, defunctAuthHostname.length() - 1);
+    }
 
-string Settings::UpstreamProxyAuthenticatedHostname()
-{
-    return GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    // Attempt to write the extracted value to the new key, so we don't have to do this every time.
+    RegistryFailureReason failureReason; // ignored, along with return value -- if this write fails we'll do it again next time
+    (void)WriteRegistryStringValue(UPSTREAM_PROXY_HOSTNAME_NAME, hostname, failureReason);
+
+    return hostname;
 }
 
 unsigned int Settings::UpstreamProxyPort()
@@ -382,9 +404,15 @@ unsigned int Settings::UpstreamProxyPort()
 
 string Settings::UpstreamProxyUsername()
 {
-    string username = "";
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    if (DoesSettingExist(UPSTREAM_PROXY_USERNAME_NAME))
+    {
+        return GetSettingString(UPSTREAM_PROXY_USERNAME_NAME, UPSTREAM_PROXY_USERNAME_DEFAULT);
+    }
 
+    // Check the defunct key, as we might have to migrate the old value
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
+
+    string username;
     int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
     if (splitIndex != string::npos) {
         string splitString = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
@@ -398,13 +426,23 @@ string Settings::UpstreamProxyUsername()
         }
     }
 
+    // Attempt to write the extracted value to the new key, so we don't have to do this every time.
+    RegistryFailureReason failureReason; // ignored, along with return value -- if this write fails we'll do it again next time
+    (void)WriteRegistryStringValue(UPSTREAM_PROXY_USERNAME_NAME, username, failureReason);
+
     return username;
 }
 
 string Settings::UpstreamProxyPassword()
 {
-    string password = "";
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    if (DoesSettingExist(UPSTREAM_PROXY_PASSWORD_NAME))
+    {
+        return GetSettingString(UPSTREAM_PROXY_PASSWORD_NAME, UPSTREAM_PROXY_PASSWORD_DEFAULT);
+    }
+
+    // Check the defunct key, as we might have to migrate the old value
+    string password;
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
 
     int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("@");
     if (splitIndex != string::npos) {
@@ -414,20 +452,77 @@ string Settings::UpstreamProxyPassword()
         password = splitString.substr(splitIndex + 1, upstreamProxyAuthenticatedHostname.length() - 1);
     }
 
+    // Attempt to write the extracted value to the new key, so we don't have to do this every time.
+    RegistryFailureReason failureReason; // ignored, along with return value -- if this write fails we'll do it again next time
+    (void)WriteRegistryStringValue(UPSTREAM_PROXY_PASSWORD_NAME, password, failureReason);
+
     return password;
 }
 
 string Settings::UpstreamProxyDomain()
 {
-    string domain = "";
-    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME, UPSTREAM_PROXY_HOSTNAME_DEFAULT);
+    if (DoesSettingExist(UPSTREAM_PROXY_DOMAIN_NAME))
+    {
+        return GetSettingString(UPSTREAM_PROXY_DOMAIN_NAME, UPSTREAM_PROXY_DOMAIN_DEFAULT);
+    }
+
+    // Check the defunct key, as we might have to migrate the old value
+    string domain;
+    string upstreamProxyAuthenticatedHostname = GetSettingString(UPSTREAM_PROXY_HOSTNAME_NAME_DEFUNCT, UPSTREAM_PROXY_HOSTNAME_DEFAULT_DEFUNCT);
 
     int splitIndex = upstreamProxyAuthenticatedHostname.find_first_of("\\");
     if (splitIndex != string::npos) {
         domain = upstreamProxyAuthenticatedHostname.substr(0, splitIndex);
     }
 
+    // Attempt to write the extracted value to the new key, so we don't have to do this every time.
+    RegistryFailureReason failureReason; // ignored, along with return value -- if this write fails we'll do it again next time
+    (void)WriteRegistryStringValue(UPSTREAM_PROXY_DOMAIN_NAME, domain, failureReason);
+
     return domain;
+}
+
+string Settings::UpstreamProxyFullHostname()
+{
+    // Assumes HTTP proxy
+
+    ostringstream ret;
+
+    if (!UpstreamProxyHostname().empty())
+    {
+        ret << "http://";
+    }
+
+    if (!UpstreamProxyDomain().empty())
+    {
+        ret << psicash::URL::Encode(UpstreamProxyDomain(), false) << "\\";
+    }
+
+    if (!UpstreamProxyUsername().empty())
+    {
+        ret << psicash::URL::Encode(UpstreamProxyUsername(), false);
+    }
+
+    if (!UpstreamProxyPassword().empty())
+    {
+        ret << ":" << psicash::URL::Encode(UpstreamProxyPassword(), false);
+    }
+
+    if (!UpstreamProxyHostname().empty())
+    {
+        if (!UpstreamProxyUsername().empty())
+        {
+            ret << "@";
+        }
+        ret << UpstreamProxyHostname();
+    }
+
+    if (UpstreamProxyPort() != 0)
+    {
+        ret << ":" << UpstreamProxyPort();
+    }
+
+    return ret.str();
 }
 
 bool Settings::SkipUpstreamProxy()

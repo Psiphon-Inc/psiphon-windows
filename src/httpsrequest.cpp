@@ -318,11 +318,9 @@ bool HTTPSRequest::MakeRequest(
         tstringstream URL;
         URL << _T("https://") << serverAddress << _T(":") << serverWebPort << requestPath;
 
-        tstring tunneledHostname;
-        DWORD tunneledPort;
-        auto tunneled = GetTunneledDefaultHttpsProxyHostnamePort(tunneledHostname, tunneledPort);
+        auto tunneledProxyConfig = GetTunneledDefaultProxyConfig();
 
-        if (tunneled)
+        if (tunneledProxyConfig.HTTPEnabled())
         {
             // We already have a tunnel, so we'll use that for the URL proxy
 
@@ -339,11 +337,9 @@ bool HTTPSRequest::MakeRequest(
             }
             urlProxyRequestPath << UrlEncode(URL.str());
 
-            serverAddress = tunneledHostname.c_str();
-            serverWebPort = tunneledPort;            
-
             success = MakeRequestWithURLProxyOption(
-                serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
+                tunneledProxyConfig.HTTPHostname().c_str(), tunneledProxyConfig.HTTPPort(), 
+                webServerCertificate, urlProxyRequestPath.str().c_str(),
                 stopInfo, usePsiphonLocalProxy, response,
                 true, // useURLProxy
                 additionalHeaders, additionalData, additionalDataLength, httpVerb);
@@ -378,13 +374,11 @@ bool HTTPSRequest::MakeRequest(
                 tstringstream urlProxyRequestPath;
                 urlProxyRequestPath << _T("/") << _T("direct") << _T("/") << UrlEncode(URL.str());
 
-                serverAddress = _T("127.0.0.1");
-                serverWebPort = connection.GetTransportLocalHttpProxy();
-
                 my_print(NOT_SENSITIVE, true, _T("%s:%d - Making direct URL proxy request with temp tunnel-core"), __TFUNCTION__, __LINE__);
 
                 success = MakeRequestWithURLProxyOption(
-                    serverAddress, serverWebPort, webServerCertificate, urlProxyRequestPath.str().c_str(),
+                    _T("127.0.0.1"), connection.GetTransportLocalHttpProxy(), 
+                    webServerCertificate, urlProxyRequestPath.str().c_str(),
                     stopInfo, usePsiphonLocalProxy, response,
                     true, // useURLProxy
                     additionalHeaders, additionalData, additionalDataLength, httpVerb);
@@ -443,9 +437,9 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
     }
     else if (usePsiphonLocalProxy != PsiphonProxy::DONT_USE)
     {
-        proxyHost = GetTunneledDefaultHttpsProxyHost();
+        auto tunneledProxyConfig = GetTunneledDefaultProxyConfig();
 
-        if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE && proxyHost == _T(""))
+        if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE && !tunneledProxyConfig.HTTPEnabled())
         {
             // We are required to proxy through Psiphon, but there's no Psiphon
             // proxy to use.
@@ -454,7 +448,7 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
     }
     else
     {
-        proxyHost = GetNativeDefaultHttpsProxyHost();
+        proxyHost = GetNativeDefaultProxyConfig().HTTPHostPort();
     }
 
     tstring reqType(requestPath);

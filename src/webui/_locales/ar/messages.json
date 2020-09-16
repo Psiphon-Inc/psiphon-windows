@@ -68,8 +68,8 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "إتصل عبر ",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
+        "message": "تحديد منطقة الخادوم",
+        "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
         "message": "<strong>خطأ! </strong> يرجى تصحيح القيم غير الصحيحة قبل المتابعة.",
@@ -112,11 +112,11 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "message": "لو تم تفعيله فلن يتم تمرير الطلبات الموجهة لخوادم في بلدك عبر Psiphon.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#split-tunnel#reason": {
-        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
+        "message": "المواقع في بلدك غير محجوبة بشكل عام، لذلك إذا فعلت هذا الخيار فسيعطيك وصول أسرع إلى هذه المواقع وفي بعض الأحيان سيخفف من تكلفة إستهلاك البيانات من موفر خدمة الإنترنت خاصتك.",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#split-tunnel#enable-label": {
@@ -132,7 +132,7 @@
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#disable-timeouts#reason": {
-        "message": "When enabling this for a very slow network connection, you are less likely to experience unexpected disconnections.",
+        "message": "عند تفعيل هذا الإعداد على اتصال بالشبكة بطيء جدا، فسوف تقلل من احتمالية تعرض اتصالك للإنقطاع الغير متوقع.",
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
@@ -143,12 +143,8 @@
         "message": "سيرفر سايفون الإقليمي  ",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
-    "settings#egress-region#label": {
-        "message": "إتصل عبر ",
-        "description": "The label for the 'Psiphon Server Region' combo box control located on the settings tab. It should be read like 'Connect via Great Britain' or 'Connect via Japan' or 'Connect via Fastest Server'."
-    },
     "settings#egress-region#select-best-performance": {
-        "message": "الدولة الأسرع ",
+        "message": "أفضل أداء",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -256,11 +252,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries. Using a Psiphon server in a country close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country.",
+        "message": "Psiphon لديه خوادم كثيرة في بلدان مختلفة. إستعمال خادم سايفون لبلد قريب من بلدك سيوفر بشكل عام إتصال شبكة أسرع، ولكن ربما تود أن تصل إلى مواقع وخدمات كما لو كنت موجود افتراضيا في بلد أو منطقة معينة.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "إنتقاء الخيار الإفتراضي  <strong> \"البلد الأسرع\" <strong/>“  يتيح لسايفون إختيار سيرفر أوتوماتيكيا، ذلك سينتج عادة أفضل إتصال  شبكة متوفر.",
+        "message": "اختيار الخيار الإفتراضي <strong>\"أفضل أداء\"</strong>  يتيح لسايفون إختيار خادوم تلقائيا، ذلك سينتج عادة أفضل إتصال باشبكة.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -272,7 +268,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "لقد ضبطت سايفون لإستعمال سيرفر في إقليم معين .n.<br>\nمع الأسف، هذأ الإقليم غير متوفر حاليا .<br> يجب إختيار منطقة جديدة أو التغيير إلى الخيار  الإفتراضي  \"الدولة الأسرع“.",
+        "message": "لقد قمت بضبط Psiphon لاستخدام خادوم في منطقة محددة.<br>\nولكن هذه المنطقة لم تعد متاحة.<br>\nلا بد من اختيار منطقة جديدة أو تغيير الاختيار الافتراضي ليكون \"أفضل أداء\".",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -588,11 +584,11 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InsufficientBalance-body": {
-        "message": "You do not have sufficient PsiCash balance for this purchase.",
+        "message": "ليس عندك ما يكفي من رصيد PsiCash لاتمام هذا الشراء.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionAmountMismatch-title": {
-        "message": "PsiCash purchase price mismatch",
+        "message": "عدم توافق في سعر شراء PsiCash",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionAmountMismatch-body": {
@@ -628,7 +624,7 @@
         "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-zerobalance-title": {
-        "message": "Need a Speed&nbsp;Boost?",
+        "message": "هل تحتاج إلى السرعة الفائقة؟",
         "description": "When the user has no PsiCash available, this message will be shown on the disabled 'Buy Speed Boost' button. This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-buypsi": {
@@ -644,7 +640,7 @@
         "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-enoughbalance-buttontext": {
-        "message": "Start Speed&nbsp;Boost",
+        "message": "ابدأ السرعة&nbspالفائقة",
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#1-hour": {
@@ -656,7 +652,7 @@
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
     },
     "psicash#ui-buyingboost-buttontext": {
-        "message": "Starting Speed&nbsp;Boost!",
+        "message": "جارٍ البدء في السرعةnbsp;الفائفة!",
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "positive-value-indicator": {
@@ -664,7 +660,7 @@
         "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
     },
     "psicash#mustconnect-modal#title": {
-        "message": "Psiphon Connection Required",
+        "message": "يلزم الاتصال ب Psiphon",
         "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
     },
     "psicash#mustconnect-modal#body": {
