@@ -33,7 +33,7 @@ public:
     struct Response {
         int code;
         string body;
-        string dateHeader;
+        map<string, vector<string>> headers;
 
         Response() : code(-1) {}
     };
@@ -77,7 +77,7 @@ private:
     bool ValidateServerCert(PCCERT_CONTEXT pCert);
     void ResponseAppendBody(const string& responseData);
     void ResponseSetCode(int code);
-    void ResponseSetDateHeader(const string& dateHeader);
+    void ResponseSetHeaders(const std::map<std::string, std::vector<std::string>>& headers);
 
     bool MakeRequestWithURLProxyOption(
         const TCHAR* serverAddress,

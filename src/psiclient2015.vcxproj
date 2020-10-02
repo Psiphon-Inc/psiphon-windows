@@ -21,14 +21,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -43,7 +43,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>psiphon</TargetName>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -60,6 +59,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <EnablePREfast>false</EnablePREfast>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -79,6 +79,7 @@
       <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -254,6 +255,8 @@
     <ClInclude Include="local_proxy.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="psicashlib.h" />
+    <ClInclude Include="psiclient_systray.h" />
+    <ClInclude Include="psiclient_ui.h" />
     <ClInclude Include="psiphon_tunnel_core.h" />
     <ClInclude Include="psiphon_tunnel_core_utilities.h" />
     <ClInclude Include="subprocess.h" />
@@ -327,6 +330,8 @@
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="psicashlib.cpp" />
     <ClCompile Include="dispatch_queue.cpp" />
+    <ClCompile Include="psiclient_systray.cpp" />
+    <ClCompile Include="psiclient_ui.cpp" />
     <ClCompile Include="psiphon_tunnel_core.cpp" />
     <ClCompile Include="psiphon_tunnel_core_utilities.cpp" />
     <ClCompile Include="subprocess.cpp" />

@@ -51,7 +51,7 @@ string GetUpstreamProxyAddress()
     string upstreamProxyAddress = Settings::UpstreamProxyFullHostname();
     if (upstreamProxyAddress.empty())
     {
-        // There's no user-set upstream proxy, so use the native default proxy 
+        // There's no user-set upstream proxy, so use the native default proxy
         // (that is, the one that was set before we tried to connect).
         auto proxyConfig = GetNativeDefaultProxyConfig();
         if (proxyConfig.HTTPEnabled())
@@ -66,8 +66,8 @@ string GetUpstreamProxyAddress()
 bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut& out)
 {
     tstring dataStoreDirectory;
-    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY }, true, dataStoreDirectory)) {
-        my_print(NOT_SENSITIVE, false, _T("%s - GetDataPath failed for dataStoreDirectory (%d)"), __TFUNCTION__, GetLastError());
+    if (!GetPsiphonDataPath({}, true, dataStoreDirectory)) {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetPsiphonDataPath failed for dataStoreDirectory (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
 
@@ -219,7 +219,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
         config["MigrateRemoteServerListDownloadFilename"] = WStringToUTF8(remoteServerListFilename.wstring());
 
         tstring oslDownloadDirectory;
-        if (GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("osl") }, false, oslDownloadDirectory)) {
+        if (GetPsiphonDataPath({ _T("osl") }, false, oslDownloadDirectory)) {
             config["MigrateObfuscatedServerListDownloadDirectory"] = WStringToUTF8(oslDownloadDirectory);
         }
 

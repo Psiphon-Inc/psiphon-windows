@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -77,37 +77,37 @@ void GetDiagnosticHistory(Json::Value& o_json)
 // Original comments:
 /*
 * Copyright (c) Microsoft Corporation.
-* 
-* User Account Control (UAC) is a new security component in Windows Vista and 
-* newer operating systems. With UAC fully enabled, interactive administrators 
-* normally run with least user privileges. This example demonstrates how to 
-* check the privilege level of the current process, and how to self-elevate 
-* the process by giving explicit consent with the Consent UI. 
-* 
+*
+* User Account Control (UAC) is a new security component in Windows Vista and
+* newer operating systems. With UAC fully enabled, interactive administrators
+* normally run with least user privileges. This example demonstrates how to
+* check the privilege level of the current process, and how to self-elevate
+* the process by giving explicit consent with the Consent UI.
+*
 * This source is subject to the Microsoft Public License.
 * See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL.
 * All other rights reserved.
-* 
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, 
-* EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED 
+*
+* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+* EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
 * WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 \***************************************************************************/
 //
 //   FUNCTION: IsUserInAdminGroup()
 //
-//   PURPOSE: The function checks whether the primary access token of the 
-//   process belongs to user account that is a member of the local 
+//   PURPOSE: The function checks whether the primary access token of the
+//   process belongs to user account that is a member of the local
 //   Administrators group, even if it currently is not elevated.
 //
-//   RETURN VALUE: Returns TRUE if the primary access token of the process 
-//   belongs to user account that is a member of the local Administrators 
+//   RETURN VALUE: Returns TRUE if the primary access token of the process
+//   belongs to user account that is a member of the local Administrators
 //   group. Returns FALSE if the token does not.
 //
-//   EXCEPTION: If this function fails, it throws a C++ DWORD exception which 
+//   EXCEPTION: If this function fails, it throws a C++ DWORD exception which
 //   contains the Win32 error code of the failure.
 //
 //   EXAMPLE CALL:
-//     try 
+//     try
 //     {
 //         if (IsUserInAdminGroup())
 //             wprintf (L"User is a member of the Administrators group\n");
@@ -124,6 +124,8 @@ struct UserGroupInfo {
     bool inUsersGroup;
     bool inGuestsGroup;
     bool inPowerUsersGroup;
+
+    UserGroupInfo() : inAdminsGroup(false), inUsersGroup(false), inGuestsGroup(false), inPowerUsersGroup(false) {}
 };
 
 bool GetUserGroupInfo(UserGroupInfo& groupInfo)
@@ -136,15 +138,15 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     OSVERSIONINFO osver = { sizeof(osver) };
 
     // Open the primary access token of the process for query and duplicate.
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE, 
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE,
         &hToken))
     {
         dwError = GetLastError();
         goto Cleanup;
     }
 
-    // Determine whether system is running Windows Vista or later operating 
-    // systems (major version >= 6) because they support linked tokens, but 
+    // Determine whether system is running Windows Vista or later operating
+    // systems (major version >= 6) because they support linked tokens, but
     // previous versions (major version < 6) do not.
     if (!GetVersionEx(&osver))
     {
@@ -154,10 +156,10 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
 
     if (osver.dwMajorVersion >= 6)
     {
-        // Running Windows Vista or later (major version >= 6). 
-        // Determine token type: limited, elevated, or default. 
+        // Running Windows Vista or later (major version >= 6).
+        // Determine token type: limited, elevated, or default.
         TOKEN_ELEVATION_TYPE elevType;
-        if (!GetTokenInformation(hToken, TokenElevationType, &elevType, 
+        if (!GetTokenInformation(hToken, TokenElevationType, &elevType,
             sizeof(elevType), &cbSize))
         {
             dwError = GetLastError();
@@ -167,7 +169,7 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
         // If limited, get the linked elevated token for further check.
         if (TokenElevationTypeLimited == elevType)
         {
-            if (!GetTokenInformation(hToken, TokenLinkedToken, &hTokenToCheck, 
+            if (!GetTokenInformation(hToken, TokenLinkedToken, &hTokenToCheck,
                 sizeof(hTokenToCheck), &cbSize))
             {
                 dwError = GetLastError();
@@ -175,10 +177,10 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
             }
         }
     }
-    
-    // CheckTokenMembership requires an impersonation token. If we just got a 
-    // linked token, it already is an impersonation token.  If we did not get 
-    // a linked token, duplicate the original into an impersonation token for 
+
+    // CheckTokenMembership requires an impersonation token. If we just got a
+    // linked token, it already is an impersonation token.  If we did not get
+    // a linked token, duplicate the original into an impersonation token for
     // CheckTokenMembership.
     if (!hTokenToCheck)
     {
@@ -191,13 +193,13 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
 
     // Create the SID corresponding to the Administrators group.
     BYTE groupSID[SECURITY_MAX_SID_SIZE];
-    
+
     //
     // ADMINS
     //
 
     cbSize = sizeof(groupSID);
-    if (!CreateWellKnownSid(WinBuiltinAdministratorsSid, NULL, &groupSID,  
+    if (!CreateWellKnownSid(WinBuiltinAdministratorsSid, NULL, &groupSID,
         &cbSize))
     {
         dwError = GetLastError();
@@ -206,9 +208,9 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
 
     // Check if the token to be checked contains admin SID.
     // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
-    // To determine whether a SID is enabled in a token, that is, whether it 
+    // To determine whether a SID is enabled in a token, that is, whether it
     // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
-    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup))
     {
         dwError = GetLastError();
         goto Cleanup;
@@ -221,7 +223,7 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     //
 
     cbSize = sizeof(groupSID);
-    if (!CreateWellKnownSid(WinBuiltinUsersSid, NULL, &groupSID,  
+    if (!CreateWellKnownSid(WinBuiltinUsersSid, NULL, &groupSID,
         &cbSize))
     {
         dwError = GetLastError();
@@ -230,9 +232,9 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
 
     // Check if the token to be checked contains admin SID.
     // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
-    // To determine whether a SID is enabled in a token, that is, whether it 
+    // To determine whether a SID is enabled in a token, that is, whether it
     // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
-    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup))
     {
         dwError = GetLastError();
         goto Cleanup;
@@ -245,7 +247,7 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     //
 
     cbSize = sizeof(groupSID);
-    if (!CreateWellKnownSid(WinBuiltinGuestsSid, NULL, &groupSID,  
+    if (!CreateWellKnownSid(WinBuiltinGuestsSid, NULL, &groupSID,
         &cbSize))
     {
         dwError = GetLastError();
@@ -254,9 +256,9 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
 
     // Check if the token to be checked contains admin SID.
     // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
-    // To determine whether a SID is enabled in a token, that is, whether it 
+    // To determine whether a SID is enabled in a token, that is, whether it
     // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
-    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup))
     {
         dwError = GetLastError();
         goto Cleanup;
@@ -269,7 +271,7 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     //
 
     cbSize = sizeof(groupSID);
-    if (!CreateWellKnownSid(WinBuiltinPowerUsersSid, NULL, &groupSID,  
+    if (!CreateWellKnownSid(WinBuiltinPowerUsersSid, NULL, &groupSID,
         &cbSize))
     {
         dwError = GetLastError();
@@ -278,9 +280,9 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
 
     // Check if the token to be checked contains admin SID.
     // http://msdn.microsoft.com/en-us/library/aa379596(VS.85).aspx:
-    // To determine whether a SID is enabled in a token, that is, whether it 
+    // To determine whether a SID is enabled in a token, that is, whether it
     // has the SE_GROUP_ENABLED attribute, call CheckTokenMembership.
-    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup)) 
+    if (!CheckTokenMembership(hTokenToCheck, &groupSID, &fInGroup))
     {
         dwError = GetLastError();
         goto Cleanup;
@@ -356,7 +358,8 @@ wstring GetDLLVersion(const string& dllFileName)
                 WCHAR subBlock[50];
                 for (size_t i = 0; i < (langAndCodePagesSize / sizeof(struct LANGANDCODEPAGE)); i++)
                 {
-                    if (langAndCodePages[i].wLanguage == 0x0409)
+                    // All English language code pages are like 0x??09
+                    if ((langAndCodePages[i].wLanguage & 0x00FF) == 0x0009)
                     {
                         swprintf_s(
                             subBlock,
@@ -392,6 +395,7 @@ struct SystemInfo
     wstring countryCode;
     UINT64 freePhysicalMemoryKB;
     UINT64 freeVirtualMemoryKB;
+    UINT64 currentDiskFreeSpaceBytes;
     wstring locale;
     wstring architecture;
     UINT32 language;
@@ -408,6 +412,8 @@ struct SystemInfo
     bool userIsAdmin;
     bool groupInfo_success;
     UserGroupInfo groupInfo;
+
+    SystemInfo() : freePhysicalMemoryKB(0), freeVirtualMemoryKB(0), currentDiskFreeSpaceBytes(0), language(0), servicePackMajor(0), servicePackMinor(0), starter(false), mideastEnabled(false), slowMachine(false), wininet_success(false), userIsAdmin(false), groupInfo_success(false) {}
 };
 
 bool GetSystemInfo(SystemInfo& o_sysInfo)
@@ -416,9 +422,9 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
 
     HRESULT hr;
 
-    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
-    if (FAILED(hr)) 
-    { 
+    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED);
+    if (FAILED(hr))
+    {
         assert(0);
         return FALSE;
     }
@@ -428,12 +434,12 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
     IWbemLocator *pLoc = NULL;
 
     hr = CoCreateInstance(
-        CLSID_WbemLocator,             
-        0, 
-        CLSCTX_INPROC_SERVER, 
-        IID_IWbemLocator, 
+        CLSID_WbemLocator,
+        0,
+        CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator,
         (LPVOID *) &pLoc);
- 
+
     if (FAILED(hr))
     {
         assert(0);
@@ -457,7 +463,7 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
              0,                       // Locale. NULL indicates current
              NULL,                    // Security flags.
              0,                       // Authority (for example, Kerberos)
-             0,                       // Context object 
+             0,                       // Context object
              &pSvc                    // pointer to IWbemServices proxy
              );
     SysFreeString(wmiNamespace);
@@ -475,11 +481,11 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
        pSvc,                        // Indicates the proxy to set
        RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
        RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
-       NULL,                        // Server principal name 
-       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+       NULL,                        // Server principal name
+       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx
        RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
        NULL,                        // client identity
-       EOAC_NONE                    // proxy capabilities 
+       EOAC_NONE                    // proxy capabilities
     );
 
     if (FAILED(hr))
@@ -497,9 +503,9 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
 
     IEnumWbemClassObject* pEnumerator = NULL;
     hr = pSvc->ExecQuery(
-        queryLanguage, 
+        queryLanguage,
         query,
-        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, 
+        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
         NULL,
         &pEnumerator);
 
@@ -522,7 +528,7 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
     while (pEnumerator)
     {
         hr = pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
-        // TODO: Do we need to check the value of hr? For example, will it 
+        // TODO: Do we need to check the value of hr? For example, will it
         // be FAILED if the table name is bad? The sample code does not check.
 
         if (0 == uReturn)
@@ -530,7 +536,7 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
             break;
         }
 
-        // For descriptions of the fields, see: 
+        // For descriptions of the fields, see:
         // http://msdn.microsoft.com/en-us/library/windows/desktop/aa394239%28v=vs.85%29.aspx
 
         VARIANT vtProp;
@@ -564,7 +570,7 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
         }
 
         // The MSDN documentation says that FreePhysicalMemory and FreeVirtualMemory
-        // are uint64, but in practice vtProp.ullVal is getting bad values. We'll 
+        // are uint64, but in practice vtProp.ullVal is getting bad values. We'll
         // get the string value and convert.
         hr = pclsObj->Get(L"FreePhysicalMemory", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr))
@@ -637,13 +643,6 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
 
     CoUninitialize();
 
-    // Miscellaneous
-
-    o_sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
-
-    o_sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
-    o_sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
-
     // Network info
 
     WininetNetworkInfo netInfo;
@@ -654,6 +653,13 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
         o_sysInfo.wininet_info = netInfo;
     }
 
+    // Miscellaneous
+
+    o_sysInfo.starter = (GetSystemMetrics(SM_STARTER) != 0);
+
+    o_sysInfo.mideastEnabled = (GetSystemMetrics(SM_MIDEASTENABLED) != 0);
+    o_sysInfo.slowMachine = (GetSystemMetrics(SM_SLOWMACHINE) != 0);
+
     o_sysInfo.groupInfo_success = false;
     if (GetUserGroupInfo(o_sysInfo.groupInfo))
     {
@@ -661,7 +667,12 @@ bool GetSystemInfo(SystemInfo& o_sysInfo)
     }
 
     o_sysInfo.mshtmlDLLVersion = GetDLLVersion("MSHTML.DLL");
-    
+
+    ULARGE_INTEGER freeBytesAvailableToCaller;
+    if (GetDiskFreeSpaceExA(NULL, &freeBytesAvailableToCaller, NULL, NULL)) {
+        o_sysInfo.currentDiskFreeSpaceBytes = freeBytesAvailableToCaller.QuadPart;
+    }
+
     return true;
 }
 
@@ -690,8 +701,8 @@ string GetClientPlatform()
     }
 
     // This will look like "Windows_10.0.17763_11"
-    cachedResult = 
-        string(CLIENT_PLATFORM) 
+    cachedResult =
+        string(CLIENT_PLATFORM)
         + "_" + WStringToUTF8(sysInfo.version)
         + "_" + WStringToUTF8(mshtmlVersion);
     return cachedResult;
@@ -732,8 +743,8 @@ struct SecurityInfo
 };
 
 void GetOSSecurityInfo(
-        vector<SecurityInfo>& antiVirusInfo, 
-        vector<SecurityInfo>& antiSpywareInfo, 
+        vector<SecurityInfo>& antiVirusInfo,
+        vector<SecurityInfo>& antiSpywareInfo,
         vector<SecurityInfo>& firewallInfo)
 {
     antiVirusInfo.clear();
@@ -744,9 +755,9 @@ void GetOSSecurityInfo(
 
     HRESULT hr;
 
-    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED); 
-    if (FAILED(hr)) 
-    { 
+    hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED);
+    if (FAILED(hr))
+    {
         assert(0);
         return;
     }
@@ -756,12 +767,12 @@ void GetOSSecurityInfo(
     IWbemLocator *pLoc = NULL;
 
     hr = CoCreateInstance(
-        CLSID_WbemLocator,             
-        0, 
-        CLSCTX_INPROC_SERVER, 
-        IID_IWbemLocator, 
+        CLSID_WbemLocator,
+        0,
+        CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator,
         (LPVOID *) &pLoc);
- 
+
     if (FAILED(hr))
     {
         assert(0);
@@ -792,7 +803,7 @@ void GetOSSecurityInfo(
              0,                       // Locale. NULL indicates current
              NULL,                    // Security flags.
              0,                       // Authority (for example, Kerberos)
-             0,                       // Context object 
+             0,                       // Context object
              &pSvc                    // pointer to IWbemServices proxy
              );
     SysFreeString(wmiNamespace);
@@ -809,7 +820,7 @@ void GetOSSecurityInfo(
                  0,                       // Locale. NULL indicates current
                  NULL,                    // Security flags.
                  0,                       // Authority (for example, Kerberos)
-                 0,                       // Context object 
+                 0,                       // Context object
                  &pSvc                    // pointer to IWbemServices proxy
                  );
         SysFreeString(wmiNamespace);
@@ -828,11 +839,11 @@ void GetOSSecurityInfo(
        pSvc,                        // Indicates the proxy to set
        RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx
        RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx
-       NULL,                        // Server principal name 
-       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+       NULL,                        // Server principal name
+       RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx
        RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
        NULL,                        // client identity
-       EOAC_NONE                    // proxy capabilities 
+       EOAC_NONE                    // proxy capabilities
     );
 
     if (FAILED(hr))
@@ -864,9 +875,9 @@ void GetOSSecurityInfo(
 
         IEnumWbemClassObject* pEnumerator = NULL;
         hr = pSvc->ExecQuery(
-            queryLanguage, 
+            queryLanguage,
             query,
-            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, 
+            WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
             NULL,
             &pEnumerator);
 
@@ -965,27 +976,27 @@ void GetOSSecurityInfo(
                     {
                         securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_AUTOUPDATE_SETTINGS|");
                     }
-            
+
                     if (flags  & WSC_SECURITY_PROVIDER_ANTIVIRUS)
                     {
                         securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_ANTIVIRUS|");
                     }
-            
+
                     if (flags  & WSC_SECURITY_PROVIDER_ANTISPYWARE)
                     {
                         securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_ANTISPYWARE|");
                     }
-            
+
                     if (flags  & WSC_SECURITY_PROVIDER_INTERNET_SETTINGS)
                     {
                         securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_INTERNET_SETTINGS|");
                     }
-            
+
                     if (flags  & WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL)
                     {
                         securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_USER_ACCOUNT_CONTROL|");
                     }
-            
+
                     if (flags  & WSC_SECURITY_PROVIDER_SERVICE)
                     {
                         securityInfo.v2.securityProvider += _T("WSC_SECURITY_PROVIDER_SERVICE|");
@@ -1024,7 +1035,7 @@ void GetOSSecurityInfo(
                     }
                 }
             }
-            else 
+            else
             {
                 securityInfo.version = _T("v1");
 
@@ -1104,6 +1115,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
     psiphonInfo["PROPAGATION_CHANNEL_ID"] = PROPAGATION_CHANNEL_ID;
     psiphonInfo["SPONSOR_ID"] = SPONSOR_ID;
     psiphonInfo["CLIENT_VERSION"] = CLIENT_VERSION;
+    psiphonInfo["clientBuild"] = GetBuildTimestamp();
     psiphonInfo["splitTunnel"] = Settings::SplitTunnel();
     psiphonInfo["selectedTransport"] = WStringToUTF8(Settings::Transport());
     o_json["SystemInformation"]["PsiphonInfo"] = psiphonInfo;
@@ -1122,6 +1134,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
     osInfo["countryCode"] = WStringToUTF8(sysInfo.countryCode);
     osInfo["freePhysicalMemoryKB"] = sysInfo.freePhysicalMemoryKB;
     osInfo["freeVirtualMemoryKB"] = sysInfo.freeVirtualMemoryKB;
+    osInfo["currentDiskFreeSpaceBytes"] = sysInfo.currentDiskFreeSpaceBytes;
     osInfo["locale"] = WStringToUTF8(sysInfo.locale);
     osInfo["architecture"] = WStringToUTF8(sysInfo.architecture);
     osInfo["language"] = sysInfo.language;
@@ -1151,7 +1164,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
         networkInfo["Current"]["Internet"]["internetConnectionProxy"] = sysInfo.wininet_info.internetConnectionProxy;
         networkInfo["Current"]["Internet"]["internetRASInstalled"] = sysInfo.wininet_info.internetRASInstalled;
     }
-    else 
+    else
     {
         networkInfo["Current"]["Internet"]["internetConnected"] = Json::nullValue;
         networkInfo["Current"]["Internet"]["internetConnectionConfigured"] = Json::nullValue;
@@ -1192,7 +1205,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
         networkInfo["Original"]["Internet"]["internetConnectionProxy"] = g_startupDiagnosticInfo.wininet_info.internetConnectionProxy;
         networkInfo["Original"]["Internet"]["internetRASInstalled"] = g_startupDiagnosticInfo.wininet_info.internetRASInstalled;
     }
-    else 
+    else
     {
         networkInfo["Original"]["Internet"]["internetConnected"] = Json::nullValue;
         networkInfo["Original"]["Internet"]["internetConnectionConfigured"] = Json::nullValue;
@@ -1218,7 +1231,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
         userInfo["inGuestsGroup"] = sysInfo.groupInfo.inGuestsGroup;
         userInfo["inPowerUsersGroup"] = sysInfo.groupInfo.inPowerUsersGroup;
     }
-    else 
+    else
     {
         userInfo["inAdminsGroup"] = Json::nullValue;
         userInfo["inUsersGroup"] = Json::nullValue;
@@ -1261,7 +1274,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
 
             resultJson["displayName"] = WStringToUTF8(it->displayName);
             resultJson["version"] = WStringToUTF8(it->version);
-            
+
             resultJson["v1"] = Json::Value(Json::objectValue);
             resultJson["v1"]["productUpToDate"] = it->v1.productUpToDate;
             resultJson["v1"]["enabled"] = it->v1.enabled;
@@ -1308,7 +1321,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
         messageEntry["message"] = WStringToUTF8(entry->message);
         messageEntry["debug"] = entry->debug;
         messageEntry["timestamp!!timestamp"] = WStringToUTF8(entry->timestamp);
-        
+
         statusHistory.append(messageEntry);
     }
 
@@ -1317,7 +1330,7 @@ void GetDiagnosticInfo(Json::Value& o_json)
 
 Json::Value GetPsiCashDiagnosticData() {
     // Get the diagnostic data in nlohmann::json format
-    auto psicashJSON = psicash::Lib::_().GetDiagnosticInfo();
+    auto psicashJSON = psicash::Lib::_().GetDiagnosticInfo(false);
     // Dump it to string
     string jsonString;
     try {
@@ -1343,7 +1356,7 @@ Json::Value GetPsiCashDiagnosticData() {
 }
 
 string GenerateFeedbackJSON(
-        const string& feedback, 
+        const string& feedback,
         const string& emailAddress,
         const string& surveyJSON,
         bool sendDiagnosticInfo)
@@ -1373,7 +1386,7 @@ string GenerateFeedbackJSON(
     {
         outJson["DiagnosticInfo"] = Json::Value(Json::objectValue);
         GetDiagnosticInfo(outJson["DiagnosticInfo"]);
-        
+
         outJson["DiagnosticInfo"]["DiagnosticHistory"] = Json::Value(Json::arrayValue);
         GetDiagnosticHistory(outJson["DiagnosticInfo"]["DiagnosticHistory"]);
 
@@ -1397,7 +1410,7 @@ string GenerateFeedbackJSON(
     }
 
     //
-    // Upload the feedback/diagnostic info 
+    // Upload the feedback/diagnostic info
     //
 
     Json::FastWriter jsonWriter;

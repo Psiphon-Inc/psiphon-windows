@@ -25,6 +25,10 @@
 
 //==== global state ===================================================
 
+extern HINSTANCE g_hInst;
+extern HWND g_hWnd;
+extern std::tstring g_appTitle;
+
 // TODO: wrap this in a singleton interface?
 extern ConnectionManager g_connectionManager;
 
@@ -35,11 +39,15 @@ extern ConnectionManager g_connectionManager;
 #define WM_PSIPHON_FEEDBACK_SUCCESS             WM_USER + 101
 #define WM_PSIPHON_FEEDBACK_FAILED              WM_USER + 102
 #define WM_PSIPHON_CREATED                      WM_USER + 103
-#define WM_PSIPHON_TRAY_ICON_NOTIFY             WM_USER + 104
-#define WM_PSIPHON_CONNECTED_REMINDER_NOTIFY    WM_USER + 105
 
 
 //==== UI Interaction ==================================================
+
+/// Returns true if the UI has received WM_QUIT and should process no more messages
+bool IsUIShutDown();
+
+/// Foreground the window with handle `hwnd`. If `hwnd` is NULL, foreground the main window.
+void ForegroundWindow(HWND hwnd=NULL);
 
 // Indicate connection state
 void UI_SetStateStopped();
@@ -55,4 +63,4 @@ void UI_Notice(const string& noticeID, const string& techInfo);
 void UI_RefreshSettings(const string& settingsJSON);
 
 // Refreshes the PsiCash-related info in the UI.
-void UI_RefreshPsiCash(const string& commandID);
+void UI_RefreshPsiCash(const string& commandID, bool reconnect_required);

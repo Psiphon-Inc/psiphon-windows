@@ -123,6 +123,14 @@
         "message": "Не пускаць праз проксі-сервер сайты з вашай краіны",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
+    "settings#split-tunnel-chinese-sites#enable-label": {
+        "message": "Don't proxy Chinese websites",
+        "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
+    },
+    "settings#split-tunnel-chinese-sites#note": {
+        "message": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
+        "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
+    },
     "settings#disable-timeouts#heading": {
         "message": "Адключыць час чакання для павольных злучэнняў",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
@@ -555,6 +563,10 @@
         "message": "<strong>Калі вэб-сайт недаступны</strong>, можна атрымаць новую версію Psiphon, даслаўшы нам ліст на адрас:",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
+    "about#license-agree": {
+        "message": "By using Psiphon you signal that you agree to the terms of the <a href=\"https://psiphon.ca/license.html\">End-User License</a> and <a href=\"https://psiphon.ca/privacy.html\">Privacy Policy</a>.",
+        "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
+    },
     "about#client-version": {
         "message": "Кліенцкая версія Psiphon для Windows",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'. The word 'Psiphon' must not be translated or transliterated."
@@ -676,7 +688,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
-        "message": "Your PsiCash tokens have expired. Log into your account and try again.",
+        "message": "Your PsiCash login has expired. Log into your account and try again.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-title": {

@@ -211,9 +211,6 @@ void MCTRL_API mcHtml_Terminate(void);
 /** @brief Disables context menu */
 #define MC_HS_NOCONTEXTMENU    0x0001
 
-/** @brief Indicates that control should ask main window before navigating */
-#define MC_HS_NOTIFYNAV        0x0002
-
 /*@}*/
 
 

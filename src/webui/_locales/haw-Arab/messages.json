@@ -11,6 +11,10 @@
     "message": "<strong>‮Iɟ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ıs‬ ‮ıuɐɔɔǝssıqʅǝ‬</strong>, ‮ʎon‬ ‮ɔɐu‬ ‮ƃǝʇ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮qʎ‬ ‮sǝupıuƃ‬ ‮ɐu‬ ‮ǝɯɐıʅ‬ ‮ʇo‬:",
     "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
   },
+  "about#license-agree": {
+    "message": "‮Ԑʎ‬ ‮nsıuƃ‬ ‮Ԁsıdɥou‬ ‮ʎon‬ ‮sıƃuɐʅ‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɐƃɹǝǝ‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮ʇǝɹɯs‬ ‮oɟ‬ ‮ʇɥǝ‬ <a href=\"https://psiphon.ca/license.html\">‮Ǝup‬-‮∩sǝɹ‬ ‮˥ıɔǝusǝ‬</a> ‮ɐup‬ <a href=\"https://psiphon.ca/privacy.html\">‮Ԁɹıʌɐɔʎ‬ ‮Ԁoʅıɔʎ‬</a>.",
+    "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
+  },
   "about#visit-download-site": {
     "message": "‮Ԁʅǝɐsǝ‬ ‮ʌısıʇ‬ ‮ʇɥǝ‬ ‮ʍǝqsıʇǝ‬ ‮ʇo‬ <strong><a class=\"NewVersionURL\" href=\"#\">‮poʍuʅoɐp‬ ‮ɐ‬ ‮uǝʍ‬ ‮ʌǝɹsıou‬</a></strong> ‮oɹ‬ ‮ʇo‬ <strong><a class=\"InfoURL\" href=\"#\">‮ƃǝʇ‬ ‮ɥǝʅd‬ ‮ɐup‬ ‮ıuɟoɹɯɐʇıou‬</a></strong>. ‮Ԁsıdɥou‬ ‮ıs‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮ɟoɹ‬ ‮∀upɹoıp‬ ‮ɐup‬ ‮Ｍıupoʍs‬.",
     "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it. The word 'Psiphon' must not be translated or transliterated."
@@ -237,11 +241,35 @@
   },
   "psicash#1-day": {
     "message": "1 ‮pɐʎ‬",
-    "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
+    "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
   },
   "psicash#1-hour": {
     "message": "1 ‮ɥonɹ‬",
-    "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
+    "description": "Label on a button. Clicking this button will buy 1 hour of Speed Boost."
+  },
+  "psicash#1-month": {
+    "message": "1 ‮ɯouʇɥ‬",
+    "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
+  },
+  "psicash#1-week": {
+    "message": "1 ‮ʍǝǝʞ‬",
+    "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
+  },
+  "psicash#alert#buyspeedboost-purchase-complete": {
+    "message": "‮Sdǝǝp‬ ‮Ԑoosʇ‬ ‮sʇɐɹʇǝp‬!",
+    "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  },
+  "psicash#alert#logged-out": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮ɐɔɔonuʇ‬ ‮ʅoƃonʇ‬ ‮ɔoɯdʅǝʇǝ‬.",
+    "description": "An alert shown when the user logs out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#alert#tokens-expired": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮ʅoƃıu‬ ‮ǝxdıɹǝp‬. ‮Ԁʅǝɐsǝ‬ ‮ʅoƃ‬ ‮qɐɔʞ‬ ‮ıu‬.",
+    "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#corner-logged-out": {
+    "message": "‮ʎon‬ ‮ɐɹǝ‬ ‮ʅoƃƃǝp‬ ‮onʇ‬ ‮oɟ‬ ‮ԀsıↃɐsɥ‬",
+    "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#init-error-body-recovered": {
     "message": "‮ԀsıↃɐsɥ‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮ıuıʇıɐʅızǝ‬. ‮⊥ɥıs‬ ‮ıs‬ ‮dɹoqɐqʅʎ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮sʎsʇǝɯ‬ ‮dɹoqʅǝɯ‬, ‮snɔɥ‬ ‮ɐs‬ ‮qǝıuƃ‬ ‮onʇ‬ ‮oɟ‬ ‮pısʞ‬ ‮sdɐɔǝ‬. ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮ɐup‬ ‮oʇɥǝɹ‬ ‮sʇɐʇǝ‬ ‮ɥɐʌǝ‬ ‮qǝǝu‬ ‮ɹǝsǝʇ‬.",
@@ -255,6 +283,110 @@
     "message": "‮ԀsıↃɐsɥ‬ ‮ıuıʇıɐʅızɐʇıou‬ ‮ǝɹɹoɹ‬",
     "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
   },
+  "psicash#login#badrequest-error-body": {
+    "message": "‮⊥ɥǝ‬ ‮ԀsıↃɐsɥ‬ ‮sǝɹʌǝɹ‬ ‮ıupıɔɐʇǝp‬ ‮ʇɥɐʇ‬ ‮ʇɥǝ‬ ‮ʅoƃıu‬ ‮ɹǝbnǝsʇ‬ ‮ʍɐs‬ ‮ıuʌɐʅıp‬. ‮Ԁʅǝɐsǝ‬ ‮ɹǝ‬-‮ǝuʇǝɹ‬ ‮ʎonɹ‬ ‮ʅoƃıu‬ ‮ıuɟoɹɯɐʇıou‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
+    "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#login#catastrophic-error-body": {
+    "message": "‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮ʅoƃıu‬ ‮ɐʇʇǝɯdʇ‬ ‮ɟɐıʅǝp‬ ‮nuǝxdǝɔʇǝpʅʎ‬.",
+    "description": "Body text of a modal dialog shown when a PsiCash login fails without a specific reason. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#login#failure-modal-title": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮˥oƃıu‬ ‮ɟɐıʅǝp‬",
+    "description": "Title of modal dialog shown when the PsiCash account login attempt fails for some reason. Text within the modal will explain why. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#login#invalid-credentials-body": {
+    "message": "‮⊥ɥǝ‬ ‮nsǝɹuɐɯǝ‬ ‮oɹ‬ ‮dɐssʍoɹp‬ ‮ǝuʇǝɹǝp‬ ‮ʍɐs‬ ‮ıuɔoɹɹǝɔʇ‬.",
+    "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+  },
+  "psicash#login#last-tracker-merge-body": {
+    "message": "‮ʎon‬ ‮ɐɹǝ‬ ‮ʅoƃƃǝp‬ ‮ıuʇo‬ ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮ɐɔɔonuʇ‬. ‮⊥ɥǝ‬ ‮dɹǝǝxısʇıuƃ‬ ‮qɐʅɐuɔǝ‬ ‮ɟɹoɯ‬ ‮ʇɥıs‬ ‮pǝʌıɔǝ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮ʇɹɐusɟǝɹɹǝp‬ ‮ıuʇo‬ ‮ʎonɹ‬ ‮ɐɔɔonuʇ‬, ‮qnʇ‬ ‮ʇɥıs‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʅɐsʇ‬ ‮ʇıɯǝ‬ ‮ɐ‬ ‮qɐʅɐuɔǝ‬ ‮ɯǝɹƃǝ‬ ‮ʍıʅʅ‬ ‮oɔɔnɹ‬.",
+    "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#login#server-error-body": {
+    "message": "‮⊥ɥǝ‬ ‮ԀsıↃɐsɥ‬ ‮sǝɹʌǝɹ‬ ‮ɹǝsdoupǝp‬ ‮ʍıʇɥ‬ ‮ɐu‬ ‮ǝɹɹoɹ‬ ‮ʍɥıʅǝ‬ ‮ʇɹʎıuƃ‬ ‮ʇo‬ ‮ʅoƃ‬ ‮ʎon‬ ‮ıu‬. ‮Ԁʅǝɐsǝ‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬ ‮ʅɐʇǝɹ‬.",
+    "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#login#success-modal-title": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮˥oƃıu‬ ‮Snɔɔǝss‬",
+    "description": "Title of modal dialog shown when the PsiCash account login attempt succeeds, if additional information needs to be conveyed. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-create-psicash-account-body": {
+    "message": "‮Ｍǝ‬ ‮sʇɹouƃʅʎ‬ ‮ǝuɔonɹɐƃǝ‬ ‮ʎon‬ ‮ʇo‬ ‮ɔɹǝɐʇǝ‬ ‮ɐ‬ ‮ԀsıↃɐsɥ‬ ‮ɐɔɔonuʇ‬ ‮qǝɟoɹǝ‬ ‮qnʎıuƃ‬ ‮ԀsıↃɐsɥ‬. ‮Hɐʌıuƃ‬ ‮ɐu‬ ‮ɐɔɔonuʇ‬ ‮ɐʅʅoʍs‬ ‮ʎon‬ ‮ʇo‬ ‮sɥɐɹǝ‬ ‮ʎonɹ‬ ‮qɐʅɐuɔǝ‬ ‮qǝʇʍǝǝu‬ ‮pǝʌıɔǝs‬ ‮ɐup‬ ‮dɹoʇǝɔʇ‬ ‮ʎonɹ‬ ‮dnɹɔɥɐsǝs‬.",
+    "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-create-psicash-account-continue-button": {
+    "message": "‮Ↄouʇıunǝ‬ ‮ʍıʇɥonʇ‬ ‮ɐɔɔonuʇ‬",
+    "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
+  },
+  "psicash#modal-create-psicash-account-create-button": {
+    "message": "‮Ↄɹǝɐʇǝ‬ ‮oɹ‬ ‮ʅoƃ‬ ‮ıuʇo‬ ‮ɐɔɔonuʇ‬",
+    "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
+  },
+  "psicash#modal-create-psicash-account-header": {
+    "message": "‮Ↄɹǝɐʇǝ‬ ‮ɐ‬ ‮ԀsıↃɐsɥ‬ ‮∀ɔɔonuʇ‬",
+    "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-login-body": {
+    "message": "<a class=\"js-psicash-account-signup\" href=\"#\">‮Ↄɹǝɐʇǝ‬ ‮ɐ‬ ‮uǝʍ‬ ‮ɐɔɔonuʇ‬</a> ‮oɹ‬ ‮ʅoƃ‬ ‮ıu‬ ‮qǝʅoʍ‬.",
+    "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
+  },
+  "psicash#modal-login-cancel-button": {
+    "message": "‮Ↄɐuɔǝʅ‬",
+    "description": "Text on the cancel button in the PsiCash account login modal dialog."
+  },
+  "psicash#modal-login-forgot-password-link": {
+    "message": "‮ɟoɹƃoʇ‬ ‮ʎonɹ‬ ‮dɐssʍoɹp‬?",
+    "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
+  },
+  "psicash#modal-login-header": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮∀ɔɔonuʇ‬",
+    "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-login-password-field": {
+    "message": "‮Ԁɐssʍoɹp‬",
+    "description": "Label for a password field in the PsiCash account login modal dialog."
+  },
+  "psicash#modal-login-submit-button": {
+    "message": "‮Snqɯıʇ‬",
+    "description": "Text on the submit button in the PsiCash account login modal dialog."
+  },
+  "psicash#modal-login-username-field": {
+    "message": "‮∩sǝɹuɐɯǝ‬",
+    "description": "Label for a username field in the PsiCash account login modal dialog."
+  },
+  "psicash#modal-logout-error-body": {
+    "message": "‮ʎon‬ ‮ʅoƃonʇ‬ ‮ɐʇʇǝɯdʇ‬ ‮ɟɐıʅǝp‬ ‮nuǝxdǝɔʇǝpʅʎ‬. ‮Ԁʅǝɐsǝ‬ ‮ʇɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬. ‮Iɟ‬ ‮ʇɥɐʇ‬ ‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬, ‮ʎon‬ ‮ʍıʅʅ‬ ‮uǝǝp‬ ‮ʇo‬ <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">‮ɔʅǝɐɹ‬ ‮ʎonɹ‬ ‮ʅoɔɐʅ‬ ‮sʇoɹɐƃǝ‬</a>.",
+    "description": "Body of modal dialog shown when the user attempts to log out of their PsiCash account and an unexpected error occurs. Please don't modify the link URL."
+  },
+  "psicash#modal-logout-header": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮∀ɔɔonuʇ‬ ‮˥oƃonʇ‬",
+    "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-psicash-logout-offline-body": {
+    "message": "‮Ԑǝıuƃ‬ ‮ɔouuǝɔʇǝp‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮uǝʇʍoɹʞ‬ ‮ǝuɐqʅǝs‬ ‮ɐ‬ ‮ɯoɹǝ‬ ‮sǝɔnɹǝ‬ ‮ԀsıↃɐsɥ‬ ‮ʅoƃonʇ‬. ‮Ｍonʅp‬ ‮ʎon‬ ‮ʅıʞǝ‬ ‮ʇo‬ ‮ɔouuǝɔʇ‬ ‮qǝɟoɹǝ‬ ‮ʅoƃƃıuƃ‬ ‮onʇ‬?",
+    "description": "Body of a modal dialog that appears when the user tries to log out of thier PsiCash account while not currently connected to the Psiphon network. We don't allow PsiCash network requests when not connected, so only an inferior localy-only logout is available. 'Psiphon' must not be translated/transliterated. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-psicash-logout-offline-cancel-button": {
+    "message": "‮Ↄɐuɔǝʅ‬",
+    "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
+  },
+  "psicash#modal-psicash-logout-offline-connect-button": {
+    "message": "‮Ↄouuǝɔʇ‬",
+    "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will abort the logout attempt and being connecting to a Psiphon server."
+  },
+  "psicash#modal-psicash-logout-offline-header": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮∀ɔɔonuʇ‬ ‮˥oƃonʇ‬",
+    "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#modal-psicash-logout-offline-logout-anyway-button": {
+    "message": "‮˥oƃ‬ ‮onʇ‬ ‮ɐuʎʍɐʎ‬",
+    "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cause a local-only logout to be performed."
+  },
+  "psicash#more-ellipsis": {
+    "message": "‮Woɹǝ‬…",
+    "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
+  },
   "psicash#mustconnect-modal#body": {
     "message": "‮Iu‬ ‮oɹpǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ԀsıↃɐsɥ‬, ‮ʎon‬ ‮ɯnsʇ‬ ‮qǝ‬ ‮ɔouuǝɔʇǝp‬ ‮ʇo‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮uǝʇʍoɹʞ‬.",
     "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
@@ -263,9 +395,81 @@
     "message": "‮Ԁsıdɥou‬ ‮Ↄouuǝɔʇıou‬ ‮ᴚǝbnıɹǝp‬",
     "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
   },
+  "psicash#overlay-logging-in": {
+    "message": "‮˥oƃƃıuƃ‬ ‮ıu‬…",
+    "description": "Text on a screen shown while the user's log-in request is in progress."
+  },
+  "psicash#overlay-logging-out": {
+    "message": "‮˥oƃƃıuƃ‬ ‮onʇ‬…",
+    "description": "Text on a screen shown while the user's log-out request is in progress."
+  },
+  "psicash#pane-balance-header": {
+    "message": "‮Ԑɐʅɐuɔǝ‬:",
+    "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
+  },
+  "psicash#pane-create-account": {
+    "message": "‮Ↄɹǝɐʇǝ‬ ‮ɐu‬ ‮ɐɔɔonuʇ‬ ‮ʇo‬ ‮dɹoʇǝɔʇ‬ ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬!",
+    "description": "Text for a link displayed when the user does not have a PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language. It encourages them to make one. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#pane-create-account-plea": {
+    "message": "‮Ↄɹǝɐʇıuƃ‬ ‮ɐ‬ ‮ԀsıↃɐsɥ‬ ‮ɐɔɔonuʇ‬ ‮ʍıʅʅ‬ ‮ɥǝʅd‬ ‮dɹǝsǝɹʌǝ‬ ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮ıɟ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ɐdd‬'‮s‬ ‮sʇoɹɐƃǝ‬ ‮oɹ‬ ‮nsǝ‬ ‮Ԁsıdɥou‬ ‮ou‬ ‮ɐuoʇɥǝɹ‬ ‮pǝʌıɔǝ‬. <a href=\"https://psiphon.ca/faq.html#psicash-account\">‮˥ǝɐɹu‬ ‮ɯoɹǝ‬.</a>",
+    "description": "Text shown below the PsiCash balance when the user does not have a PsiCash account. 'Learn more' is a link to an FAQ entry explaining the benefits of creating an account. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#pane-create-new-account": {
+    "message": "‮Ↄɹǝɐʇǝ‬ ‮ɐ‬ ‮Nǝʍ‬ ‮∀ɔɔonuʇ‬",
+    "description": "Text on button that user can click to create a new account (opens an external web page)."
+  },
+  "psicash#pane-l2tp-incompatible": {
+    "message": "‮Sdǝǝp‬ ‮Ԑoosʇ‬ ‮ɔɐuuoʇ‬ ‮qǝ‬ ‮nsǝp‬ ‮ʍɥıʅǝ‬ ‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬ ‮ıu‬ <a href=\"#\">‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬ ‮ʇɹɐusdoɹʇ‬ ‮ɯopǝ‬</a>.",
+    "description": "A message shown when L2TP/IPSec mode is enabled in Psiphon. Speed Boost cannot be used in this mode."
+  },
+  "psicash#pane-log-in": {
+    "message": "‮˥oƃ‬ ‮Iu‬!",
+    "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
+  },
+  "psicash#pane-log-out": {
+    "message": "‮˥oƃ‬ ‮Onʇ‬",
+    "description": "Text on a button that will log the user out of their PsiCash account."
+  },
+  "psicash#pane-manage-web": {
+    "message": "‮Wɐuɐƃǝ‬ ‮ou‬ ‮ʇɥǝ‬ ‮ʍǝq‬",
+    "description": "Text for a link to a web site where users can manage their PsiCash account."
+  },
+  "psicash#pane-must-log-in": {
+    "message": "‮ʎon‬ ‮ɯnsʇ‬ ‮ʅoƃ‬ ‮ıu‬ ‮ʇo‬ ‮nsǝ‬ ‮ԀsıↃɐsɥ‬.",
+    "description": "Message shown when the user was logged in with an account and then logged out. It's telling the user that they have to log in again. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#pane-need-more-psicash-body": {
+    "message": "‮Iu‬ ‮oɹpǝɹ‬ ‮ɐɔʇıʌɐʇǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬, ‮ʎon‬ ‮uǝǝp‬ ‮ʇo‬ ‮qnʎ‬ ‮ɯoɹǝ‬ ‮ԀsıↃɐsɥ‬.",
+    "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  },
+  "psicash#pane-need-more-psicash-header": {
+    "message": "‮ʎon‬ ‮uǝǝp‬ ‮ɯoɹǝ‬ ‮ԀsıↃɐsɥ‬!",
+    "description": "Header for a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#pane-need-psicash-visit-store": {
+    "message": "‮Nǝǝp‬ ‮ԀsıↃɐsɥ‬? ‮Ʌısıʇ‬ ‮onɹ‬ ‮sʇoɹǝ‬ ‮ʇo‬ ‮qnʎ‬ ‮ɯoɹǝ‬!",
+    "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#pane-speed-boost-cta": {
+    "message": "‮∩uʅǝɐsɥ‬ ‮ʇɥǝ‬ ‮ɟnʅʅ‬ ‮doʇǝuʇıɐʅ‬ ‮oɟ‬ ‮Ԁsıdɥou‬ ‮ʍıʇɥ‬ ‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬!",
+    "description": "Text encouraging the user to purchase Speed Boost. 'Unleash' can translated to something like 'unlock', 'release', 'enable', 'amplify', or generally 'make a lot better'. 'Psiphon' must not be translated/transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  },
+  "psicash#pane-speed-port-limits-body": {
+    "message": "‮Ｍıʇɥonʇ‬ ‮ɐɔʇıʌǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬, ‮ʎonɹ‬ ‮sdǝǝp‬ ‮ıs‬ ‮ʅıɯıʇǝp‬ ‮ɐup‬ ‮soɯǝ‬ ‮ıuʇǝɹuǝʇ‬ ‮ʇɹɐɟɟıɔ‬ ‮ıs‬ ‮uoʇ‬ ‮snddoɹʇǝp‬. ‮∀ɔʇıʌɐʇǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬ ‮ʍıʇɥ‬ ‮ԀsıↃɐsɥ‬ ‮ʇo‬ ‮nuʅoɔʞ‬ ‮ʇɥǝ‬ ‮ɟnʅʅ‬ ‮doʇǝuʇıɐʅ‬ ‮oɟ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ǝxdǝɹıǝuɔǝ‬.",
+    "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  },
+  "psicash#pane-speed-port-limits-head": {
+    "message": "‮Sdǝǝp‬ ‮ɐup‬ ‮Ԁoɹʇ‬ ‮˥ıɯıʇs‬",
+    "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
+  },
   "psicash#psiphon-speed": {
     "message": "‮Ԁsıdɥou‬<br>‮Sdǝǝp‬",
     "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
+  },
+  "psicash#psiphon-speed-nobreak": {
+    "message": "‮Ԁsıdɥou‬ ‮Sdǝǝp‬",
+    "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
   },
   "psicash#transaction-ExistingTransaction-body": {
     "message": "‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɐu‬ ‮ǝxısʇıuƃ‬ ‮ԀsıↃɐsɥ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬. ‮∀uoʇɥǝɹ‬ ‮dnɹɔɥɐsǝ‬ ‮oɟ‬ ‮ʇɥıs‬ ‮ʇʎdǝ‬ ‮ıs‬ ‮uoʇ‬ ‮ɐʅʅoʍǝp‬ ‮nuʇıʅ‬ ‮ʇɥǝ‬ ‮dɹǝʌıons‬ ‮ouǝ‬ ‮ǝxdıɹǝs‬. ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮sʇɐʇǝ‬ ‮ʍıʅʅ‬ ‮qǝ‬ ‮ɹǝɟɹǝsɥǝp‬ ‮uoʍ‬.",
@@ -283,13 +487,21 @@
     "message": "‮Iusnɟɟıɔıǝuʇ‬ ‮ԀsıↃɐsɥ‬ ‮qɐʅɐuɔǝ‬",
     "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
   },
-  "psicash#transaction-InvalidTokens-body": {
-    "message": "‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮ʇoʞǝus‬ ‮ɐɹǝ‬ ‮ıuʌɐʅıp‬. ‮⊥ɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬. ‮Iɟ‬ ‮ʇɥɐʇ‬ ‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬, ‮ʎon‬ ‮ʍıʅʅ‬ ‮uǝǝp‬ ‮ʇo‬ <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">‮ɔʅǝɐɹ‬ ‮ʎonɹ‬ ‮ʅoɔɐʅ‬ ‮sʇoɹɐƃǝ‬</a>.",
+  "psicash#transaction-InvalidTokens-body-account": {
+    "message": "‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮ʅoƃıu‬ ‮ɥɐs‬ ‮ǝxdıɹǝp‬. ‮˥oƃ‬ ‮ıuʇo‬ ‮ʎonɹ‬ ‮ɐɔɔonuʇ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬.",
     "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
   },
-  "psicash#transaction-InvalidTokens-title": {
-    "message": "‮Iuʌɐʅıp‬ ‮ԀsıↃɐsɥ‬ ‮ʇoʞǝus‬",
+  "psicash#transaction-InvalidTokens-body-tracker": {
+    "message": "‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮sʇɐʇǝ‬ ‮ıs‬ ‮ıuʌɐʅıp‬. ‮⊥ɹʎ‬ ‮ɹǝsʇɐɹʇıuƃ‬ ‮ʇɥǝ‬ ‮ɐddʅıɔɐʇıou‬. ‮Iɟ‬ ‮ʇɥɐʇ‬ ‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬, ‮ʎon‬ ‮ʍıʅʅ‬ ‮uǝǝp‬ ‮ʇo‬ <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">‮ɔʅǝɐɹ‬ ‮ʎonɹ‬ ‮ʅoɔɐʅ‬ ‮sʇoɹɐƃǝ‬</a>.",
+    "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#transaction-InvalidTokens-title-account": {
+    "message": "‮ԀsıↃɐsɥ‬ ‮ʅoƃıu‬ ‮ǝxdıɹǝp‬",
     "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+  },
+  "psicash#transaction-InvalidTokens-title-tracker": {
+    "message": "‮Iuʌɐʅıp‬ ‮ԀsıↃɐsɥ‬ ‮sʇɐʇǝ‬",
+    "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
   },
   "psicash#transaction-ServerError-body": {
     "message": "‮⊥ɥǝ‬ ‮ԀsıↃɐsɥ‬ ‮sǝɹʌǝɹ‬ ‮ɹǝsdoupǝp‬ ‮ʍıʇɥ‬ ‮ɐu‬ ‮ǝɹɹoɹ‬ ‮ʍɥıʅǝ‬ ‮ʇɹʎıuƃ‬ ‮ʇo‬ ‮ɯɐʞǝ‬ ‮ʇɥǝ‬ ‮dnɹɔɥɐsǝ‬. ‮Ԁʅǝɐsǝ‬ ‮ɹǝʇɹʎ‬ ‮ʎonɹ‬ ‮dnɹɔɥɐsǝ‬ ‮ʅɐʇǝɹ‬.",
@@ -335,10 +547,6 @@
     "message": "‮Ԑnʎ‬ ‮ԀsıↃɐsɥ‬",
     "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user has no PsiCash at all. The word 'PsiCash' must not be translated or transliterated."
   },
-  "psicash#ui-enoughbalance-buttontext": {
-    "message": "‮Sʇɐɹʇ‬ ‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬",
-    "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
-  },
   "psicash#ui-nsfbalance-buttontext": {
     "message": "‮Nǝǝpǝp‬ ‮ɟoɹ‬ ‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬",
     "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
@@ -347,9 +555,9 @@
     "message": "‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬ ‮ɐɔʇıʌǝ‬ ‮ɟoɹ‬ %s",
     "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
-  "psicash#ui-zerobalance-title": {
-    "message": "‮Nǝǝp‬ ‮ɐ‬ ‮Sdǝǝp‬&nbsp;‮Ԑoosʇ‬?",
-    "description": "When the user has no PsiCash available, this message will be shown on the disabled 'Buy Speed Boost' button. This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+  "psicash#ui-speedboost-button": {
+    "message": "‮Sdǝǝp‬ ‮Ԑoosʇ‬",
+    "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy Speed Boost. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
   },
   "settings#apply-button": {
     "message": "‮∀ddʅʎ‬ ‮Ↄɥɐuƃǝs‬",
@@ -782,5 +990,9 @@
   "settings#vpn-incompatible-msg": {
     "message": "(‮poǝsu‬'‮ʇ‬ ‮ʍoɹʞ‬ ‮ʍıʇɥ‬ ‮˥‬2‮⊥Ԁ‬/‮IԀSǝɔ‬ ‮ɯopǝ‬.)",
     "description": "If 'L2TP/IPSec mode' is enabled, this text is displayed under or beside settings which are incompatible with L2TP/IPSec mode and have been disabled because of it. It is intended to let the user know why the setting has been disabled."
+  },
+  "ui#alert#url-copied-to-clipboard": {
+    "message": "‮∩ᴚ˥‬ ‮ɔodıǝp‬ ‮ʇo‬ ‮ɔʅıdqoɐɹp‬.<br>‮Iɟ‬ ‮qɹoʍsǝɹ‬ ‮ɟɐıʅs‬ ‮ʇo‬ ‮odǝu‬, ‮dɐsʇǝ‬ ‮ʇɥǝ‬ ‮∩ᴚ˥‬ ‮ıuʇo‬ ‮ʇɥǝ‬ ‮qɹoʍsǝɹ‬ ‮ɐppɹǝss‬ ‮qɐɹ‬.",
+    "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
   }
 }

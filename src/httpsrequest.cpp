@@ -17,6 +17,7 @@
  *
  */
 
+#include <string>
 #include "stdafx.h"
 #include "httpsrequest.h"
 #include "logging.h"
@@ -70,6 +71,7 @@ HTTPSRequest::~HTTPSRequest()
 
     CloseHandle(m_mutex);
 }
+
 
 void CALLBACK WinHttpStatusCallback(
                 HINTERNET hRequest,
@@ -153,13 +155,14 @@ void CALLBACK WinHttpStatusCallback(
         break;
     case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
 
-        // Get Date header. We're not going to error if we can't get it.
-        // This comes before the status code check, because the Date header
-        // should be valid for all responses.
-        dwLen = sizeof(dwStatusCode);
+        // Get the response headers. This comes before the status code check,
+        // because we want the headers regardless of the status.
+        // (We're not going to error if we can't get them, but it shouldn't happen.
+        // If it does happen, the consumer of the headers will have to deal with it.)
+        dwLen = 0;
         if (!WinHttpQueryHeaders(
             hRequest,
-            WINHTTP_QUERY_DATE,
+            WINHTTP_QUERY_RAW_HEADERS_CRLF,
             WINHTTP_HEADER_NAME_BY_INDEX,
             NULL,
             &dwLen,
@@ -172,13 +175,30 @@ void CALLBACK WinHttpStatusCallback(
 
                 if (WinHttpQueryHeaders(
                     hRequest,
-                    WINHTTP_QUERY_DATE,
+                    WINHTTP_QUERY_RAW_HEADERS_CRLF,
                     WINHTTP_HEADER_NAME_BY_INDEX,
                     (LPVOID)buf.data(),
                     &dwLen,
                     WINHTTP_NO_HEADER_INDEX))
                 {
-                    httpRequest->ResponseSetDateHeader(WStringToUTF8(buf));
+                    istringstream rawHeaders(WStringToUTF8(buf));
+
+                    map<string, vector<string>> headersMap;
+                    std::string header;
+                    while (std::getline(rawHeaders, header)) {
+                        auto index = header.find(':', 0);
+                        if (index != std::string::npos) {
+                            auto key = trim(header.substr(0, index));
+                            if (!key.empty()) {
+                                if (headersMap.count(key) == 0) {
+                                    headersMap[key] = {};
+                                }
+                                headersMap[key].push_back(trim(header.substr(index + 1)));
+                            }
+                        }
+                    }
+
+                    httpRequest->ResponseSetHeaders(headersMap);
                 }
             }
         }
@@ -325,7 +345,7 @@ bool HTTPSRequest::MakeRequest(
             // We already have a tunnel, so we'll use that for the URL proxy
 
             tstringstream urlProxyRequestPath;
-            if (usePsiphonLocalProxy == PsiphonProxy::DONT_USE) 
+            if (usePsiphonLocalProxy == PsiphonProxy::DONT_USE)
             {
                 urlProxyRequestPath << _T("/direct/");
                 my_print(NOT_SENSITIVE, true, _T("%s:%d - Making direct URL proxy request with existing tunnel-core"), __TFUNCTION__, __LINE__);
@@ -338,7 +358,7 @@ bool HTTPSRequest::MakeRequest(
             urlProxyRequestPath << UrlEncode(URL.str());
 
             success = MakeRequestWithURLProxyOption(
-                tunneledProxyConfig.HTTPHostname().c_str(), tunneledProxyConfig.HTTPPort(), 
+                tunneledProxyConfig.HTTPHostname().c_str(), tunneledProxyConfig.HTTPPort(),
                 webServerCertificate, urlProxyRequestPath.str().c_str(),
                 stopInfo, usePsiphonLocalProxy, response,
                 true, // useURLProxy
@@ -377,7 +397,7 @@ bool HTTPSRequest::MakeRequest(
                 my_print(NOT_SENSITIVE, true, _T("%s:%d - Making direct URL proxy request with temp tunnel-core"), __TFUNCTION__, __LINE__);
 
                 success = MakeRequestWithURLProxyOption(
-                    _T("127.0.0.1"), connection.GetTransportLocalHttpProxy(), 
+                    _T("127.0.0.1"), connection.GetTransportLocalHttpProxy(),
                     webServerCertificate, urlProxyRequestPath.str().c_str(),
                     stopInfo, usePsiphonLocalProxy, response,
                     true, // useURLProxy
@@ -449,8 +469,8 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         }
         else if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE)
         {
-            // We are required to proxy through Psiphon, but there's no Psiphon
-            // proxy to use.
+            // We are required to proxy through Psiphon, but there's no Psiphon proxy to use
+            my_print(NOT_SENSITIVE, true, _T("%s:%d: usePsiphonLocalProxy is PsiphonProxy::REQUIRE but !tunneledProxyConfig.HTTPEnabled()"), __TFUNCTION__, __LINE__);
             return false;
         }
         // PsiphonProxy::USE doesn't require the Psiphon proxy, but will use it if available
@@ -462,7 +482,7 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
     {
         reqType.resize(reqEnd);
     }
-    my_print(NOT_SENSITIVE, true, _T("%s: %s; proxy: {use: %d, set: %d}"), __TFUNCTION__, reqType.c_str(), usePsiphonLocalProxy, !!proxyHost.length());
+    my_print(NOT_SENSITIVE, true, _T("%s: %s; proxy: {use: %d, set: %S}"), __TFUNCTION__, reqType.c_str(), usePsiphonLocalProxy, (proxyHost.length() ? "true" : "false"));
 
     AutoHINTERNET hSession =
                 WinHttpOpen(
@@ -485,14 +505,14 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         return false;
     }
 
-    // SSLv3, TLSv1.0, TLSv1.1 all have security flaws that mean that should be avoided. 
+    // SSLv3, TLSv1.0, TLSv1.1 all have security flaws that mean that should be avoided.
     // Some of those flaws (like SSLv3's POODLE http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566)
-    // require the client side to not try to use them. So we're going to force use of 
+    // require the client side to not try to use them. So we're going to force use of
     // TLS v1.2. We'll try to remember to update these flags when new TLS versions come
-    // out; we think it's too risky to set all bits except the bad ones (like ~(SSL|TLS1.0|TLS1.1)), 
+    // out; we think it's too risky to set all bits except the bad ones (like ~(SSL|TLS1.0|TLS1.1)),
     // as we might get something we don't want.
     // When WinHttpSetOption gets flags it doesn't understand -- like WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2
-    // on XP and Vista -- it returns FALSE and sets errno to ERROR_INVALID_PARAMETER (87). When 
+    // on XP and Vista -- it returns FALSE and sets errno to ERROR_INVALID_PARAMETER (87). When
     // that happens we'll fall back to the URL proxy. That's why we're _not_ going
     // to set the HTTPS protocol for URL proxy requests (and it's HTTP, not HTTPS).
     DWORD dwProtocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
@@ -669,10 +689,10 @@ void HTTPSRequest::ResponseSetCode(int code)
     m_response.code = code;
 }
 
-void HTTPSRequest::ResponseSetDateHeader(const string& dateHeader)
+void HTTPSRequest::ResponseSetHeaders(const std::map<std::string, std::vector<std::string>>& headers)
 {
     AutoMUTEX lock(m_mutex);
-    m_response.dateHeader = dateHeader;
+    m_response.headers = headers;
 }
 
 bool HTTPSRequest::ValidateServerCert(PCCERT_CONTEXT pCert)

@@ -5,9 +5,11 @@
 
 .fade {
   opacity: 0;
+  filter: alpha(opacity=0); // PSIPHON: added to support IE8
   .transition(opacity .15s linear);
   &.in {
     opacity: 1;
+    filter: alpha(opacity=100); // PSIPHON: added to support IE8
   }
 }
 

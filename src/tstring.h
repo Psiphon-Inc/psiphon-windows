@@ -6,12 +6,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -41,7 +41,7 @@ typedef basic_stringstream<TCHAR> tstringstream;
 
 static string WStringToUTF8(LPCWSTR wString)
 {
-    wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     const string utf8_string = converter.to_bytes(wString);
     return utf8_string;
 }
@@ -52,7 +52,7 @@ static string WStringToUTF8(const wstring& wString)
 }
 
 static wstring UTF8ToWString(LPCSTR utf8String)
-{    
+{
     // There is an issue in VS2015 that messes up codecvt. For a bit of info
     // and the workaround, see here:
     // https://social.msdn.microsoft.com/Forums/en-US/8f40dcd8-c67f-4eba-9134-a19b9178e481/vs-2015-rc-linker-stdcodecvt-error?forum=vcgeneral
@@ -62,9 +62,7 @@ static wstring UTF8ToWString(LPCSTR utf8String)
     // And these two lines are the workaround:
     std::wstring_convert<std::codecvt_utf8_utf16<__int16>, __int16> utf16conv;
     basic_string<__int16, char_traits<__int16>, allocator<__int16> > utf16 = utf16conv.from_bytes(utf8String);
-
-    wstring wide_string(utf16.begin(), utf16.end());
-    return wide_string;
+    return wstring(utf16.begin(), utf16.end());
 }
 
 static wstring UTF8ToWString(const string& utf8String)

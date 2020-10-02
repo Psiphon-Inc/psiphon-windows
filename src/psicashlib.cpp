@@ -31,8 +31,8 @@ error::Error Lib::Init(bool forceReset) {
     AutoMUTEX lock(m_mutex);
 
     tstring dataDir;
-    if (!GetDataPath({ LOCAL_SETTINGS_APPDATA_SUBDIRECTORY, _T("psicash") }, true, dataDir)) {
-        return psicash::error::MakeCriticalError("GetDataPath failed");
+    if (!GetPsiphonDataPath({ _T("psicash") }, true, dataDir)) {
+        return psicash::error::MakeCriticalError("GetPsiphonDataPath failed");
     }
 
     // C++'s standard library doesn't deal with wide strings, so make the path
@@ -42,16 +42,8 @@ error::Error Lib::Init(bool forceReset) {
         return psicash::error::MakeCriticalError("GetShortPathName failed");
     }
 
-    if (forceReset) {
-        auto err = PsiCash::Reset(
-            WStringToNarrow(dataDirShort).c_str(), TESTING);
-        if (err) {
-            return WrapError(err, "PsiCash::Reset failed");
-        }
-    }
-
     auto err = PsiCash::Init(
-        USER_AGENT, WStringToNarrow(dataDirShort).c_str(), GetHTTPReqFn(m_requestStopInfo), TESTING);
+        USER_AGENT, WStringToNarrow(dataDirShort).c_str(), GetHTTPReqFn(m_requestStopInfo), forceReset, TESTING);
     if (err) {
         return WrapError(err, "PsiCash::Init failed");
     }
@@ -73,6 +65,9 @@ error::Error Lib::Init(bool forceReset) {
         return WrapError(err, "SetRequestMetadataItem failed");
     }
 
+    try { my_print(NOT_SENSITIVE, true, _T("%s: PsiCash state: %S"), __TFUNCTION__, PsiCash::GetDiagnosticInfo(true).dump(-1, ' ', true).c_str()); }
+    catch (...) {}
+
     return error::nullerr;
 }
 
@@ -87,15 +82,20 @@ error::Error Lib::UpdateClientRegion(const string& region) {
 
 enum class RequestType : int {
     RefreshState,
-    NewExpiringPurchase
+    NewExpiringPurchase,
+    AccountLogin,
+    AccountLogout
 };
 
 void Lib::RefreshState(
-    std::function<void(error::Result<Status>)> callback)
+    bool local_only,
+    std::function<void(error::Result<RefreshStateResponse>)> callback)
 {
     // Don't queue this if there is already an outstanding RefreshState
     auto queued = m_requestQueue.dispatch((int)RequestType::RefreshState, { (int)RequestType::RefreshState }, [=] {
-        callback(PsiCash::RefreshState({ "speed-boost" }));
+        callback(PsiCash::RefreshState(local_only, { "speed-boost" }));
+        try { my_print(NOT_SENSITIVE, true, _T("%s: PsiCash state: %S"), __TFUNCTION__, PsiCash::GetDiagnosticInfo(true).dump(-1, ' ', true).c_str()); }
+        catch (...) {}
     });
 
     if (!queued) {
@@ -111,9 +111,40 @@ void Lib::NewExpiringPurchase(
 {
     (void)m_requestQueue.dispatch((int)RequestType::NewExpiringPurchase, {}, [=] {
         callback(PsiCash::NewExpiringPurchase(transactionClass, distinguisher, expectedPrice));
+        try { my_print(NOT_SENSITIVE, true, _T("%s: PsiCash state: %S"), __TFUNCTION__, PsiCash::GetDiagnosticInfo(true).dump(-1, ' ', true).c_str()); }
+        catch (...) {}
     });
 }
 
+void Lib::AccountLogin(
+    const std::string &utf8_username,
+    const std::string &utf8_password,
+    std::function<void(error::Result<AccountLoginResponse>)> callback)
+{
+    // Don't queue this if there is already an outstanding AccountLogin
+    (void)m_requestQueue.dispatch(
+        (int)RequestType::AccountLogin,
+        {(int)RequestType::AccountLogin},
+        [=] {
+            callback(PsiCash::AccountLogin(utf8_username, utf8_password));
+            try { my_print(NOT_SENSITIVE, true, _T("%s: PsiCash state: %S"), __TFUNCTION__, PsiCash::GetDiagnosticInfo(true).dump(-1, ' ', true).c_str()); }
+            catch (...) {}
+        });
+}
+
+void Lib::AccountLogout(
+    std::function<void(error::Result<AccountLogoutResponse>)> callback)
+{
+    // Don't queue this if there is already an outstanding AccountLogout
+    (void)m_requestQueue.dispatch(
+        (int)RequestType::AccountLogout,
+        {(int)RequestType::AccountLogout},
+        [=] {
+            callback(PsiCash::AccountLogout());
+            try { my_print(NOT_SENSITIVE, true, _T("%s: PsiCash state: %S"), __TFUNCTION__, PsiCash::GetDiagnosticInfo(true).dump(-1, ' ', true).c_str()); }
+            catch (...) {}
+        });
+}
 
 // Note that this _requires_ a Psiphon tunnel to be in place.
 psicash::MakeHTTPRequestFn GetHTTPReqFn(const StopInfo& stopInfo) {
@@ -157,8 +188,8 @@ psicash::MakeHTTPRequestFn GetHTTPReqFn(const StopInfo& stopInfo) {
                     httpsResponse,
                     true,       // failoverToURLProxy -- required for old WinXP
                     headers.str().empty() ? NULL : headers.str().c_str(),
-                    NULL,       // additionalData
-                    0,          // additionalDataLength
+                    params.body.empty() ? NULL : (LPVOID)params.body.c_str(),
+                    params.body.length(),
                     UTF8ToWString(params.method).c_str()))
             {
                 result.error = "httpsRequest.MakeRequest failed";
@@ -178,12 +209,11 @@ psicash::MakeHTTPRequestFn GetHTTPReqFn(const StopInfo& stopInfo) {
 
         result.code = httpsResponse.code;
         result.body = httpsResponse.body;
-        result.date = httpsResponse.dateHeader;
+        result.headers = httpsResponse.headers;
         return std::move(result);
     };
 
     return httpReqFn;
 }
-
 
 } // namespace psicash
