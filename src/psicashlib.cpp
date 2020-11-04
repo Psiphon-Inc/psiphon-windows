@@ -140,9 +140,6 @@ psicash::MakeHTTPRequestFn GetHTTPReqFn(const StopInfo& stopInfo) {
             headers << UTF8ToWString(header.first) << L": " << UTF8ToWString(header.second) << L"\r\n";
         }
 
-        // TEMP
-        //headers << L"X-PsiCash-Test: Timeout:11";
-
         HTTPResult result;
 
         HTTPSRequest httpsRequest(/*silentMode=*/true);

@@ -578,7 +578,7 @@ string CoreTransport::GetUpstreamProxyAddress()
     string upstreamProxyAddress = Settings::UpstreamProxyFullHostname();
     if (upstreamProxyAddress.empty())
     {
-        // There's no user-set upstream proxy, so use the native default proxy 
+        // There's no user-set upstream proxy, so use the native default proxy
         // (that is, the one that was set before we tried to connect).
         auto proxyConfig = GetNativeDefaultProxyConfig();
         if (proxyConfig.HTTPEnabled())
@@ -1036,6 +1036,12 @@ void CoreTransport::HandleCoreProcessOutputLine(const char* line)
             string region = data["region"].asString();
             my_print(NOT_SENSITIVE, true, _T("Client region: %S"), region.c_str());
             psicash::Lib::_().UpdateClientRegion(region);
+        }
+        else if (noticeType == "TrafficRateLimits")
+        {
+            string speed = data["downstreamBytesPerSecond"].toStyledString();
+            my_print(NOT_SENSITIVE, true, _T("Traffic rate downstream limit: %S"), speed.c_str());
+            // Processing this is left to main.js
         }
     }
     catch (exception& e)
