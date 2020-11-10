@@ -2213,7 +2213,7 @@
       }
       else {
         // The baseline is below the threshold
-        DEBUG_LOG('Baseline speed is high; hiding speed limit');
+        DEBUG_LOG('Baseline speed is low; showing speed limit');
         $('.psicash-interface .speed-limit').removeClass('hidden');
       }
     }
