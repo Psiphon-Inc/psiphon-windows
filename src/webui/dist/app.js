@@ -1990,9 +1990,29 @@
     $('.psicash-interface').not(state.uiSelector).addClass('hidden');
     $(state.uiSelector).removeClass('hidden'); // Now that the correct interface is showing, update the balance
 
-    PsiCashBalanceChange.push(psicashData.balance, veryFirstUpdate); // When we have an active speed boost, we want this function to be called repeatedly,
+    PsiCashBalanceChange.push(psicashData.balance, veryFirstUpdate); // If Boost _is not_ active, then whether or not we show the speed limit UI depends
+    // on the baseline connection speed. If Boost _is_ active, then we always show the speed.
+
+    if (state === PsiCashUIState.ACTIVE_BOOST) {
+      DEBUG_LOG('Speed Boost active; showing speed limit');
+      $('.psicash-interface .speed-limit').removeClass('hidden');
+    } else {
+      var baselineRateLimit = getCookie('BaselineRateLimit');
+      var threshold = (5 << 20) / 8; // 5 mbps in bytes; arbitrarily "fast"
+
+      if (!baselineRateLimit || baselineRateLimit > threshold) {
+        // Either we don't yet have a baseline, or it's above the threshold
+        DEBUG_LOG('Baseline speed is high; hiding speed limit');
+        $('.psicash-interface .speed-limit').addClass('hidden');
+      } else {
+        // The baseline is below the threshold
+        DEBUG_LOG('Baseline speed is high; hiding speed limit');
+        $('.psicash-interface .speed-limit').removeClass('hidden');
+      }
+    } // When we have an active speed boost, we want this function to be called repeatedly,
     // so that the countdown timer is updated, and so the UI changes when the speed boost
     // ends. But there's no reason to do work on an interval if there's no active boost.
+
 
     if (state === PsiCashUIState.ACTIVE_BOOST) {
       // There are triggers that result in this function being called, and we don't want
@@ -3042,6 +3062,15 @@
           message: $('#debug-UpstreamProxyError input').val()
         }
       });
+    }); // Wire up the TrafficRateLimits notice
+
+    $('#debug-TrafficRateLimits a').click(function () {
+      HtmlCtrlInterface_AddNotice({
+        noticeType: 'TrafficRateLimits',
+        data: {
+          downstreamBytesPerSecond: Number($('#debug-TrafficRateLimits input').val())
+        }
+      });
     }); // Wire up the HttpProxyPortInUse notice
 
     $('#debug-HttpProxyPortInUse a').click(function () {
@@ -3286,6 +3315,14 @@
       } else if (args.noticeType === 'ServerAlert') {
         if (args.data.reason === 'disallowed-traffic') {
           handleDisallowedTrafficNotice();
+        }
+      } else if (args.noticeType === 'TrafficRateLimits') {
+        // We are interested in the connection speed when _not_ Boosted
+        if (PsiCashStore.data.uiState !== PsiCashUIState.ACTIVE_BOOST) {
+          // Store the value in a cookie so that it's available at the next startup.
+          setCookie('BaselineRateLimit', args.data.downstreamBytesPerSecond || Number.MAX_SAFE_INTEGER); // Update the UI.
+
+          psiCashUIUpdater();
         }
       } else if (args.noticeType === 'SystemProxySettings::SetProxyError') {
         showNoticeModal('notice#systemproxysettings-setproxy-error-title', 'notice#systemproxysettings-setproxy-error-body', null, null, null);
