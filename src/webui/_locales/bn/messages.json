@@ -351,21 +351,13 @@
         "message": "আপস্ট্রিম প্রক্সি ব্যবহার করবেন না",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "আপনাকে অবশ্যই ব্যবহারকারী নাম এবং পাসওয়ার্ড উভয় সেট করতে হবে, অথবা কোন প্রমাণীকরণের জন্য উভয় ফাঁকা রাখা আবশ্যক।",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    "settings#upstream-proxy#set-hostname-error-msg": {
+        "message": "You must provide a Hostname, or leave all Upstream Proxy fields blank for automatic selection.",
+        "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "আপনাকে হোস্টনাম এবং পোর্ট উভয় সেট করতে হবে, বা  স্বয়ংক্রিয়ভাবে নির্বাচনের জন্য ফাঁকা রাখা আবশ্যক।",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "একটি ইউজারনেম/ব্যবহারকারী নাম  এবং পাসওয়ার্ড সেট করার জন্য একটি হোস্টনাম এবং পোর্ট সেট করার প্রয়োজন",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "একটি ডোমেন সেট করার জন্য ব্যবহারকারীর নাম এবং পাসওয়ার্ড সেট করা প্রয়োজন",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "settings#upstream-proxy#set-username-error-msg": {
+        "message": "You must provide a Username if you are setting Password or Domain; or leave all authentication fields blank for no authentication.",
+        "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
         "message": "আপস্ট্রিম প্রক্সি ত্রুটি",

@@ -28,7 +28,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "nav#logs": {
-        "message": "Журналы",
+        "message": "Логи",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Logs' view. In that view the user can see the status messages that Psiphon produces as it connects, disconnects, etc."
     },
     "nav#about": {
@@ -144,7 +144,7 @@
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "Наилучшая производительность",
+        "message": "Лучшая производительность",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -256,7 +256,7 @@
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Если оставить опцию <strong>“Лучшая производительность”</strong>, то Psiphon будет автоматически выбирать сервер, что, в целом, повышает качество подключения к сети.",
+        "message": "Если оставить опцию <strong>“Лучшая производительность”</strong>, то Psiphon будет автоматически выбирать сервер. Это обычно повышает качество подключения к сети.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -304,7 +304,7 @@
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\nВы настроили Psiphon на использование определенного локального порта для HTTP прокси.<br>\nК сожалению, этот порт уже занят и не может быть использован.\n</p>\n<p>\nПожалуйста, используйте другое значение или оставьте поле пустым, чтобы Psiphon выбрал порт для локального HTTP прокси автоматически.\n</p>",
+        "message": "<p>\nВы настроили Psiphon на использование определенного локального порта для HTTP-прокси.<br>\nК сожалению, этот порт уже занят и не может быть использован.\n</p>\n<p>\nПожалуйста, используйте другое значение или оставьте поле пустым, чтобы Psiphon выбрал порт для локального HTTP-прокси автоматически.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
@@ -324,7 +324,7 @@
         "description": "Help text describing why the user might need to modify the upstream proxy settings in order to successfully connect to the Psiphon server."
     },
     "settings#upstream-proxy#proxy-reqs": {
-        "message": "HTTP прокси должны поддерживатъ HTTPS",
+        "message": "Для HTTP-прокси обязательна поддержка HTTPS.",
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#upstream-proxy#hostname-label": {
@@ -351,21 +351,13 @@
         "message": "Не использовать внешний прокси",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Вы должны указать логин и пароль. Либо оставьте оба поля пустыми, если аутентификация не требуется.",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    "settings#upstream-proxy#set-hostname-error-msg": {
+        "message": "Нужно указать имя хоста. Если нужен автоматический выбор, оставьте все поля внешнего прокси пустыми.",
+        "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "Вы должны указать имя хоста и пароль. Либо оставьте оба поля пустыми для автоматического выбора.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "Указание имени пользователя и пароля также требует указания имени узла и порта.",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "Указание домена требует указание имени пользователя и пароля",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "settings#upstream-proxy#set-username-error-msg": {
+        "message": "Нужно указать имя пользователя (для пароля или домена). Если аутентификация не нужна, оставьте все поля пустыми.",
+        "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
         "message": "Ошибка внешнего прокси",
@@ -388,7 +380,7 @@
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "settings#transport-mode#help-text": {
-        "message": "Использует встроенный L2TP/IPSec VPN Windows. В этом режиме осуществляется туннелирование трафика всех ваших приложений. Использование этого режима легко определяется и блокируется средствами цензуры. <strong>Не рекомендуется</strong> для обхода большинства блокировок.",
+        "message": "Выбор встроенного L2TP/IPSec VPN Windows. Туннелируется трафик всех приложений. Использование этого режима легко определяется и блокируется средствами цензуры. <strong>Не рекомендуется</strong> для обхода большинства блокировок.",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#systray-minimize#heading": {
@@ -424,11 +416,11 @@
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "feedback#top_content_title": {
-        "message": "Предоставьте нам ваши отзывы",
+        "message": "Обратная связь",
         "description": "Title for the Feedback page"
     },
     "feedback#top_para_2": {
-        "message": "Большинство проблем может быть решено путем загрузки последней версии. Вы можете <a class=\"newVersionURL\" href=\"#\"> загрузить последнюю версию, нажав здесь </a>, или вы можете отправить сообщение по адресу <a class=\"NewVersionEmail\" href=\"#\"></a>.",
+        "message": "Большинство проблем решается загрузкой свежей версии Psiphon. Можно <a class=\"newVersionURL\" href=\"#\"> загрузить последнюю версию</a> или отправить email по адресу <a class=\"NewVersionEmail\" href=\"#\"></a>.",
         "description": "Text telling the user that downloading a new version of Psiphon may be beneficial, and how to get a new version."
     },
     "feedback#top_para_3": {
@@ -436,11 +428,11 @@
         "description": "Text telling the user how to get to the Psiphon FAQ."
     },
     "feedback#smiley_happy": {
-        "message": "Psiphon соединяется и работает так, как мне нужно.",
+        "message": "Psiphon соединяется и работает так, как мне нужно",
         "description": "The text below the 'happy face' feedback choice. The word 'Psiphon' must not be translated or transliterated."
     },
     "feedback#smiley_sad": {
-        "message": "Psiphon часто не может соединиться или его производительность недостаточна.",
+        "message": "Psiphon часто не может соединиться или работает плохо",
         "description": "The text below the 'sad face' feedback choice. The word 'Psiphon' must not be translated or transliterated."
     },
     "feedback#text_feedback_prompt": {
@@ -448,11 +440,11 @@
         "description": "Label for a text box where the user can provide a feedback message to Psiphon Inc."
     },
     "feedback#text_feedback_email_prompt": {
-        "message": "Укажите свой адрес эл.почты, если хотите получить ответ на ваш отзыв:",
+        "message": "Укажите свой email, если хотите получить ответ:",
         "description": "Label for a text field where the user can provide an email address to Psiphon Inc. along with their feedback."
     },
     "feedback#diagnostic_check": {
-        "message": "Отправить диагностические данные. Собранные данные не содержат идентифицирующей вас информации и помогают нам сделать систему лучше и надежнее. <a class=\"DataCollectionInfoURL\" href=\"#\">Кликните здесь, чтобы узнать какие данные мы собираем.</a>",
+        "message": "Отправить диагностические данные. Они не содержат идентифицирующей информации и помогают нам делать Psiphon лучше. <a class=\"DataCollectionInfoURL\" href=\"#\">Подробнее о том, какие данные мы собираем.</a>",
         "description": "Checkbox text. If it is checked, diagnostic information about Psiphon's status will be sent along with the feedback to Psiphon Inc. The word 'Psiphon' must not be translated or transliterated."
     },
     "feedback#submit_button": {
@@ -468,7 +460,7 @@
         "description": "Message shown to user after their feedback has been sent successufully"
     },
     "logs#show-debug-label": {
-        "message": "Показать журналы отладки",
+        "message": "Показать логи отладки",
         "description": "Label on a checkbox. If the user checks it, debug log messages will be shown to the user."
     },
     "logs#placeholder": {
@@ -484,15 +476,15 @@
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#description": {
-        "message": "Psiphon - это инструмент обхода цензуры</strong>, предназначенный для доступа к открытой сети Интернет, минуя блокировки.  Psiphon имеет <strong>открытый исходный код</strong> и разрабатывается в г.Торонто, Канада.",
+        "message": "Psiphon – инструмент обхода цензуры</strong>, предназначенный для доступа к интернету без границ, минуя блокировки. У Psiphon <strong>открытый исходный код</strong>. Разработчики находятся в Торонто (Канада).",
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#visit-download-site": {
-        "message": "Пожалуйста, посетите наш веб-сайт, чтобы <strong><a class=\"NewVersionURL\" href=\"#\">скачать новую версию</a></strong> или <strong><a class=\"InfoURL\" href=\"#\">получить помощь и информацию</a></strong>.  Psiphon доступен для Android и Windows.",
+        "message": "На нашем сайте можно <strong><a class=\"NewVersionURL\" href=\"#\">скачать свежую версию</a></strong> и <strong><a class=\"InfoURL\" href=\"#\">получить помощь и информацию</a></strong>. Psiphon доступен для Android и Windows.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#get-by-email": {
-        "message": "<strong>Если веб-сайт недоступен</strong>, вы можете получить новую версию Psiphon, отправив письмо по адресу:",
+        "message": "<strong>Если сайт недоступен</strong>, можно получить новую версию Psiphon по email. Отправьте письмо по адресу: ",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
@@ -576,7 +568,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ExistingTransaction-body": {
-        "message": "У вас уэе есть покупка PsiCash этого типа. Другая покупка такого же типа невозможна, пока не кончится текущая. Ваш статус PsiCash сейчас будет обновлен.",
+        "message": "У вас уже есть покупка PsiCash этого типа. Другая покупка такого же типа невозможна, пока не кончится текущая. Ваш статус PsiCash сейчас будет обновлен.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InsufficientBalance-title": {
@@ -592,7 +584,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionAmountMismatch-body": {
-        "message": "Цены на покупки PsiCash устарели. Ваш статус PsiCash будет обновлен.",
+        "message": "Стоимость покупки PsiCash изменилась. Ваш статус PsiCash будет обновлен.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionTypeNotFound-title": {
@@ -640,7 +632,7 @@
         "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-enoughbalance-buttontext": {
-        "message": "Запустить Турбоскорость",
+        "message": "Запуск Турбоскорости",
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#1-hour": {
@@ -684,7 +676,7 @@
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "notice#disallowed-traffic-alert-title": {
-        "message": "Обновить ваше соединение к Psiphon",
+        "message": "Обновить ваше соединение Psiphon",
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
@@ -700,7 +692,7 @@
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "Предупреждение о не поддерживаемом трафик",
+        "message": "Предупреждение о неподдерживаемом трафике",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {

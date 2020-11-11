@@ -351,21 +351,13 @@
         "message": "Ne pas utiliser de mandataire ascendant",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Vous devez définir à la fois un nom d’utilisateur et un mot de passe, ou laisser les deux vides s’il n’y a pas d’authentification.",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    "settings#upstream-proxy#set-hostname-error-msg": {
+        "message": "Vous devez indiquer un Nom d’hôte ou, pour une sélection automatique, laisser tous les champs Mandataire ascendant vides.",
+        "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "Vous devez définir à la fois le nom d’hôte et le port, ou laisser les deux vides pour une sélection automatique.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "En définissant un nom d’utilisateur et un mot de passe, il est aussi exigé de définir un nom d’hôte et un port",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "En définissant un nom d’hôte, il est aussi exigé de définir un nom d’utilisateur et un mot de passe",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "settings#upstream-proxy#set-username-error-msg": {
+        "message": "Vous devez indiquer un Nom d’utilisateur si vous définissez un Mot de passe ou un Domaine ou, pour aucune authentification, laisser tous les champs d’authentification vides.",
+        "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
         "message": "Erreur de mandataire ascendant",

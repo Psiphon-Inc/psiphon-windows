@@ -351,21 +351,13 @@
         "message": "Giden vekil sunucusu kullanılmasın",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Hem Kullanıcı Adını hem de Parolayı yazmalı ya da kimlik doğrulaması yapılmaması için ikisini de boş bırakmalısınız.",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    "settings#upstream-proxy#set-hostname-error-msg": {
+        "message": "Bir sunucu adı yazmalı ya da otomatik seçim için tüm Giden Vekil Sunucu alanlarını boş bırakmalısınız.",
+        "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "Hem Sunucu Adı hem de Kapı Numarasını yazmalı ya da otomatik seçim yapılması için ikisini de boş bırakmalısınız.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "Kullanıcı Adı ve Parola belirtildiğinde, Sunucu Adı ve Kapı Numarasının da belirtilmesi gerekir.",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "Bir Etki Alanı belirtmek için bir Kullanıcı Adı ve Parola belirtilmesi gerekir",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "settings#upstream-proxy#set-username-error-msg": {
+        "message": "Bir Parola ya da Etki Alanı ayarlıyorsanız bir Kullanıcı Adı yazmalı ya da kimlik doğrulaması yapılmaması için tüm kimlik doğrulama alanlarını boş bırakın.",
+        "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
         "message": "Giden Vekil Sunucu Hatası",

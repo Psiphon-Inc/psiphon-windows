@@ -351,21 +351,13 @@
         "message": "Usitumie proxy ya juu zaidi",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "Lazima upangilie vyote jina la mtumiaji na neno siri. au acha vyote wazi kama hakuna uhalalishwaji.",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    "settings#upstream-proxy#set-hostname-error-msg": {
+        "message": "Wewe lazima utoe hostname au uache wakala mto mashamba matupu kwaajili ya uteuzi wa kiautomatic.",
+        "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "Ni lazima upangilie vyote jina la mwenyeji na kituo. au acha wazi vyote kwa ajili ya uchaguzi wa kiatomati.",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "Mpangilio wa jina la mtumiaji na nywila pia uhitaji mpangilio jina la mwenyeji na port ",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "Mpangilio wa Kikoa inahitaji mpangilio wa jina la mtumiaji na nywila",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "settings#upstream-proxy#set-username-error-msg": {
+        "message": "Wewe lazima kutoa jina la utumiaji kama unaweka nywila au kikoa; au acha mashamba uthibitisho wazi kwaajili ya kutokua na uthibitishaji.",
+        "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
         "message": "Kosa katika proxy ya juu zaidi",

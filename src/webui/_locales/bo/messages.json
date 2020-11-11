@@ -351,21 +351,13 @@
         "message": "ངོ་ཚབ་ནང་འཇུག་བེད་སྤྱོད་མ་བྱས།",
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
-    "settings#upstream-proxy#set-username-password-error-msg": {
-        "message": "ཁྱེད་རང་གིས་སྤྱོད་མིང་དང་གསང་ཨང་གཉིས་ཀ་ངེས་པར་དུ་སྒྲིག་དགོས། ཡང་ན་ཁུངས་ལྡན་མིན་པའི་ཆེད་དུ་རེའུ་མིག་གཉིས་ཀ་སྟོང་པར་བཞག",
-        "description": "Error message that is shown if the user enters a value for one of 'Username' or 'Password', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to use an upstream proxy which doesn't require authentication."
+    "settings#upstream-proxy#set-hostname-error-msg": {
+        "message": "You must provide a Hostname, or leave all Upstream Proxy fields blank for automatic selection.",
+        "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
-    "settings#upstream-proxy#set-hostname-port-error-msg": {
-        "message": "ཁྱེད་རང་གིས་དོ་བདག་གི་མིང་དང་མཐུད་སྒོ་གཉིས་ཀ་ངིས་པར་དུ་སྒྲིག་རོགས། ཡང་ན་སྟོང་པ་བཞག་ནས་རང་འགུལ་གྱིས་འདེམས་ཐུབ།",
-        "description": "Error message that is shown if the user enters a value for one of 'Upstream Hostname' or 'Upstream Port', but not for both -- this is not valid, as both are required. Alternatively, the user can leave both blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-hostname-port-without-authentication-error-msg": {
-        "message": "སྤྱོད་མིང་དང་གསང་ཨང་སྒྲིག་པ་ལ་དོ་བདག་་བའི་མིང་དང་མཐུད་སྒོ་ཡང་སྒྲིག་དགོས།",
-        "description": "Error message that is shown if the user enters a value for 'Username' and 'Password' but doesn't set a 'Hostname' and 'Port' -- this is not valid, as both are required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
-    },
-    "settings#upstream-proxy#set-domain-without-authentication-error-msg": {
-        "message": "དྲྭ་རྒྱའི་ཁ་བྱང་སྒྲིག་བཀོད་བྱེད་པ་ལ་སྤྱོད་མཁན་གྱི་མིང་དང་གསང་ཨང་གཉིས་དགོས།",
-        "description": "Error message that is shown if the user enters a value for 'Domain', but not 'Username' and 'Password' -- this is not valid, as domain authentication requires a Username and Password. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
+    "settings#upstream-proxy#set-username-error-msg": {
+        "message": "You must provide a Username if you are setting Password or Domain; or leave all authentication fields blank for no authentication.",
+        "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
         "message": "ངོ་ཚབ་ནང་འཇུག་ནོར་སྐྱོན།",
