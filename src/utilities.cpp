@@ -34,16 +34,6 @@
 #include "webbrowser.h"
 #include <iomanip>
 
-#pragma warning(push, 0)
-#pragma warning(disable: 4244)
-#include "cryptlib.h"
-#include "rsa.h"
-#include "base64.h"
-#include "osrng.h"
-#include "modes.h"
-#include "hmac.h"
-#pragma warning(pop)
-
 
 using namespace std::experimental;
 
@@ -65,7 +55,10 @@ void TerminateProcessByName(const TCHAR* executableName)
             if (_tcsicmp(entry.szExeFile, executableName) == 0)
             {
                 HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
-                if (!TerminateProcess(process, 0) ||
+                // Terminate process with exit code 1 to signal that it did not exit normally.
+                // This is used to distinguish between a process which was interrupted and one
+                // which ran to completion successfully.
+                if (!TerminateProcess(process, 1) ||
                     WAIT_OBJECT_0 != WaitForSingleObject(process, TERMINATE_PROCESS_WAIT_MS))
                 {
                     my_print(NOT_SENSITIVE, false, _T("TerminateProcess failed for process with name %s"), executableName);
@@ -1279,6 +1272,37 @@ tstring UrlDecode(const tstring& input)
 }
 
 
+Json::Value LoadJSONArray(const char* jsonArrayString)
+{
+    if (!jsonArrayString) {
+        return Json::nullValue;
+    }
+
+    try
+    {
+        Json::Reader reader;
+        Json::Value array;
+        if (!reader.parse(jsonArrayString, array))
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: JSON parse failed: %S"), __TFUNCTION__, reader.getFormattedErrorMessages().c_str());
+        }
+        else if (!array.isArray())
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s: unexpected type"), __TFUNCTION__);
+        }
+        else
+        {
+            return array;
+        }
+    }
+    catch (exception& e)
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s: JSON exception: %S"), __TFUNCTION__, e.what());
+    }
+    return Json::nullValue;
+}
+
+
 tstring GetLocaleName()
 {
     int size = GetLocaleInfo(
@@ -1590,167 +1614,6 @@ bool GetResourceBytes(LPCTSTR name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size
 
     return true;
 }
-
-
-/*
-* Feedback Encryption
-*/
-
-bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted)
-{
-    o_encrypted.clear();
-
-    CryptoPP::AutoSeededRandomPool rng;
-
-    string b64Ciphertext, b64Mac, b64WrappedEncryptionKey, b64WrappedMacKey, b64IV;
-
-    try
-    {
-        string ciphertext, mac, wrappedEncryptionKey, wrappedMacKey;
-
-        // NOTE: We are doing encrypt-then-MAC.
-
-        // CryptoPP::AES::MIN_KEYLENGTH is 128 bits.
-        int KEY_LENGTH = CryptoPP::AES::MIN_KEYLENGTH;
-
-        //
-        // Encrypt
-        //
-
-        CryptoPP::SecByteBlock encryptionKey(KEY_LENGTH);
-        rng.GenerateBlock(encryptionKey, encryptionKey.size());
-
-        byte iv[CryptoPP::AES::BLOCKSIZE];
-        rng.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
-
-        CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption encryptor;
-        encryptor.SetKeyWithIV(encryptionKey, encryptionKey.size(), iv);
-
-        CryptoPP::StringSource(
-            plaintext,
-            true,
-            new CryptoPP::StreamTransformationFilter(
-                encryptor,
-                new CryptoPP::StringSink(ciphertext),
-                CryptoPP::StreamTransformationFilter::PKCS_PADDING));
-
-        CryptoPP::StringSource(
-            ciphertext,
-            true,
-            new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64Ciphertext),
-                false));
-
-        size_t ivLength = sizeof(iv) * sizeof(iv[0]);
-        CryptoPP::StringSource(
-            iv,
-            ivLength,
-            true,
-            new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64IV),
-                false));
-
-        //
-        // HMAC
-        //
-
-        // Include the IV in the MAC'd data, as per http://tools.ietf.org/html/draft-mcgrew-aead-aes-cbc-hmac-sha2-01
-        size_t ciphertextLength = ciphertext.length() * sizeof(ciphertext[0]);
-        byte* ivPlusCiphertext = new byte[ivLength + ciphertextLength];
-        if (!ivPlusCiphertext)
-        {
-            return false;
-        }
-        memcpy(ivPlusCiphertext, iv, ivLength);
-        memcpy(ivPlusCiphertext + ivLength, ciphertext.data(), ciphertextLength);
-
-        CryptoPP::SecByteBlock macKey(KEY_LENGTH);
-        rng.GenerateBlock(macKey, macKey.size());
-
-        CryptoPP::HMAC<CryptoPP::SHA256> hmac(macKey, macKey.size());
-
-        CryptoPP::StringSource(
-            ivPlusCiphertext,
-            ivLength + ciphertextLength,
-            true,
-            new CryptoPP::HashFilter(
-                hmac,
-                new CryptoPP::StringSink(mac)));
-
-        delete[] ivPlusCiphertext;
-
-        CryptoPP::StringSource(
-            mac,
-            true,
-            new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64Mac),
-                false));
-
-        //
-        // Wrap the keys
-        //
-
-#pragma warning(push, 0)
-#pragma warning(disable: 4239)
-        CryptoPP::RSAES_OAEP_SHA_Encryptor rsaEncryptor(
-            CryptoPP::StringSource(
-                publicKey,
-                true,
-                new CryptoPP::Base64Decoder()));
-#pragma warning(pop)
-
-        CryptoPP::StringSource(
-            encryptionKey.data(),
-            encryptionKey.size(),
-            true,
-            new CryptoPP::PK_EncryptorFilter(
-                rng,
-                rsaEncryptor,
-                new CryptoPP::StringSink(wrappedEncryptionKey)));
-
-        CryptoPP::StringSource(
-            macKey.data(),
-            macKey.size(),
-            true,
-            new CryptoPP::PK_EncryptorFilter(
-                rng,
-                rsaEncryptor,
-                new CryptoPP::StringSink(wrappedMacKey)));
-
-        CryptoPP::StringSource(
-            wrappedEncryptionKey,
-            true,
-            new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64WrappedEncryptionKey),
-                false));
-
-        CryptoPP::StringSource(
-            wrappedMacKey,
-            true,
-            new CryptoPP::Base64Encoder(
-                new CryptoPP::StringSink(b64WrappedMacKey),
-                false));
-    }
-    catch (const CryptoPP::Exception& e)
-    {
-        my_print(NOT_SENSITIVE, false, _T("%s - Encryption failed (%d): %S"), __TFUNCTION__, GetLastError(), e.what());
-        return false;
-    }
-
-    stringstream ss;
-    ss << "{  \n";
-    ss << "  \"contentCiphertext\": \"" << b64Ciphertext << "\",\n";
-    ss << "  \"iv\": \"" << b64IV << "\",\n";
-    ss << "  \"wrappedEncryptionKey\": \"" << b64WrappedEncryptionKey << "\",\n";
-    ss << "  \"contentMac\": \"" << b64Mac << "\",\n";
-    ss << "  \"wrappedMacKey\": \"" << b64WrappedMacKey << "\"\n";
-    ss << "}";
-
-    o_encrypted = ss.str();
-
-    return true;
-}
-
 
 DWORD GetTickCountDiff(DWORD start, DWORD end)
 {

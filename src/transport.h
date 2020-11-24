@@ -114,7 +114,7 @@ public:
 
     // Call to create the connection.
     // A failed attempt must clean itself up as needed.
-    // May throw TransportFailed or Abort.
+    // May throw TransportFailed, Error, or Abort.
     // Subclasses must not override.
     // remoteServerListFetcher is optional. If NULL, no remote server list
     // fetch will be triggered.

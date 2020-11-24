@@ -21,7 +21,6 @@
 #include "logging.h"
 #include "psiclient.h"
 #include "embeddedvalues.h"
-#include "httpsrequest.h"
 #include "wininet_network_check.h"
 #include "systemproxysettings.h"
 #include "utilities.h"
@@ -1343,17 +1342,16 @@ Json::Value GetPsiCashDiagnosticData() {
     return jsonValue;
 }
 
-bool SendFeedbackAndDiagnosticInfo(
+string GenerateFeedbackJSON(
         const string& feedback, 
         const string& emailAddress,
         const string& surveyJSON,
-        bool sendDiagnosticInfo, 
-        const StopInfo& stopInfo)
+        bool sendDiagnosticInfo)
 {
     if (feedback.empty() && !sendDiagnosticInfo)
     {
         // nothing to do
-        return true;
+        return "";
     }
 
     CryptoPP::AutoSeededRandomPool rng;
@@ -1405,37 +1403,5 @@ bool SendFeedbackAndDiagnosticInfo(
     Json::FastWriter jsonWriter;
     string outJsonString = jsonWriter.write(outJson);
 
-    string encryptedPayload;
-    if (!PublicKeyEncryptData(
-            FEEDBACK_ENCRYPTION_PUBLIC_KEY, 
-            outJsonString.c_str(),
-            encryptedPayload))
-    {
-        return false;
-    }
-
-    tstring uploadLocation = UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_PATH)
-                                + UTF8ToWString(feedbackID);
-        
-    HTTPSRequest httpsRequest;
-    HTTPSRequest::Response httpsResponse;
-    if (!httpsRequest.MakeRequest(
-            UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER).c_str(),
-            443,
-            string(), // Do standard cert validation
-            uploadLocation.c_str(),
-            stopInfo,
-            HTTPSRequest::PsiphonProxy::DONT_USE,
-            httpsResponse,
-            true,  // fail over to URL proxy
-            UTF8ToWString(FEEDBACK_DIAGNOSTIC_INFO_UPLOAD_SERVER_HEADERS).c_str(),
-            (LPVOID)encryptedPayload.c_str(),
-            encryptedPayload.length(),
-            _T("PUT")) 
-        || httpsResponse.code != HTTPSRequest::OK)
-    {
-        return false;
-    }
-
-    return true;
+    return outJsonString;
 }
