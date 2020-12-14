@@ -129,11 +129,10 @@ string Dehexlify(const string& input);
 string Base64Encode(const unsigned char* input, size_t length);
 string Base64Decode(const string& input);
 
-bool PublicKeyEncryptData(const char* publicKey, const char* plaintext, string& o_encrypted);
-
 tstring UrlEncode(const tstring& input);
 tstring UrlDecode(const tstring& input);
 
+Json::Value LoadJSONArray(const char* jsonArrayString);
 
 /*
  * System Utilities

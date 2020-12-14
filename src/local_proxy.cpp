@@ -429,9 +429,9 @@ bool LocalProxy::ProcessStatsAndStatus(bool final)
         if (!ReadFile(m_polipoPipe, page_view_buffer, bytes_avail, &num_read, NULL))
         {
             my_print(NOT_SENSITIVE, false, _T("%s:%d - ReadFile failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
-            false;
+            return false;
         }
-        page_view_buffer[bytes_avail] = '\0';
+        page_view_buffer[num_read] = '\0';
 
         // Update page view and traffic stats with the new info.
         ParsePolipoStatsBuffer(page_view_buffer);

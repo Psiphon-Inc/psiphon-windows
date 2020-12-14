@@ -60,7 +60,25 @@ public:
     virtual void SetReconnecting();
     virtual void SetReconnected();
 
+    /**
+    Returns true when the VPN transport is connected and all system traffic
+    is being tunneled through it, rather than only traffic routed through the
+    local Psiphon proxy; otherwise returns false. In other words, when the
+    selected transport is connected: returns true if the transport is the VPN
+    transport (VPNTransport), and returns false if the transport is the
+    Psiphon Tunnel Core transport (CoreTransport); otherwise returns false.
+    */
     bool IsWholeSystemTunneled() const;
+
+    /**
+    Returns true when the selected transport has been started and it tunnels
+    all system traffic, rather than only traffic routed through the local
+    Psiphon proxy; otherwise returns false. In other words, when
+    the selected transport has been started: returns true if the transport is
+    the VPN transport (VPNTransport), and returns false if the transport is the
+    Psiphon Tunnel Core transport (CoreTransport); otherwise returns false.
+    */
+    bool VPNModeStarted() const;
 
     // ILocalProxyStatsCollector implementation
     // May throw StopSignal::StopException subclass if not `final`
