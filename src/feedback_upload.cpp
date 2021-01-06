@@ -118,7 +118,7 @@ bool FeedbackUpload::Cleanup()
 
 void FeedbackUpload::SendFeedback()
 {
-    my_print(NOT_SENSITIVE, false, _T("%s - starting feedback upload..."), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s - starting feedback upload..."), __TFUNCTION__);
 
     try
     {
@@ -136,7 +136,7 @@ void FeedbackUpload::SendFeedback()
         throw;
     }
 
-    my_print(NOT_SENSITIVE, false, _T("%s - successfully started feedback upload"), __TFUNCTION__);
+    my_print(NOT_SENSITIVE, true, _T("%s - successfully started feedback upload"), __TFUNCTION__);
 }
 
 
