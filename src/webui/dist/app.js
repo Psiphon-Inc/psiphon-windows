@@ -814,7 +814,7 @@
       DisableTimeouts: $('#DisableTimeouts').prop('checked') ? 1 : 0,
       LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
       LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
-      ExposeLocalProxiesToLAN: $('ExposeLocalProxiesToLAN').prop('checked') ? 1 : 0,
+      ExposeLocalProxiesToLAN: $('#ExposeLocalProxiesToLAN').prop('checked') ? 1 : 0,
       UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
       UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
       UpstreamProxyUsername: $('#UpstreamProxyUsername').val(),
