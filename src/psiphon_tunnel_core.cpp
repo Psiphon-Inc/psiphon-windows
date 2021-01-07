@@ -68,7 +68,7 @@ void PsiphonTunnelCore::HandleSubprocessOutputLine(const string& line)
         {
             // We do not think that a panic will contain private data
             my_print(NOT_SENSITIVE, false, _T("core panic: %S"), line.c_str());
-            AddDiagnosticInfoJson("CorePanic", line);
+            AddDiagnosticInfoJson("CorePanic", line.c_str());
         }
         else
         {
@@ -134,6 +134,6 @@ void PsiphonTunnelCore::HandleSubprocessOutputLine(const string& line)
     // Add to diagnostics
     if (logOutputToDiagnostics)
     {
-        AddDiagnosticInfoJson("CoreNotice", line);
+        AddDiagnosticInfoJson("CoreNotice", line.c_str());
     }
 }
