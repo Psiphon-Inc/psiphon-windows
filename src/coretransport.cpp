@@ -497,6 +497,10 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
         config["EgressRegion"] = Settings::EgressRegion();
         config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
         config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+        if (Settings::ExposeLocalProxiesToLAN())
+        {
+            config["ListenInterface"] = "any";
+        }
 
         auto remoteServerListFilename = filesystem::path(dataStoreDirectory)
                                                     .append(LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME);
