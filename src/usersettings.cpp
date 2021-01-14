@@ -193,7 +193,7 @@ void Settings::ToJson(Json::Value& o_json)
       o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
       o_json["defaults"]["LocalSocksProxyPort"] = SOCKS_PROXY_PORT_DEFAULT;
 
-      o_json["ExposeLocalProxiesToLAN"] = Settings::ExposeLocalProxiesToLAN();
+      o_json["ExposeLocalProxiesToLAN"] = Settings::ExposeLocalProxiesToLAN() ? TRUE : FALSE;
       o_json["defaults"]["ExposeLocalProxiesToLAN"] = EXPOSE_LOCAL_PROXIES_TO_LAN_DEFAULT;
 
       o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;
