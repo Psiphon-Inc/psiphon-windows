@@ -323,6 +323,10 @@
     "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature.",
     "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
   },
+  "settings#expose-local-proxies-to-lan#enable-label": {
+    "message": "Allow other devices on your network to use the local Psiphon proxies",
+    "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
+  },
   "settings#upstream-proxy#heading": {
     "message": "Upstream Proxy",
     "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."

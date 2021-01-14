@@ -531,6 +531,10 @@
     "message": "[Şḗḗŧŧīīƞɠş Ḗḗřřǿǿř]",
     "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
   },
+  "settings#expose-local-proxies-to-lan#enable-label": {
+    "message": "[Ȧȧŀŀǿǿẇ ǿǿŧħḗḗř ḓḗḗṽīīƈḗḗş ǿǿƞ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş]",
+    "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
+  },
   "settings#expose-local-proxies-to-lan#help-text": {
     "message": "[Īīƒ ẏǿǿŭŭ ħȧȧṽḗḗ ǿǿŧħḗḗř ḓḗḗṽīīƈḗḗş ǿǿƞ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ, şŭŭƈħ ȧȧş ȧȧ Şḿȧȧřŧ ŦṼ ǿǿř ɠȧȧḿīīƞɠ ƈǿǿƞşǿǿŀḗḗ, ẏǿǿŭŭ ƈȧȧƞ ȧȧŀŀǿǿẇ ŧħḗḗḿ ŧǿǿ ŭŭşḗḗ ŧħḗḗşḗḗ ĦŦŦƤ ȧȧƞḓ ŞǾǿƇĶŞ ƥřǿǿẋīīḗḗş ẇħīīŀḗḗ Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ.]",
     "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies."
