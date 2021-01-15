@@ -316,8 +316,8 @@
     "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
   },
   "settings#expose-local-proxies-to-lan#help-text": {
-    "message": "If you have other devices on your network, such as a Smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
-    "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies."
+    "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+    "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
   },
   "settings#expose-local-proxies-to-lan#hint": {
     "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature.",

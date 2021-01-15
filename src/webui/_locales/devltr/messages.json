@@ -536,8 +536,8 @@
     "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
   },
   "settings#expose-local-proxies-to-lan#help-text": {
-    "message": "[Īīƒ ẏǿǿŭŭ ħȧȧṽḗḗ ǿǿŧħḗḗř ḓḗḗṽīīƈḗḗş ǿǿƞ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ, şŭŭƈħ ȧȧş ȧȧ Şḿȧȧřŧ ŦṼ ǿǿř ɠȧȧḿīīƞɠ ƈǿǿƞşǿǿŀḗḗ, ẏǿǿŭŭ ƈȧȧƞ ȧȧŀŀǿǿẇ ŧħḗḗḿ ŧǿǿ ŭŭşḗḗ ŧħḗḗşḗḗ ĦŦŦƤ ȧȧƞḓ ŞǾǿƇĶŞ ƥřǿǿẋīīḗḗş ẇħīīŀḗḗ Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ.]",
-    "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies."
+    "message": "[Īīƒ ẏǿǿŭŭ ħȧȧṽḗḗ ǿǿŧħḗḗř ḓḗḗṽīīƈḗḗş ǿǿƞ ẏǿǿŭŭř ƞḗḗŧẇǿǿřķ, şŭŭƈħ ȧȧş ȧȧ şḿȧȧřŧ ŦṼ ǿǿř ɠȧȧḿīīƞɠ ƈǿǿƞşǿǿŀḗḗ, ẏǿǿŭŭ ƈȧȧƞ ȧȧŀŀǿǿẇ ŧħḗḗḿ ŧǿǿ ŭŭşḗḗ ŧħḗḗşḗḗ ĦŦŦƤ ȧȧƞḓ ŞǾǿƇĶŞ ƥřǿǿẋīīḗḗş ẇħīīŀḗḗ Ƥşīīƥħǿǿƞ īīş ƈǿǿƞƞḗḗƈŧḗḗḓ.]",
+    "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
   },
   "settings#expose-local-proxies-to-lan#hint": {
     "message": "[<strong>ĦĪīȠŦ:</strong> Ẏǿǿŭŭ şħǿǿŭŭŀḓ şƥḗḗƈīīƒẏ ȧȧŧ ŀḗḗȧȧşŧ ǿǿƞḗḗ ǿǿƒ ŧħḗḗ ƥǿǿřŧ ƞŭŭḿƀḗḗřş ȧȧƀǿǿṽḗḗ īīƞ ǿǿřḓḗḗř ŧǿǿ ŭŭşḗḗ ŧħīīş ƒḗḗȧȧŧŭŭřḗḗ.]",
