@@ -68,7 +68,7 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "Select server region",
+        "message": "सर्वर क्षेत्र चुने",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
@@ -136,7 +136,7 @@
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
-        "message": "Disable timeouts for slow networks",
+        "message": "धीमे नेटवर्क के लिए टाइमआउट अक्षम करें",
         "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
     },
     "settings#egress-region#heading": {
@@ -332,11 +332,11 @@
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "settings#upstream-proxy#port-label": {
-        "message": "Port",
+        "message": "पोर्ट",
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#upstream-proxy#username-label": {
-        "message": "Username",
+        "message": "यूज़रनाम",
         "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
     },
     "settings#upstream-proxy#password-label": {

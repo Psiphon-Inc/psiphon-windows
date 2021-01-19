@@ -214,6 +214,12 @@ bool IWorkerThread::IsRunning() const
     return started && !stopped;
 }
 
+bool IWorkerThread::IsStopped() const {
+    bool started = (WaitForSingleObject(m_startedEvent, 0) == WAIT_OBJECT_0);
+    bool stopped = (WaitForSingleObject(m_stoppedEvent, 0) == WAIT_OBJECT_0);
+    return started && stopped;
+}
+
 // static
 DWORD WINAPI IWorkerThread::Thread(void* object)
 {

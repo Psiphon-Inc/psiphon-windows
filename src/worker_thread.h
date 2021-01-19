@@ -71,6 +71,7 @@ public:
     virtual HANDLE GetStoppedEvent() const;
 
     bool IsRunning() const;
+    bool IsStopped() const;
 
     //
     // Exception classes

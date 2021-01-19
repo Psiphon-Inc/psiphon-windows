@@ -2006,7 +2006,7 @@
         $('.psicash-interface .speed-limit').addClass('hidden');
       } else {
         // The baseline is below the threshold
-        DEBUG_LOG('Baseline speed is high; hiding speed limit');
+        DEBUG_LOG('Baseline speed is low; showing speed limit');
         $('.psicash-interface .speed-limit').removeClass('hidden');
       }
     } // When we have an active speed boost, we want this function to be called repeatedly,
