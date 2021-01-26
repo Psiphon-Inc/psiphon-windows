@@ -49,7 +49,7 @@ void FeedbackUpload::StartSendFeedback()
 
 // Called once during IWorkerThread startup.
 bool FeedbackUpload::DoStart()
-{	 
+{
     try
     {
         SendFeedback();
@@ -93,8 +93,7 @@ FeedbackUpload
 FeedbackUpload::FeedbackUpload(const string& diagnosticData,
                                const string& upstreamProxyAddress,
                                const StopInfo& stopInfo)
-    : m_panicked(false),
-      m_uploadStatus(FEEDBACK_UPLOAD_STATUS_IN_PROGRESS),
+    : m_uploadStatus(FEEDBACK_UPLOAD_STATUS_IN_PROGRESS),
       m_diagnosticData(diagnosticData),
       m_stopInfo(stopInfo),
       m_upstreamProxyAddress(upstreamProxyAddress)
@@ -266,7 +265,7 @@ bool FeedbackUpload::DoPeriodicCheck()
     catch (Subprocess::Error& error) {
         my_print(NOT_SENSITIVE, false, _T("%s - caught Subprocess::Error: %s"), __TFUNCTION__, error.GetMessage().c_str());
     }
- 
+
     return false;
 }
 

@@ -89,7 +89,7 @@ public:
     The upload has either completed successfully or failed.
     */
     bool FeedbackUpload::UploadCompleted() const;
-    
+
     /**
     Feedback upload status. Possible values are defined by the constants
     FEEDBACK_UPLOAD_STATUS{IN_PROGRESS, SUCCESS, FAILED, CANCELLED, ERROR}.
@@ -107,7 +107,7 @@ protected:
     void HandlePsiphonTunnelCoreNotice(const string& noticeType, const string& timestamp, const Json::Value& data);
 
     virtual void SendFeedback();
- 
+
     /**
     May throw FeedbackUploadFailed.
     */
@@ -116,7 +116,6 @@ protected:
 
 protected:
     tstring m_exePath;
-    bool m_panicked;
     atomic<DWORD> m_uploadStatus;
     WorkerThreadSynch m_workerThreadSynch;
     string m_diagnosticData;
