@@ -29,7 +29,8 @@
 
 
 PsiphonTunnelCore::PsiphonTunnelCore(IPsiphonTunnelCoreNoticeHandler* noticeHandler, const tstring& exePath)
-    : Subprocess(exePath, this)
+    : Subprocess(exePath, this),
+      m_panicked(false)
 {
     if (noticeHandler == NULL) {
         throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) "noticeHandler null");
