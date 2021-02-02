@@ -219,29 +219,18 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
     Json::FastWriter jsonWriter;
     configDataStream << jsonWriter.write(config);
 
-    // RequireUrlProxyWithoutTunnel mode has a distinct config file so that
-    // it won't conflict with a standard CoreTransport which may already be
-    // running. Also, this mode omits the server list file, since it's not
-    // trying to establish a tunnel.
-    // TODO: there's still a remote chance that concurrently spawned url
-    // proxy instances could clobber each other's config file?
-
     auto configPath = filesystem::path(dataStoreDirectory);
-    if (in.requestingUrlProxyWithoutTunnel)
-    {
-        configPath.append(LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME);
-    }
-    else
-    {
-        configPath.append(LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME);
-    }
-    out.configFilename = configPath;
+    configPath.append(in.configFilename);
+    out.configFilePath = configPath;
 
-    if (!WriteFile(out.configFilename, configDataStream.str()))
+    if (!WriteFile(out.configFilePath, configDataStream.str()))
     {
         my_print(NOT_SENSITIVE, false, _T("%s - write config file failed (%d)"), __TFUNCTION__, GetLastError());
         return false;
     }
+
+    // RequireUrlProxyWithoutTunnel mode omits the server list file, since
+    // it's not trying to establish a tunnel.
 
     if (!in.requestingUrlProxyWithoutTunnel)
     {
