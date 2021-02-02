@@ -24,6 +24,7 @@
 static const TCHAR* INFO_LINK_PROMPT = _T("About Psiphon 3");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_SUBDIRECTORY = _T("Psiphon3");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME = _T("psiphon.config");
+static const TCHAR* LOCAL_SETTINGS_APPDATA_FEEDBACK_CONFIG_FILENAME = _T("feedback.config");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME = _T("url_proxy.config");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_SERVER_LIST_FILENAME = _T("server_list.dat");
 static const TCHAR* LOCAL_SETTINGS_APPDATA_REMOTE_SERVER_LIST_FILENAME = _T("remote_server_list");
