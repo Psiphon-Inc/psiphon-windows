@@ -1229,7 +1229,12 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
                 StopInfo stopInfo = StopInfo(&GlobalStopSignal::Instance(),
                     STOP_REASON_ANY_ABORT_FEEDBACK_UPLOAD_VPN_MODE_STARTED);
                 feedbackUpload = make_unique<FeedbackUploadWorker>(diagnosticData, vpnModeStarted, upstreamProxyAddress, stopInfo);
-                feedbackUpload->StartUpload();
+                try {
+                    feedbackUpload->StartUpload();
+                }
+                catch (...) {
+                    break;
+                }
             }
             else if (feedbackUpload == NULL && !vpnModeStarted)
             {
@@ -1253,7 +1258,12 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
                 }
 
                 feedbackUpload = make_unique<FeedbackUploadWorker>(diagnosticData, vpnModeStarted, upstreamProxyAddress, stopInfo);
-                feedbackUpload->StartUpload();
+                try {
+                    feedbackUpload->StartUpload();
+                }
+                catch (...) {
+                    break;
+                }
             }
             else if (feedbackUpload != NULL) {
 
