@@ -39,6 +39,7 @@ string GetUpstreamProxyAddress();
 // Input arguments to WriteParameterFiles
 struct WriteParameterFilesIn {
     bool requestingUrlProxyWithoutTunnel;
+    string configFilename;
     string upstreamProxyAddress;
     Json::Value encodedAuthorizations;
     const ServerEntry* tempConnectServerEntry;
@@ -46,7 +47,7 @@ struct WriteParameterFilesIn {
 
 // Ouput information from WriteParameterFiles
 struct WriteParameterFilesOut {
-    tstring configFilename;
+    tstring configFilePath;
     tstring serverListFilename;
     tstring oldClientUpgradeFilename;
     tstring newClientUpgradeFilename;

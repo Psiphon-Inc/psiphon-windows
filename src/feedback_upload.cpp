@@ -144,6 +144,9 @@ void FeedbackUpload::SendFeedbackHelper()
     WriteParameterFilesOut out;
     WriteParameterFilesIn in;
     in.requestingUrlProxyWithoutTunnel = false;
+    // FeedbackUpload mode has a distinct config file so that it won't conflict
+    // with a standard CoreTransport which may already be running.
+    in.configFilename = WStringToUTF8(LOCAL_SETTINGS_APPDATA_FEEDBACK_CONFIG_FILENAME);
     in.upstreamProxyAddress = m_upstreamProxyAddress;
     in.encodedAuthorizations = Json::Value(Json::arrayValue);
     in.tempConnectServerEntry = NULL;
@@ -154,7 +157,7 @@ void FeedbackUpload::SendFeedbackHelper()
     }
 
     // Run subprocess; it will begin uploading the feedback
-    if (!SpawnFeedbackUploadProcess(out.configFilename, m_diagnosticData))
+    if (!SpawnFeedbackUploadProcess(out.configFilePath, m_diagnosticData))
     {
         throw FeedbackUploadFailed();
     }

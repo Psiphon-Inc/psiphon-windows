@@ -233,6 +233,18 @@ void CoreTransport::TransportConnectHelper()
     WriteParameterFilesOut out;
     WriteParameterFilesIn in;
     in.requestingUrlProxyWithoutTunnel = RequestingUrlProxyWithoutTunnel();
+    if (in.requestingUrlProxyWithoutTunnel) {
+        // RequestingUrlProxyWithoutTunnel mode has a distinct config file so that
+        // it won't conflict with a standard CoreTransport which may already be
+        // running.
+        // TODO: there's still a remote chance that concurrently spawned url proxy
+        // instances could clobber each other's config file?
+        in.configFilename = WStringToUTF8(LOCAL_SETTINGS_APPDATA_URL_PROXY_CONFIG_FILENAME);
+    }
+    else {
+        in.configFilename = WStringToUTF8(LOCAL_SETTINGS_APPDATA_CONFIG_FILENAME);
+    }
+
     in.upstreamProxyAddress = GetUpstreamProxyAddress();
     in.encodedAuthorizations = encodedAuthorizations;
     in.tempConnectServerEntry = m_tempConnectServerEntry;
@@ -262,7 +274,7 @@ void CoreTransport::TransportConnectHelper()
 
     // Run core process; it will begin establishing a tunnel
 
-    if (!SpawnCoreProcess(out.configFilename, out.serverListFilename))
+    if (!SpawnCoreProcess(out.configFilePath, out.serverListFilename))
     {
         throw TransportFailed();
     }

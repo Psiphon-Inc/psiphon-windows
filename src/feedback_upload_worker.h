@@ -33,14 +33,32 @@ public:
                          const string& upstreamProxyAddress, const StopInfo& stopInfo);
     ~FeedbackUploadWorker();
 
+    /**
+    Begins the feedback upload operation.
+    May throw FeedbackUploadFailed, Error, or Abort.
+    */
     void StartUpload() const;
 
+    /**
+    Returns the vpnModeStarted value that the FeedbackUploadWorker was initialized
+    with.
+    */
     bool IsVPNMode() const;
 
+    /**
+    Returns true if the feedback upload has either completed successfully or failed;
+    otherwise returns false.
+    */
     bool UploadCompleted() const;
 
+    /**
+    Returns true if the feedback upload has been stopped; otherwise returns false.
+    */
     bool UploadStopped() const;
 
+    /**
+    Returns true if the feedback upload completed sucessfully; otherwise returns false.
+    */
     bool UploadSuccessful() const;
 
 protected:

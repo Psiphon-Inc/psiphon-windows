@@ -316,7 +316,7 @@
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#upstream-proxy#by-default": {
-        "message": "ኮምፒውተርዎ ቀድሞውኑ የተዋቀረ ወኪል ካለው Psiphon በነባሪው ሁነታ ግንኙነቱን ሲፈጽም ያንን ወኪል ይጠቀማል። ይህንን ባህሪ የተለየ ወኪል እንዲጠቀም ወይም እንደዚህ ያለ ”የላይ ወኪል“  እንዳይጠቀም በመወሰን መቀየር ይችላሉ።",
+        "message": "ኮምፒውተርዎ ቀድሞውኑ የተዋቀረ ወኪል ካለው Psiphon በነባሪው ሁነታ ግንኙነቱን ሲፈጽም ያንን ወኪል ይጠቀማል ማስተላለፊያ ዋሻ ሲፈጥር። ይህንን ባህሪ የተለየ ወኪል እንዲጠቀም ወይም እንደዚህ ያለ ”የላይ ወኪል“  እንዳይጠቀም በመወሰን መቀየር ይችላሉ።",
         "description": "Help text indicating the default (and best) configuration and behavior for the 'Upstream Proxy' setting. It also indicates what will happen if the setting is overridden or disabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#reason": {
@@ -380,7 +380,7 @@
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "settings#transport-mode#help-text": {
-        "message": "የWindows L2TP/IPSec ምናባዊ አውታረመረብን ይጠቀማል። ይህ ሁነታ ለሁሉም መተግበሪያዎች መተላለፊያ ይፈጥራል ነገር ግን ጥብቅ ስላልሆነ ጠንካራ ሳንሱርን የማለፊያ ችሎታዎች የሉትም። አብዛኛዎቹን ኬላዎችን ለማለፊያነት መጠቀም <strong>አይመከርም</strong>።",
+        "message": "የWindows L2TP/IPSec ምናባዊ አውታረመረብን ይጠቀማል። ይህ ሁነታ ለሁሉም መተግበሪያዎች ማስተላለፊያ ይፈጥራል ነገር ግን ጥብቅ ስላልሆነ ጠንካራ ሳንሱርን የማለፊያ ችሎታዎች የሉትም። አብዛኛዎቹን ኬላዎችን ለማለፊያነት መጠቀም <strong>አይመከርም</strong>።",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#systray-minimize#heading": {
