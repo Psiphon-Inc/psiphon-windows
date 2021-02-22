@@ -435,20 +435,25 @@ bool HTTPSRequest::MakeRequestWithURLProxyOption(
         // The URL proxy (tunnelcore) will pick up a system proxy setting and will use it if necessary.
         // So leave proxyHost blank here.
     }
-    else if (usePsiphonLocalProxy != PsiphonProxy::DONT_USE)
+    else if (usePsiphonLocalProxy == PsiphonProxy::DONT_USE)
+    {
+        proxyHost = GetNativeDefaultProxyConfig().HTTPHostPort();
+    }
+    else // PsiphonProxy::USE or PsiphonProxy::REQUIRE
     {
         auto tunneledProxyConfig = GetTunneledDefaultProxyConfig();
 
-        if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE && !tunneledProxyConfig.HTTPEnabled())
+        if (tunneledProxyConfig.HTTPEnabled())
+        {
+            proxyHost = tunneledProxyConfig.HTTPHostPort();
+        }
+        else if (usePsiphonLocalProxy == PsiphonProxy::REQUIRE)
         {
             // We are required to proxy through Psiphon, but there's no Psiphon
             // proxy to use.
             return false;
         }
-    }
-    else
-    {
-        proxyHost = GetNativeDefaultProxyConfig().HTTPHostPort();
+        // PsiphonProxy::USE doesn't require the Psiphon proxy, but will use it if available
     }
 
     tstring reqType(requestPath);
