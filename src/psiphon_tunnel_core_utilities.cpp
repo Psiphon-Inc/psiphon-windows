@@ -110,9 +110,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
 
     if (Settings::SplitTunnel())
     {
-        config["SplitTunnelRoutesUrlFormat"] = SPLIT_TUNNEL_ROUTES_URL_FORMAT;
-        config["SplitTunnelRoutesSignaturePublicKey"] = SPLIT_TUNNEL_ROUTES_SIGNATURE_PUBLIC_KEY;
-        config["SplitTunnelDnsServer"] = SPLIT_TUNNEL_DNS_SERVER;
+        config["EnableSplitTunnel"] = true;
     }
 
     if (Settings::DisableTimeouts())
