@@ -4396,7 +4396,7 @@
       "connection#wait-btn": "ကျေးဇူး၍ ​ခေတ္တစောင့်ပါ...",
       "connection#stopped-msg": "Psiphon သည် <span class=\"state-word\">ချိတ်ဆက်မှုဖြတ်တောက်ပြီးပါပြီ</span>",
       "connection#connect-btn": "ချိတ်ဆက်ရန်",
-      "connection#egress-region-combo-label": "Select server region",
+      "connection#egress-region-combo-label": "ဆာဗာဒေသူ ရွေးပါ",
       "settings#error-alert": "<strong>မှားယွင်းနေသည်</strong>ကျေးဇူးပြု၍ဆက်လက်လုပ်ဆောင်ခြင်းမပြုမီ မှန်ကန်မှုမရှိသော တန်ဖိုးများကိုပြင်ပါ။",
       "settings#reset-button": "မူလပုံစံပြန်ထားရန်",
       "settings#apply-button": "ပြောင်းလဲမှုများကို လုပ်ဆောင်ပါ",
