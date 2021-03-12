@@ -27,14 +27,17 @@ network changes.
 void DoStartupDiagnosticCollection();
 
 /**
-Throws StopSignal::StopException if stop was signaled.
+Returns feedback data encoded as a JSON string. The returned JSON will omit
+diagnostic data if sendDiagnosticInfo is false, i.e. the user did not opt in
+to sending diagnostic data. If the user did not write any feedback, i.e the
+feedback parameter string is empty, and sendDiagnosticInfo is false, then
+the return value is an empty string.
 */
-bool SendFeedbackAndDiagnosticInfo(
+string GenerateFeedbackJSON(
         const string& feedback,
         const string& emailAddress,
         const string& surveyJSON,
-        bool sendDiagnosticInfo,
-        const StopInfo& stopInfo);
+        bool sendDiagnosticInfo);
 
 
 // Forward declarations. Do not access directly. (They're only here because the

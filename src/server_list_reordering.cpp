@@ -88,7 +88,7 @@ void ServerListReorder::Stop(DWORD stopReason)
         m_thread = NULL;
     }
 
-    m_stopSignal.ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
+    m_stopSignal.ClearStopSignal(STOP_REASON_ANY_STOP_TUNNEL &~ STOP_REASON_EXIT);
 }
 
 
@@ -111,7 +111,7 @@ DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
     unsigned int seed = (unsigned)time(NULL);
     srand(seed);
 
-    ReorderServerList(*(object->m_serverList), StopInfo(&object->m_stopSignal, STOP_REASON_ALL));
+    ReorderServerList(*(object->m_serverList), StopInfo(&object->m_stopSignal, STOP_REASON_ANY_STOP_TUNNEL));
 
     object->m_thread = NULL;
     return 0;

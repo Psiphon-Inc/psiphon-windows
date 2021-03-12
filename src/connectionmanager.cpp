@@ -39,6 +39,9 @@
 #include "stopsignal.h"
 #include "diagnostic_info.h"
 #include "psicashlib.h"
+#include "psiphon_tunnel_core_utilities.h"
+#include "feedback_upload_worker.h"
+#include "worker_thread.h"
 
 
 // Upgrade process posts a Quit message
@@ -64,6 +67,15 @@ ConnectionManager::ConnectionManager(void) :
 ConnectionManager::~ConnectionManager(void)
 {
     Stop(STOP_REASON_NONE);
+
+    if (m_feedbackThread)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
+        WaitForSingleObject(m_feedbackThread, INFINITE);
+        my_print(NOT_SENSITIVE, true, _T("%s: Feedback thread died"), __TFUNCTION__);
+        m_feedbackThread = 0;
+    }
+
     CloseHandle(m_mutex);
 }
 
@@ -76,10 +88,16 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
 
     if (newState == CONNECTION_MANAGER_STATE_STARTING)
     {
+        GlobalStopSignal::Instance().SignalStop(STOP_REASON_CONNECTING);
+        GlobalStopSignal::Instance().ClearStopSignal(
+            STOP_REASON_CONNECTED | STOP_REASON_DISCONNECTING | STOP_REASON_DISCONNECTED);
         UI_SetStateStarting(m_transport->GetTransportProtocolName());
     }
     else if (newState == CONNECTION_MANAGER_STATE_CONNECTED)
     {
+       GlobalStopSignal::Instance().SignalStop(STOP_REASON_CONNECTED);
+       GlobalStopSignal::Instance().ClearStopSignal(
+           STOP_REASON_CONNECTING | STOP_REASON_DISCONNECTING | STOP_REASON_DISCONNECTED);
         UI_SetStateConnected(
             m_transport->GetTransportProtocolName(),
             m_currentSessionInfo.GetLocalSocksProxyPort(),
@@ -87,10 +105,16 @@ void ConnectionManager::SetState(ConnectionManagerState newState)
     }
     else if (newState == CONNECTION_MANAGER_STATE_STOPPING)
     {
+        GlobalStopSignal::Instance().SignalStop(STOP_REASON_DISCONNECTING);
+        GlobalStopSignal::Instance().ClearStopSignal(
+            STOP_REASON_CONNECTING | STOP_REASON_CONNECTED | STOP_REASON_DISCONNECTED);
         UI_SetStateStopping();
     }
     else //if (newState == CONNECTION_MANAGER_STATE_STOPPED)
     {
+        GlobalStopSignal::Instance().SignalStop(STOP_REASON_DISCONNECTED);
+        GlobalStopSignal::Instance().ClearStopSignal(
+            STOP_REASON_CONNECTING | STOP_REASON_DISCONNECTING | STOP_REASON_CONNECTED);
         UI_SetStateStopped();
     }
 }
@@ -166,13 +190,8 @@ void ConnectionManager::Stop(DWORD reason)
         m_upgradeThread = 0;
     }
 
-    if (m_feedbackThread)
-    {
-        my_print(NOT_SENSITIVE, true, _T("%s: Waiting for feedback thread to die"), __TFUNCTION__);
-        WaitForSingleObject(m_feedbackThread, INFINITE);
-        my_print(NOT_SENSITIVE, true, _T("%s: Feedback thread died"), __TFUNCTION__);
-        m_feedbackThread = 0;
-    }
+    // The feedback thread (m_feedbackThread) is not stopped here because it
+    // manages its own lifecycle between connection state changes.
 
     delete m_transport;
     m_transport = 0;
@@ -202,7 +221,7 @@ void ConnectionManager::Start(bool isReconnect/*=false*/)
 
     m_startSplitTunnel = Settings::SplitTunnel();
 
-    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ALL &~ STOP_REASON_EXIT);
+    GlobalStopSignal::Instance().ClearStopSignal(STOP_REASON_ANY_STOP_TUNNEL &~ STOP_REASON_EXIT);
 
     if (m_state != CONNECTION_MANAGER_STATE_STOPPED || m_thread != 0)
     {
@@ -287,7 +306,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
         try
         {
-            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ANY_STOP_TUNNEL, true);
 
             manager->SetState(CONNECTION_MANAGER_STATE_STARTING);
 
@@ -311,7 +330,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             try
             {
                 transportConnection.Connect(
-                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                    StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ANY_STOP_TUNNEL),
                     manager->m_transport,
                     manager,    // ILocalProxyStatsCollector
                     manager,    // IUpgradePaver
@@ -352,7 +371,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
 
             // Before doing post-connect work, make sure there's no stop signal.
             // Throws if there's a signal set.
-            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ANY_STOP_TUNNEL, true);
 
             //
             // Do post-connect work, like opening home pages.
@@ -369,7 +388,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerStartThread(void* object)
             my_print(NOT_SENSITIVE, true, _T("%s: entering transportConnection wait"), __TFUNCTION__);
             transportConnection.WaitForDisconnect();
 
-            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ALL, true);
+            GlobalStopSignal::Instance().CheckSignal(STOP_REASON_ANY_STOP_TUNNEL, true);
 
             // The stop signal has not been set, so this was an unexpected disconnect. Retry.
 
@@ -493,7 +512,7 @@ void ConnectionManager::DoPostConnect(const SessionInfo& sessionInfo, bool openH
                             sessionInfo,
                             connectedRequestPath.c_str(),
                             response,
-                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL)))
+                            StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ANY_STOP_TUNNEL)))
         {
             // Get the server time from response json and record it
             // connected_timestamp
@@ -578,6 +597,10 @@ bool ConnectionManager::IsWholeSystemTunneled() const
         && m_transport->IsConnected(true);
 }
 
+bool ConnectionManager::VPNModeStarted() const {
+    return m_transport && m_transport->IsWholeSystemTunneled();
+}
+
 bool ConnectionManager::SendStatusMessage(
                             bool final,
                             const map<string, int>& pageViewEntries,
@@ -654,7 +677,7 @@ bool ConnectionManager::SendStatusMessage(
     // wait loop.
     // TODO: the user may be left waiting too long after cancelling; add
     // a shorter timeout in this case
-    DWORD stopReason = final ? STOP_REASON_NONE : STOP_REASON_ALL;
+    DWORD stopReason = final ? STOP_REASON_NONE : STOP_REASON_ANY_STOP_TUNNEL;
 
     // Allow adhoc tunnels if this is the final stats request
     ServerRequest::ReqLevel reqLevel = final ? ServerRequest::FULL : ServerRequest::ONLY_IF_TRANSPORT;
@@ -875,7 +898,7 @@ DWORD WINAPI ConnectionManager::ConnectionManagerUpgradeThread(void* object)
                 443,
                 "",
                 UTF8ToWString(UPGRADE_REQUEST_PATH).c_str(),
-                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ALL),
+                StopInfo(&GlobalStopSignal::Instance(), STOP_REASON_ANY_STOP_TUNNEL),
                 HTTPSRequest::PsiphonProxy::USE,
                 httpsResponse,
                 true) // fail over to URL proxy
@@ -1168,24 +1191,103 @@ bool ConnectionManager::DoSendFeedback(LPCWSTR feedbackJSON)
     Json::Value surveyResponses = json_entry.get("responses", Json::nullValue);
     string surveyJSON = Json::FastWriter().write(surveyResponses);
 
-    // When disconnected, ignore the user cancel flag in the HTTP request
-    // wait loop.
-    // TODO: the user may be left waiting too long after cancelling; add
-    // a shorter timeout in this case
-    DWORD stopReason = (GetState() == CONNECTION_MANAGER_STATE_CONNECTED ? STOP_REASON_ALL : STOP_REASON_NONE);
-
-    bool success = true;
+    bool success = false;
 
     // Upload diagnostic info
     if (!feedback.empty() || !surveyJSON.empty() || sendDiagnosticInfo)
     {
-        // We don't care if this succeeds.
-        success = SendFeedbackAndDiagnosticInfo(
+        string diagnosticData = GenerateFeedbackJSON(
                     feedback,
                     email,
                     surveyJSON,
-                    sendDiagnosticInfo,
-                    StopInfo(&GlobalStopSignal::Instance(), stopReason));
+                    sendDiagnosticInfo);
+        
+        unique_ptr<FeedbackUploadWorker> feedbackUpload;
+ 
+        // Kick off the feedback upload and poll for it to complete. Interrupt
+        // the operation if the VPN is connecting or disconnecting, and retry
+        // when it is connected or disconnected again.
+        // TODO: cancel the upload if the connection state is flapping?
+        while (true) {
+
+            bool vpnModeStarted = g_connectionManager.VPNModeStarted();
+
+            if (feedbackUpload == NULL && vpnModeStarted && 
+                (GetState() == CONNECTION_MANAGER_STATE_STOPPED || GetState() == CONNECTION_MANAGER_STATE_CONNECTED))
+            {
+                // Start the upload in VPN mode if the transport is stopped, or
+                // connected. Since all system traffic is being tunneled the
+                // upload will fail when the transport is connecting or
+                // disconnecting.
+
+                // The upstream proxy is provided, but will not be used if the
+                // VPN transport is connected and all system traffic is being
+                // tunneled. I.E. the upstream proxy parameter will be omitted
+                // from the Psiphon config provided to the feedback upload
+                // process if the whole system is tunneled. See WriteParameterFiles.
+                string upstreamProxyAddress = GetUpstreamProxyAddress();
+                StopInfo stopInfo = StopInfo(&GlobalStopSignal::Instance(),
+                    STOP_REASON_ANY_ABORT_FEEDBACK_UPLOAD_VPN_MODE_STARTED);
+                feedbackUpload = make_unique<FeedbackUploadWorker>(diagnosticData, vpnModeStarted, upstreamProxyAddress, stopInfo);
+                try {
+                    feedbackUpload->StartUpload();
+                }
+                catch (...) {
+                    break;
+                }
+            }
+            else if (feedbackUpload == NULL && !vpnModeStarted)
+            {
+                StopInfo stopInfo;
+                string upstreamProxyAddress;
+
+                if (GetState() == CONNECTION_MANAGER_STATE_CONNECTED)
+                {
+                    // Use the local proxy exposed by the transport to tunnel
+                    // the feedback upload.
+                    ProxyConfig tunneledProxyConfig = GetTunneledDefaultProxyConfig();
+                    upstreamProxyAddress = WStringToUTF8(tunneledProxyConfig.HTTPHostPortScheme());
+                    stopInfo = StopInfo(&GlobalStopSignal::Instance(),
+                        STOP_REASON_ANY_ABORT_FEEDBACK_UPLOAD_NONVPN_MODE_CONNECTED);
+                }
+                else
+                {
+                    upstreamProxyAddress = GetUpstreamProxyAddress();
+                    stopInfo = StopInfo(&GlobalStopSignal::Instance(),
+                        STOP_REASON_ANY_ABORT_FEEDBACK_UPLOAD_NONVPN_MODE_NOT_CONNECTED);
+                }
+
+                feedbackUpload = make_unique<FeedbackUploadWorker>(diagnosticData, vpnModeStarted, upstreamProxyAddress, stopInfo);
+                try {
+                    feedbackUpload->StartUpload();
+                }
+                catch (...) {
+                    break;
+                }
+            }
+            else if (feedbackUpload != NULL) {
+
+                // The feedback upload has been started
+
+                if (feedbackUpload->UploadCompleted())
+                {
+                    my_print(NOT_SENSITIVE, true, _T("%s: feedback upload completed"), __TFUNCTION__);
+                    success = feedbackUpload->UploadSuccessful();
+                    break;
+                }
+                else if (feedbackUpload->UploadStopped() || feedbackUpload->IsVPNMode() != vpnModeStarted) 
+                {
+                    // Worker has been stopped by the stop signal going high or
+                    // the transport mode has changed to, or from, VPN mode. In
+                    // the latter case, the upload should be stopped and
+                    // restarted to reconfigure the stop conditions.
+                    my_print(NOT_SENSITIVE, true, _T("%s: feedback upload cancelled, waiting to retry..."), __TFUNCTION__);
+                    feedbackUpload = nullptr;
+                }
+            }
+
+            Sleep(100);
+        }
     }
 
     return success;

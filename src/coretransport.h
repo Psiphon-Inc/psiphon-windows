@@ -20,6 +20,7 @@
 #pragma once
 
 #include "worker_thread.h"
+#include "psiphon_tunnel_core.h"
 #include "transport.h"
 #include "transport_registry.h"
 #include "usersettings.h"
@@ -29,7 +30,7 @@ class SessionInfo;
 #define CORE_TRANSPORT_PROTOCOL_NAME    _T("CoreTransport")
 #define CORE_TRANSPORT_DISPLAY_NAME     _T("Psiphon Tunnel")
 
-class CoreTransport : public ITransport
+class CoreTransport : public ITransport, public IPsiphonTunnelCoreNoticeHandler
 {
 public:
     CoreTransport();
@@ -60,26 +61,21 @@ protected:
     virtual void TransportConnect();
     virtual bool DoPeriodicCheck();
 
+    // IPsiphonTunnelCoreNoticeHandler
+    void HandlePsiphonTunnelCoreNotice(const string& noticeType, const string& timestamp, const Json::Value& data);
+
     bool RequestingUrlProxyWithoutTunnel();
     void TransportConnectHelper();
-    bool WriteParameterFiles(tstring& configFilename, tstring& serverListFilename, tstring& oldClientUpgradeFilename, tstring& newClientUpgradeFilename);
-    string GetUpstreamProxyAddress();
     bool SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename);
-    void ConsumeCoreProcessOutput();
-    bool ValidateAndPaveUpgrade(const tstring clientUpgradeFilename);
-    void HandleCoreProcessOutputLine(const char* line);
+    bool ValidateAndPaveUpgrade(const tstring& clientUpgradeFilename);
 
 protected:
-    tstring m_exePath;
     int m_localSocksProxyPort;
     int m_localHttpProxyPort;
-    PROCESS_INFORMATION m_processInfo;
-    HANDLE m_pipe;
-    string m_pipeBuffer;
     bool m_hasEverConnected;
     bool m_isConnected;
     bool m_clientUpgradeDownloadHandled;
     string m_lastUpstreamProxyErrorMessage;
-    bool m_panicked;
     std::vector<std::string> m_authorizationIDs;
+    unique_ptr<PsiphonTunnelCore> m_psiphonTunnelCore;
 };

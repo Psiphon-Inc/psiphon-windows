@@ -51,6 +51,11 @@
     </ClCompile>
     <ClCompile Include="psicashlib.cpp" />
     <ClCompile Include="dispatch_queue.cpp" />
+    <ClCompile Include="feedback_upload.cpp" />
+    <ClCompile Include="psiphon_tunnel_core_utilities.cpp" />
+    <ClCompile Include="subprocess.cpp" />
+    <ClCompile Include="psiphon_tunnel_core.cpp" />
+    <ClCompile Include="feedback_upload_worker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -532,6 +537,11 @@
     <ClInclude Include="3rdParty\psicash\url.hpp">
       <Filter>3rdParty\psicash</Filter>
     </ClInclude>
+    <ClInclude Include="feedback_upload.h" />
+    <ClInclude Include="psiphon_tunnel_core_utilities.h" />
+    <ClInclude Include="subprocess.h" />
+    <ClInclude Include="psiphon_tunnel_core.h" />
+    <ClInclude Include="feedback_upload_worker.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />
