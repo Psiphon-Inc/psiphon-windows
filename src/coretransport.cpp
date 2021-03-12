@@ -508,8 +508,20 @@ bool CoreTransport::WriteParameterFiles(tstring& configFilename, tstring& server
     else
     {
         config["EgressRegion"] = Settings::EgressRegion();
-        config["LocalHttpProxyPort"] = Settings::LocalHttpProxyPort();
-        config["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
+
+        unsigned int localHttpProxyPortSetting = Settings::LocalHttpProxyPort();
+        unsigned int localSocksProxyPortSetting = Settings::LocalSocksProxyPort();
+        if (localHttpProxyPortSetting > 0)
+        {
+            my_print(NOT_SENSITIVE, true, _T("Setting LocalHttpProxyPort to a user configured value"));
+        }
+        if (localSocksProxyPortSetting > 0)
+        {
+            my_print(NOT_SENSITIVE, true, _T("Setting LocalSocksProxyPort to a user configured value"));
+        }
+        config["LocalHttpProxyPort"] = localHttpProxyPortSetting;
+        config["LocalSocksProxyPort"] = localSocksProxyPortSetting;
+
         if (Settings::ExposeLocalProxiesToLAN())
         {
             config["ListenInterface"] = "any";
