@@ -1939,6 +1939,8 @@ void GetLocalIPv4Addresses(vector<tstring>& o_ipAddresses)
     PIP_ADAPTER_ADDRESSES ipAddressesIterator = NULL;
     ULONG ipAddressesBufferLength = 15000;
 
+    // Adapted from example at https://docs.microsoft.com/en-us/windows/win32/api/iphlpapi/nf-iphlpapi-getadaptersaddresses
+
     for (int attempts = 0; attempts < 3; ++attempts)
     {
         ipAddresses = (IP_ADAPTER_ADDRESSES *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, ipAddressesBufferLength);
