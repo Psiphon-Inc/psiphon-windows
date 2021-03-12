@@ -24,8 +24,8 @@
 // If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
 // set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
-// We only support Windows XP and later because we use L2TP/IPSec PSK and that is not supported
+// We only support Windows Vista and later because we use inet_ntop and that is not supported
 // on lower versions.
-#define _WIN32_WINNT 0x0501 
+#define _WIN32_WINNT 0x0600
 
 #include <SDKDDKVer.h>

@@ -472,6 +472,7 @@
         VPN: 0,
         LocalHttpProxyPort: 7771,
         LocalSocksProxyPort: 7770,
+        ExposeLocalProxiesToLAN: 1,
         SkipUpstreamProxy: 1,
         UpstreamProxyHostname: 'upstreamhost',
         UpstreamProxyPort: 234,
@@ -487,6 +488,7 @@
           VPN: 0,
           LocalHttpProxyPort: '',
           LocalSocksProxyPort: '',
+          ExposeLocalProxiesToLAN: 0,
           SkipUpstreamProxy: 0,
           UpstreamProxyHostname: '',
           UpstreamProxyPort: '',
@@ -742,6 +744,10 @@
 
     localProxyValid(false);
 
+    if (!_.isUndefined(obj.ExposeLocalProxiesToLAN)) {
+      $('#ExposeLocalProxiesToLAN').prop('checked', !!obj.ExposeLocalProxiesToLAN);
+    }
+
     if (!_.isUndefined(obj.UpstreamProxyHostname)) {
       $('#UpstreamProxyHostname').val(obj.UpstreamProxyHostname);
     }
@@ -808,6 +814,7 @@
       DisableTimeouts: $('#DisableTimeouts').prop('checked') ? 1 : 0,
       LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
       LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
+      ExposeLocalProxiesToLAN: $('#ExposeLocalProxiesToLAN').prop('checked') ? 1 : 0,
       UpstreamProxyHostname: $('#UpstreamProxyHostname').val(),
       UpstreamProxyPort: validatePort($('#UpstreamProxyPort').val()),
       UpstreamProxyUsername: $('#UpstreamProxyUsername').val(),
@@ -978,6 +985,10 @@
 
         localProxyValid(false);
       }, this, event), 100);
+    });
+    $('#ExposeLocalProxiesToLAN').change(function () {
+      // Tell the settings pane a change was made.
+      $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
     });
   } // Returns true if the local proxy values are valid, otherwise false.
   // Shows/hides an error message as appropriate.

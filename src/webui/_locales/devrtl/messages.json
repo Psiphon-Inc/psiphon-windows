@@ -531,6 +531,18 @@
     "message": "‮Sǝʇʇıuƃs‬ ‮Ǝɹɹoɹ‬",
     "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
   },
+  "settings#expose-local-proxies-to-lan#enable-label": {
+    "message": "‮∀ʅʅoʍ‬ ‮oʇɥǝɹ‬ ‮pǝʌıɔǝs‬ ‮ou‬ ‮ʎonɹ‬ ‮uǝʇʍoɹʞ‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬",
+    "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
+  },
+  "settings#expose-local-proxies-to-lan#help-text": {
+    "message": "‮Iɟ‬ ‮ʎon‬ ‮ɥɐʌǝ‬ ‮oʇɥǝɹ‬ ‮pǝʌıɔǝs‬ ‮ou‬ ‮ʎonɹ‬ ‮uǝʇʍoɹʞ‬, ‮snɔɥ‬ ‮ɐs‬ ‮ɐ‬ ‮sɯɐɹʇ‬ ‮⊥Ʌ‬ ‮oɹ‬ ‮ƃɐɯıuƃ‬ ‮ɔousoʅǝ‬, ‮ʎon‬ ‮ɔɐu‬ ‮ɐʅʅoʍ‬ ‮ʇɥǝɯ‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝsǝ‬ ‮H⊥⊥Ԁ‬ ‮ɐup‬ ‮SOↃӼS‬ ‮dɹoxıǝs‬ ‮ʍɥıʅǝ‬ ‮Ԁsıdɥou‬ ‮ıs‬ ‮ɔouuǝɔʇǝp‬.",
+    "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
+  },
+  "settings#expose-local-proxies-to-lan#hint": {
+    "message": "<strong>‮HIN⊥‬:</strong> ‮ʎon‬ ‮sɥonʅp‬ ‮sdǝɔıɟʎ‬ ‮ɐʇ‬ ‮ʅǝɐsʇ‬ ‮ouǝ‬ ‮oɟ‬ ‮ʇɥǝ‬ ‮doɹʇ‬ ‮unɯqǝɹs‬ ‮ɐqoʌǝ‬ ‮ıu‬ ‮oɹpǝɹ‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥıs‬ ‮ɟǝɐʇnɹǝ‬. ‮⊥ɥǝ‬ ‮ɐppɹǝssǝs‬ ‮oɟ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮dɹoxıǝs‬ ‮ʍıʅʅ‬ ‮qǝ‬ ‮pısdʅɐʎǝp‬ ‮ıu‬ ‮ʇɥǝ‬ ‮ʅoƃs‬.",
+    "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
+  },
   "settings#local-proxy-ports#error-modal-body-http": {
     "message": "<p>\n‮ʎon‬ ‮ɥɐʌǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮Ԁsıdɥou‬ ‮ʇo‬ ‮nsǝ‬ ‮ɐ‬ ‮sdǝɔıɟıɔ‬ ‮ʅoɔɐʅ‬ ‮doɹʇ‬ ‮ɟoɹ‬ ‮ıʇs‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬.<br>\n‮Hoʍǝʌǝɹ‬, ‮ʇɥɐʇ‬ ‮doɹʇ‬ ‮ɐddǝɐɹs‬ ‮ʇo‬ ‮qǝ‬ ‮ɐʅɹǝɐpʎ‬ ‮ıu‬ ‮nsǝ‬ ‮ɐup‬ ‮so‬ ‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮nsǝ‬ ‮ıʇ‬.\n</p>\n<p>\n‮Ԁʅǝɐsǝ‬ ‮ɔɥɐuƃǝ‬ ‮ʇɥǝ‬ ‮ɔouɟıƃnɹǝp‬ ‮H⊥⊥Ԁ‬ ‮dɹoxʎ‬ ‮doɹʇ‬ ‮ʌɐʅnǝ‬ ‮ɐup‬ ‮ʇɹʎ‬ ‮ɐƃɐıu‬. ‮Ｍǝ‬ ‮ɹǝɔoɯɯǝupǝp‬ ‮ʇɥɐʇ‬ ‮ʎon‬ ‮ɔʅǝɐɹ‬ ‮ʇɥǝ‬ ‮ʌɐʅnǝ‬ ‮so‬ ‮ʇɥɐʇ‬ ‮Ԁsıdɥou‬ ‮ɔɐu‬ ‮ɐnʇoɯɐʇıɔɐʅʅʎ‬ ‮dıɔʞ‬ ‮ɐu‬ ‮ɐʌɐıʅɐqʅǝ‬ ‮doɹʇ‬.\n</p>",
     "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port. The word 'Psiphon' must not be translated or transliterated."

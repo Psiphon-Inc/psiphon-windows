@@ -303,11 +303,24 @@ void CoreTransport::TransportConnectHelper()
     }
 
     m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
-    my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
-
     m_systemProxySettings->SetHttpProxyPort(m_localHttpProxyPort);
     m_systemProxySettings->SetHttpsProxyPort(m_localHttpProxyPort);
-    my_print(NOT_SENSITIVE, false, _T("HTTP proxy is running on localhost port %d."), m_localHttpProxyPort);
+
+    vector<tstring> ipAddresses;
+    GetLocalIPv4Addresses(ipAddresses);
+    if (Settings::ExposeLocalProxiesToLAN() && ipAddresses.size() > 0)
+    {
+        for (const auto& ipAddress : ipAddresses)
+        {
+            my_print(SENSITIVE_FORMAT_ARGS, false, _T("SOCKS proxy is running on %s port %d."), ipAddress.c_str(), m_localSocksProxyPort);
+            my_print(SENSITIVE_FORMAT_ARGS, false, _T("HTTP proxy is running on %s port %d."), ipAddress.c_str(), m_localHttpProxyPort);
+        }
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
+        my_print(NOT_SENSITIVE, false, _T("HTTP proxy is running on localhost port %d."), m_localHttpProxyPort);
+    }
 }
 
 
