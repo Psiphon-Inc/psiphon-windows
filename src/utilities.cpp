@@ -1946,7 +1946,7 @@ void GetLocalIPv4Addresses(vector<tstring>& o_ipAddresses)
         if (!ipAddresses)
         {
             my_print(NOT_SENSITIVE, false, _T("%s - HeapAlloc failed"), __TFUNCTION__);
-            throw 0;
+            throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) ": memory allocation failed");
         }
 
         returnCode = GetAdaptersAddresses(AF_INET,
