@@ -505,11 +505,6 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
         // SENSITIVE_LOG: "address" is site user is browsing
         my_print(SENSITIVE_LOG, false, _T("Untunneled: %S"), address.c_str());
     }
-    else if (noticeType == "SplitTunnelRegion")
-    {
-        string region = data["region"].asString();
-        my_print(NOT_SENSITIVE, false, _T("Split Tunnel Region: %S"), region.c_str());
-    }
     else if (noticeType == "UpstreamProxyError")
     {
         string message = data["message"].asString();
@@ -572,6 +567,12 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
         string region = data["region"].asString();
         my_print(NOT_SENSITIVE, true, _T("Client region: %S"), region.c_str());
         psicash::Lib::_().UpdateClientRegion(region);
+
+        if (Settings::SplitTunnel())
+        {
+            // Display split tunnel region to user
+            my_print(NOT_SENSITIVE, false, _T("Split Tunnel Country: %S"), region.c_str());
+        }
     }
     else if (noticeType == "TrafficRateLimits")
     {
