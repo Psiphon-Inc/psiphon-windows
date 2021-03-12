@@ -33,6 +33,8 @@
 #include "diagnostic_info.h"
 #include "webbrowser.h"
 #include <iomanip>
+#include <iphlpapi.h>
+#include <ws2tcpip.h>
 
 #pragma warning(push, 0)
 #pragma warning(disable: 4244)
@@ -1924,4 +1926,73 @@ float ConvertDpiToScaling(UINT dpi)
 {
     const UINT defaultDPI = 96;
     return dpi / (float)defaultDPI;
+}
+
+/*
+Network Interface Utilities
+*/
+
+void GetLocalIPv4Addresses(vector<tstring>& o_ipAddresses)
+{
+    DWORD returnCode = ERROR_SUCCESS;
+    PIP_ADAPTER_ADDRESSES ipAddresses = NULL;
+    PIP_ADAPTER_ADDRESSES ipAddressesIterator = NULL;
+    ULONG ipAddressesBufferLength = 15000;
+
+    for (int attempts = 0; attempts < 3; ++attempts)
+    {
+        ipAddresses = (IP_ADAPTER_ADDRESSES *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, ipAddressesBufferLength);
+
+        if (!ipAddresses)
+        {
+            my_print(NOT_SENSITIVE, false, _T("%s - HeapAlloc failed"), __TFUNCTION__);
+            throw 0;
+        }
+
+        returnCode = GetAdaptersAddresses(AF_INET,
+            GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER,
+            NULL, ipAddresses, &ipAddressesBufferLength);
+
+        if (returnCode == ERROR_BUFFER_OVERFLOW)
+        {
+            HeapFree(GetProcessHeap(), 0, ipAddresses);
+            ipAddresses = NULL;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (returnCode == ERROR_SUCCESS)
+    {
+        ipAddressesIterator = ipAddresses;
+        while (ipAddressesIterator)
+        {
+            for (PIP_ADAPTER_UNICAST_ADDRESS unicastAddress = ipAddressesIterator->FirstUnicastAddress;
+                unicastAddress != NULL; unicastAddress = unicastAddress->Next)
+            {
+                if (unicastAddress->Address.lpSockaddr->sa_family == AF_INET)
+                {
+                    sockaddr_in *sin = (sockaddr_in *)(unicastAddress->Address.lpSockaddr);
+                    char ipv4Address[INET_ADDRSTRLEN] = {};
+                    if (inet_ntop(AF_INET, &(sin->sin_addr), ipv4Address, sizeof(ipv4Address)))
+                    {
+                        o_ipAddresses.push_back(UTF8ToWString(ipv4Address));
+                    }
+                }
+            }
+            ipAddressesIterator = ipAddressesIterator->Next;
+        }
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - GetAdaptersAddresses failed (%d)"), __TFUNCTION__, returnCode);
+    }
+
+    if (ipAddresses)
+    {
+        HeapFree(GetProcessHeap(), 0, ipAddresses);
+        ipAddresses = NULL;
+    }
 }
