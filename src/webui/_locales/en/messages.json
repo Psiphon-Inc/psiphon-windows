@@ -320,7 +320,7 @@
     "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
   },
   "settings#expose-local-proxies-to-lan#hint": {
-    "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature.",
+    "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
     "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
   },
   "settings#expose-local-proxies-to-lan#enable-label": {

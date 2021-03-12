@@ -540,7 +540,7 @@
     "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
   },
   "settings#expose-local-proxies-to-lan#hint": {
-    "message": "[<strong>ĦĪīȠŦ:</strong> Ẏǿǿŭŭ şħǿǿŭŭŀḓ şƥḗḗƈīīƒẏ ȧȧŧ ŀḗḗȧȧşŧ ǿǿƞḗḗ ǿǿƒ ŧħḗḗ ƥǿǿřŧ ƞŭŭḿƀḗḗřş ȧȧƀǿǿṽḗḗ īīƞ ǿǿřḓḗḗř ŧǿǿ ŭŭşḗḗ ŧħīīş ƒḗḗȧȧŧŭŭřḗḗ.]",
+    "message": "[<strong>ĦĪīȠŦ:</strong> Ẏǿǿŭŭ şħǿǿŭŭŀḓ şƥḗḗƈīīƒẏ ȧȧŧ ŀḗḗȧȧşŧ ǿǿƞḗḗ ǿǿƒ ŧħḗḗ ƥǿǿřŧ ƞŭŭḿƀḗḗřş ȧȧƀǿǿṽḗḗ īīƞ ǿǿřḓḗḗř ŧǿǿ ŭŭşḗḗ ŧħīīş ƒḗḗȧȧŧŭŭřḗḗ. Ŧħḗḗ ȧȧḓḓřḗḗşşḗḗş ǿǿƒ ŧħḗḗ ŀǿǿƈȧȧŀ ƥřǿǿẋīīḗḗş ẇīīŀŀ ƀḗḗ ḓīīşƥŀȧȧẏḗḗḓ īīƞ ŧħḗḗ ŀǿǿɠş.]",
     "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
   },
   "settings#local-proxy-ports#error-modal-body-http": {
