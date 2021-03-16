@@ -299,3 +299,10 @@ HRESULT GetDpiScalingForMonitorFromPoint(POINT pt, float& o_scale);
 
 // Helper for converting DPI value to scaling value.
 float ConvertDpiToScaling(UINT dpi);
+
+
+/*
+Network Interface Utilities
+*/
+
+void GetLocalIPv4Addresses(vector<tstring>& o_ipAddresses);

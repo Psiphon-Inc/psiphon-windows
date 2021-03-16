@@ -303,11 +303,24 @@ void CoreTransport::TransportConnectHelper()
     }
 
     m_systemProxySettings->SetSocksProxyPort(m_localSocksProxyPort);
-    my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
-
     m_systemProxySettings->SetHttpProxyPort(m_localHttpProxyPort);
     m_systemProxySettings->SetHttpsProxyPort(m_localHttpProxyPort);
-    my_print(NOT_SENSITIVE, false, _T("HTTP proxy is running on localhost port %d."), m_localHttpProxyPort);
+
+    vector<tstring> ipAddresses;
+    GetLocalIPv4Addresses(ipAddresses);
+    if (Settings::ExposeLocalProxiesToLAN() && ipAddresses.size() > 0)
+    {
+        for (const auto& ipAddress : ipAddresses)
+        {
+            my_print(SENSITIVE_FORMAT_ARGS, false, _T("SOCKS proxy is running on %s port %d."), ipAddress.c_str(), m_localSocksProxyPort);
+            my_print(SENSITIVE_FORMAT_ARGS, false, _T("HTTP proxy is running on %s port %d."), ipAddress.c_str(), m_localHttpProxyPort);
+        }
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, false, _T("SOCKS proxy is running on localhost port %d."), m_localSocksProxyPort);
+        my_print(NOT_SENSITIVE, false, _T("HTTP proxy is running on localhost port %d."), m_localHttpProxyPort);
+    }
 }
 
 
@@ -505,11 +518,6 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
         // SENSITIVE_LOG: "address" is site user is browsing
         my_print(SENSITIVE_LOG, false, _T("Untunneled: %S"), address.c_str());
     }
-    else if (noticeType == "SplitTunnelRegion")
-    {
-        string region = data["region"].asString();
-        my_print(NOT_SENSITIVE, false, _T("Split Tunnel Region: %S"), region.c_str());
-    }
     else if (noticeType == "UpstreamProxyError")
     {
         string message = data["message"].asString();
@@ -572,6 +580,12 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
         string region = data["region"].asString();
         my_print(NOT_SENSITIVE, true, _T("Client region: %S"), region.c_str());
         psicash::Lib::_().UpdateClientRegion(region);
+
+        if (Settings::SplitTunnel())
+        {
+            // Display split tunnel region to user
+            my_print(NOT_SENSITIVE, false, _T("Split Tunnel Country: %S"), region.c_str());
+        }
     }
     else if (noticeType == "TrafficRateLimits")
     {

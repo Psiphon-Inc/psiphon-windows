@@ -41,6 +41,8 @@ namespace Settings
     // Returns 0 if port should be chosen automatically.
     unsigned int LocalSocksProxyPort();
 
+    bool ExposeLocalProxiesToLAN();
+
     bool SkipUpstreamProxy();
     string UpstreamProxyType();
     string UpstreamProxyHostname();

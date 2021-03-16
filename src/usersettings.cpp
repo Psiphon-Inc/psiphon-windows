@@ -46,6 +46,9 @@
 #define SOCKS_PROXY_PORT_NAME           "LocalSOCKSProxyPort"
 #define SOCKS_PROXY_PORT_DEFAULT        NULL_PORT
 
+#define EXPOSE_LOCAL_PROXIES_TO_LAN_NAME    "ExposeLocalProxiesToLAN"
+#define EXPOSE_LOCAL_PROXIES_TO_LAN_DEFAULT FALSE
+
 #define EGRESS_REGION_NAME              "EgressRegion"
 #define EGRESS_REGION_DEFAULT           ""
 
@@ -190,6 +193,9 @@ void Settings::ToJson(Json::Value& o_json)
       o_json["LocalSocksProxyPort"] = Settings::LocalSocksProxyPort();
       o_json["defaults"]["LocalSocksProxyPort"] = SOCKS_PROXY_PORT_DEFAULT;
 
+      o_json["ExposeLocalProxiesToLAN"] = Settings::ExposeLocalProxiesToLAN() ? TRUE : FALSE;
+      o_json["defaults"]["ExposeLocalProxiesToLAN"] = EXPOSE_LOCAL_PROXIES_TO_LAN_DEFAULT;
+
       o_json["SkipUpstreamProxy"] = Settings::SkipUpstreamProxy() ? TRUE : FALSE;
       o_json["defaults"]["SkipUpstreamProxy"] = SKIP_UPSTREAM_PROXY_DEFAULT;
       o_json["UpstreamProxyHostname"] = Settings::UpstreamProxyHostname();
@@ -262,6 +268,10 @@ bool Settings::FromJson(
         DWORD socksPort = json.get("LocalSocksProxyPort", SOCKS_PROXY_PORT_DEFAULT).asUInt();
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || socksPort != Settings::LocalSocksProxyPort();
         WriteRegistryDwordValue(SOCKS_PROXY_PORT_NAME, socksPort);
+
+        BOOL exposeLocalProxiesToLAN = json.get("ExposeLocalProxiesToLAN", EXPOSE_LOCAL_PROXIES_TO_LAN_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!exposeLocalProxiesToLAN != Settings::ExposeLocalProxiesToLAN();
+        WriteRegistryDwordValue(EXPOSE_LOCAL_PROXIES_TO_LAN_NAME, exposeLocalProxiesToLAN);
 
         string upstreamProxyUsername = json.get("UpstreamProxyUsername", UPSTREAM_PROXY_USERNAME_DEFAULT).asString();
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || upstreamProxyUsername != Settings::UpstreamProxyUsername();
@@ -363,6 +373,11 @@ unsigned int Settings::LocalSocksProxyPort()
         port = SOCKS_PROXY_PORT_DEFAULT;
     }
     return (unsigned int)port;
+}
+
+bool Settings::ExposeLocalProxiesToLAN()
+{
+    return !!GetSettingDword(EXPOSE_LOCAL_PROXIES_TO_LAN_NAME, EXPOSE_LOCAL_PROXIES_TO_LAN_DEFAULT);
 }
 
 string Settings::UpstreamProxyType()

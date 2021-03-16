@@ -1009,6 +1009,35 @@
                       </div>
                     </fieldset>
                   </form>
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <p data-i18n="settings#expose-local-proxies-to-lan#help-text">
+                        If you have other devices on your network, such as a
+                        smart TV or gaming console, you can allow them to use
+                        these HTTP and SOCKS proxies while Psiphon is connected.
+                      </p>
+                      <p data-i18n="[html]settings#expose-local-proxies-to-lan#hint">
+                        <strong>HINT:</strong> You should specify at least one of the port numbers
+                        above in order to use this feature. The addresses of the local proxies will
+                        be displayed in the logs.
+                      </p>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="ExposeLocalProxiesToLAN"/>
+                          <label for="ExposeLocalProxiesToLAN">
+                            <span data-i18n="settings#expose-local-proxies-to-lan#enable-label">
+                              Allow other devices on your network to use the local Psiphon proxies
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with L2TP/IPSec mode.)
+                        </small>
+                      </span>
+                    </fieldset>
+                  </form>
                 </div>
               </div>
             </div>
