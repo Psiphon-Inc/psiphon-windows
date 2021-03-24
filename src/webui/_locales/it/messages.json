@@ -311,6 +311,18 @@
         "message": "<p>\nYou have configured Psiphon to use a specific local port for its SOCKS proxy.<br>\nHowever, that port appears to be already in use and so Psiphon cannot use it.\n</p>\n<p>\nPlease change the configured SOCKS proxy port value and try again. We recommended that you clear the value so that Psiphon can automatically pick an available port.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
+    "settings#expose-local-proxies-to-lan#help-text": {
+        "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+        "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
+    },
+    "settings#expose-local-proxies-to-lan#hint": {
+        "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
+        "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
+    },
+    "settings#expose-local-proxies-to-lan#enable-label": {
+        "message": "Allow other devices on your network to use the local Psiphon proxies",
+        "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
+    },
     "settings#upstream-proxy#heading": {
         "message": "Proxy di transito",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
