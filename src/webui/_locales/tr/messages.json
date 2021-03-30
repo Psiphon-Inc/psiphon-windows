@@ -251,6 +251,54 @@
         "message": "Avustralya",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
+    "settings#egress-region#select-ar": {
+        "message": "Arjantin",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Argentina will be used."
+    },
+    "settings#egress-region#select-br": {
+        "message": "Brezilya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Brazil will be used."
+    },
+    "settings#egress-region#select-cl": {
+        "message": "Şili",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Chile will be used."
+    },
+    "settings#egress-region#select-fi": {
+        "message": "Finlandiya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Finland will be used."
+    },
+    "settings#egress-region#select-is": {
+        "message": "Izlanda",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Iceland will be used."
+    },
+    "settings#egress-region#select-ie": {
+        "message": "Irlanda",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ireland will be used."
+    },
+    "settings#egress-region#select-ke": {
+        "message": "Kenya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Kenya will be used."
+    },
+    "settings#egress-region#select-mx": {
+        "message": "Meksika",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Mexico will be used."
+    },
+    "settings#egress-region#select-za": {
+        "message": "Güney Afrika",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
+    },
+    "settings#egress-region#select-kr": {
+        "message": "Kore",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
+    },
+    "settings#egress-region#select-tw": {
+        "message": "Tayvan",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Taiwan will be used."
+    },
+    "settings#egress-region#select-ae": {
+        "message": "Birleşik Arap Emirlikleri",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
+    },
     "settings#egress-region#description": {
         "message": "Bir çok ülkede ve bölgede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir bölgedeki Psiphon sunucusunuı seçmeniz daha iyi ağ bağlantısı sağlar. Ancak belirli bir ülkedeki web sitesi ve hizmetlerine erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -312,15 +360,15 @@
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#expose-local-proxies-to-lan#help-text": {
-        "message": "Ağınızda, akıllı TV veya oyun konsolu gibi başka aygıtlar varsa, Psiphon bağlı iken bu HTTP ve SOCKS vekillerini kullanmalarına izin verecek şekilde ayarlayabilirsiniz.",
+        "message": "Ağınızda, akıllı TV veya oyun konsolu gibi başka aygıtlar varsa, Psiphon bağlı olduğunda bu HTTP ve SOCKS vekil sunucularını kullanmalarına izin verebilirsiniz.",
         "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
     },
     "settings#expose-local-proxies-to-lan#hint": {
-        "message": "<strong>İPUCU:</strong> Bu özelliği kullanmak için yukarıda en azından bir adet port numarası belirtmeniz gerekiyor. Yerel vekillerin adresleri günlüklerde görüntülenecektir.",
+        "message": "<strong>İPUCU:</strong> Bu özelliği kullanabilmek için yukarıda en az bir kapı numarası belirtmelisiniz. Yerel vekil sunucuların adresleri günlüklerde görüntülenir.",
         "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#expose-local-proxies-to-lan#enable-label": {
-        "message": "Ağınızdaki diğer aygıtların Psiphon vekillerini kullanmalarına izin ver",
+        "message": "Ağınızdaki diğer aygıtların Psiphon vekil sunucularını kullanmasına izin verin",
         "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
