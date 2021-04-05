@@ -288,7 +288,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
     },
     "settings#egress-region#select-kr": {
-        "message": "Korea",
+        "message": "Corea",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
     },
     "settings#egress-region#select-tw": {
@@ -360,15 +360,15 @@
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#expose-local-proxies-to-lan#help-text": {
-        "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+        "message": "Si tienes otros dispositivos en tu red, tales como un TV inteligente o una consola de juegos, puedes permitirles usar estos proxies HTTP y SOCKS mientras Psiphon esrá conectado.",
         "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
     },
     "settings#expose-local-proxies-to-lan#hint": {
-        "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
+        "message": "<strong>PISTA:</strong> Deberías especificar al menos uno de los números de puerto de arriba para poder usar esta característica. Las direcciones de los proxies locales serán mostradas en los registros.",
         "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#expose-local-proxies-to-lan#enable-label": {
-        "message": "Allow other devices on your network to use the local Psiphon proxies",
+        "message": "Permitir que otros dispositivos en tu red usen los proxies Psiphon locales",
         "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
