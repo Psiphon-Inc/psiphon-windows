@@ -205,6 +205,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
         if (Settings::ExposeLocalProxiesToLAN())
         {
             config["ListenInterface"] = "any";
+            config["ClientFeatures"] = LoadJSONArray("[\"listen-interface-any\"]");
             my_print(NOT_SENSITIVE, true, _T("Setting ListenInterface to any"));
         }
 

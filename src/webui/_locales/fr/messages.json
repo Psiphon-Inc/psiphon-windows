@@ -251,6 +251,54 @@
         "message": "Australie",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
+    "settings#egress-region#select-ar": {
+        "message": "Argentine",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Argentina will be used."
+    },
+    "settings#egress-region#select-br": {
+        "message": "Brésil",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Brazil will be used."
+    },
+    "settings#egress-region#select-cl": {
+        "message": "Chili",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Chile will be used."
+    },
+    "settings#egress-region#select-fi": {
+        "message": "Finlande",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Finland will be used."
+    },
+    "settings#egress-region#select-is": {
+        "message": "Islande",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Iceland will be used."
+    },
+    "settings#egress-region#select-ie": {
+        "message": "Irlande",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ireland will be used."
+    },
+    "settings#egress-region#select-ke": {
+        "message": "Kenya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Kenya will be used."
+    },
+    "settings#egress-region#select-mx": {
+        "message": "Mexique",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Mexico will be used."
+    },
+    "settings#egress-region#select-za": {
+        "message": "Afrique du Sud",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
+    },
+    "settings#egress-region#select-kr": {
+        "message": "Corée",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
+    },
+    "settings#egress-region#select-tw": {
+        "message": "Taïwan",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Taiwan will be used."
+    },
+    "settings#egress-region#select-ae": {
+        "message": "Émirats arabes unis",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon a des serveurs dans de nombreux pays et régions différents. L’utilisation d’un serveur Psiphon dans une région proche de votre pays de résidence fournira habituellement une meilleure connexion réseau, mais vous pourriez souhaiter accéder à des sites Web et des services comme si vous étiez virtuellement dans un pays ou une région particuliers.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -310,6 +358,18 @@
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nVous avez configuré Psiphon pour qu’il utilise un port local spécifique pour son serveur mandataire SOCKS.<br>\nCependant, il semble que ce port est déjà utilisé et donc, Psiphon ne peut pas s’en servir.\n</p>\n<p>\nVeuillez changer la valeur de port de mandataire SOCKS configurée et réessayer. Nous vous recommandons de supprimer la valeur afin que Psiphon puisse choisir automatiquement un port disponible.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
+    },
+    "settings#expose-local-proxies-to-lan#help-text": {
+        "message": "Si vous avez d’autres appareils sur votre réseau tels qu’une télé intelligente ou une console de jeux, vous pouvez les autoriser à utiliser ces mandataires HTTP et SOCKS pendant que Psiphon est connecté.",
+        "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
+    },
+    "settings#expose-local-proxies-to-lan#hint": {
+        "message": "<strong>CONSEIL :</strong> Vous devriez indiquer au moins un des numéros de port ci-dessus afin d’utiliser cette fonction. Les adresses des mandataires locaux apparaîtront dans les journaux.",
+        "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
+    },
+    "settings#expose-local-proxies-to-lan#enable-label": {
+        "message": "Permettre à d’autres appareils sur votre réseau d’utiliser les mandataires locaux de Psiphon",
+        "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
         "message": "Mandataire ascendant",

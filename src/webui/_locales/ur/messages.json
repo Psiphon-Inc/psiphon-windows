@@ -251,6 +251,54 @@
         "message": "Australia",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
+    "settings#egress-region#select-ar": {
+        "message": "Argentina",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Argentina will be used."
+    },
+    "settings#egress-region#select-br": {
+        "message": "Brazil",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Brazil will be used."
+    },
+    "settings#egress-region#select-cl": {
+        "message": "Chile",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Chile will be used."
+    },
+    "settings#egress-region#select-fi": {
+        "message": "Finland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Finland will be used."
+    },
+    "settings#egress-region#select-is": {
+        "message": "Iceland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Iceland will be used."
+    },
+    "settings#egress-region#select-ie": {
+        "message": "Ireland",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ireland will be used."
+    },
+    "settings#egress-region#select-ke": {
+        "message": "Kenya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Kenya will be used."
+    },
+    "settings#egress-region#select-mx": {
+        "message": "Mexico",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Mexico will be used."
+    },
+    "settings#egress-region#select-za": {
+        "message": "South Africa",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
+    },
+    "settings#egress-region#select-kr": {
+        "message": "Korea",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
+    },
+    "settings#egress-region#select-tw": {
+        "message": "Taiwan",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Taiwan will be used."
+    },
+    "settings#egress-region#select-ae": {
+        "message": "United Arab Emirates",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -310,6 +358,18 @@
     "settings#local-proxy-ports#error-modal-body-socks": {
         "message": "<p>\nآپ نے Psiphon (سائفن) کو اس کے SOCKS پراکسی کے لئے ایک مخصوص لوکل پورٹ کا استعمال کرنے کے لئے تشکیل دیا ہے۔<br>\nتاہم ، وہ پورٹ پہلے ہی استعمال میں ہے اور اس لئے Psiphon (سائفن) اسے استعمال نہیں کرسکتی ہے۔\n </p>\n<p>\nبراہ کرم تشکیل شدہ SOCKS پراکسی پورٹ ویلیو کو تبدیل کریں اور دوبارہ کوشش کریں۔ ہمارا مشورہ ہے کہ آپ ویلیو کو صاف کریں تاکہ Psiphon (سائفن) خود بخود دستیاب پورٹ منتخب کرسکے۔\n </p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
+    },
+    "settings#expose-local-proxies-to-lan#help-text": {
+        "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+        "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
+    },
+    "settings#expose-local-proxies-to-lan#hint": {
+        "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
+        "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
+    },
+    "settings#expose-local-proxies-to-lan#enable-label": {
+        "message": "Allow other devices on your network to use the local Psiphon proxies",
+        "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
         "message": "اپ سٹریم پراکسی",
