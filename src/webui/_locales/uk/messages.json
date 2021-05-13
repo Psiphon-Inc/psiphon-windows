@@ -68,7 +68,7 @@
         "description": "Text on the big connection button telling the user that if they click it, Psiphon will start trying to connect to the network. This is shown to the user while Psiphon is disconnected."
     },
     "connection#egress-region-combo-label": {
-        "message": "Select server region",
+        "message": "Оберіть країну сервера",
         "description": "The label for the 'Psiphon Server Region' combo box control located on the connection tab."
     },
     "settings#error-alert": {
@@ -112,7 +112,7 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "message": "Якщо активовано, запити зроблені до сервері вашої домашньої країні не будуть тунельовані через Psiphon.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#split-tunnel#reason": {
@@ -244,7 +244,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-rs": {
-        "message": "Serbia",
+        "message": "Сербія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Serbia will be used."
     },
     "settings#egress-region#select-au": {
@@ -264,15 +264,15 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Chile will be used."
     },
     "settings#egress-region#select-fi": {
-        "message": "Finland",
+        "message": "Фінляндія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Finland will be used."
     },
     "settings#egress-region#select-is": {
-        "message": "Iceland",
+        "message": "Ісляндія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Iceland will be used."
     },
     "settings#egress-region#select-ie": {
-        "message": "Ireland",
+        "message": "Ірландія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ireland will be used."
     },
     "settings#egress-region#select-ke": {
@@ -284,15 +284,15 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Mexico will be used."
     },
     "settings#egress-region#select-za": {
-        "message": "South Africa",
+        "message": "Південна Африка",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
     },
     "settings#egress-region#select-kr": {
-        "message": "Korea",
+        "message": "Корея",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
     },
     "settings#egress-region#select-tw": {
-        "message": "Taiwan",
+        "message": "Тайвань",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Taiwan will be used."
     },
     "settings#egress-region#select-ae": {
@@ -300,7 +300,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
+        "message": "Psiphon має сервери в багатьох різних країнах та регіонах. Використання Psiphon сервер в регіоні що ближче до вашої домівки зазвичай дозволяє забезпечити кращий з'єднання, але ви будете мати доступ до сайтів та серверів наче ви віртуально в особливий країні чи регіоні.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
@@ -616,7 +616,7 @@
         "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
-        "message": "PsiCash transaction error",
+        "message": "PsiCash помилка передачі",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-error-body": {
@@ -632,7 +632,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InsufficientBalance-title": {
-        "message": "Insufficient PsiCash balance",
+        "message": "Недостатній баланс PsiCash",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InsufficientBalance-body": {
@@ -680,11 +680,11 @@
         "description": "When the user has no PsiCash available, this message will be shown on the disabled 'Buy Speed Boost' button. This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-buypsi": {
-        "message": "Buy PsiCash",
+        "message": "Купити PsiCash",
         "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user has no PsiCash at all. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-buymorepsi": {
-        "message": "Buy more PsiCash",
+        "message": "Купити більше PsiCash",
         "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user already has some PsiCash, but may wish to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-nsfbalance-buttontext": {
@@ -712,7 +712,7 @@
         "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
     },
     "psicash#mustconnect-modal#title": {
-        "message": "Psiphon Connection Required",
+        "message": "Psiphon з'єднання необхідне",
         "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
     },
     "psicash#mustconnect-modal#body": {
@@ -720,7 +720,7 @@
         "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
     },
     "psicash#init-error-title": {
-        "message": "PsiCash initialization error",
+        "message": "PsiCash помилка ініціалізації",
         "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-unrecovered": {
@@ -732,11 +732,11 @@
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#psiphon-speed": {
-        "message": "Psiphon<br>Speed",
+        "message": "Psiphon Швидкість",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "notice#disallowed-traffic-alert-title": {
-        "message": "Upgrade your Psiphon connection",
+        "message": "оновлення вашого Psiphon з'єднання",
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
@@ -744,7 +744,7 @@
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
-        "message": "Apps not working?",
+        "message": "Застосунки не працюють?",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
@@ -752,7 +752,7 @@
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "Disallowed Traffic Alert",
+        "message": "Попередження про недозволений трафік  ",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
@@ -760,7 +760,7 @@
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {
-        "message": "Disable disallowed traffic alerts",
+        "message": "заборонити попередження про недозволений трафік ",
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "banner#sponsored-by": {

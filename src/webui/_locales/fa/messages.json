@@ -316,7 +316,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Best Performance” choice.",
+        "message": "شما Psiphon (سایفون) را برای استفاده از سرور منطقه مشخصی تنظیم کرده‌اید.<br>\nهرچند، این منطقه دیگر در دسترس نیست.<br>\nشما باید منطقه جدیدی را انتخاب کرده و یا منطقه پیشفرض گزینه‌ی \"بهترین عملکرد\" را تغییر دهید.",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -360,15 +360,15 @@
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#expose-local-proxies-to-lan#help-text": {
-        "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+        "message": "اگر دستگاه دیگری مانند تلویزیون هوشمند یا کنسول بازی بر روی شبکه خود دارید، می‌توانید به آن‌ها اجازه استفاده از این پروکسی‌های HTTP و SOCKS را در هنگام اتصال به Psiphon (سایفون) بدهید.",
         "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
     },
     "settings#expose-local-proxies-to-lan#hint": {
-        "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
+        "message": "<strong>توجه:</strong> برای استفاده از این ویژگی، شما باید حداقل یکی از شماره درگاه‌های بالا را تعیین کنید. آدرس‌های پروکسی‌های محلی در ثبت وقایع نمایش می‌یابد.",
         "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#expose-local-proxies-to-lan#enable-label": {
-        "message": "Allow other devices on your network to use the local Psiphon proxies",
+        "message": "به سایر دستگاه‌های متصل به شبکه خود، اجازه استفاده از پروکسی‌های محلی Psiphon (سایفون) را بدهید",
         "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
@@ -412,11 +412,11 @@
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "settings#upstream-proxy#set-hostname-error-msg": {
-        "message": "You must provide a Hostname, or leave all Upstream Proxy fields blank for automatic selection.",
+        "message": "شما باید یک نام میزبان مهیا کنید و یا فیلد پروکسی بالادست را برای انتخاب خودکار خالی بگذارید.",
         "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#upstream-proxy#set-username-error-msg": {
-        "message": "You must provide a Username if you are setting Password or Domain; or leave all authentication fields blank for no authentication.",
+        "message": "اگر قصد تنظیم رمزعبور و یا دامنه را دارید، باید یک نام کاربری ارائه دهید و یا تمامی فیلدهای احراز هویت را خالی بگذارید. خالی به معنی عدم احراز هویت.",
         "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
@@ -740,7 +740,7 @@
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+        "message": "<p>اپ‌هایتان کار نمی‌کنند؟</p>\n<p>بعضی از ترافیک‌های اینترنت بدون فعال‌سازی «اسپید بوست» پشتیبانی نمی‌شوند. «اسپید بوست» را با PsiCash فعال کنید تا تمام پتانسیل Psiphon (سایفون) را تجربه کنید.</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
@@ -748,19 +748,19 @@
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
-        "message": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+        "message": "«اسپید بوست» را فعال کنید تا تمام پتانسیل Psiphon (سایفون) را تجربه کنید.",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "Disallowed Traffic Alert",
+        "message": "هشدار ترافیک غیرمجاز",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
-        "message": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+        "message": "بعضی از ترافیک‌های اینترنت بدون فعال‌سازی «اسپید بوست» پشتیبانی نمی‌شوند. هنگام مواجه با چنین ترافیک‌هایی، هشداری نمایش داده می‌شود. (فعال‌سازی مجدد نیازمند اتصال مجدد است.)",
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {
-        "message": "Disable disallowed traffic alerts",
+        "message": "غیرفعال‌سازی هشدار ترافیک غیرمجاز",
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "banner#sponsored-by": {
