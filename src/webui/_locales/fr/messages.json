@@ -620,7 +620,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-error-body": {
-        "message": "Échec inattendu de votre tentative de transaction PsiCash.",
+        "message": "Votre tentative de transaction PsiCash a échoué de manière inattendue.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ExistingTransaction-title": {
@@ -659,25 +659,25 @@
         "message": "Les jetons PsiCash sont invalides",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-body": {
+    "psicash#transaction-InvalidTokens-body-tracker": {
         "message": "Vos jetons PsiCash sont invalides. Essayez de redémarrer l’appli. Si cela ne suffit pas, vous devrez <a href=\"https://psiphon3.com/fr/faq.html#clear-windows-data\"> vider votre cache local.</a>.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
+    "psicash#transaction-InvalidTokens-body-account": {
+        "message": "Vos jetons PsiCash ont expiré. Connectez-vous à votre compte et réessayez.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    },
     "psicash#transaction-ServerError-title": {
-        "message": "Erreur du serveur PsiCash",
+        "message": "Erreur du serveur PsiCash",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-body": {
-        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez réessayer votre achat plus tard.",
+        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative d’achat. Veuillez réessayer votre achat plus tard.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-speedboost-active": {
         "message": "La Survitesse est active pendant %s",
         "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
-    },
-    "psicash#ui-zerobalance-title": {
-        "message": "Avez-vous besoin de plus de vitesse ?",
-        "description": "When the user has no PsiCash available, this message will be shown on the disabled 'Buy Speed Boost' button. This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-buypsi": {
         "message": "Acheter du PsiCash",
@@ -691,21 +691,173 @@
         "message": "Requis pour la Survitesse",
         "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
-    "psicash#ui-enoughbalance-buttontext": {
-        "message": "Lancer la Survitesse",
-        "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy an hour of Speed Boost. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    "psicash#ui-speedboost-button": {
+        "message": "Survitesse",
+        "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy Speed Boost. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#1-hour": {
         "message": "1 heure",
-        "description": "Label on a button. Clicking this button will buy 1 hour of speed boost."
+        "description": "Label on a button. Clicking this button will buy 1 hour of Speed Boost."
     },
     "psicash#1-day": {
         "message": "1  jour",
-        "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of speed boost."
+        "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
+    },
+    "psicash#1-week": {
+        "message": "1 semaine",
+        "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
+    },
+    "psicash#1-month": {
+        "message": "1 mois",
+        "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
         "message": "Lancement de la Survitesse…",
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#pane-create-account": {
+        "message": "Créez un compte pour protéger votre PsiCash !",
+        "description": "Text for a link displayed when the user does not have a PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language. It encourages them to make one. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#pane-balance-header": {
+        "message": "Solde :",
+        "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
+    },
+    "psicash#pane-log-in": {
+        "message": "Connectez-vous !",
+        "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
+    },
+    "psicash#pane-log-out": {
+        "message": "Déconnexion",
+        "description": "Text on a button that will log the user out of their PsiCash account."
+    },
+    "psicash#pane-manage-web": {
+        "message": "Gérer sur le Web",
+        "description": "Text for a link to a web site where users can manage their PsiCash account."
+    },
+    "psicash#pane-create-account-plea": {
+        "message": "La création d’un compte PsiCash vous aidera à conserver votre PsiCash si vous effacez la mémoire de l’appli ou si vous utilisez Psiphon sur un autre appareil. <a href=\"https://psiphon.ca/faq.html#psicash-account\">Apprenez-en davantage.</a>",
+        "description": "Text shown below the PsiCash balance when the user does not have a PsiCash account. 'Learn more' is a link to an FAQ entry explaining the benefits of creating an account. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#pane-l2tp-incompatible": {
+        "message": "La Survitesse ne peut pas être utilisée si Psiphon est connecté en <a href=\"#\">mode de transport L2TP/IPSec</a>.",
+        "description": "A message shown when L2TP/IPSec mode is enabled in Psiphon. Speed Boost cannot be used in this mode."
+    },
+    "psicash#pane-must-log-in": {
+        "message": "Vous devez vous connecter pour utiliser du PsiCash.",
+        "description": "Message shown when the user was logged in with an account and then logged out. It's telling the user that they have to log in again. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#pane-create-new-account": {
+        "message": "Créer un nouveau compte",
+        "description": "Text on button that user can click to create a new account (opens an external web page)."
+    },
+    "psicash#pane-speed-port-limits-head": {
+        "message": "Limites de vitesse et de ports",
+        "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
+    },
+    "psicash#pane-speed-port-limits-body": {
+        "message": "Si la Survitesse n’est pas activée, votre vitesse est limitée et une partie du trafic Internet n’est pas prise en charge. Activez la Survitesse avec du PsiCash pour libérer le plein potentiel de votre expérience avec Psiphon.",
+        "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#pane-speed-boost-cta": {
+        "message": "Libérer le plein potentiel de Psiphon grâce à la Survitesse.",
+        "description": "Text encouraging the user to purchase Speed Boost. 'Unleash' can translated to something like 'unlock', 'release', 'enable', 'amplify', or generally 'make a lot better'. 'Psiphon' must not be translated/transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#pane-need-more-psicash-header": {
+        "message": "Il vous faut plus de PsiCash !",
+        "description": "Header for a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#pane-need-more-psicash-body": {
+        "message": "Afin d’activer la Survitesse, vous devez acheter plus de PsiCash.",
+        "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#pane-need-psicash-visit-store": {
+        "message": "Besoin de PsiCash ? Visitez notre magasin pour en acheter plus.",
+        "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#overlay-logging-in": {
+        "message": "Connexion…",
+        "description": "Text on a screen shown while the user's log-in request is in progress."
+    },
+    "psicash#overlay-logging-out": {
+        "message": "Déconnexion…",
+        "description": "Text on a screen shown while the user's log-out request is in progress."
+    },
+    "psicash#modal-create-psicash-account-header": {
+        "message": "Créer un compte PsiCash",
+        "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#modal-create-psicash-account-body": {
+        "message": "Nous vous suggérons fortement de créer un compte PsiCash avant d’acheter du PsiCash. Un compte vous permet de partager votre solde entre appareils et de protéger vos achats.",
+        "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#modal-create-psicash-account-create-button": {
+        "message": "Créer un compte ou me connecter",
+        "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
+    },
+    "psicash#modal-create-psicash-account-continue-button": {
+        "message": "Poursuivre sans compte",
+        "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
+    },
+    "psicash#modal-psicash-logout-offline-header": {
+        "message": "Déconnexion du compte PsiCash",
+        "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#modal-psicash-logout-offline-body": {
+        "message": "Être connecté au réseau Psiphon permet une déconnexion plus sûre du compte PsiCash. Voulez-vous vous connecter avant de vous déconnecter ?",
+        "description": "Body of a modal dialog that appears when the user tries to log out of thier PsiCash account while not currently connected to the Psiphon network. We don't allow PsiCash network requests when not connected, so only an inferior localy-only logout is available. 'Psiphon' must not be translated/transliterated. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#modal-psicash-logout-offline-connect-button": {
+        "message": "Se connecter",
+        "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will abort the logout attempt and being connecting to a Psiphon server."
+    },
+    "psicash#modal-psicash-logout-offline-logout-anyway-button": {
+        "message": "Me déconnecter quand même",
+        "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cause a local-only logout to be performed."
+    },
+    "psicash#modal-psicash-logout-offline-cancel-button": {
+        "message": "Annuler",
+        "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
+    },
+    "psicash#modal-login-header": {
+        "message": "Compte PsiCash",
+        "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#modal-login-body": {
+        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">Créez un nouveau compte</a> ou connectez-vous ci-dessous.",
+        "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
+    },
+    "psicash#modal-login-username-field": {
+        "message": "Nom d’utilisateur",
+        "description": "Label for a username field in the PsiCash account login modal dialog."
+    },
+    "psicash#modal-login-password-field": {
+        "message": "Mot de passe",
+        "description": "Label for a password field in the PsiCash account login modal dialog."
+    },
+    "psicash#modal-login-forgot-passwork-link": {
+        "message": "Avez-vous oublié votre nom d’utilisateur ou votre mot de passe ?",
+        "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
+    },
+    "psicash#modal-login-submit-button": {
+        "message": "Envoyer",
+        "description": "Text on the submit button in the PsiCash account login modal dialog."
+    },
+    "psicash#modal-login-cancel-button": {
+        "message": "Annuler",
+        "description": "Text on the cancel button in the PsiCash account login modal dialog."
+    },
+    "psicash#alert#buyspeedboost-purchase-complete": {
+        "message": "La Survitesse est en fonction.",
+        "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
+    },
+    "psicash#modal-logout-header": {
+        "message": "Déconnexion du compte PsiCash",
+        "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#modal-logout-error-body": {
+        "message": "Votre tentative de déconnexion a échoué de manière inattendue. Veuillez essayer de redémarrer l’appli. Si cela ne suffit pas, vous devrez <a href=\"https://psiphon3.com/fr/faq.html#clear-windows-data\"> vider votre cache local.</a>.",
+        "description": "Body of modal dialog shown when the user attempts to log out of their PsiCash account and an unexpected error occurs. Please don't modify the link URL."
     },
     "positive-value-indicator": {
         "message": "+ %d",
@@ -735,6 +887,54 @@
         "message": "Vitesse<br>Psiphon",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
+    "psicash#psiphon-speed-nobreak": {
+        "message": "Vitesse Psiphon",
+        "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
+    },
+    "psicash#corner-logged-out": {
+        "message": "Vous êtes déconnecté de PsiCash",
+        "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#more-ellipsis": {
+        "message": "Plus…",
+        "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
+    },
+    "psicash#login#failure-modal-title": {
+        "message": "Échec de connexion à PsiCash",
+        "description": "Title of modal dialog shown when the PsiCash account login attempt fails for some reason. Text within the modal will explain why. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#login#catastrophic-error-body": {
+        "message": "Votre tentative de connexion à PsiCash a échoué de manière inattendue.",
+        "description": "Body text of a modal dialog shown when a PsiCash login fails without a specific reason. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#login#invalid-credentials-body": {
+        "message": "Le nom d’utilisateur ou le mot de passe saisi était erroné.",
+        "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+    },
+    "psicash#login#server-error-body": {
+        "message": "Le serveur PsiCash a répondu par une erreur lors de la tentative de connexion. Veuillez réessayer votre achat plus tard.",
+        "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#login#badrequest-error-body": {
+        "message": "Le serveur PsiCash a indiqué que la demande de connexion était invalide. Veuillez saisir vos authentifiants de nouveau et réessayer.",
+        "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#login#success-modal-title": {
+        "message": "La connexion à PsiCash est réussie",
+        "description": "Title of modal dialog shown when the PsiCash account login attempt succeeds, if additional information needs to be conveyed. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#login#last-tracker-merge-body": {
+        "message": "Vous êtes connecté à votre compte PsiCash. Le solde préexistant de cet appareil a été transféré dans votre compte, mais c’est la dernière fois qu’une fusion de solde aura lieu.",
+        "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#alert#tokens-expired": {
+        "message": "La connexion PsiCash est expirée. Veuillez vous reconnecter.",
+        "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#alert#logged-out": {
+        "message": "La déconnexion du compte PsiCash est terminée.",
+        "description": "An alert shown when the user logs out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
+    },
     "notice#disallowed-traffic-alert-title": {
         "message": "Surclassez votre connexion Psiphon",
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
@@ -762,6 +962,10 @@
     "settings#disallowed-traffic-alert#disable-label": {
         "message": "Désactiver les alertes de trafic refusé",
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
+    },
+    "ui#alert#url-copied-to-clipboard": {
+        "message": "L’URL a été copiée dans le presse-papiers.<br>SI le navigateur ne s’ouvre pas, copiez l’URL dans la barre d’adresse du navigateur.",
+        "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
     },
     "banner#sponsored-by": {
         "message": "Commandité par",
