@@ -299,6 +299,14 @@
         "message": "Emiratos Árabes Unidos",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
+    "settings#egress-region#select-ee": {
+        "message": "Estonia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
+    },
+    "settings#egress-region#select-lv": {
+        "message": "Letonia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon tiene servidores en muchos países y regiones diferentes. Usar un servidor Psiphon en una región cercana a su país natal generalmente proporcionará una mejor conexión a la red, pero puede que desee acceder a sitios web y servicios como si estuviera virtualmente en un país o región específica.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -655,13 +663,17 @@
         "message": "El producto que está intentando comprar no existe más. Puede que sea necesario actualizar o reinstalar la aplicación.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-title": {
-        "message": "Credenciales PsiCash inválidas",
-        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    "psicash#transaction-InvalidTokens-title-tracker": {
+        "message": "Estado de PsiCash inválido",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "Sus credenciales PsiCash son inválidas. Intente reinstalar la aplicación. Si eso no funciona, necesitará <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">limpiar su almacenamiento local</a>.",
-        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+        "message": "El estado de tu PsiCash es inválido. Prueba reiniciando la aplicación. Si eso no funciona, necesitarás <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">limpiar tu almacenamiento local</a>.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title-account": {
+        "message": "Inicio de sesión PsiCash caducado",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
         "message": "Tus credenciales PsiCash han expirado. Inicia sesión dentro de tu cuenta e intenta de nuevo.",
@@ -835,8 +847,8 @@
         "message": "Contraseña",
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
-    "psicash#modal-login-forgot-passwork-link": {
-        "message": "¿Olvidaste tu nombre de usuario o contraseña?",
+    "psicash#modal-login-forgot-password-link": {
+        "message": "¿Olvidaste tu contraseña?",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
