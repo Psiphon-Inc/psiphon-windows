@@ -299,6 +299,14 @@
         "message": "የተባበሩት አረብ ኤምሬቶች",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
+    "settings#egress-region#select-ee": {
+        "message": "ኤስቶኒያ",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
+    },
+    "settings#egress-region#select-lv": {
+        "message": "ላትቪያ",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon በተለያዩ ሃገራት አገልጋዮች አሉት። አሁን ላሉበት ሃገር ቅርብ የሆነ፣ የPsiphon አገልጋይ ያለበትን ሃገር መጠቀም አብዛኛውን ግዜ የተሻለ የአውታረመረብ ግንኙነት እንዲኖር ያደርጋል፤ ነገር ግን በመረጡት ሀገር ላይ እንደሆኑ መስለው ድረጣቢያን እና አገልግሎቶቹን ማግኘት ይችላሉ።",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -655,13 +663,17 @@
         "message": "ለመግዛት የሚሞክሩት ምርት አሁን አይገኝም። መተግበሪያውን ማዘመን ወይም ዳግም መጫን ሊጠበቅቦት ይችላል።",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-title": {
-        "message": "ተቀባይነት የሌላቸው የPsiCash ቦኖዎች",
-        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    "psicash#transaction-InvalidTokens-title-tracker": {
+        "message": "Invalid PsiCash state",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "የPsiCash ቦኖዋችዎት ተቀባይነት የሌላቸው ናቸው። መተግበሪያውን ዳግም ለማስጀመር ይሞክሩ። ያ የማይሠራ ከሆነ <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">የአካባቢውን ማከማቻ ማጽዳት </a>ይኖርቦታል።   ",
-        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+        "message": "Your PsiCash state is invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title-account": {
+        "message": "PsiCash login expired",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
         "message": "Your PsiCash tokens have expired. Log into your account and try again.",
@@ -704,11 +716,11 @@
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
     },
     "psicash#1-week": {
-        "message": "1 week",
+        "message": "1 ሳምንት",
         "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
     },
     "psicash#1-month": {
-        "message": "1 month",
+        "message": "1 ወር",
         "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
@@ -720,15 +732,15 @@
         "description": "Text for a link displayed when the user does not have a PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language. It encourages them to make one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-balance-header": {
-        "message": "Balance:",
+        "message": "ቀሪ ሒሳብ",
         "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
     },
     "psicash#pane-log-in": {
-        "message": "Log In!",
+        "message": "በመለያ ግባ!",
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
-        "message": "Log Out",
+        "message": "መለያ ዘግተው ይውጡ",
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
@@ -756,7 +768,7 @@
         "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
     },
     "psicash#pane-speed-port-limits-body": {
-        "message": "Without active Speed Boost, your speed is limited and some internet traffic is not supported. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.",
+        "message": "የነቃ ፍጥነት ጭማሪ ከሌልዎት፣ የኢንተርኔት ፍጥነትዎ የተገደበ ነው እንዲሁም አንዳንድ የኢንተርኔት ትራፊክ አይደገፍም። ፍጥነት ጭማሬን በPsiCash ያንቁ እና የPsiphonን ሙሉ እምቅ ሃይል ያንቁ።",
         "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-speed-boost-cta": {
@@ -835,8 +847,8 @@
         "message": "የይለፍ ቃል",
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
-    "psicash#modal-login-forgot-passwork-link": {
-        "message": "Forgot your username or password?",
+    "psicash#modal-login-forgot-password-link": {
+        "message": "Forgot your password?",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
@@ -848,7 +860,7 @@
         "description": "Text on the cancel button in the PsiCash account login modal dialog."
     },
     "psicash#alert#buyspeedboost-purchase-complete": {
-        "message": "Speed Boost started!",
+        "message": "ፍጥነት ጭማሬ ጀምሯል!",
         "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#modal-logout-header": {
@@ -888,7 +900,7 @@
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "psicash#psiphon-speed-nobreak": {
-        "message": "Psiphon Speed",
+        "message": "Psiphon ፍጥነት",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
     },
     "psicash#corner-logged-out": {
@@ -896,7 +908,7 @@
         "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#more-ellipsis": {
-        "message": "More…",
+        "message": "ተጨማሪ",
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {

@@ -88,7 +88,7 @@
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#body": {
-        "message": "Vous avez apporté des changements à vos paramètres, mais vous ne les avez pas appliqués.\n<br><br>Voulez-vous appliquer ces changements maintenant ou les abandonner ?",
+        "message": "Vous avez apporté des changements à vos paramètres, mais vous ne les avez pas appliqués.\n<br><br>Voulez-vous appliquer ces changements maintenant ou les abandonner?",
         "description": "Body text of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#apply-button": {
@@ -298,6 +298,14 @@
     "settings#egress-region#select-ae": {
         "message": "Émirats arabes unis",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
+    },
+    "settings#egress-region#select-ee": {
+        "message": "Estonie",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
+    },
+    "settings#egress-region#select-lv": {
+        "message": "Lettonie",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
     "settings#egress-region#description": {
         "message": "Psiphon a des serveurs dans de nombreux pays et régions différents. L’utilisation d’un serveur Psiphon dans une région proche de votre pays de résidence fournira habituellement une meilleure connexion réseau, mais vous pourriez souhaiter accéder à des sites Web et des services comme si vous étiez virtuellement dans un pays ou une région particuliers.",
@@ -655,13 +663,17 @@
         "message": "Le produit que vous tentez d’acheter n’existe plus. Vous devrez peut-être mettre l’appli à jour ou la réinstaller.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-title": {
-        "message": "Les jetons PsiCash sont invalides",
-        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    "psicash#transaction-InvalidTokens-title-tracker": {
+        "message": "Invalid PsiCash state",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "Vos jetons PsiCash sont invalides. Essayez de redémarrer l’appli. Si cela ne suffit pas, vous devrez <a href=\"https://psiphon3.com/fr/faq.html#clear-windows-data\"> vider votre cache local.</a>.",
-        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+        "message": "Your PsiCash state is invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title-account": {
+        "message": "PsiCash login expired",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
         "message": "Vos jetons PsiCash ont expiré. Connectez-vous à votre compte et réessayez.",
@@ -772,7 +784,7 @@
         "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-psicash-visit-store": {
-        "message": "Besoin de PsiCash ? Visitez notre magasin pour en acheter plus.",
+        "message": "Besoin de PsiCash? Visitez notre magasin pour en acheter plus.",
         "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#overlay-logging-in": {
@@ -804,7 +816,7 @@
         "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-body": {
-        "message": "Être connecté au réseau Psiphon permet une déconnexion plus sûre du compte PsiCash. Voulez-vous vous connecter avant de vous déconnecter ?",
+        "message": "Être connecté au réseau Psiphon permet une déconnexion plus sûre du compte PsiCash. Voulez-vous vous connecter avant de vous déconnecter?",
         "description": "Body of a modal dialog that appears when the user tries to log out of thier PsiCash account while not currently connected to the Psiphon network. We don't allow PsiCash network requests when not connected, so only an inferior localy-only logout is available. 'Psiphon' must not be translated/transliterated. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-connect-button": {
@@ -835,8 +847,8 @@
         "message": "Mot de passe",
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
-    "psicash#modal-login-forgot-passwork-link": {
-        "message": "Avez-vous oublié votre nom d’utilisateur ou votre mot de passe ?",
+    "psicash#modal-login-forgot-password-link": {
+        "message": "Mot de passe oublié?",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {

@@ -299,6 +299,14 @@
         "message": "အာ​ရပ် စော်ဘွား​များ​ပြည်ထောင်စု",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
+    "settings#egress-region#select-ee": {
+        "message": "အစ္စ​တိုး​နီး​ယား",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
+    },
+    "settings#egress-region#select-lv": {
+        "message": "လတ်ဗီးယား",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon သည် မတူညီသောနိုင်ငံများနှင့်ဒေသများရှိ ဆာဗာများရှိပါသည်။ သင်နေထိုင်သောနိုင်ငံ နှင့် နီးစပ်သော Psiphon ဆာဗာ ကိုအသုံးပြု၍ ပိုကောင်းမွန်သော ချိတ်ဆက်မှုရရှိနိုင်ပါသည်။ သို့သော်လည်း သတ်မှတ်ထားသော နိုင်ငံဒေသဆီ သို့ အွန်လိုင်းစနစ်ဖြင့် ရောက်ရှိနေ၍ ထိုနေရာမှသာပင် ရရှိနိုင်မည့် ဝဘ်ဆိုက်နှင့် ဝန်ဆောင်မှုများကို သင် ရစေလိုနိုင်ပါသည်။",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -655,13 +663,17 @@
         "message": "သင် ဝယ်ယူလိုသော အရာကို မရရှိနိုင်တော့ပါ။ သင့် အပ္ပလီကေးရှင်းအား အဆင့်မြှင့် သို့မဟုတ် ပြန်တင်သွင်းလိုပါသည်။",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-title": {
-        "message": "အကျုံးမဝင်သော PsiCash တိုကင်များ",
-        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    "psicash#transaction-InvalidTokens-title-tracker": {
+        "message": "Invalid PsiCash state",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "သင့် PsiCash တိုကင်များသည် အကျုံးမဝင်ပါ။ အပ္ပလီကေးရှင်းအား ပြန်စတင်ပေးပါ။ ထိုမှ မအောင်မြင်လျှင် <a href=\"https://psiphon3.com/faq.html#clear-windows-data\"> သင့်စက်တွင်း သိုလှောင်မှုအားရှင်းလင်းရန် </a> လိုပါမည်။",
-        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+        "message": "Your PsiCash state is invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title-account": {
+        "message": "PsiCash login expired",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
         "message": "Your PsiCash tokens have expired. Log into your account and try again.",
@@ -835,8 +847,8 @@
         "message": "စကားဝှက်",
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
-    "psicash#modal-login-forgot-passwork-link": {
-        "message": "Forgot your username or password?",
+    "psicash#modal-login-forgot-password-link": {
+        "message": "စကားဝှက်မေ့နေလား?",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {

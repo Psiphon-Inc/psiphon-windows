@@ -24,7 +24,7 @@
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Settings' view. In that view the user can change the settings/options that change how Psiphon works."
     },
     "nav#feedback": {
-        "message": "Geri Bildirim",
+        "message": "Geri bildirim",
         "description": "Text on the tab that, if the user clicks on it, switches to the 'Feeback' view. In that view the user can send feedback about their experience to Psiphon."
     },
     "nav#logs": {
@@ -48,7 +48,7 @@
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network. The word 'Psiphon' must not be translated or transliterated."
     },
     "connection#disconnect-btn": {
-        "message": "Bağlantıyı Kes",
+        "message": "Bağlantıyı kes",
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "connection#stopping-msg": {
@@ -76,15 +76,15 @@
         "description": "This alert is shown to the user if they enter incorrect values into one or more of the settings fields."
     },
     "settings#reset-button": {
-        "message": "Varsayılanı Yükle",
+        "message": "Varsayılanı yükle",
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "settings#apply-button": {
-        "message": "Değişiklikleri Uygula",
+        "message": "Değişiklikleri uygula",
         "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
     },
     "settings#unapplied-changes-prompt#title": {
-        "message": "Ayarlar Değiştirilmiş",
+        "message": "Ayarlar değiştirilmiş",
         "description": "Title of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes."
     },
     "settings#unapplied-changes-prompt#body": {
@@ -96,7 +96,7 @@
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will apply the changes -- that is, save the changes and make them immediately take effect. Should be read like the verb in 'Apply your changes'."
     },
     "settings#unapplied-changes-prompt#discard-button": {
-        "message": "Yoksay",
+        "message": "Yok say",
         "description": "Text on a button of the modal dialog box that appears when the user has modified their changes, but has not applied the changes before trying to navigate to another tab. At that time the user is propmted with the choice to apply or discard the changes. This button will discard the changes -- that is, throw away the changes to the settings the user has made since viewing the settings tab.  Should be read like the verb in 'Discard your changes'."
     },
     "settings#vpn-incompatible-msg": {
@@ -108,7 +108,7 @@
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#split-tunnel#heading": {
-        "message": "Bölünmüş Tünel",
+        "message": "Bölünmüş tünel",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
@@ -124,7 +124,7 @@
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "settings#disable-timeouts#heading": {
-        "message": "Yavaş Bağlantılarda Zaman Aşımı Kullanılmasın",
+        "message": "Yavaş bağlantılarda zaman aşımı kullanılmasın",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
     },
     "settings#disable-timeouts#help-text": {
@@ -140,11 +140,11 @@
         "description": "The label on the checkbox that enables 'Disable Timeouts' mode."
     },
     "settings#egress-region#heading": {
-        "message": "Psiphon Sunucu Bölgesi",
+        "message": "Psiphon sunucu bölgesi",
         "description": "Settings section heading. In this section the user can choose to use a Psiphon server in a specific country/region (or the default, which is just to choose the best/fastest region). The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#select-best-performance": {
-        "message": "En İyi Başarım",
+        "message": "En iyi başarım",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. This is the default option and indicates that Psiphon will use a server in the best/fastest region."
     },
     "settings#egress-region#select-us": {
@@ -299,6 +299,14 @@
         "message": "Birleşik Arap Emirlikleri",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
+    "settings#egress-region#select-ee": {
+        "message": "Estonya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
+    },
+    "settings#egress-region#select-lv": {
+        "message": "Letonya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Bir çok ülkede ve bölgede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir bölgedeki Psiphon sunucusunuı seçmeniz daha iyi ağ bağlantısı sağlar. Ancak belirli bir ülkedeki web sitesi ve hizmetlerine erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -312,7 +320,7 @@
         "description": "Error message that is visible when the 'Psiphon Server Region' setting is invalid or not yet set. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#error-modal-title": {
-        "message": "Sunucu Bölgesi Kullanılamıyor",
+        "message": "Sunucu bölgesi kullanılamıyor",
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
@@ -320,7 +328,7 @@
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "Yerel Vekil Sunucu Kapı Numaraları",
+        "message": "Yerel vekil sunucu kapı numaraları",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#local-proxy-ports#leave-blank": {
@@ -348,7 +356,7 @@
         "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
     },
     "settings#local-proxy-ports#error-modal-title": {
-        "message": "Yerel Vekil Sunucu Kapı Numarası Çakışması",
+        "message": "Yerel vekil sunucu kapı numarası çakışması",
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-http": {
@@ -372,7 +380,7 @@
         "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
-        "message": "Giden Vekil Sunucu",
+        "message": "Giden vekil sunucu",
         "description": "Settings section heading. In this section the user can specify network information to use an 'upstream proxy', which is a separate proxy that Psiphon will connect through to get to its own server. This is most often used by people in school or work networks that force them to connect out to the Internet through a particular server. This setting can also disable automatic upstream proxy use."
     },
     "settings#upstream-proxy#by-default": {
@@ -388,15 +396,15 @@
         "description": "Help text beside the upstream proxy settings indicating what type of upstream proxies can by used by Psiphon (different proxies are of different types and have different capabilities, and Psiphon has certain requirements)."
     },
     "settings#upstream-proxy#hostname-label": {
-        "message": "Sunucu Adı",
+        "message": "Sunucu adı",
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "settings#upstream-proxy#port-label": {
-        "message": "Kapı No",
+        "message": "Kapı no",
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#upstream-proxy#username-label": {
-        "message": "Kullanıcı Adı",
+        "message": "Kullanıcı adı",
         "description": "Label for the text box where the user can set the username for the 'upstream proxy'."
     },
     "settings#upstream-proxy#password-label": {
@@ -404,7 +412,7 @@
         "description": "Label for the text box where the user can set the password for the 'upstream proxy'."
     },
     "settings#upstream-proxy#domain-label": {
-        "message": "Etki Alanı",
+        "message": "Etki alanı",
         "description": "Label for the text box where the user can set the domain for the 'upstream proxy'."
     },
     "settings#upstream-proxy#skip-label": {
@@ -416,11 +424,11 @@
         "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#upstream-proxy#set-username-error-msg": {
-        "message": "Bir Parola ya da Etki Alanı ayarlıyorsanız bir Kullanıcı Adı yazmalı ya da kimlik doğrulaması yapılmaması için tüm kimlik doğrulama alanlarını boş bırakın.",
+        "message": "Bir parola ya da etki alanı ayarlıyorsanız bir kullanıcı adı yazmalı ya da kimlik doğrulaması yapılmaması için tüm kimlik doğrulama alanlarını boş bırakın.",
         "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
-        "message": "Giden Vekil Sunucu Hatası",
+        "message": "Giden vekil sunucu hatası",
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#upstream-proxy#error-modal-body-default": {
@@ -432,7 +440,7 @@
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has directly altered these settings, and those settings are (probably) erroneous. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#transport-mode#heading": {
-        "message": "Aktarım Kipi",
+        "message": "Aktarım kipi",
         "description": "Settings section heading. In this section the user can choose to use an alternative connection and data transfer method -- also known as 'transport'."
     },
     "settings#transport-mode#check-label": {
@@ -444,7 +452,7 @@
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#systray-minimize#heading": {
-        "message": "Bildirim Alanına Küçült (Sistem Tepsisi)",
+        "message": "Bildirim alanına küçült (sistem tepsisi)",
         "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
     },
     "settings#systray-minimize#help-text": {
@@ -468,7 +476,7 @@
         "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "settings#error-modal#title": {
-        "message": "Ayar Hatası",
+        "message": "Ayar hatası",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
     },
     "settings#error-modal#body": {
@@ -476,7 +484,7 @@
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "feedback#top_content_title": {
-        "message": "Bize Geri Bildirimde Bulunun",
+        "message": "Bize geri bildirimde bulunun",
         "description": "Title for the Feedback page"
     },
     "feedback#top_para_2": {
@@ -532,7 +540,7 @@
         "description": "A welcome message shown to the user when they first switch to the correct UI language. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#wordart-tag": {
-        "message": "Sınırları Aşın",
+        "message": "Sınırları aşın",
         "description": "The application/product/tool tagline/slogan/motto part of the fancy title at the top of the 'About' page. 'Beyond Borders' is the slogan that is also used on the Psiphon website -- it is meant to suggest that Psiphon can help users to get to the internet beyond the border (firewall) of the country they live in. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#description": {
@@ -548,7 +556,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
-        "message": "Windows için Psiphon istemci sürümü:",
+        "message": "Windows için Psiphon uygulaması sürümü:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'. The word 'Psiphon' must not be translated or transliterated."
     },
     "general#modal-close-button": {
@@ -560,7 +568,7 @@
         "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
     },
     "notice#systemproxysettings-setproxy-error-title": {
-        "message": "Sistem Vekil Sunucu Hatası",
+        "message": "Sistem vekil sunucu hatası",
         "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "notice#systemproxysettings-setproxy-error-body": {
@@ -655,13 +663,17 @@
         "message": "Satın almaya çalıştığınız ürün artık bulunmuyor. Uygulamayı güncellemeniz ya da yeniden kurmanız gerekebilir.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-title": {
-        "message": "PsiCash kodları geçersiz",
-        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    "psicash#transaction-InvalidTokens-title-tracker": {
+        "message": "PsiCash durumu geçersiz",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "PsiCash kodlarınız geçersiz. Uygulamayı yeniden başlatmayı deneyin. Bu şekilde düzelmez ise, <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">yerel deponuzu temizlemeniz</a> gerekir.",
-        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+        "message": "PsiCash durumunuz geçersiz. Uygulamayı yeniden başlatmayı deneyin. Bu şekilde düzelmez ise, <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">yerel deponuzu temizlemeniz</a> gerekir.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title-account": {
+        "message": "PsiCash oturumunun süresi dolmuş",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
         "message": "PsiCash kodlarınızın süresi geçmiş. Hesabınıza oturum açarak yeniden deneyin.",
@@ -680,7 +692,7 @@
         "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-buypsi": {
-        "message": "PsiCash Satın Alın",
+        "message": "PsiCash satın alın",
         "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user has no PsiCash at all. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-buymorepsi": {
@@ -712,7 +724,7 @@
         "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
-        "message": "Speed&nbsp;Boost! Başlatılıyor",
+        "message": "Speed&nbsp;Boost! başlatılıyor",
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-create-account": {
@@ -724,11 +736,11 @@
         "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
     },
     "psicash#pane-log-in": {
-        "message": "Oturum Açın!",
+        "message": "Oturum açın!",
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
-        "message": "Oturumu Kapat",
+        "message": "Oturumu kapat",
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
@@ -748,11 +760,11 @@
         "description": "Message shown when the user was logged in with an account and then logged out. It's telling the user that they have to log in again. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-create-new-account": {
-        "message": "Yeni Hesap Ekle",
+        "message": "Yeni hesap ekle",
         "description": "Text on button that user can click to create a new account (opens an external web page)."
     },
     "psicash#pane-speed-port-limits-head": {
-        "message": "Hız ve Kapı Kısıtlamaları",
+        "message": "Hız ve kapı kısıtlamaları",
         "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
     },
     "psicash#pane-speed-port-limits-body": {
@@ -784,7 +796,7 @@
         "description": "Text on a screen shown while the user's log-out request is in progress."
     },
     "psicash#modal-create-psicash-account-header": {
-        "message": "PsiCash Hesabı Açın",
+        "message": "PsiCash hesabı açın",
         "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-body": {
@@ -800,7 +812,7 @@
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
     },
     "psicash#modal-psicash-logout-offline-header": {
-        "message": "PsiCash Hesabı Oturumunu Kapat",
+        "message": "PsiCash hesabı oturumunu kapat",
         "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-body": {
@@ -820,7 +832,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
-        "message": "PsiCash Hesabı",
+        "message": "PsiCash hesabı",
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {
@@ -835,8 +847,8 @@
         "message": "Parola",
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
-    "psicash#modal-login-forgot-passwork-link": {
-        "message": "Kullanıcı adı ya da parolanızı unuttunuz mu?",
+    "psicash#modal-login-forgot-password-link": {
+        "message": "Parolamı unuttum",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
@@ -852,7 +864,7 @@
         "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#modal-logout-header": {
-        "message": "PsiCash Hesabı Oturumunu Kapat",
+        "message": "PsiCash hesabı oturumunu kapat",
         "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-logout-error-body": {
@@ -864,7 +876,7 @@
         "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
     },
     "psicash#mustconnect-modal#title": {
-        "message": "Psiphon Bağlantısı Gerekli",
+        "message": "Psiphon bağlantısı gerekli",
         "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
     },
     "psicash#mustconnect-modal#body": {
@@ -884,11 +896,11 @@
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#psiphon-speed": {
-        "message": "Psiphon<br>Hızı",
+        "message": "Psiphon<br>hızı",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "psicash#psiphon-speed-nobreak": {
-        "message": "Psiphon Hızı",
+        "message": "Psiphon hızı",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
     },
     "psicash#corner-logged-out": {
@@ -900,7 +912,7 @@
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {
-        "message": "PsiCash Oturumu Açılamadı",
+        "message": "PsiCash oturumu açılamadı",
         "description": "Title of modal dialog shown when the PsiCash account login attempt fails for some reason. Text within the modal will explain why. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#catastrophic-error-body": {
@@ -916,11 +928,11 @@
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
-        "message": "PsiCash sunucusu oturum açma isteğinin geçersiz olduğunu bildirdi. Lütfen oturum giriş bilginizi tekrar girip, yeniden deneyin.",
+        "message": "PsiCash sunucusu oturum açma isteğinin geçersiz olduğunu bildirdi. Lütfen oturum açma bilgilerinizi yazarak yeniden deneyin.",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#success-modal-title": {
-        "message": "PsiCash Oturumu Açıldı",
+        "message": "PsiCash oturumu açıldı",
         "description": "Title of modal dialog shown when the PsiCash account login attempt succeeds, if additional information needs to be conveyed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#last-tracker-merge-body": {
@@ -952,7 +964,7 @@
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "İzin Verilmeyen Trafik Uyarısı",
+        "message": "İzin verilmeyen trafik uyarısı",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {

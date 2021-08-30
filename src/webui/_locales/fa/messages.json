@@ -299,6 +299,14 @@
         "message": "امارات متحده عربی",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
+    "settings#egress-region#select-ee": {
+        "message": "استونی",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
+    },
+    "settings#egress-region#select-lv": {
+        "message": "لاتیوا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
+    },
     "settings#egress-region#description": {
         "message": "(Psiphon) در بسیاری از کشورها سرور دارد. معمولا استفاده از یک سرور (Psiphon) که به کشور شما نزدیک‌تر است اتصال بهتری به شبکه فراهم می کند، اما شاید شما بخواهید به وبسایت‌ها و خدمات طوری دسترسی داشته باشید که انگار که در کشور خاصی هستید.\n ",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
@@ -655,13 +663,17 @@
         "message": "چیزی که می‌خواهید بخرید دیگر وجود ندارد. شما باید برنامه‌ی خود را به روز رسانی یا دوباره نصب کنید.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
-    "psicash#transaction-InvalidTokens-title": {
-        "message": "مشخصه نامعتبر PsiCash",
-        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+    "psicash#transaction-InvalidTokens-title-tracker": {
+        "message": "Invalid PsiCash state",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "مشخصه PsiCash شما نامعتبر است. برنامه را دوباره راه‌اندازی کنید. اگر اثری نداشت، باید <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">فضای ذخیره محلی خود را پاک کنید</a>.",
-        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
+        "message": "Your PsiCash state is invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
+    },
+    "psicash#transaction-InvalidTokens-title-account": {
+        "message": "PsiCash login expired",
+        "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
         "message": "Your PsiCash tokens have expired. Log into your account and try again.",
@@ -835,8 +847,8 @@
         "message": "گذرواژه",
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
-    "psicash#modal-login-forgot-passwork-link": {
-        "message": "Forgot your username or password?",
+    "psicash#modal-login-forgot-password-link": {
+        "message": "Forgot your password?",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
