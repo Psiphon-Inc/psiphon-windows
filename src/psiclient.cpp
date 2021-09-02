@@ -108,8 +108,9 @@ void OnCreate(HWND hWndParent)
 
     Json::FastWriter jsonWriter;
     tstring initJsonString = UTF8ToWString(jsonWriter.write(initJSON).c_str());
+    tstring encodedJson = PercentEncode(initJsonString);
 
-    tstring url = ResourceToUrl(_T("main.html"), NULL, initJsonString.c_str());
+    tstring url = ResourceToUrl(_T("main.html"), NULL, encodedJson.c_str());
 
     /* Create the html control */
     g_hHtmlCtrl = CreateWindow(

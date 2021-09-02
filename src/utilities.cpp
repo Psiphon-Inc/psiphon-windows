@@ -1268,6 +1268,27 @@ tstring UrlEncode(const tstring& input)
     return escapedURL.str();
 }
 
+// Only URL-encodes `%` characters. 
+// Note that this is _only_ enough to encode a hash fragment in isolation.
+tstring PercentEncode(const tstring& input)
+{
+    constexpr auto escapedPercent = _T("%25");
+    tstringstream escapedURL;
+
+    for (tstring::const_iterator i = input.begin(), n = input.end(); i != n; ++i) {
+        tstring::value_type c = (*i);
+
+        if (c == '%') {
+            escapedURL << escapedPercent;
+            continue;
+        }
+
+        escapedURL << c;
+    }
+
+    return escapedURL.str();
+}
+
 tstring UrlDecode(const tstring& input)
 {
     return UrlCodec(input, false);
