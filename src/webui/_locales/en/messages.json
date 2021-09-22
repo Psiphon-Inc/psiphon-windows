@@ -994,5 +994,17 @@
   "ui#alert#url-copied-to-clipboard": {
     "message": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
     "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
+  },
+  "notice#psiphonui-fileerror-error-title": {
+    "message": "File Access Error",
+    "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
+  },
+  "notice#psiphonui-fileerror-error-body": {
+    "message": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
+    "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
+  },
+  "notice#psiphonui-fileerror-detail-preamble": {
+    "message": "Filename and error message:",
+    "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
   }
 }

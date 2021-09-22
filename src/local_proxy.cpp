@@ -91,7 +91,15 @@ bool LocalProxy::DoStart()
 {
     if (m_polipoPath.size() == 0)
     {
-        if (!ExtractExecutable(IDR_POLIPO_EXE, POLIPO_EXE_NAME, m_polipoPath))
+        filesystem::path tempPath;
+        if (!GetSysTempPath(tempPath)) {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            return false;
+        }
+
+        m_polipoPath = tempPath / POLIPO_EXE_NAME;
+
+        if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
         {
             return false;
         }
