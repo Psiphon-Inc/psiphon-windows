@@ -110,7 +110,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
 
     if (Settings::SplitTunnel())
     {
-        config["EnableSplitTunnel"] = true;
+        config["SplitTunnelOwnRegion"] = true;
     }
 
     if (Settings::DisableTimeouts())
