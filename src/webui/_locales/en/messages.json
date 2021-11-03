@@ -127,6 +127,14 @@
     "message": "Don't proxy websites within your country",
     "description": "The label on the checkbox that enables 'Split Tunnel'."
   },
+  "settings#split-tunnel-chinese-sites#enable-label": {
+    "message": "Don't proxy Chinese websites",
+    "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
+  },
+  "settings#split-tunnel-chinese-sites#note": {
+    "message": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
+    "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
+  },
   "settings#disable-timeouts#heading": {
     "message": "Disable Timeouts for Slow Networks",
     "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
