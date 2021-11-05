@@ -663,6 +663,14 @@
     "message": "[Ẇḗḗƀşīīŧḗḗş ẇīīŧħīīƞ ẏǿǿŭŭř ħǿǿḿḗḗ ƈǿǿŭŭƞŧřẏ ȧȧřḗḗ ɠḗḗƞḗḗřȧȧŀŀẏ ƞǿǿŧ ƀŀǿǿƈķḗḗḓ, şǿǿ ḗḗƞȧȧƀŀīīƞɠ ŧħīīş ǿǿƥŧīīǿǿƞ ẇīīŀŀ ɠīīṽḗḗ ẏǿǿŭŭ ƒȧȧşŧḗḗř ȧȧƈƈḗḗşş ŧǿǿ ŧħǿǿşḗḗ şīīŧḗḗş ȧȧƞḓ ƈȧȧƞ şǿǿḿḗḗŧīīḿḗḗş řḗḗḓŭŭƈḗḗ ĪīŞƤ ḓȧȧŧȧȧ ŭŭşȧȧɠḗḗ ƈǿǿşŧş.]",
     "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
   },
+  "settings#split-tunnel-chinese-sites#enable-label": {
+    "message": "[Ḓǿǿƞ'ŧ ƥřǿǿẋẏ Ƈħīīƞḗḗşḗḗ ẇḗḗƀşīīŧḗḗş]",
+    "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
+  },
+  "settings#split-tunnel-chinese-sites#note": {
+    "message": "[<strong>ẆȦȧŘȠĪīȠƓ:</strong> Ŧħīīş ƒḗḗȧȧŧŭŭřḗḗ ŭŭşḗḗş ḓȧȧŧȧȧ ẇħīīƈħ ḿȧȧẏ ƞǿǿŧ ȧȧŀẇȧȧẏş ƀḗḗ řḗḗŀīīȧȧƀŀḗḗ. Ŭŭşḗḗ ƈȧȧŭŭŧīīǿǿƞ ẇħḗḗƞ ḗḗƞȧȧƀŀīīƞɠ ŧħīīş ƒḗḗȧȧŧŭŭřḗḗ ȧȧş şǿǿḿḗḗ ƈḗḗƞşǿǿřḗḗḓ ẇḗḗƀşīīŧḗḗş ḿȧȧẏ ƀḗḗ ŭŭƞīīƞŧḗḗƞŧīīǿǿƞȧȧŀŀẏ ḗḗẋƈŀŭŭḓḗḗḓ ƒřǿǿḿ ŧħḗḗ ƥřǿǿẋẏ.]",
+    "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
+  },
   "settings#systray-minimize#enable-label": {
     "message": "[Ḿīīƞīīḿīīẑḗḗ ŧǿǿ ŧħḗḗ ƞǿǿŧīīƒīīƈȧȧŧīīǿǿƞ ȧȧřḗḗȧȧ (şẏşŧḗḗḿ ŧřȧȧẏ)]",
     "description": "The label on the checkbox that enables 'Minimize to Notification Area (System Tray)'."

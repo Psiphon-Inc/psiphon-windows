@@ -113,6 +113,11 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
         config["SplitTunnelOwnRegion"] = true;
     }
 
+    if (Settings::SplitTunnelChineseSites())
+    {
+        config["SplitTunnelRegions"] = LoadJSONArray("[\"CN\", \"HK\"]");
+    }
+
     if (Settings::DisableTimeouts())
     {
         config["NetworkLatencyMultiplierLambda"] = 0.1;

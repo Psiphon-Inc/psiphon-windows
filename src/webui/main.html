@@ -671,6 +671,30 @@
                       </span>
                     </fieldset>
                   </form>
+                  <form class="vpn-incompatible">
+                    <fieldset>
+                      <div class="checkbox-container">
+                        <div class="controls checkbox">
+                          <input type="checkbox" id="SplitTunnelChineseSites"/>
+                          <label for="SplitTunnelChineseSites">
+                            <span data-i18n="settings#split-tunnel-chinese-sites#enable-label">
+                              Don't proxy Chinese websites
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <span class="help-block">
+                        <small class="vpn-incompatible-msg" data-i18n="settings#vpn-incompatible-msg">
+                          (Doesn't work with L2TP/IPSec mode.)
+                        </small>
+                      </span>
+                      <p data-i18n="[html]settings#split-tunnel-chinese-sites#note">
+                        <strong>WARNING:</strong> This feature uses data which may not always be reliable.
+                        Use caution when enabling this feature as some censored websites
+                        may be unintentionally excluded from the proxy.
+                      </p>
+                    </fieldset>
+                  </form>
                 </div>
               </div>
             </div>

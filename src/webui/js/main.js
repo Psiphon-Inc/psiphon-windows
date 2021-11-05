@@ -528,6 +528,7 @@
     {
       g_initObj.Settings = {
         SplitTunnel: 0,
+        SplitTunnelChineseSites: 0,
         DisableTimeouts: 0,
         VPN: 0,
         LocalHttpProxyPort: 7771,
@@ -544,6 +545,7 @@
         DisableDisallowedTrafficAlert: 0,
         defaults: {
           SplitTunnel: 0,
+          SplitTunnelChineseSites: 0,
           DisableTimeouts: 0,
           VPN: 0,
           LocalHttpProxyPort: '',
@@ -809,6 +811,10 @@
       $('#SplitTunnel').prop('checked', !!obj.SplitTunnel);
     }
 
+    if (!_.isUndefined(obj.SplitTunnelChineseSites)) {
+      $('#SplitTunnelChineseSites').prop('checked', !!obj.SplitTunnelChineseSites);
+    }
+
     if (!_.isUndefined(obj.DisableTimeouts)) {
       $('#DisableTimeouts').prop('checked', !!obj.DisableTimeouts);
     }
@@ -897,6 +903,7 @@
     var returnValue = {
       VPN: $('#VPN').prop('checked') ? 1 : 0,
       SplitTunnel: $('#SplitTunnel').prop('checked') ? 1 : 0,
+      SplitTunnelChineseSites: $('#SplitTunnelChineseSites').prop('checked') ? 1 : 0,
       DisableTimeouts: $('#DisableTimeouts').prop('checked') ? 1 : 0,
       LocalHttpProxyPort: validatePort($('#LocalHttpProxyPort').val()),
       LocalSocksProxyPort: validatePort($('#LocalSocksProxyPort').val()),
@@ -963,6 +970,11 @@
   // Will be called exactly once. Set up event listeners, etc.
   function splitTunnelSetup() {
     $('#SplitTunnel').change(function() {
+      // Tell the settings pane a change was made.
+      $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
+    });
+
+    $('#SplitTunnelChineseSites').change(function() {
       // Tell the settings pane a change was made.
       $('#settings-pane').trigger(SETTING_CHANGED_EVENT, this.id);
     });

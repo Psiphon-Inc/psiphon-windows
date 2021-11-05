@@ -33,6 +33,9 @@
 #define SPLIT_TUNNEL_NAME               "SplitTunnel"
 #define SPLIT_TUNNEL_DEFAULT            FALSE
 
+#define SPLIT_TUNNEL_CHINESE_SITES_NAME "SplitTunnelChineseSites"
+#define SPLIT_TUNNEL_CHINESE_SITES_DEFAULT  FALSE
+
 #define DISABLE_TIMEOUTS_NAME           "DisableTimeouts"
 #define DISABLE_TIMEOUTS_DEFAULT        FALSE
 
@@ -182,6 +185,9 @@ void Settings::ToJson(Json::Value& o_json)
       o_json["SplitTunnel"] = Settings::SplitTunnel() ? TRUE : FALSE;
       o_json["defaults"]["SplitTunnel"] = SPLIT_TUNNEL_DEFAULT;
 
+      o_json["SplitTunnelChineseSites"] = Settings::SplitTunnelChineseSites() ? TRUE : FALSE;
+      o_json["defaults"]["SplitTunnelChineseSites"] = SPLIT_TUNNEL_CHINESE_SITES_DEFAULT;
+
       o_json["DisableTimeouts"] = Settings::DisableTimeouts() ? TRUE : FALSE;
       o_json["defaults"]["DisableTimeouts"] = DISABLE_TIMEOUTS_DEFAULT;
 
@@ -249,6 +255,10 @@ bool Settings::FromJson(
         BOOL splitTunnel = json.get("SplitTunnel", SPLIT_TUNNEL_DEFAULT).asUInt();
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!splitTunnel != Settings::SplitTunnel();
         WriteRegistryDwordValue(SPLIT_TUNNEL_NAME, splitTunnel);
+
+        BOOL splitTunnelChineseSites = json.get("SplitTunnelChineseSites", SPLIT_TUNNEL_CHINESE_SITES_DEFAULT).asUInt();
+        reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!splitTunnelChineseSites != Settings::SplitTunnelChineseSites();
+        WriteRegistryDwordValue(SPLIT_TUNNEL_CHINESE_SITES_NAME, splitTunnelChineseSites);
 
         BOOL disableTimeouts = json.get("DisableTimeouts", DISABLE_TIMEOUTS_DEFAULT).asUInt();
         reconnectRequiredValueChanged = reconnectRequiredValueChanged || !!disableTimeouts != Settings::DisableTimeouts();
@@ -338,6 +348,11 @@ bool Settings::FromJson(
 bool Settings::SplitTunnel()
 {
     return !!GetSettingDword(SPLIT_TUNNEL_NAME, SPLIT_TUNNEL_DEFAULT);
+}
+
+bool Settings::SplitTunnelChineseSites()
+{
+    return !!GetSettingDword(SPLIT_TUNNEL_CHINESE_SITES_NAME, SPLIT_TUNNEL_CHINESE_SITES_DEFAULT);
 }
 
 bool Settings::DisableTimeouts()
