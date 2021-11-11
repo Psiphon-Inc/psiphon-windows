@@ -26,6 +26,8 @@ struct WininetNetworkInfo {
     bool internetConnectionOffline;
     bool internetConnectionProxy;
     bool internetRASInstalled;
+
+    WininetNetworkInfo() : internetConnectionConfigured(false), internetConnectionLAN(false), internetConnectionModem(false), internetConnectionOffline(false), internetConnectionProxy(false), internetRASInstalled(false) {}
 };
 
 bool WininetGetNetworkInfo(WininetNetworkInfo& netInfo);

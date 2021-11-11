@@ -123,6 +123,14 @@
         "message": "Ülkenizdeki web siteleri için vekil sunucu kullanılmasın",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
+    "settings#split-tunnel-chinese-sites#enable-label": {
+        "message": "Çin web sitelerinde vekil sunucu kullanılmasın",
+        "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
+    },
+    "settings#split-tunnel-chinese-sites#note": {
+        "message": "<strong>UYARI:</strong> Bu özellik, her zaman güvenilir olmayabilecek verileri kullanır. Engellenen bazı web siteleri istemeden vekil sunucu dışında tutulabileceğinden, bu özelliği etkinleştirirken dikkatli olun. ",
+        "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
+    },
     "settings#disable-timeouts#heading": {
         "message": "Yavaş bağlantılarda zaman aşımı kullanılmasın",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
@@ -555,6 +563,10 @@
         "message": "<strong>Web sitesine erişilemiyorsa</strong>, son Psiphon sürümünü almak için şu adrese e-posta gönderebilirsiniz:",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
+    "about#license-agree": {
+        "message": "Psiphon uygulamasını kullanarak <a href=\"https://psiphon.ca/license.html\">son kullanıcı lisansı</a> ve <a href=\"https://psiphon.ca/privacy.html\">gizlilik ilkesi</a> metinlerini kabul etmiş olursunuz.",
+        "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
+    },
     "about#client-version": {
         "message": "Windows için Psiphon uygulaması sürümü:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'. The word 'Psiphon' must not be translated or transliterated."
@@ -676,7 +688,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
-        "message": "PsiCash kodlarınızın süresi geçmiş. Hesabınıza oturum açarak yeniden deneyin.",
+        "message": "PsiCash oturumunuzun süresi dolmuş. Hesabınızla oturum açarak yeniden deneyin.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-title": {

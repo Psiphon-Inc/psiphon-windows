@@ -37,6 +37,8 @@ import subprocess
 import transifexlib
 
 
+# The locale strings being mapped to must be valid BCP 47 in one of these forms:
+#   zh, zh-TW, zh-Hant, zh-Hant-TW
 DEFAULT_LANGS = {
     'am': 'am',         # Amharic
     'ar': 'ar',         # Arabic
@@ -48,7 +50,7 @@ DEFAULT_LANGS = {
     'el_GR': 'el',      # Greek
     'es': 'es',         # Spanish
     'fa': 'fa',         # Farsi/Persian
-    'fa_AF': 'fa_AF',   # Persian (Afghanistan)
+    'fa_AF': 'fa-AF',   # Persian (Afghanistan)
     'fi_FI': 'fi',      # Finnish
     'fr': 'fr',         # French
     'hi': 'hi',         # Hindi
@@ -63,8 +65,8 @@ DEFAULT_LANGS = {
     'nb_NO': 'nb',      # Norwegian
     'nl': 'nl',         # Dutch
     'om': 'om',         # Afaan Oromoo
-    'pt_BR': 'pt_BR',   # Portuguese-Brazil
-    'pt_PT': 'pt_PT',   # Portuguese-Portugal
+    'pt_BR': 'pt-BR',   # Portuguese-Brazil
+    'pt_PT': 'pt-PT',   # Portuguese-Portugal
     'ru': 'ru',         # Russian
     #'sn': 'sn',         # Shona
     'sw': 'sw',         # Swahili
@@ -73,14 +75,14 @@ DEFAULT_LANGS = {
     'ti': 'ti',         # Tigrinya
     'tk': 'tk',         # Turkmen
     'tr': 'tr',         # Turkish
-    #'ug': 'ug@Latn',    # Uighur (latin script)
+    #'ug': 'ug-Latn',    # Uighur (latin script)
     'uk': 'uk',         # Ukrainian
     'ur': 'ur',         # Urdu
-    'uz': 'uz@Latn',    # Uzbek (latin script)
-    #'uz@Cyrl': 'uz@Cyrl',    # Uzbek (latin script)
+    'uz': 'uz-Latn',    # Uzbek (latin script)
+    #'uz@Cyrl': 'uz-Cyrl',    # Uzbek (latin script)
     'vi': 'vi',         # Vietnamese
     'zh': 'zh',         # Chinese (simplified)
-    'zh_TW': 'zh_TW'    # Chinese (traditional)
+    'zh_TW': 'zh-TW'    # Chinese (traditional)
 }
 
 
@@ -95,7 +97,7 @@ def pull_app_translations():
     # We need to run grunt to incorporate the new translations
     print('Running grunt...')
     os.chdir('../src/webui')
-    subprocess.run(['grunt'], shell=True, check=True)
+    subprocess.run(['npx', 'grunt'], shell=True, check=True)
 
 
 def go():

@@ -9,7 +9,7 @@
 
 namespace psicash {
 
-/// Wraps the PsiCash library and provides the HTTP requester. 
+/// Wraps the PsiCash library and provides the HTTP requester.
 /// Network calls are made on a separate thread.
 /// Uses and respects the GlobalStopSignal.
 class Lib : public PsiCash {
@@ -38,10 +38,12 @@ public:
     /// Update the client region (in the request metadata) as it's better known.
     error::Error UpdateClientRegion(const string& region);
 
-    /// Makes a RefreshState request. 
+    /// Makes a RefreshState request. If `localOnly` is true, no network request will be
+    /// attempted -- the refresh will only examine local data.
     /// Network and callback will happen on a separate thread.
     void RefreshState(
-        std::function<void(error::Result<Status>)> callback);
+        bool localOnly,
+        std::function<void(error::Result<RefreshStateResponse>)> callback);
 
     /// Makes a NewExpiringPurchase request.
     /// Network and callback will happen on a separate thread.
@@ -50,6 +52,18 @@ public:
         const std::string& distinguisher,
         const int64_t expectedPrice,
         std::function<void(error::Result<NewExpiringPurchaseResponse>)> callback);
+
+    /// Makes an AccountLogin request.
+    /// Network and callback will happen on a separate thread.
+    void AccountLogin(
+        const std::string &utf8_username,
+        const std::string &utf8_password,
+        std::function<void(error::Result<AccountLoginResponse>)> callback);
+
+    /// Makes an AccountLogout request.
+    /// Network and callback will happen on a separate thread.
+    void AccountLogout(
+        std::function<void(error::Result<AccountLogoutResponse>)> callback);
 
 protected:
     /// If this returns true, the request has been made and requestTask has been moved.

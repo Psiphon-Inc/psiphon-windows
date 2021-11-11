@@ -1,3 +1,4 @@
+
 ## PsiCash
 
 ## Design
@@ -16,7 +17,7 @@ Install [Node](https://nodejs.org/). v6.x works, and v4.x will probably also wor
 ```
 $ npm install -g grunt-cli
 # In the webui directory...
-$ npm install .
+$ npm ci
 ```
 
 ## Developing
@@ -52,6 +53,16 @@ The other important part of this is the C++ code that talks to the UI. The [`HTM
 There are lots more UI communications helper functions here. In order to push info into the UI they call JS functions (via the HTML control).
 
 (Copy-pasted from email.)
+
+### Debugging in app
+
+1. Probably put a `debugger;` line where you'd like to break in the JavaScript.
+2. Make a non-minified build -- probably use `grunt serve`.
+3. Make a debug build of the app and run it (but _not_ under the debugger).
+4. In MSVC, in the "Debug" menu, click "Attach to Process...".
+5. In that dialog, change the "Attach to" setting to "Script code".
+6. Do whatever is needed to hit your `debugger` line. Or pause the debugger and set some breakpoints.
+
 
 ## Building
 
@@ -157,8 +168,6 @@ NOTE: We no longer support IE7 (because we no longer support XP or Vista). That 
 
 * ALL: `keyup` and `keydown` events are unreliable. Use `keypress` instead.
   - Related: `change` event doesn't fire for text boxes until focus is lost.
-
-* IE7: Can't use `float:right` on an element that's a child/grandchild of a `postition:absolute` element. See the comment for `#settings-accordion` in `lteIE7.css` for details.
 
 * IE8 can't cope with the babel-ization for `for (let x of arr)`. Don't use it.
 

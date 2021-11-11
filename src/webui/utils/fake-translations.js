@@ -30,11 +30,11 @@ for (var i = 0; i < keys.length; i++) {
 }
 
 fs.writeFileSync(
-  '../_locales/devltr/messages.json',
+  '../_locales/haw-Cyrl/messages.json',
   JSON.stringify(devltr, null, '  '),
   { encoding: 'utf8' });
 
 fs.writeFileSync(
-  '../_locales/devrtl/messages.json',
+  '../_locales/haw-Arab/messages.json',
   JSON.stringify(devrtl, null, '  '),
   { encoding: 'utf8' });

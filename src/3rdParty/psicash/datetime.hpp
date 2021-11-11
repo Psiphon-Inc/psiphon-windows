@@ -45,6 +45,8 @@ public:
     // Returns true if this DateTime is the zero value.
     bool IsZero() const;
 
+    std::string ToString() const;
+
     // These only support the "Z" timezone format.
     std::string ToISO8601() const;
     bool FromISO8601(const std::string& s);

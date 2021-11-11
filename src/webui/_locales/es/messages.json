@@ -123,6 +123,14 @@
         "message": "No proxyficar sitios web dentro de su país",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
+    "settings#split-tunnel-chinese-sites#enable-label": {
+        "message": "No usar proxy en sitios web chinos",
+        "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
+    },
+    "settings#split-tunnel-chinese-sites#note": {
+        "message": "<strong>ADVERTENCIA:</strong> Esta característica usa datos que podrían no siempre ser confiables. Usa precaución cuando la habilites, ya que algunos sitios web censurados podrían ser excluídos del proxy sin intención.",
+        "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
+    },
     "settings#disable-timeouts#heading": {
         "message": "Deshabilitar límite de tiempo de espera para redes lentas",
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
@@ -555,6 +563,10 @@
         "message": "<strong>Si el sitio web no está accesible</strong>, puede obtener una versión nueva de Psiphon enviando un correo electrónico a:",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
+    "about#license-agree": {
+        "message": "Al usar Psiphon, indicas que estás de acuerdo con los términos de la <a href=\"https://psiphon.ca/license.html\">Licencia de Usuario Final</a> y la <a href=\"https://psiphon.ca/privacy.html\">Política de Privacidad</a>.",
+        "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
+    },
     "about#client-version": {
         "message": "Versión del cliente para Windows de Psiphon:",
         "description": "Footer on the 'About' page indicating the client version number. This text is the prefix to the actual number. Like: 'Psiphon for Windows client version: 88'. The word 'Psiphon' must not be translated or transliterated."
@@ -676,7 +688,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
-        "message": "Tus credenciales PsiCash han expirado. Inicia sesión dentro de tu cuenta e intenta de nuevo.",
+        "message": "Tus credenciales PsiCash han caducado. Inicia sesión en tu cuenta e intenta otra vez.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-title": {
@@ -896,7 +908,7 @@
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#psiphon-speed": {
-        "message": "<br>Velocidad de Psiphon",
+        "message": "Velocidad<br>de Psiphon",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "psicash#psiphon-speed-nobreak": {

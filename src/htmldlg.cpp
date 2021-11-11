@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "htmldlg.h"
+#include "utilities.h"
 
 
 /**************************************************************************
@@ -32,9 +33,9 @@ tstring ResourceToUrl(LPCTSTR resourceName, LPCTSTR urlQuery, LPCTSTR urlFragmen
 
     url += _T("res://");
 
-    TCHAR   szTemp[MAX_PATH * 2];
-    GetModuleFileName(NULL, szTemp, ARRAYSIZE(szTemp));
-    url += szTemp;
+    tstring exePath;
+    (void)GetOwnExecutablePath(exePath);
+    url += exePath;
 
     url += _T("/");
     url += resourceName;

@@ -107,10 +107,6 @@ DWORD WINAPI ServerListReorder::ReorderServerListThread(void* data)
 
     ServerListReorder* object = (ServerListReorder*)data;
 
-    // Seed built-in non-crypto PRNG used for shuffling (load balancing)
-    unsigned int seed = (unsigned)time(NULL);
-    srand(seed);
-
     ReorderServerList(*(object->m_serverList), StopInfo(&object->m_stopSignal, STOP_REASON_ANY_STOP_TUNNEL));
 
     object->m_thread = NULL;
@@ -225,7 +221,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
 
     if (serverEntries.size() > MAX_WORKER_THREADS)
     {
-        random_shuffle(serverEntries.begin() + MAX_WORKER_THREADS/2, serverEntries.end());
+        ShuffleVector(serverEntries.begin() + MAX_WORKER_THREADS / 2, serverEntries.end());
     }
 
     for (ServerEntryIterator entry = serverEntries.begin(); entry != serverEntries.end(); ++entry)
@@ -316,7 +312,7 @@ void ReorderServerList(ServerList& serverList, const StopInfo& stopInfo)
         }
     }
 
-    random_shuffle(respondingServers.begin(), respondingServers.end());
+    ShuffleVector(respondingServers.begin(), respondingServers.end());
 
     // Merge back into server entry list. MoveEntriesToFront will move
     // these servers to the top of the list in the order submitted. Any

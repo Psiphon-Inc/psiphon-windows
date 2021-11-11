@@ -100,8 +100,8 @@ const Error nullerr;
  */
 
 /// Result holds an error-or-value. For usage, see nonstd::expected at
-/// https://github.com/martinmoene/expected-lite
-/// or actual current usage.
+/// https://github.com/martinmoene/expected-lite/ or actual current usage.
+/// To access the error (when `!res`), call `res.error()`.
 template<typename T>
 class Result : public nonstd::expected<T, Error> {
 public:
