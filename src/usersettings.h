@@ -34,6 +34,7 @@ namespace Settings
 
     bool DisableTimeouts();
     bool SplitTunnel();
+    bool SplitTunnelChineseSites();
     tstring Transport();
     
     // Returns 0 if port should be chosen automatically.

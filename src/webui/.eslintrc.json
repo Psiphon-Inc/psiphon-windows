@@ -17,15 +17,18 @@
   "globals": {
       "_": false,
       "i18n": false,
+      "I18n": false,
       "Spinner": false,
       "moment": false,
       "base64": false,
       "Datastore": false,
       "objectPathImmutable": false,
-      "Modernizr": false
+      "Modernizr": false,
+      "computedStyle": false
   },
   "rules": {
       "no-console": "off",
-      "lodash/prefer-lodash-method": "off"
+      "lodash/prefer-lodash-method": "off",
+      "semi": ["error", "always"]
   }
 }

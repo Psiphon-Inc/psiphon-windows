@@ -449,7 +449,7 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
         int count = data["count"].asInt();
         if (count == 0)
         {
-            if (m_hasEverConnected && m_reconnectStateReceiver)
+            if (m_hasEverConnected && m_reconnectStateReceiver && !m_stopInfo.stopSignal->CheckSignal(m_stopInfo.stopReasons))
             {
                 m_reconnectStateReceiver->SetReconnecting();
             }
@@ -548,7 +548,7 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
     else if (noticeType == "AvailableEgressRegions")
     {
         string regions = data["regions"].toStyledString();
-        my_print(NOT_SENSITIVE, false, _T("Available egress regions: %S"), regions.c_str());
+        my_print(NOT_SENSITIVE, true, _T("Available egress regions: %S"), regions.c_str());
         // Processing this is left to main.js
     }
     else if (noticeType == "ActiveAuthorizationIDs")
@@ -580,12 +580,11 @@ void CoreTransport::HandlePsiphonTunnelCoreNotice(const string& noticeType, cons
         string region = data["region"].asString();
         my_print(NOT_SENSITIVE, true, _T("Client region: %S"), region.c_str());
         psicash::Lib::_().UpdateClientRegion(region);
-
-        if (Settings::SplitTunnel())
-        {
-            // Display split tunnel region to user
-            my_print(NOT_SENSITIVE, false, _T("Split Tunnel Country: %S"), region.c_str());
-        }
+    }
+    else if (noticeType == "SplitTunnelRegions")
+    {
+        string regions = data["regions"].toStyledString();
+        my_print(NOT_SENSITIVE, false, _T("Split Tunnel Regions: %S"), regions.c_str());
     }
     else if (noticeType == "TrafficRateLimits")
     {

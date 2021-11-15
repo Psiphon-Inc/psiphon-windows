@@ -45,15 +45,222 @@
 // Place any jQuery/helper plugins in here.
 
 
-/* JQUERY.SCROLLTO */
-/* https://github.com/flesler/jquery.scrollTo */
-/**
- * Copyright (c) 2007-2015 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+/*!
+ * jQuery.scrollTo
+ * Copyright (c) 2007 Ariel Flesler - aflesler ○ gmail • com | https://github.com/flesler
  * Licensed under MIT
+ * https://github.com/flesler/jquery.scrollTo
+ * @projectDescription Lightweight, cross-browser and highly customizable animated scrolling with jQuery
  * @author Ariel Flesler
- * @version 2.1.1
+ * @version 2.1.2
  */
-(function(f){"use strict";"function"===typeof define&&define.amd?define(["jquery"],f):"undefined"!==typeof module&&module.exports?module.exports=f(require("jquery")):f(jQuery)})(function($){"use strict";function n(a){return!a.nodeName||-1!==$.inArray(a.nodeName.toLowerCase(),["iframe","#document","html","body"])}function h(a){return $.isFunction(a)||$.isPlainObject(a)?a:{top:a,left:a}}var p=$.scrollTo=function(a,d,b){return $(window).scrollTo(a,d,b)};p.defaults={axis:"xy",duration:0,limit:!0};$.fn.scrollTo=function(a,d,b){"object"=== typeof d&&(b=d,d=0);"function"===typeof b&&(b={onAfter:b});"max"===a&&(a=9E9);b=$.extend({},p.defaults,b);d=d||b.duration;var u=b.queue&&1<b.axis.length;u&&(d/=2);b.offset=h(b.offset);b.over=h(b.over);return this.each(function(){function k(a){var k=$.extend({},b,{queue:!0,duration:d,complete:a&&function(){a.call(q,e,b)}});r.animate(f,k)}if(null!==a){var l=n(this),q=l?this.contentWindow||window:this,r=$(q),e=a,f={},t;switch(typeof e){case "number":case "string":if(/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(e)){e= h(e);break}e=l?$(e):$(e,q);if(!e.length)return;case "object":if(e.is||e.style)t=(e=$(e)).offset()}var v=$.isFunction(b.offset)&&b.offset(q,e)||b.offset;$.each(b.axis.split(""),function(a,c){var d="x"===c?"Left":"Top",m=d.toLowerCase(),g="scroll"+d,h=r[g](),n=p.max(q,c);t?(f[g]=t[m]+(l?0:h-r.offset()[m]),b.margin&&(f[g]-=parseInt(e.css("margin"+d),10)||0,f[g]-=parseInt(e.css("border"+d+"Width"),10)||0),f[g]+=v[m]||0,b.over[m]&&(f[g]+=e["x"===c?"width":"height"]()*b.over[m])):(d=e[m],f[g]=d.slice&& "%"===d.slice(-1)?parseFloat(d)/100*n:d);b.limit&&/^\d+$/.test(f[g])&&(f[g]=0>=f[g]?0:Math.min(f[g],n));!a&&1<b.axis.length&&(h===f[g]?f={}:u&&(k(b.onAfterFirst),f={}))});k(b.onAfter)}})};p.max=function(a,d){var b="x"===d?"Width":"Height",h="scroll"+b;if(!n(a))return a[h]-$(a)[b.toLowerCase()]();var b="client"+b,k=a.ownerDocument||a.document,l=k.documentElement,k=k.body;return Math.max(l[h],k[h])-Math.min(l[b],k[b])};$.Tween.propHooks.scrollLeft=$.Tween.propHooks.scrollTop={get:function(a){return $(a.elem)[a.prop]()}, set:function(a){var d=this.get(a);if(a.options.interrupt&&a._last&&a._last!==d)return $(a.elem).stop();var b=Math.round(a.now);d!==b&&($(a.elem)[a.prop](b),a._last=this.get(a))}};return p});
+;
+(function (factory) {
+  'use strict';
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define(['jquery'], factory);
+  } else if (typeof module !== 'undefined' && module.exports) {
+    // CommonJS
+    module.exports = factory(require('jquery'));
+  } else {
+    // Global
+    factory(jQuery);
+  }
+})(function ($) {
+  'use strict';
+
+  var $scrollTo = $.scrollTo = function (target, duration, settings) {
+    return $(window).scrollTo(target, duration, settings);
+  };
+
+  $scrollTo.defaults = {
+    axis: 'xy',
+    duration: 0,
+    limit: true
+  };
+
+  function isWin(elem) {
+    return !elem.nodeName ||
+      $.inArray(elem.nodeName.toLowerCase(), ['iframe', '#document', 'html', 'body']) !== -1;
+  }
+
+  $.fn.scrollTo = function (target, duration, settings) {
+    if (typeof duration === 'object') {
+      settings = duration;
+      duration = 0;
+    }
+    if (typeof settings === 'function') {
+      settings = {
+        onAfter: settings
+      };
+    }
+    if (target === 'max') {
+      target = 9e9;
+    }
+
+    settings = $.extend({}, $scrollTo.defaults, settings);
+    // Speed is still recognized for backwards compatibility
+    duration = duration || settings.duration;
+    // Make sure the settings are given right
+    var queue = settings.queue && settings.axis.length > 1;
+    if (queue) {
+      // Let's keep the overall duration
+      duration /= 2;
+    }
+    settings.offset = both(settings.offset);
+    settings.over = both(settings.over);
+
+    return this.each(function () {
+      // Null target yields nothing, just like jQuery does
+      if (target === null) return;
+
+      var win = isWin(this),
+        elem = win ? this.contentWindow || window : this,
+        $elem = $(elem),
+        targ = target,
+        attr = {},
+        toff;
+
+      switch (typeof targ) {
+        // A number will pass the regex
+        case 'number':
+        case 'string':
+          if (/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ)) {
+            targ = both(targ);
+            // We are done
+            break;
+          }
+          // Relative/Absolute selector
+          targ = win ? $(targ) : $(targ, elem);
+          /* falls through */
+        case 'object':
+          if (targ.length === 0) return;
+          // DOMElement / jQuery
+          if (targ.is || targ.style) {
+            // Get the real position of the target
+            toff = (targ = $(targ)).offset();
+          }
+      }
+
+      var offset = $.isFunction(settings.offset) && settings.offset(elem, targ) || settings.offset;
+
+      $.each(settings.axis.split(''), function (i, axis) {
+        var Pos = axis === 'x' ? 'Left' : 'Top',
+          pos = Pos.toLowerCase(),
+          key = 'scroll' + Pos,
+          prev = $elem[key](),
+          max = $scrollTo.max(elem, axis);
+
+        if (toff) { // jQuery / DOMElement
+          attr[key] = toff[pos] + (win ? 0 : prev - $elem.offset()[pos]);
+
+          // If it's a dom element, reduce the margin
+          if (settings.margin) {
+            attr[key] -= parseInt(targ.css('margin' + Pos), 10) || 0;
+            attr[key] -= parseInt(targ.css('border' + Pos + 'Width'), 10) || 0;
+          }
+
+          attr[key] += offset[pos] || 0;
+
+          if (settings.over[pos]) {
+            // Scroll to a fraction of its width/height
+            attr[key] += targ[axis === 'x' ? 'width' : 'height']() * settings.over[pos];
+          }
+        } else {
+          var val = targ[pos];
+          // Handle percentage values
+          attr[key] = val.slice && val.slice(-1) === '%' ?
+            parseFloat(val) / 100 * max :
+            val;
+        }
+
+        // Number or 'number'
+        if (settings.limit && /^\d+$/.test(attr[key])) {
+          // Check the limits
+          attr[key] = attr[key] <= 0 ? 0 : Math.min(attr[key], max);
+        }
+
+        // Don't waste time animating, if there's no need.
+        if (!i && settings.axis.length > 1) {
+          if (prev === attr[key]) {
+            // No animation needed
+            attr = {};
+          } else if (queue) {
+            // Intermediate animation
+            animate(settings.onAfterFirst);
+            // Don't animate this axis again in the next iteration.
+            attr = {};
+          }
+        }
+      });
+
+      animate(settings.onAfter);
+
+      function animate(callback) {
+        var opts = $.extend({}, settings, {
+          // The queue setting conflicts with animate()
+          // Force it to always be true
+          queue: true,
+          duration: duration,
+          complete: callback && function () {
+            callback.call(elem, targ, settings);
+          }
+        });
+        $elem.animate(attr, opts);
+      }
+    });
+  };
+
+  // Max scrolling position, works on quirks mode
+  // It only fails (not too badly) on IE, quirks mode.
+  $scrollTo.max = function (elem, axis) {
+    var Dim = axis === 'x' ? 'Width' : 'Height',
+      scroll = 'scroll' + Dim;
+
+    if (!isWin(elem))
+      return elem[scroll] - $(elem)[Dim.toLowerCase()]();
+
+    var size = 'client' + Dim,
+      doc = elem.ownerDocument || elem.document,
+      html = doc.documentElement,
+      body = doc.body;
+
+    return Math.max(html[scroll], body[scroll]) - Math.min(html[size], body[size]);
+  };
+
+  function both(val) {
+    return $.isFunction(val) || $.isPlainObject(val) ? val : {
+      top: val,
+      left: val
+    };
+  }
+
+  // Add special hooks so that window scroll properties can be animated
+  $.Tween.propHooks.scrollLeft =
+    $.Tween.propHooks.scrollTop = {
+      get: function (t) {
+        return $(t.elem)[t.prop]();
+      },
+      set: function (t) {
+        var curr = this.get(t);
+        // If interrupt is true and user scrolled, stop animating
+        if (t.options.interrupt && t._last && t._last !== curr) {
+          return $(t.elem).stop();
+        }
+        var next = Math.round(t.now);
+        // Don't waste CPU
+        // Browsers don't render floating point scroll
+        if (curr !== next) {
+          $(t.elem)[t.prop](next);
+          t._last = this.get(t);
+        }
+      }
+    };
+
+  // AMD requirement
+  return $scrollTo;
+});
 
 // Smarter resize event
 // http://www.paulirish.com/2009/throttled-smartresize-jquery-event-handler/
@@ -83,6 +290,91 @@
   jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
 
 })(jQuery,'smartresize');
+
+
+/*
+$.revealablePassword can be called on `<input type="password">` elements to add a reveal button.
+`command` can be one of three values:
+  - `init`: Initializes the reveal button for the given elements.
+  - 'set': Sets the pasword field to the given `value`. Also resets the revealed state to hidden.
+  - 'clear': Clears the password field. (Equivalent to `set('')`.)
+*/
+(function ($) {
+  const dataKey = '$.revealablePassword';
+
+  $.fn.revealablePassword = function(command='init', value=null) {
+    if (command === 'init') {
+      this.each(function() {
+        const $passwordInput = $(this);
+
+        // We can't use $.clone here because the `type` attribute change won't get picked up by IE8.
+        // The original password input will the canonical source of the value.
+        // On IE8, e.outerHTML doesn't include quotes around all attributes.
+        // Known issue: On IE8, when pasting via mouse, no event will fire on the first
+        // change. This means that, for example, the "Apply Settings" button won't be enabled.
+        // This seems to be unavoidable. The workaround is to change focus after the mouse-paste.
+        const $revealedText = $($passwordInput.prop('outerHTML').replace(/type="?password"?/, 'type="text"'))
+          .prop('id', $passwordInput.prop('id')+'-plaintext').addClass('hidden')
+          .on('propertychange input change keydown keyup keypress blur', function(e) {
+            if (e.type === 'propertychange' && e.originalEvent.propertyName !== 'value') {
+              return;
+            }
+            // For some reason that I cannot fathom, on IE8 this handler fires for $passwordInput as well as $revealedText
+            if (e.currentTarget.id !== $revealedText.prop('id')) {
+              return;
+            }
+            $passwordInput.val($(this).val());
+            $passwordInput.trigger('change');
+          });
+
+        // For accessibility reasons, we want the clickable eye to be in the tab order, so
+        // we're using a real control rather than a `<i>` element.
+        // `type="button"` is necessary to prevent the button from being the default for
+        // the form (that is, activated by pressing Enter).
+        const $revealEye = $('<button type="button" class="password-input-reveal icon-eye1 btn btn-link"></button>');
+        $passwordInput.after($revealedText, $revealEye);
+
+        const reveal = function() {
+          $revealedText.val($passwordInput.val()).removeClass('hidden');
+          $passwordInput.addClass('hidden');
+          $revealEye.removeClass('icon-eye1').addClass('icon-eye-blocked');
+        };
+        const unreveal = function() {
+          $revealedText.addClass('hidden');
+          $passwordInput.val($revealedText.val()).removeClass('hidden');
+          $revealEye.removeClass('icon-eye-blocked').addClass('icon-eye1');
+        };
+
+        $revealEye.on('click', function(e) {
+          e.preventDefault();
+          if ($revealedText.hasClass('hidden')) {
+            reveal();
+          } else {
+            unreveal();
+          }
+        });
+
+        $passwordInput.data(dataKey, {
+          unreveal: unreveal
+        });
+      });
+    }
+    else if (command === 'set') {
+      this.each(function() {
+        const $passwordInput = $(this);
+        const data = $passwordInput.data(dataKey);
+        data.unreveal();
+        $passwordInput.val(value);
+        $passwordInput.trigger('change');
+      });
+    }
+    else if (command === 'clear') {
+      this.revealablePassword('set', '');
+    }
+
+    return this;
+  };
+}(jQuery));
 
 
 /*
@@ -287,3 +579,241 @@ Datastore.prototype = {
     return unsubscribe;
   }
 };
+
+
+/**
+ * Internationalization helper. Must be initialized before use.
+ * Should be accessed via `window.i18n`, with the exception of `I18n.localeBestMatch`.
+ */
+function I18n() {
+
+  /**
+   * Initializes this object.
+   * @param {Object} translations The set of translations available to us.
+   *    Must be of the form `{en: {translation:{key1:"string1",key2:"string2",...}}, ...}
+   * @param {string} fallbackLocale The locale to use if a string key is missing from a translation,
+   *    or if `setLocale` is passed a locale that it can't find a match for.
+   */
+  this.init = function(translations, fallbackLocale) {
+    this.translations = translations;
+    this.locales = Object.keys(translations);
+
+    if (!this.translations[fallbackLocale]) {
+      throw new Error(`fallbackLocale '${fallbackLocale}' must exactly match a locale in translations`);
+    }
+    this.fallbackLocale = fallbackLocale;
+    this.currentLocale = this.fallbackLocale;
+  };
+
+  /**
+   * Sets the current locale of this object to a best match of `locale`. If UI l10n
+   * update is also desired, `localizeUI` should be called after this.
+   * @param {string} locale
+   */
+  this.setLocale = function(locale) {
+    this.currentLocale = I18n.localeBestMatch(locale, this.locales) || this.fallbackLocale;
+  };
+
+  /**
+   * Returns true if the current locale is RTL, false otherwise.
+   * @returns {boolean}
+   */
+  this.isRTL = function() {
+    // Factors to keep in mind:
+    // - some languages are RTL in their default script; like Arabic and Hebrew
+    // - some languages sometimes use Arabic script, but not by default; like Kazakh
+    // - any locale can have the `Arab` script set and become RTL (probably other
+    //   scripts as well, but that's the only one we'll check for)
+    const defaultRTLLanguages = ['devrtl', 'fa', 'ar', 'ug', 'ur', 'he', 'ps', 'sd'];
+    // This isn't all of them, but the ones we might reasonably encounter combined with an RTL language. We may need to expand this with time.
+    const ltrScripts = ['Latn', 'Cyrl', 'Deva'];
+    // We may need to expand this with time.
+    const rtlScripts = ['Arab'];
+
+    // Note that script names are always four characters, and language and country codes
+    // are always 2 characters, so we're not going to accidentally match a script name.
+
+    // Do we have an explicit RTL script?
+    for (let i = 0; i < rtlScripts.length; i++) {
+      if (this.currentLocale.toLowerCase().indexOf(rtlScripts[i].toLowerCase()) >= 0) { // eslint-disable-line
+        return true;
+      }
+    }
+
+    // Do we have an explicit LTR script?
+    for (let i = 0; i < ltrScripts.length; i++) {
+      if (this.currentLocale.toLowerCase().indexOf(ltrScripts[i].toLowerCase()) >= 0) { // eslint-disable-line
+        return false;
+      }
+    }
+
+    // Does the current language default to RTL?
+    for (let i = 0; i < defaultRTLLanguages.length; i++) {
+      if (this.currentLocale.toLowerCase().startsWith(defaultRTLLanguages[i].toLowerCase())) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  /**
+   * Find the string corresponding to `key` for the current locale (falling back if
+   * necessary). If the key can't be found, an exception will be thrown.
+   * @param {string} key
+   * @returns {string}
+   */
+  this.t = function(key) {
+    const translation = this.translations[this.currentLocale].translation[key]
+                        || this.translations[this.fallbackLocale].translation[key];
+    if (!translation) {
+      throw new Error(`failed to find translation for key '${key}' and locale '${this.currentLocale}'`);
+    }
+    return translation;
+  };
+
+  /**
+   * Update the UI with translations for the current locale.
+   */
+  this.localizeUI = function() {
+    const translatableElems = $('[data-i18n]');
+    for (let i = 0; i < translatableElems.length; i++) {
+      const elem = translatableElems.eq(i);
+      const key = elem.data('i18n');
+      if (key.startsWith('[html]')) {
+        elem.html(this.t(key.slice('[html]'.length)));
+      }
+      else {
+        elem.text(this.t(key));
+      }
+    }
+
+    $('html').attr('lang', this.currentLocale);
+    const rtl = this.isRTL();
+    $('body').attr('dir', rtl ? 'rtl' : 'ltr')
+             .css('direction', rtl ? 'rtl' : 'ltr');
+  };
+
+  /**
+   * Finds the best match for `desiredLocale` among `availableLocales`. Returns a locale
+   * from `availableLocales`, or `null` if no acceptable match can be found.
+   * @param {string} desiredLocale
+   * @param {string[]} availableLocales
+   * @returns {?string}
+   */
+  /* Adheres to this behaviour:
+  [
+    {
+      _desc: 'Exact match',
+      desiredLocale: 'zh-Hans-CN',
+      availableLocales: ['en', 'zh-Hans-CN', 'zh'],
+      want: 'zh-Hans-CN'
+    },
+    {
+      _desc: 'Language-only match',
+      desiredLocale: 'zh-Hans-CN',
+      availableLocales: ['en', 'zh', 'de'],
+      want: 'zh'
+    },
+    {
+      _desc: 'Language+script match',
+      desiredLocale: 'zh-Hans-CN',
+      availableLocales: ['en', 'zh', 'zh-Hans', 'zh-Hant-TW', 'de'],
+      want: 'zh-Hans'
+    },
+    {
+      _desc: 'Language+country match',
+      desiredLocale: 'zh-Hans-CN',
+      availableLocales: ['en', 'zh', 'zh-CN', 'zh-Hant-TW', 'de'],
+      want: 'zh-CN'
+    },
+    {
+      _desc: 'Case-insensitive best match',
+      desiredLocale: 'ZH-HANS-CN',
+      availableLocales: ['en-US', 'zh-TW', 'de-DE'],
+      want: 'zh-TW'
+    },
+    {
+      _desc: 'Shortest best match',
+      desiredLocale: 'zh-Hans-CN',
+      availableLocales: ['en-US', 'zh-XX', 'zh', 'zh-TW', 'de-DE'],
+      want: 'zh'
+    },
+    {
+      _desc: 'Equally good matches will be determined by input order; part 1',
+      desiredLocale: 'zh-XX-YY',
+      availableLocales: ['en-US', 'zh-XX', 'zh', 'zh-YY', 'de-DE'],
+      want: 'zh-XX'
+    },
+    {
+      _desc: 'Equally good matches will be determined by input order; part 2',
+      desiredLocale: 'zh-XX-YY',
+      availableLocales: ['en-US', 'zh-YY', 'zh', 'zh-XX', 'de-DE'],
+      want: 'zh-YY'
+    },
+  ].forEach((test) => {
+    const got = I18n.localeBestMatch(test.desiredLocale, test.availableLocales);
+    if (got !== test.want) {
+      throw new Error(`test failed: "${test._desc}"; got "${got}"; wanted "${test.want}"`)
+    }
+    console.log(`pass: ${test._desc}`);
+  });
+  console.log('all tests passed');
+  */
+  I18n.localeBestMatch = function(desiredLocale, availableLocales) {
+    // Our translation locales are like 'en', 'en-Latn', 'en-US', or 'en-Latn-US' (BCP 47 subset).
+    // `localeID` can also be like any of those, but not necessarily the same.
+    // We want to match intelligently.
+
+    // First try to match exactly. This is case sensitive. If there's a match that
+    // requires case-insensitivity, it will be found below.
+    for (let i = 0; i < availableLocales.length; i++) {
+      if (availableLocales[i] === desiredLocale) {
+        return desiredLocale;
+      }
+    }
+
+    // We'll break the IDs up into pieces and try to find a best match that must include
+    // the first, language, part.
+    const desiredLocaleParts = desiredLocale.toLowerCase().split('-');
+
+    let maxMatchScore = 0, maxMatchLocale = null;
+
+    for (let i = 0; i < availableLocales.length; i++) {
+      const translationLocale = availableLocales[i];
+      const translationLocaleParts = translationLocale.toLowerCase().split('-');
+      if (translationLocaleParts[0] !== desiredLocaleParts[0]) {
+        // The language part must match.
+        continue;
+      }
+
+      let currentScore = 1;
+
+      for (let j = 1; j < desiredLocaleParts.length; j++) {
+        for (let k = 1; k < translationLocaleParts.length; k++) {
+          if (desiredLocaleParts[j] === translationLocaleParts[k]) {
+            currentScore += 1;
+          }
+        }
+      }
+
+      if (currentScore > maxMatchScore) {
+        maxMatchScore = currentScore;
+        maxMatchLocale = translationLocale;
+      }
+      else if (currentScore === maxMatchScore) {
+        // We're going to break ties by preferring the shortest locale. This allows us,
+        // for example, to prefer "zh" over "zh-TW" for "zh-CN" and "zh-Hans-CN".
+        if (translationLocale.length < maxMatchLocale.length) {
+          maxMatchScore = currentScore;
+          maxMatchLocale = translationLocale;
+        }
+      }
+    }
+
+    return maxMatchLocale;
+  };
+
+}
+
+window.i18n = new I18n();

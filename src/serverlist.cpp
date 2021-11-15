@@ -75,7 +75,7 @@ size_t ServerList::AddEntriesToList(
 
     // This list may contain more than one discovered server
     // Randomize this list for load-balancing
-    random_shuffle(decodedServerEntries.begin(), decodedServerEntries.end());
+    ShuffleVector(decodedServerEntries.begin(), decodedServerEntries.end());
 
     ServerEntries oldServerEntryList = GetList();
 
@@ -270,7 +270,7 @@ ServerEntries ServerList::GetList()
     {
         embeddedServerEntryList = GetListFromEmbeddedValues();
         // Randomize this list for load-balancing
-        random_shuffle(embeddedServerEntryList.begin(), embeddedServerEntryList.end());
+        ShuffleVector(embeddedServerEntryList.begin(), embeddedServerEntryList.end());
     }
     catch (std::exception &ex)
     {

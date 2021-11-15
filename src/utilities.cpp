@@ -164,23 +164,85 @@ bool ExtractExecutable(
     return true;
 }
 
+// Returns empty path if unable to get dir
+static filesystem::path GetBasePsiphonDataDir()
+{
+    /*
+    We initially used AppData/Roaming for our data directory, but later review revealed
+    that it's not appropriate for Psiphon data or PsiCash data. So we need to migrate
+    from /Roaming to /Local. See these issues for details:
+    https://github.com/Psiphon-Inc/psiphon-issues/issues/688
+    https://github.com/Psiphon-Inc/psiphon-issues/issues/689
 
-bool GetDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring& o_path) {
-    TCHAR path[MAX_PATH];
-    if (!SHGetSpecialFolderPath(NULL, path, CSIDL_APPDATA, FALSE))
+    Here is the overall flow:
+        1. Check for the existence of the Local datastore (dir). If present, use that. Exit flow.
+        2. If Local datastore not present, check for existence of Roaming datastore. If also not present, use Local. Exit flow.
+        3. If Roaming datastore present, move it to Local. If that succeeds, use Local. Exit flow.
+        4. If the move fails, use Roaming. Log.
+    */
+
+    TCHAR roamingAppData[MAX_PATH];
+    if (!SHGetSpecialFolderPath(NULL, roamingAppData, CSIDL_APPDATA, FALSE))
     {
-        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath failed (%d)"), __TFUNCTION__, GetLastError());
+        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath (roaming) failed (%d)"), __TFUNCTION__, GetLastError());
+        return filesystem::path();
+    }
+
+    TCHAR localAppData[MAX_PATH];
+    if (!SHGetSpecialFolderPath(NULL, localAppData, CSIDL_LOCAL_APPDATA, TRUE))
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - SHGetFolderPath (local) failed (%d)"), __TFUNCTION__, GetLastError());
+        return filesystem::path();
+    }
+
+    auto psiRoaming = filesystem::path(roamingAppData) / LOCAL_SETTINGS_APPDATA_SUBDIRECTORY;
+    auto psiLocal = filesystem::path(localAppData) / LOCAL_SETTINGS_APPDATA_SUBDIRECTORY;
+    filesystem::path pathToUse;
+
+    if (DirectoryExists(psiLocal.c_str()))
+    {
+        pathToUse = psiLocal;
+    }
+    else if (!DirectoryExists(psiRoaming.c_str()))
+    {
+        pathToUse = psiLocal;
+    }
+    else if (MoveFileEx(psiRoaming.c_str(), psiLocal.c_str(), MOVEFILE_WRITE_THROUGH | MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING))
+    {
+        pathToUse = psiLocal;
+    }
+    else
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: MigratePsiphonDataDir failed to move roaming to local (%d)"), __TFUNCTION__, GetLastError());
+        pathToUse = psiRoaming;
+    }
+
+    if (!CreateDirectory(pathToUse.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+    {
+        my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
+        return filesystem::path();
+    }
+
+    return pathToUse;
+}
+
+bool GetPsiphonDataPath(const vector<tstring> &pathSuffixes, bool ensureExists, tstring &o_path)
+{
+    // static var initialization is thread-safe as of C++11
+    static const auto baseDataPath = GetBasePsiphonDataDir();
+    if (baseDataPath.empty())
+    {
         return false;
     }
 
-    filesystem::path appDataPath(path);
-    auto dataDirectory = filesystem::path(appDataPath);
+    auto dataPath = baseDataPath;
 
-    for (auto suffix : pathSuffixes) {
-        dataDirectory.append(suffix);
+    for (auto suffix : pathSuffixes)
+    {
+        dataPath.append(suffix);
 
         if (ensureExists) {
-            if (!CreateDirectory(dataDirectory.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
+            if (!CreateDirectory(dataPath.c_str(), NULL) && ERROR_ALREADY_EXISTS != GetLastError())
             {
                 my_print(NOT_SENSITIVE, false, _T("%s - create directory failed (%d)"), __TFUNCTION__, GetLastError());
                 return false;
@@ -188,10 +250,9 @@ bool GetDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring
         }
     }
 
-    o_path = dataDirectory;
+    o_path = dataPath;
     return true;
 }
-
 
 // Caller can check GetLastError() on failure
 bool GetTempPath(tstring& o_path)
@@ -276,6 +337,17 @@ bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath)
 }
 
 
+bool GetOwnExecutablePath(tstring& o_path) {
+    o_path.clear();
+    TCHAR szTemp[MAX_PATH * 2];
+    if (!GetModuleFileName(NULL, szTemp, ARRAYSIZE(szTemp))) {
+        return false;
+    }
+    o_path = szTemp;
+    return true;
+}
+
+
 // Makes a GUID string. Returns true on success, false otherwise.
 bool MakeGUID(tstring& o_guid) {
     o_guid.clear();
@@ -343,6 +415,14 @@ bool WriteFile(const tstring& filename, const string& data)
     return true;
 }
 
+// From https://stackoverflow.com/a/6218445/729729
+bool DirectoryExists(LPCTSTR szPath)
+{
+    DWORD dwAttrib = GetFileAttributes(szPath);
+
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+            (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
 
 DWORD WaitForConnectability(
     USHORT port,
@@ -1019,6 +1099,83 @@ bool ReadRegistryStringValue(LPCSTR name, wstring& value)
 }
 
 
+bool WriteRegistryProtocolHandler(const tstring& scheme)
+{
+    /* We're creating a structure that looks like this:
+
+    [HKEY_CURRENT_USER\SOFTWARE\Classes\psiphon]
+    @="URL:psiphon"
+    "URL Protocol"=""
+
+    [HKEY_CURRENT_USER\SOFTWARE\Classes\psiphon\shell]
+
+    [HKEY_CURRENT_USER\SOFTWARE\Classes\psiphon\shell\open]
+
+    [HKEY_CURRENT_USER\SOFTWARE\Classes\psiphon\shell\open\command]
+    @="\"C:\\<path_to>\\psiphon3.exe\" -- \"%1\""
+    */
+
+    tstring exePath;
+    if (!GetOwnExecutablePath(exePath)) {
+        return false;
+    }
+
+    struct Entry {
+        wstring keyPath;
+        wstring name;
+        wstring value;
+    };
+    vector<Entry> entries = {
+        {_T("SOFTWARE\\Classes\\")+scheme, _T(""), _T("URL:")+scheme},
+        {_T("SOFTWARE\\Classes\\")+scheme, _T("URL Protocol"), _T("")},
+        {_T("SOFTWARE\\Classes\\")+scheme+_T("\\shell\\open\\command"), _T(""), _T("\"") + exePath + _T("\" -- \"%1\"")},
+    };
+
+    for (const auto& entry : entries) {
+        HKEY key = 0;
+        LONG returnCode = RegCreateKeyEx(
+                            HKEY_CURRENT_USER,
+                            entry.keyPath.c_str(),
+                            0,
+                            0,
+                            0,
+                            KEY_WRITE,
+                            0,
+                            &key,
+                            0);
+        if (returnCode != ERROR_SUCCESS)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: RegCreateKeyEx failed for '%hs' with code %ld"), __TFUNCTION__, entry.keyPath.c_str(), returnCode);
+            return false;
+        }
+
+        // It's inefficient to close the key on each iteration,
+        // but it's simpler and doesn't need to be high-perfomance.
+        auto closeKey = finally([=]() {
+            auto lastError = GetLastError();
+            RegCloseKey(key);
+            SetLastError(lastError); // restore the previous error code
+        });
+
+        returnCode = RegSetValueExW(
+            key,
+            entry.name.c_str(),
+            0,
+            REG_SZ,
+            (LPBYTE)entry.value.c_str(),
+            (entry.value.length() + 1) * sizeof(wchar_t)); // Write the null terminator
+        if (returnCode != ERROR_SUCCESS)
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s: RegSetValueExW failed for '%hs' with code %ld"), __TFUNCTION__, entry.name.c_str(), returnCode);
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 int TextHeight(void)
 {
     HWND hWnd = CreateWindow(L"Static", 0, 0, 0, 0, 0, 0, 0, 0, g_hInst, 0);
@@ -1268,6 +1425,27 @@ tstring UrlEncode(const tstring& input)
     return escapedURL.str();
 }
 
+// Only URL-encodes `%` characters. 
+// Note that this is _only_ enough to encode a hash fragment in isolation.
+tstring PercentEncode(const tstring& input)
+{
+    constexpr auto escapedPercent = _T("%25");
+    tstringstream escapedURL;
+
+    for (tstring::const_iterator i = input.begin(), n = input.end(); i != n; ++i) {
+        tstring::value_type c = (*i);
+
+        if (c == '%') {
+            escapedURL << escapedPercent;
+            continue;
+        }
+
+        escapedURL << c;
+    }
+
+    return escapedURL.str();
+}
+
 tstring UrlDecode(const tstring& input)
 {
     return UrlCodec(input, false);
@@ -1305,37 +1483,145 @@ Json::Value LoadJSONArray(const char* jsonArrayString)
 }
 
 
-tstring GetLocaleName()
+/*
+ * System Utilities
+ */
+
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+
+std::string GetBuildTimestamp() {
+    // This info is set at build time
+    const IMAGE_NT_HEADERS* nt_header = (const IMAGE_NT_HEADERS*)((char*)&__ImageBase + __ImageBase.e_lfanew);
+
+    tm gmt;
+    errno_t err;
+    if ((err = gmtime_s(&gmt, reinterpret_cast<const time_t*>(&nt_header->FileHeader.TimeDateStamp))) != 0) {
+        my_print(NOT_SENSITIVE, false, _T("%s: gmtime_s failed: %d"), __TFUNCTION__, err);
+    }
+
+    char buf[100];
+    strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &gmt);
+    return buf;
+}
+
+
+DWORD GetTickCountDiff(DWORD start, DWORD end)
 {
-    int size = GetLocaleInfo(
-        LOCALE_USER_DEFAULT,
+    if (start == 0)
+    {
+        return 0;
+    }
+
+    // Has tick count wrapped around?
+    if (end < start)
+    {
+        return (MAXDWORD - start) + end;
+    }
+
+    return end - start;
+}
+
+
+wstring GetLocaleID()
+{
+    //
+    // Language
+    //
+
+    auto size = GetLocaleInfoEx(
+        LOCALE_NAME_USER_DEFAULT,
         LOCALE_SISO639LANGNAME,
         NULL,
         0);
 
     if (size <= 0)
     {
-        return _T("");
+        return L"";
     }
 
-    LPTSTR buf = new TCHAR[size];
+    auto buf = std::make_unique<wchar_t[]>(size);
 
-    size = GetLocaleInfo(
-        LOCALE_USER_DEFAULT,
+    size = GetLocaleInfoEx(
+        LOCALE_NAME_USER_DEFAULT,
         LOCALE_SISO639LANGNAME,
-        buf,
+        buf.get(),
         size);
 
     if (size <= 0)
     {
-        return _T("");
+        return L"";
     }
 
-    tstring ret = buf;
+    wstring language = buf.get();
 
-    delete[] buf;
+    //
+    // Script
+    //
 
-    return ret;
+    size = GetLocaleInfoEx(
+        LOCALE_NAME_USER_DEFAULT,
+        LOCALE_SSCRIPTS,
+        NULL,
+        0);
+
+    if (size <= 0)
+    {
+        return L"";
+    }
+
+    buf = std::make_unique<wchar_t[]>(size);
+
+    size = GetLocaleInfoEx(
+        LOCALE_NAME_USER_DEFAULT,
+        LOCALE_SSCRIPTS,
+        buf.get(),
+        size);
+
+    if (size <= 0)
+    {
+        return L"";
+    }
+
+    // We now have a semicolon-separated list of scripts; we'll use the first
+    wstring script;
+    auto scripts = split(wstring(buf.get()), L';');
+    if (!scripts.empty() && !scripts.front().empty()) {
+        script = scripts.front();
+    }
+
+    //
+    // Country
+    //
+
+    size = GetLocaleInfoEx(
+        LOCALE_NAME_USER_DEFAULT,
+        LOCALE_SISO3166CTRYNAME,
+        NULL,
+        0);
+
+    if (size <= 0)
+    {
+        return L"";
+    }
+
+    buf = std::make_unique<wchar_t[]>(size);
+
+    size = GetLocaleInfoEx(
+        LOCALE_NAME_USER_DEFAULT,
+        LOCALE_SISO3166CTRYNAME,
+        buf.get(),
+        size);
+
+    if (size <= 0)
+    {
+        return L"";
+    }
+
+    wstring country = buf.get();
+
+    wstring bcp47 = language + (script.empty() ? L"" : L"-") + script + (country.empty() ? L"" : L"-") + country;
+
+    return bcp47;
 }
 
 
@@ -1569,6 +1855,58 @@ void EnforceOSSupport(HWND parentWnd, const wstring& message)
     ExitProcess(1);
 }
 
+bool CopyToClipboard(HWND mainWnd, const tstring& s)
+{
+    // Adapted from https://docs.microsoft.com/en-us/windows/win32/dataxchg/using-the-clipboard#copying-information-to-the-clipboard
+
+    if (!OpenClipboard(mainWnd))
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: OpenClipboard failed: %d"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    // OpenClipboard was successful, so we need to close it no matter what.
+    auto closeClipboard = finally([] {
+        CloseClipboard();
+        });
+
+    if (!EmptyClipboard())
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: EmptyClipboard failed: %d"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, (s.size() + 1) * sizeof(TCHAR));
+    if (hglbCopy == NULL)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: GlobalAlloc failed: %d"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    LPTSTR lptstrCopy = (LPTSTR)GlobalLock(hglbCopy);
+    if (lptstrCopy == NULL)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: GlobalLock failed: %d"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    memcpy(lptstrCopy, s.c_str(), s.size() * sizeof(TCHAR));
+    lptstrCopy[s.size()] = (TCHAR)0; // null terminator
+
+    if (!GlobalUnlock(hglbCopy) && GetLastError() != ERROR_SUCCESS)
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s: GlobalUnlock failed: %d"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    if (SetClipboardData(CF_UNICODETEXT, hglbCopy) == NULL) {
+        my_print(NOT_SENSITIVE, true, _T("%s: SetClipboardData failed: %d"), __TFUNCTION__, GetLastError());
+        return false;
+    }
+
+    return true;
+}
+
 
 /*
 Resource Utilities
@@ -1615,22 +1953,6 @@ bool GetResourceBytes(LPCTSTR name, LPCTSTR type, BYTE*& o_pBytes, DWORD& o_size
     o_size = SizeofResource(NULL, res);
 
     return true;
-}
-
-DWORD GetTickCountDiff(DWORD start, DWORD end)
-{
-    if (start == 0)
-    {
-        return 0;
-    }
-
-    // Has tick count wrapped around?
-    if (end < start)
-    {
-        return (MAXDWORD - start) + end;
-    }
-
-    return end - start;
 }
 
 /*
@@ -1860,4 +2182,16 @@ void GetLocalIPv4Addresses(vector<tstring>& o_ipAddresses)
         HeapFree(GetProcessHeap(), 0, ipAddresses);
         ipAddresses = NULL;
     }
+}
+
+/*
+ * String Utilities
+ */
+
+// This function might be easily convertible to support wstring, but it would need testing.
+// From https://stackoverflow.com/a/17976541/729729
+std::string trim(const std::string& s)
+{
+    auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) {return std::isspace(c); });
+    return std::string(wsfront, std::find_if_not(s.rbegin(), std::string::const_reverse_iterator(wsfront), [](int c) {return std::isspace(c); }).base());
 }

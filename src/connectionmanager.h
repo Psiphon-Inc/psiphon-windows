@@ -99,8 +99,7 @@ public:
 
     // Results in WM_PSIPHON_FEEDBACK_SUCCESS being posted to the main window
     // on success, WM_PSIPHON_FEEDBACK_FAILED on failure.
-    // NOTE: The JSON string must contain wide unicode codepoints, not UTF-8.
-    void SendFeedback(LPCWSTR unicodeFeedbackJSON);
+    void SendFeedback(const string& utf8FeedbackJSON);
 
 private:
     static DWORD WINAPI ConnectionManagerStartThread(void* object);
@@ -126,7 +125,7 @@ private:
     void UpdateCurrentSessionInfo(const SessionInfo& sessionInfo);
 
     // May throw StopSignal::StopException
-    bool DoSendFeedback(LPCWSTR feedbackJSON);
+    bool DoSendFeedback(const string& feedbackJSON);
     static DWORD WINAPI ConnectionManagerFeedbackThread(void* object);
 
 private:

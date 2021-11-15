@@ -56,6 +56,8 @@
     <ClCompile Include="subprocess.cpp" />
     <ClCompile Include="psiphon_tunnel_core.cpp" />
     <ClCompile Include="feedback_upload_worker.cpp" />
+    <ClCompile Include="psiclient_systray.cpp" />
+    <ClCompile Include="psiclient_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
@@ -542,6 +544,8 @@
     <ClInclude Include="subprocess.h" />
     <ClInclude Include="psiphon_tunnel_core.h" />
     <ClInclude Include="feedback_upload_worker.h" />
+    <ClInclude Include="psiclient_systray.h" />
+    <ClInclude Include="psiclient_ui.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="psiclient.rc" />

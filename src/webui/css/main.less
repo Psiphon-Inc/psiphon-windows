@@ -84,7 +84,7 @@
 
 @brand-primary: @psiAction;
 @brand-success: #51A253;
-@brand-info: #5bc0de;
+@brand-info: #3694b4;
 @brand-warning: #f0ad4e;
 @brand-danger: #C25350;
 
@@ -132,6 +132,12 @@ html, body
   outline: 0 !important;
 }
 
+// We want the hidden class to really be hidden, even if another display value is applies
+// to the element with a stricter selector.
+.hidden {
+  display: none !important;
+}
+
 // External links should be underlined
 a[href^=http], a[href^=mailto] {
   text-decoration: underline;
@@ -159,6 +165,16 @@ textarea {
   }
   // ...and add it to the container
   margin-bottom: 5px;
+}
+
+// This is a copy of the icon-spin rule in icomoon/helpers.css. This rule is necessary
+// to make the wait spinners with 8 dots look right
+.icon-spin-8dot {
+  display: inline-block;
+  -moz-animation: spin 1s infinite steps(8);
+  -o-animation: spin 1s infinite steps(8);
+  -webkit-animation: spin 1s infinite steps(8);
+  animation: spin 1s infinite steps(8);
 }
 
 
@@ -212,7 +228,7 @@ textarea {
       }
     }
 
-    &.long-connecting-show {
+    &.long-connecting {
       font-size: 0.9em;
 
       div {
@@ -270,6 +286,7 @@ textarea {
   &.main-nav.nav {
     border-width: 0;
     margin: 0;
+    min-width: 165px; // the width needed for the English UI
   }
 
   #fill-tab {
@@ -439,7 +456,7 @@ textarea {
       .circle {
         height: 2.5em;
         width: 2.5em;
-        border-radius: 50%;
+        .border-radius(50%);
         background-color: @color;
         margin: auto;
 
@@ -502,6 +519,7 @@ textarea {
   .wait-spinner {
     position: relative;
     display: inline-block;
+    .ie7-inline-block();
     width: 1em;
     height: 1em;
   }
@@ -560,8 +578,8 @@ textarea {
   position: absolute;
   left: 50%;
   top: 50%;
-  .translate(-50%,-50%);
-  border-radius: 100%;
+  .translate(-50%; -50%);
+  .border-radius(100%);
   width: 125%;
   height: 125%;
   border: 10000px solid black;
@@ -648,6 +666,10 @@ textarea {
 .value-error-alert {
   // For some reason the error alert is not showing over the body text.
   z-index: @zindexPopover;
+
+  // If we let this wrap, it can mess up DPI scaling calculations,
+  // because the width won't be what we expect.
+  white-space: nowrap;
 }
 
 .vpn-incompatible-msg {
@@ -743,8 +765,7 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
 }
 
 #EgressRegion, #EgressRegionCombo ul, #EgressRegionCombo .btn {
-  @egressRegionWidth: 300px;
-  width: @egressRegionWidth;
+  min-width: 200px;
 
   .flag {
     display: block;
@@ -886,6 +907,15 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
 }
 
 
+/* DEBUG */
+
+#debug-pane {
+  #debug-modal-notices li {
+    list-style: none;
+  }
+}
+
+
 /* ABOUT */
 
 #about-pane {
@@ -906,8 +936,8 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
   display: inline-block;
   .ie7-inline-block();
   text-transform: uppercase;
-  transform: skew(-10deg) rotate(-7deg);
-  transform-origin: right;
+  .transform(skew(-10deg) rotate(-7deg));
+  .transform-origin(right);
   display: table;
   margin: 1em auto 3em auto;
 
@@ -935,6 +965,22 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
 
 /* PSICASH */
 
+.psicash-balance-coin {
+  // These rules help old-IE clients look okay
+  white-space: nowrap;
+  max-height: 1.6em;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+// This applies to both balance/prices and the nav tab icon. In the future we might need
+// separate styles for these uses.
+img.coin {
+  height: 1.4em;
+  vertical-align: text-top;
+}
+
+// This is the always-visible box in the bottom-left of the window
 #psicash-block {
   // We want the PsiCash block to be bottom-left (for LTR)
   position: absolute;
@@ -956,18 +1002,27 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
       margin-bottom: 5px;
       .clearfix;
 
-      .psicash-balance-coin {
-        // These rules help old-IE clients look okay
-        white-space: nowrap;
-        max-height: 1.6em;
+      a {
+        // Override the colour given to links. This violates our semantic colouring,
+        // but looks better. This is okay because it's just a convenience shortcut.
+        color: #000;
+        &:hover {
+          // We need to duplicate this from scaffolding.less otherwise the above rule
+          // clobbers the standard link hover rule (in IE).
+          color: @linkColorHover;
+        }
       }
 
-      > span {
+      .psicash-account-action {
         body[dir="ltr"] & {
           .pull-right;
         }
         body[dir="rtl"] & {
           .pull-left;
+        }
+
+        i {
+          font-weight: bold;
         }
       }
 
@@ -977,7 +1032,7 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
         pointer-events: none;
 
         // Prevent it from interfering with the layout of other elements
-        position: relative;
+        position: absolute;
         height: 0;
         width: 0;
         overflow: visible;
@@ -989,8 +1044,14 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
 
         // Tweak to center on the balance.
         // TODO: Figure out how to prevent jumping when the number of digits in the balance changes.
-        top: -23px;
-        left: 3px;
+        top: 7px;
+        body[dir="ltr"] & {
+          left: 3px;
+        }
+        body[dir="rtl"] & {
+          right: 3px;
+        }
+
 
         // Starts opaque
         opacity: 1;
@@ -1020,125 +1081,473 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
       }
     }
 
-    img.coin {
-      height: 1.5em;
-      vertical-align: text-top;
-    }
+    .psicash-corner-cluster {
+      .psicash-corner-cluster-item {
+        display: block;
 
-    .btn {
-      // A full-width button doesn't look enough like a button
-      max-width: 95%;
-    }
+        // This is a bit of fancy footwork to make sure that the first item in the cluster
+        // has rounded corners on the top, and the last has rounded corners on the bottom,
+        // even if the actual first element is hidden (as the speed limit will sometimes be).
 
-    .button-container {
-      .text-center;
-    }
+        @borderRadius: 10px;
 
-    .boost-container {
-      max-width: 95%;
-      margin: auto;
+        // First put a top border radius on all items.
+        border-top-left-radius: @borderRadius;
+        border-top-right-radius: @borderRadius;
+        // Reset the bottom corners to get rid of the Bootstrap badge
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
 
-      .boost-container-label {
-        width: 100%;
-
-        // We want the label to seem like it's part of a single control with
-        // the buttons, so we'll shift its bottom behind the top of the buttons.
-        margin-bottom: -4px;
-
-        border-top: 1px @btnPrimaryBackgroundHighlight solid;
-        border-left: 1px @btnPrimaryBackgroundHighlight solid;
-        border-right: 1px @btnPrimaryBackgroundHighlight solid;
-        .border-top-left-radius(@buttonBorderRadiusBase);
-        .border-top-right-radius(@buttonBorderRadiusBase);
-
-        .boost-container-label-inner {
-          padding-left: 3px;
-          padding-right: 3px;
-          padding-bottom: 4px; // this must be the same as the margin-bottom above
+        // This says "psicash-corner-cluster-items that are not hidden and are siblings of
+        // and subsequent to any non-hidden psicash-corner-cluster-item.
+        // So it removes the top border radius from all items but the first (which isn't subsequent to any others).
+        &:not(.hidden) ~ .psicash-corner-cluster-item:not(.hidden) {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
         }
-      }
 
-      .boost-container-buttons {
-        /*
-        We're going to mimic a table with the btn-group. That gives us nice layout
-        within and between the buttons.
-        One thing we _lose_ from this approach is height-matching between the buttons.
-        */
+        // Put a border radius on the last item.
+        &:not(.hidden):last-child {
+          border-bottom-left-radius: @borderRadius;
+          border-bottom-right-radius: @borderRadius;
+        }
 
-        width: 100%;
-        display: table;
-        overflow: hidden;
+        &.label {
+          // Make labels larger and give them more space (this currently is for the
+          // "Starting Speed Boost" label and may be too broad).
+          white-space: normal;
+          padding: 0.7em;
+          font-size: 1em;
+          line-height: 1.2em;
 
-        border-left: 1px @btnPrimaryBackgroundHighlight solid;
-        border-right: 1px @btnPrimaryBackgroundHighlight solid;
-        border-bottom: 1px @btnPrimaryBackgroundHighlight solid;
-        .border-bottom-left-radius(@buttonBorderRadiusBase);
-        .border-bottom-right-radius(@buttonBorderRadiusBase);
-
-        .btn {
-          width: 100%;
-          max-width: 100%;
-          white-space: normal; // override the default for .btn-group
-          overflow-wrap: break-word;
-
-          display: table-row;
-
-          & > span {
-            display: table-cell;
-            width: 1%;
-            vertical-align: middle;
-            padding: 3px;
+          // The success label background is darker than we'd like (and there's no harm
+          // in using the button background colour, since our corner labels are clickable).
+          &-success {
+            background-color: @btnSuccessBackground;
           }
         }
       }
+    }
+
+    .psicash-buy-speedboost {
+      display: block;
+      border-radius: 0;
+      padding: 4px 2px; // normal .btn styling is `4px 12px`, but that causes us to wrap text before we'd like
+
+      .psicash-buy-speedboost-label {
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      table {
+        margin: auto;
+      }
+    }
+
+    .psicash-buy-speedboost-more-options {
+      display: block;
+      padding: 5px;
+      border-radius: 0 0 10px 10px;
+      border-color: @psiAction;
+      border-top-width: 0;
     }
 
     .psicash-price-container {
       white-space: nowrap;
     }
 
-    // TODO: Still valid?
-    .psicash-buy-psi {
-      margin-top: 4px;
+    .psicash-block-overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      width: 100%;
+      background: @psiNavBackgroundColor;
+      filter: alpha(opacity=90); // IE8
+      opacity: 0.9;
+      z-index: @zindexModalBackdrop - 1; // Keep the z-index below the modal backdrop, otherwise there's a jarring flash when the overlay follows the login modal
+      overflow: hidden;
+
+      i {
+        top: 25%;
+        position: relative;
+        font-size: 40px;
+      }
+    }
+  }
+}
+
+// This is the PsiCash tab content
+#psicash-pane {
+  hr {
+    // We want to tighten up the space around HRs, so the content doesn't get spread out
+    // too much and the pane doesn't require too much scrolling.
+    margin: 5px 0 10px 0;
+  }
+
+  .width-limiter {
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .psicash-pane__user-and-balance {
+    width: 100%;
+
+    // Put some space between the rows
+    border-collapse: separate;
+    border-spacing: 0 5px;
+
+    .psicash-pane__user-and-balance__log-in-out-buttons {
+      white-space: nowrap;
+      vertical-align: top;
+      .text-right();
+      body[dir="rtl"] & {
+        .text-left();
+      }
+    }
+
+    .psicash-pane__user-and-balance__username-container {
+      width: 100%;
+      font-weight: bold;
+
+      // These need to be on the TD element in IE. This has the unfortunate effect of
+      // causing the "Create an account to protect your PsiCash" text to break-all as
+      // well, but the window shouldn't get that narrow (and hopefully the translations
+      // don't get that long).
+      -ms-word-break: break-all;
+      word-break: break-all;
+      word-break: break-word;
+
+      .psicash-pane__user-and-balance__username-container__username {
+        font-size: 1.5em;
+      }
+    }
+
+    .psicash-pane__user-and-balance__balance {
+      font-size: 1.5em;
+
+      .psicash-balance-coin {
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
+      }
+    }
+
+    .psicash-pane__user-and-balance__manage-web {
+      white-space: nowrap;
+      .text-right();
+      body[dir="rtl"] & {
+        .text-left();
+      }
     }
   }
 
-  .speed-limit {
-    .badge {
-      max-width: calc(100% - 18px); /* badges use 9px padding on left and right */
-      text-transform: uppercase;
-      white-space: normal;
+  .speed-boost-buttons {
+    .speed-boost-button {
+      display: inline-block;
+      .ie7-inline-block();
+      height: 155px;
+      width: 150px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      position: relative;
+      .border-radius(7px);
 
-      td:first {
-        width: 100%;
+      // This width is chosen to avoid the buttons wrapping and a horizontal scroll bar appearing
+      @media (max-width: 920px) {
+        height: 125px;
+        width: 121px;
       }
+
+      &.enough-balance:hover {
+        .box-shadow(0px 0px 10px 0px #6c6c6c);
+        cursor: pointer;
+      }
+
+      &.not-enough-balance {
+        opacity: 0.5;
+      }
+
+      &.one-hour {
+        @imgPath: '../speed-boost-button-1-hour.png';
+        background-image: url("@{imgPath}");
+
+        // IE8 hacks
+        html.no-backgroundsize & {
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale');
+        }
+        html.no-opacity &.not-enough-balance {
+          // IE8: There can only be one filter directive, so we need to repeat and append to add opacity
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale') alpha(opacity=50);
+        }
+      }
+      &.one-day {
+        @imgPath: '../speed-boost-button-1-day.png';
+        background-image: url("@{imgPath}");
+
+        // IE8 hacks
+        html.no-backgroundsize & {
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale');
+        }
+        html.no-opacity &.not-enough-balance {
+          // IE8: There can only be one filter directive, so we need to repeat and append to add opacity
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale') alpha(opacity=50);
+        }
+      }
+      &.one-week {
+        @imgPath: '../speed-boost-button-1-week.png';
+        background-image: url("@{imgPath}");
+
+        // IE8 hacks
+        html.no-backgroundsize & {
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale');
+        }
+        html.no-opacity &.not-enough-balance {
+          // IE8: There can only be one filter directive, so we need to repeat and append to add opacity
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale') alpha(opacity=50);
+        }
+      }
+      &.one-month {
+        @imgPath: '../speed-boost-button-1-month.png';
+        background-image: url("@{imgPath}");
+
+        // IE8 hacks
+        html.no-backgroundsize & {
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale');
+        }
+        html.no-opacity &.not-enough-balance {
+          // IE8: There can only be one filter directive, so we need to repeat and append to add opacity
+          filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@imgPath,sizingMethod='scale') alpha(opacity=50);
+        }
+      }
+
+      .speed-boost-duration {
+        position: absolute;
+        top: 8px;
+        width: 100%;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .speed-boost-price {
+        position: absolute;
+        bottom: 0px;
+        width: 80%;
+        left: 50%;
+        .translate(-50%; -50%);
+        padding: 5px;
+        background: rgba(255, 255, 255, 0.9);
+        .border-radius(4px);
+        .box-shadow(0px 0px 2px 0px #6c6c6c);
+        font-weight: bold;
+
+        // IE8 hacks
+        html.no-csstransforms & {
+          left: 10px \0;
+          background: #FFFFFF \0;
+          filter: alpha(opacity=90) \0;
+        }
+      }
+    }
+  }
+
+  .boost-remaining {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #cc664c;
+    .border-radius(9px);
+    color: #222;
+    background: #fff;
+    font-size: 1.5em;
+    white-space: normal;
+    padding: 19px;
+    line-height: 1.5em;
+
+    .speed-boost-rocket {
+      display: table-cell;
+      vertical-align: middle;
 
       img {
-        height: 35px;
-        vertical-align: baseline;
+        width: 2em;
+      }
+    }
 
-        body[dir="ltr"] & {
-          padding-left: 2px;
+    .speed-boost-time-remaining {
+      display: table-cell;
+      padding: 5px;
+      vertical-align: middle;
+      font-weight: bold;
+    }
+  }
+
+  .psicash-buy-psi {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+
+  .logged-out-ui {
+    .logged-out-ui-button-container {
+      display: inline-block;
+      .ie7-inline-block();
+      box-sizing: border-box;
+
+      > div {
+        width: 100%;
+
+        .btn {
+          display: block;
+          margin-bottom: 5px;
         }
-        body[dir="rtl"] & {
-          padding-right: 2px;
-        }
+      }
+    }
+  }
+
+  .vpn-mode-ui {
+    .alert {
+      display: inline-block;
+      font-size: 1.5em;
+    }
+  }
+
+  .psicash-ui-overlay-container {
+    position: relative;
+    min-height: 200px;
+  }
+
+  .psicash-ui-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: @zindexModalBackdrop - 1; // Keep the z-index below the modal backdrop, otherwise there's a jarring flash when the overlay follows the login modal
+    height: 100%;
+    opacity: 0.9;
+    filter: alpha(opacity=90); // IE8
+    background: @psiBaseLight;
+    width: 100%;
+    overflow: hidden;
+
+    > div {
+      position: relative;
+      top: 20%;
+
+      i {
+        font-size: 60px;
+      }
+    }
+  }
+
+  // This applies to the PsiCash pane, but not the corner
+  .speed-limit {
+    .badge {
+      font-size: 20px;
+
+      img {
+        // The speed limit badge on the pane is one line rather than two, so the image should be smaller
+        height: 1.5em;
       }
 
-      // This color is derived (lightened) from the Psiphon logo
-      @speedLimitColor: #cc664c;
-
-      &.speed-slow {
-        background-color: @speedLimitColor;
-        color: @psiNavBackgroundColor;
+      table {
+        display: inline-block;
+        .ie7-inline-block();
       }
+    }
+  }
 
-      &.speed-fast {
-        color: @psiBaseText;
-        text-shadow: none;
-        background-color: @psiNavBackgroundColor;
-        border: 1px solid @speedLimitColor;
+  // We have speed limit collapsers both within the badge and outside it, with slightly different styling
+  & .badge .psicash-pane__speed-limit__collapser {
+    text-decoration: none;  // undo .btn styling
+    text-shadow: none;      // undo .btn styling
+    margin-top: 4px;
+    color: darken(@white, 10%);
+    &:hover {
+      color: @white;
+    }
+
+    body[dir="ltr"] & {
+      .pull-right();
+    }
+    body[dir="rtl"] & {
+      .pull-left();
+    }
+  }
+
+  & h3 .psicash-pane__speed-limit__collapser {
+    font-size: 14px;
+    text-decoration: none;  // undo .btn styling
+    text-shadow: none;      // undo .btn styling
+    display: inline-block\9; // This is strictly to defeat IE8's "hasLayout" behaviour. It has no negative effect on other platforms.
+
+    &.icon-question-circle, &.icon-question {
+      padding: 0; // undo .btn styling
+      border: 0;  // undo .btn styling
+    }
+  }
+
+  .psicash-pane__speed-limit__collapse {
+    // When the title and text above the badge are collapsed, we lose the top margin of
+    // the header and so the badge is too high up. So we need to add and remove a top
+    // margin when we collpase and expand.
+    // To avoid jumping around, use a transition for the top margin. But this overrides
+    // the Bootstrap .collapse transition (found in component-animations.less), so we
+    // need to copy it here as well.
+    .transition(~"height 0.35s ease, margin-top 0.35s ease, opacity 0.35s ease, border 0.35s ease");
+    &:not(.in) {
+      opacity: 0;
+      border: none;
+    }
+  }
+}
+
+.speed-limit {
+  // This color is derived (lightened) from the Psiphon logo
+  @speedLimitColor: #cc664c;
+
+  #psicash-pane & {
+    #gradient > .vertical(fadeout(@speedLimitColor, 90%), fadeout(@speedLimitColor, 100%));
+    .border-radius(9px); // equal to .badge's
+  }
+
+  .badge, &.badge {
+    display: block;
+    text-transform: uppercase;
+    white-space: normal;
+    line-height: 1.2em;
+
+    table {
+      margin: auto;
+    }
+
+    td:first {
+      width: 100%;
+    }
+
+    img {
+      height: 3em;
+      max-width: none;
+      vertical-align: baseline;
+
+      body[dir="ltr"] & {
+        padding-left: 0.2em;
       }
+      body[dir="rtl"] & {
+        padding-right: 0.2em;
+      }
+    }
+
+    &.speed-slow {
+      background-color: @speedLimitColor;
+      color: @psiNavBackgroundColor;
+    }
+
+    &.speed-fast {
+      color: @psiBaseText;
+      text-shadow: none;
+      background-color: @psiNavBackgroundColor;
+      border: 1px solid @speedLimitColor;
     }
   }
 }
@@ -1146,19 +1555,17 @@ label[for="EgressRegionCombo"], label[for="EgressRegion"] {
 /* MISCELLANEOUS AND HELPERS */
 
 .global-alert {
-  position: fixed;
-  bottom: 0;
+  bottom: 0px;
   white-space: nowrap;
   overflow: hidden;
   .box-shadow(0px 0px 10px 0px rgba(50, 50, 50, 0.75));
   z-index: @zindexPopover;
 
   body[dir="ltr"] & {
-    right: 0;
+    right: 0px;
   }
-
   body[dir="rtl"] & {
-    left: 0;
+    left: 0px;
   }
 }
 
@@ -1201,4 +1608,48 @@ hr.dotted {
   border-top-width: 2px;
   border-bottom-style: none;
   border-bottom-width: 0px;
+}
+
+.paragraph-icon {
+  font-size: 2.2em;
+  font-weight: bold;
+
+  &.paragraph-icon__warning {
+    color: @warningText;
+  }
+  &.paragraph-icon__error {
+    color: @errorText;
+  }
+  &.paragraph-icon__info {
+    color: @infoText;
+  }
+  &.paragraph-icon__success {
+    color: @successText;
+  }
+
+  body[dir="ltr"] & {
+    .pull-left();
+    margin: 5px 10px 10px 0;
+  }
+
+  body[dir="rtl"] & {
+    .pull-right();
+    margin: 5px 0 10px 10px;
+  }
+}
+
+.password-input-reveal {
+  body[dir="ltr"] & {
+    margin-left: -25px;
+  }
+  body[dir="rtl"] & {
+    margin-right: -25px;
+  }
+  position: relative;
+  vertical-align: middle;
+  cursor: pointer;
+
+  // These are to defeat the Bootstrap .btn styling
+  padding: 0;
+  color: @textColor;
 }

@@ -230,7 +230,7 @@ static int       stackDepth_g = 0;  // see readValue()
 
 namespace Json {
 
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L || (defined(_CPPLIB_VER) && _CPPLIB_VER >= 520)
 typedef std::unique_ptr<CharReader> CharReaderPtr;
 #else
 typedef std::auto_ptr<CharReader>   CharReaderPtr;
@@ -4008,7 +4008,7 @@ Value& Path::make(Value& root) const {
 
 namespace Json {
 
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L || (defined(_CPPLIB_VER) && _CPPLIB_VER >= 520)
 typedef std::unique_ptr<StreamWriter> StreamWriterPtr;
 #else
 typedef std::auto_ptr<StreamWriter>   StreamWriterPtr;
