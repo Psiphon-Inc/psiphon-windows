@@ -21,6 +21,7 @@
 
 #include <random>
 
+using namespace std::experimental;
 
 struct StopInfo;
 
@@ -31,8 +32,7 @@ struct StopInfo;
 
 bool ExtractExecutable(
     DWORD resourceID,
-    const TCHAR* exeFilename,
-    tstring& path,
+    const std::tstring& exeFilePath,
     bool succeedIfExists=false);
 
 bool GetShortPathName(const tstring& path, tstring& o_shortPath);
@@ -47,7 +47,7 @@ bool DirectoryExists(LPCTSTR szPath);
 // dir with no suffixes is always created.)
 bool GetPsiphonDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring& o_path);
 
-bool GetTempPath(tstring& o_path);
+bool GetSysTempPath(filesystem::path& o_path);
 
 // Makes an absolute path to a unique temp directory.
 // If `create` is true, the directory will also be created.
@@ -129,7 +129,6 @@ int LongestTextWidth(const TCHAR* texts[], int count);
 // Returns true if at least one item in the array is true.
 bool TestBoolArray(const vector<const bool*>& boolArray);
 
-
 /*
  * Data Encoding Utilities
  */
@@ -177,6 +176,8 @@ void EnforceOSSupport(HWND parentWnd, const wstring& message);
 /// Copy the given string to the clipboard. Returns true on success.
 bool CopyToClipboard(HWND mainWnd, const tstring& s);
 
+/// Converts the given system error code (e.g., from `GetLastError()`) into a human-readable string.
+std::tstring SystemErrorMessage(DWORD errorCode);
 
 /*
  * Miscellaneous Utilities
@@ -220,6 +221,7 @@ std::vector<basic_string<charT>> split(const basic_string<charT> &s, charT delim
 
 // Trim whitespace from the left and right of the string.
 std::string trim(const std::string& s);
+std::wstring trim(const std::wstring& s);
 
 
 #ifndef STRINGIZE
