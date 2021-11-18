@@ -348,7 +348,7 @@
     "description": "Text on the cancel button in the PsiCash account login modal dialog."
   },
   "psicash#modal-login-forgot-password-link": {
-    "message": "[Ƒǿǿřɠǿǿŧ ẏǿǿŭŭř ƥȧȧşşẇǿǿřḓ?]",
+    "message": "[Ƒǿǿřɠǿǿŧ ẏǿǿŭŭř ƥȧȧşşẇǿǿřḓ ǿǿř ŭŭşḗḗřƞȧȧḿḗḗ?]",
     "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
   },
   "psicash#modal-login-header": {

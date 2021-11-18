@@ -864,7 +864,7 @@
     "description": "Label for a password field in the PsiCash account login modal dialog."
   },
   "psicash#modal-login-forgot-password-link": {
-    "message": "Forgot your password?",
+    "message": "Forgot your password or username?",
     "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
   },
   "psicash#modal-login-submit-button": {
