@@ -28,6 +28,7 @@
 #include "usersettings.h"
 #include "config.h"
 #include "psicashlib.h"
+#include <VersionHelpers.h>
 
 #pragma warning(push, 0)
 #pragma warning(disable: 4244)
@@ -135,7 +136,6 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
     HANDLE hToken = NULL;
     HANDLE hTokenToCheck = NULL;
     DWORD cbSize = 0;
-    OSVERSIONINFO osver = { sizeof(osver) };
 
     // Open the primary access token of the process for query and duplicate.
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE,
@@ -145,18 +145,10 @@ bool GetUserGroupInfo(UserGroupInfo& groupInfo)
         goto Cleanup;
     }
 
-    // Determine whether system is running Windows Vista or later operating
-    // systems (major version >= 6) because they support linked tokens, but
-    // previous versions (major version < 6) do not.
-    if (!GetVersionEx(&osver))
+    // Windows Vista or later operating systems (major version >= 6) support
+    // linked tokens, but previous versions (major version < 6) do not.
+    if (IsWindowsVistaOrGreater())
     {
-        dwError = GetLastError();
-        goto Cleanup;
-    }
-
-    if (osver.dwMajorVersion >= 6)
-    {
-        // Running Windows Vista or later (major version >= 6).
         // Determine token type: limited, elevated, or default.
         TOKEN_ELEVATION_TYPE elevType;
         if (!GetTokenInformation(hToken, TokenElevationType, &elevType,
