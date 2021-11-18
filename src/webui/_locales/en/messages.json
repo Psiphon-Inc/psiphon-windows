@@ -579,6 +579,10 @@
     "message": "Close",
     "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
   },
+  "general#modal-feedback-button": {
+    "message": "Send Feedback",
+    "description": "Text in a button that switches to the feedback tab and dismisses a modal dialog."
+  },
   "general#notice-modal-tech-preamble": {
     "message": "Here is the technical error info:",
     "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."

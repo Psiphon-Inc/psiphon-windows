@@ -3510,6 +3510,10 @@
   function showNoticeModal(titleKey, bodyKey, levelIcon, techPreambleKey, techInfoString, closedCallback) {
     DEBUG_ASSERT(titleKey && bodyKey, 'missing titleKey or bodyKey', titleKey, bodyKey);
 
+    if (levelIcon === 'error' || levelIcon === 'warning') {
+      HtmlCtrlInterface_Log('PsiCash: showing notice modal:', levelIcon, bodyKey);
+    }
+
     var $modal = $('#NoticeModal');
 
     $modal.find('.js-modal-title').html(i18n.t(titleKey));
