@@ -2282,7 +2282,10 @@
       "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
       "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
       "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
-      "ui#alert#url-copied-to-clipboard": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar."
+      "ui#alert#url-copied-to-clipboard": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
+      "notice#psiphonui-fileerror-error-title": "File Access Error",
+      "notice#psiphonui-fileerror-error-body": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
+      "notice#psiphonui-fileerror-detail-preamble": "Filename and error message:"
     }
   },
   "es": {
@@ -3614,6 +3617,9 @@
       "nav#settings": "‮Sǝʇʇıuƃs‬",
       "notice#disallowed-traffic-alert-body": "<p>‮∀dds‬ ‮uoʇ‬ ‮ʍoɹʞıuƃ‬?</p>\n<p>‮Soɯǝ‬ ‮ıuʇǝɹuǝʇ‬ ‮ʇɹɐɟɟıɔ‬ ‮ıs‬ ‮uoʇ‬ ‮snddoɹʇǝp‬ ‮ʍıʇɥonʇ‬ ‮ɐu‬ ‮ɐɔʇıʌǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬. ‮∀ɔʇıʌɐʇǝ‬ ‮Sdǝǝp‬ ‮Ԑoosʇ‬ ‮ʍıʇɥ‬ ‮ԀsıↃɐsɥ‬ ‮ʇo‬ ‮nuʅoɔʞ‬ ‮ʇɥǝ‬ ‮ɟnʅʅ‬ ‮doʇǝuʇıɐʅ‬ ‮oɟ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ǝxdǝɹıǝuɔǝ‬.</p>",
       "notice#disallowed-traffic-alert-title": "‮∩dƃɹɐpǝ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ɔouuǝɔʇıou‬",
+      "notice#psiphonui-fileerror-detail-preamble": "‮ɟıʅǝuɐɯǝ‬ ‮ɐup‬ ‮ǝɹɹoɹ‬ ‮ɯǝssɐƃǝ‬:",
+      "notice#psiphonui-fileerror-error-body": "<p>‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮ɐɔɔǝss‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮ıʇ‬ ‮uǝǝps‬ ‮ıu‬ ‮oɹpǝɹ‬ ‮ʇo‬ ‮ʍoɹʞ‬ ‮dɹodǝɹʅʎ‬.</p>\n<p>‮Ↄʅosǝ‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮ɐddʅıɔɐʇıou‬, ‮pǝʅǝʇǝ‬ ‮ʇɥǝ‬ ‮ɟıʅǝ‬ ‮ʅısʇǝp‬ ‮qǝʅoʍ‬, ‮ɐup‬ ‮ʇɹʎ‬ ‮ɹnuuıuƃ‬ ‮Ԁsıdɥou‬ ‮ɐƃɐıu‬.</p>",
+      "notice#psiphonui-fileerror-error-title": "‮ɟıʅǝ‬ ‮∀ɔɔǝss‬ ‮Ǝɹɹoɹ‬",
       "notice#systemproxysettings-setproxy-error-body": "<p>‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬.</p>\n<p>‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.</p>",
       "notice#systemproxysettings-setproxy-error-title": "‮Sʎsʇǝɯ‬ ‮Ԁɹoxʎ‬ ‮Ǝɹɹoɹ‬",
       "notice#systemproxysettings-setproxy-warning-template": "‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ɟoɹ‬ ‮ʇɥǝ‬ ‮Iuʇǝɹuǝʇ‬ ‮ɔouuǝɔʇıou‬ ‮uɐɯǝp‬ “<%- data %>”. ‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.",
@@ -3868,6 +3874,9 @@
       "nav#settings": "[Şḗḗŧŧīīƞɠş]",
       "notice#disallowed-traffic-alert-body": "[<p>Ȧȧƥƥş ƞǿǿŧ ẇǿǿřķīīƞɠ?</p>\n<p>Şǿǿḿḗḗ īīƞŧḗḗřƞḗḗŧ ŧřȧȧƒƒīīƈ īīş ƞǿǿŧ şŭŭƥƥǿǿřŧḗḗḓ ẇīīŧħǿǿŭŭŧ ȧȧƞ ȧȧƈŧīīṽḗḗ Şƥḗḗḗḗḓ Ɓǿǿǿǿşŧ. Ȧȧƈŧīīṽȧȧŧḗḗ Şƥḗḗḗḗḓ Ɓǿǿǿǿşŧ ẇīīŧħ ƤşīīƇȧȧşħ ŧǿǿ ŭŭƞŀǿǿƈķ ŧħḗḗ ƒŭŭŀŀ ƥǿǿŧḗḗƞŧīīȧȧŀ ǿǿƒ ẏǿǿŭŭř Ƥşīīƥħǿǿƞ ḗḗẋƥḗḗřīīḗḗƞƈḗḗ.</p>]",
       "notice#disallowed-traffic-alert-title": "[Ŭŭƥɠřȧȧḓḗḗ ẏǿǿŭŭř Ƥşīīƥħǿǿƞ ƈǿǿƞƞḗḗƈŧīīǿǿƞ]",
+      "notice#psiphonui-fileerror-detail-preamble": "[Ƒīīŀḗḗƞȧȧḿḗḗ ȧȧƞḓ ḗḗřřǿǿř ḿḗḗşşȧȧɠḗḗ:]",
+      "notice#psiphonui-fileerror-error-body": "[<p>Ƥşīīƥħǿǿƞ ƈȧȧƞƞǿǿŧ ȧȧƈƈḗḗşş ȧȧ ƒīīŀḗḗ īīŧ ƞḗḗḗḗḓş īīƞ ǿǿřḓḗḗř ŧǿǿ ẇǿǿřķ ƥřǿǿƥḗḗřŀẏ.</p>\n<p>Ƈŀǿǿşḗḗ ŧħḗḗ Ƥşīīƥħǿǿƞ ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ, ḓḗḗŀḗḗŧḗḗ ŧħḗḗ ƒīīŀḗḗ ŀīīşŧḗḗḓ ƀḗḗŀǿǿẇ, ȧȧƞḓ ŧřẏ řŭŭƞƞīīƞɠ Ƥşīīƥħǿǿƞ ȧȧɠȧȧīīƞ.</p>]",
+      "notice#psiphonui-fileerror-error-title": "[Ƒīīŀḗḗ Ȧȧƈƈḗḗşş Ḗḗřřǿǿř]",
       "notice#systemproxysettings-setproxy-error-body": "[<p>Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş.</p>\n<p>Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.</p>]",
       "notice#systemproxysettings-setproxy-error-title": "[Şẏşŧḗḗḿ Ƥřǿǿẋẏ Ḗḗřřǿǿř]",
       "notice#systemproxysettings-setproxy-warning-template": "[Ƥşīīƥħǿǿƞ ƒȧȧīīŀḗḗḓ ŧǿǿ şḗḗŧ ŧħḗḗ şẏşŧḗḗḿ’ş ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ƒǿǿř ŧħḗḗ Īīƞŧḗḗřƞḗḗŧ ƈǿǿƞƞḗḗƈŧīīǿǿƞ ƞȧȧḿḗḗḓ “<%- data %>”. Ŧħīīş ḿīīɠħŧ ƀḗḗ ḓŭŭḗḗ ŧǿǿ ȧȧ ƈǿǿƞƒŀīīƈŧ ẇīīŧħ ẏǿǿŭŭř ȧȧƞŧīīṽīīřŭŭş şǿǿƒŧẇȧȧřḗḗ. Ẏǿǿŭŭ ḿīīɠħŧ ƞḗḗḗḗḓ ŧǿǿ ḿȧȧƞŭŭȧȧŀŀẏ ƈǿǿƞƒīīɠŭŭřḗḗ ẏǿǿŭŭř ȧȧƥƥŀīīƈȧȧŧīīǿǿƞ ǿǿř şẏşŧḗḗḿ ƥřǿǿẋẏ şḗḗŧŧīīƞɠş ŧǿǿ ŭŭşḗḗ ŧħḗḗ ŀǿǿƈȧȧŀ Ƥşīīƥħǿǿƞ ƥřǿǿẋīīḗḗş.]",

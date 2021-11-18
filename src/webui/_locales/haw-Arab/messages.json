@@ -223,6 +223,18 @@
     "message": "‮∩dƃɹɐpǝ‬ ‮ʎonɹ‬ ‮Ԁsıdɥou‬ ‮ɔouuǝɔʇıou‬",
     "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
   },
+  "notice#psiphonui-fileerror-detail-preamble": {
+    "message": "‮ɟıʅǝuɐɯǝ‬ ‮ɐup‬ ‮ǝɹɹoɹ‬ ‮ɯǝssɐƃǝ‬:",
+    "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
+  },
+  "notice#psiphonui-fileerror-error-body": {
+    "message": "<p>‮Ԁsıdɥou‬ ‮ɔɐuuoʇ‬ ‮ɐɔɔǝss‬ ‮ɐ‬ ‮ɟıʅǝ‬ ‮ıʇ‬ ‮uǝǝps‬ ‮ıu‬ ‮oɹpǝɹ‬ ‮ʇo‬ ‮ʍoɹʞ‬ ‮dɹodǝɹʅʎ‬.</p>\n<p>‮Ↄʅosǝ‬ ‮ʇɥǝ‬ ‮Ԁsıdɥou‬ ‮ɐddʅıɔɐʇıou‬, ‮pǝʅǝʇǝ‬ ‮ʇɥǝ‬ ‮ɟıʅǝ‬ ‮ʅısʇǝp‬ ‮qǝʅoʍ‬, ‮ɐup‬ ‮ʇɹʎ‬ ‮ɹnuuıuƃ‬ ‮Ԁsıdɥou‬ ‮ɐƃɐıu‬.</p>",
+    "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
+  },
+  "notice#psiphonui-fileerror-error-title": {
+    "message": "‮ɟıʅǝ‬ ‮∀ɔɔǝss‬ ‮Ǝɹɹoɹ‬",
+    "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
+  },
   "notice#systemproxysettings-setproxy-error-body": {
     "message": "<p>‮Ԁsıdɥou‬ ‮ɟɐıʅǝp‬ ‮ʇo‬ ‮sǝʇ‬ ‮ʇɥǝ‬ ‮sʎsʇǝɯ‬’‮s‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬.</p>\n<p>‮⊥ɥıs‬ ‮ɯıƃɥʇ‬ ‮qǝ‬ ‮pnǝ‬ ‮ʇo‬ ‮ɐ‬ ‮ɔouɟʅıɔʇ‬ ‮ʍıʇɥ‬ ‮ʎonɹ‬ ‮ɐuʇıʌıɹns‬ ‮soɟʇʍɐɹǝ‬. ‮ʎon‬ ‮ɯıƃɥʇ‬ ‮uǝǝp‬ ‮ʇo‬ ‮ɯɐunɐʅʅʎ‬ ‮ɔouɟıƃnɹǝ‬ ‮ʎonɹ‬ ‮ɐddʅıɔɐʇıou‬ ‮oɹ‬ ‮sʎsʇǝɯ‬ ‮dɹoxʎ‬ ‮sǝʇʇıuƃs‬ ‮ʇo‬ ‮nsǝ‬ ‮ʇɥǝ‬ ‮ʅoɔɐʅ‬ ‮Ԁsıdɥou‬ ‮dɹoxıǝs‬.</p>",
     "description": "Body text of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon. The word 'Psiphon' must not be translated or transliterated."

@@ -251,7 +251,8 @@ void CoreTransport::TransportConnectHelper()
 
     if (!WriteParameterFiles(in, out))
     {
-        throw TransportFailed();
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - WriteParameterFiles failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        throw TransportFailed(false);
     }
 
     // Once a new upgrade has been paved, CoreTransport should never restart without the actual application restarting.
@@ -276,7 +277,8 @@ void CoreTransport::TransportConnectHelper()
 
     if (!SpawnCoreProcess(out.configFilePath, out.serverListFilename))
     {
-        throw TransportFailed();
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - SpawnCoreProcess failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        throw TransportFailed(false);
     }
 
     // Wait and poll for first active tunnel (or stop signal)
@@ -326,29 +328,48 @@ void CoreTransport::TransportConnectHelper()
 
 bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
-    tstringstream commandLineFlags;
-    tstring exePath;
+    filesystem::path tempPath;
+    if (!GetSysTempPath(tempPath)) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
 
+    filesystem::path exePath;
     if (RequestingUrlProxyWithoutTunnel())
     {
+        exePath = tempPath / URL_PROXY_EXE_NAME;
+
         // In RequestingUrlProxyWithoutTunnel mode, we allow for multiple instances
         // so we don't fail extract if the file already exists -- and don't try to
         // kill any associated process holding a lock on it.
-        if (!ExtractExecutable(
-                IDR_PSIPHON_TUNNEL_CORE_EXE, URL_PROXY_EXE_NAME, exePath, true))
+        if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath, true))
         {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+
+            // This string contains PII (the username in the temp path) but won't be logged
+            auto errorDetail = WStringToUTF8(exePath.tstring() + L"\n\n" + SystemErrorMessage(GetLastError()));
+            UI_Notice("PsiphonUI::FileError", errorDetail);
+
             return false;
         }
     }
     else
     {
-        if (!ExtractExecutable(
-                IDR_PSIPHON_TUNNEL_CORE_EXE, EXE_NAME, exePath))
+        exePath = tempPath / EXE_NAME;
+
+        if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
         {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+
+            // This string contains PII (the username in the temp path) but won't be logged
+            auto errorDetail = WStringToUTF8(exePath.tstring() + L"\n\n" + SystemErrorMessage(GetLastError()));
+            UI_Notice("PsiphonUI::FileError", errorDetail);
+
             return false;
         }
     }
 
+    tstringstream commandLineFlags;
     commandLineFlags <<  _T(" --config \"") << configFilename << _T("\"");
 
     if (!RequestingUrlProxyWithoutTunnel())

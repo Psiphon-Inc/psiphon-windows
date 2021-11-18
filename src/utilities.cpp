@@ -78,8 +78,7 @@ void TerminateProcessByName(const TCHAR* executableName)
 
 bool ExtractExecutable(
     DWORD resourceID,
-    const TCHAR* exeFilename,
-    tstring& path,
+    const tstring& exeFilePath,
     bool succeedIfExists/*=false*/)
 {
     // Extract executable from resources and write to temporary file
@@ -93,25 +92,11 @@ bool ExtractExecutable(
         return false;
     }
 
-    tstring tempPath;
-    if (!GetTempPath(tempPath))
-    {
-        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - GetTempPath failed (%d)"), GetLastError());
-        return false;
-    }
-
-    TCHAR filePath[MAX_PATH];
-    if (NULL == PathCombine(filePath, tempPath.c_str(), exeFilename))
-    {
-        my_print(NOT_SENSITIVE, false, _T("ExtractExecutable - PathCombine failed (%d)"), GetLastError());
-        return false;
-    }
-
     HANDLE tempFile = INVALID_HANDLE_VALUE;
     bool attemptedTerminate = false;
     while (true)
     {
-        tempFile = CreateFile(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        tempFile = CreateFile(exeFilePath.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
         if (tempFile == INVALID_HANDLE_VALUE)
         {
             int lastError = GetLastError();
@@ -127,11 +112,10 @@ bool ExtractExecutable(
                     // is different, it would be better to proceed with attempting to extract the
                     // executable and even terminating any locking process -- for example, the locking
                     // process may be a dangling child process left over from before a client upgrade.
-                    path = filePath;
                     return true;
                 }
 
-                TerminateProcessByName(exeFilename);
+                TerminateProcessByName(filesystem::path(exeFilePath).filename().c_str());
                 attemptedTerminate = true;
             }
             else
@@ -159,8 +143,6 @@ bool ExtractExecutable(
     }
 
     CloseHandle(tempFile);
-
-    path = filePath;
 
     return true;
 }
@@ -256,7 +238,7 @@ bool GetPsiphonDataPath(const vector<tstring> &pathSuffixes, bool ensureExists, 
 }
 
 // Caller can check GetLastError() on failure
-bool GetTempPath(tstring& o_path)
+bool GetSysTempPath(filesystem::path& o_path)
 {
     o_path.clear();
 
@@ -282,8 +264,8 @@ bool GetUniqueTempDir(tstring& o_path, bool create)
 {
     o_path.clear();
 
-    tstring tempPath;
-    if (!GetTempPath(tempPath))
+    filesystem::path tempPath;
+    if (!GetSysTempPath(tempPath))
     {
         return false;
     }
@@ -309,8 +291,8 @@ bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath)
 {
     o_filepath.clear();
 
-    tstring tempPath;
-    if (!GetTempPath(tempPath))
+    filesystem::path tempPath;
+    if (!GetSysTempPath(tempPath))
     {
         return false;
     }
@@ -1426,7 +1408,7 @@ tstring UrlEncode(const tstring& input)
     return escapedURL.str();
 }
 
-// Only URL-encodes `%` characters. 
+// Only URL-encodes `%` characters.
 // Note that this is _only_ enough to encode a hash fragment in isolation.
 tstring PercentEncode(const tstring& input)
 {
@@ -1892,6 +1874,28 @@ bool CopyToClipboard(HWND mainWnd, const tstring& s)
     return true;
 }
 
+std::tstring SystemErrorMessage(DWORD errorCode) {
+    LPTSTR messageBuffer = NULL;
+    DWORD size = FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        errorCode,
+        NULL, // default language ID
+        (LPTSTR)&messageBuffer,
+        0,
+        NULL);
+
+    if (size == 0) {
+        // FormatMessage failed.
+        return _T("");
+    }
+
+    tstring message(messageBuffer, size);
+
+    LocalFree(messageBuffer);
+
+    return trim(message);
+}
 
 /*
 Resource Utilities
@@ -2173,10 +2177,15 @@ void GetLocalIPv4Addresses(vector<tstring>& o_ipAddresses)
  * String Utilities
  */
 
-// This function might be easily convertible to support wstring, but it would need testing.
 // From https://stackoverflow.com/a/17976541/729729
 std::string trim(const std::string& s)
 {
-    auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) {return std::isspace(c); });
-    return std::string(wsfront, std::find_if_not(s.rbegin(), std::string::const_reverse_iterator(wsfront), [](int c) {return std::isspace(c); }).base());
+    auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) { return std::isspace(c); });
+    return std::string(wsfront, std::find_if_not(s.rbegin(), std::string::const_reverse_iterator(wsfront), [](int c) { return std::isspace(c); }).base());
+}
+
+std::wstring trim(const std::wstring& s)
+{
+    auto wsfront = std::find_if_not(s.begin(), s.end(), [](wint_t c) { return iswspace(c); });
+    return std::wstring(wsfront, std::find_if_not(s.rbegin(), std::wstring::const_reverse_iterator(wsfront), [](wint_t c) { return iswspace(c); }).base());
 }
