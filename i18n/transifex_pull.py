@@ -97,7 +97,7 @@ def pull_app_translations():
     # We need to run grunt to incorporate the new translations
     print('Running grunt...')
     os.chdir('../src/webui')
-    subprocess.run(['npx', 'grunt'], shell=True, check=True)
+    subprocess.run('npx grunt', shell=True, check=True)
 
 
 def go():
