@@ -194,7 +194,7 @@ public:
 
     /// Set values that will be included in the request metadata. This includes
     /// client_version, client_region, sponsor_id, and propagation_channel_id.
-    error::Error SetRequestMetadataItem(const std::string& key, const std::string& value);
+    error::Error SetRequestMetadataItems(const std::map<std::string, std::string>& items);
 
     /// Set current UI locale.
     error::Error SetLocale(const std::string& locale);
