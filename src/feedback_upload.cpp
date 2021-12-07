@@ -168,15 +168,26 @@ void FeedbackUpload::SendFeedbackHelper()
 
 bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, const string& diagnosticData)
 {
-    tstringstream commandLineFlags;
-    tstring exePath;
-
-    if (!ExtractExecutable(
-        IDR_PSIPHON_TUNNEL_CORE_EXE, EXE_NAME, exePath))
-    {
+    filesystem::path tempPath;
+    if (!GetSysTempPath(tempPath)) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
+    auto exePath = tempPath / EXE_NAME;
+
+    if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
+    {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+
+        // This string contains PII (the username in the temp path) but won't be logged
+        auto errorDetail = WStringToUTF8(exePath.tstring() + L"\n\n" + SystemErrorMessage(GetLastError()));
+        UI_Notice("PsiphonUI::FileError", errorDetail);
+
+        return false;
+    }
+
+    tstringstream commandLineFlags;
     commandLineFlags << _T(" --config \"") << configFilename << _T("\" --feedbackUpload");
 
     m_psiphonTunnelCore = make_unique<PsiphonTunnelCore>(this, exePath);

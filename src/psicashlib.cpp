@@ -48,21 +48,13 @@ error::Error Lib::Init(bool forceReset) {
         return WrapError(err, "PsiCash::Init failed");
     }
 
-    err = PsiCash::SetRequestMetadataItem("client_version", CLIENT_VERSION);
+    err = PsiCash::SetRequestMetadataItems({
+        {"client_version", CLIENT_VERSION},
+        {"propagation_channel_id", PROPAGATION_CHANNEL_ID},
+        {"sponsor_id", SPONSOR_ID},
+        {"client_region", WStringToUTF8(GetDeviceRegion())} });
     if (err) {
-        return WrapError(err, "SetRequestMetadataItem failed");
-    }
-    err = PsiCash::SetRequestMetadataItem("propagation_channel_id", PROPAGATION_CHANNEL_ID);
-    if (err) {
-        return WrapError(err, "SetRequestMetadataItem failed");
-    }
-    err = PsiCash::SetRequestMetadataItem("sponsor_id", SPONSOR_ID);
-    if (err) {
-        return WrapError(err, "SetRequestMetadataItem failed");
-    }
-    err = PsiCash::SetRequestMetadataItem("client_region", WStringToUTF8(GetDeviceRegion()));
-    if (err) {
-        return WrapError(err, "SetRequestMetadataItem failed");
+        return WrapError(err, "SetRequestMetadataItems failed");
     }
 
     try { my_print(NOT_SENSITIVE, true, _T("%s: PsiCash state: %S"), __TFUNCTION__, PsiCash::GetDiagnosticInfo(true).dump(-1, ' ', true).c_str()); }
@@ -72,9 +64,9 @@ error::Error Lib::Init(bool forceReset) {
 }
 
 error::Error Lib::UpdateClientRegion(const string& region) {
-    auto err = PsiCash::SetRequestMetadataItem("client_region", region);
+    auto err = PsiCash::SetRequestMetadataItems({ {"client_region", region} });
     if (err) {
-        return WrapError(err, "SetRequestMetadataItem failed");
+        return WrapError(err, "SetRequestMetadataItems failed");
     }
 
     return error::nullerr;

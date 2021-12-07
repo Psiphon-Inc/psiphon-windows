@@ -3510,6 +3510,10 @@
   function showNoticeModal(titleKey, bodyKey, levelIcon, techPreambleKey, techInfoString, closedCallback) {
     DEBUG_ASSERT(titleKey && bodyKey, 'missing titleKey or bodyKey', titleKey, bodyKey);
 
+    if (levelIcon === 'error' || levelIcon === 'warning') {
+      HtmlCtrlInterface_Log('PsiCash: showing notice modal:', levelIcon, bodyKey);
+    }
+
     var $modal = $('#NoticeModal');
 
     $modal.find('.js-modal-title').html(i18n.t(titleKey));
@@ -4043,6 +4047,14 @@
       });
     });
 
+    // Wire up the PsiphonUI::FileError notice
+    $('#debug-PsiphonUI-FileError a').click(function() {
+      HtmlCtrlInterface_AddNotice({
+        noticeType: 'PsiphonUI::FileError',
+        data: 'C:\\Users\\<username>\\Temp\\file.ext\n\nAccess denied.'
+      });
+    });
+
     // Wire up the SystemProxySettings::SetProxyError test
     $('#debug-SetProxyError a').click(function() {
       HtmlCtrlInterface_AddNotice({
@@ -4458,6 +4470,15 @@
       }
       else if (args.noticeType === 'PsiphonUI::URLCopiedToClipboard') {
         displayCornerAlert($('#alert-url-copied-to-clipboard'));
+      }
+      else if (args.noticeType === 'PsiphonUI::FileError') {
+        showNoticeModal(
+          'notice#psiphonui-fileerror-error-title',
+          'notice#psiphonui-fileerror-error-body',
+          'error',
+          'notice#psiphonui-fileerror-detail-preamble', // tech detail preamble
+          args.data,                                    // tech detail body
+          null);                                        // callback
       }
     });
   }
