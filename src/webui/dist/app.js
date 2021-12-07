@@ -1272,66 +1272,39 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var skipUpstreamProxy = $('#SkipUpstreamProxy').prop('checked');
     $('.js-skip-upstream-proxy-incompatible input').prop('disabled', skipUpstreamProxy);
     $('.js-skip-upstream-proxy-incompatible').toggleClass('disabled-text', skipUpstreamProxy);
-  } // The occurrence of an upstream proxy error might mean that a tunnel cannot
-  // ever be established, but not necessarily -- it might just be, for example,
-  // that the upstream proxy doesn't allow the port needed for one of our
-  // servers, but not all of them.
-  // So instead of showing an error immediately, we'll remember that the upstream
-  // proxy error occurred, wait a while to see if we connect successfully, and
-  // show it if we haven't connected.
-  // Potential enhancement: If the error modal is showing and the connection
-  // succeeds, dismiss the modal. This would be good behaviour, but probably too
-  // fringe to be worthwhile.
+  }
+  /**
+   * Called when we receive a tunnel-core notice indicating a problem with the configured
+   * upstream proxy.
+   */
 
-
-  var g_upstreamProxyErrorNoticeTimer = null; // When the connected state changes, we clear the timer.
-
-  $window.on(CONNECTED_STATE_CHANGE_EVENT, function () {
-    if (g_upstreamProxyErrorNoticeTimer) {
-      clearTimeout(g_upstreamProxyErrorNoticeTimer);
-      g_upstreamProxyErrorNoticeTimer = null;
-    }
-  });
 
   function upstreamProxyErrorNotice(errorMessage) {
-    if (g_upstreamProxyErrorNoticeTimer) {
-      // We've already received an upstream proxy error and we're waiting to show it.
+    // It can happen that we receive a notice about an upstream error *after*
+    // we have successfully connected -- it will have been received from one
+    // of the parallel unsuccessful connection attempts. We should not show
+    // such an error. So, as a general statement: Do not show upstream errors
+    // if we're already successfully connected.
+    if (g_lastState === 'connected') {
       return;
-    } // This is the first upstream proxy error we've received, so start waiting to
-    // show a message for it.
+    } // There are two slightly different error messages shown depending on whether
+    // there is an upstream proxy explicitly configured, or it's the default
+    // empty value, which means the pre-existing system proxy will be used.
 
 
-    g_upstreamProxyErrorNoticeTimer = setTimeout(function () {
-      // It can happen that we receive a notice about an upstream error *after*
-      // we have successfully connected -- it will have been received from one
-      // of the parallel unsuccessful connection attempts. We should not show
-      // such an error. So, as a general statement: Do not show upstream errors
-      // if we're already successfully connected.
-      if (g_lastState === 'connected') {
-        if (g_upstreamProxyErrorNoticeTimer) {
-          g_upstreamProxyErrorNoticeTimer = null;
-        }
+    var bodyKey = 'settings#upstream-proxy#error-modal-body-default';
 
-        return;
-      } // There are two slightly different error messages shown depending on whether
-      // there is an upstream proxy explicitly configured, or it's the default
-      // empty value, which means the pre-existing system proxy will be used.
+    if (g_initObj.Settings.UpstreamProxyHostname) {
+      bodyKey = 'settings#upstream-proxy#error-modal-body-configured';
+    }
 
+    showNoticeModal('settings#upstream-proxy#error-modal-title', bodyKey, 'error', 'general#notice-modal-tech-preamble', errorMessage, function () {
+      $('#UpstreamProxyHostname').trigger('focus');
+    }); // Switch to the appropriate settings section
 
-      var bodyKey = 'settings#upstream-proxy#error-modal-body-default';
-
-      if (g_initObj.Settings.UpstreamProxyHostname) {
-        bodyKey = 'settings#upstream-proxy#error-modal-body-configured';
-      }
-
-      showNoticeModal('settings#upstream-proxy#error-modal-title', bodyKey, 'error', 'general#notice-modal-tech-preamble', errorMessage, function () {
-        $('#UpstreamProxyHostname').trigger('focus');
-      }); // Switch to the appropriate settings section
-
-      showSettingsSection('#settings-accordion-upstream-proxy'); // We are not going to set the timer to null here. We only want the error
-      // to show once per connection attempt sequence. It will be cleared when
-      // the client transistions to 'stopped' or 'connected'.
-    }, 60000);
+    showSettingsSection('#settings-accordion-upstream-proxy'); // We are not going to set the timer to null here. We only want the error
+    // to show once per connection attempt sequence. It will be cleared when
+    // the client transistions to 'stopped' or 'connected'.
   } //
   // VPN Mode (Transport Mode)
   //
