@@ -124,11 +124,11 @@
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "settings#split-tunnel-chinese-sites#enable-label": {
-        "message": "Don't proxy Chinese websites",
+        "message": "برای وب‌سایت‌های چینی از پروکسی استفاده نکن",
         "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
     },
     "settings#split-tunnel-chinese-sites#note": {
-        "message": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
+        "message": "<strong>هشدار:</strong> این ویژگی از داده‌هایی استفاده می‌کند که ممکن است همیشه قابل اعتماد نباشند. هنگام فعال کردن این ویژگی احتیاط کنید زیرا ممکن است برخی از وب‌سایت‌های سانسور شده به طور ناخواسته از پروکسی حذف شوند. ",
         "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
     },
     "settings#disable-timeouts#heading": {
@@ -564,7 +564,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#license-agree": {
-        "message": "By using Psiphon you signal that you agree to the terms of the <a href=\"https://psiphon.ca/license.html\">End-User License</a> and <a href=\"https://psiphon.ca/privacy.html\">Privacy Policy</a>.",
+        "message": "با استفاده از Psiphon موافقت خود را با <a href=\"https://psiphon.ca/license.html\">شرایط مجوز کاربر نهایی</a> و <a href=\"https://psiphon.ca/privacy.html\">سیاست حریم خصوصی</a> اعلام می‌کنید.",
         "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
@@ -676,19 +676,19 @@
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-title-tracker": {
-        "message": "Invalid PsiCash state",
+        "message": "وضعیت PsiCash نامعتبر",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "Your PsiCash state is invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "message": "وضعیت PsiCash شما نامعتبر است. برنامه را دوباره راه‌اندازی کنید. اگر باز کار نکرد، باید <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">فضای ذخیره محلی خود را پاک کنید</a>.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-title-account": {
-        "message": "PsiCash login expired",
+        "message": "ورود به PsiCash منقضی شده",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
-        "message": "Your PsiCash login has expired. Log into your account and try again.",
+        "message": "ورود شما به PsiCash منقضی شده است. وارد حساب کاربری خود شده و دوباره امتحان کنید.",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-title": {
@@ -740,15 +740,15 @@
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-create-account": {
-        "message": "Create an account to protect your PsiCash!",
+        "message": "برای حفاظت از PsiCash خود، یک حساب کاربری بسازید!",
         "description": "Text for a link displayed when the user does not have a PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language. It encourages them to make one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-balance-header": {
-        "message": "Balance:",
+        "message": "موجودی:",
         "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
     },
     "psicash#pane-log-in": {
-        "message": "Log In!",
+        "message": "ورود!",
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
@@ -756,23 +756,23 @@
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
-        "message": "Manage on the web",
+        "message": "مدیریت در وب",
         "description": "Text for a link to a web site where users can manage their PsiCash account."
     },
     "psicash#pane-create-account-plea": {
-        "message": "Creating a PsiCash account will help preserve your PsiCash if you clear the app's storage or use Psiphon on another device. <a href=\"https://psiphon.ca/faq.html#psicash-account\">Learn more.</a>",
+        "message": "اگر فضای ذخیره‌سازی برنامه را پاک کنید یا از Psiphon در دستگاه دیگری استفاده کنید، ایجاد یک حساب PsiCash به حفظ PsiCash شما کمک می‌کند. <a href=\"https://psiphon.ca/faq.html#psicash-account\">بیشتر بدانید.</a>",
         "description": "Text shown below the PsiCash balance when the user does not have a PsiCash account. 'Learn more' is a link to an FAQ entry explaining the benefits of creating an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-l2tp-incompatible": {
-        "message": "Speed Boost cannot be used while Psiphon is connected in <a href=\"#\">L2TP/IPSec transport mode</a>.",
+        "message": "حالت توربو در زمانی که Psiphon به <a href=\"#\">حالت L2TP/IPSec</a> متصل باشد، قابل استفاده نیست.",
         "description": "A message shown when L2TP/IPSec mode is enabled in Psiphon. Speed Boost cannot be used in this mode."
     },
     "psicash#pane-must-log-in": {
-        "message": "You must log in to use PsiCash.",
+        "message": "برای استفاده از PsiCash باید وارد شوید.",
         "description": "Message shown when the user was logged in with an account and then logged out. It's telling the user that they have to log in again. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-create-new-account": {
-        "message": "Create a New Account",
+        "message": "حساب کاربری جدید بسازید",
         "description": "Text on button that user can click to create a new account (opens an external web page)."
     },
     "psicash#pane-speed-port-limits-head": {
@@ -784,51 +784,51 @@
         "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-speed-boost-cta": {
-        "message": "Unleash the full potential of Psiphon with Speed&nbsp;Boost!",
+        "message": "پتانسیل کامل Psiphon را با حالت توربو آزاد کنید!",
         "description": "Text encouraging the user to purchase Speed Boost. 'Unleash' can translated to something like 'unlock', 'release', 'enable', 'amplify', or generally 'make a lot better'. 'Psiphon' must not be translated/transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-more-psicash-header": {
-        "message": "You need more PsiCash!",
+        "message": "شما به PsiCash بیشتری نیاز دارید!",
         "description": "Header for a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-need-more-psicash-body": {
-        "message": "In order activate Speed Boost, you need to buy more PsiCash.",
+        "message": "برای فعال‌سازی حالت توربو، باید PsiCash بیشتری بخرید.",
         "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-psicash-visit-store": {
-        "message": "Need PsiCash? Visit our store to buy more!",
+        "message": "نیاز به PsiCash دارید؟ برای خرید بیشتر به فروشگاه ما سر بزنید!",
         "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#overlay-logging-in": {
-        "message": "Logging in…",
+        "message": "در حال ورود...",
         "description": "Text on a screen shown while the user's log-in request is in progress."
     },
     "psicash#overlay-logging-out": {
-        "message": "Logging out…",
+        "message": "در حال خروج...",
         "description": "Text on a screen shown while the user's log-out request is in progress."
     },
     "psicash#modal-create-psicash-account-header": {
-        "message": "Create a PsiCash Account",
+        "message": "یک حساب کاربری PsiCash بسازید",
         "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-body": {
-        "message": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
+        "message": "شما را تشویق می‌کنیم که قبل از خرید PsiCash یک حساب PsiCash ایجاد کنید. داشتن یک حساب کاربری به شما این امکان را می‌دهد که موجودی خود را بین دستگاه‌ها به اشتراک بگذارید و از خریدهای خود محافظت کنید. ",
         "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-create-button": {
-        "message": "Create or log into account",
+        "message": "ساخت و یا ورود به حساب کاربری",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
     },
     "psicash#modal-create-psicash-account-continue-button": {
-        "message": "Continue without account",
+        "message": "ادامه بدون حساب کاربری",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
     },
     "psicash#modal-psicash-logout-offline-header": {
-        "message": "PsiCash Account Logout",
+        "message": "خروج از حساب کاربری PsiCash",
         "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-body": {
-        "message": "Being connected to the Psiphon network enables a more secure PsiCash logout. Would you like to connect before logging out?",
+        "message": "اتصال به شبکه Psiphon خروج امن‌تری از PsiCash را فراهم می‌آورد. آیا می‌خواهید قبل از خروج، متصل شوید؟",
         "description": "Body of a modal dialog that appears when the user tries to log out of thier PsiCash account while not currently connected to the Psiphon network. We don't allow PsiCash network requests when not connected, so only an inferior localy-only logout is available. 'Psiphon' must not be translated/transliterated. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-connect-button": {
@@ -836,7 +836,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will abort the logout attempt and being connecting to a Psiphon server."
     },
     "psicash#modal-psicash-logout-offline-logout-anyway-button": {
-        "message": "Log out anyway",
+        "message": "به هر حال خارج شو",
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cause a local-only logout to be performed."
     },
     "psicash#modal-psicash-logout-offline-cancel-button": {
@@ -844,11 +844,11 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
-        "message": "PsiCash Account",
+        "message": "حساب کاربری PsiCash",
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {
-        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">Create a new account</a> or log in below.",
+        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">یک حساب کاربری جدید بسازید</a> و یا در زیر وارد شوید.",
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
@@ -860,7 +860,7 @@
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-forgot-password-link": {
-        "message": "Forgot your password?",
+        "message": "رمزعبور خود را فراموش کرده‌اید؟",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
@@ -872,15 +872,15 @@
         "description": "Text on the cancel button in the PsiCash account login modal dialog."
     },
     "psicash#alert#buyspeedboost-purchase-complete": {
-        "message": "Speed Boost started!",
+        "message": "توربو آغاز شد!",
         "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#modal-logout-header": {
-        "message": "PsiCash Account Logout",
+        "message": "خروج از حساب کاربری PsiCash",
         "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-logout-error-body": {
-        "message": "You logout attempt failed unexpectedly. Please try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "message": "تلاش شما برای خروج به طور غیرمنتظره‌ای ناموفق بود. برنامه را دوباره راه‌اندازی کنید. اگر باز کار نکرد، باید <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">فضای ذخیره محلی خود را پاک کنید</a>.",
         "description": "Body of modal dialog shown when the user attempts to log out of their PsiCash account and an unexpected error occurs. Please don't modify the link URL."
     },
     "positive-value-indicator": {
@@ -912,51 +912,51 @@
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "psicash#psiphon-speed-nobreak": {
-        "message": "Psiphon Speed",
+        "message": "سرعت Psiphon",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
     },
     "psicash#corner-logged-out": {
-        "message": "You are logged out of PsiCash",
+        "message": "شما از PsiCash خارج شده‌اید",
         "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#more-ellipsis": {
-        "message": "More…",
+        "message": "بیشتر...",
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {
-        "message": "PsiCash Login Failed",
+        "message": "ورود به PsiCash ناموفق بود.",
         "description": "Title of modal dialog shown when the PsiCash account login attempt fails for some reason. Text within the modal will explain why. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#catastrophic-error-body": {
-        "message": "Your PsiCash login attempt failed unexpectedly.",
+        "message": "تلاش شما برای ورود به PsiCash به طور غیرمنتظره‌ای ممکن نشد.",
         "description": "Body text of a modal dialog shown when a PsiCash login fails without a specific reason. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#invalid-credentials-body": {
-        "message": "The username or password entered was incorrect.",
+        "message": "نام کاربری و یا رمز عبور وارد شده اشتباه بود.",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
-        "message": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
+        "message": "هنگام تلاش برای ورود شما، سرور PsiCash با خطا مواجه شد. لطفا بعدا دوباره تلاش کنید.",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
-        "message": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
+        "message": "سرور PsiCash نشان داد که درخواست ورود نامعتبر است. لطفا اطلاعات ورود خود را دوباره وارد کرده و دوباره امتحان کنید.",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#success-modal-title": {
-        "message": "PsiCash Login Success",
+        "message": "ورود به PsiCash با موفقیت انجام شد.",
         "description": "Title of modal dialog shown when the PsiCash account login attempt succeeds, if additional information needs to be conveyed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#last-tracker-merge-body": {
-        "message": "You are logged into your PsiCash account. The preexisting balance from this device has been transferred into your account, but this is the last time a balance merge will occur.",
+        "message": "شما به حساب کاربری PsiCash خود وارد شده‌اید. موجودی قبلی شما در این دستگاه به حساب کاربری شما منتقل شده است۷ اما این آخرین باری خواهد بود که ادغام موجودی صورت می‌پذیرد.",
         "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#tokens-expired": {
-        "message": "PsiCash login expired. Please log back in.",
+        "message": "ورود PsiCash منقضی شد. لطفا دوباره وارد شوید.",
         "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#logged-out": {
-        "message": "PsiCash account logout complete.",
+        "message": "خروج از حساب کاربری PsiCash با موفقیت انجام شد.",
         "description": "An alert shown when the user logs out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-title": {
@@ -988,7 +988,7 @@
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "ui#alert#url-copied-to-clipboard": {
-        "message": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
+        "message": "آدرس کپی شد.<br>اگر مرورگر شما قادر به باز شدن نبود، آدرس را در نوار آدرس مرورگر پیست کنید.",
         "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
     },
     "banner#sponsored-by": {
