@@ -483,6 +483,9 @@ public:
 protected:
     // See implementation for descriptions of non-public methods.
 
+    error::Result<std::string> GetUserMetadataURLPackage(
+        const std::vector<std::string>& token_types, bool error_if_token_missing) const;
+
     error::Result<std::string> AddEarnerTokenToURL(const std::string& url_string, bool query_param_only) const;
 
     nlohmann::json GetRequestMetadata(int attempt) const;
