@@ -1,5 +1,6 @@
 embeddedvalues.h
 transifex_conf.json
+transifex_api_token
 
 # Numerous always-ignore extensions
 *.diff

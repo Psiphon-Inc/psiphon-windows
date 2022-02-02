@@ -29,6 +29,11 @@ $ pipenv run python transifex_pull.py
 
 # To reset your pipenv state (e.g., after a Python upgrade):
 $ pipenv --rm
+
+# To update transifexlib
+$ pipenv update transifexlib
+$ pipenv --rm
+$ pipenv install --three --ignore-pipfile
 '''
 
 
