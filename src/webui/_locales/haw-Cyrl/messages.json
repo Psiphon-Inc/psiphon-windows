@@ -368,7 +368,7 @@
     "description": "Text on the submit button in the PsiCash account login modal dialog."
   },
   "psicash#modal-login-username-field": {
-    "message": "[Ŭŭşḗḗřƞȧȧḿḗḗ]",
+    "message": "[ƤşīīƇȧȧşħ ŭŭşḗḗřƞȧȧḿḗḗ]",
     "description": "Label for a username field in the PsiCash account login modal dialog."
   },
   "psicash#modal-logout-error-body": {
