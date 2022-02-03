@@ -943,6 +943,10 @@
     "message": "The username or password entered was incorrect.",
     "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
   },
+  "psicash#login#invalid-credentials-body-multiple-attempts": {
+    "message": "Would you instead like to <a class=\"js-psicash-account-signup\" href=\"#\">create an account</a> or <a class=\"js-psicash-forgot-account\" href=\"#\">recover your account</a>?",
+    "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+  },
   "psicash#login#server-error-body": {
     "message": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
     "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
