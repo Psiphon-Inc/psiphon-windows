@@ -315,6 +315,10 @@
     "message": "[Ŧħḗḗ ŭŭşḗḗřƞȧȧḿḗḗ ǿǿř ƥȧȧşşẇǿǿřḓ ḗḗƞŧḗḗřḗḗḓ ẇȧȧş īīƞƈǿǿřřḗḗƈŧ.]",
     "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
   },
+  "psicash#login#invalid-credentials-body-multiple-attempts": {
+    "message": "[Ẇǿǿŭŭŀḓ ẏǿǿŭŭ īīƞşŧḗḗȧȧḓ ŀīīķḗḗ ŧǿǿ <a class=\"js-psicash-account-signup\" href=\"#\">ƈřḗḗȧȧŧḗḗ ȧȧƞ ȧȧƈƈǿǿŭŭƞŧ</a> ǿǿř <a class=\"js-psicash-forgot-account\" href=\"#\">řḗḗƈǿǿṽḗḗř ẏǿǿŭŭř ȧȧƈƈǿǿŭŭƞŧ</a>?]",
+    "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+  },
   "psicash#login#last-tracker-merge-body": {
     "message": "[Ẏǿǿŭŭ ȧȧřḗḗ ŀǿǿɠɠḗḗḓ īīƞŧǿǿ ẏǿǿŭŭř ƤşīīƇȧȧşħ ȧȧƈƈǿǿŭŭƞŧ. Ŧħḗḗ ƥřḗḗḗḗẋīīşŧīīƞɠ ƀȧȧŀȧȧƞƈḗḗ ƒřǿǿḿ ŧħīīş ḓḗḗṽīīƈḗḗ ħȧȧş ƀḗḗḗḗƞ ŧřȧȧƞşƒḗḗřřḗḗḓ īīƞŧǿǿ ẏǿǿŭŭř ȧȧƈƈǿǿŭŭƞŧ, ƀŭŭŧ ŧħīīş īīş ŧħḗḗ ŀȧȧşŧ ŧīīḿḗḗ ȧȧ ƀȧȧŀȧȧƞƈḗḗ ḿḗḗřɠḗḗ ẇīīŀŀ ǿǿƈƈŭŭř.]",
     "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."

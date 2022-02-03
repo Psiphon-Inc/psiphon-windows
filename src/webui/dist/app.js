@@ -2812,6 +2812,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
    */
 
   function psicashAccountLoginSubmitHandler(event) {
+    // We need to persist this count between form submissions.
+    if (_.isUndefined(psicashAccountLoginSubmitHandler.InvalidCredentialsCount)) {
+      psicashAccountLoginSubmitHandler.InvalidCredentialsCount = 0;
+    }
+
     if (event) {
       event.preventDefault();
     }
@@ -2861,16 +2866,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         HtmlCtrlInterface_PsiCashCommand(new PsiCashCommandRefresh('account-login'));
       }
 
+      if (result.status !== PsiCashServerResponseStatus.InvalidCredentials) {
+        psicashAccountLoginSubmitHandler.InvalidCredentialsCount = 0;
+      }
+
       if (result.error) {
         // Catastrophic failure. Hopefully the error string helps the user diagnose the problem.
         showNoticeModal('psicash#login#failure-modal-title', 'psicash#login#catastrophic-error-body', 'error', 'general#notice-modal-tech-preamble', result.error, null); // callback
       } else {
         switch (result.status) {
           case PsiCashServerResponseStatus.InvalidCredentials:
-            showNoticeModal('psicash#login#failure-modal-title', 'psicash#login#invalid-credentials-body', 'warning', null, // tech preamble
-            null, // tech detail
-            null); // callback
-
+            // If there have been multiple InvalidCredentials in a row, we show an additional message
+            psicashAccountLoginSubmitHandler.InvalidCredentialsCount++;
+            $('#PsiCashAccountInvalidCredentials #PsiCashAccountInvalidCredentials__multipleAttempts').toggleClass('hidden', psicashAccountLoginSubmitHandler.InvalidCredentialsCount < 2);
+            $('#PsiCashAccountInvalidCredentials').modal({
+              show: true,
+              backdrop: 'static'
+            });
             break;
 
           case PsiCashServerResponseStatus.BadRequest:
