@@ -856,7 +856,7 @@
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
-        "message": "PsiCash username",
+        "message": "نام کاربری PsiCash",
         "description": "Label for a username field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-password-field": {
@@ -940,7 +940,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#invalid-credentials-body-multiple-attempts": {
-        "message": "Would you instead like to <a class=\"js-psicash-account-signup\" href=\"#\">create an account</a> or <a class=\"js-psicash-forgot-account\" href=\"#\">recover your account</a>?",
+        "message": "آیا می‌خواهید <a class=\"js-psicash-account-signup\" href=\"#\">حساب کاربری بسازید</a> و یا <a class=\"js-psicash-forgot-account\" href=\"#\">حساب کاربری خود را بازیابی کنید</a>؟",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
@@ -1000,15 +1000,15 @@
         "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
     },
     "notice#psiphonui-fileerror-error-title": {
-        "message": "File Access Error",
+        "message": "خطای دسترسی فایل",
         "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "notice#psiphonui-fileerror-error-body": {
-        "message": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
+        "message": "<p>Psiphon دسترسی به فایل مورد نیاز برای عملکرد صحیح را ندارد.</p>\n<p>برنامه Psiphon را ببندید، فایل لیست شده در زیر را پاک کنید و دوباره Psiphon را باز کنید.</p>",
         "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#psiphonui-fileerror-detail-preamble": {
-        "message": "Filename and error message:",
+        "message": "نام فایل و پیغام خطا:",
         "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "banner#sponsored-by": {
