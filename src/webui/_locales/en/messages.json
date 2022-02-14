@@ -860,7 +860,7 @@
     "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
   },
   "psicash#modal-login-username-field": {
-    "message": "Username",
+    "message": "PsiCash username",
     "description": "Label for a username field in the PsiCash account login modal dialog."
   },
   "psicash#modal-login-password-field": {
@@ -941,6 +941,10 @@
   },
   "psicash#login#invalid-credentials-body": {
     "message": "The username or password entered was incorrect.",
+    "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+  },
+  "psicash#login#invalid-credentials-body-multiple-attempts": {
+    "message": "Would you instead like to <a class=\"js-psicash-account-signup\" href=\"#\">create an account</a> or <a class=\"js-psicash-forgot-account\" href=\"#\">recover your account</a>?",
     "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
   },
   "psicash#login#server-error-body": {

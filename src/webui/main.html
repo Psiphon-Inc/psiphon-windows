@@ -2368,7 +2368,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn" data-tab-switch="#feedback-tab" data-dismiss="modal">
+      <button type="button" class="btn btn-small" data-tab-switch="#feedback-tab" data-dismiss="modal">
         <span data-i18n="general#modal-feedback-button">
           Send Feedback
         </span>
@@ -2471,6 +2471,37 @@
       </button>
     </div>
   </div><!-- /PsiCashAccountLogin -->
+
+  <div class="modal fade" id="PsiCashAccountInvalidCredentials" tabindex="-1" role="dialog"
+       aria-labelledby="PsiCashAccountInvalidCredentialsTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-header">
+      <h3 id="PsiCashAccountInvalidCredentialsTitle" data-i18n="psicash#login#failure-modal-title">
+        PsiCash Login Failed
+      </h3>
+    </div>
+    <div class="modal-body">
+      <i class="paragraph-icon paragraph-icon__warning icon-circle-minus hidden"></i>
+      <p data-i18n="psicash#login#invalid-credentials-body">
+        The username or password entered was incorrect.
+      </p>
+      <p id="PsiCashAccountInvalidCredentials__multipleAttempts" data-i18n="[html]psicash#login#invalid-credentials-body-multiple-attempts">
+        Would you instead like to <a class="js-psicash-account-signup" href="#">create an account</a> or <a class="js-psicash-forgot-account" href="#">recover your account</a>?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-small" data-tab-switch="#feedback-tab" data-dismiss="modal">
+        <span data-i18n="general#modal-feedback-button">
+          Send Feedback
+        </span>
+      </button>
+
+      <button type="button" class="btn btn-primary" data-dismiss="modal">
+        <span data-i18n="general#modal-close-button">
+          Close
+        </span>
+      </button>
+    </div>
+  </div><!-- /PsiCashAccountInvalidCredentials -->
 
   <!-- Modal dialog shown to user to encourage making a PsiCash account -->
   <div class="modal fade" id="PsiCashAccountEncouragement" tabindex="-1" role="dialog"

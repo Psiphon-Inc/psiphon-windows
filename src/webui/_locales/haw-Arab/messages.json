@@ -315,6 +315,10 @@
     "message": "‮⊥ɥǝ‬ ‮nsǝɹuɐɯǝ‬ ‮oɹ‬ ‮dɐssʍoɹp‬ ‮ǝuʇǝɹǝp‬ ‮ʍɐs‬ ‮ıuɔoɹɹǝɔʇ‬.",
     "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
   },
+  "psicash#login#invalid-credentials-body-multiple-attempts": {
+    "message": "‮Ｍonʅp‬ ‮ʎon‬ ‮ıusʇǝɐp‬ ‮ʅıʞǝ‬ ‮ʇo‬ <a class=\"js-psicash-account-signup\" href=\"#\">‮ɔɹǝɐʇǝ‬ ‮ɐu‬ ‮ɐɔɔonuʇ‬</a> ‮oɹ‬ <a class=\"js-psicash-forgot-account\" href=\"#\">‮ɹǝɔoʌǝɹ‬ ‮ʎonɹ‬ ‮ɐɔɔonuʇ‬</a>?",
+    "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+  },
   "psicash#login#last-tracker-merge-body": {
     "message": "‮ʎon‬ ‮ɐɹǝ‬ ‮ʅoƃƃǝp‬ ‮ıuʇo‬ ‮ʎonɹ‬ ‮ԀsıↃɐsɥ‬ ‮ɐɔɔonuʇ‬. ‮⊥ɥǝ‬ ‮dɹǝǝxısʇıuƃ‬ ‮qɐʅɐuɔǝ‬ ‮ɟɹoɯ‬ ‮ʇɥıs‬ ‮pǝʌıɔǝ‬ ‮ɥɐs‬ ‮qǝǝu‬ ‮ʇɹɐusɟǝɹɹǝp‬ ‮ıuʇo‬ ‮ʎonɹ‬ ‮ɐɔɔonuʇ‬, ‮qnʇ‬ ‮ʇɥıs‬ ‮ıs‬ ‮ʇɥǝ‬ ‮ʅɐsʇ‬ ‮ʇıɯǝ‬ ‮ɐ‬ ‮qɐʅɐuɔǝ‬ ‮ɯǝɹƃǝ‬ ‮ʍıʅʅ‬ ‮oɔɔnɹ‬.",
     "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
@@ -368,7 +372,7 @@
     "description": "Text on the submit button in the PsiCash account login modal dialog."
   },
   "psicash#modal-login-username-field": {
-    "message": "‮∩sǝɹuɐɯǝ‬",
+    "message": "‮ԀsıↃɐsɥ‬ ‮nsǝɹuɐɯǝ‬",
     "description": "Label for a username field in the PsiCash account login modal dialog."
   },
   "psicash#modal-logout-error-body": {

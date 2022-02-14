@@ -575,6 +575,10 @@
         "message": "بستن",
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
+    "general#modal-feedback-button": {
+        "message": "ارسال بازخورد",
+        "description": "Text in a button that switches to the feedback tab and dismisses a modal dialog."
+    },
     "general#notice-modal-tech-preamble": {
         "message": "در این جا اطلاعات تکنیکی پیغام خطا را مشاهده می کنید:",
         "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
@@ -852,7 +856,7 @@
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
-        "message": "نام کاربری",
+        "message": "نام کاربری PsiCash",
         "description": "Label for a username field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-password-field": {
@@ -860,7 +864,7 @@
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-forgot-password-link": {
-        "message": "رمزعبور خود را فراموش کرده‌اید؟",
+        "message": "رمز عبور و یا نام کاربری خود را فراموش کرده‌اید؟",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
@@ -935,6 +939,10 @@
         "message": "نام کاربری و یا رمز عبور وارد شده اشتباه بود.",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
+    "psicash#login#invalid-credentials-body-multiple-attempts": {
+        "message": "آیا می‌خواهید <a class=\"js-psicash-account-signup\" href=\"#\">حساب کاربری بسازید</a> و یا <a class=\"js-psicash-forgot-account\" href=\"#\">حساب کاربری خود را بازیابی کنید</a>؟",
+        "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
+    },
     "psicash#login#server-error-body": {
         "message": "هنگام تلاش برای ورود شما، سرور PsiCash با خطا مواجه شد. لطفا بعدا دوباره تلاش کنید.",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
@@ -990,6 +998,18 @@
     "ui#alert#url-copied-to-clipboard": {
         "message": "آدرس کپی شد.<br>اگر مرورگر شما قادر به باز شدن نبود، آدرس را در نوار آدرس مرورگر پیست کنید.",
         "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
+    },
+    "notice#psiphonui-fileerror-error-title": {
+        "message": "خطای دسترسی فایل",
+        "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
+    },
+    "notice#psiphonui-fileerror-error-body": {
+        "message": "<p>Psiphon دسترسی به فایل مورد نیاز برای عملکرد صحیح را ندارد.</p>\n<p>برنامه Psiphon را ببندید، فایل لیست شده در زیر را پاک کنید و دوباره Psiphon را باز کنید.</p>",
+        "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
+    },
+    "notice#psiphonui-fileerror-detail-preamble": {
+        "message": "نام فایل و پیغام خطا:",
+        "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "banner#sponsored-by": {
         "message": "اسپانسر شده با  ",
