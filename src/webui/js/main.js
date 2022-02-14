@@ -1837,8 +1837,8 @@
     var $localeListElem = $('#language-pane');
 
     for (var i = 0; i < locales.length; i++) {
-      // If we're not in debug mode, don't output the dev locales
-      if (!g_initObj.Config.Debug && _.startsWith(locales[i], 'dev')) {
+      // If we're not in debug mode, don't output the dev locales (haw-Cyrl and haw-Arab)
+      if (!g_initObj.Config.Debug && _.startsWith(locales[i], 'haw')) {
         continue;
       }
 
