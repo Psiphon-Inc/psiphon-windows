@@ -271,7 +271,7 @@ bool GetUniqueTempDir(tstring& o_path, bool create)
     }
 
     tstring guid;
-    if (!MakeGUID(guid))
+    if (!MakeGUID(guid, false))
     {
         return false;
     }
@@ -298,7 +298,7 @@ bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath)
     }
 
     tstring filename;
-    if (!MakeGUID(filename))
+    if (!MakeGUID(filename, false))
     {
         return false;
     }
@@ -332,7 +332,7 @@ bool GetOwnExecutablePath(tstring& o_path) {
 
 
 // Makes a GUID string. Returns true on success, false otherwise.
-bool MakeGUID(tstring& o_guid) {
+bool MakeGUID(tstring& o_guid, bool withBraces/*=true*/) {
     o_guid.clear();
 
     GUID g;
@@ -349,6 +349,10 @@ bool MakeGUID(tstring& o_guid) {
     }
 
     o_guid = guidString;
+
+    if (!withBraces) {
+        o_guid = o_guid.substr(1, o_guid.length()-2);
+    }
 
     return true;
 }

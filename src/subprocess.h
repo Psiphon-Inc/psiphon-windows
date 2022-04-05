@@ -53,8 +53,9 @@ class Subprocess
 public:
     /**
     Initialize a new instance. Throws std::exception if outputHandler is null.
+    If deleteExe is true, the file at exePath will be deleted on cleanup.
     */
-    Subprocess(const tstring& exePath, ISubprocessOutputHandler* outputHandler);
+    Subprocess(const tstring& exePath, ISubprocessOutputHandler* outputHandler, bool deleteExe=true);
     virtual ~Subprocess();
 
     /**
@@ -127,4 +128,5 @@ protected:
     string m_parentOutputPipeBuffer;
     HANDLE m_mutex;
     ISubprocessOutputHandler* m_outputHandler;
+    bool m_deleteExe;
 };

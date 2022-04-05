@@ -38,8 +38,6 @@ using namespace std::experimental;
 
 
 #define AUTOMATICALLY_ASSIGNED_PORT_NUMBER   0
-#define EXE_NAME                             _T("psiphon-tunnel-core.exe")
-#define URL_PROXY_EXE_NAME                   _T("psiphon-url-proxy.exe")
 #define MAX_LEGACY_SERVER_ENTRIES            30
 #define LEGACY_SERVER_ENTRY_LIST_NAME        (string(LOCAL_SETTINGS_REGISTRY_VALUE_SERVERS) + "OSSH").c_str()
 
@@ -328,17 +326,17 @@ void CoreTransport::TransportConnectHelper()
 
 bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
-    filesystem::path tempPath;
-    if (!GetSysTempPath(tempPath)) {
-        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+    // We will be using a random file name for the executable. This will help
+    // prevent blocking of "psiphon-tunnel-core.exe". See:
+    // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
+    tstring exePath;
+    if (!GetUniqueTempFilename(_T(""), exePath)) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
-    filesystem::path exePath;
     if (RequestingUrlProxyWithoutTunnel())
     {
-        exePath = tempPath / URL_PROXY_EXE_NAME;
-
         // In RequestingUrlProxyWithoutTunnel mode, we allow for multiple instances
         // so we don't fail extract if the file already exists -- and don't try to
         // kill any associated process holding a lock on it.
@@ -347,7 +345,7 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
             my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
 
             // This string contains PII (the username in the temp path) but won't be logged
-            auto errorDetail = WStringToUTF8(exePath.tstring() + L"\n\n" + SystemErrorMessage(GetLastError()));
+            auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
             UI_Notice("PsiphonUI::FileError", errorDetail);
 
             return false;
@@ -355,14 +353,12 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
     }
     else
     {
-        exePath = tempPath / EXE_NAME;
-
         if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
         {
             my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
 
             // This string contains PII (the username in the temp path) but won't be logged
-            auto errorDetail = WStringToUTF8(exePath.tstring() + L"\n\n" + SystemErrorMessage(GetLastError()));
+            auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
             UI_Notice("PsiphonUI::FileError", errorDetail);
 
             return false;

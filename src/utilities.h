@@ -186,7 +186,8 @@ std::tstring SystemErrorMessage(DWORD errorCode);
 tstring GetISO8601DatetimeString();
 
 // Makes a GUID string. Returns true on success, false otherwise.
-bool MakeGUID(tstring& o_guid);
+// If withBraces is true, there will be curly braces as prefix and suffix.
+bool MakeGUID(tstring& o_guid, bool withBraces=true);
 
 /// Randomly shuffle a vector of values.
 template <typename IteratorType>
