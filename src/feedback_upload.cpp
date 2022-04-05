@@ -35,8 +35,6 @@
 
 using namespace std::experimental;
 
-#define EXE_NAME _T("feedback-upload.exe")
-
 // IWorkerThread boilerplate
 
 void FeedbackUpload::StartSendFeedback()
@@ -168,20 +166,18 @@ void FeedbackUpload::SendFeedbackHelper()
 
 bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, const string& diagnosticData)
 {
-    filesystem::path tempPath;
-    if (!GetSysTempPath(tempPath)) {
-        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+    tstring exePath;
+    if (!GetUniqueTempFilename(_T(""), exePath)) {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
-
-    auto exePath = tempPath / EXE_NAME;
 
     if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
     {
         my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
 
         // This string contains PII (the username in the temp path) but won't be logged
-        auto errorDetail = WStringToUTF8(exePath.tstring() + L"\n\n" + SystemErrorMessage(GetLastError()));
+        auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
         UI_Notice("PsiphonUI::FileError", errorDetail);
 
         return false;

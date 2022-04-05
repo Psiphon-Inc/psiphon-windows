@@ -30,7 +30,6 @@
 
 
 #define POLIPO_CONNECTION_TIMEOUT_SECONDS   20
-#define POLIPO_EXE_NAME                     _T("psiphon3-polipo.exe")
 
 
 LocalProxy::LocalProxy(
@@ -89,24 +88,18 @@ void LocalProxy::UpdateSessionInfo(const SessionInfo& sessionInfo)
 
 bool LocalProxy::DoStart()
 {
-    if (m_polipoPath.size() == 0)
-    {
-        filesystem::path tempPath;
-        if (!GetSysTempPath(tempPath)) {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-            return false;
-        }
-
-        m_polipoPath = tempPath / POLIPO_EXE_NAME;
-
-        if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
-        {
-            return false;
-        }
-    }
-
     // Ensure we start from a disconnected/clean state
     Cleanup(false);
+
+    if (!GetUniqueTempFilename(_T(""), m_polipoPath)) {
+        my_print(NOT_SENSITIVE, false, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        return false;
+    }
+
+    if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
+    {
+        return false;
+    }
 
     int localHttpProxyPort = Settings::LocalHttpProxyPort();
     if (localHttpProxyPort == 0)
@@ -204,6 +197,14 @@ void LocalProxy::DoStop(bool cleanly)
 
 void LocalProxy::Cleanup(bool doStats)
 {
+    auto deleteExe = finally([=]() {
+        if (!m_polipoPath.empty() && !DeleteFile(m_polipoPath.c_str()))
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - DeleteFile failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        }
+        m_polipoPath.clear();
+    });
+
     // Give the process an opportunity for graceful shutdown, then terminate
     if (m_polipoProcessInfo.hProcess != 0
         && m_polipoProcessInfo.hProcess != INVALID_HANDLE_VALUE)

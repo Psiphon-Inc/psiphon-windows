@@ -27,9 +27,10 @@
 #include "utilities.h"
 
 
-Subprocess::Subprocess(const tstring& exePath, ISubprocessOutputHandler* outputHandler)
+Subprocess::Subprocess(const tstring& exePath, ISubprocessOutputHandler* outputHandler, bool deleteExe/*=true*/)
     : m_parentOutputPipe(INVALID_HANDLE_VALUE),
-      m_parentInputPipe(INVALID_HANDLE_VALUE)
+      m_parentInputPipe(INVALID_HANDLE_VALUE),
+      m_deleteExe(deleteExe)
 {
     if (outputHandler == NULL) {
         throw std::exception(__FUNCTION__ ":" STRINGIZE(__LINE__) "outputHandler null");
@@ -180,6 +181,14 @@ bool Subprocess::CloseInputPipes()
 bool Subprocess::Cleanup()
 {
     AutoMUTEX lock(m_mutex);
+
+    auto deleteExe = finally([=]() {
+        if (m_deleteExe && !m_exePath.empty() && !DeleteFile(m_exePath.c_str()))
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - DeleteFile failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        }
+        m_exePath.clear();
+    });
 
     (void)CloseInputPipes();
 
