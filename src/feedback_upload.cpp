@@ -168,7 +168,7 @@ bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, c
 {
     tstring exePath;
     if (!GetUniqueTempFilename(_T(""), exePath)) {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
