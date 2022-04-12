@@ -91,7 +91,7 @@ bool LocalProxy::DoStart()
     // Ensure we start from a disconnected/clean state
     Cleanup(false);
 
-    if (!GetUniqueTempFilename(_T(""), m_polipoPath)) {
+    if (!GetUniqueTempFilename(_T(".exe"), m_polipoPath, true)) {
         my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }

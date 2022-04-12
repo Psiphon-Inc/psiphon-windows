@@ -329,8 +329,14 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
     // We will be using a random file name for the executable. This will help
     // prevent blocking of "psiphon-tunnel-core.exe". See:
     // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
+    // The goal is to make the running of this file as unblockable as possible,
+    // for example by a Windows Group Policy. Originally we always used the
+    // the same filename and it was trivially blocked from running. We are now
+    // using a filename with random length and random characters, which should
+    // be extremely difficult to create a glob-based matching rule for. The
+    // extension is also only included randomly (half the time).
     tstring exePath;
-    if (!GetUniqueTempFilename(_T(""), exePath)) {
+    if (!GetUniqueTempFilename(_T(".exe"), exePath, true)) {
         my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }

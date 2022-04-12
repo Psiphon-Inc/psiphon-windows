@@ -43,6 +43,10 @@ using namespace std::experimental;
 
 extern HINSTANCE g_hInst;
 
+/// To be used for random number operations within this file
+thread_local static std::mt19937 g_RNG{std::random_device{}()};
+
+
 // Adapted from here:
 // http://stackoverflow.com/questions/865152/how-can-i-get-a-process-handle-by-its-name-in-c
 void TerminateProcessByName(const TCHAR* executableName)
@@ -257,6 +261,47 @@ bool GetSysTempPath(filesystem::path& o_path)
 }
 
 
+/// Generates a random alphanumeric string with the given length
+std::tstring RandomString(size_t length)
+{
+    static auto& chars = "0123456789"
+         "abcdefghijklmnopqrstuvwxyz"
+         "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // -1 for the null terminator, -1 because 0-based indexing
+    static const auto lastCharIndex = sizeof(chars) - 2;
+
+    // The 0-to-lastCharIndex range is inclusive
+    std::uniform_int_distribution<size_t> pick(0, lastCharIndex);
+
+    std::tstring s;
+    s.reserve(length);
+
+    while (length--) {
+        s += chars[pick(g_RNG)];
+    }
+
+    return s;
+}
+
+
+/// Generates a random alphanumeric string with length randomly chosen between the given bounds (inclusive)
+std::tstring RandomLengthString(size_t shortestLength, size_t longestLength)
+{
+    std::uniform_int_distribution<size_t> pick(shortestLength, longestLength);
+    return RandomString(pick(g_RNG));
+}
+
+
+/// Generates a random file or directory name with random (but appropriate) length
+std::tstring RandomLengthFilename()
+{
+    // This is entirely arbitrary. Any shorter than this and there starts being the
+    // possibility of conflict; any longer and it starts encroaching on MAX_PATH
+    // (especially if a random filename is combined with a random directory name).
+    return RandomLengthString(6, 60);
+}
+
+
 // Makes an absolute path to a unique temp directory.
 // If `create` is true, the directory will also be created.
 // Returns true on success, false otherwise. Caller can check GetLastError() on failure.
@@ -270,13 +315,7 @@ bool GetUniqueTempDir(tstring& o_path, bool create)
         return false;
     }
 
-    tstring guid;
-    if (!MakeGUID(guid, false))
-    {
-        return false;
-    }
-
-    auto tempDir = filesystem::path(tempPath).append(guid);
+    auto tempDir = filesystem::path(tempPath).append(RandomLengthFilename());
 
     if (create && !CreateDirectory(tempDir.tstring().c_str(), NULL)) {
         return false;
@@ -287,7 +326,7 @@ bool GetUniqueTempDir(tstring& o_path, bool create)
     return true;
 }
 
-bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath)
+bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath, bool randomlyDropExtension/*=false*/)
 {
     o_filepath.clear();
 
@@ -297,18 +336,23 @@ bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath)
         return false;
     }
 
-    tstring filename;
-    if (!MakeGUID(filename, false))
-    {
-        return false;
-    }
+    tstring filename = RandomLengthFilename();
 
     if (!extension.empty()) {
-        if (extension[0] == _T('.')) {
-            filename += extension;
+        bool addExtension = true;
+
+        if (randomlyDropExtension) {
+            std::uniform_int_distribution<int> pick(0, 1);
+            addExtension = pick(g_RNG) == 1;
         }
-        else {
-            filename += _T(".") + extension;
+
+        if (addExtension) {
+            if (extension[0] == _T('.')) {
+                filename += extension;
+            }
+            else {
+                filename += _T(".") + extension;
+            }
         }
     }
 
@@ -327,33 +371,6 @@ bool GetOwnExecutablePath(tstring& o_path) {
         return false;
     }
     o_path = szTemp;
-    return true;
-}
-
-
-// Makes a GUID string. Returns true on success, false otherwise.
-bool MakeGUID(tstring& o_guid, bool withBraces/*=true*/) {
-    o_guid.clear();
-
-    GUID g;
-    if (CoCreateGuid(&g) != S_OK)
-    {
-        return false;
-    }
-
-    TCHAR guidString[128];
-
-    if (StringFromGUID2(g, guidString, sizeof(guidString) / sizeof(TCHAR)) <= 0)
-    {
-        return false;
-    }
-
-    o_guid = guidString;
-
-    if (!withBraces) {
-        o_guid = o_guid.substr(1, o_guid.length()-2);
-    }
-
     return true;
 }
 

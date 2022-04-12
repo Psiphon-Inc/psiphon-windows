@@ -54,10 +54,11 @@ bool GetSysTempPath(filesystem::path& o_path);
 // Returns true on success, false otherwise. Caller can check GetLastError() on failure.
 bool GetUniqueTempDir(tstring& o_path, bool create);
 
-// Makes an absolute path for a unique filename. If `extension` is nonempty,
-// the filename will have that extension.
-// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
-bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath);
+/// Makes an absolute path for a unique filename. If `extension` is nonempty,
+/// the filename will have that extension. If `randomlyDropExtension` is true,
+/// the extension will be discarded approximately half the time.
+/// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
+bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath, bool randomlyDropExtension=false);
 
 /// Retrieves the path of the current executable. Returns false on error.
 bool GetOwnExecutablePath(tstring& o_path);
@@ -184,10 +185,6 @@ std::tstring SystemErrorMessage(DWORD errorCode);
  */
 
 tstring GetISO8601DatetimeString();
-
-// Makes a GUID string. Returns true on success, false otherwise.
-// If withBraces is true, there will be curly braces as prefix and suffix.
-bool MakeGUID(tstring& o_guid, bool withBraces=true);
 
 /// Randomly shuffle a vector of values.
 template <typename IteratorType>
