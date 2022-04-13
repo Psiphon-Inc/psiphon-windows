@@ -96,6 +96,7 @@ bool Subprocess::SpawnSubprocess(const tstring &commandLineFlags)
     {
         my_print(NOT_SENSITIVE, false, _T("%s - CreateProcess failed (%d)"), __TFUNCTION__, GetLastError());
         CloseHandle(m_parentOutputPipe);
+        m_parentOutputPipe = INVALID_HANDLE_VALUE;
         CloseHandle(startupInfo.hStdInput);
         CloseHandle(startupInfo.hStdOutput);
         CloseHandle(startupInfo.hStdError);
@@ -134,6 +135,7 @@ bool Subprocess::SpawnSubprocess(const tstring &commandLineFlags)
         if (!CloseHandle(m_parentOutputPipe)) {
             my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __TFUNCTION__, __LINE__, GetLastError());
         }
+        m_parentOutputPipe = INVALID_HANDLE_VALUE;
         return false;
     }
 
@@ -172,6 +174,7 @@ bool Subprocess::CloseInputPipes()
         if (!CloseHandle(m_parentOutputPipe)) {
             my_print(NOT_SENSITIVE, false, _T("%s:%d - CloseHandle failed (%d)"), __FUNCTION__, __LINE__, GetLastError());
         }
+        m_parentOutputPipe = INVALID_HANDLE_VALUE;
     }
 
     return success;
@@ -185,7 +188,14 @@ bool Subprocess::Cleanup()
     auto deleteExe = finally([=]() {
         if (m_deleteExe && !m_exePath.empty() && !DeleteFile(m_exePath.c_str()))
         {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - DeleteFile failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            // We sometimes see random DeleteFile failures with ERROR_ACCESS_DENIED.
+            // This may be due to ongoing virus scanning of a newly written executable.
+            // Sleeping seems effective in allowing a subsequent DeleteFile to succeed,
+            // although the exact time needed to sleep surely varies by system.
+            Sleep(1000);
+            if (!DeleteFile(m_exePath.c_str())) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - DeleteFile failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            }
         }
         m_exePath.clear();
     });

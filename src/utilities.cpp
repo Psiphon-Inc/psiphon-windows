@@ -253,6 +253,7 @@ bool GetSysTempPath(filesystem::path& o_path)
     ret = GetTempPath(MAX_PATH, tempPath);
     if (ret > MAX_PATH - 14 || ret == 0)
     {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
@@ -302,51 +303,68 @@ std::tstring RandomLengthFilename()
 }
 
 
-// Makes an absolute path to a unique temp directory.
-// If `create` is true, the directory will also be created.
-// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
-bool GetUniqueTempDir(tstring& o_path, bool create)
+bool GetUniqueTempDir(tstring& o_path, int depth/*=1*/)
 {
+    // This is arbitrary, but sane. The length variability gets smaller as the depth
+    // gets deeper, and at a very large number we might hit MAX_PATH.
+    if (depth > 10) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - depth too large: %d"), __TFUNCTION__, __LINE__, depth);
+        return false;
+    }
+
     o_path.clear();
 
     filesystem::path tempPath;
     if (!GetSysTempPath(tempPath))
     {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
-    auto tempDir = filesystem::path(tempPath).append(RandomLengthFilename());
+    if (depth > 0) {
+        // These is entirely arbitrary. Directories shorter than 6 run the risk of
+        // name conflicts. We also don't want paths that are too long, to make sure
+        // we stay under MAX_PATH (note that there will still be a filename under
+        // this path).
+        const int minSubDirLen = 6;
+        const int maxTotalSubDirsLen = 80;
 
-    if (create && !CreateDirectory(tempDir.tstring().c_str(), NULL)) {
-        return false;
+        // Ensure that the max is at least a little bigger than the min.
+        int maxSubDirLen = max(maxTotalSubDirsLen/depth, minSubDirLen+1);
+
+        for (int i = 0; i < depth; i++) {
+            tempPath /= RandomLengthString(minSubDirLen, maxSubDirLen);
+
+            if (!CreateDirectory(tempPath.tstring().c_str(), NULL)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - CreateDirectory failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                return false;
+            }
+        }
     }
 
-    o_path = tempDir.tstring();
+    o_path = tempPath.tstring();
 
     return true;
 }
 
-bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath, bool randomlyDropExtension/*=false*/)
+bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath, int attempt/*=-1*/)
 {
     o_filepath.clear();
 
-    filesystem::path tempPath;
-    if (!GetSysTempPath(tempPath))
-    {
+    // Many ordinary temp files are under directories, so it makes sense for us to
+    // also use subdirecties, but going much deeper than 3 has diminishing returns.
+    int tempDirDepth = std::uniform_int_distribution<int>(0, 3)(g_RNG);
+
+    tstring tempPath;
+    if (!GetUniqueTempDir(tempPath, tempDirDepth)) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempDir failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
-    tstring filename = RandomLengthFilename();
+    tstring filename = RandomLengthString(6, 60);
 
     if (!extension.empty()) {
-        bool addExtension = true;
-
-        if (randomlyDropExtension) {
-            std::uniform_int_distribution<int> pick(0, 1);
-            addExtension = pick(g_RNG) == 1;
-        }
-
-        if (addExtension) {
+        if (attempt < 0 || attempt % 2 == 0) {
             if (extension[0] == _T('.')) {
                 filename += extension;
             }

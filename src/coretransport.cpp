@@ -326,62 +326,75 @@ void CoreTransport::TransportConnectHelper()
 
 bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
-    // We will be using a random file name for the executable. This will help
-    // prevent blocking of "psiphon-tunnel-core.exe". See:
-    // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
-    // The goal is to make the running of this file as unblockable as possible,
-    // for example by a Windows Group Policy. Originally we always used the
-    // the same filename and it was trivially blocked from running. We are now
-    // using a filename with random length and random characters, which should
-    // be extremely difficult to create a glob-based matching rule for. The
-    // extension is also only included randomly (half the time).
-    tstring exePath;
-    if (!GetUniqueTempFilename(_T(".exe"), exePath, true)) {
-        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    if (RequestingUrlProxyWithoutTunnel())
-    {
-        // In RequestingUrlProxyWithoutTunnel mode, we allow for multiple instances
-        // so we don't fail extract if the file already exists -- and don't try to
-        // kill any associated process holding a lock on it.
-        if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath, true))
-        {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-
-            // This string contains PII (the username in the temp path) but won't be logged
-            auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
-            UI_Notice("PsiphonUI::FileError", errorDetail);
-
+    bool startSuccess = false;
+    for (int i = 0; i < 5; i++) {
+        // We will be using a random file name for the executable. This will help
+        // prevent blocking of "psiphon-tunnel-core.exe". See:
+        // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
+        // The goal is to make the running of this file as unblockable as possible, for
+        // example by a Windows Group Policy. Originally we always used the the same
+        // filename and it was trivially blocked from running. We are now using a filename
+        // with random length and random characters, under a random depth of subdirectories,
+        // which should be extremely difficult to create a glob-based matching rule for.
+        // The extension is also only included half the time. We will make multiple
+        // attempts to ensure that various filename configurations are tried.
+        tstring exePath;
+        if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            // This is unlikely to be recoverable with more attempts
             return false;
         }
-    }
-    else
-    {
-        if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
+
+        if (RequestingUrlProxyWithoutTunnel())
         {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            // In RequestingUrlProxyWithoutTunnel mode, we allow for multiple instances
+            // so we don't fail extract if the file already exists -- and don't try to
+            // kill any associated process holding a lock on it.
+            if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath, true))
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
 
-            // This string contains PII (the username in the temp path) but won't be logged
-            auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
-            UI_Notice("PsiphonUI::FileError", errorDetail);
+                // This string contains PII (the username in the temp path) but won't be logged
+                auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
+                UI_Notice("PsiphonUI::FileError", errorDetail);
 
-            return false;
+                continue;
+            }
         }
+        else
+        {
+            if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
+            {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+
+                // This string contains PII (the username in the temp path) but won't be logged
+                auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
+                UI_Notice("PsiphonUI::FileError", errorDetail);
+
+                continue;
+            }
+        }
+
+        tstringstream commandLineFlags;
+        commandLineFlags <<  _T(" --config \"") << configFilename << _T("\"");
+
+        if (!RequestingUrlProxyWithoutTunnel())
+        {
+            commandLineFlags << _T(" --serverList \"") << serverListFilename << _T("\"");
+        }
+
+        m_psiphonTunnelCore = make_unique<PsiphonTunnelCore>(this, exePath);
+        if (!m_psiphonTunnelCore->SpawnSubprocess(commandLineFlags.str())) {
+            my_print(NOT_SENSITIVE, false, _T("%s:%d - SpawnSubprocess failed"), __TFUNCTION__, __LINE__);
+            continue;
+        }
+
+        startSuccess = true;
+        break;
     }
 
-    tstringstream commandLineFlags;
-    commandLineFlags <<  _T(" --config \"") << configFilename << _T("\"");
-
-    if (!RequestingUrlProxyWithoutTunnel())
-    {
-        commandLineFlags << _T(" --serverList \"") << serverListFilename << _T("\"");
-    }
-
-    m_psiphonTunnelCore = make_unique<PsiphonTunnelCore>(this, exePath);
-    if (!m_psiphonTunnelCore->SpawnSubprocess(commandLineFlags.str())) {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - SpawnSubprocess failed"), __TFUNCTION__, __LINE__);
+    if (!startSuccess) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - process spawning failed utterly: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
