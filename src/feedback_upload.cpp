@@ -166,29 +166,42 @@ void FeedbackUpload::SendFeedbackHelper()
 
 bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, const string& diagnosticData)
 {
-    tstring exePath;
-    if (!GetUniqueTempFilename(_T(""), exePath)) {
-        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
+    bool startSuccess = false;
+    for (int i = 0; i < 5; i++) {
+        tstring exePath;
+        if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            // This is unlikely to be recoverable with more attempts
+            return false;
+        }
+
+        if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
+        {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+
+            // This string contains PII (the username in the temp path) but won't be logged
+            auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
+            UI_Notice("PsiphonUI::FileError", errorDetail);
+
+            continue;
+        }
+
+        tstringstream commandLineFlags;
+        commandLineFlags << _T(" --config \"") << configFilename << _T("\" --feedbackUpload");
+
+        m_psiphonTunnelCore = make_unique<PsiphonTunnelCore>(this, exePath);
+        if (!m_psiphonTunnelCore->SpawnSubprocess(commandLineFlags.str())) {
+            my_print(NOT_SENSITIVE, false, _T("%s:%d - SpawnSubprocess failed"), __TFUNCTION__, __LINE__);
+            // The PsiphonTunnelCore (Subprocess) destructor will clean up the executable file
+            continue;
+        }
+
+        startSuccess = true;
+        break;
     }
 
-    if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
-    {
-        my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-
-        // This string contains PII (the username in the temp path) but won't be logged
-        auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
-        UI_Notice("PsiphonUI::FileError", errorDetail);
-
-        return false;
-    }
-
-    tstringstream commandLineFlags;
-    commandLineFlags << _T(" --config \"") << configFilename << _T("\" --feedbackUpload");
-
-    m_psiphonTunnelCore = make_unique<PsiphonTunnelCore>(this, exePath);
-    if (!m_psiphonTunnelCore->SpawnSubprocess(commandLineFlags.str())) {
-        my_print(NOT_SENSITIVE, false, _T("%s:%d - SpawnSubprocess failed"), __TFUNCTION__, __LINE__);
+    if (!startSuccess) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - process spawning failed utterly: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 

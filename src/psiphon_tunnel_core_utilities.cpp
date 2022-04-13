@@ -163,7 +163,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
             // as each other. So we'll give each one a unique, temporary directory.
 
             tstring tempDir;
-            if (!GetUniqueTempDir(tempDir, true))
+            if (!GetUniqueTempDir(tempDir))
             {
                 my_print(NOT_SENSITIVE, false, _T("%s - GetUniqueTempDir failed (%d)"), __TFUNCTION__, GetLastError());
                 return false;

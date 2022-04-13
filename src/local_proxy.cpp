@@ -91,40 +91,56 @@ bool LocalProxy::DoStart()
     // Ensure we start from a disconnected/clean state
     Cleanup(false);
 
-    if (!GetUniqueTempFilename(_T(""), m_polipoPath)) {
-        my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-        return false;
-    }
-
-    if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
-    {
-        return false;
-    }
-
     int localHttpProxyPort = Settings::LocalHttpProxyPort();
-    if (localHttpProxyPort == 0)
-    {
-        // Choose the port automatically
-        localHttpProxyPort = 1024;
-        if (!TestForOpenPort(localHttpProxyPort, 60000, m_stopInfo))
-        {
-            my_print(NOT_SENSITIVE, false, _T("HTTP proxy could not find an available port."));
+
+    bool startSuccess = false;
+    for (int i = 0; i < 5; i++) {
+        if (!GetUniqueTempFilename(_T(".exe"), m_polipoPath, i)) {
+            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            // This is unlikely to be recoverable with more attempts
             return false;
         }
-    }
-    else
-    {
-        // Require the specified port
-        if (!TestForOpenPort(localHttpProxyPort, 0, m_stopInfo))
+
+        if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
         {
-            my_print(NOT_SENSITIVE, false, _T("Port is not available for HTTP proxy to listen on: %d"), localHttpProxyPort);
-            return false;
+            continue;
         }
+
+        if (localHttpProxyPort == 0)
+        {
+            // Choose the port automatically
+            localHttpProxyPort = 1024;
+            if (!TestForOpenPort(localHttpProxyPort, 60000, m_stopInfo))
+            {
+                my_print(NOT_SENSITIVE, false, _T("HTTP proxy could not find an available port."));
+                // This is unlikely to be recoverable with more attempts
+                return false;
+            }
+        }
+        else
+        {
+            // Require the specified port
+            if (!TestForOpenPort(localHttpProxyPort, 0, m_stopInfo))
+            {
+                my_print(NOT_SENSITIVE, false, _T("Port is not available for HTTP proxy to listen on: %d"), localHttpProxyPort);
+                // This is unlikely to be recoverable with more attempts
+                return false;
+            }
+        }
+
+        if (!StartPolipo(localHttpProxyPort))
+        {
+            // The executable file is deleted by Cleanup
+            Cleanup(false);
+            continue;
+        }
+
+        startSuccess = true;
+        break;
     }
 
-    if (!StartPolipo(localHttpProxyPort))
-    {
-        Cleanup(false);
+    if (!startSuccess) {
+        my_print(NOT_SENSITIVE, true, _T("%s:%d - startup failed utterly: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
 
@@ -200,7 +216,14 @@ void LocalProxy::Cleanup(bool doStats)
     auto deleteExe = finally([=]() {
         if (!m_polipoPath.empty() && !DeleteFile(m_polipoPath.c_str()))
         {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - DeleteFile failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            // We sometimes see random DeleteFile failures with ERROR_ACCESS_DENIED.
+            // This may be due to ongoing virus scanning of a newly written executable.
+            // Sleeping seems effective in allowing a subsequent DeleteFile to succeed,
+            // although the exact time needed to sleep surely varies by system.
+            Sleep(1000);
+            if (!DeleteFile(m_polipoPath.c_str())) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - DeleteFile failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+            }
         }
         m_polipoPath.clear();
     });
