@@ -10897,7 +10897,7 @@
       "connection#wait-btn": "請稍候...",
       "connection#stopped-msg": "賽風<span class=\"state-word\">連接已中斷</span>",
       "connection#connect-btn": "連接",
-      "connection#egress-region-combo-label": "Select server region",
+      "connection#egress-region-combo-label": "選擇伺服器地區",
       "settings#error-alert": "<strong>出錯了！</strong>請在繼續前修正錯誤設定值。",
       "settings#reset-button": "重置為默認值",
       "settings#apply-button": "應用更改",
