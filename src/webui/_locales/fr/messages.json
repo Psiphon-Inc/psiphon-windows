@@ -972,11 +972,11 @@
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "<p>Les applis ne fonctionnent-elles pas ?</p>\n<p>Une partie du trafic Internet n’est pas prise en charge sans une Survitesse active. Activez la Survitesse avec du PsiCash afin de libérer le plein potentiel de votre expérience Psiphon.</p>",
+        "message": "<p>Les applis ne fonctionnent-elles pas?</p>\n<p>Une partie du trafic Internet n’est pas prise en charge sans une Survitesse active. Activez la Survitesse avec du PsiCash afin de libérer le plein potentiel de votre expérience Psiphon.</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
-        "message": "Les applis ne fonctionnent-elles pas ?",
+        "message": "Les applis ne fonctionnent-elles pas?",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
