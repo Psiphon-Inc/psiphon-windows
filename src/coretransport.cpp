@@ -326,23 +326,51 @@ void CoreTransport::TransportConnectHelper()
 
 bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
+    // When Settings::ExposeLocalProxiesToLAN is true, we are exposing the local proxy
+    // to the LAN (i.e., listen on all IP addresses; allow connections from external
+    // clients) there is a Windows Firewall prompt to allow the subprocess -- by path
+    // and name -- to accept external connections. In that case there are two things
+    // we don't want to do:
+    // 1. Show a new prompt every time there's a connection attempt and a new
+    //    subprocess is spawned. This means that we can't use a random name every time.
+    // 2. Show a prompt with an filename that is unintelligible to the user. This means
+    //    that we don't want to use a random name at all.
+    bool useFixedSubprocessName = Settings::ExposeLocalProxiesToLAN();
+
     bool startSuccess = false;
     for (int i = 0; i < 5; i++) {
-        // We will be using a random file name for the executable. This will help
-        // prevent blocking of "psiphon-tunnel-core.exe". See:
-        // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
-        // The goal is to make the running of this file as unblockable as possible, for
-        // example by a Windows Group Policy. Originally we always used the the same
-        // filename and it was trivially blocked from running. We are now using a filename
-        // with random length and random characters, under a random depth of subdirectories,
-        // which should be extremely difficult to create a glob-based matching rule for.
-        // The extension is also only included half the time. We will make multiple
-        // attempts to ensure that various filename configurations are tried.
+        if (i > 0 && useFixedSubprocessName) {
+            // We've already had our one attempt
+            break;
+        }
+
         tstring exePath;
-        if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-            // This is unlikely to be recoverable with more attempts
-            return false;
+        if (useFixedSubprocessName) {
+            filesystem::path tempPath;
+            if (!GetSysTempPath(tempPath)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                return false;
+            }
+
+            exePath = tempPath / "psiphon-tunnel-core.exe";
+        }
+        else {
+            // We will be using a random file name for the executable. This will help
+            // prevent blocking of "psiphon-tunnel-core.exe". See:
+            // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
+            // The goal is to make the running of this file as unblockable as possible,
+            // for example by a Windows Group Policy. Originally we always used the the
+            // same filename and it was trivially blocked from running. We are now using a
+            // filename with random length and random characters, under a random depth of
+            // subdirectories, which should be extremely difficult to create a glob-based
+            // matching rule for.
+            // The extension is also only included half the time. We will make multiple
+            // attempts to ensure that various filename configurations are tried.
+            if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                // This is unlikely to be recoverable with more attempts
+                return false;
+            }
         }
 
         if (RequestingUrlProxyWithoutTunnel())
