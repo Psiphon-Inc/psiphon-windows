@@ -576,7 +576,7 @@
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
     "general#modal-feedback-button": {
-        "message": "Send Feedback",
+        "message": "Оставить обратную связь",
         "description": "Text in a button that switches to the feedback tab and dismisses a modal dialog."
     },
     "general#notice-modal-tech-preamble": {

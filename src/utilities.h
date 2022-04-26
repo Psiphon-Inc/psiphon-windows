@@ -47,17 +47,22 @@ bool DirectoryExists(LPCTSTR szPath);
 // dir with no suffixes is always created.)
 bool GetPsiphonDataPath(const vector<tstring>& pathSuffixes, bool ensureExists, tstring& o_path);
 
+/// Returns the system temp path to be used for Psiphon files.
 bool GetSysTempPath(filesystem::path& o_path);
 
-// Makes an absolute path to a unique temp directory.
-// If `create` is true, the directory will also be created.
-// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
-bool GetUniqueTempDir(tstring& o_path, bool create);
+/// Makes an absolute path to a unique temp directory. The directory is created.
+/// `depth` indicates how many subdirectories under the temp root should be used.
+/// If `depth` is zero, then the temp directory itself is returned.
+/// `depth` must not be larger than 10, as randomness is lost and the path can get too long.
+/// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
+bool GetUniqueTempDir(tstring& o_path, int depth=1);
 
-// Makes an absolute path for a unique filename. If `extension` is nonempty,
-// the filename will have that extension.
-// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
-bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath);
+/// Makes an absolute path for a unique filename. It may include one or more subdirectories.
+/// If `extension` is nonempty, the filename will have that extension.
+/// If `attempt` is greater than zero, the extension will alternate between being included and not.
+/// (This is intended to be used when creating executable files.)
+/// Returns true on success, false otherwise. Caller can check GetLastError() on failure.
+bool GetUniqueTempFilename(const tstring& extension, tstring& o_filepath, int attempt=-1);
 
 /// Retrieves the path of the current executable. Returns false on error.
 bool GetOwnExecutablePath(tstring& o_path);
@@ -184,9 +189,6 @@ std::tstring SystemErrorMessage(DWORD errorCode);
  */
 
 tstring GetISO8601DatetimeString();
-
-// Makes a GUID string. Returns true on success, false otherwise.
-bool MakeGUID(tstring& o_guid);
 
 /// Randomly shuffle a vector of values.
 template <typename IteratorType>
