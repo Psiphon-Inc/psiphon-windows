@@ -326,26 +326,16 @@ void CoreTransport::TransportConnectHelper()
 
 bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstring& serverListFilename)
 {
-    // When Settings::ExposeLocalProxiesToLAN is true, we are exposing the local proxy
-    // to the LAN (i.e., listen on all IP addresses; allow connections from external
-    // clients) there is a Windows Firewall prompt to allow the subprocess -- by path
-    // and name -- to accept external connections. In that case there are two things
-    // we don't want to do:
-    // 1. Show a new prompt every time there's a connection attempt and a new
-    //    subprocess is spawned. This means that we can't use a random name every time.
-    // 2. Show a prompt with an filename that is unintelligible to the user. This means
-    //    that we don't want to use a random name at all.
-    bool useFixedSubprocessName = Settings::ExposeLocalProxiesToLAN();
-
     bool startSuccess = false;
-    for (int i = 0; i < 5; i++) {
-        if (i > 0 && useFixedSubprocessName) {
-            // We've already had our one attempt
-            break;
-        }
-
+    // We will try a static filename and then five attempts with random filenames
+    for (int i = -1; i < 5; i++) {
         tstring exePath;
-        if (useFixedSubprocessName) {
+        if (i < 0) {
+            // First we try a static filename. This will work for most people, it will not
+            // cause repeated Windows Firewall prompts (in "listen on all interfaces" mode),
+            // the FW prompt will have an intelligible filename, and it won't cause some
+            // security software (like Symantec Endpoint Protection) to give prompts about
+            // the random filenames.
             filesystem::path tempPath;
             if (!GetSysTempPath(tempPath)) {
                 my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
@@ -359,12 +349,12 @@ bool CoreTransport::SpawnCoreProcess(const tstring& configFilename, const tstrin
             // prevent blocking of "psiphon-tunnel-core.exe". See:
             // https://github.com/Psiphon-Inc/psiphon-issues/issues/828
             // The goal is to make the running of this file as unblockable as possible,
-            // for example by a Windows Group Policy. Originally we always used the the
-            // same filename and it was trivially blocked from running. We are now using a
+            // for example by a Windows Group Policy. Originally we always used the same
+            // filename and it was trivially blocked from running. We are now using a
             // filename with random length and random characters, under a random depth of
             // subdirectories, which should be extremely difficult to create a glob-based
             // matching rule for.
-            // The extension is also only included half the time. We will make multiple
+            // The extension is also included only half the time. We will make multiple
             // attempts to ensure that various filename configurations are tried.
             if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
                 my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
