@@ -93,12 +93,24 @@ bool LocalProxy::DoStart()
 
     int localHttpProxyPort = Settings::LocalHttpProxyPort();
 
+    // See CoreTransport::SpawnCoreProcess for an explanation of the filename logic
     bool startSuccess = false;
-    for (int i = 0; i < 5; i++) {
-        if (!GetUniqueTempFilename(_T(".exe"), m_polipoPath, i)) {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-            // This is unlikely to be recoverable with more attempts
-            return false;
+    for (int i = -1; i < 5; i++) {
+        if (i < 0) {
+            filesystem::path tempPath;
+            if (!GetSysTempPath(tempPath)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                return false;
+            }
+
+            m_polipoPath = tempPath / "psiphon-local-proxy.exe";
+        }
+        else {
+            if (!GetUniqueTempFilename(_T(".exe"), m_polipoPath, i)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                // This is unlikely to be recoverable with more attempts
+                return false;
+            }
         }
 
         if (!ExtractExecutable(IDR_POLIPO_EXE, m_polipoPath))
