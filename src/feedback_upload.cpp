@@ -166,13 +166,26 @@ void FeedbackUpload::SendFeedbackHelper()
 
 bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, const string& diagnosticData)
 {
+    // See CoreTransport::SpawnCoreProcess for an explanation of the filename logic
     bool startSuccess = false;
-    for (int i = 0; i < 5; i++) {
+    string fileErrorDetail;
+    for (int i = -1; i < 5; i++) {
         tstring exePath;
-        if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
-            my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
-            // This is unlikely to be recoverable with more attempts
-            return false;
+        if (i < 0) {
+            filesystem::path tempPath;
+            if (!GetSysTempPath(tempPath)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - GetSysTempPath failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                return false;
+            }
+
+            exePath = tempPath / "psiphon-feedback.exe";
+        }
+        else {
+            if (!GetUniqueTempFilename(_T(".exe"), exePath, i)) {
+                my_print(NOT_SENSITIVE, true, _T("%s:%d - GetUniqueTempFilename failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
+                // This is unlikely to be recoverable with more attempts
+                return false;
+            }
         }
 
         if (!ExtractExecutable(IDR_PSIPHON_TUNNEL_CORE_EXE, exePath))
@@ -180,9 +193,7 @@ bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, c
             my_print(NOT_SENSITIVE, true, _T("%s:%d - ExtractExecutable failed: %d"), __TFUNCTION__, __LINE__, GetLastError());
 
             // This string contains PII (the username in the temp path) but won't be logged
-            auto errorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
-            UI_Notice("PsiphonUI::FileError", errorDetail);
-
+            fileErrorDetail = WStringToUTF8(exePath + L"\n\n" + SystemErrorMessage(GetLastError()));
             continue;
         }
 
@@ -201,6 +212,10 @@ bool FeedbackUpload::SpawnFeedbackUploadProcess(const tstring& configFilename, c
     }
 
     if (!startSuccess) {
+        if (!fileErrorDetail.empty()) {
+            UI_Notice("PsiphonUI::FileError", fileErrorDetail);
+        }
+
         my_print(NOT_SENSITIVE, true, _T("%s:%d - process spawning failed utterly: %d"), __TFUNCTION__, __LINE__, GetLastError());
         return false;
     }
