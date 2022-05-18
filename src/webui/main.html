@@ -38,8 +38,8 @@
   <script>
     // We need to set up the window.onerror handler in a separate script block, otherwise
     // compilation errors in the main code might prevent the handler from getting set.
-    window.onerror = function(errorMsg, url, lineNumber) {
-      alert("Window caught error on line " + lineNumber + ": " + errorMsg + "\nPlease report this error.");
+    window.onerror = function(msg, url, lineNum, colNum, err) {
+      alert('Window caught error on line ' + lineNum + ' column ' + colNum + ': ' + msg + '\nPlease report this error.\n\n' + (((err && err.stack) ? err.stack : '')));
     };
 
     function exceptionString(ex) {
