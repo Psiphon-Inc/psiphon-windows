@@ -30,8 +30,29 @@
 
 
 static const TCHAR* DEFAULT_CONNECTION_NAME = _T("");
-static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>");
 static const int INTERNET_OPTIONS_NUMBER = 3;
+
+// According to Microsoft (https://docs.microsoft.com/en-us/troubleshoot/developer/browsers/connectivity-navigation/internet-explorer-uses-proxy-server-local-ip-address):
+//  > When you connect to a Web server using the Internet Protocol (IP) address or Fully
+//  > Qualified Domain Name (FQDN) on the local network, Microsoft Internet Explorer or
+//  > Windows Internet Explorer connects through an assigned proxy server even if the
+//  > Bypass proxy server for local addresses option is turned on.
+//  >
+//  > However, if you connect to a Web server using the host name (for example,
+//  > http://webserver) instead of the IP address (for example, http://10.0.0.1) or FQDN
+//  > (for example, http://webserver.domainname.com), the proxy server is bypassed and
+//  > Internet Explorer connects directly to the server.
+//
+// This means that it is insufficien to rely on "<local>" to bypass the proxy for local
+// addresses. We'll need to explicitly exclude private and link-local IP address ranges
+// (but using wildcards rather than CIDR).
+static const TCHAR* SYSTEM_PROXY_SETTINGS_PROXY_BYPASS = _T("<local>;"
+    /*10.0.0.0/8*/"10.*;"
+    /*172.16.0.0/12*/"172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;"
+    /*192.168.0.0/16*/"192.168.*;"
+    /*169.254.0.0/16 link-local*/"169.254.*;"
+    /*fc00::/7*/"[fc*];[fd*];"
+    /*fe80::/10 link-local*/"[fe8*];[fe9*];[fea*];[feb*]");
 
 bool GetCurrentSystemConnectionsProxyInfo(vector<ConnectionProxy>& o_proxyInfo);
 bool GetCurrentSystemConnectionProxy(tstring connectionName, ConnectionProxy& o_proxyInfo);
@@ -804,7 +825,7 @@ ProxyConfig ProxyConfig::DecomposeProxyInfo(const ConnectionProxy& proxyInfo)
         type = http | https | socks
 
     If no type is specific ("universal type"), it is the equivalent of "http=host;https=host".
-    Note that the "http" and "https" types specify traffic types for which the 
+    Note that the "http" and "https" types specify traffic types for which the
     proxy -- assumed to be an HTTP proxy -- should be used, whereas the "socks"
     type is a proxy type to be used with all traffic.
     */
@@ -816,7 +837,7 @@ ProxyConfig ProxyConfig::DecomposeProxyInfo(const ConnectionProxy& proxyInfo)
     }
 
     // To make parsing easier, convert the "universal type" to the multiple types format.
-    if (proxy_str.find('=') == tstring::npos) 
+    if (proxy_str.find('=') == tstring::npos)
     {
         tstringstream ss;
         ss << _T("http=") << proxy_str << _T(";https=") << proxy_str;
