@@ -336,15 +336,15 @@
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
-        "message": "Yerel vekil sunucu kapı numaraları",
+        "message": "Yerel vekil sunucu bağlantı noktaları",
         "description": "Settings section heading. In this section the user can specify what network ports the local Psiphon processes should use (Psiphon uses two such ports). For most people, this should be set to automatic."
     },
     "settings#local-proxy-ports#leave-blank": {
-        "message": "Otomatik kapı numarası seçimi için <strong>boş</strong> bırakın (önerilir).",
+        "message": "Otomatik bağlantı noktası seçimi için <strong>boş</strong> bırakın (önerilir).",
         "description": "Help text that appears above the 'Local Proxy Ports' settings. 'blank' is the default and best value, and is bolded."
     },
     "settings#local-proxy-ports#reason": {
-        "message": "Bilgisayarınızda Psiphon ile çalışabilmesi için el ile yapılandırılması gereken araçlar kullanıyorsanız, Psiphon tarafından hep aynı yerel kapı numaralarının kullanılmasını istersiniz. Özel bir kapı numarası belirtmek için bir nedeniniz yoksa, çakışmaları önlemek için kapı numaralarının Psiphon tarafından otomatik olarak seçilmesine izin vermelisiniz.",
+        "message": "Bilgisayarınızda Psiphon ile çalışabilmesi için el ile yapılandırılması gereken araçlar kullanıyorsanız, Psiphon tarafından hep aynı yerel bağlantı noktalarının kullanılmasını istersiniz. Özel bir bağlantı noktası belirtmek için bir nedeniniz yoksa, çakışmaları önlemek için bağlantı noktalarının Psiphon tarafından otomatik olarak seçilmesine izin vermelisiniz.",
         "description": "Help text in the 'Local Proxy Ports' settings area. This explains to the user why they might want to override the default (automatic) settings values. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#http-label": {
@@ -360,19 +360,19 @@
         "description": "Label for the text box where the user will enter their desired local port for the Psiphon SOCKS process. The full term for this would be 'Desired SOCKS local proxy port', but is shortened. 'SOCKS' is a proxy protocol. Any user for whom this setting is useful will know what that means."
     },
     "settings#local-proxy-ports#unique-error-msg": {
-        "message": "Yerel kapı numaraları birbirinden farklı olmalıdır.",
+        "message": "Yerel bağlantı noktaları birbirinden farklı olmalıdır.",
         "description": "Error message that shows if the HTTP local proxy port and SOCKS local proxy port are set to a value and are the same as each other. The local ports must be different from each other. Or one or both of the fields can be empty, which means 'automatic selection'."
     },
     "settings#local-proxy-ports#error-modal-title": {
-        "message": "Yerel vekil sunucu kapı numarası çakışması",
+        "message": "Yerel vekil sunucu bağlantı noktası çakışması",
         "description": "Title of the message box showing the error message when it is detected that the user has chosen a local proxy port (either HTTP or SOCKS) that is already in use and therefore can't be used by Psiphon."
     },
     "settings#local-proxy-ports#error-modal-body-http": {
-        "message": "<p>\nPsiphon HTTP vekil sunucusu için özel bir kapı numarası yapılandırmışsınız.<br>\nAncak bu kapı numarası zaten kullanımda olduğundan Psiphon bunu kullanamaz.\n</p>\n<p>\nLütfen yapılandırılmış HTTP vekil sunucu kapı numarasını değiştirip yeniden deneyin. Bu alanı boş bırakarak kapı numarasının Psiphon tarafından otomatik olarak belirlenmesini sağlamanız önerilir.\n</p>",
+        "message": "<p>\nPsiphon HTTP vekil sunucusu için özel bir bağlantı noktası yapılandırmışsınız.<br>\nAncak bu bağlantı noktası zaten kullanımda olduğundan Psiphon bunu kullanamaz.\n</p>\n<p>\nLütfen yapılandırılmış HTTP vekil sunucu bağlantı noktasını değiştirip yeniden deneyin. Bu alanı boş bırakarak bağlantı noktasının Psiphon tarafından otomatik olarak belirlenmesini sağlamanız önerilir.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the HTTP proxy port, rather than the SOCKS proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#error-modal-body-socks": {
-        "message": "<p>\nPsiphon SOCKS vekil sunucusu için özel bir kapı numarası yapılandırmışsınız.<br>\nAncak bu kapı numarası zaten kullanımda olduğundan Psiphon bunu kullanamaz.\n</p>\n<p>\nLütfen yapılandırılmış SOCKS vekil sunucu kapı numarasını değiştirip yeniden deneyin. Bu alanı boş bırakarak kapı numarasının Psiphon tarafından otomatik olarak belirlenmesini sağlamanız önerilir.\n</p>",
+        "message": "<p>\nPsiphon SOCKS vekil sunucusu için özel bir bağlantı noktası yapılandırmışsınız.<br>\nAncak bu bağlantı noktası zaten kullanımda olduğundan Psiphon bunu kullanamaz.\n</p>\n<p>\nLütfen yapılandırılmış SOCKS vekil sunucu bağlantı noktasını değiştirip yeniden deneyin. Bu alanı boş bırakarak bağlantı noktasının Psiphon tarafından otomatik olarak belirlenmesini sağlamanız önerilir.\n</p>",
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#expose-local-proxies-to-lan#help-text": {
@@ -380,7 +380,7 @@
         "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
     },
     "settings#expose-local-proxies-to-lan#hint": {
-        "message": "<strong>İPUCU:</strong> Bu özelliği kullanabilmek için yukarıda en az bir kapı numarası belirtmelisiniz. Yerel vekil sunucuların adresleri günlüklerde görüntülenir.",
+        "message": "<strong>İPUCU:</strong> Bu özelliği kullanabilmek için yukarıda en az bir bağlantı noktası belirtmelisiniz. Yerel vekil sunucuların adresleri günlüklerde görüntülenir.",
         "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#expose-local-proxies-to-lan#enable-label": {
@@ -408,7 +408,7 @@
         "description": "Label for the text box where the user can set the hostname for the 'upstream proxy'. 'Hostname' means approximately the same thing as 'server network name or identifier'."
     },
     "settings#upstream-proxy#port-label": {
-        "message": "Kapı no",
+        "message": "Bağlantı noktası",
         "description": "Label for the text box where the user can set the network port number for the 'upstream proxy' that they would like to use."
     },
     "settings#upstream-proxy#username-label": {
@@ -436,7 +436,7 @@
         "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
-        "message": "Giden vekil sunucu hatası",
+        "message": "Giden vekil sunucu sorunuı",
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#upstream-proxy#error-modal-body-default": {
@@ -484,11 +484,11 @@
         "description": "Pop-up message shown to users after they have changed their settings (but they aren't currently connected, so there's no reconnect or further action)."
     },
     "settings#error-modal#title": {
-        "message": "Ayar hatası",
+        "message": "Ayar sorunu",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This string is the title of the modal box."
     },
     "settings#error-modal#body": {
-        "message": "Ayar değerlerinizde hatalar var. Lütfen ilerlemeden önce bunları düzeltin.",
+        "message": "Sorunlu ayar değerleriniz var. Lütfen ilerlemeden önce bunları düzeltin.",
         "description": "This modal dialog box is shown when the user tries to save their settings, but there is an error in the values they have entered. This body is the title of the modal box."
     },
     "feedback#top_content_title": {
@@ -580,11 +580,11 @@
         "description": "Text in a button that switches to the feedback tab and dismisses a modal dialog."
     },
     "general#notice-modal-tech-preamble": {
-        "message": "Teknik hata bilgisi şu şekilde:",
+        "message": "Teknik sorun bilgileri şu şekilde:",
         "description": "Preamble before the technical message relating to the error being shown. This is generated within the code and may not be very user-friendly (but it may be necessary for the user to figure out what's wrong)."
     },
     "notice#systemproxysettings-setproxy-error-title": {
-        "message": "Sistem vekil sunucu hatası",
+        "message": "Sistem vekil sunucusu sorunu",
         "description": "Title of modal error message shown to user when Psiphon fails to set the user's system proxy settings. This means that Psiphon was able to connect, but was unable to configure the system to actually use Psiphon."
     },
     "notice#systemproxysettings-setproxy-error-body": {
@@ -780,7 +780,7 @@
         "description": "Text on button that user can click to create a new account (opens an external web page)."
     },
     "psicash#pane-speed-port-limits-head": {
-        "message": "Hız ve kapı kısıtlamaları",
+        "message": "Hız ve bağlantı noktası kısıtlamaları",
         "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
     },
     "psicash#pane-speed-port-limits-body": {
@@ -944,7 +944,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
-        "message": "Oturum açılmaya çalışılırken PsiCash sunucusundan bir hata yanıtı alındı. Lütfen bir süre sonra yeniden deneyin.",
+        "message": "Oturum açılmaya çalışılırken PsiCash sunucusundan bir sorun bildirimi alındı. Lütfen bir süre sonra yeniden deneyin.",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
@@ -1008,7 +1008,7 @@
         "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#psiphonui-fileerror-detail-preamble": {
-        "message": "Dosya adı ve hata iletisi",
+        "message": "Dosya adı ve sorun bildirimi:",
         "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "banner#sponsored-by": {
