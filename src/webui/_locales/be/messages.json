@@ -248,7 +248,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-pl": {
-        "message": "Польшчы",
+        "message": "Польшча",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Sweden will be used."
     },
     "settings#egress-region#select-rs": {
@@ -260,59 +260,59 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Australia will be used."
     },
     "settings#egress-region#select-ar": {
-        "message": "Argentina",
+        "message": "Аргенціна",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Argentina will be used."
     },
     "settings#egress-region#select-br": {
-        "message": "Brazil",
+        "message": "Бразілія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Brazil will be used."
     },
     "settings#egress-region#select-cl": {
-        "message": "Chile",
+        "message": "Чылі",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Chile will be used."
     },
     "settings#egress-region#select-fi": {
-        "message": "Finland",
+        "message": "Фінляндыя",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Finland will be used."
     },
     "settings#egress-region#select-is": {
-        "message": "Iceland",
+        "message": "Ісландыя",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Iceland will be used."
     },
     "settings#egress-region#select-ie": {
-        "message": "Ireland",
+        "message": "Ірландыя",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ireland will be used."
     },
     "settings#egress-region#select-ke": {
-        "message": "Kenya",
+        "message": "Кенія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Kenya will be used."
     },
     "settings#egress-region#select-mx": {
-        "message": "Mexico",
+        "message": "Мексіка",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Mexico will be used."
     },
     "settings#egress-region#select-za": {
-        "message": "South Africa",
+        "message": "Паўднёвая Афрыка",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
     },
     "settings#egress-region#select-kr": {
-        "message": "Korea",
+        "message": "Карэя",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
     },
     "settings#egress-region#select-tw": {
-        "message": "Taiwan",
+        "message": "Тайвань",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Taiwan will be used."
     },
     "settings#egress-region#select-ae": {
-        "message": "United Arab Emirates",
+        "message": "Аб'яднаныя Арабскія Эміраты",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in United Arab Emirates will be used."
     },
     "settings#egress-region#select-ee": {
-        "message": "Estonia",
+        "message": "Эстонія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Estonia will be used."
     },
     "settings#egress-region#select-lv": {
-        "message": "Latvia",
+        "message": "Латвія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
     "settings#egress-region#description": {
@@ -724,19 +724,19 @@
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy Speed Boost. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#1-hour": {
-        "message": "1 hour",
+        "message": "1 гадзіна",
         "description": "Label on a button. Clicking this button will buy 1 hour of Speed Boost."
     },
     "psicash#1-day": {
-        "message": "1 day",
+        "message": "1 дзень",
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
     },
     "psicash#1-week": {
-        "message": "1 week",
+        "message": "1 тыдзень",
         "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
     },
     "psicash#1-month": {
-        "message": "1 month",
+        "message": "1 месяц",
         "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
@@ -752,7 +752,7 @@
         "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
     },
     "psicash#pane-log-in": {
-        "message": "Log In!",
+        "message": "Увайсці!",
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
@@ -824,7 +824,7 @@
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
     },
     "psicash#modal-create-psicash-account-continue-button": {
-        "message": "Continue without account",
+        "message": "Працягнуць без уліковага запісу",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
     },
     "psicash#modal-psicash-logout-offline-header": {
@@ -836,7 +836,7 @@
         "description": "Body of a modal dialog that appears when the user tries to log out of thier PsiCash account while not currently connected to the Psiphon network. We don't allow PsiCash network requests when not connected, so only an inferior localy-only logout is available. 'Psiphon' must not be translated/transliterated. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-connect-button": {
-        "message": "Злучэнне",
+        "message": "Злучыцца",
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will abort the logout attempt and being connecting to a Psiphon server."
     },
     "psicash#modal-psicash-logout-offline-logout-anyway-button": {
@@ -844,7 +844,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cause a local-only logout to be performed."
     },
     "psicash#modal-psicash-logout-offline-cancel-button": {
-        "message": "Адмяніць",
+        "message": "Скасаваць",
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
@@ -872,7 +872,7 @@
         "description": "Text on the submit button in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-cancel-button": {
-        "message": "Адмяніць",
+        "message": "Скасаваць",
         "description": "Text on the cancel button in the PsiCash account login modal dialog."
     },
     "psicash#alert#buyspeedboost-purchase-complete": {
@@ -976,7 +976,7 @@
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
-        "message": "Apps not working?",
+        "message": "Праграмы не працуюць?",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
