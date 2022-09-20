@@ -848,7 +848,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
-        "message": "PsiCash Account",
+        "message": "PsiCash အကောင့်",
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {

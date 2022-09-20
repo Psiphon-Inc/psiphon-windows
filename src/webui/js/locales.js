@@ -6430,7 +6430,7 @@
       "psicash#modal-psicash-logout-offline-connect-button": "ချိတ်ဆက်မယ်",
       "psicash#modal-psicash-logout-offline-logout-anyway-button": "Log out anyway",
       "psicash#modal-psicash-logout-offline-cancel-button": "ပယ်ဖျက်မည်",
-      "psicash#modal-login-header": "PsiCash Account",
+      "psicash#modal-login-header": "PsiCash အကောင့်",
       "psicash#modal-login-body": "<a class=\"js-psicash-account-signup\" href=\"#\">Create a new account</a> or log in below.",
       "psicash#modal-login-username-field": "PsiCash username",
       "psicash#modal-login-password-field": "စကားဝှက်",
