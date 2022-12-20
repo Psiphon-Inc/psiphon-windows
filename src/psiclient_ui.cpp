@@ -760,9 +760,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR _url)
 
         string stringJSON = uiURLParams(url, appSetCookiesLen);
         Settings::SetCookies(stringJSON);
-    }
-    else if (url == appBannerClick)
-     
+    } 
     else if (url.find(psicashCommand) == 0 && url.length() > psicashCommandLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: PsiCash command requested"), __TFUNCTION__);
