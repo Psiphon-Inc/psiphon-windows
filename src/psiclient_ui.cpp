@@ -762,19 +762,7 @@ static void HtmlUI_BeforeNavigateHandler(LPCTSTR _url)
         Settings::SetCookies(stringJSON);
     }
     else if (url == appBannerClick)
-    {
-        my_print(NOT_SENSITIVE, true, _T("%s: Banner clicked"), __TFUNCTION__);
-        // If connected, open sponsor home pages, or info link if
-        // no sponsor pages. If not connected, open info link.
-        if (CONNECTION_MANAGER_STATE_CONNECTED == g_connectionManager.GetState())
-        {
-            g_connectionManager.OpenHomePages("banner", INFO_LINK_URL);
-        }
-        else
-        {
-            OpenBrowser(INFO_LINK_URL);
-        }
-    }
+     
     else if (url.find(psicashCommand) == 0 && url.length() > psicashCommandLen)
     {
         my_print(NOT_SENSITIVE, true, _T("%s: PsiCash command requested"), __TFUNCTION__);
