@@ -576,7 +576,7 @@
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
     "general#modal-feedback-button": {
-        "message": "Send Feedback",
+        "message": "发送反馈",
         "description": "Text in a button that switches to the feedback tab and dismisses a modal dialog."
     },
     "general#notice-modal-tech-preamble": {
@@ -756,7 +756,7 @@
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
-        "message": "Log Out",
+        "message": "登出",
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
@@ -804,7 +804,7 @@
         "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#overlay-logging-in": {
-        "message": "Logging in…",
+        "message": "正在登录...",
         "description": "Text on a screen shown while the user's log-in request is in progress."
     },
     "psicash#overlay-logging-out": {
