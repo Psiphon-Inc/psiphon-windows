@@ -42,7 +42,7 @@ bool verifySignedDataPackage(
     bool gzipped,
     string& authenticDataPackage)
 {
-    const int SANITY_CHECK_SIZE = 10 * 1024 * 1024;
+    const int SANITY_CHECK_SIZE = 100 * 1024 * 1024;
 
     authenticDataPackage.clear();
 
