@@ -296,7 +296,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in South Africa will be used."
     },
     "settings#egress-region#select-kr": {
-        "message": "Korea",
+        "message": "韓國",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
     },
     "settings#egress-region#select-tw": {
@@ -780,11 +780,11 @@
         "description": "Text on button that user can click to create a new account (opens an external web page)."
     },
     "psicash#pane-speed-port-limits-head": {
-        "message": "Speed and Port Limits",
+        "message": "速度與端口限制",
         "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
     },
     "psicash#pane-speed-port-limits-body": {
-        "message": "Without active Speed Boost, your speed is limited and some internet traffic is not supported. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.",
+        "message": "沒有啟用加速器，您的速度會受限且無法支援某些網路流量。透過 PsiCash 啟動加速以解效完全的 Psiphon 使用體驗。",
         "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-speed-boost-cta": {
@@ -820,19 +820,19 @@
         "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-create-button": {
-        "message": "Create or log into account",
+        "message": "創建或登入帳號",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
     },
     "psicash#modal-create-psicash-account-continue-button": {
-        "message": "Continue without account",
+        "message": "繼續而不登入帳號",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
     },
     "psicash#modal-psicash-logout-offline-header": {
-        "message": "PsiCash Account Logout",
+        "message": "PsiCash 帳號登出",
         "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-body": {
-        "message": "Being connected to the Psiphon network enables a more secure PsiCash logout. Would you like to connect before logging out?",
+        "message": "連線至 Psiphon 網路以確保 PsiCash 安全登出，您是否在登出前先連線至 Psiphon ?",
         "description": "Body of a modal dialog that appears when the user tries to log out of thier PsiCash account while not currently connected to the Psiphon network. We don't allow PsiCash network requests when not connected, so only an inferior localy-only logout is available. 'Psiphon' must not be translated/transliterated. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-connect-button": {
@@ -840,7 +840,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will abort the logout attempt and being connecting to a Psiphon server."
     },
     "psicash#modal-psicash-logout-offline-logout-anyway-button": {
-        "message": "Log out anyway",
+        "message": "繼續登出",
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cause a local-only logout to be performed."
     },
     "psicash#modal-psicash-logout-offline-cancel-button": {
@@ -848,7 +848,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
-        "message": "PsiCash Account",
+        "message": "PsiCash 帳號",
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {
@@ -856,7 +856,7 @@
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
-        "message": "PsiCash username",
+        "message": "PsiCash 用戶名稱",
         "description": "Label for a username field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-password-field": {
@@ -864,7 +864,7 @@
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-forgot-password-link": {
-        "message": "Forgot your password or username?",
+        "message": "忘記帳號或密碼？",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
@@ -880,7 +880,7 @@
         "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#modal-logout-header": {
-        "message": "PsiCash Account Logout",
+        "message": "PsiCash 帳號登出",
         "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-logout-error-body": {
@@ -892,11 +892,11 @@
         "description": "This is used to indicate when a numeric value is positive -- like '+500'. This will show when a number is going to be increased by another number. '%d' is a placeholder for an integer for decimal value."
     },
     "psicash#mustconnect-modal#title": {
-        "message": "Psiphon Connection Required",
+        "message": "要求 Psiphon 連線",
         "description": "Title text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Psiphon' must not be translated/transliterated."
     },
     "psicash#mustconnect-modal#body": {
-        "message": "In order to use PsiCash, you must be connected to the Psiphon network.",
+        "message": "要使用 PsiCash, 必須先連線到 Psiphon 網路。",
         "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
     },
     "psicash#init-error-title": {
@@ -928,15 +928,15 @@
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {
-        "message": "PsiCash Login Failed",
+        "message": "PsiCash 登入失敗",
         "description": "Title of modal dialog shown when the PsiCash account login attempt fails for some reason. Text within the modal will explain why. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#catastrophic-error-body": {
-        "message": "Your PsiCash login attempt failed unexpectedly.",
+        "message": "嘗試登入 PsiCash 意外失敗",
         "description": "Body text of a modal dialog shown when a PsiCash login fails without a specific reason. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#invalid-credentials-body": {
-        "message": "The username or password entered was incorrect.",
+        "message": "輸入的密碼或帳號不正確",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#invalid-credentials-body-multiple-attempts": {
@@ -944,7 +944,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
-        "message": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
+        "message": "您欲登入時  PsiCash 伺服器傳回錯誤訊息，請稍候再試。",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
@@ -952,11 +952,11 @@
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#success-modal-title": {
-        "message": "PsiCash Login Success",
+        "message": "PsiCash 登入成功",
         "description": "Title of modal dialog shown when the PsiCash account login attempt succeeds, if additional information needs to be conveyed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#last-tracker-merge-body": {
-        "message": "You are logged into your PsiCash account. The preexisting balance from this device has been transferred into your account, but this is the last time a balance merge will occur.",
+        "message": "當登人您的 PsiCash 帳號，這台登入設備之前的餘額會轉入您的帳號，其為最後一次餘額合併。",
         "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#tokens-expired": {
@@ -964,11 +964,11 @@
         "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#logged-out": {
-        "message": "PsiCash account logout complete.",
+        "message": "PsiCash 帳號已完全登出。",
         "description": "An alert shown when the user logs out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-title": {
-        "message": "Upgrade your Psiphon connection",
+        "message": "昇級 Psiphon 連線",
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
