@@ -112,23 +112,23 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "Bu seçenek etkinleştirildiğinde, bulunduğunuz ülkedeki sunuculara yapılan istekler Psiphon tarafından tünelden geçirilmez.",
+        "message": "Açıldığında, bulunduğunuz ülkedeki sunuculara yapılan istekler Psiphon tarafından tünelden geçirilmez.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#split-tunnel#reason": {
-        "message": "Bulunduğunuz ülkedeki web siteleri genellikle engellenmez. Bu nedenle bu seçeneğin etkinleştirilmesi bu sitelere daha hızlı erişim sağlayarak İSS veri kullanımını da azaltabilir.",
+        "message": "Bulunduğunuz ülkedeki siteler genellikle engellenmez. Bu nedenle bu seçeneğin açılması bu sitelere daha hızlı erişim sağlayarak İSS veri kullanımını da azaltabilir.",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#split-tunnel#enable-label": {
-        "message": "Ülkenizdeki web siteleri için vekil sunucu kullanılmasın",
+        "message": "Ülkenizdeki siteler için vekil sunucu kullanılmasın",
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "settings#split-tunnel-chinese-sites#enable-label": {
-        "message": "Çin web sitelerinde vekil sunucu kullanılmasın",
+        "message": "Çin sitelerinde vekil sunucu kullanılmasın",
         "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
     },
     "settings#split-tunnel-chinese-sites#note": {
-        "message": "<strong>UYARI:</strong> Bu özellik, her zaman güvenilir olmayabilecek verileri kullanır. Engellenen bazı web siteleri istemeden vekil sunucu dışında tutulabileceğinden, bu özelliği etkinleştirirken dikkatli olun. ",
+        "message": "<strong>UYARI:</strong> Bu özellik, her zaman güvenilir olmayabilecek verileri kullanır. Engellenen bazı siteler istemeden vekil sunucu dışında tutulabileceğinden, bu özelliği açarken dikkatli olun. ",
         "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
     },
     "settings#disable-timeouts#heading": {
@@ -136,11 +136,11 @@
         "description": "Settings section heading. If the user clicks this, the 'Disable Timeouts for Slow Networks' section will expand and can be edited. If 'disable timeouts' is enabled, network timeouts between the Psiphon client and server will be disabled."
     },
     "settings#disable-timeouts#help-text": {
-        "message": "Bu seçenek etkinleştirildiğinde, Psiphon sunucusu ile iletişimde zaman aşımı süresi kullanılmaz.",
+        "message": "Açıldığında, Psiphon sunucusu ile iletişimde zaman aşımı süresi kullanılmaz.",
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#disable-timeouts#reason": {
-        "message": "Bu seçenek etkinleştirildiğinde, çok yavaş bağlantılarda beklenmedik bağlantı kopmaları sorunu daha az yaşanır.",
+        "message": "Açıldığında, çok yavaş bağlantılarda beklenmedik bağlantı kopmaları sorunu daha az yaşanır.",
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
@@ -316,7 +316,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Bir çok ülkede ve bölgede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir bölgedeki Psiphon sunucusunuı seçmeniz daha iyi ağ bağlantısı sağlar. Ancak belirli bir ülkedeki web sitesi ve hizmetlerine erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
+        "message": "Bir çok ülkede ve bölgede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir bölgedeki Psiphon sunucusunu seçmeniz daha iyi ağ bağlantısı sağlar. Ancak belirli bir ülkedeki site ve hizmetlere erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
@@ -440,7 +440,7 @@
         "description": "Title of the message box showing the error message when a problem is detected with the user's 'upstream proxy settings'."
     },
     "settings#upstream-proxy#error-modal-body-default": {
-        "message": "Psiphon \"giden vekil sunucusu\" olarak sistem vekil sunucusunu kullanmak üzere yapılandırılmış.<br>\nAncak bu vekil sunucuyu kullanarak bir Psiphon sunucusu ile bağlantı kuramadık.<br>\n\nLütfen \"Giden vekil sunucusu kullanılmasın\" seçeneğini etkinleştirip yeniden deneyin.",
+        "message": "Psiphon \"giden vekil sunucusu\" olarak sistem vekil sunucusunu kullanmak üzere yapılandırılmış.<br>\nAncak bu vekil sunucuyu kullanarak bir Psiphon sunucusu ile bağlantı kuramadık.<br>\n\nLütfen \"Giden vekil sunucusu kullanılmasın\" seçeneğini açıp yeniden deneyin.",
         "description": "Main text in the 'Upstream Proxy Error' dialog box. This is shown when the user has not directly altered these settings (yet), but the default is causing a problem. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#upstream-proxy#error-modal-body-configured": {
@@ -456,7 +456,7 @@
         "description": "Label for the checkbox that allows the user to indicate that they want to use the non-default network transport mode. This mode is generally inferior for circumvention and not recommended. 'L2TP/IPSec' is the technical name for a type of virtual private network and should probably not be translated."
     },
     "settings#transport-mode#help-text": {
-        "message": "Bu seçenek etkinleştirildiğinde, Windows L2TP/IPSec sanal ağını kullanır. Bu kip tüm uygulamalarınızın trafiğini tünelden geçirir ancak herhangi bir gizlenme sağlamaz. Çoğu güvenlik duvarını aşmak için <strong>önerilmez</strong>.",
+        "message": "Açıldığında, Windows L2TP/IPSec sanal ağını kullanır. Bu kip tüm uygulamalarınızın trafiğini tünelden geçirir ancak herhangi bir gizlenme sağlamaz. Çoğu güvenlik duvarını aşmak için <strong>önerilmez</strong>.",
         "description": "Help text for the 'Use L2TP/IPSec mode' transport selection checkbox. It gives some technical details and indicates that this mode is not recommended."
     },
     "settings#systray-minimize#heading": {
@@ -464,7 +464,7 @@
         "description": "Settings section heading. In this section the user can choose to enable or disable the ability for the Psiphon application window to be hidden as a notification area icon when minimized. 'Notification area' is the official term for the icons located near the clock on the Windows taskbar, but it's also often called the 'system tray' or 'systray' -- use whatever is most common in your language, and be verbose if necessary."
     },
     "settings#systray-minimize#help-text": {
-        "message": "Bu seçenek etkinleştirildiğinde, Psiphon uygulama penceresi simge durumuna küçültüldüğünde bildirim alanına gizlenir (Windows görev çubuğundaki saatin yanında bulunan \"sistem tepsisi\" olarak da bilinir).",
+        "message": "Açıldığında, Psiphon uygulama penceresi simge durumuna küçültüldüğünde bildirim alanına gizlenir (Windows görev çubuğundaki saatin yanında bulunan \"sistem tepsisi\" olarak da bilinir).",
         "description": "Text explaining to the user what the 'Minimize to Notification Area (System Tray)' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#systray-minimize#reason": {
@@ -556,11 +556,11 @@
         "description": "Paragraph on the 'About' page telling users generally what Psiphon is. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#visit-download-site": {
-        "message": "Lütfen <strong><a class=\"NewVersionURL\" href=\"#\">yeni sürümü indirmek için</a></strong> ya da <strong><a class=\"InfoURL\" href=\"#\">yardım ve bilgi</a></strong> almak için web sitesini ziyaret edin. Psiphon Android ve Windows üzerinde kullanılabilir.",
+        "message": "Lütfen <strong><a class=\"NewVersionURL\" href=\"#\">yeni sürümü indirmek için</a></strong> ya da <strong><a class=\"InfoURL\" href=\"#\">yardım ve bilgi</a></strong> almak için siteyi ziyaret edin. Psiphon Android ve Windows üzerinde kullanılabilir.",
         "description": "Paragraph on the 'About' page telling users what web page to go to get a new version of Psiphon or more info about it. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#get-by-email": {
-        "message": "<strong>Web sitesine erişilemiyorsa</strong>, son Psiphon sürümünü almak için şu adrese e-posta gönderebilirsiniz:",
+        "message": "<strong>Siteye erişilemiyorsa</strong>, son Psiphon sürümünü almak için şu adrese e-posta gönderebilirsiniz:",
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#license-agree": {
@@ -636,7 +636,7 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphon artık Windows XP ya da Vista desteği vermiyor.\nAyrıntılı bilgi almak için web sitemize bakabilirsiniz.",
+        "message": "Psiphon artık Windows XP ya da Vista desteği vermiyor.\nAyrıntılı bilgi almak için sitemize bakabilirsiniz.",
         "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
@@ -760,7 +760,7 @@
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
-        "message": "Web üzerinden yönetin",
+        "message": "Site üzerinden yönetin",
         "description": "Text for a link to a web site where users can manage their PsiCash account."
     },
     "psicash#pane-create-account-plea": {
@@ -972,7 +972,7 @@
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "</p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği etkin olmadan kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.</p>",
+        "message": "<p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği etkinleştirilmeden kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
@@ -988,7 +988,7 @@
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
-        "message": "İnternet trafiğinin bir kısmı Speed Boost özelliği etkin olmadan kullanılamaz. Böyle bir trafik engellendiğinde bir uyarı görüntülenir (yeniden etkinleştirmek için yeniden bağlanmak gerekir).",
+        "message": "İnternet trafiğinin bir kısmı Speed Boost özelliği etkinleştirilmeden kullanılamaz. Böyle bir trafik engellendiğinde bir uyarı görüntülenir (yeniden etkinleştirmek için yeniden bağlanmak gerekir).",
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {

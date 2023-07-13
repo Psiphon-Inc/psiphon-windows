@@ -576,7 +576,7 @@
         "description": "Text in the button that dismisses a modal dialog. It is often the only button (no 'OK' or 'Cancel', etc.)."
     },
     "general#modal-feedback-button": {
-        "message": "Send Feedback",
+        "message": "Tuma mrejesho",
         "description": "Text in a button that switches to the feedback tab and dismisses a modal dialog."
     },
     "general#notice-modal-tech-preamble": {
@@ -680,7 +680,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-title-tracker": {
-        "message": "Invalid PsiCash state",
+        "message": "Hali ya PsiCash ni batili",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
@@ -732,11 +732,11 @@
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
     },
     "psicash#1-week": {
-        "message": "1 week",
+        "message": "Wiki 1",
         "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
     },
     "psicash#1-month": {
-        "message": "1 month",
+        "message": "Mwezi 1",
         "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
@@ -744,23 +744,23 @@
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-create-account": {
-        "message": "Create an account to protect your PsiCash!",
+        "message": "Unda akaunti kulinda PsiCash yako!",
         "description": "Text for a link displayed when the user does not have a PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language. It encourages them to make one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-balance-header": {
-        "message": "Balance:",
+        "message": "Usawa",
         "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
     },
     "psicash#pane-log-in": {
-        "message": "Log In!",
+        "message": "Ingia",
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
-        "message": "Log Out",
+        "message": "Ondoka",
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
-        "message": "Manage on the web",
+        "message": "Kusimamia kwenye wavuti",
         "description": "Text for a link to a web site where users can manage their PsiCash account."
     },
     "psicash#pane-create-account-plea": {
@@ -772,11 +772,11 @@
         "description": "A message shown when L2TP/IPSec mode is enabled in Psiphon. Speed Boost cannot be used in this mode."
     },
     "psicash#pane-must-log-in": {
-        "message": "You must log in to use PsiCash.",
+        "message": "Unatakiwa kuingia ili utumie PsiCash.",
         "description": "Message shown when the user was logged in with an account and then logged out. It's telling the user that they have to log in again. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-create-new-account": {
-        "message": "Create a New Account",
+        "message": "Unda Akaunti",
         "description": "Text on button that user can click to create a new account (opens an external web page)."
     },
     "psicash#pane-speed-port-limits-head": {
@@ -792,7 +792,7 @@
         "description": "Text encouraging the user to purchase Speed Boost. 'Unleash' can translated to something like 'unlock', 'release', 'enable', 'amplify', or generally 'make a lot better'. 'Psiphon' must not be translated/transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-more-psicash-header": {
-        "message": "You need more PsiCash!",
+        "message": "Unahitaji zaidi PsiCash!",
         "description": "Header for a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-need-more-psicash-body": {
@@ -800,19 +800,19 @@
         "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-psicash-visit-store": {
-        "message": "Need PsiCash? Visit our store to buy more!",
+        "message": "Unahitaji PsiCash? tembelea kununua zaidi!",
         "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#overlay-logging-in": {
-        "message": "Logging in…",
+        "message": "Kuingia",
         "description": "Text on a screen shown while the user's log-in request is in progress."
     },
     "psicash#overlay-logging-out": {
-        "message": "Logging out…",
+        "message": "Kutoka",
         "description": "Text on a screen shown while the user's log-out request is in progress."
     },
     "psicash#modal-create-psicash-account-header": {
-        "message": "Create a PsiCash Account",
+        "message": "Unda akaunti ya PsiCash",
         "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-body": {
@@ -820,15 +820,15 @@
         "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-create-button": {
-        "message": "Create or log into account",
+        "message": "Unda au ingia kwenye akaunti",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
     },
     "psicash#modal-create-psicash-account-continue-button": {
-        "message": "Continue without account",
+        "message": "Endelea bila akaunti",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
     },
     "psicash#modal-psicash-logout-offline-header": {
-        "message": "PsiCash Account Logout",
+        "message": "ondoka kwenye akaunti ya PsiCash",
         "description": "Header of a modal dialog that appears when the user tries to log out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-psicash-logout-offline-body": {
@@ -840,7 +840,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will abort the logout attempt and being connecting to a Psiphon server."
     },
     "psicash#modal-psicash-logout-offline-logout-anyway-button": {
-        "message": "Log out anyway",
+        "message": "Ondoka hata ivyo",
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cause a local-only logout to be performed."
     },
     "psicash#modal-psicash-logout-offline-cancel-button": {
@@ -848,15 +848,15 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
-        "message": "PsiCash Account",
+        "message": "Akaunti ya PsiCash",
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {
-        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">Create a new account</a> or log in below.",
+        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">Unda akaunti mpya </a> au ingia hapa chini.",
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
-        "message": "PsiCash username",
+        "message": "Jina la mtumiaji PsiCash",
         "description": "Label for a username field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-password-field": {
@@ -864,7 +864,7 @@
         "description": "Label for a password field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-forgot-password-link": {
-        "message": "Forgot your password or username?",
+        "message": "Umesahau nywila au jina la mtumiaji?",
         "description": "Link for text in the PsiCash account login modal dialog. Clicking it will bring the user to a page where they can recover their account."
     },
     "psicash#modal-login-submit-button": {
@@ -880,7 +880,7 @@
         "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#modal-logout-header": {
-        "message": "PsiCash Account Logout",
+        "message": "ondoka kwenye akaunti ya PsiCash",
         "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-logout-error-body": {
@@ -920,11 +920,11 @@
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
     },
     "psicash#corner-logged-out": {
-        "message": "You are logged out of PsiCash",
+        "message": "Umetoka kwenye PsiCash",
         "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#more-ellipsis": {
-        "message": "More…",
+        "message": "Zaidi...",
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {
@@ -936,7 +936,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails without a specific reason. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#invalid-credentials-body": {
-        "message": "The username or password entered was incorrect.",
+        "message": "Jina la mtumiaji au nywila uliyoingiza haikua sahihi.",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#invalid-credentials-body-multiple-attempts": {
@@ -964,7 +964,7 @@
         "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#logged-out": {
-        "message": "PsiCash account logout complete.",
+        "message": "Kutoka kwenye akaunti ya PsiCash kumekamilika.",
         "description": "An alert shown when the user logs out of their PsiCash account. The word 'PsiCash' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-title": {
@@ -1000,15 +1000,15 @@
         "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
     },
     "notice#psiphonui-fileerror-error-title": {
-        "message": "File Access Error",
+        "message": "Hitilafu ya kufikia faili",
         "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "notice#psiphonui-fileerror-error-body": {
-        "message": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
+        "message": "<p>Psiphon haiwezi kufikia faili inahitaji kufanya kazi  kiufasaha.</p>\n<p>Funga programu ya Psiphon, futa faili iliyoorodheshwa hapo chini, na jaribu kuifanyia kazi Psiphon tena.</p>",
         "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#psiphonui-fileerror-detail-preamble": {
-        "message": "Filename and error message:",
+        "message": "Jina la faili na ujumbe mfupi wa makosa:",
         "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "banner#sponsored-by": {
