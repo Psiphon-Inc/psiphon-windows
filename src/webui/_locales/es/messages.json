@@ -940,7 +940,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#invalid-credentials-body-multiple-attempts": {
-        "message": "¿Prefieres <a class=\"js-psicash-account-signup\" href=\"#\"> crear una cuenta  o <a class=\"js-psicash-forgot-account\" href=\"#\"> recuperar tu cuenta</a>?",
+        "message": "¿Prefieres <a class=\"js-psicash-account-signup\" href=\"#\"> crear una cuenta</a> o <a class=\"js-psicash-forgot-account\" href=\"#\"> recuperar tu cuenta</a>?",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {

@@ -13459,12 +13459,12 @@ try {
 "object"!=typeof JSON&&(JSON={}),function(){"use strict";var rx_one=/^[\],:{}\s]*$/,rx_two=/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,rx_three=/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,rx_four=/(?:^|:|,)(?:\s*\[)+/g,rx_escapable=/[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,rx_dangerous=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta,rep;function f(t){return t<10?"0"+t:t}function this_value(){return this.valueOf()}function quote(t){return rx_escapable.lastIndex=0,rx_escapable.test(t)?'"'+t.replace(rx_escapable,function(t){var e=meta[t];return"string"==typeof e?e:"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+t+'"'}function str(t,e){var r,n,o,u,f,a=gap,i=e[t];switch(i&&"object"==typeof i&&"function"==typeof i.toJSON&&(i=i.toJSON(t)),"function"==typeof rep&&(i=rep.call(e,t,i)),typeof i){case"string":return quote(i);case"number":return isFinite(i)?String(i):"null";case"boolean":case"null":return String(i);case"object":if(!i)return"null";if(gap+=indent,f=[],"[object Array]"===Object.prototype.toString.apply(i)){for(u=i.length,r=0;r<u;r+=1)f[r]=str(r,i)||"null";return o=0===f.length?"[]":gap?"[\n"+gap+f.join(",\n"+gap)+"\n"+a+"]":"["+f.join(",")+"]",gap=a,o}if(rep&&"object"==typeof rep)for(u=rep.length,r=0;r<u;r+=1)"string"==typeof rep[r]&&(o=str(n=rep[r],i))&&f.push(quote(n)+(gap?": ":":")+o);else for(n in i)Object.prototype.hasOwnProperty.call(i,n)&&(o=str(n,i))&&f.push(quote(n)+(gap?": ":":")+o);return o=0===f.length?"{}":gap?"{\n"+gap+f.join(",\n"+gap)+"\n"+a+"}":"{"+f.join(",")+"}",gap=a,o}}"function"!=typeof Date.prototype.toJSON&&(Date.prototype.toJSON=function(){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+f(this.getUTCMonth()+1)+"-"+f(this.getUTCDate())+"T"+f(this.getUTCHours())+":"+f(this.getUTCMinutes())+":"+f(this.getUTCSeconds())+"Z":null},Boolean.prototype.toJSON=this_value,Number.prototype.toJSON=this_value,String.prototype.toJSON=this_value),meta={"\b":"\\b","\t":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},JSON.stringify=function(t,e,r){var n;if(gap="",indent="","number"==typeof r)for(n=0;n<r;n+=1)indent+=" ";else"string"==typeof r&&(indent=r);if(rep=e,e&&"function"!=typeof e&&("object"!=typeof e||"number"!=typeof e.length))throw new Error("JSON.stringify");return str("",{"":t})},JSON.parse=function(text,reviver){var j;function walk(t,e){var r,n,o=t[e];if(o&&"object"==typeof o)for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(void 0!==(n=walk(o,r))?o[r]=n:delete o[r]);return reviver.call(t,e,o)}if(text=String(text),rx_dangerous.lastIndex=0,rx_dangerous.test(text)&&(text=text.replace(rx_dangerous,function(t){return"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})),rx_one.test(text.replace(rx_two,"@").replace(rx_three,"]").replace(rx_four,"")))return j=eval("("+text+")"),"function"==typeof reviver?walk({"":j},""):j;throw new SyntaxError("JSON.parse")}}();
 </script>
   <![endif]--><script>(function() {
-    var fi, n, t, ci = "3.10.2", li = 1, si = 2, pi = 4, hi = 8, vi = 16, _i = 32, gi = 64, yi = 128, di = 256, wi = 30, mi = "...", xi = 150, bi = 16, Ai = 200, ji = 1, ki = 2, Oi = "Expected a function", Ii = "__lodash_placeholder__", Ri = "[object Arguments]", Ei = "[object Array]", Ci = "[object Boolean]", Si = "[object Date]", Ui = "[object Error]", $i = "[object Function]", r = "[object Map]", Fi = "[object Number]", Wi = "[object Object]", Li = "[object RegExp]", e = "[object Set]", Ni = "[object String]", u = "[object WeakMap]", Ti = "[object ArrayBuffer]", qi = "[object Float32Array]", Pi = "[object Float64Array]", Bi = "[object Int8Array]", zi = "[object Int16Array]", Di = "[object Int32Array]", Mi = "[object Uint8Array]", Ki = "[object Uint8ClampedArray]", Vi = "[object Uint16Array]", Yi = "[object Uint32Array]", Gi = /\b__p \+= '';/g, Ji = /\b(__p \+=) '' \+/g, Xi = /(__e\(.*?\)|\b__t\)) \+\n'';/g, Zi = /&(?:amp|lt|gt|quot|#39|#96);/g, Hi = /[&<>"'`]/g, Qi = RegExp(Zi.source), na = RegExp(Hi.source), ta = /<%-([\s\S]+?)%>/g, ra = /<%([\s\S]+?)%>/g, ea = /<%=([\s\S]+?)%>/g, ua = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, oa = /^\w*$/, ia = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g, aa = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g, fa = RegExp(aa.source), ca = /[\u0300-\u036f\ufe20-\ufe23]/g, la = /\\(\\)?/g, sa = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, pa = /\w*$/, ha = /^0[xX]/, va = /^\[object .+?Constructor\]$/, _a = /^\d+$/, ga = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g, ya = /($^)/, da = /['\n\r\u2028\u2029\\]/g, wa = (n = "[A-Z\\xc0-\\xd6\\xd8-\\xde]", 
+    var fi, n, t, ci = "3.10.2", li = 1, si = 2, pi = 4, hi = 8, vi = 16, _i = 32, gi = 64, yi = 128, di = 256, wi = 30, mi = "...", xi = 150, bi = 16, Ai = 200, ji = 1, ki = 2, Oi = "Expected a function", Ii = "__lodash_placeholder__", Ri = "[object Arguments]", Ei = "[object Array]", Ci = "[object Boolean]", Si = "[object Date]", Ui = "[object Error]", $i = "[object Function]", r = "[object Map]", Fi = "[object Number]", Wi = "[object Object]", zi = "[object RegExp]", e = "[object Set]", Li = "[object String]", u = "[object WeakMap]", Ni = "[object ArrayBuffer]", Ti = "[object Float32Array]", Pi = "[object Float64Array]", Bi = "[object Int8Array]", Di = "[object Int16Array]", qi = "[object Int32Array]", Mi = "[object Uint8Array]", Ki = "[object Uint8ClampedArray]", Vi = "[object Uint16Array]", Yi = "[object Uint32Array]", Gi = /\b__p \+= '';/g, Ji = /\b(__p \+=) '' \+/g, Xi = /(__e\(.*?\)|\b__t\)) \+\n'';/g, Zi = /&(?:amp|lt|gt|quot|#39|#96);/g, Hi = /[&<>"'`]/g, Qi = RegExp(Zi.source), na = RegExp(Hi.source), ta = /<%-([\s\S]+?)%>/g, ra = /<%([\s\S]+?)%>/g, ea = /<%=([\s\S]+?)%>/g, ua = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, oa = /^\w*$/, ia = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g, aa = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g, fa = RegExp(aa.source), ca = /[\u0300-\u036f\ufe20-\ufe23]/g, la = /\\(\\)?/g, sa = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, pa = /\w*$/, ha = /^0[xX]/, va = /^\[object .+?Constructor\]$/, _a = /^\d+$/, ga = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g, ya = /($^)/, da = /['\n\r\u2028\u2029\\]/g, wa = (n = "[A-Z\\xc0-\\xd6\\xd8-\\xde]", 
     t = "[a-z\\xdf-\\xf6\\xf8-\\xff]+", RegExp(n + "+(?=" + n + t + ")|" + n + "?" + t + "|" + n + "+|[0-9]+", "g")), ma = [ "Array", "ArrayBuffer", "Date", "Error", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Math", "Number", "Object", "RegExp", "Set", "String", "_", "clearTimeout", "isFinite", "parseFloat", "parseInt", "setTimeout", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "WeakMap" ], xa = [ "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString", "valueOf" ], ba = -1, Aa = {};
-    Aa[qi] = Aa[Pi] = Aa[Bi] = Aa[zi] = Aa[Di] = Aa[Mi] = Aa[Ki] = Aa[Vi] = Aa[Yi] = !0, 
-    Aa[Ri] = Aa[Ei] = Aa[Ti] = Aa[Ci] = Aa[Si] = Aa[Ui] = Aa[$i] = Aa[r] = Aa[Fi] = Aa[Wi] = Aa[Li] = Aa[e] = Aa[Ni] = Aa[u] = !1;
+    Aa[Ti] = Aa[Pi] = Aa[Bi] = Aa[Di] = Aa[qi] = Aa[Mi] = Aa[Ki] = Aa[Vi] = Aa[Yi] = !0, 
+    Aa[Ri] = Aa[Ei] = Aa[Ni] = Aa[Ci] = Aa[Si] = Aa[Ui] = Aa[$i] = Aa[r] = Aa[Fi] = Aa[Wi] = Aa[zi] = Aa[e] = Aa[Li] = Aa[u] = !1;
     var ja = {};
-    ja[Ri] = ja[Ei] = ja[Ti] = ja[Ci] = ja[Si] = ja[qi] = ja[Pi] = ja[Bi] = ja[zi] = ja[Di] = ja[Fi] = ja[Wi] = ja[Li] = ja[Ni] = ja[Mi] = ja[Ki] = ja[Vi] = ja[Yi] = !0, 
+    ja[Ri] = ja[Ei] = ja[Ni] = ja[Ci] = ja[Si] = ja[Ti] = ja[Pi] = ja[Bi] = ja[Di] = ja[qi] = ja[Fi] = ja[Wi] = ja[zi] = ja[Li] = ja[Mi] = ja[Ki] = ja[Vi] = ja[Yi] = !0, 
     ja[Ui] = ja[$i] = ja[r] = ja[e] = ja[u] = !1;
     var o = {
         "À": "A",
@@ -13596,7 +13596,7 @@ try {
         return -1;
     }
     function Ra(n, t, r) {
-        if (t != t) return Ta(n, r);
+        if (t != t) return Na(n, r);
         for (var e = r - 1, u = n.length; ++e < u; ) if (n[e] === t) return e;
         return -1;
     }
@@ -13623,20 +13623,20 @@ try {
     function Wa(n) {
         return i[n];
     }
-    function La(n, t, r) {
+    function za(n, t, r) {
         return t ? n = c[n] : r && (n = l[n]), "\\" + n;
     }
-    function Na(n) {
+    function La(n) {
         return "\\" + l[n];
     }
-    function Ta(n, t, r) {
+    function Na(n, t, r) {
         for (var e = n.length, u = t + (r ? 0 : -1); r ? u-- : ++u < e; ) {
             var o = n[u];
             if (o != o) return u;
         }
         return -1;
     }
-    var qa = function() {
+    var Ta = function() {
         try {
             Object({
                 toString: 0
@@ -13661,11 +13661,11 @@ try {
         o[++u] = r);
         return o;
     }
-    function za(n) {
+    function Da(n) {
         for (var t = -1, r = n.length; ++t < r && y(n.charCodeAt(t)); ) ;
         return t;
     }
-    function Da(n) {
+    function qa(n) {
         for (var t = n.length; t-- && y(n.charCodeAt(t)); ) ;
         return t;
     }
@@ -13673,9 +13673,9 @@ try {
         return a[n];
     }
     var Ka = function Va(n) {
-        var C = (n = n ? Ka.defaults(ka.Object(), n, Ka.pick(ka, ma)) : ka).Array, t = n.Date, _ = n.Error, g = n.Function, e = n.Math, r = n.Number, y = n.Object, d = n.RegExp, u = n.String, w = n.TypeError, i = C.prototype, m = _.prototype, x = y.prototype, b = u.prototype, o = g.prototype.toString, A = x.hasOwnProperty, a = 0, j = x.toString, f = ka._, c = d("^" + o.call(A).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), l = n.ArrayBuffer, k = n.clearTimeout, s = n.parseFloat, p = e.pow, h = x.propertyIsEnumerable, v = Bt(n, "Set"), O = n.setTimeout, I = i.splice, R = n.Uint8Array, E = Bt(n, "WeakMap"), S = e.ceil, U = Bt(y, "create"), $ = e.floor, F = Bt(C, "isArray"), W = n.isFinite, L = Bt(y, "keys"), N = e.max, T = e.min, q = Bt(t, "now"), P = n.parseInt, B = e.random, z = r.NEGATIVE_INFINITY, D = r.POSITIVE_INFINITY, M = 4294967295, K = M - 1, V = M >>> 1, Y = 9007199254740991, G = E && new E(), J = {}, X = {};
-        X[qi] = n.Float32Array, X[Pi] = n.Float64Array, X[Bi] = n.Int8Array, X[zi] = n.Int16Array, 
-        X[Di] = n.Int32Array, X[Mi] = R, X[Ki] = n.Uint8ClampedArray, X[Vi] = n.Uint16Array, 
+        var C = (n = n ? Ka.defaults(ka.Object(), n, Ka.pick(ka, ma)) : ka).Array, t = n.Date, _ = n.Error, g = n.Function, e = n.Math, r = n.Number, y = n.Object, d = n.RegExp, u = n.String, w = n.TypeError, i = C.prototype, m = _.prototype, x = y.prototype, b = u.prototype, o = g.prototype.toString, A = x.hasOwnProperty, a = 0, j = x.toString, f = ka._, c = d("^" + o.call(A).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), l = n.ArrayBuffer, k = n.clearTimeout, s = n.parseFloat, p = e.pow, h = x.propertyIsEnumerable, v = Bt(n, "Set"), O = n.setTimeout, I = i.splice, R = n.Uint8Array, E = Bt(n, "WeakMap"), S = e.ceil, U = Bt(y, "create"), $ = e.floor, F = Bt(C, "isArray"), W = n.isFinite, z = Bt(y, "keys"), L = e.max, N = e.min, T = Bt(t, "now"), P = n.parseInt, B = e.random, D = r.NEGATIVE_INFINITY, q = r.POSITIVE_INFINITY, M = 4294967295, K = M - 1, V = M >>> 1, Y = 9007199254740991, G = E && new E(), J = {}, X = {};
+        X[Ti] = n.Float32Array, X[Pi] = n.Float64Array, X[Bi] = n.Int8Array, X[Di] = n.Int16Array, 
+        X[qi] = n.Int32Array, X[Mi] = R, X[Ki] = n.Uint8ClampedArray, X[Vi] = n.Uint16Array, 
         X[Yi] = n.Uint32Array;
         var Z = {};
         function H(n) {
@@ -13694,11 +13694,11 @@ try {
             toLocaleString: !0,
             toString: !0,
             valueOf: !0
-        }, Z[Ci] = Z[Ni] = {
+        }, Z[Ci] = Z[Li] = {
             constructor: !0,
             toString: !0,
             valueOf: !0
-        }, Z[Ui] = Z[$i] = Z[Li] = {
+        }, Z[Ui] = Z[$i] = Z[zi] = {
             constructor: !0,
             toString: !0
         }, Z[Wi] = {
@@ -13712,7 +13712,7 @@ try {
         var tn = H.support = {};
         function rn(n) {
             this.__wrapped__ = n, this.__actions__ = [], this.__dir__ = 1, this.__filtered__ = !1, 
-            this.__iteratees__ = [], this.__takeCount__ = D, this.__views__ = [];
+            this.__iteratees__ = [], this.__takeCount__ = q, this.__views__ = [];
         }
         function en() {
             this.__data__ = {};
@@ -13779,7 +13779,7 @@ try {
             return null == t ? n : wn(t, Pe(t), n);
         }
         function dn(n, t) {
-            for (var r = -1, e = null == n, u = !e && Dt(n), o = u ? n.length : 0, i = t.length, a = C(i); ++r < i; ) {
+            for (var r = -1, e = null == n, u = !e && qt(n), o = u ? n.length : 0, i = t.length, a = C(i); ++r < i; ) {
                 var f = t[r];
                 a[r] = u ? Mt(f, o) ? n[f] : fi : e ? fi : n[f];
             }
@@ -13795,7 +13795,7 @@ try {
         }
         function mn(n, t, r) {
             var e = typeof n;
-            return "function" == e ? t === fi ? n : ut(n, t, r) : null == n ? iu : "object" == e ? zn(n) : t === fi ? pu(n) : Dn(n, t);
+            return "function" == e ? t === fi ? n : ut(n, t, r) : null == n ? iu : "object" == e ? Dn(n) : t === fi ? pu(n) : qn(n, t);
         }
         function xn(r, e, u, n, t, o, i) {
             var a;
@@ -13813,18 +13813,18 @@ try {
                 if (c != Wi && c != Ri && (!l || t)) return ja[c] ? function h(n, t, r) {
                     var e = n.constructor;
                     switch (t) {
-                      case Ti:
+                      case Ni:
                         return ot(n);
 
                       case Ci:
                       case Si:
                         return new e(+n);
 
-                      case qi:
+                      case Ti:
                       case Pi:
                       case Bi:
-                      case zi:
                       case Di:
+                      case qi:
                       case Mi:
                       case Ki:
                       case Vi:
@@ -13834,16 +13834,16 @@ try {
                         return new e(r ? ot(u) : u, n.byteOffset, n.length);
 
                       case Fi:
-                      case Ni:
+                      case Li:
                         return new e(n);
 
-                      case Li:
+                      case zi:
                         var o = new e(n.source, pa.exec(n));
                         o.lastIndex = n.lastIndex;
                     }
                     return o;
                 }(r, c, e) : t ? r : {};
-                if (qa(r)) return t ? r : {};
+                if (Ta(r)) return t ? r : {};
                 if (a = function v(n) {
                     var t = n.constructor;
                     return "function" == typeof t && t instanceof t || (t = y), new t();
@@ -13896,7 +13896,7 @@ try {
         function kn(n, t) {
             var r = n ? n.length : 0, e = [];
             if (!r) return e;
-            var u = -1, o = Tt(), i = o === Ra, a = i && t.length >= Ai ? pt(t) : null, f = t.length;
+            var u = -1, o = Nt(), i = o === Ra, a = i && t.length >= Ai ? pt(t) : null, f = t.length;
             a && (o = on, i = !1, t = a);
             n: for (;++u < r; ) {
                 var c = n[u];
@@ -13907,7 +13907,7 @@ try {
             }
             return e;
         }
-        var On = lt(Wn), In = lt(Ln, !0);
+        var On = lt(Wn), In = lt(zn, !0);
         function Rn(n, e) {
             var u = !0;
             return On(n, function(n, t, r) {
@@ -13930,7 +13930,7 @@ try {
             e = e || [];
             for (var u = -1, o = n.length; ++u < o; ) {
                 var i = n[u];
-                Pa(i) && Dt(i) && (r || _e(i) || ve(i)) ? t ? Sn(i, t, r, e) : pn(e, i) : r || (e[e.length] = i);
+                Pa(i) && qt(i) && (r || _e(i) || ve(i)) ? t ? Sn(i, t, r, e) : pn(e, i) : r || (e[e.length] = i);
             }
             return e;
         }
@@ -13941,28 +13941,28 @@ try {
         function Wn(n, t) {
             return Un(n, t, Pe);
         }
-        function Ln(n, t) {
+        function zn(n, t) {
             return $n(n, t, Pe);
         }
-        function Nn(n, t) {
+        function Ln(n, t) {
             for (var r = -1, e = t.length, u = -1, o = []; ++r < e; ) {
                 var i = t[r];
                 de(n[i]) && (o[++u] = i);
             }
             return o;
         }
-        function Tn(n, t, r) {
+        function Nn(n, t, r) {
             if (null != n) {
                 n = er(n), r !== fi && r in n && (t = [ r ]);
                 for (var e = 0, u = t.length; null != n && e < u; ) n = er(n)[t[e++]];
                 return e && e == u ? n : fi;
             }
         }
-        function qn(n, t, r, e, u, o) {
+        function Tn(n, t, r, e, u, o) {
             return n === t || (null == n || null == t || !we(n) && !Pa(t) ? n != n && t != t : function x(n, t, r, e, u, o, i) {
                 var a = _e(n), f = _e(t), c = Ei, l = Ei;
                 a || ((c = j.call(n)) == Ri ? c = Wi : c != Wi && (a = ke(n))), f || ((l = j.call(t)) == Ri ? l = Wi : l != Wi && (f = ke(t)));
-                var s = c == Wi && !qa(n), p = l == Wi && !qa(t), h = c == l;
+                var s = c == Wi && !Ta(n), p = l == Wi && !Ta(t), h = c == l;
                 if (h && !a && !s) return function d(n, t, r) {
                     switch (r) {
                       case Ci:
@@ -13975,8 +13975,8 @@ try {
                       case Fi:
                         return n != +n ? t != +t : n == +t;
 
+                      case zi:
                       case Li:
-                      case Ni:
                         return n == t + "";
                     }
                     return !1;
@@ -14025,7 +14025,7 @@ try {
                     return !0;
                 })(n, t, r, e, u, o, i);
                 return o.pop(), i.pop(), y;
-            }(n, t, qn, r, e, u, o));
+            }(n, t, Tn, r, e, u, o));
         }
         function Pn(n, t, r) {
             var e = t.length, u = e, o = !r;
@@ -14040,18 +14040,18 @@ try {
                     if (f === fi && !(a in n)) return !1;
                 } else {
                     var l = r ? r(f, c, a) : fi;
-                    if (!(l === fi ? qn(c, f, r, !0) : l)) return !1;
+                    if (!(l === fi ? Tn(c, f, r, !0) : l)) return !1;
                 }
             }
             return !0;
         }
         function Bn(n, e) {
-            var u = -1, o = Dt(n) ? C(n.length) : [];
+            var u = -1, o = qt(n) ? C(n.length) : [];
             return On(n, function(n, t, r) {
                 o[++u] = e(n, t, r);
             }), o;
         }
-        function zn(n) {
+        function Dn(n) {
             var t = Pt(n);
             if (1 == t.length && t[0][2]) {
                 var r = t[0][0], e = t[0][1];
@@ -14063,16 +14063,16 @@ try {
                 return Pn(n, t);
             };
         }
-        function Dn(r, e) {
+        function qn(r, e) {
             var u = _e(r), o = Vt(r) && Jt(e), i = r + "";
             return r = ur(r), function(n) {
                 if (null == n) return !1;
                 var t = i;
                 if (n = er(n), (u || !o) && !(t in n)) {
-                    if (null == (n = 1 == r.length ? n : Tn(n, Gn(r, 0, -1)))) return !1;
+                    if (null == (n = 1 == r.length ? n : Nn(n, Gn(r, 0, -1)))) return !1;
                     t = vr(r), n = er(n);
                 }
-                return n[t] === e ? e !== fi || t in n : qn(e, n[t], fi, !0);
+                return n[t] === e ? e !== fi || t in n : Tn(e, n[t], fi, !0);
             };
         }
         function Mn(t) {
@@ -14141,7 +14141,7 @@ try {
             });
         }
         function Hn(n, t) {
-            var r = -1, e = Tt(), u = n.length, o = e === Ra, i = o && Ai <= u, a = i ? pt() : null, f = [];
+            var r = -1, e = Nt(), u = n.length, o = e === Ra, i = o && Ai <= u, a = i ? pt() : null, f = [];
             a ? (e = on, o = !1) : (i = !1, a = t ? [] : f);
             n: for (;++r < u; ) {
                 var c = n[r], l = t ? t(c, r, n) : c;
@@ -14187,7 +14187,7 @@ try {
                 if (i) var h = p || e; else h = a ? p && s && (e || null != l) : f ? p && (e || s) : null != l && (e ? l <= t : l < t);
                 h ? u = c + 1 : o = c;
             }
-            return T(o, K);
+            return N(o, K);
         }
         function ut(o, i, n) {
             if ("function" != typeof o) return iu;
@@ -14222,13 +14222,13 @@ try {
             return new R(t).set(new R(n)), t;
         }
         function it(n, t, r) {
-            for (var e = r.length, u = -1, o = N(n.length - e, 0), i = -1, a = t.length, f = C(a + o); ++i < a; ) f[i] = t[i];
+            for (var e = r.length, u = -1, o = L(n.length - e, 0), i = -1, a = t.length, f = C(a + o); ++i < a; ) f[i] = t[i];
             for (;++u < e; ) f[r[u]] = n[u];
             for (;o--; ) f[i++] = n[u++];
             return f;
         }
         function at(n, t, r) {
-            for (var e = -1, u = r.length, o = -1, i = N(n.length - u, 0), a = -1, f = t.length, c = C(i + f); ++o < i; ) c[o] = n[o];
+            for (var e = -1, u = r.length, o = -1, i = L(n.length - u, 0), a = -1, f = t.length, c = C(i + f); ++o < i; ) c[o] = n[o];
             for (var l = o; ++a < f; ) c[l + a] = t[a];
             for (;++e < u; ) c[l + r[e]] = n[o++];
             return c;
@@ -14258,7 +14258,7 @@ try {
         }
         function lt(o, i) {
             return function(n, t) {
-                var r = n ? qt(n) : 0;
+                var r = n ? Tt(n) : 0;
                 if (!Gt(r)) return o(n, t);
                 for (var e = i ? r : -1, u = er(n); (i ? e-- : ++e < r) && !1 !== t(u[e], e, u); ) ;
                 return n;
@@ -14372,11 +14372,11 @@ try {
                 for (var u, o = arguments.length, n = f ? o : -1, t = 0, i = C(o); f ? n-- : ++n < o; ) {
                     var r = i[t++] = arguments[n];
                     if ("function" != typeof r) throw new w(Oi);
-                    !u && nn.prototype.thru && "wrapper" == Nt(r) && (u = new nn([], !0));
+                    !u && nn.prototype.thru && "wrapper" == Lt(r) && (u = new nn([], !0));
                 }
                 for (n = u ? -1 : o; ++n < o; ) {
-                    var e = Nt(r = i[n]), a = "wrapper" == e ? Lt(r) : fi;
-                    u = a && Yt(a[0]) && a[1] == (yi | hi | _i | di) && !a[4].length && 1 == a[9] ? u[Nt(a[0])].apply(u, a[3]) : 1 == r.length && Yt(r) ? u[e]() : u.thru(r);
+                    var e = Lt(r = i[n]), a = "wrapper" == e ? zt(r) : fi;
+                    u = a && Yt(a[0]) && a[1] == (yi | hi | _i | di) && !a[4].length && 1 == a[9] ? u[Lt(a[0])].apply(u, a[3]) : 1 == r.length && Yt(r) ? u[e]() : u.thru(r);
                 }
                 return function() {
                     var n = arguments, t = n[0];
@@ -14439,7 +14439,7 @@ try {
                 if (_ && (r = it(r, _, g)), y && (r = at(r, y, d)), k || I) {
                     var e = E.placeholder, u = Ba(r, e);
                     if ((n -= u.length) < x) {
-                        var o = w ? an(w) : fi, i = N(x - n, 0);
+                        var o = w ? an(w) : fi, i = L(x - n, 0);
                         h |= k ? _i : gi, h &= ~(k ? gi : _i), O || (h &= ~(li | si));
                         var a = [ p, h, v, k ? r : fi, k ? u : fi, k ? fi : r, k ? fi : u, o, m, i ], f = Et.apply(fi, a);
                         return Yt(p) && nr(f, a), f.placeholder = e, f;
@@ -14447,7 +14447,7 @@ try {
                 }
                 var c = A ? v : this, l = j ? c[p] : p;
                 return w && (r = function s(n, t) {
-                    for (var r = n.length, e = T(t.length, r), u = an(n); e--; ) {
+                    for (var r = n.length, e = N(t.length, r), u = an(n); e--; ) {
                         var o = t[e];
                         n[e] = Mt(o, r) ? u[o] : fi;
                     }
@@ -14490,7 +14490,7 @@ try {
                 var l = e, s = u;
                 e = u = fi;
             }
-            var p = f ? fi : Lt(n), h = [ n, t, r, e, u, l, s, o, i, a ];
+            var p = f ? fi : zt(n), h = [ n, t, r, e, u, l, s, o, i, a ];
             if (p && (function _(n, t) {
                 var r = n[1], e = t[1], u = r | e, o = u < yi, i = e == yi && r == hi || e == yi && r == di && n[7].length <= t[8] || e == (yi | di) && r == hi;
                 if (!o && !i) return n;
@@ -14501,9 +14501,9 @@ try {
                     n[3] = f ? it(f, a, t[4]) : an(a), n[4] = f ? Ba(n[3], Ii) : an(t[4]);
                 }
                 return (a = t[5]) && (f = n[5], n[5] = f ? at(f, a, t[6]) : an(a), n[6] = f ? Ba(n[5], Ii) : an(t[6])), 
-                (a = t[7]) && (n[7] = an(a)), e & yi && (n[8] = null == n[8] ? t[8] : T(n[8], t[8])), 
+                (a = t[7]) && (n[7] = an(a)), e & yi && (n[8] = null == n[8] ? t[8] : N(n[8], t[8])), 
                 null == n[9] && (n[9] = t[9]), n[0] = t[0], n[1] = u, n;
-            }(h, p), t = h[1], a = h[9]), h[9] = null == a ? f ? 0 : n.length : N(a - c, 0) || 0, 
+            }(h, p), t = h[1], a = h[9]), h[9] = null == a ? f ? 0 : n.length : L(a - c, 0) || 0, 
             t == li) var v = function g(n, t) {
                 var r = vt(n);
                 return function e() {
@@ -14516,21 +14516,21 @@ try {
             var e = H.callback || ou;
             return e = e === ou ? mn : e, r ? e(n, t, r) : e;
         }
-        var Lt = G ? function(n) {
+        var zt = G ? function(n) {
             return G.get(n);
         } : su;
-        function Nt(n) {
+        function Lt(n) {
             for (var t = n.name + "", r = J[t], e = r ? r.length : 0; e--; ) {
                 var u = r[e], o = u.func;
                 if (null == o || o == n) return u.name;
             }
             return t;
         }
-        function Tt(n, t, r) {
+        function Nt(n, t, r) {
             var e = H.indexOf || pr;
             return e = e === pr ? Ra : e, n ? e(n, t, r) : e;
         }
-        var qt = Mn("length");
+        var Tt = Mn("length");
         function Pt(n) {
             for (var t = Ke(n), r = t.length; r--; ) t[r][2] = Jt(t[r][1]);
             return t;
@@ -14539,14 +14539,14 @@ try {
             var r = null == n ? fi : n[t];
             return me(r) ? r : fi;
         }
-        function zt(n, t, r) {
-            null == n || Vt(t, n) || (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1)), 
+        function Dt(n, t, r) {
+            null == n || Vt(t, n) || (n = 1 == (t = ur(t)).length ? n : Nn(n, Gn(t, 0, -1)), 
             t = vr(t));
             var e = null == n ? n : n[t];
             return null == e ? fi : e.apply(n, r);
         }
-        function Dt(n) {
-            return null != n && Gt(qt(n));
+        function qt(n) {
+            return null != n && Gt(Tt(n));
         }
         function Mt(n, t) {
             return n = "number" == typeof n || _a.test(n) ? +n : -1, t = null == t ? Y : t, 
@@ -14555,7 +14555,7 @@ try {
         function Kt(n, t, r) {
             if (we(r)) {
                 var e = typeof t;
-                if ("number" == e ? Dt(r) && Mt(t, r.length) : "string" == e && t in r) {
+                if ("number" == e ? qt(r) && Mt(t, r.length) : "string" == e && t in r) {
                     var u = r[t];
                     return n == n ? n === u : u != u;
                 }
@@ -14566,10 +14566,10 @@ try {
             return !!("string" == r && oa.test(n) || "number" == r) || !_e(n) && (!ua.test(n) || null != t && n in er(t));
         }
         function Yt(n) {
-            var t = Nt(n), r = H[t];
+            var t = Lt(n), r = H[t];
             if ("function" == typeof r && t in rn.prototype) {
                 if (n === r) return 1;
-                var e = Lt(r);
+                var e = zt(r);
                 return e && n === e[0];
             }
         }
@@ -14608,7 +14608,7 @@ try {
             return i;
         }
         function rr(n) {
-            return null == n ? [] : Dt(n) ? H.support.unindexedChars && je(n) ? n.split("") : we(n) ? n : y(n) : Ye(n);
+            return null == n ? [] : qt(n) ? H.support.unindexedChars && je(n) ? n.split("") : we(n) ? n : y(n) : Ye(n);
         }
         function er(n) {
             if (H.support.unindexedChars && je(n)) {
@@ -14628,7 +14628,7 @@ try {
             return n instanceof rn ? n.clone() : new nn(n.__wrapped__, n.__chain__, an(n.__actions__));
         }
         var ir = pe(function(n, t) {
-            return Pa(n) && Dt(n) ? kn(n, Sn(t, !1, !0)) : [];
+            return Pa(n) && qt(n) ? kn(n, Sn(t, !1, !0)) : [];
         });
         function ar(n, t, r) {
             return n && n.length ? ((r ? Kt(n, t, r) : null == t) && (t = 1), Gn(n, t < 0 ? 0 : t)) : [];
@@ -14644,15 +14644,15 @@ try {
         function pr(n, t, r) {
             var e = n ? n.length : 0;
             if (!e) return -1;
-            if ("number" == typeof r) r = r < 0 ? N(e + r, 0) : r; else if (r) {
+            if ("number" == typeof r) r = r < 0 ? L(e + r, 0) : r; else if (r) {
                 var u = rt(n, t);
                 return u < e && (t == t ? t === n[u] : n[u] != n[u]) ? u : -1;
             }
             return Ra(n, t, r || 0);
         }
         var hr = pe(function(n) {
-            for (var t = n.length, r = t, e = C(l), u = Tt(), o = u === Ra, i = []; r--; ) {
-                var a = n[r] = Dt(a = n[r]) ? a : [];
+            for (var t = n.length, r = t, e = C(l), u = Nt(), o = u === Ra, i = []; r--; ) {
+                var a = n[r] = qt(a = n[r]) ? a : [];
                 e[r] = o && 120 <= a.length ? pt(r && a) : null;
             }
             var f = n[0], c = -1, l = f ? f.length : 0, s = e[0];
@@ -14684,7 +14684,7 @@ try {
             if (!n || !n.length) return [];
             null != t && "boolean" != typeof t && (r = Kt(n, t, e = r) ? fi : t, t = !1);
             var u = Wt();
-            return null == r && u === mn || (r = u(r, e, 3)), (t && Tt() === Ra ? function c(n, t) {
+            return null == r && u === mn || (r = u(r, e, 3)), (t && Nt() === Ra ? function c(n, t) {
                 for (var r, e = -1, u = n.length, o = -1, i = []; ++e < u; ) {
                     var a = n[e], f = t ? t(a, e, n) : a;
                     e && r === f || (r = f, i[++o] = a);
@@ -14696,7 +14696,7 @@ try {
             if (!n || !n.length) return [];
             var t = -1, r = 0;
             n = ln(n, function(n) {
-                return Dt(n) && (r = N(n.length, r), 1);
+                return qt(n) && (r = L(n.length, r), 1);
             });
             for (var e = C(r); ++t < r; ) e[t] = sn(n, Mn(t));
             return e;
@@ -14709,7 +14709,7 @@ try {
             }));
         }
         var Ar = pe(function(n, t) {
-            return Dt(n) ? kn(n, t) : [];
+            return qt(n) ? kn(n, t) : [];
         });
         var jr = pe(xr);
         function kr(n, t) {
@@ -14742,7 +14742,7 @@ try {
             });
         });
         var Cr = pe(function(n, t) {
-            return Dt(n) && (n = rr(n)), dn(n, Sn(t));
+            return qt(n) && (n = rr(n)), dn(n, Sn(t));
         }), Sr = ft(function(n, t, r) {
             A.call(n, r) ? ++n[r] : n[r] = 1;
         });
@@ -14755,30 +14755,30 @@ try {
             return (_e(n) ? ln : En)(n, t = Wt(t, r, 3));
         }
         var Fr = dt(On), Wr = dt(In, !0);
-        var Lr = bt(fn, On), Nr = bt(function wu(n, t) {
+        var zr = bt(fn, On), Lr = bt(function wu(n, t) {
             for (var r = n.length; r-- && !1 !== t(n[r], r, n); ) ;
             return n;
-        }, In), Tr = ft(function(n, t, r) {
+        }, In), Nr = ft(function(n, t, r) {
             A.call(n, r) ? n[r].push(t) : n[r] = [ t ];
         });
-        function qr(n, t, r, e) {
-            var u = n ? qt(n) : 0;
-            return Gt(u) || (u = (n = Ye(n)).length), r = "number" != typeof r || e && Kt(t, r, e) ? 0 : r < 0 ? N(u + r, 0) : r || 0, 
-            "string" == typeof n || !_e(n) && je(n) ? r <= u && -1 < n.indexOf(t, r) : !!u && -1 < Tt(n, t, r);
+        function Tr(n, t, r, e) {
+            var u = n ? Tt(n) : 0;
+            return Gt(u) || (u = (n = Ye(n)).length), r = "number" != typeof r || e && Kt(t, r, e) ? 0 : r < 0 ? L(u + r, 0) : r || 0, 
+            "string" == typeof n || !_e(n) && je(n) ? r <= u && -1 < n.indexOf(t, r) : !!u && -1 < Nt(n, t, r);
         }
         var Pr = ft(function(n, t, r) {
             n[r] = t;
         }), Br = pe(function(n, r, e) {
-            var u = -1, o = "function" == typeof r, i = Vt(r), a = Dt(n) ? C(n.length) : [];
+            var u = -1, o = "function" == typeof r, i = Vt(r), a = qt(n) ? C(n.length) : [];
             return On(n, function(n) {
                 var t = o ? r : i && null != n ? n[r] : fi;
-                a[++u] = t ? t.apply(n, e) : zt(n, r, e);
+                a[++u] = t ? t.apply(n, e) : Dt(n, r, e);
             }), a;
         });
-        function zr(n, t, r) {
+        function Dr(n, t, r) {
             return (_e(n) ? sn : Bn)(n, t = Wt(t, r, 3));
         }
-        var Dr = ft(function(n, t, r) {
+        var qr = ft(function(n, t, r) {
             n[r ? 0 : 1].push(t);
         }, function() {
             return [ [], [] ];
@@ -14791,7 +14791,7 @@ try {
         function Vr(n, t, r) {
             if (r ? Kt(n, t, r) : null == t) return 0 < (e = (n = rr(n)).length) ? n[Vn(0, e - 1)] : fi;
             var e, u = -1, o = Ie(n), i = (e = o.length) - 1;
-            for (t = T(!(t < 0) && +t || 0, e); ++u < t; ) {
+            for (t = N(!(t < 0) && +t || 0, e); ++u < t; ) {
                 var a = Vn(u, i), f = o[a];
                 o[a] = o[u], o[u] = f;
             }
@@ -14807,7 +14807,7 @@ try {
             var r = t[2];
             return r && Kt(t[0], t[1], r) && (t.length = 1), Zn(n, Sn(t), []);
         });
-        var Jr = q || function() {
+        var Jr = T || function() {
             return new t().getTime();
         };
         function Xr(n, t) {
@@ -14829,7 +14829,7 @@ try {
             }
             return Ft(n, e, t, r, u);
         }), Hr = pe(function(n, t) {
-            for (var r = -1, e = (t = t.length ? Sn(t) : qe(n)).length; ++r < e; ) {
+            for (var r = -1, e = (t = t.length ? Sn(t) : Te(n)).length; ++r < e; ) {
                 var u = t[r];
                 n[u] = Ft(n[u], li, n);
             }
@@ -14848,7 +14848,7 @@ try {
             if (u = !(u < 0) && +u || 0, !0 === n) {
                 var _ = !0;
                 v = !1;
-            } else we(n) && (_ = !!n.leading, h = "maxWait" in n && N(+n.maxWait || 0, u), v = "trailing" in n ? !!n.trailing : v);
+            } else we(n) && (_ = !!n.leading, h = "maxWait" in n && L(+n.maxWait || 0, u), v = "trailing" in n ? !!n.trailing : v);
             function t(n, t) {
                 t && k(t), i = l = s = fi, n && (p = Jr(), a = e.apply(c, o), l || i || (o = c = fi));
             }
@@ -14891,7 +14891,7 @@ try {
             if (e = Sn(e), "function" != typeof r || !cn(e, Ea)) throw new w(Oi);
             var u = e.length;
             return pe(function(n) {
-                for (var t = T(n.length, u); t--; ) n[t] = e[t](n[t]);
+                for (var t = N(n.length, u); t--; ) n[t] = e[t](n[t]);
                 return r.apply(this, n);
             });
         });
@@ -14900,8 +14900,8 @@ try {
         });
         function pe(o, i) {
             if ("function" != typeof o) throw new w(Oi);
-            return i = N(i === fi ? o.length - 1 : +i || 0, 0), function() {
-                for (var n = arguments, t = -1, r = N(n.length - i, 0), e = C(r); ++t < r; ) e[t] = n[i + t];
+            return i = L(i === fi ? o.length - 1 : +i || 0, 0), function() {
+                for (var n = arguments, t = -1, r = L(n.length - i, 0), e = C(r); ++t < r; ) e[t] = n[i + t];
                 switch (i) {
                   case 0:
                     return o.call(this, e);
@@ -14921,14 +14921,14 @@ try {
             return t < n;
         }
         function ve(n) {
-            return Pa(n) && Dt(n) && A.call(n, "callee") && !h.call(n, "callee");
+            return Pa(n) && qt(n) && A.call(n, "callee") && !h.call(n, "callee");
         }
         var _e = F || function(n) {
             return Pa(n) && Gt(n.length) && j.call(n) == Ei;
         };
         function ge(n, t, r, e) {
             var u = (r = "function" == typeof r ? ut(r, e, 3) : fi) ? r(n, t) : fi;
-            return u === fi ? qn(n, t, r) : !!u;
+            return u === fi ? Tn(n, t, r) : !!u;
         }
         function ye(n) {
             return Pa(n) && "string" == typeof n.message && j.call(n) == Ui;
@@ -14941,24 +14941,24 @@ try {
             return !!n && ("object" == t || "function" == t);
         }
         function me(n) {
-            return null != n && (de(n) ? c.test(o.call(n)) : Pa(n) && (qa(n) ? c : va).test(n));
+            return null != n && (de(n) ? c.test(o.call(n)) : Pa(n) && (Ta(n) ? c : va).test(n));
         }
         function xe(n) {
             return "number" == typeof n || Pa(n) && j.call(n) == Fi;
         }
         function be(n) {
             var t, e;
-            return !(!Pa(n) || j.call(n) != Wi || qa(n) || ve(n) || !(A.call(n, "constructor") || "function" != typeof (t = n.constructor) || t instanceof t)) && (H.support.ownLast ? (Fn(n, function(n, t, r) {
+            return !(!Pa(n) || j.call(n) != Wi || Ta(n) || ve(n) || !(A.call(n, "constructor") || "function" != typeof (t = n.constructor) || t instanceof t)) && (H.support.ownLast ? (Fn(n, function(n, t, r) {
                 return e = A.call(r, t), !1;
             }), !1 !== e) : (Fn(n, function(n, t) {
                 e = t;
             }), e === fi || A.call(n, e)));
         }
         function Ae(n) {
-            return we(n) && j.call(n) == Li;
+            return we(n) && j.call(n) == zi;
         }
         function je(n) {
-            return "string" == typeof n || Pa(n) && j.call(n) == Ni;
+            return "string" == typeof n || Pa(n) && j.call(n) == Li;
         }
         function ke(n) {
             return Pa(n) && Gt(n.length) && !!Aa[j.call(n)];
@@ -14967,7 +14967,7 @@ try {
             return n < t;
         }
         function Ie(n) {
-            var t = n ? qt(n) : 0;
+            var t = n ? Tt(n) : 0;
             return Gt(t) ? t ? H.support.unindexedChars && je(n) ? n.split("") : an(n) : [] : Ye(n);
         }
         function Re(n) {
@@ -14975,12 +14975,12 @@ try {
         }
         var Ee = ct(function xu(o, i, a, f, c) {
             if (!we(o)) return o;
-            var l = Dt(i) && (_e(i) || ke(i)), s = l ? fi : Pe(i);
+            var l = qt(i) && (_e(i) || ke(i)), s = l ? fi : Pe(i);
             return fn(s || i, function(n, t) {
                 if (s && (n = i[t = n]), Pa(n)) !function p(n, t, r, e, u, o, i) {
                     for (var a = o.length, f = t[r]; a--; ) if (o[a] == f) return void (n[r] = i[a]);
                     var c = n[r], l = u ? u(c, f, r, n, t) : fi, s = l === fi;
-                    s && (Dt(l = f) && (_e(f) || ke(f)) ? l = _e(c) ? c : Dt(c) ? an(c) : [] : be(f) || ve(f) ? l = ve(c) ? Re(c) : be(c) ? c : {} : s = !1), 
+                    s && (qt(l = f) && (_e(f) || ke(f)) ? l = _e(c) ? c : qt(c) ? an(c) : [] : be(f) || ve(f) ? l = ve(c) ? Re(c) : be(c) ? c : {} : s = !1), 
                     o.push(f), i.push(l), s ? n[r] = e(l, f, u, o, i) : (l == l ? l !== c : c == c) && (n[r] = l);
                 }(o, i, t, xu, a, f = f || [], c = c || []); else {
                     var r = o[t], e = a ? a(r, n, t, o, i) : fi, u = e === fi;
@@ -14994,13 +14994,13 @@ try {
             return n === fi ? t : n;
         }), Ue = gt(Ee, function Au(n, t) {
             return n === fi ? t : Ee(n, t, Au);
-        }), $e = mt(Wn), Fe = mt(Ln), We = At(Un), Le = At($n), Ne = jt(Wn), Te = jt(Ln);
-        function qe(n) {
-            return Nn(n, Be(n));
+        }), $e = mt(Wn), Fe = mt(zn), We = At(Un), ze = At($n), Le = jt(Wn), Ne = jt(zn);
+        function Te(n) {
+            return Ln(n, Be(n));
         }
-        var Pe = L ? function(n) {
+        var Pe = z ? function(n) {
             var t = null == n ? fi : n.constructor;
-            return "function" == typeof t && t.prototype === n || ("function" == typeof n ? H.support.enumPrototypes : Dt(n)) ? tr(n) : we(n) ? L(n) : [];
+            return "function" == typeof t && t.prototype === n || ("function" == typeof n ? H.support.enumPrototypes : qt(n)) ? tr(n) : we(n) ? z(n) : [];
         } : tr;
         function Be(n) {
             if (null == n) return [];
@@ -15010,7 +15010,7 @@ try {
             for (var e = n.constructor, u = -1, o = de(e) && e.prototype || x, i = o === n, a = C(t), f = 0 < t, c = r.enumErrorProps && (n === m || n instanceof _), l = r.enumPrototypes && de(n); ++u < t; ) a[u] = u + "";
             for (var s in n) l && "prototype" == s || c && ("message" == s || "name" == s) || f && Mt(s, t) || "constructor" == s && (i || !A.call(n, s)) || a.push(s);
             if (r.nonEnumShadows && n !== x) {
-                var p = n === b ? Ni : n === m ? Ui : j.call(n), h = Z[p] || Z[Wi];
+                var p = n === b ? Li : n === m ? Ui : j.call(n), h = Z[p] || Z[Wi];
                 for (p == Wi && (o = x), t = xa.length; t--; ) {
                     var v = h[s = xa[t]];
                     i && v || (v ? !A.call(n, s) : n[s] === o[s]) || a.push(s);
@@ -15018,7 +15018,7 @@ try {
             }
             return a;
         }
-        var ze = kt(!0), De = kt(), Me = pe(function(n, t) {
+        var De = kt(!0), qe = kt(), Me = pe(function(n, t) {
             if (null == n) return {};
             if ("function" != typeof t[0]) return t = sn(Sn(t), u), Xt(n, kn(Be(n), t));
             var e = ut(t[0], t[1], 3);
@@ -15063,7 +15063,7 @@ try {
         });
         function ru(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(za(n), Da(n) + 1) : (t += "", 
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(Da(n), qa(n) + 1) : (t += "", 
             n.slice(Sa(n, t), Ua(n, t) + 1)) : n;
         }
         function eu(n, t, r) {
@@ -15083,23 +15083,23 @@ try {
             return n;
         }
         function au(n) {
-            return zn(xn(n, !0));
+            return Dn(xn(n, !0));
         }
         var fu = pe(function(t, r) {
             return function(n) {
-                return zt(n, t, r);
+                return Dt(n, t, r);
             };
         }), cu = pe(function(t, r) {
             return function(n) {
-                return zt(t, n, r);
+                return Dt(t, n, r);
             };
         });
         function lu(e, n, t) {
             if (null == t) {
-                var r = we(n), u = r ? Pe(n) : fi, o = u && u.length ? Nn(n, u) : fi;
+                var r = we(n), u = r ? Pe(n) : fi, o = u && u.length ? Ln(n, u) : fi;
                 (o ? o.length : r) || (o = !1, t = n, n = e, e = this);
             }
-            o = o || Nn(n, Pe(n));
+            o = o || Ln(n, Pe(n));
             var i = !0, a = -1, f = de(e), c = o.length;
             !1 === t ? i = !1 : we(t) && "chain" in t && (i = t.chain);
             for (;++a < c; ) {
@@ -15126,11 +15126,11 @@ try {
             return (Vt(n) ? Mn : function e(t) {
                 var r = t + "";
                 return t = ur(t), function(n) {
-                    return Tn(n, t, r);
+                    return Nn(n, t, r);
                 };
             })(n);
         }
-        var hu, vu = Ut("ceil"), _u = Ut("floor"), gu = yt(he, z), yu = yt(Oe, D), du = Ut("round");
+        var hu, vu = Ut("ceil"), _u = Ut("floor"), gu = yt(he, D), yu = yt(Oe, q), du = Ut("round");
         return H.prototype = Q.prototype, (nn.prototype = bn(Q.prototype)).constructor = nn, 
         (rn.prototype = bn(Q.prototype)).constructor = rn, en.prototype["delete"] = function ju(n) {
             return this.has(n) && delete this.__data__[n];
@@ -15153,11 +15153,11 @@ try {
                 if (--n < 1) return t.apply(this, arguments);
             };
         }, H.ary = function Cu(n, t, r) {
-            return r && Kt(n, t, r) && (t = fi), t = n && null == t ? n.length : N(+t || 0, 0), 
+            return r && Kt(n, t, r) && (t = fi), t = n && null == t ? n.length : L(+t || 0, 0), 
             Ft(n, yi, fi, fi, fi, fi, t);
         }, H.assign = Ce, H.at = Cr, H.before = Xr, H.bind = Zr, H.bindAll = Hr, H.bindKey = Qr, 
         H.callback = ou, H.chain = Ir, H.chunk = function Su(n, t, r) {
-            t = (r ? Kt(n, t, r) : null == t) ? 1 : N($(t) || 1, 1);
+            t = (r ? Kt(n, t, r) : null == t) ? 1 : L($(t) || 1, 1);
             for (var e = 0, u = n ? n.length : 0, o = -1, i = C(S(u / t)); e < u; ) i[++o] = Gn(n, e, e += t);
             return i;
         }, H.compact = function Uu(n) {
@@ -15176,9 +15176,9 @@ try {
         }, H.curry = ne, H.curryRight = te, H.debounce = re, H.defaults = Se, H.defaultsDeep = Ue, 
         H.defer = ee, H.delay = ue, H.difference = ir, H.drop = ar, H.dropRight = fr, H.dropRightWhile = function Wu(n, t, r) {
             return n && n.length ? nt(n, Wt(t, r, 3), !0, !0) : [];
-        }, H.dropWhile = function Lu(n, t, r) {
+        }, H.dropWhile = function zu(n, t, r) {
             return n && n.length ? nt(n, Wt(t, r, 3), !0) : [];
-        }, H.fill = function Nu(n, t, r, e) {
+        }, H.fill = function Lu(n, t, r, e) {
             var u = n ? n.length : 0;
             return u ? (r && "number" != typeof r && Kt(n, t, r) && (r = 0, e = u), function o(n, t, r, e) {
                 var u = n.length;
@@ -15186,13 +15186,13 @@ try {
                 u = e < r ? 0 : e >>> 0, r >>>= 0; r < u; ) n[r++] = t;
                 return n;
             }(n, t, r, e)) : [];
-        }, H.filter = $r, H.flatten = function Tu(n, t, r) {
+        }, H.filter = $r, H.flatten = function Nu(n, t, r) {
             var e = n ? n.length : 0;
             return r && Kt(n, t, r) && (t = !1), e ? Sn(n, t) : [];
-        }, H.flattenDeep = function qu(n) {
+        }, H.flattenDeep = function Tu(n) {
             return n && n.length ? Sn(n, !0) : [];
-        }, H.flow = oe, H.flowRight = ie, H.forEach = Lr, H.forEachRight = Nr, H.forIn = We, 
-        H.forInRight = Le, H.forOwn = Ne, H.forOwnRight = Te, H.functions = qe, H.groupBy = Tr, 
+        }, H.flow = oe, H.flowRight = ie, H.forEach = zr, H.forEachRight = Lr, H.forIn = We, 
+        H.forInRight = ze, H.forOwn = Le, H.forOwnRight = Ne, H.functions = Te, H.groupBy = Nr, 
         H.indexBy = Pr, H.initial = function Pu(n) {
             return fr(n, 1);
         }, H.intersection = hr, H.invert = function Bu(n, t, r) {
@@ -15202,32 +15202,32 @@ try {
                 t ? A.call(i, f) ? i[f].push(a) : i[f] = [ a ] : i[f] = a;
             }
             return i;
-        }, H.invoke = Br, H.keys = Pe, H.keysIn = Be, H.map = zr, H.mapKeys = ze, H.mapValues = De, 
-        H.matches = au, H.matchesProperty = function zu(n, t) {
-            return Dn(n, xn(t, !0));
+        }, H.invoke = Br, H.keys = Pe, H.keysIn = Be, H.map = Dr, H.mapKeys = De, H.mapValues = qe, 
+        H.matches = au, H.matchesProperty = function Du(n, t) {
+            return qn(n, xn(t, !0));
         }, H.memoize = ae, H.merge = Ee, H.method = fu, H.methodOf = cu, H.mixin = lu, H.modArgs = fe, 
-        H.negate = function Du(n) {
+        H.negate = function qu(n) {
             if ("function" != typeof n) throw new w(Oi);
             return function() {
                 return !n.apply(this, arguments);
             };
         }, H.omit = Me, H.once = function Mu(n) {
             return Xr(2, n);
-        }, H.pairs = Ke, H.partial = ce, H.partialRight = le, H.partition = Dr, H.pick = Ve, 
+        }, H.pairs = Ke, H.partial = ce, H.partialRight = le, H.partition = qr, H.pick = Ve, 
         H.pluck = function Ku(n, t) {
-            return zr(n, pu(t));
+            return Dr(n, pu(t));
         }, H.property = pu, H.propertyOf = function Vu(t) {
             return function(n) {
-                return Tn(t, ur(n), n + "");
+                return Nn(t, ur(n), n + "");
             };
         }, H.pull = function Yu() {
             var n = arguments, t = n[0];
             if (!t || !t.length) return t;
-            for (var r = 0, e = Tt(), u = n.length; ++r < u; ) for (var o = 0, i = n[r]; -1 < (o = e(t, i, o)); ) I.call(t, o, 1);
+            for (var r = 0, e = Nt(), u = n.length; ++r < u; ) for (var o = 0, i = n[r]; -1 < (o = e(t, i, o)); ) I.call(t, o, 1);
             return t;
         }, H.pullAt = _r, H.range = function Gu(n, t, r) {
             r && Kt(n, t, r) && (t = r = fi), n = +n || 0, null == t ? (t = n, n = 0) : t = +t || 0;
-            for (var e = -1, u = N(S((t - n) / ((r = null == r ? 1 : +r || 0) || 1)), 0), o = C(u); ++e < u; ) o[e] = n, 
+            for (var e = -1, u = L(S((t - n) / ((r = null == r ? 1 : +r || 0) || 1)), 0), o = C(u); ++e < u; ) o[e] = n, 
             n += r;
             return o;
         }, H.rearg = se, H.reject = function Ju(n, e, t) {
@@ -15253,7 +15253,7 @@ try {
             }
             return n;
         }, H.shuffle = function Hu(n) {
-            return Vr(n, D);
+            return Vr(n, q);
         }, H.slice = function Qu(n, t, r) {
             var e = n ? n.length : 0;
             return e ? (r && "number" != typeof r && Kt(n, t, r) && (t = 0, r = e), Gn(n, t, r)) : [];
@@ -15298,7 +15298,7 @@ try {
             });
         }, H.thru = Rr, H.times = function co(n, t, r) {
             if ((n = $(n)) < 1 || !W(n)) return [];
-            var e = -1, u = C(T(n, M));
+            var e = -1, u = C(N(n, M));
             for (t = ut(t, r, 1); ++e < n; ) e < M ? u[e] = t(e) : t(e);
             return u;
         }, H.toArray = Ie, H.toPlainObject = Re, H.transform = function lo(n, e, u, t) {
@@ -15313,17 +15313,17 @@ try {
         }, H.union = wr, H.uniq = mr, H.unzip = xr, H.unzipWith = br, H.values = Ye, H.valuesIn = function so(n) {
             return Qn(n, Be(n));
         }, H.where = function po(n, t) {
-            return $r(n, zn(t));
+            return $r(n, Dn(t));
         }, H.without = Ar, H.wrap = function ho(n, t) {
             return Ft(t = null == t ? iu : t, _i, fi, [ n ], []);
         }, H.xor = function vo() {
             for (var n = -1, t = arguments.length; ++n < t; ) {
                 var r = arguments[n];
-                if (Dt(r)) var e = e ? pn(kn(e, r), kn(r, e)) : r;
+                if (qt(r)) var e = e ? pn(kn(e, r), kn(r, e)) : r;
             }
             return e ? Hn(e) : [];
-        }, H.zip = jr, H.zipObject = kr, H.zipWith = Or, H.backflow = ie, H.collect = zr, 
-        H.compose = ie, H.each = Lr, H.eachRight = Nr, H.extend = Ce, H.iteratee = ou, H.methods = qe, 
+        }, H.zip = jr, H.zipObject = kr, H.zipWith = Or, H.backflow = ie, H.collect = Dr, 
+        H.compose = ie, H.each = zr, H.eachRight = Lr, H.extend = Ce, H.iteratee = ou, H.methods = Te, 
         H.object = kr, H.select = $r, H.tail = gr, H.unique = mr, lu(H, H), H.add = function _o(n, t) {
             return (+n || 0) + (+t || 0);
         }, H.attempt = uu, H.camelCase = Ge, H.capitalize = function go(n) {
@@ -15336,16 +15336,16 @@ try {
         }, H.deburr = Je, H.endsWith = function mo(n, t, r) {
             t += "";
             var e = (n = Ca(n)).length;
-            return r = r === fi ? e : T(!(r < 0) && +r || 0, e), 0 <= (r -= t.length) && n.indexOf(t, r) == r;
+            return r = r === fi ? e : N(!(r < 0) && +r || 0, e), 0 <= (r -= t.length) && n.indexOf(t, r) == r;
         }, H.escape = function xo(n) {
             return (n = Ca(n)) && na.test(n) ? n.replace(Hi, Wa) : n;
         }, H.escapeRegExp = function bo(n) {
-            return (n = Ca(n)) && fa.test(n) ? n.replace(aa, La) : n || "(?:)";
+            return (n = Ca(n)) && fa.test(n) ? n.replace(aa, za) : n || "(?:)";
         }, H.every = Ur, H.find = Fr, H.findIndex = cr, H.findKey = $e, H.findLast = Wr, 
         H.findLastIndex = lr, H.findLastKey = Fe, H.findWhere = function Ao(n, t) {
-            return Fr(n, zn(t));
+            return Fr(n, Dn(t));
         }, H.first = sr, H.floor = _u, H.get = function jo(n, t, r) {
-            var e = null == n ? fi : Tn(n, ur(t), t + "");
+            var e = null == n ? fi : Nn(n, ur(t), t + "");
             return e === fi ? r : e;
         }, H.gt = he, H.gte = function ko(n, t) {
             return t <= n;
@@ -15353,12 +15353,12 @@ try {
             if (null == n) return !1;
             var r = A.call(n, t);
             if (!r && !Vt(t)) {
-                if (null == (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1)))) return !1;
+                if (null == (n = 1 == (t = ur(t)).length ? n : Nn(n, Gn(t, 0, -1)))) return !1;
                 t = vr(t), r = A.call(n, t);
             }
             return r || Gt(n.length) && Mt(t, n.length) && (_e(n) || ve(n) || je(n));
-        }, H.identity = iu, H.includes = qr, H.indexOf = pr, H.inRange = function Io(n, t, r) {
-            return t = +t || 0, r === fi ? (r = t, t = 0) : r = +r || 0, n >= T(t, r) && n < N(t, r);
+        }, H.identity = iu, H.includes = Tr, H.indexOf = pr, H.inRange = function Io(n, t, r) {
+            return t = +t || 0, r === fi ? (r = t, t = 0) : r = +r || 0, n >= N(t, r) && n < L(t, r);
         }, H.isArguments = ve, H.isArray = _e, H.isBoolean = function Ro(n) {
             return !0 === n || !1 === n || Pa(n) && j.call(n) == Ci;
         }, H.isDate = function Eo(n) {
@@ -15366,7 +15366,7 @@ try {
         }, H.isElement = function Co(n) {
             return !!n && 1 === n.nodeType && Pa(n) && !be(n);
         }, H.isEmpty = function So(n) {
-            return null == n || (Dt(n) && (_e(n) || je(n) || ve(n) || Pa(n) && de(n.splice)) ? !n.length : !Pe(n).length);
+            return null == n || (qt(n) && (_e(n) || je(n) || ve(n) || Pa(n) && de(n.splice)) ? !n.length : !Pe(n).length);
         }, H.isEqual = ge, H.isError = ye, H.isFinite = function Uo(n) {
             return "number" == typeof n && W(n);
         }, H.isFunction = de, H.isMatch = function $o(n, t, r, e) {
@@ -15376,22 +15376,22 @@ try {
         }, H.isNative = me, H.isNull = function Wo(n) {
             return null === n;
         }, H.isNumber = xe, H.isObject = we, H.isPlainObject = be, H.isRegExp = Ae, H.isString = je, 
-        H.isTypedArray = ke, H.isUndefined = function Lo(n) {
+        H.isTypedArray = ke, H.isUndefined = function zo(n) {
             return n === fi;
-        }, H.kebabCase = Xe, H.last = vr, H.lastIndexOf = function No(n, t, r) {
+        }, H.kebabCase = Xe, H.last = vr, H.lastIndexOf = function Lo(n, t, r) {
             var e = n ? n.length : 0;
             if (!e) return -1;
             var u = e;
-            if ("number" == typeof r) u = (r < 0 ? N(e + r, 0) : T(r || 0, e - 1)) + 1; else if (r) {
+            if ("number" == typeof r) u = (r < 0 ? L(e + r, 0) : N(r || 0, e - 1)) + 1; else if (r) {
                 var o = n[u = rt(n, t, !0) - 1];
                 return (t == t ? t === o : o != o) ? u : -1;
             }
-            if (t != t) return Ta(n, u, !0);
+            if (t != t) return Na(n, u, !0);
             for (;u--; ) if (n[u] === t) return u;
             return -1;
-        }, H.lt = Oe, H.lte = function To(n, t) {
+        }, H.lt = Oe, H.lte = function No(n, t) {
             return n <= t;
-        }, H.max = gu, H.min = yu, H.noConflict = function qo() {
+        }, H.max = gu, H.min = yu, H.noConflict = function To() {
             return ka._ = f, this;
         }, H.noop = su, H.now = Jr, H.pad = function Po(n, t, r) {
             t = +t;
@@ -15401,26 +15401,26 @@ try {
             return (r = Ct("", S(u), r)).slice(0, o) + n + r;
         }, H.padLeft = Ze, H.padRight = He, H.parseInt = function Bo(n, t, r) {
             return t = (r ? Kt(n, t, r) : null == t) ? 0 : t && +t, n = ru(n), P(n, t || (ha.test(n) ? 16 : 10));
-        }, H.random = function zo(n, t, r) {
+        }, H.random = function Do(n, t, r) {
             r && Kt(n, t, r) && (t = r = fi);
             var e = null == n, u = null == t;
             if (null == r && (u && "boolean" == typeof n ? (r = n, n = 1) : "boolean" == typeof t && (r = t, 
             u = !0)), e && u && (u = !(t = 1)), n = +n || 0, u ? (t = n, n = 0) : t = +t || 0, 
             r || n % 1 || t % 1) {
                 var o = B();
-                return T(n + o * (t - n + s("1e-" + ((o + "").length - 1))), t);
+                return N(n + o * (t - n + s("1e-" + ((o + "").length - 1))), t);
             }
             return Vn(n, t);
-        }, H.reduce = Mr, H.reduceRight = Kr, H.repeat = Qe, H.result = function Do(n, t, r) {
+        }, H.reduce = Mr, H.reduceRight = Kr, H.repeat = Qe, H.result = function qo(n, t, r) {
             var e = null == n ? fi : er(n)[t];
-            return e === fi && (null == n || Vt(t, n) || (e = null == (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1))) ? fi : er(n)[vr(t)]), 
+            return e === fi && (null == n || Vt(t, n) || (e = null == (n = 1 == (t = ur(t)).length ? n : Nn(n, Gn(t, 0, -1))) ? fi : er(n)[vr(t)]), 
             e = e === fi ? r : e), de(e) ? e.call(n) : e;
         }, H.round = du, H.runInContext = Va, H.size = function Mo(n) {
-            var t = n ? qt(n) : 0;
+            var t = n ? Tt(n) : 0;
             return Gt(t) ? t : Pe(n).length;
         }, H.snakeCase = nu, H.some = Yr, H.sortedIndex = yr, H.sortedLastIndex = dr, H.startCase = tu, 
         H.startsWith = function Ko(n, t, r) {
-            return n = Ca(n), r = null == r ? 0 : T(!(r < 0) && +r || 0, n.length), n.lastIndexOf(t, r) == r;
+            return n = Ca(n), r = null == r ? 0 : N(!(r < 0) && +r || 0, n.length), n.lastIndexOf(t, r) == r;
         }, H.sum = function Vo(n, t, r) {
             return r && Kt(n, t, r) && (t = fi), 1 == (t = Wt(t, r, 3)).length ? function u(n, t) {
                 for (var r = n.length, e = 0; r--; ) e += +t(n[r]) || 0;
@@ -15436,7 +15436,7 @@ try {
             t && Kt(i, n, t) && (n = t = fi), i = Ca(i), n = gn(yn({}, t || n), r, _n);
             var a, f, e = gn(yn({}, n.imports), r.imports, _n), u = Pe(e), o = Qn(e, u), c = 0, l = n.interpolate || ya, s = "__p += '", p = d((n.escape || ya).source + "|" + l.source + "|" + (l === ea ? sa : ya).source + "|" + (n.evaluate || ya).source + "|$", "g"), h = "//# sourceURL=" + ("sourceURL" in n ? n.sourceURL : "lodash.templateSources[" + ++ba + "]") + "\n";
             i.replace(p, function(n, t, r, e, u, o) {
-                return r = r || e, s += i.slice(c, o).replace(da, Na), t && (a = !0, s += "' +\n__e(" + t + ") +\n'"), 
+                return r = r || e, s += i.slice(c, o).replace(da, La), t && (a = !0, s += "' +\n__e(" + t + ") +\n'"), 
                 u && (f = !0, s += "';\n" + u + ";\n__p += '"), r && (s += "' +\n((__t = (" + r + ")) == null ? '' : __t) +\n'"), 
                 c = o + n.length, n;
             }), s += "';\n";
@@ -15450,10 +15450,10 @@ try {
             return _;
         }, H.trim = ru, H.trimLeft = function Go(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(za(n)) : n.slice(Sa(n, t + "")) : n;
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(Da(n)) : n.slice(Sa(n, t + "")) : n;
         }, H.trimRight = function Jo(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(0, Da(n) + 1) : n.slice(0, Ua(n, t + "") + 1) : n;
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(0, qa(n) + 1) : n.slice(0, Ua(n, t + "") + 1) : n;
         }, H.trunc = function Xo(n, t, r) {
             r && Kt(n, t, r) && (t = fi);
             var e = wi, u = mi;
@@ -15482,8 +15482,8 @@ try {
         }, H.uniqueId = function Ho(n) {
             var t = ++a;
             return Ca(n) + t;
-        }, H.words = eu, H.all = Ur, H.any = Yr, H.contains = qr, H.eq = ge, H.detect = Fr, 
-        H.foldl = Mr, H.foldr = Kr, H.head = sr, H.include = qr, H.inject = Mr, lu(H, (hu = {}, 
+        }, H.words = eu, H.all = Ur, H.any = Yr, H.contains = Tr, H.eq = ge, H.detect = Fr, 
+        H.foldl = Mr, H.foldr = Kr, H.head = sr, H.include = Tr, H.inject = Mr, lu(H, (hu = {}, 
         Wn(H, function(n, t) {
             H.prototype[t] || (hu[t] = n);
         }), hu), !1), H.sample = Vr, H.prototype.sample = function(t) {
@@ -15496,9 +15496,9 @@ try {
             rn.prototype[e] = function(n) {
                 var t = this.__filtered__;
                 if (t && !u) return new rn(this);
-                n = null == n ? 1 : N($(n) || 0, 0);
+                n = null == n ? 1 : L($(n) || 0, 0);
                 var r = this.clone();
-                return t ? r.__takeCount__ = T(r.__takeCount__, n) : r.__views__.push({
+                return t ? r.__takeCount__ = N(r.__takeCount__, n) : r.__views__.push({
                     size: n,
                     type: e + (r.__dir__ < 0 ? "Right" : "")
                 }), r;
@@ -15525,7 +15525,7 @@ try {
                 return this.__filtered__ ? new rn(this) : this[r](1);
             };
         }), fn([ "pluck", "where" ], function(n, t) {
-            var r = t ? "filter" : "map", e = t ? zn : pu;
+            var r = t ? "filter" : "map", e = t ? Dn : pu;
             rn.prototype[n] = function(n) {
                 return this[r](e(n));
             };
@@ -15543,7 +15543,7 @@ try {
         }, rn.prototype.takeRightWhile = function(n, t) {
             return this.reverse().takeWhile(n, t).reverse();
         }, rn.prototype.toArray = function() {
-            return this.take(D);
+            return this.take(q);
         }, Wn(rn.prototype, function(s, n) {
             var p = /^(?:filter|map|reject)|While$/.test(n), h = /^(?:first|last)$/.test(n), v = H[h ? "take" + ("last" == n ? "Right" : "") : n];
             v && (H.prototype[n] = function() {
@@ -15610,18 +15610,18 @@ try {
                         break;
 
                       case "take":
-                        t = T(t, n + i);
+                        t = N(t, n + i);
                         break;
 
                       case "takeRight":
-                        n = N(n, t - i);
+                        n = L(n, t - i);
                     }
                 }
                 return {
                     start: n,
                     end: t
                 };
-            }(0, u, this.__views__), i = o.start, a = o.end, f = a - i, c = e ? a : i - 1, l = this.__iteratees__, s = l.length, p = 0, h = T(f, this.__takeCount__);
+            }(0, u, this.__views__), i = o.start, a = o.end, f = a - i, c = e ? a : i - 1, l = this.__iteratees__, s = l.length, p = 0, h = N(f, this.__takeCount__);
             if (!r || u < Ai || u == f && h == f) return tt(n, this.__actions__);
             var v = [];
             n: for (;f-- && p < h; ) {
@@ -28251,8 +28251,8 @@ function I18n() {
             "settings#split-tunnel#help-text": "لو تم تفعيله فلن يتم تمرير الطلبات الموجهة لخوادم في بلدك عبر Psiphon.",
             "settings#split-tunnel#reason": "المواقع في بلدك غير محجوبة بشكل عام، لذلك إذا فعلت هذا الخيار فسيعطيك وصول أسرع إلى هذه المواقع وفي بعض الأحيان سيخفف من تكلفة إستهلاك البيانات من موفر خدمة الإنترنت خاصتك.",
             "settings#split-tunnel#enable-label": "لا تستعمل  بروكسي للمواقع في بلدك.",
-            "settings#split-tunnel-chinese-sites#enable-label": "Don't proxy Chinese websites",
-            "settings#split-tunnel-chinese-sites#note": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
+            "settings#split-tunnel-chinese-sites#enable-label": "لا تستعمل بروكسي مع المواقع الصينية",
+            "settings#split-tunnel-chinese-sites#note": "<strong>تحذير:</strong> تستخدم هذه الميزة بيانات قد لا تكون موثوقة دائمًا. توخ الحذر عند تفعيل هذه الميزة حيث قد يتم استبعاد بعض المواقع الخاضعة للرقابة عن غير قصد من البوكسي.",
             "settings#disable-timeouts#heading": "تعطيل المهلات بالنسبة للشبكات البطيئة",
             "settings#disable-timeouts#help-text": "إذا تم تمكين الاتصال بخادم سايفون فانه لن يتوقف.",
             "settings#disable-timeouts#reason": "عند تفعيل هذا الإعداد على اتصال بالشبكة بطيء جدا، فسوف تقلل من احتمالية تعرض اتصالك للإنقطاع الغير متوقع.",
@@ -28314,9 +28314,9 @@ function I18n() {
             "settings#local-proxy-ports#error-modal-title": "تضارب في  منفذ البروكسي المحلي ",
             "settings#local-proxy-ports#error-modal-body-http": '<p>\nلقد ضبطت سايفون لإستعمال منفذ  محلي خاص لبروكسي أل  HTTP.<br>\nمع الأسف    يظهر أن هذا المنفذ في طور الإستعمال حاليا ولا يمكن لسايفون إستعماله .  \n</p>\n<p>الرجاء تغيير قيمة منفذ بروكسي  HTTP المضبوطة  "configured HTTP proxy port value " والمحاولة  من جديد.  ننصح بإزالة القيمة كي يستطيع سايفون إختيار منفذ متوفر أوتوماتيكيا. \n</p>',
             "settings#local-proxy-ports#error-modal-body-socks": '<p>لقد ضبطت سايفون  لإستعمال منفذ محلي خاص  للبروكسي  سوكس  SOCKS" <br">\nمع الأسف  ظهر أن هذا المنفذ في طور الإستعمال حاليا ولا يمكن لسايفون إستعماله .\n</p>\n<p>\nالرجاء تغيير قيمة منفذ بروكسي  سوكس (SOCKS)  المضبوطة  "configured SOCKS  proxy port value " والمحاولة  من جديد.  ننصح بإزالة القيمة كي يستطيع سايفون إختيار منفذ متوفر أوتوماتيكيا. </p>',
-            "settings#expose-local-proxies-to-lan#help-text": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
-            "settings#expose-local-proxies-to-lan#hint": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
-            "settings#expose-local-proxies-to-lan#enable-label": "Allow other devices on your network to use the local Psiphon proxies",
+            "settings#expose-local-proxies-to-lan#help-text": "إذا كانت لديك أجهزة أخرى على شبكتك، مثل التلفزيون الذكي أو وحدة التحكم في الألعاب، فيمكنك السماح لها باستخدام بروكسيات HTTP و SOCKS أثناء اتصال Psiphon.",
+            "settings#expose-local-proxies-to-lan#hint": "<strong> تلميح:</strong> يجب عليك تحديد واحد على الأقل من أرقام المنافذ أعلاه لإستخدام هذه الميزة. سيتم عرض عناوين البروكسيات المحليين في السجلات.",
+            "settings#expose-local-proxies-to-lan#enable-label": "اسمح للأجهزة الأخرى الموجودة على شبكتك باستخدام بروكسيات Psiphon المحلية",
             "settings#upstream-proxy#heading": "أبستريم بروكسي  ",
             "settings#upstream-proxy#by-default": 'إذا كان جهاز الكمبيوتر الخاص بك لديه بروكسي مثبت، سايفون  سيستعمل أوتوماتيكيا هذا البروكسي عندما ينشئ النفق. يمكنك تجاوز هذا السلوك عن طريق تحديد بروكسي للإستعمال، أو بتحديد عدم جواز إستعمال "أبستريم بروكسي" كهذا .',
             "settings#upstream-proxy#reason": "ألأبستريم بروكسي مطلوبين أحيانا في المدارس، الجامعات، وأماكن العمل. إذا كنت تعلم إعدادات الأبستريم بروكسي المطلوب من موفر خدمة الإنترنت خاصتك فقد يكون إدخالهم يدويا هنا مطلوب للإتصال.",
@@ -28327,8 +28327,8 @@ function I18n() {
             "settings#upstream-proxy#password-label": "كلمة المرور",
             "settings#upstream-proxy#domain-label": "النطاق",
             "settings#upstream-proxy#skip-label": "لا تستعمل أبستريم بروكسي  ",
-            "settings#upstream-proxy#set-hostname-error-msg": "You must provide a Hostname, or leave all Upstream Proxy fields blank for automatic selection.",
-            "settings#upstream-proxy#set-username-error-msg": "You must provide a Username if you are setting Password or Domain; or leave all authentication fields blank for no authentication.",
+            "settings#upstream-proxy#set-hostname-error-msg": "يجب عليك تقديم اسم مضيف، أو ترك جميع حقول البروكسي Upstream فارغة للاختيار التلقائي.",
+            "settings#upstream-proxy#set-username-error-msg": "يجب عليك تقديم اسم مستخدم إذا كنت تقوم بتعيين كلمة السر أو نطاق؛ أو اترك كل حقول المصادقة فارغة لعدم وجود مصادقة.",
             "settings#upstream-proxy#error-modal-title": "خطأ بروكسي أبستريم.\nUpstream Proxy Error  ",
             "settings#upstream-proxy#error-modal-body-default": 'سايفون مضبوط حاليا لإستعمال بروكسي نظامك كأبستريم بروكسي ”. <br>\nومع ذلك، يظهر إننا غير قادرين على الإتصال بسيرفر سايفون من خلال هذا البروكسي .<br>\nالرجاء تفعيل  "لا تستخدم أبستريم بروكسي"  “Don\'t use upstream proxy” والمحاولة من جديد.',
             "settings#upstream-proxy#error-modal-body-configured": 'لقد  ضبطت سايفون ليستعمل أبستريم بروكسي  upstream proxy" .<br">\nومع ذلك، يظهر إننا غير قادرين على الإتصال بسيرفر سايفون من خلال هذا البروكسي.<br>\nالرجاء إعادة ضبط  الإعدادات والمحاولة  من جديد .',
@@ -28361,7 +28361,7 @@ function I18n() {
             "about#description": "سايفون هو<strong> أداة لتجاوز الرقابة على الإنترنت.</strong> — لقد صمم لكي يساعد على الوصول إلى الإنترنت المفتوح، متجاوزا الرقابة والجدران النارية <strong>سايفون مصدر مفتوح</strong>  جرى تصميمه في تورنتو، كندا",
             "about#visit-download-site": 'الرجاء زيارة الموقع <strong><a class="NewVersionURL" href="#">لتحميل  نسخة جديدة  </a></strong> أو لكي <strong><a class="InfoURL" href="#">تحصل على مساعدة ومعلومات  and</a></strong>. سايفون متوفر للأندرويد والويندوز.',
             "about#get-by-email": "<strong>إذا كنتم لا تستطيعون الدخول إلى الموقع </strong>, يمكنكم الحصول على نسخة جديدة  من سايفون  عبر إرسال بريد إلكتروني إلى:  ",
-            "about#license-agree": 'By using Psiphon you signal that you agree to the terms of the <a href="https://psiphon.ca/license.html">End-User License</a> and <a href="https://psiphon.ca/privacy.html">Privacy Policy</a>.',
+            "about#license-agree": 'باستخدام Psiphon، فإنك تشير إلى موافقتك على شروط <a href="https://psiphon.ca/license.html">ترخيص المستخدم النهائي</a> و<a href="https://psiphon.ca/privacy.html">سياسة الخصوصية</a>.',
             "about#client-version": "سايفون لإصدارات أجهزة سطح مكتب من ويندوز (Windows Client Version)",
             "general#modal-close-button": "أغلق ",
             "general#modal-feedback-button": "أرسل ملاحظاتك",
@@ -28379,52 +28379,52 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "ساهم في إبقاء سايفون مجاني بزيارة مواقع داعمينا!",
             "appbackend#minimized-to-systray-title": "لقد تّم تصغير سايفون إلى منطقة الإعلام ",
             "appbackend#minimized-to-systray-body": "إضغط الأيقونة لإسترجاع التطبيق ",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
-            "psicash#transaction-error-title": "PsiCash transaction error",
-            "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
-            "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
-            "psicash#transaction-ExistingTransaction-body": "You have an existing PsiCash purchase of this type. Another purchase of this type is not allowed until the previous one expires. Your PsiCash state will be refreshed now.",
+            "appbackend#os-unsupported": "Psiphon لم يعد يدعم نظام التشغيل Windows XP أو Vista.\nيرجى زيارة موقعنا على الانترنت لمزيد من المعلومات.",
+            "psicash#transaction-error-title": "خطأ في معاملة PsiCash",
+            "psicash#transaction-error-body": "فشلت محاولة معاملة PsiCash الخاصة بك بشكل غير متوقع.",
+            "psicash#transaction-ExistingTransaction-title": "شراء PsiCash موجود بالفعل",
+            "psicash#transaction-ExistingTransaction-body": "لديك عملية شراء PsiCash حالية من هذا النوع. لا يُسمح بشراء آخر من هذا النوع حتى تنتهي صلاحية الشراء السابق. سيتم تحديث حالة PsiCash الخاصة بك الآن.",
             "psicash#transaction-InsufficientBalance-title": "رصيد PsiCash غير كاف",
             "psicash#transaction-InsufficientBalance-body": "ليس عندك ما يكفي من رصيد PsiCash لاتمام هذا الشراء.",
             "psicash#transaction-TransactionAmountMismatch-title": "عدم توافق في سعر شراء PsiCash",
-            "psicash#transaction-TransactionAmountMismatch-body": "PsiCash purchase prices are out-of-date. Your PsiCash state will be refreshed now.",
-            "psicash#transaction-TransactionTypeNotFound-title": "PsiCash purchase type not found",
-            "psicash#transaction-TransactionTypeNotFound-body": "The product you are trying to buy no longer exists. You may need to update or reinstall the application.",
-            "psicash#transaction-InvalidTokens-title-tracker": "Invalid PsiCash state",
-            "psicash#transaction-InvalidTokens-body-tracker": 'Your PsiCash state is invalid. Try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
-            "psicash#transaction-InvalidTokens-title-account": "PsiCash login expired",
-            "psicash#transaction-InvalidTokens-body-account": "Your PsiCash login has expired. Log into your account and try again.",
-            "psicash#transaction-ServerError-title": "PsiCash server error",
-            "psicash#transaction-ServerError-body": "The PsiCash server responded with an error while trying to make the purchase. Please retry your purchase later.",
+            "psicash#transaction-TransactionAmountMismatch-body": "أسعار شراء PsiCash قديمة. سيتم تحديث حالة PsiCash الخاصة بك الآن.",
+            "psicash#transaction-TransactionTypeNotFound-title": "نوع شراء PsiCash غير موجود",
+            "psicash#transaction-TransactionTypeNotFound-body": "المنتج الذي تحاول شراءه لم يعد موجودًا. قد تحتاج إلى تحديث التطبيق أو إعادة تثبيته.",
+            "psicash#transaction-InvalidTokens-title-tracker": "حالة PsiCash غير صالحة",
+            "psicash#transaction-InvalidTokens-body-tracker": 'حالة PsiCash الخاصة بك غير صالحة. حاول إعادة تشغيل التطبيق. إذا لم يفلح ذلك، فستحتاج إلى <a href="https://psiphon3.com/faq.html#clear-windows-data">مسح التخزين المحلي</a>.',
+            "psicash#transaction-InvalidTokens-title-account": "انتهت صلاحية تسجيل الدخول إلى PsiCash",
+            "psicash#transaction-InvalidTokens-body-account": "انتهت صلاحية تسجيل دخولك إلى PsiCash. قم بتسجيل الدخول إلى حسابك وحاول مرة أخرى.",
+            "psicash#transaction-ServerError-title": "خطأ في سيرفر PsiCash",
+            "psicash#transaction-ServerError-body": "استجاب سيرفر PsiCash بخطأ أثناء محاولة الشراء. يرجى إعادة محاولة الشراء لاحقًا.",
             "psicash#ui-speedboost-active": "Speed&nbsp;Boost active for %s",
-            "psicash#ui-buypsi": "Buy PsiCash",
-            "psicash#ui-buymorepsi": "Buy more PsiCash",
-            "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
+            "psicash#ui-buypsi": "إشتري PsiCash",
+            "psicash#ui-buymorepsi": "إشتري المزيد من PsiCash",
+            "psicash#ui-nsfbalance-buttontext": "مطلوب للسرعة‮ ‪‏Speed&nbsp;Boost",
             "psicash#ui-speedboost-button": "زيادة السرعة",
             "psicash#1-hour": "ساعة",
             "psicash#1-day": "1 يوم",
-            "psicash#1-week": "1 week",
-            "psicash#1-month": "1 month",
+            "psicash#1-week": "أسبوع 1",
+            "psicash#1-month": "1 شهر",
             "psicash#ui-buyingboost-buttontext": "جارٍ البدء في السرعةnbsp;الفائفة!",
-            "psicash#pane-create-account": "Create an account to protect your PsiCash!",
-            "psicash#pane-balance-header": "Balance:",
-            "psicash#pane-log-in": "Log In!",
+            "psicash#pane-create-account": "قم بإنشاء حساب لحماية PsiCash الخاص بك!",
+            "psicash#pane-balance-header": "الرصيد:",
+            "psicash#pane-log-in": "تسجيل الدخول!",
             "psicash#pane-log-out": "تسجيل الخروج",
-            "psicash#pane-manage-web": "Manage on the web",
-            "psicash#pane-create-account-plea": 'Creating a PsiCash account will help preserve your PsiCash if you clear the app\'s storage or use Psiphon on another device. <a href="https://psiphon.ca/faq.html#psicash-account">Learn more.</a>',
-            "psicash#pane-l2tp-incompatible": 'Speed Boost cannot be used while Psiphon is connected in <a href="#">L2TP/IPSec transport mode</a>.',
-            "psicash#pane-must-log-in": "You must log in to use PsiCash.",
-            "psicash#pane-create-new-account": "Create a New Account",
+            "psicash#pane-manage-web": "إدارة على شبكة الإنترنت",
+            "psicash#pane-create-account-plea": 'سيساعد إنشاء حساب PsiCash في الحفاظ على PsiCash إذا قمت بمسح مساحة تخزين التطبيق أو استخدمت Psiphon على جهاز آخر.<a href="https://psiphon.ca/faq.html#psicash-account">معرفة أكثر.</a>',
+            "psicash#pane-l2tp-incompatible": 'لا يمكن استخدام Speed Boost أثناء توصيل Psiphon في <a href="#">وضع النقل L2TP / IPSec</a>.',
+            "psicash#pane-must-log-in": "يجب عليك تسجيل الدخول لاستخدام PsiCash.",
+            "psicash#pane-create-new-account": "انشاء حساب جديد",
             "psicash#pane-speed-port-limits-head": "حدود السرعة والمنافذ",
             "psicash#pane-speed-port-limits-body": "إن غياب « معزز السرعة » سيجعل سرعتك محدودة، كما أن حركة مرورك  غير مدعومة. يُرجى تفعيل منتج « معزز السرعة » مع PsiCash للتمكين الكامل خلال استخدامك Psiphon.",
-            "psicash#pane-speed-boost-cta": "Unleash the full potential of Psiphon with Speed&nbsp;Boost!",
-            "psicash#pane-need-more-psicash-header": "You need more PsiCash!",
-            "psicash#pane-need-more-psicash-body": "In order activate Speed Boost, you need to buy more PsiCash.",
-            "psicash#pane-need-psicash-visit-store": "Need PsiCash? Visit our store to buy more!",
-            "psicash#overlay-logging-in": "Logging in…",
-            "psicash#overlay-logging-out": "Logging out…",
-            "psicash#modal-create-psicash-account-header": "Create a PsiCash Account",
-            "psicash#modal-create-psicash-account-body": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
+            "psicash#pane-speed-boost-cta": "أطلق العنان لإمكانيات Psiphon الكاملة مع ‪Speed & nbsp؛ Boost!",
+            "psicash#pane-need-more-psicash-header": "أنت بحاجة إلى المزيد من PsiCash!",
+            "psicash#pane-need-more-psicash-body": "لتفعيل Speed Boost، تحتاج إلى شراء المزيد من PsiCash.",
+            "psicash#pane-need-psicash-visit-store": "تحتاج PsiCash؟ قم بزيارة متجرنا لشراء المزيد!",
+            "psicash#overlay-logging-in": "  جاري تسجيل الدخول…",
+            "psicash#overlay-logging-out": "تسجيل الخروج…",
+            "psicash#modal-create-psicash-account-header": "قم بإنشاء حساب PsiCash",
+            "psicash#modal-create-psicash-account-body": "نحن نشجعك بشدة على إنشاء حساب PsiCash قبل شراء PsiCash. يتيح لك امتلاك حساب مشاركة رصيدك بين الأجهزة وحماية مشترياتك.",
             "psicash#modal-create-psicash-account-create-button": "إنشاء حساب أو الولوج إليه",
             "psicash#modal-create-psicash-account-continue-button": "اﻻستمرار بدون حساب",
             "psicash#modal-psicash-logout-offline-header": "الخروج من حساب PsiCash",
@@ -28433,46 +28433,46 @@ function I18n() {
             "psicash#modal-psicash-logout-offline-logout-anyway-button": "الخروج في كل اﻷحوال",
             "psicash#modal-psicash-logout-offline-cancel-button": "إلغاء",
             "psicash#modal-login-header": "حساب PsiCash",
-            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Create a new account</a> or log in below.',
+            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">إنشاء حساب جديد</a> أو تسجيل الدخول أدناه.',
             "psicash#modal-login-username-field": "اسم مستخدم Psicash",
             "psicash#modal-login-password-field": "كلمة السّر",
             "psicash#modal-login-forgot-password-link": "نسيت اسم المستخدم وكلمة المرور؟",
             "psicash#modal-login-submit-button": "أرسل",
             "psicash#modal-login-cancel-button": "إلغاء",
-            "psicash#alert#buyspeedboost-purchase-complete": "Speed Boost started!",
+            "psicash#alert#buyspeedboost-purchase-complete": "بدأت Speed Boost",
             "psicash#modal-logout-header": "الخروج من حساب PsiCash",
-            "psicash#modal-logout-error-body": 'You logout attempt failed unexpectedly. Please try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
+            "psicash#modal-logout-error-body": 'فشلت محاولة تسجيل الخروج بشكل غير متوقع. يرجى محاولة إعادة تشغيل التطبيق. إذا لم يفلح ذلك، فستحتاج إلى <a href="https://psiphon3.com/faq.html#clear-windows-data">مسح التخزين المحلي</a>.',
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "يلزم الاتصال ب Psiphon",
             "psicash#mustconnect-modal#body": "للتمكن من استخدام PsiCash، يجب عليك الاتصال بشبكة Psiphon.",
-            "psicash#init-error-title": "PsiCash initialization error",
-            "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
-            "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
-            "psicash#psiphon-speed": "Psiphon<br>Speed",
-            "psicash#psiphon-speed-nobreak": "Psiphon Speed",
-            "psicash#corner-logged-out": "You are logged out of PsiCash",
-            "psicash#more-ellipsis": "More…",
+            "psicash#init-error-title": "خطأ في تهيئة برنامج PsiCash",
+            "psicash#init-error-body-unrecovered": " PsiCash فشل في التهيئة. ربما يكون هذا بسبب مشكلة في نظام الملفات، مثل نفاد مساحة القرص. تم فقد رصيدك وحالتك الأخرى. برنامج PsiCash لن يكون قابلاً للاستخدام. يمكنك محاولة إعادة تشغيل التطبيق للتعافي من المشكلة.",
+            "psicash#init-error-body-recovered": "فشل PsiCash في التهيئة. ربما يكون هذا بسبب مشكلة في نظام الملفات، مثل نفاد مساحة القرص. تمت إعادة تعيين رصيدك والحالة الأخرى.",
+            "psicash#psiphon-speed": "Psiphon<br> سرعة ",
+            "psicash#psiphon-speed-nobreak": "سرعة Psiphon",
+            "psicash#corner-logged-out": "لقد تم تسجيل خروجك من PsiCash",
+            "psicash#more-ellipsis": "المزيد ...",
             "psicash#login#failure-modal-title": "فشل الولوج إلى PsiCash",
             "psicash#login#catastrophic-error-body": "لقد فشلت محاولة ولوجك إلى PsiCash بصورة غير متوقعة.",
             "psicash#login#invalid-credentials-body": "اسم المستخدم غير صحيح أو كلمة السر غير صحيحة.",
-            "psicash#login#invalid-credentials-body-multiple-attempts": 'Would you instead like to <a class="js-psicash-account-signup" href="#">create an account</a> or <a class="js-psicash-forgot-account" href="#">recover your account</a>?',
+            "psicash#login#invalid-credentials-body-multiple-attempts": 'هل ترغب بدلاً من ذلك في <a class="js-psicash-account-signup" href="#">إنشاء حساب</a> أو <a class="js-psicash-forgot-account" href="#">استعادة حسابك</a>؟',
             "psicash#login#server-error-body": "لقد أجابك خادم PsiCash بحدوث خطأ أثناء محاولة ولوجك إليه. يُرجى المحاولة مرة أخرى لاحقا.",
-            "psicash#login#badrequest-error-body": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
+            "psicash#login#badrequest-error-body": "أشار سيرفر PsiCash إلى أن طلب تسجيل الدخول غير صالح. الرجاء إعادة إدخال معلومات تسجيل الدخول الخاصة بك وحاول مرة أخرى.",
             "psicash#login#success-modal-title": "نجح الولوج إلى PsiCash",
             "psicash#login#last-tracker-merge-body": "لقد ولجت حسابك في PsiCash. لقد نُقل رصيدك السابق من هذا الجهاز إلى حسابك، لكن هذه هي آخر مرة سيحدث دمج الرصيد.",
-            "psicash#alert#tokens-expired": "PsiCash login expired. Please log back in.",
+            "psicash#alert#tokens-expired": "انتهت صلاحية تسجيل الدخول إلى PsiCash. الرجاء تسجيل الدخول مرة أخرى.",
             "psicash#alert#logged-out": "لقد تم الخروج من حساب PsiCash.",
             "notice#disallowed-traffic-alert-title": "ترقية اتصال Psiphon",
-            "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
-            "appbackend#disallowed-traffic-notification-title": "Apps not working?",
-            "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
-            "settings#disallowed-traffic-alert#heading": "Disallowed Traffic Alert",
-            "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
-            "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
-            "ui#alert#url-copied-to-clipboard": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
-            "notice#psiphonui-fileerror-error-title": "File Access Error",
-            "notice#psiphonui-fileerror-error-body": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
-            "notice#psiphonui-fileerror-detail-preamble": "Filename and error message:",
+            "notice#disallowed-traffic-alert-body": "<p>التطبيقات لا تعمل؟</p>\n<p> بعض حركات المرور على الإنترنت غير مدعومة من دون Speed Boost نشط . فعل Speed Boost مع PsiCash لإطلاق العنان للإمكانات الكاملة لتجربة Psiphon الخاصة بك.</p>",
+            "appbackend#disallowed-traffic-notification-title": "التطبيقات لا تعمل؟",
+            "appbackend#disallowed-traffic-notification-body": "قم بتنشيط Speed Boost لفتح الإمكانات الكاملة لتجربة Psiphon الخاصة بك.",
+            "settings#disallowed-traffic-alert#heading": "تنبيه حركة المرور غير مسموح به",
+            "settings#disallowed-traffic-alert#help-text": "لا يتم دعم بعض أنواع حركة المرور على الإنترنت بدون تنشيط Speed Boost.  عندما يتم حظر حركة المرور هذه، يتم عرض تنبيه. ( إعادة التنشيط ستتطلب إعادة الاتصال.)",
+            "settings#disallowed-traffic-alert#disable-label": "تعطيل تنبيهات حركة المرور غير المسموح بها",
+            "ui#alert#url-copied-to-clipboard": "تم نسخ عنوان URL إلى الحافظة.<br> إذا حدث فشل في فتح المتصفح، فقم بلصق عنوان URL في شريط عنوان المتصفح.",
+            "notice#psiphonui-fileerror-error-title": "خطأ في الوصول إلى الملف",
+            "notice#psiphonui-fileerror-error-body": "<p>Psiphon لا يستطيع الوصول إلى الملف الذي يحتاجه لكي يعمل بشكل صحيح.</p>\n<p> أغلق تطبيق Psiphon ، واحذف الملف المدرج أدناه، وحاول تشغيل Psiphon مرة أخرى.</p>",
+            "notice#psiphonui-fileerror-detail-preamble": "اسم الملف ورسالة الخطأ:",
             "banner#sponsored-by": "برعاية "
         }
     },
@@ -30527,7 +30527,7 @@ function I18n() {
             "psicash#login#failure-modal-title": "Falló inicio de sesión PsiCash",
             "psicash#login#catastrophic-error-body": "Su intento de inicio de sesión PsiCash falló inesperadamente.",
             "psicash#login#invalid-credentials-body": "El nombre de usuario o contraseña ingresada es incorrecta.",
-            "psicash#login#invalid-credentials-body-multiple-attempts": '¿Prefieres <a class="js-psicash-account-signup" href="#"> crear una cuenta  o <a class="js-psicash-forgot-account" href="#"> recuperar tu cuenta</a>?',
+            "psicash#login#invalid-credentials-body-multiple-attempts": '¿Prefieres <a class="js-psicash-account-signup" href="#"> crear una cuenta</a> o <a class="js-psicash-forgot-account" href="#"> recuperar tu cuenta</a>?',
             "psicash#login#server-error-body": "El servidor PsiCash respondió con un error mientras intentaba iniciar tu sesión. Por favor intenta más tarde.",
             "psicash#login#badrequest-error-body": "El servidor PsiCash indicó que la solicitud de inicio de sesión fue inválida. Por favor vuelve a ingresar la información para inicio de sesión e intenta de nuevo más tarde.",
             "psicash#login#success-modal-title": "Inicio de sesión PsiCash exitoso",
@@ -36134,7 +36134,7 @@ function I18n() {
             "about#license-agree": 'By using Psiphon you signal that you agree to the terms of the <a href="https://psiphon.ca/license.html">End-User License</a> and <a href="https://psiphon.ca/privacy.html">Privacy Policy</a>.',
             "about#client-version": "Psiphon kwa madirisha ya toleo la mteja:",
             "general#modal-close-button": "Funga",
-            "general#modal-feedback-button": "Send Feedback",
+            "general#modal-feedback-button": "Tuma mrejesho",
             "general#notice-modal-tech-preamble": "Hizi ni taarifa za kimakosa ya ufundi:",
             "notice#systemproxysettings-setproxy-error-title": "Kosa la mfumo wa Proksi",
             "notice#systemproxysettings-setproxy-error-body": "<p>Psiphon imeshindwa kuweka mpangilio wa mfumo wa proksi.</p>\n<p>Hii inaweza kua kupitia kwenye migogoro kwenye programu yako ya antivirusi. Unaweza kuhitaji kusanidi matumizi yako mwenyewe au mipangilio ya mfumo wa proksi kwa kutumia proksi za mtaa za Psiphon. ",
@@ -36160,7 +36160,7 @@ function I18n() {
             "psicash#transaction-TransactionAmountMismatch-body": "Bei ya manunuzi ya PsiCash imeoita muda wake. hali ya PsiCash yako itakua imerudishwa sasa.",
             "psicash#transaction-TransactionTypeNotFound-title": "Aina ya manunuzi ya PsiCash hayafanyi kazi.",
             "psicash#transaction-TransactionTypeNotFound-body": "Bidhaa uliyojaribu kununua haipo tena. Unatakiwa kusasisha au kuweka tena programu-tumizi. ",
-            "psicash#transaction-InvalidTokens-title-tracker": "Invalid PsiCash state",
+            "psicash#transaction-InvalidTokens-title-tracker": "Hali ya PsiCash ni batili",
             "psicash#transaction-InvalidTokens-body-tracker": 'Your PsiCash state is invalid. Try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
             "psicash#transaction-InvalidTokens-title-account": "PsiCash login expired",
             "psicash#transaction-InvalidTokens-body-account": "Your PsiCash login has expired. Log into your account and try again.",
@@ -36173,44 +36173,44 @@ function I18n() {
             "psicash#ui-speedboost-button": "Kuongeza kasi",
             "psicash#1-hour": "Lisaa1",
             "psicash#1-day": "Siku1",
-            "psicash#1-week": "1 week",
-            "psicash#1-month": "1 month",
+            "psicash#1-week": "Wiki 1",
+            "psicash#1-month": "Mwezi 1",
             "psicash#ui-buyingboost-buttontext": "Anza kwa kasi&nbsp;Ongeza!",
-            "psicash#pane-create-account": "Create an account to protect your PsiCash!",
-            "psicash#pane-balance-header": "Balance:",
-            "psicash#pane-log-in": "Log In!",
-            "psicash#pane-log-out": "Log Out",
-            "psicash#pane-manage-web": "Manage on the web",
+            "psicash#pane-create-account": "Unda akaunti kulinda PsiCash yako!",
+            "psicash#pane-balance-header": "Usawa",
+            "psicash#pane-log-in": "Ingia",
+            "psicash#pane-log-out": "Ondoka",
+            "psicash#pane-manage-web": "Kusimamia kwenye wavuti",
             "psicash#pane-create-account-plea": 'Creating a PsiCash account will help preserve your PsiCash if you clear the app\'s storage or use Psiphon on another device. <a href="https://psiphon.ca/faq.html#psicash-account">Learn more.</a>',
             "psicash#pane-l2tp-incompatible": 'Speed Boost cannot be used while Psiphon is connected in <a href="#">L2TP/IPSec transport mode</a>.',
-            "psicash#pane-must-log-in": "You must log in to use PsiCash.",
-            "psicash#pane-create-new-account": "Create a New Account",
+            "psicash#pane-must-log-in": "Unatakiwa kuingia ili utumie PsiCash.",
+            "psicash#pane-create-new-account": "Unda Akaunti",
             "psicash#pane-speed-port-limits-head": "Speed and Port Limits",
             "psicash#pane-speed-port-limits-body": "Without active Speed Boost, your speed is limited and some internet traffic is not supported. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.",
             "psicash#pane-speed-boost-cta": "Unleash the full potential of Psiphon with Speed&nbsp;Boost!",
-            "psicash#pane-need-more-psicash-header": "You need more PsiCash!",
+            "psicash#pane-need-more-psicash-header": "Unahitaji zaidi PsiCash!",
             "psicash#pane-need-more-psicash-body": "In order activate Speed Boost, you need to buy more PsiCash.",
-            "psicash#pane-need-psicash-visit-store": "Need PsiCash? Visit our store to buy more!",
-            "psicash#overlay-logging-in": "Logging in…",
-            "psicash#overlay-logging-out": "Logging out…",
-            "psicash#modal-create-psicash-account-header": "Create a PsiCash Account",
+            "psicash#pane-need-psicash-visit-store": "Unahitaji PsiCash? tembelea kununua zaidi!",
+            "psicash#overlay-logging-in": "Kuingia",
+            "psicash#overlay-logging-out": "Kutoka",
+            "psicash#modal-create-psicash-account-header": "Unda akaunti ya PsiCash",
             "psicash#modal-create-psicash-account-body": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
-            "psicash#modal-create-psicash-account-create-button": "Create or log into account",
-            "psicash#modal-create-psicash-account-continue-button": "Continue without account",
-            "psicash#modal-psicash-logout-offline-header": "PsiCash Account Logout",
+            "psicash#modal-create-psicash-account-create-button": "Unda au ingia kwenye akaunti",
+            "psicash#modal-create-psicash-account-continue-button": "Endelea bila akaunti",
+            "psicash#modal-psicash-logout-offline-header": "ondoka kwenye akaunti ya PsiCash",
             "psicash#modal-psicash-logout-offline-body": "Being connected to the Psiphon network enables a more secure PsiCash logout. Would you like to connect before logging out?",
             "psicash#modal-psicash-logout-offline-connect-button": "Unganisha",
-            "psicash#modal-psicash-logout-offline-logout-anyway-button": "Log out anyway",
+            "psicash#modal-psicash-logout-offline-logout-anyway-button": "Ondoka hata ivyo",
             "psicash#modal-psicash-logout-offline-cancel-button": "futa",
-            "psicash#modal-login-header": "PsiCash Account",
-            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Create a new account</a> or log in below.',
-            "psicash#modal-login-username-field": "PsiCash username",
+            "psicash#modal-login-header": "Akaunti ya PsiCash",
+            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Unda akaunti mpya </a> au ingia hapa chini.',
+            "psicash#modal-login-username-field": "Jina la mtumiaji PsiCash",
             "psicash#modal-login-password-field": "Neno la siri",
-            "psicash#modal-login-forgot-password-link": "Forgot your password or username?",
+            "psicash#modal-login-forgot-password-link": "Umesahau nywila au jina la mtumiaji?",
             "psicash#modal-login-submit-button": "Wasilisha",
             "psicash#modal-login-cancel-button": "futa",
             "psicash#alert#buyspeedboost-purchase-complete": "Speed Boost started!",
-            "psicash#modal-logout-header": "PsiCash Account Logout",
+            "psicash#modal-logout-header": "ondoka kwenye akaunti ya PsiCash",
             "psicash#modal-logout-error-body": 'You logout attempt failed unexpectedly. Please try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
             "positive-value-indicator": "+%d",
             "psicash#mustconnect-modal#title": "Psiphon inahitaji kuunganishwa",
@@ -36220,18 +36220,18 @@ function I18n() {
             "psicash#init-error-body-recovered": "PsiCash ilishindwa kuanzisha. hii inaweza kua tatizo la mfumo wa faili, kama vile kua nje ya nafasi ya diski. Usawa wako na hali nyingine zimewekwa upya.",
             "psicash#psiphon-speed": "Psiphon<br>Spidi",
             "psicash#psiphon-speed-nobreak": "Psiphon Speed",
-            "psicash#corner-logged-out": "You are logged out of PsiCash",
-            "psicash#more-ellipsis": "More…",
+            "psicash#corner-logged-out": "Umetoka kwenye PsiCash",
+            "psicash#more-ellipsis": "Zaidi...",
             "psicash#login#failure-modal-title": "PsiCash Login Failed",
             "psicash#login#catastrophic-error-body": "Your PsiCash login attempt failed unexpectedly.",
-            "psicash#login#invalid-credentials-body": "The username or password entered was incorrect.",
+            "psicash#login#invalid-credentials-body": "Jina la mtumiaji au nywila uliyoingiza haikua sahihi.",
             "psicash#login#invalid-credentials-body-multiple-attempts": 'Would you instead like to <a class="js-psicash-account-signup" href="#">create an account</a> or <a class="js-psicash-forgot-account" href="#">recover your account</a>?',
             "psicash#login#server-error-body": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
             "psicash#login#badrequest-error-body": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
             "psicash#login#success-modal-title": "PsiCash Login Success",
             "psicash#login#last-tracker-merge-body": "You are logged into your PsiCash account. The preexisting balance from this device has been transferred into your account, but this is the last time a balance merge will occur.",
             "psicash#alert#tokens-expired": "PsiCash login expired. Please log back in.",
-            "psicash#alert#logged-out": "PsiCash account logout complete.",
+            "psicash#alert#logged-out": "Kutoka kwenye akaunti ya PsiCash kumekamilika.",
             "notice#disallowed-traffic-alert-title": "Kuboresha Psiphon yako kuunganishwa",
             "notice#disallowed-traffic-alert-body": "<p>Programu haifanyikazi?</p>\n<p>Wavuti nyingine hazina msaada bila kuongeza kasi ya utendaji. Kuongeza kasi ya kufanya kazi na PsiCash kwa kufungua uwezo mzima wa uzoefu wa Psiphon yako.</p> ",
             "appbackend#disallowed-traffic-notification-title": "Programu haifanyi kazi?",
@@ -36240,9 +36240,9 @@ function I18n() {
             "settings#disallowed-traffic-alert#help-text": "Baadhi ya aina ya mtandao wa traffic haiungi mkono bila kuaongeza kasi ya utendaji. Wakati kama traffic hairuhusiwi, itaonesha arifu. (Kuwezesha tena kutahitajika kuunganisha tena.)",
             "settings#disallowed-traffic-alert#disable-label": "Lemaza hairuhusu ku arifu traffic",
             "ui#alert#url-copied-to-clipboard": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
-            "notice#psiphonui-fileerror-error-title": "File Access Error",
-            "notice#psiphonui-fileerror-error-body": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
-            "notice#psiphonui-fileerror-detail-preamble": "Filename and error message:",
+            "notice#psiphonui-fileerror-error-title": "Hitilafu ya kufikia faili",
+            "notice#psiphonui-fileerror-error-body": "<p>Psiphon haiwezi kufikia faili inahitaji kufanya kazi  kiufasaha.</p>\n<p>Funga programu ya Psiphon, futa faili iliyoorodheshwa hapo chini, na jaribu kuifanyia kazi Psiphon tena.</p>",
+            "notice#psiphonui-fileerror-detail-preamble": "Jina la faili na ujumbe mfupi wa makosa:",
             "banner#sponsored-by": "Imedhaminiwa na"
         }
     },
@@ -37528,7 +37528,7 @@ function I18n() {
             "psicash#alert#tokens-expired": "PsiCash oturumu zaman aşımına uğramış. Lütfen yeniden oturum açın.",
             "psicash#alert#logged-out": "PsiCash hesabının oturumu kapatıldı.",
             "notice#disallowed-traffic-alert-title": "Psiphon bağlantınızı yükseltin",
-            "notice#disallowed-traffic-alert-body": "</p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği etkinleştirilmeden kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.</p>",
+            "notice#disallowed-traffic-alert-body": "<p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği etkinleştirilmeden kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.</p>",
             "appbackend#disallowed-traffic-notification-title": "Çalışmayan uygulamalar mı var?",
             "appbackend#disallowed-traffic-notification-body": "Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.",
             "settings#disallowed-traffic-alert#heading": "İzin verilmeyen trafik uyarısı",
@@ -38338,7 +38338,7 @@ function I18n() {
             "connection#wait-btn": "Xin chờ...",
             "connection#stopped-msg": 'Psiphon <span class="state-word">đã ngắt kết nối </span>',
             "connection#connect-btn": "Kết nối",
-            "connection#egress-region-combo-label": "Select server region",
+            "connection#egress-region-combo-label": "Chọn vùng máy chủ",
             "settings#error-alert": "<strong>Có Lỗi!</strong> Vui lòng điều chỉnh các con số sai trước khi tiếp tục.",
             "settings#reset-button": "Thiết lập lại mặc định",
             "settings#apply-button": "Áp dụng các thay đổi",
@@ -38387,7 +38387,7 @@ function I18n() {
             "settings#egress-region#select-rs": "Serbia",
             "settings#egress-region#select-au": "Úc",
             "settings#egress-region#select-ar": "Argentina",
-            "settings#egress-region#select-br": "Ba Tây",
+            "settings#egress-region#select-br": "Brazil",
             "settings#egress-region#select-cl": "Chile",
             "settings#egress-region#select-fi": "Phần Lan",
             "settings#egress-region#select-is": "Iceland",
@@ -38395,7 +38395,7 @@ function I18n() {
             "settings#egress-region#select-ke": "Kenya",
             "settings#egress-region#select-mx": "Mexico",
             "settings#egress-region#select-za": "Nam Phi",
-            "settings#egress-region#select-kr": "Korea",
+            "settings#egress-region#select-kr": "Hàn Quốc",
             "settings#egress-region#select-tw": "Đài Loan",
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
@@ -38465,7 +38465,7 @@ function I18n() {
             "about#license-agree": 'By using Psiphon you signal that you agree to the terms of the <a href="https://psiphon.ca/license.html">End-User License</a> and <a href="https://psiphon.ca/privacy.html">Privacy Policy</a>.',
             "about#client-version": "Phiên bản trình Psiphon cho Windows:",
             "general#modal-close-button": "Đóng",
-            "general#modal-feedback-button": "Send Feedback",
+            "general#modal-feedback-button": "Gửi Phản hồi",
             "general#notice-modal-tech-preamble": "Đây là thông tin kỹ thuật về lỗi:",
             "notice#systemproxysettings-setproxy-error-title": "Lỗi Proxy Hệ Thống",
             "notice#systemproxysettings-setproxy-error-body": "<p>Psiphon thất bại khi lập các thiết đặt proxy hệ thống.</p>\n<p>Đây có thể vì xung khắc với phần mềm chống vi-rút. Bạn cần cấu hình lại các thiết đặt của ứng dụng hoặc của proxy hệ thống để dùng proxy Psiphon địa phương.</p>",
@@ -38480,90 +38480,90 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Giữ Pisphon miễn phí bằng cách vào thăm trang của các nhà bảo trợ!",
             "appbackend#minimized-to-systray-title": "Psiphon đã được thu nhỏ vào vùng thông báo",
             "appbackend#minimized-to-systray-body": "Bấm vào biểu tượng để phục hồi ứng dụng",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
-            "psicash#transaction-error-title": "PsiCash transaction error",
-            "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
-            "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
-            "psicash#transaction-ExistingTransaction-body": "You have an existing PsiCash purchase of this type. Another purchase of this type is not allowed until the previous one expires. Your PsiCash state will be refreshed now.",
-            "psicash#transaction-InsufficientBalance-title": "Insufficient PsiCash balance",
-            "psicash#transaction-InsufficientBalance-body": "You do not have sufficient PsiCash balance for this purchase.",
-            "psicash#transaction-TransactionAmountMismatch-title": "PsiCash purchase price mismatch",
-            "psicash#transaction-TransactionAmountMismatch-body": "PsiCash purchase prices are out-of-date. Your PsiCash state will be refreshed now.",
-            "psicash#transaction-TransactionTypeNotFound-title": "PsiCash purchase type not found",
-            "psicash#transaction-TransactionTypeNotFound-body": "The product you are trying to buy no longer exists. You may need to update or reinstall the application.",
-            "psicash#transaction-InvalidTokens-title-tracker": "Invalid PsiCash state",
-            "psicash#transaction-InvalidTokens-body-tracker": 'Your PsiCash state is invalid. Try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
-            "psicash#transaction-InvalidTokens-title-account": "PsiCash login expired",
-            "psicash#transaction-InvalidTokens-body-account": "Your PsiCash login has expired. Log into your account and try again.",
-            "psicash#transaction-ServerError-title": "PsiCash server error",
-            "psicash#transaction-ServerError-body": "The PsiCash server responded with an error while trying to make the purchase. Please retry your purchase later.",
-            "psicash#ui-speedboost-active": "Speed&nbsp;Boost active for %s",
-            "psicash#ui-buypsi": "Buy PsiCash",
-            "psicash#ui-buymorepsi": "Buy more PsiCash",
-            "psicash#ui-nsfbalance-buttontext": "Needed for Speed&nbsp;Boost",
-            "psicash#ui-speedboost-button": "Nâng cấp Tốc Độ",
+            "appbackend#os-unsupported": "Psiphon không còn hỗ trợ cho Windows XP hay Vista\nXin xem trang web chúng tôi để biết thêm thông tin.",
+            "psicash#transaction-error-title": "Lỗi giao dịch PsiCash",
+            "psicash#transaction-error-body": "Giao dịch PsiCash có lỗi bất ngờ.",
+            "psicash#transaction-ExistingTransaction-title": "Hàng mua bằng PsiCash đã có rồi",
+            "psicash#transaction-ExistingTransaction-body": "Bạn đã món hàng loại này mua bằng PsiCash rồi. Món hàng loại này không được mua nữa cho đến khi món hàng trước hết hạn. Tình trạng PsiCash sẽ được làm mới bây giờ.",
+            "psicash#transaction-InsufficientBalance-title": "Không đủ số dư PsiCash",
+            "psicash#transaction-InsufficientBalance-body": "Bạn không đủ số dư Psicash cho món hàng này.",
+            "psicash#transaction-TransactionAmountMismatch-title": "Giá món hàng bằng PsiCash không khớp",
+            "psicash#transaction-TransactionAmountMismatch-body": "Giá món hàng bằng PsiCash đã quá han. Tình trạng PsiCash sẽ được làm mới bây giờ.",
+            "psicash#transaction-TransactionTypeNotFound-title": "Loại món hàng PsiCash không tìm thấy",
+            "psicash#transaction-TransactionTypeNotFound-body": "Món hàng bạn muốn mua không còn tồn tại nữa. Bạn có thể phải cần cập nhật hoặc cài đặt lại ứng dụng.",
+            "psicash#transaction-InvalidTokens-title-tracker": "Trạng thái PsiCash không hợp lệ",
+            "psicash#transaction-InvalidTokens-body-tracker": 'Tình trạng PsiCash không hợp lệ. Thử khởi động lại ứng dụng. Nếu vẫn không chạy,  bạn sẽ phải cần <a href="https://psiphon3.com/faq.html#clear-windows-data">làm sạch kho chứa cục bộ </a>.',
+            "psicash#transaction-InvalidTokens-title-account": "Đăng nhập PsiCash hết hạn",
+            "psicash#transaction-InvalidTokens-body-account": "Đăng nhập PsiCash của bạn đã hết hạn. Đăng nhập lại vào tài khoản của bạn và thử lại.",
+            "psicash#transaction-ServerError-title": "Lỗi máy chủ PsiCash",
+            "psicash#transaction-ServerError-body": "Máy chủ PsiCash hồi đáp có lỗi trong lúc đặt mua. Xin thử mua lại sau.",
+            "psicash#ui-speedboost-active": "Tăng&nbsp;Tốc chạy cho %s",
+            "psicash#ui-buypsi": "Mua PsiCash",
+            "psicash#ui-buymorepsi": "Mua thêm PsiCash",
+            "psicash#ui-nsfbalance-buttontext": "Cần cho Tăng&nbsp;Tốc",
+            "psicash#ui-speedboost-button": "Tăng Tốc",
             "psicash#1-hour": "1 tiếng",
-            "psicash#1-day": "1 day",
-            "psicash#1-week": "1 week",
-            "psicash#1-month": "1 month",
-            "psicash#ui-buyingboost-buttontext": "Starting Speed&nbsp;Boost!",
-            "psicash#pane-create-account": "Create an account to protect your PsiCash!",
-            "psicash#pane-balance-header": "Balance:",
-            "psicash#pane-log-in": "Log In!",
+            "psicash#1-day": "1 ngày",
+            "psicash#1-week": "1 tuần",
+            "psicash#1-month": "1 tháng",
+            "psicash#ui-buyingboost-buttontext": "Khởi động Tăng&nbsp;Tốc!",
+            "psicash#pane-create-account": "Tạo tài khoản để bảo vệ tiền PsiCash!",
+            "psicash#pane-balance-header": "Số dư:",
+            "psicash#pane-log-in": "Đăng nhập!",
             "psicash#pane-log-out": "Đăng xuất",
-            "psicash#pane-manage-web": "Manage on the web",
+            "psicash#pane-manage-web": "Quản lý trong trang mạng",
             "psicash#pane-create-account-plea": 'Creating a PsiCash account will help preserve your PsiCash if you clear the app\'s storage or use Psiphon on another device. <a href="https://psiphon.ca/faq.html#psicash-account">Learn more.</a>',
             "psicash#pane-l2tp-incompatible": 'Speed Boost cannot be used while Psiphon is connected in <a href="#">L2TP/IPSec transport mode</a>.',
-            "psicash#pane-must-log-in": "You must log in to use PsiCash.",
-            "psicash#pane-create-new-account": "Create a New Account",
-            "psicash#pane-speed-port-limits-head": "Speed and Port Limits",
-            "psicash#pane-speed-port-limits-body": "Without active Speed Boost, your speed is limited and some internet traffic is not supported. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.",
-            "psicash#pane-speed-boost-cta": "Unleash the full potential of Psiphon with Speed&nbsp;Boost!",
-            "psicash#pane-need-more-psicash-header": "You need more PsiCash!",
-            "psicash#pane-need-more-psicash-body": "In order activate Speed Boost, you need to buy more PsiCash.",
-            "psicash#pane-need-psicash-visit-store": "Need PsiCash? Visit our store to buy more!",
-            "psicash#overlay-logging-in": "Logging in…",
-            "psicash#overlay-logging-out": "Logging out…",
-            "psicash#modal-create-psicash-account-header": "Create a PsiCash Account",
+            "psicash#pane-must-log-in": "Bạn phải đăng nhập để dùng PsiCash.",
+            "psicash#pane-create-new-account": "Tạo Tài Khoản Mới",
+            "psicash#pane-speed-port-limits-head": "Giới hạn của Tốc độ và Cổng",
+            "psicash#pane-speed-port-limits-body": "Nếu không có Tăng Tốc, tốc độ của bạn bị giới hạn và một số lưu lượng giao thông mạng không được hỗ trợ. Mua Tăng Tốc với tiền PsiCash để có được một trải nghiệm hoàn hảo với Psiphon.",
+            "psicash#pane-speed-boost-cta": "Đạt được trọn vẹn tiềm năng của Psiphon với Tăng&nbsp;Tốc!",
+            "psicash#pane-need-more-psicash-header": "Bạn cần thêm PsiCash!",
+            "psicash#pane-need-more-psicash-body": "Để kích hoạt Tăng Tốc, bạn cần mua thêm PsiCash.",
+            "psicash#pane-need-psicash-visit-store": "Cần PsiCash? Ghé vào cửa hàng chúng tôi để mua thêm!",
+            "psicash#overlay-logging-in": "Đang đăng nhập...",
+            "psicash#overlay-logging-out": "Đang đăng xuất ...",
+            "psicash#modal-create-psicash-account-header": "Tạo Tài Khoản PsiCash",
             "psicash#modal-create-psicash-account-body": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
-            "psicash#modal-create-psicash-account-create-button": "Create or log into account",
-            "psicash#modal-create-psicash-account-continue-button": "Continue without account",
-            "psicash#modal-psicash-logout-offline-header": "PsiCash Account Logout",
-            "psicash#modal-psicash-logout-offline-body": "Being connected to the Psiphon network enables a more secure PsiCash logout. Would you like to connect before logging out?",
+            "psicash#modal-create-psicash-account-create-button": "Tạo hoặc đăng nhập vào tài khoản",
+            "psicash#modal-create-psicash-account-continue-button": "Tiếp tục không cần tài khoản",
+            "psicash#modal-psicash-logout-offline-header": "Đăng xuất Tài khoản PsiCash",
+            "psicash#modal-psicash-logout-offline-body": "Có kết nối vào mạng Psiphon sẽ giúp đăng xuất khỏi PsiCash an toàn hơn. Bạn có muốn kết nối trước khi đăng xuất?",
             "psicash#modal-psicash-logout-offline-connect-button": "Kết nối",
-            "psicash#modal-psicash-logout-offline-logout-anyway-button": "Log out anyway",
+            "psicash#modal-psicash-logout-offline-logout-anyway-button": "Cứ đăng xuất ",
             "psicash#modal-psicash-logout-offline-cancel-button": "Hủy",
-            "psicash#modal-login-header": "PsiCash Account",
-            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Create a new account</a> or log in below.',
-            "psicash#modal-login-username-field": "PsiCash username",
-            "psicash#modal-login-password-field": "Mật mã",
-            "psicash#modal-login-forgot-password-link": "Forgot your password or username?",
-            "psicash#modal-login-submit-button": "Đệ nạp",
+            "psicash#modal-login-header": "Tài khoản PsiCash",
+            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Tạo tài khoản mới </a> hoặc đăng nhập dưới đây.',
+            "psicash#modal-login-username-field": "Tên người dùng PsiCash",
+            "psicash#modal-login-password-field": "Mật khẩu",
+            "psicash#modal-login-forgot-password-link": "Quên mật khẩu hoặc tên người dùng?",
+            "psicash#modal-login-submit-button": "Gửi",
             "psicash#modal-login-cancel-button": "Hủy",
-            "psicash#alert#buyspeedboost-purchase-complete": "Speed Boost started!",
-            "psicash#modal-logout-header": "PsiCash Account Logout",
+            "psicash#alert#buyspeedboost-purchase-complete": "Tăng Tốc bắt đầu!",
+            "psicash#modal-logout-header": "Đăng xuất Tài khoản PsiCash",
             "psicash#modal-logout-error-body": 'You logout attempt failed unexpectedly. Please try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
             "positive-value-indicator": "+%d",
-            "psicash#mustconnect-modal#title": "Psiphon Connection Required",
-            "psicash#mustconnect-modal#body": "In order to use PsiCash, you must be connected to the Psiphon network.",
-            "psicash#init-error-title": "PsiCash initialization error",
+            "psicash#mustconnect-modal#title": "Cần có Kết nối Psiphon",
+            "psicash#mustconnect-modal#body": "Để dùng PsiCash, bạn phải kết nối vào mạng Psiphon.",
+            "psicash#init-error-title": "Có lỗi khởi đầu PsiCash",
             "psicash#init-error-body-unrecovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
             "psicash#init-error-body-recovered": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
-            "psicash#psiphon-speed": "Psiphon<br>Speed",
-            "psicash#psiphon-speed-nobreak": "Psiphon Speed",
+            "psicash#psiphon-speed": "Tốc độ<br>Psiphon",
+            "psicash#psiphon-speed-nobreak": "Tốc độ Psiphon",
             "psicash#corner-logged-out": "You are logged out of PsiCash",
-            "psicash#more-ellipsis": "More…",
-            "psicash#login#failure-modal-title": "PsiCash Login Failed",
-            "psicash#login#catastrophic-error-body": "Your PsiCash login attempt failed unexpectedly.",
-            "psicash#login#invalid-credentials-body": "The username or password entered was incorrect.",
+            "psicash#more-ellipsis": "Thêm...",
+            "psicash#login#failure-modal-title": "Đăng nhập PsiCash Thất bại ",
+            "psicash#login#catastrophic-error-body": "Đăng nhập vào PsiCash có lỗi bất ngờ.",
+            "psicash#login#invalid-credentials-body": "Tên người dùng hoặc mật khẩu không đúng.",
             "psicash#login#invalid-credentials-body-multiple-attempts": 'Would you instead like to <a class="js-psicash-account-signup" href="#">create an account</a> or <a class="js-psicash-forgot-account" href="#">recover your account</a>?',
-            "psicash#login#server-error-body": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
+            "psicash#login#server-error-body": "Máy chủ PsiCash hồi đáp có lỗi khi đăng nhập bạn vào. Xin thử lại sau.",
             "psicash#login#badrequest-error-body": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
-            "psicash#login#success-modal-title": "PsiCash Login Success",
-            "psicash#login#last-tracker-merge-body": "You are logged into your PsiCash account. The preexisting balance from this device has been transferred into your account, but this is the last time a balance merge will occur.",
+            "psicash#login#success-modal-title": "Đăng nhập vào PsiCash Thành công",
+            "psicash#login#last-tracker-merge-body": "Bạn đã đăng nhập vào tài khoản PsiCash. Số dư tồn đọng từ thiết bị này đã được chuyển giao vào tài khoản của bạn, nhưng đây là lần cuối cùng số dư được sát nhập lại.",
             "psicash#alert#tokens-expired": "PsiCash login expired. Please log back in.",
-            "psicash#alert#logged-out": "PsiCash account logout complete.",
-            "notice#disallowed-traffic-alert-title": "Upgrade your Psiphon connection",
+            "psicash#alert#logged-out": "Đăng xuất khỏi tài khoản PsiCash xong.",
+            "notice#disallowed-traffic-alert-title": "Nâng cấp kết nối Psiphon",
             "notice#disallowed-traffic-alert-body": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
             "appbackend#disallowed-traffic-notification-title": "Apps not working?",
             "appbackend#disallowed-traffic-notification-body": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
@@ -38571,7 +38571,7 @@ function I18n() {
             "settings#disallowed-traffic-alert#help-text": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
             "settings#disallowed-traffic-alert#disable-label": "Disable disallowed traffic alerts",
             "ui#alert#url-copied-to-clipboard": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
-            "notice#psiphonui-fileerror-error-title": "File Access Error",
+            "notice#psiphonui-fileerror-error-title": "Lỗi Truy cập Tập tin",
             "notice#psiphonui-fileerror-error-body": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
             "notice#psiphonui-fileerror-detail-preamble": "Filename and error message:",
             "banner#sponsored-by": "Được tài trợ bởi"
@@ -38815,11 +38815,11 @@ function I18n() {
             "psicash#login#failure-modal-title": "PsiCash登录失败",
             "psicash#login#catastrophic-error-body": "您的PsiCash登录尝试失败。",
             "psicash#login#invalid-credentials-body": "输入的用户名或者密码不正确",
-            "psicash#login#invalid-credentials-body-multiple-attempts": 'Would you instead like to <a class="js-psicash-account-signup" href="#">create an account</a> or <a class="js-psicash-forgot-account" href="#">recover your account</a>?',
+            "psicash#login#invalid-credentials-body-multiple-attempts": '您想<a class="js-psicash-account-signup" href="#">创建一个账户</a>还是<a class="js-psicash-forgot-account" href="#">恢复您的账户</a>？',
             "psicash#login#server-error-body": "当尝试登录时，PsiCash服务器返回一个错误。请稍后再尝试。",
             "psicash#login#badrequest-error-body": "PsiCash服务器显示登录要求无效。请重新输入您的登录信息并再次尝试。",
             "psicash#login#success-modal-title": "PsiCash登录成功",
-            "psicash#login#last-tracker-merge-body": "您已经登陆您的PsiCash账户。预先存在在这个设备上的余额已经转入您的帐户，但是这是最后一次余额合并。",
+            "psicash#login#last-tracker-merge-body": "您已经登陆您的PsiCash账户。预先存在在这个设备上的余额已经转入您的账户，但是这是最后一次余额合并。",
             "psicash#alert#tokens-expired": "PsiCash登录已过期。请重新登录。",
             "psicash#alert#logged-out": "PsiCash账户已完全登出",
             "notice#disallowed-traffic-alert-title": "升级您的赛风链接",
@@ -38830,9 +38830,9 @@ function I18n() {
             "settings#disallowed-traffic-alert#help-text": "有些网络流量必须有加速服务的支持。当这样的流量被禁止时，一个警告将会弹出。（重新启用这样的流量需要重新连接。）",
             "settings#disallowed-traffic-alert#disable-label": "禁止禁用流量警告",
             "ui#alert#url-copied-to-clipboard": "链接已复制至剪贴板。<br>如果浏览器无法打开，复制链接到浏览器地址栏。",
-            "notice#psiphonui-fileerror-error-title": "File Access Error",
-            "notice#psiphonui-fileerror-error-body": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
-            "notice#psiphonui-fileerror-detail-preamble": "Filename and error message:",
+            "notice#psiphonui-fileerror-error-title": "文件访问错误",
+            "notice#psiphonui-fileerror-error-body": "<p>Psiphon 无法访问正常工作所需的文件。</p>\n<p>关闭 Psiphon 应用程序，删除下面列出的文件，然后尝试再次运行 Psiphon。</p>",
+            "notice#psiphonui-fileerror-detail-preamble": "文件名和错误消息：",
             "banner#sponsored-by": "赞助者："
         }
     },

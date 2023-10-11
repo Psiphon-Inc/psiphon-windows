@@ -24,7 +24,7 @@ Run with
 # If you don't already have pipenv:
 $ python3 -m pip install --upgrade pipenv
 
-$ pipenv install --three --ignore-pipfile
+$ pipenv install --ignore-pipfile
 $ pipenv run python transifex_pull.py
 
 # To reset your pipenv state (e.g., after a Python upgrade):
@@ -33,7 +33,7 @@ $ pipenv --rm
 # To update transifexlib
 $ pipenv update transifexlib
 $ pipenv --rm
-$ pipenv install --three --ignore-pipfile
+$ pipenv install --ignore-pipfile
 '''
 
 
@@ -93,7 +93,7 @@ DEFAULT_LANGS = {
 
 def pull_app_translations():
     transifexlib.process_resource(
-        'windows-client-strings',
+        'https://app.transifex.com/otf/Psiphon3/windows-client-strings/',
         DEFAULT_LANGS,
         '../src/webui/_locales/en/messages.json',
         lambda lang: f'../src/webui/_locales/{lang}/messages.json',
