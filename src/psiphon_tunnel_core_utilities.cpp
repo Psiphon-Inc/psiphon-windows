@@ -135,6 +135,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
     // Feedback
     config["FeedbackUploadURLs"] = LoadJSONArray(FEEDBACK_UPLOAD_URLS_JSON);
     config["FeedbackEncryptionPublicKey"] = FEEDBACK_ENCRYPTION_PUBLIC_KEY;
+    config["EnableFeedbackUpload"] = true;
 
     // In temporary tunnel mode, only the specific server should be connected to,
     // and a handshake is not performed.
@@ -229,6 +230,7 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
         config["MigrateUpgradeDownloadFilename"] = WStringToUTF8(out.oldClientUpgradeFilename);
         config["UpgradeDownloadURLs"] = LoadJSONArray(UPGRADE_URLS_JSON);
         config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
+        config["EnableUpgradeDownload"] = true;
 
         // Newer versions of tunnel-core download the upgrade file to its own data directory. Both oldClientUpgradeFilename and
         // newClientUpgradeFilename should be deleted when Psiphon starts if they exist.
