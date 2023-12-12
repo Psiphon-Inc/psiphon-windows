@@ -108,15 +108,15 @@
         "description": "If 'L2TP/IPSec mode' is enabled, this text shows up in a label beside the Settings sections which are incompatible with L2TP/IPSec mode. It is intended to draw the user's attention to the fact that some of the other settings have become disabled."
     },
     "settings#split-tunnel#heading": {
-        "message": "Đường Hầm Tách",
+        "message": "Tách Đường Hầm",
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "message": "Nếu bật mở, truy cập vào các máy chủ ở quốc gia bạn sẽ không được xuyên hầm qua Psiphon.",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#split-tunnel#reason": {
-        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
+        "message": "Trang web ở ngay trong quốc gia bạn thường không bị chặn, do đó bật mở tùy chọn này sẽ giúp truy cập vào các trang đó nhanh hơn và đôi khi giảm chi phí của nhà mạng.",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#split-tunnel#enable-label": {
@@ -124,11 +124,11 @@
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "settings#split-tunnel-chinese-sites#enable-label": {
-        "message": "Don't proxy Chinese websites",
+        "message": "Đừng proxy các trang web ở Trung Quốc",
         "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
     },
     "settings#split-tunnel-chinese-sites#note": {
-        "message": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
+        "message": "<strong>CẢNH BÁO:</strong> Tính năng này dùng dữ liệu mà có thể không phải luôn đáng tin cậy. Cẩn trọng khi bật mở tính năng này vì một số trang web bị kiểm duyệt có thể bị vô tình loại trừ khỏi proxy.",
         "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
     },
     "settings#disable-timeouts#heading": {
@@ -140,7 +140,7 @@
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#disable-timeouts#reason": {
-        "message": "When enabling this for a very slow network connection, you are less likely to experience unexpected disconnections.",
+        "message": "Khi bật mở tùy chọn này cho một đường kết nối mạng rất chậm, bạn sẽ ít bị ngắt kết nối bất ngờ.",
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
@@ -316,11 +316,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
+        "message": "Psiphon có nhiều máy chủ tại nhiều quốc gia và vùng khác nhau. Dùng một máy chủ Psiphon trong vùng gần với quốc gia bạn thường sẽ có kết nối mạng nhanh hơn, nhưng bạn có thể muốn cho thấy là mình đang đứng từ một quốc gia hay vùng nào khác để truy cập và sử dụng dịch vụ.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Choosing the default <strong>“Best Performance”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "message": "Tùy chọn mặc định <strong>“Hiệu Năng Tốt Nhất”</strong> cho phép Psiphon tự động chọn một máy chủ với kết nối mạng tốt nhất.",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -332,7 +332,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Best Performance” choice.",
+        "message": "Bạn cấu hình Psiphon để dùng máy chủ trong một vùng riêng biệt.<br>\nTuy nhiê, vùng đó không còn nữa.<br>\nBạn phải chọn một vùng khác hoặc đổi qua tùy chọn mặc định “Hiệu Năng Tốt Nhất”.",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -376,15 +376,15 @@
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#expose-local-proxies-to-lan#help-text": {
-        "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+        "message": "Nếu bạn có các thiết bị khác trong mạng của mình, như TV thông minh hoặc máy chơi game, bạn có thể cho phép chúng dùng các proxies HTTP và SOCKS trong khi Psiphon kết nối.",
         "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
     },
     "settings#expose-local-proxies-to-lan#hint": {
-        "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
+        "message": "<strong>GỢI Ý:</strong> Bạn nên chọn ít nhất một trong các số cổng bên trên để dùng tính năng này. Địa chỉ của các proxies cục bộ sẽ được hiển thị trong nhật ký.",
         "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#expose-local-proxies-to-lan#enable-label": {
-        "message": "Allow other devices on your network to use the local Psiphon proxies",
+        "message": "Cho phép các thiết bị khác trong mạng bạn dùng proxies Psiphon cục bộ",
         "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
@@ -428,11 +428,11 @@
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "settings#upstream-proxy#set-hostname-error-msg": {
-        "message": "You must provide a Hostname, or leave all Upstream Proxy fields blank for automatic selection.",
+        "message": "Bạn phải cung cấp Hostname, hoặc để trống ô Upstream Proxy để được tự động chọn.",
         "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#upstream-proxy#set-username-error-msg": {
-        "message": "You must provide a Username if you are setting Password or Domain; or leave all authentication fields blank for no authentication.",
+        "message": "Bạn phải cung cấp Tên người dùng nếu bạn đặt Mật khẩu hay Miền; hoặc để các ô này trống để không có xác thực.",
         "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
@@ -564,7 +564,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#license-agree": {
-        "message": "By using Psiphon you signal that you agree to the terms of the <a href=\"https://psiphon.ca/license.html\">End-User License</a> and <a href=\"https://psiphon.ca/privacy.html\">Privacy Policy</a>.",
+        "message": "Khi dùng Psiphon bạn mặc nhiên đồng ý với các điều khoản của  <a href=\"https://psiphon.ca/license.html\">Giấy Phép Người Dùng Cuối</a> and <a href=\"https://psiphon.ca/privacy.html\">Chính sách Quyền Riêng Tư</a>.",
         "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
@@ -764,11 +764,11 @@
         "description": "Text for a link to a web site where users can manage their PsiCash account."
     },
     "psicash#pane-create-account-plea": {
-        "message": "Creating a PsiCash account will help preserve your PsiCash if you clear the app's storage or use Psiphon on another device. <a href=\"https://psiphon.ca/faq.html#psicash-account\">Learn more.</a>",
+        "message": "Tạo tài khoản PsiCash sẽ bảo vệ tiền PsiCash của bạn trong trường hợp bạn xóa kho chứa của ứng dụng hoặc dùng Psiphon trên một thiết bị khác. <a href=\"https://psiphon.ca/faq.html#psicash-account\">Tìm hiểu thêm.</a>",
         "description": "Text shown below the PsiCash balance when the user does not have a PsiCash account. 'Learn more' is a link to an FAQ entry explaining the benefits of creating an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-l2tp-incompatible": {
-        "message": "Speed Boost cannot be used while Psiphon is connected in <a href=\"#\">L2TP/IPSec transport mode</a>.",
+        "message": "Tăng Tốc không thể dùng trong lúc Psiphon kết nối dùng <a href=\"#\"> phương thức chuyển tải L2TP/IPSec </a>.",
         "description": "A message shown when L2TP/IPSec mode is enabled in Psiphon. Speed Boost cannot be used in this mode."
     },
     "psicash#pane-must-log-in": {
@@ -816,7 +816,7 @@
         "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-body": {
-        "message": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
+        "message": "Chúng tôi khuyến khích bạn tạo tài khoản PsiCash trước khi mua tiền PsiCash. Có tài khoản cho phép bạn chia sẻ số dư giữa các thiết bị và bảo vệ hàng bạn mua.",
         "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-create-button": {
@@ -884,7 +884,7 @@
         "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-logout-error-body": {
-        "message": "You logout attempt failed unexpectedly. Please try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "message": "Đăng xuất của bạn thất bại bất ngờ. Thử khởi động lại ứng dụng. Nếu vẫn không chạy,  bạn sẽ phải cần <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">làm sạch kho chứa cục bộ </a>.",
         "description": "Body of modal dialog shown when the user attempts to log out of their PsiCash account and an unexpected error occurs. Please don't modify the link URL."
     },
     "positive-value-indicator": {
@@ -904,11 +904,11 @@
         "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-unrecovered": {
-        "message": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+        "message": "PsiCash không khởi đầu được. Có lẻ vì gặp trở ngại với hệ thống tập tin, như hết chỗ chứa. Số dư và các tình trạng khác của bạn bị mất. PsiCash sẽ không dùng được. Bạn thử khởi động lại ứng dụng để phục hồi lại từ lỗi.",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-recovered": {
-        "message": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+        "message": "PsiCash không khởi đầu được. Có lẻ vì gặp trở ngại với hệ thống tập tin, như hết chỗ chứa. Số dư và các tình trạng khác của bạn đã được làm lại.",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#psiphon-speed": {
@@ -920,7 +920,7 @@
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
     },
     "psicash#corner-logged-out": {
-        "message": "You are logged out of PsiCash",
+        "message": "Bạn đã đăng xuất khỏi PsiCash",
         "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#more-ellipsis": {
@@ -940,7 +940,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#invalid-credentials-body-multiple-attempts": {
-        "message": "Would you instead like to <a class=\"js-psicash-account-signup\" href=\"#\">create an account</a> or <a class=\"js-psicash-forgot-account\" href=\"#\">recover your account</a>?",
+        "message": "Bạn muốn <a class=\"js-psicash-account-signup\" href=\"#\">tạo tài khoản</a> hay <a class=\"js-psicash-forgot-account\" href=\"#\">phục hồi tài khoản của bạn</a>?",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
@@ -948,7 +948,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
-        "message": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
+        "message": "Máy chủ PsiCash cho biết yêu cầu đăng nhập không hợp lệ. Xin điền lại dữ kiện đăng nhập và thử lại.",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#success-modal-title": {
@@ -960,7 +960,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#tokens-expired": {
-        "message": "PsiCash login expired. Please log back in.",
+        "message": "Đăng nhập PsiCash hết hạn. Xin đăng nhập vào lại.",
         "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#logged-out": {
@@ -972,31 +972,31 @@
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+        "message": "<p>Ứng dụng không chạy được?</p>\n<p>Một số giao thông internet không được hỗ trợ nếu không có Tăng Tốc chạy. Kích hoạt chức năng Tăng Tốc bằng PsiCash để được trải nghiệm toàn diện của Psiphon.</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
-        "message": "Apps not working?",
+        "message": "Ứng dụng không chạy?",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
-        "message": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+        "message": "Kích hoạt chức năng Tăng Tốc để được trải nghiệm toàn diện của Psiphon.",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "Disallowed Traffic Alert",
+        "message": "Cảnh báo Giao thông Không được phép",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
-        "message": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+        "message": "Một số loại giao thông internet không được hỗ trợ nếu không có Tăng Tốc chạy. Khi loại giao thông đó không được phép, sẽ thấy cảnh báo. (Nếu cho phép lại sẽ phải kết nối lại.)",
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {
-        "message": "Disable disallowed traffic alerts",
+        "message": "Tắt cảnh báo giao thông không được phép",
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "ui#alert#url-copied-to-clipboard": {
-        "message": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
+        "message": "URL được sao chép vào bảng ghi tạm.<br>Nếu trình duyệt không mở được, dán URL vào thanh địa chỉ của trình duyệt.",
         "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
     },
     "notice#psiphonui-fileerror-error-title": {
@@ -1004,11 +1004,11 @@
         "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "notice#psiphonui-fileerror-error-body": {
-        "message": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
+        "message": "<p>Psiphon không thể truy cập một tập tin cần có để chạy cho đúng đắn.</p>\n<p>Đóng ứng dụng Psiphon lại, xóa các tập tin liệt kê sau đây, và thử chạy Psiphon lại.</p>",
         "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#psiphonui-fileerror-detail-preamble": {
-        "message": "Filename and error message:",
+        "message": "Tên tập tin và thông tin lỗi:",
         "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "banner#sponsored-by": {
