@@ -804,7 +804,7 @@
         "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#overlay-logging-in": {
-        "message": "Logging in…",
+        "message": "Logge ein...",
         "description": "Text on a screen shown while the user's log-in request is in progress."
     },
     "psicash#overlay-logging-out": {
