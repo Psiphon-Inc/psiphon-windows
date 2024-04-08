@@ -315,6 +315,38 @@
         "message": "Латвия",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
+    "settings#egress-region#select-id": {
+        "message": "Индонезия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Indonesia will be used."
+    },
+    "settings#egress-region#select-nz": {
+        "message": "Новая Зеландия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in New Zealand will be used."
+    },
+    "settings#egress-region#select-gr": {
+        "message": "Греция",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Greece will be used."
+    },
+    "settings#egress-region#select-hr": {
+        "message": "Хорватия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Croatia will be used."
+    },
+    "settings#egress-region#select-pt": {
+        "message": "Португалия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Portugal will be used."
+    },
+    "settings#egress-region#select-ua": {
+        "message": "Украинa",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ukraine will be used."
+    },
+    "settings#egress-region#select-co": {
+        "message": "Колумбия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Colombia will be used."
+    },
+    "settings#egress-region#select-my": {
+        "message": "Малайзия",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Malaysia will be used."
+    },
     "settings#egress-region#description": {
         "message": "У Psiphon есть серверы в разных странах и регионах. Обычно чем ближе сервер Psiphon, тем лучше связь. С другой стороны, вам может понадобиться работать с сайтами и сервисами так, словно вы находитесь в одной стране с сервером Psiphon.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."

@@ -315,6 +315,38 @@
         "message": "Latvia",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
+    "settings#egress-region#select-id": {
+        "message": "Indonesia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Indonesia will be used."
+    },
+    "settings#egress-region#select-nz": {
+        "message": "New Zealand",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in New Zealand will be used."
+    },
+    "settings#egress-region#select-gr": {
+        "message": "Greece",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Greece will be used."
+    },
+    "settings#egress-region#select-hr": {
+        "message": "Croatia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Croatia will be used."
+    },
+    "settings#egress-region#select-pt": {
+        "message": "Portugal",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Portugal will be used."
+    },
+    "settings#egress-region#select-ua": {
+        "message": "Ukraine",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ukraine will be used."
+    },
+    "settings#egress-region#select-co": {
+        "message": "Colombia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Colombia will be used."
+    },
+    "settings#egress-region#select-my": {
+        "message": "Malaysia",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Malaysia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon ina seva katika nchi nyingi tofauti tofauti na maeneo. Tumia Psiphon seva kwenye mkoa uliofungwa kwenye nchi ya nyuba yako kwa ujumla itatoamunganiko mzuri wa mtandao, lakini tumaini kufikia tovuti na huduma kama ukiwa karibu kwenye nchi maalumu au mkoa.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."

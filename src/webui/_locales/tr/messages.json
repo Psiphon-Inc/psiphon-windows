@@ -315,6 +315,38 @@
         "message": "Letonya",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
+    "settings#egress-region#select-id": {
+        "message": "Endonezya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Indonesia will be used."
+    },
+    "settings#egress-region#select-nz": {
+        "message": "Yeni Zelanda",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in New Zealand will be used."
+    },
+    "settings#egress-region#select-gr": {
+        "message": "Yunanistan",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Greece will be used."
+    },
+    "settings#egress-region#select-hr": {
+        "message": "Hırvatistan",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Croatia will be used."
+    },
+    "settings#egress-region#select-pt": {
+        "message": "Portekiz",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Portugal will be used."
+    },
+    "settings#egress-region#select-ua": {
+        "message": "Ukrayna",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ukraine will be used."
+    },
+    "settings#egress-region#select-co": {
+        "message": "Kolombiya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Colombia will be used."
+    },
+    "settings#egress-region#select-my": {
+        "message": "Malezya",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Malaysia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Bir çok ülkede ve bölgede Psiphon sunucuları bulunuyor. Bulunduğunuz ülkeye yakın bir bölgedeki Psiphon sunucusunu seçmeniz daha iyi ağ bağlantısı sağlar. Ancak belirli bir ülkedeki site ve hizmetlere erişmek istiyorsanız sanal olarak o ülkedeymiş gibi görünmek isteyebilirsiniz.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."

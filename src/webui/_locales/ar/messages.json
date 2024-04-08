@@ -315,6 +315,38 @@
         "message": "لاتفيا",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
+    "settings#egress-region#select-id": {
+        "message": "أندونيسيا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Indonesia will be used."
+    },
+    "settings#egress-region#select-nz": {
+        "message": "نيوزيلندا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in New Zealand will be used."
+    },
+    "settings#egress-region#select-gr": {
+        "message": "اليونان",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Greece will be used."
+    },
+    "settings#egress-region#select-hr": {
+        "message": "كرواتيا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Croatia will be used."
+    },
+    "settings#egress-region#select-pt": {
+        "message": "البرتغال",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Portugal will be used."
+    },
+    "settings#egress-region#select-ua": {
+        "message": "أوكرانيا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Ukraine will be used."
+    },
+    "settings#egress-region#select-co": {
+        "message": "كولومبيا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Colombia will be used."
+    },
+    "settings#egress-region#select-my": {
+        "message": "ماليزيا",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Malaysia will be used."
+    },
     "settings#egress-region#description": {
         "message": "Psiphon لديه خوادم كثيرة في بلدان مختلفة. إستعمال خادم سايفون لبلد قريب من بلدك سيوفر بشكل عام إتصال شبكة أسرع، ولكن ربما تود أن تصل إلى مواقع وخدمات كما لو كنت موجود افتراضيا في بلد أو منطقة معينة.",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
