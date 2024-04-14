@@ -170,9 +170,14 @@ void SetUiLocale(const wstring& uiLocale);
 // running in. Returns ISO 3166-1 alpha-2 format.
 wstring GetDeviceRegion();
 
-/// Returns true if the current Windows version is supported by the Psiphon client.
-/// Otherwise Psiphon will not and cannot function and the user should be told.
-bool IsOSSupported();
+/// Returns true if the current Windows version is unsupported by the Psiphon client.
+/// In this case will not and cannot function and the user should be told.
+bool IsOSUnsupported();
+
+/// Returns true if the current Windows version is considered "legacy". This means that
+/// the Psiphon client will run on it, but future versions will not -- i.e., version
+/// upgrades must be disabled.
+bool IsOSLegacy();
 
 /// Check is the current Windows version is support. If it's not, show a message
 /// and terminate the app.

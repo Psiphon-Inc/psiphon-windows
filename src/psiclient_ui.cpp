@@ -77,7 +77,7 @@ void CreateHTMLControl(HWND hWndParent, float dpiScaling) {
     initJSON["Cookies"] = Settings::GetCookies();
     initJSON["Config"] = Json::Value();
     initJSON["Config"]["ClientVersion"] = CLIENT_VERSION;
-    initJSON["Config"]["ClientBuild"] = GetBuildTimestamp();
+    initJSON["Config"]["ClientBuild"] = GetBuildTimestamp() + (IsOSLegacy() ? ".LEGACY" : "");
     initJSON["Config"]["Language"] = WStringToUTF8(GetLocaleID());
     initJSON["Config"]["Banner"] = "banner.png";
     initJSON["Config"]["InfoURL"] = WStringToUTF8(INFO_LINK_URL);

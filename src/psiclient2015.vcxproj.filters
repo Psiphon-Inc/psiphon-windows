@@ -577,4 +577,7 @@
     <Image Include="psiclient.ico" />
     <Image Include="systray-stopped.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="psiphon.manifest" />
+  </ItemGroup>
 </Project>

@@ -697,6 +697,11 @@ string GetClientPlatform()
         string(CLIENT_PLATFORM)
         + "_" + WStringToUTF8(sysInfo.version)
         + "_" + WStringToUTF8(mshtmlVersion);
+
+    if (IsOSLegacy()) {
+        cachedResult += "_LEGACY";
+    }
+
     return cachedResult;
 }
 

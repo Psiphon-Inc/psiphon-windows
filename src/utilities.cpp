@@ -1839,9 +1839,32 @@ wstring GetDeviceRegion()
     return L"";
 }
 
-bool IsOSSupported()
+// This define and function are copied from the Windows 10.0 SDK. When we are ready to
+// upgrade the Target Version (which will properly give us access to these), we should
+// remove these.
+#define _WIN32_WINNT_WIN10                  0x0A00
+VERSIONHELPERAPI IsWindows10OrGreater()
 {
-    return IsWindows7OrGreater();
+    return IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_WIN10), LOBYTE(_WIN32_WINNT_WIN10), 0);
+}
+
+/// Should be true iff this is the last version to support a deprecated Windows OS version
+/// (or versions). It will result in upgrades being blocked for users on that OS version.
+/// When changing this value, the versions used in IsOSUnsupported and/or IsOSLegacy
+/// must change.
+#define IS_LEGACY_BUILD     true
+
+bool IsOSUnsupported()
+{
+    // We no longer support Windows XP or Vista.
+    return !IsWindows7OrGreater();
+}
+
+bool IsOSLegacy()
+{
+    // Windows 7, 8, and 8.1 are considered legacy -- this is the last build
+    // that will support them.
+    return IS_LEGACY_BUILD && IsWindows7OrGreater() && !IsWindows10OrGreater();
 }
 
 void EnforceOSSupport(HWND parentWnd, const wstring& message)

@@ -228,9 +228,19 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
         out.oldClientUpgradeFilename = filesystem::path(shortDataStoreDirectory).append(UPGRADE_EXE_NAME);
 
         config["MigrateUpgradeDownloadFilename"] = WStringToUTF8(out.oldClientUpgradeFilename);
-        config["UpgradeDownloadURLs"] = LoadJSONArray(UPGRADE_URLS_JSON);
         config["UpgradeDownloadClientVersionHeader"] = string("x-amz-meta-psiphon-client-version");
-        config["EnableUpgradeDownload"] = true;
+        config["UpgradeDownloadURLs"] = LoadJSONArray(UPGRADE_URLS_JSON);
+
+        // We do not want to upgrade if we're running on a legacy version of Windows.
+        if (IsOSLegacy())
+        {
+            my_print(NOT_SENSITIVE, false, _T("Legacy OS detected; disabling upgrade via tunnel-core"));
+            config["EnableUpgradeDownload"] = false;
+        }
+        else
+        {
+            config["EnableUpgradeDownload"] = true;
+        }
 
         // Newer versions of tunnel-core download the upgrade file to its own data directory. Both oldClientUpgradeFilename and
         // newClientUpgradeFilename should be deleted when Psiphon starts if they exist.

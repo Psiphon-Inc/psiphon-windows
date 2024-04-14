@@ -326,9 +326,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PSIPHON_CREATED:
     {
         // Display client version number
-        my_print(NOT_SENSITIVE, false, (tstring(_T("Client Version: ")) + UTF8ToWString(CLIENT_VERSION)).c_str());
+        string clientVersion = "Client Version: "s + CLIENT_VERSION;
+        if (IsOSLegacy())
+        {
+            clientVersion += " LEGACY";
+        }
+        my_print(NOT_SENSITIVE, false, UTF8ToWString(clientVersion).c_str());
 
-        if (!IsOSSupported())
+        if (IsOSUnsupported())
         {
             // We're not showing the main app window, as it will probably be garbage
             // and the app should close momentarily.
