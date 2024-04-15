@@ -179,9 +179,9 @@ bool IsOSUnsupported();
 /// upgrades must be disabled.
 bool IsOSLegacy();
 
-/// Check is the current Windows version is support. If it's not, show a message
+/// Check if the current Windows version is supported. If it's not, show a message
 /// and terminate the app.
-void EnforceOSSupport(HWND parentWnd, const wstring& message);
+void EnforceOSSupport(HWND parentWnd, const wstring& message, const string& faqURL);
 
 /// Copy the given string to the clipboard. Returns true on success.
 bool CopyToClipboard(HWND mainWnd, const tstring& s);

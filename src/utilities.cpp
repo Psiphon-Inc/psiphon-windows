@@ -1867,14 +1867,19 @@ bool IsOSLegacy()
     return IS_LEGACY_BUILD && IsWindows7OrGreater() && !IsWindows10OrGreater();
 }
 
-void EnforceOSSupport(HWND parentWnd, const wstring& message)
+void EnforceOSSupport(HWND parentWnd, const wstring& message, const string& faqURL)
 {
-    if (IsOSSupported())
+    if (!IsOSUnsupported())
     {
         return;
     }
 
-    const wstring url = L"https://psiphon3.com/faq.html#windows-xp-eol";
+    wstring fragment = L"#windows-7-eol";
+    if (!IsWindows7OrGreater()) {
+        fragment = L"#windows-xp-eol";
+    }
+
+    const wstring url = UTF8ToWString(faqURL) + fragment;
     const wstring messageURL = message + L"\n" + url;
 
     ::MessageBoxW(parentWnd, messageURL.c_str(), L"Psiphon", MB_OK | MB_ICONSTOP);

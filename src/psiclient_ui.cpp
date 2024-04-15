@@ -365,7 +365,7 @@ static void AddStringTableEntry(const string& utf8EntryJson)
 
     // As soon as the OS_UNSUPPORTED string is available, do the OS check.
     if (key == STRING_KEY_OS_UNSUPPORTED) {
-        EnforceOSSupport(g_hWnd, wideStr);
+        EnforceOSSupport(g_hWnd, wideStr, FAQ_URL);
     }
 }
 
