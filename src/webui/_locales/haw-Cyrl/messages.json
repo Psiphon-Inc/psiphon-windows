@@ -40,8 +40,8 @@
     "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons). The word 'Psiphon' must not be translated or transliterated."
   },
   "appbackend#os-unsupported": {
-    "message": "[Ƥşīīƥħǿǿƞ ƞǿǿ ŀǿǿƞɠḗḗř şŭŭƥƥǿǿřŧş Ẇīīƞḓǿǿẇş ẊƤ ǿǿř Ṽīīşŧȧȧ.\nƤŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř ẇḗḗƀşīīŧḗḗ ƒǿǿř ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ.]",
-    "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
+    "message": "[Ƥşīīƥħǿǿƞ ǿǿƞŀẏ şŭŭƥƥǿǿřŧş Ẇīīƞḓǿǿẇş 10 ȧȧƞḓ ƞḗḗẇḗḗř.\nƤŀḗḗȧȧşḗḗ ṽīīşīīŧ ǿǿŭŭř ẇḗḗƀşīīŧḗḗ ƒǿǿř ḿǿǿřḗḗ īīƞƒǿǿřḿȧȧŧīīǿǿƞ.]",
+    "description": "Appears in a message box when Psiphon is run on an unsupported version of Windows. Is followed by a URL."
   },
   "appbackend#state-connected-body": {
     "message": "[Ḗḗẋƥŀǿǿřḗḗ ƀḗḗẏǿǿƞḓ ẏǿǿŭŭř ƀǿǿřḓḗḗřş!]",
