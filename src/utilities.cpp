@@ -1852,19 +1852,17 @@ VERSIONHELPERAPI IsWindows10OrGreater()
 /// (or versions). It will result in upgrades being blocked for users on that OS version.
 /// When changing this value, the versions used in IsOSUnsupported and/or IsOSLegacy
 /// must change.
-#define IS_LEGACY_BUILD     true
+#define IS_LEGACY_BUILD     false
 
 bool IsOSUnsupported()
 {
-    // We no longer support Windows XP or Vista.
-    return !IsWindows7OrGreater();
+    // We no longer support Windows XP, Vista, 7, 8, 8.1
+    return !IsWindows10OrGreater();
 }
 
 bool IsOSLegacy()
 {
-    // Windows 7, 8, and 8.1 are considered legacy -- this is the last build
-    // that will support them.
-    return IS_LEGACY_BUILD && IsWindows7OrGreater() && !IsWindows10OrGreater();
+    return IS_LEGACY_BUILD;
 }
 
 void EnforceOSSupport(HWND parentWnd, const wstring& message, const string& faqURL)
