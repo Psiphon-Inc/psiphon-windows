@@ -319,6 +319,10 @@
     "message": "Latvia",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
   },
+  "settings#egress-region#select-lt": {
+    "message": "Lithuania",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Lithuania will be used."
+  },
   "settings#egress-region#select-id": {
     "message": "Indonesia",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Indonesia will be used."
