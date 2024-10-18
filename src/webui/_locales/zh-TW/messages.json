@@ -112,11 +112,11 @@
         "description": "Settings section heading. If the user clicks this, the 'Split Tunnel' section will expand and can be edited. If 'split tunnel' is enabled, if the user is trying to get to a website in his/her own country, they will connect to it directly, instead of through Psiphon."
     },
     "settings#split-tunnel#help-text": {
-        "message": "If enabled, requests made to servers within your home country will not be tunneled through Psiphon.",
+        "message": "如果啟用，連到身處國家的伺服器將不會通過 Psiphon 墜道。",
         "description": "Text explaining to the user what the 'Split Tunnel' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#split-tunnel#reason": {
-        "message": "Websites within your home country are generally not blocked, so enabling this option will give you faster access to those sites and can sometimes reduce ISP data usage costs.",
+        "message": "您所在國家/地區境內網站通常不會被封鎖，啟用此選項將可以更快地訪問這些網站，有時還可降低  ISP 流量使用成本。",
         "description": "Help text in the 'Split Tunnel' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#split-tunnel#enable-label": {
@@ -124,11 +124,11 @@
         "description": "The label on the checkbox that enables 'Split Tunnel'."
     },
     "settings#split-tunnel-chinese-sites#enable-label": {
-        "message": "Don't proxy Chinese websites",
+        "message": "不要代理中文網站",
         "description": "The label on the checkbox that enables 'Split Tunnel' for Chinese websites, regardless of what region the user is in."
     },
     "settings#split-tunnel-chinese-sites#note": {
-        "message": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
+        "message": "<strong>警告：</strong>此功能所用的資料並不一定可靠。 啟用此功能時請務必小心，因為某些受審查的網站可能無意中被排除在代理之外。",
         "description": "A note cautioning the user that this feature may result in some sites being unproxied unintentionally."
     },
     "settings#disable-timeouts#heading": {
@@ -140,7 +140,7 @@
         "description": "Text explaining to the user what the 'Disable Timeouts' setting does if enabled. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#disable-timeouts#reason": {
-        "message": "When enabling this for a very slow network connection, you are less likely to experience unexpected disconnections.",
+        "message": "因網路連線很快而啟用此功能時，不太可能遇到意外斷線。",
         "description": "Help text in the 'Disable Timeouts' settings section explaining to the user why they might want to modify (enable) the setting."
     },
     "settings#disable-timeouts#enable-label": {
@@ -348,11 +348,11 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Malaysia will be used."
     },
     "settings#egress-region#description": {
-        "message": "Psiphon has servers in many different countries and regions. Using a Psiphon server in a region close to your home country will generally provide a better network connection, but you may wish to access websites and services like you are virtually in a specific country or region.",
+        "message": "Psiphon 在許多國家和地區擁有伺服器。 您所在國家/地區附近的地區使用 Psiphon 伺服器通常能提供更好的網路連線，但您可能希望像在特定國家或地區一樣存取網站和服務。",
         "description": "Help text in the 'Psiphon Server Region' settings section explaining what the option is and why the user may want to override the default ('best') setting value. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#default": {
-        "message": "Choosing the default <strong>“Best Performance”</strong> option allows Psiphon to automatically choose a server, which will generally result in the best network connection.",
+        "message": "選擇預設的 <strong>“最佳效能”</strong> 選項，讓 Psiphon 自行選擇最優網路連線的伺服器。",
         "description": "Help text below the 'Psiphon Server Region' combo box. It explains to the user what the default (and best) option is. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#egress-region#invalid-error-msg": {
@@ -364,7 +364,7 @@
         "description": "Title text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured."
     },
     "settings#egress-region#error-modal-body-http": {
-        "message": "You have configured Psiphon to use a server in a specific region.<br>\nHowever, that region is no longer available.<br>\nYou must choose a new region or change to the default “Best Performance” choice.",
+        "message": "已將 Psiphon 設定為使用特定區域中的伺服器。<br>\n但是，該區域已不可用。<br>\n須選擇新區域或變更為預設的“最佳效能”選項。",
         "description": "Descriptive body text of the error modal dialog shown when it is detected that the user has an invalid 'Psiphon Server Region' currently configured. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#local-proxy-ports#heading": {
@@ -408,15 +408,15 @@
         "description": "Main text in the 'Local Proxy Port Conflict' dialog box. This is shown when the conflict is with the SOCKS proxy port, rather than the HTTP proxy port. The word 'Psiphon' must not be translated or transliterated."
     },
     "settings#expose-local-proxies-to-lan#help-text": {
-        "message": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
+        "message": "如果網路上有其他裝置（例如智慧電視或遊戲機），可以讓它們連接 Psiphon 時使用這些 HTTP 和 SOCKS 代理程式。",
         "description": "Help text explaining the setting to allow other devices on the network to use the local Psiphon proxies. Smart TV refers to televisions that have Internet connectivity and apps that access Internet services."
     },
     "settings#expose-local-proxies-to-lan#hint": {
-        "message": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
+        "message": "<strong>提示：</strong>應至少指定某一個上述連接埠數字才能使用此功能。 本地代理的地址將顯示在日誌中。 ",
         "description": "Helpful hint suggesting to set port numbers for the local Psiphon proxies when using the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#expose-local-proxies-to-lan#enable-label": {
-        "message": "Allow other devices on your network to use the local Psiphon proxies",
+        "message": "允許網路上的其他裝置使用本機 Psiphon 代理",
         "description": "Label for the setting to allow other devices on the network to use the local Psiphon proxies."
     },
     "settings#upstream-proxy#heading": {
@@ -460,11 +460,11 @@
         "description": "Label for the checkbox that allows the user to override the default 'upstream proxy' usage and totally disable the feature."
     },
     "settings#upstream-proxy#set-hostname-error-msg": {
-        "message": "You must provide a Hostname, or leave all Upstream Proxy fields blank for automatic selection.",
+        "message": "須提供主機名稱，或將所有上游代理欄位留空以便自動選擇。",
         "description": "Error message that is shown if the user enters a value for one of the other upstream proxy fields but not for 'hostname', which is required. Alternatively, the user can leave all fields blank to allow the automatic behaviour."
     },
     "settings#upstream-proxy#set-username-error-msg": {
-        "message": "You must provide a Username if you are setting Password or Domain; or leave all authentication fields blank for no authentication.",
+        "message": "若要設定密碼或域名，請提供用戶名稱； 或將所有身份驗證欄位留空不進行身份驗證。",
         "description": "Error message that is shown if the user enters a value for one of 'Password' or 'Domain', but does not provide a 'Username' -- this is not valid, as username is are required. Alternatively, the user can leave all authentication fields blank to use an upstream proxy which doesn't require authentication."
     },
     "settings#upstream-proxy#error-modal-title": {
@@ -596,7 +596,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#license-agree": {
-        "message": "By using Psiphon you signal that you agree to the terms of the <a href=\"https://psiphon.ca/license.html\">End-User License</a> and <a href=\"https://psiphon.ca/privacy.html\">Privacy Policy</a>.",
+        "message": "使用 Psiphon 即表示同意以下條款 <a href=\"https://psiphon.ca/license.html\">終端用戶許可</a> 和 <a href=\"https://psiphon.ca/privacy.html\">隱私權政策</a>。",
         "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
@@ -668,23 +668,23 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+        "message": "Psiphon 不再支援 Windows XP 或 Vista。\n請訪問我們的網站了解更多資訊。",
         "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
-        "message": "PsiCash transaction error",
+        "message": "PsiCash 交易出錯",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-error-body": {
-        "message": "Your PsiCash transaction attempt failed unexpectedly.",
+        "message": "PsiCash 交易發生無預警錯誤。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ExistingTransaction-title": {
-        "message": "PsiCash purchase already exists",
+        "message": "PsiCash 購買已存在。",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ExistingTransaction-body": {
-        "message": "You have an existing PsiCash purchase of this type. Another purchase of this type is not allowed until the previous one expires. Your PsiCash state will be refreshed now.",
+        "message": "您已 購買此類 PsiCash。 在前一次購買到期之前，無法再次購買同類產品。 您的 PsiCash 狀態會立即刷新。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InsufficientBalance-title": {
@@ -692,35 +692,35 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InsufficientBalance-body": {
-        "message": "You do not have sufficient PsiCash balance for this purchase.",
+        "message": "沒有足夠的 PsiCash 餘額來完成此次購買。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The user doesn't have enough PsiCash to make the attempted purchase. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionAmountMismatch-title": {
-        "message": "PsiCash purchase price mismatch",
+        "message": "PsiCash 購買價格不符",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionAmountMismatch-body": {
-        "message": "PsiCash purchase prices are out-of-date. Your PsiCash state will be refreshed now.",
+        "message": "PsiCash 購買價格已過時。 您的 PsiCash 狀態會刷新。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionTypeNotFound-title": {
-        "message": "PsiCash purchase type not found",
+        "message": "找不到 PsiCash 購買種類",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-TransactionTypeNotFound-body": {
-        "message": "The product you are trying to buy no longer exists. You may need to update or reinstall the application.",
+        "message": "試圖購買的產品已不存在。 可能需要更新或重新安裝該應用程式。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-title-tracker": {
-        "message": "Invalid PsiCash state",
+        "message": "無效的 PsiCash  狀態",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-tracker": {
-        "message": "Your PsiCash state is invalid. Try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "message": "您的 PsiCash 狀態無效。 嘗試重新啟動應用程式。 如果不起作用，則需<a href=\"https://psiphon3.com/faq.html#clear-windows-data\">清理本地儲存</a>。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. This error is extremely rare and should only occur if there's data corruption. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-title-account": {
-        "message": "PsiCash login expired",
+        "message": "PsiCash 登入逾時",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
@@ -732,23 +732,23 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-body": {
-        "message": "The PsiCash server responded with an error while trying to make the purchase. Please retry your purchase later.",
+        "message": "欲購買時，PsiCash 伺服器回應錯誤。 請稍後重試購買。",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-speedboost-active": {
-        "message": "Speed&nbsp;Boost active for %s",
+        "message": "Speed&nbsp;Boost 運作中 %s",
         "description": "When the user has Speed Boost active, this shows them how much time they have remaining. '%s' is like 'an hour' or '30 minutes' (localized). This text will be shown on a narrow button that should have at most 3 lines. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-buypsi": {
-        "message": "Buy PsiCash",
+        "message": "購買 PsiCash",
         "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user has no PsiCash at all. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-buymorepsi": {
-        "message": "Buy more PsiCash",
+        "message": "購買更多的 PsiCash",
         "description": "Label for a button/link that opens a store web page were users can spend money to buy PsiCash. At this point, the user already has some PsiCash, but may wish to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#ui-nsfbalance-buttontext": {
-        "message": "Needed for Speed&nbsp;Boost",
+        "message": "需要 Speed&nbsp;Boost",
         "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-speedboost-button": {
@@ -772,19 +772,19 @@
         "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
-        "message": "Starting Speed&nbsp;Boost!",
+        "message": "開始 Speed&nbsp;Boost!",
         "description": "Label for a disabled button. The user has clicked the button in order to buy an hour of Speed Boost, and now the purchase is completing and Speed Boost is activating. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-create-account": {
-        "message": "Create an account to protect your PsiCash!",
+        "message": "創建帳戶以保障 PsiCash!",
         "description": "Text for a link displayed when the user does not have a PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language. It encourages them to make one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-balance-header": {
-        "message": "Balance:",
+        "message": "餘額：",
         "description": "Text before showing the user's PsiCash balance. So it will appear like: 'Balance: Ⓟ100'."
     },
     "psicash#pane-log-in": {
-        "message": "Log In!",
+        "message": "登入!",
         "description": "Text on a button that will lead the user to log into their PsiCash account. This is an strong suggestion, hence the exclamation point -- use whatever makes sense in your language."
     },
     "psicash#pane-log-out": {
@@ -792,23 +792,23 @@
         "description": "Text on a button that will log the user out of their PsiCash account."
     },
     "psicash#pane-manage-web": {
-        "message": "Manage on the web",
+        "message": "在網頁上進行管理",
         "description": "Text for a link to a web site where users can manage their PsiCash account."
     },
     "psicash#pane-create-account-plea": {
-        "message": "Creating a PsiCash account will help preserve your PsiCash if you clear the app's storage or use Psiphon on another device. <a href=\"https://psiphon.ca/faq.html#psicash-account\">Learn more.</a>",
+        "message": "如果清除應用程式的儲存空間或在其他裝置上使用 Psiphon，建立 PsiCash 帳戶將有助於保留您的 PsiCash。<a href=\"https://psiphon.ca/faq.html#psicash-account\">了解詳情</a>",
         "description": "Text shown below the PsiCash balance when the user does not have a PsiCash account. 'Learn more' is a link to an FAQ entry explaining the benefits of creating an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-l2tp-incompatible": {
-        "message": "Speed Boost cannot be used while Psiphon is connected in <a href=\"#\">L2TP/IPSec transport mode</a>.",
+        "message": "以<a href=\"#\">L2TP/IPSec 傳輸模式</a>連接 Psiphon 時無法使用 Speed Boost 。",
         "description": "A message shown when L2TP/IPSec mode is enabled in Psiphon. Speed Boost cannot be used in this mode."
     },
     "psicash#pane-must-log-in": {
-        "message": "You must log in to use PsiCash.",
+        "message": "需登入方可使用 PsiCash。",
         "description": "Message shown when the user was logged in with an account and then logged out. It's telling the user that they have to log in again. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-create-new-account": {
-        "message": "Create a New Account",
+        "message": "創建新帳戶",
         "description": "Text on button that user can click to create a new account (opens an external web page)."
     },
     "psicash#pane-speed-port-limits-head": {
@@ -820,19 +820,19 @@
         "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-speed-boost-cta": {
-        "message": "Unleash the full potential of Psiphon with Speed&nbsp;Boost!",
+        "message": "通過 Speed&nbsp;Boost 檡放 Psiphon 的全部潛力！ ",
         "description": "Text encouraging the user to purchase Speed Boost. 'Unleash' can translated to something like 'unlock', 'release', 'enable', 'amplify', or generally 'make a lot better'. 'Psiphon' must not be translated/transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-more-psicash-header": {
-        "message": "You need more PsiCash!",
+        "message": "需要更多的 PsiCash !",
         "description": "Header for a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-need-more-psicash-body": {
-        "message": "In order activate Speed Boost, you need to buy more PsiCash.",
+        "message": "欲激活 Speed Boost，請購買更多的 PsiCash。",
         "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-psicash-visit-store": {
-        "message": "Need PsiCash? Visit our store to buy more!",
+        "message": "需要 PsiCash ? 請到我們的商店訂購！",
         "description": "Text encouraging the user to buy PsiCash (with real money). The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#overlay-logging-in": {
@@ -840,15 +840,15 @@
         "description": "Text on a screen shown while the user's log-in request is in progress."
     },
     "psicash#overlay-logging-out": {
-        "message": "Logging out…",
+        "message": "登出....",
         "description": "Text on a screen shown while the user's log-out request is in progress."
     },
     "psicash#modal-create-psicash-account-header": {
-        "message": "Create a PsiCash Account",
+        "message": "建立 PsiCash 帳戶",
         "description": "Header of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-body": {
-        "message": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
+        "message": "強烈建議在購買 PsiCash 前建先立一個 PsiCash 帳戶。 擁有帳戶可在不同裝置間共享餘額並保護您的購買。",
         "description": "Body of a modal dialog that appears when the user tries to buy PsiCash with real money but doens't have an account. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-create-psicash-account-create-button": {
@@ -884,7 +884,7 @@
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {
-        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">Create a new account</a> or log in below.",
+        "message": "<a class=\"js-psicash-account-signup\" href=\"#\">建立新帳戶</a>或在下方登入。",
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
@@ -908,7 +908,7 @@
         "description": "Text on the cancel button in the PsiCash account login modal dialog."
     },
     "psicash#alert#buyspeedboost-purchase-complete": {
-        "message": "Speed Boost started!",
+        "message": "Speed Boost 已啟動！",
         "description": "A non-modal alert shown when a new Speed Boost has been activated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#modal-logout-header": {
@@ -916,7 +916,7 @@
         "description": "Header of modal dialog shown when the user attempts to log out of their PsiCash account and a message results. 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-logout-error-body": {
-        "message": "You logout attempt failed unexpectedly. Please try restarting the application. If that doesn't work, you will need to <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">clear your local storage</a>.",
+        "message": "登出嘗試失敗。 請嘗試重新啟動應用程式。 如果不起作用，則需 <a href=\"https://psiphon3.com/faq.html#clear-windows-data\">清理本地儲存</a>。",
         "description": "Body of modal dialog shown when the user attempts to log out of their PsiCash account and an unexpected error occurs. Please don't modify the link URL."
     },
     "positive-value-indicator": {
@@ -932,31 +932,31 @@
         "description": "Body text of a modal dialog shown when the user tries to use (spend, buy, etc.) PsiCash, if they not currently connected. 'Use' here means buy, spend, or otherwise interact with. 'Psiphon' must not be translated/transliterated. 'PsiCash' must not be translated/transliterated."
     },
     "psicash#init-error-title": {
-        "message": "PsiCash initialization error",
+        "message": "PsiCash 安裝錯誤",
         "description": "Title of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-unrecovered": {
-        "message": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been lost. PsiCash will not be usable. You can try restarting the application to recover from the problem.",
+        "message": "PsiCash 初始化失敗。 可能是檔案系統問題，例如磁碟空間不足。 已遺失餘額與其它相關狀態資料，PsiCash 無法使用。 您可以嘗試重新啟動應用程式來恢復。",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#init-error-body-recovered": {
-        "message": "PsiCash failed to initialize. This is probably due to a file system problem, such as being out of disk space. Your balance and other state have been reset.",
+        "message": "PsiCash 初始化失敗。 這可能是檔案系統問題，例如磁碟空間不足。 已重設您的餘額和其他狀態。",
         "description": "Body text of a modal dialog shown when the PsiCash library fails to initialize. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#psiphon-speed": {
-        "message": "Psiphon<br>Speed",
+        "message": "Psiphon<br>網速",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept narrow and short -- only two or three lines of one or two words each. Use hard breaks (like <br>) to separate lines (perhaps with hyphens), and soft break indicators (like &shy; or <wbr> or &#8203;) to indicate were long words can be broken."
     },
     "psicash#psiphon-speed-nobreak": {
-        "message": "Psiphon Speed",
+        "message": "Psiphon 網速",
         "description": "Text on a badge next to an image or gauge that will indicate 'fast' or 'slow'. This is the current Psiphon tunnel speed limit. Speed Boost is required in order to get the fastest speed. The word 'Psiphon' must not be translated or transliterated. The word 'Psiphon' can be dropped if necessary to get a meaning like 'speed limit'. This text must be kept short."
     },
     "psicash#corner-logged-out": {
-        "message": "You are logged out of PsiCash",
+        "message": "已登出 PsiCash",
         "description": "Message shown to the user when they have a PsiCash account, but they are logged out. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#more-ellipsis": {
-        "message": "More…",
+        "message": "更多…",
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {
@@ -972,7 +972,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#invalid-credentials-body-multiple-attempts": {
-        "message": "Would you instead like to <a class=\"js-psicash-account-signup\" href=\"#\">create an account</a> or <a class=\"js-psicash-forgot-account\" href=\"#\">recover your account</a>?",
+        "message": "想要 <a class=\"js-psicash-account-signup\" href=\"#\">建立帳戶</a> 還是 <a class=\"js-psicash-forgot-account\" href=\"#\">回復帳戶</a>?",
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
@@ -980,7 +980,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
-        "message": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
+        "message": "PsiCash 伺服器顥示登入請求無效。 請重新輸入登入資訊重試。",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a 'bad request' error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#success-modal-title": {
@@ -992,7 +992,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#tokens-expired": {
-        "message": "PsiCash login expired. Please log back in.",
+        "message": "PsiCash 登入已過期。 請重新登入。",
         "description": "An alert shown when the user's PsiCash account tokens expire. This is a normal occurrence (once per year), and the user needs to log into their PsiCash account again to continue to use it. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#logged-out": {
@@ -1004,43 +1004,43 @@
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "<p>Apps not working?</p>\n<p>Some internet traffic is not supported without an active Speed Boost. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.</p>",
+        "message": "<p>應用程式無法正常運作？</p>\n<p>某些網路流量需要 Speed Boost 支援。 使用 PsiCash 激活 Speed Boost ，釋放 Psiphon 體驗的全部潛力。\n\n</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
-        "message": "Apps not working?",
+        "message": "應用程式無法正常運作？",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
-        "message": "Activate Speed Boost to unlock the full potential of your Psiphon experience.",
+        "message": "使用 PsiCash 激活 Speed Boost ，釋放 Psiphon 體驗的全部潛力。",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
-        "message": "Disallowed Traffic Alert",
+        "message": "禁用流量警告",
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
-        "message": "Some types of internet traffic are not supported without an active Speed Boost. When such traffic is disallowed, an alert is shown. (Re-enabling will require a reconnection.)",
+        "message": "某些類型的網路流量必須用到 Speed Boost 支援。 當此類流量被禁止時，會顯示警報。 （重新啟用需要重新連線。）",
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {
-        "message": "Disable disallowed traffic alerts",
+        "message": "關閉禁用流量警告",
         "description": "The label on the checkbox that disables the 'Disallowed Traffic Alert'."
     },
     "ui#alert#url-copied-to-clipboard": {
-        "message": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
+        "message": "URL複製到剪貼簿。<br>如果瀏覽器無法打開，請將 URL 貼到瀏覽器網址列。",
         "description": "Sometimes when the Psiphon UI tries to open an external URL in the browser, it fails to open. This message indicates to the user that URL has been copied to the Windows system clipboard and is available for pasting into a browser. `<br>` may be used to split the message over two lines to ensure the alert doesn't take too much horizontal space."
     },
     "notice#psiphonui-fileerror-error-title": {
-        "message": "File Access Error",
+        "message": "檔案存取錯誤",
         "description": "Title of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "notice#psiphonui-fileerror-error-body": {
-        "message": "<p>Psiphon cannot access a file it needs in order to work properly.</p>\n<p>Close the Psiphon application, delete the file listed below, and try running Psiphon again.</p>",
+        "message": "<p>Psiphon 無法存取正常運作所需的檔案。</p>\n<p>關閉 Psiphon 應用程式，刪除下列檔案，然後嘗試再次執行 Psiphon。</p>",
         "description": "Body text of modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly. If this occurs, the user cannot connect and must take manual action to fix it. The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#psiphonui-fileerror-detail-preamble": {
-        "message": "Filename and error message:",
+        "message": "檔名與錯誤訊息：",
         "description": "Preamble text before technical details displayed in a modal error message shown to user when Psiphon cannot read/write/delete a file that it needs to access in order to function properly."
     },
     "banner#sponsored-by": {
