@@ -276,7 +276,7 @@
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Finland will be used."
     },
     "settings#egress-region#select-is": {
-        "message": "Ісляндія",
+        "message": "Ісландія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Iceland will be used."
     },
     "settings#egress-region#select-ie": {
@@ -314,6 +314,10 @@
     "settings#egress-region#select-lv": {
         "message": "Латвія",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
+    },
+    "settings#egress-region#select-lt": {
+        "message": "Литва",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Lithuania will be used."
     },
     "settings#egress-region#select-id": {
         "message": "Індонезія",
@@ -668,11 +672,11 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphon більше не підтримує Windows XP та Vista.\nДокладніше можна прочитати на нашому сайті.",
-        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
+        "message": "Psiphon підтримує лише Windows 10 та новіші версії.\nБудь ласка, відвідайте на вебсайт для додаткової інформації.",
+        "description": "Appears in a message box when Psiphon is run on an unsupported version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
-        "message": "PsiCash помилка передачі",
+        "message": "PsiCash помилка транзакції",
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-error-body": {

@@ -13459,12 +13459,12 @@ try {
 "object"!=typeof JSON&&(JSON={}),function(){"use strict";var rx_one=/^[\],:{}\s]*$/,rx_two=/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,rx_three=/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,rx_four=/(?:^|:|,)(?:\s*\[)+/g,rx_escapable=/[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,rx_dangerous=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta,rep;function f(t){return t<10?"0"+t:t}function this_value(){return this.valueOf()}function quote(t){return rx_escapable.lastIndex=0,rx_escapable.test(t)?'"'+t.replace(rx_escapable,function(t){var e=meta[t];return"string"==typeof e?e:"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+t+'"'}function str(t,e){var r,n,o,u,f,a=gap,i=e[t];switch(i&&"object"==typeof i&&"function"==typeof i.toJSON&&(i=i.toJSON(t)),"function"==typeof rep&&(i=rep.call(e,t,i)),typeof i){case"string":return quote(i);case"number":return isFinite(i)?String(i):"null";case"boolean":case"null":return String(i);case"object":if(!i)return"null";if(gap+=indent,f=[],"[object Array]"===Object.prototype.toString.apply(i)){for(u=i.length,r=0;r<u;r+=1)f[r]=str(r,i)||"null";return o=0===f.length?"[]":gap?"[\n"+gap+f.join(",\n"+gap)+"\n"+a+"]":"["+f.join(",")+"]",gap=a,o}if(rep&&"object"==typeof rep)for(u=rep.length,r=0;r<u;r+=1)"string"==typeof rep[r]&&(o=str(n=rep[r],i))&&f.push(quote(n)+(gap?": ":":")+o);else for(n in i)Object.prototype.hasOwnProperty.call(i,n)&&(o=str(n,i))&&f.push(quote(n)+(gap?": ":":")+o);return o=0===f.length?"{}":gap?"{\n"+gap+f.join(",\n"+gap)+"\n"+a+"}":"{"+f.join(",")+"}",gap=a,o}}"function"!=typeof Date.prototype.toJSON&&(Date.prototype.toJSON=function(){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+f(this.getUTCMonth()+1)+"-"+f(this.getUTCDate())+"T"+f(this.getUTCHours())+":"+f(this.getUTCMinutes())+":"+f(this.getUTCSeconds())+"Z":null},Boolean.prototype.toJSON=this_value,Number.prototype.toJSON=this_value,String.prototype.toJSON=this_value),meta={"\b":"\\b","\t":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},JSON.stringify=function(t,e,r){var n;if(gap="",indent="","number"==typeof r)for(n=0;n<r;n+=1)indent+=" ";else"string"==typeof r&&(indent=r);if(rep=e,e&&"function"!=typeof e&&("object"!=typeof e||"number"!=typeof e.length))throw new Error("JSON.stringify");return str("",{"":t})},JSON.parse=function(text,reviver){var j;function walk(t,e){var r,n,o=t[e];if(o&&"object"==typeof o)for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(void 0!==(n=walk(o,r))?o[r]=n:delete o[r]);return reviver.call(t,e,o)}if(text=String(text),rx_dangerous.lastIndex=0,rx_dangerous.test(text)&&(text=text.replace(rx_dangerous,function(t){return"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})),rx_one.test(text.replace(rx_two,"@").replace(rx_three,"]").replace(rx_four,"")))return j=eval("("+text+")"),"function"==typeof reviver?walk({"":j},""):j;throw new SyntaxError("JSON.parse")}}();
 </script>
   <![endif]--><script>(function() {
-    var fi, n, t, ci = "3.10.2", li = 1, si = 2, pi = 4, hi = 8, vi = 16, _i = 32, gi = 64, yi = 128, di = 256, wi = 30, mi = "...", xi = 150, bi = 16, Ai = 200, ji = 1, Oi = 2, Ii = "Expected a function", ki = "__lodash_placeholder__", Ri = "[object Arguments]", Ei = "[object Array]", Ci = "[object Boolean]", Si = "[object Date]", Ui = "[object Error]", $i = "[object Function]", r = "[object Map]", Fi = "[object Number]", Wi = "[object Object]", Li = "[object RegExp]", e = "[object Set]", Ni = "[object String]", u = "[object WeakMap]", Ti = "[object ArrayBuffer]", Pi = "[object Float32Array]", Bi = "[object Float64Array]", zi = "[object Int8Array]", Di = "[object Int16Array]", qi = "[object Int32Array]", Mi = "[object Uint8Array]", Ki = "[object Uint8ClampedArray]", Vi = "[object Uint16Array]", Yi = "[object Uint32Array]", Gi = /\b__p \+= '';/g, Ji = /\b(__p \+=) '' \+/g, Xi = /(__e\(.*?\)|\b__t\)) \+\n'';/g, Zi = /&(?:amp|lt|gt|quot|#39|#96);/g, Hi = /[&<>"'`]/g, Qi = RegExp(Zi.source), na = RegExp(Hi.source), ta = /<%-([\s\S]+?)%>/g, ra = /<%([\s\S]+?)%>/g, ea = /<%=([\s\S]+?)%>/g, ua = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, oa = /^\w*$/, ia = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g, aa = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g, fa = RegExp(aa.source), ca = /[\u0300-\u036f\ufe20-\ufe23]/g, la = /\\(\\)?/g, sa = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, pa = /\w*$/, ha = /^0[xX]/, va = /^\[object .+?Constructor\]$/, _a = /^\d+$/, ga = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g, ya = /($^)/, da = /['\n\r\u2028\u2029\\]/g, wa = (n = "[A-Z\\xc0-\\xd6\\xd8-\\xde]", 
+    var fi, n, t, ci = "3.10.2", li = 1, si = 2, pi = 4, hi = 8, vi = 16, _i = 32, gi = 64, yi = 128, di = 256, wi = 30, mi = "...", xi = 150, bi = 16, Ai = 200, ji = 1, Oi = 2, Ii = "Expected a function", ki = "__lodash_placeholder__", Ri = "[object Arguments]", Ei = "[object Array]", Ci = "[object Boolean]", Si = "[object Date]", Ui = "[object Error]", $i = "[object Function]", r = "[object Map]", Fi = "[object Number]", Wi = "[object Object]", Li = "[object RegExp]", e = "[object Set]", Ni = "[object String]", u = "[object WeakMap]", Ti = "[object ArrayBuffer]", qi = "[object Float32Array]", Pi = "[object Float64Array]", Bi = "[object Int8Array]", zi = "[object Int16Array]", Di = "[object Int32Array]", Mi = "[object Uint8Array]", Ki = "[object Uint8ClampedArray]", Vi = "[object Uint16Array]", Yi = "[object Uint32Array]", Gi = /\b__p \+= '';/g, Ji = /\b(__p \+=) '' \+/g, Xi = /(__e\(.*?\)|\b__t\)) \+\n'';/g, Zi = /&(?:amp|lt|gt|quot|#39|#96);/g, Hi = /[&<>"'`]/g, Qi = RegExp(Zi.source), na = RegExp(Hi.source), ta = /<%-([\s\S]+?)%>/g, ra = /<%([\s\S]+?)%>/g, ea = /<%=([\s\S]+?)%>/g, ua = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/, oa = /^\w*$/, ia = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g, aa = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g, fa = RegExp(aa.source), ca = /[\u0300-\u036f\ufe20-\ufe23]/g, la = /\\(\\)?/g, sa = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g, pa = /\w*$/, ha = /^0[xX]/, va = /^\[object .+?Constructor\]$/, _a = /^\d+$/, ga = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g, ya = /($^)/, da = /['\n\r\u2028\u2029\\]/g, wa = (n = "[A-Z\\xc0-\\xd6\\xd8-\\xde]", 
     t = "[a-z\\xdf-\\xf6\\xf8-\\xff]+", RegExp(n + "+(?=" + n + t + ")|" + n + "?" + t + "|" + n + "+|[0-9]+", "g")), ma = [ "Array", "ArrayBuffer", "Date", "Error", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Math", "Number", "Object", "RegExp", "Set", "String", "_", "clearTimeout", "isFinite", "parseFloat", "parseInt", "setTimeout", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "WeakMap" ], xa = [ "constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "toLocaleString", "toString", "valueOf" ], ba = -1, Aa = {};
-    Aa[Pi] = Aa[Bi] = Aa[zi] = Aa[Di] = Aa[qi] = Aa[Mi] = Aa[Ki] = Aa[Vi] = Aa[Yi] = !0, 
+    Aa[qi] = Aa[Pi] = Aa[Bi] = Aa[zi] = Aa[Di] = Aa[Mi] = Aa[Ki] = Aa[Vi] = Aa[Yi] = !0, 
     Aa[Ri] = Aa[Ei] = Aa[Ti] = Aa[Ci] = Aa[Si] = Aa[Ui] = Aa[$i] = Aa[r] = Aa[Fi] = Aa[Wi] = Aa[Li] = Aa[e] = Aa[Ni] = Aa[u] = !1;
     var ja = {};
-    ja[Ri] = ja[Ei] = ja[Ti] = ja[Ci] = ja[Si] = ja[Pi] = ja[Bi] = ja[zi] = ja[Di] = ja[qi] = ja[Fi] = ja[Wi] = ja[Li] = ja[Ni] = ja[Mi] = ja[Ki] = ja[Vi] = ja[Yi] = !0, 
+    ja[Ri] = ja[Ei] = ja[Ti] = ja[Ci] = ja[Si] = ja[qi] = ja[Pi] = ja[Bi] = ja[zi] = ja[Di] = ja[Fi] = ja[Wi] = ja[Li] = ja[Ni] = ja[Mi] = ja[Ki] = ja[Vi] = ja[Yi] = !0, 
     ja[Ui] = ja[$i] = ja[r] = ja[e] = ja[u] = !1;
     var o = {
         "À": "A",
@@ -13636,7 +13636,7 @@ try {
         }
         return -1;
     }
-    var Pa = function() {
+    var qa = function() {
         try {
             Object({
                 toString: 0
@@ -13650,22 +13650,22 @@ try {
             return "function" != typeof n.toString && "string" == typeof (n + "");
         };
     }();
-    function Ba(n) {
+    function Pa(n) {
         return !!n && "object" == typeof n;
     }
     function y(n) {
         return n <= 160 && 9 <= n && n <= 13 || 32 == n || 160 == n || 5760 == n || 6158 == n || 8192 <= n && (n <= 8202 || 8232 == n || 8233 == n || 8239 == n || 8287 == n || 12288 == n || 65279 == n);
     }
-    function za(n, t) {
+    function Ba(n, t) {
         for (var r = -1, e = n.length, u = -1, o = []; ++r < e; ) n[r] === t && (n[r] = ki, 
         o[++u] = r);
         return o;
     }
-    function Da(n) {
+    function za(n) {
         for (var t = -1, r = n.length; ++t < r && y(n.charCodeAt(t)); ) ;
         return t;
     }
-    function qa(n) {
+    function Da(n) {
         for (var t = n.length; t-- && y(n.charCodeAt(t)); ) ;
         return t;
     }
@@ -13673,13 +13673,13 @@ try {
         return a[n];
     }
     var Ka = function Va(n) {
-        var C = (n = n ? Ka.defaults(Oa.Object(), n, Ka.pick(Oa, ma)) : Oa).Array, t = n.Date, _ = n.Error, g = n.Function, e = n.Math, r = n.Number, y = n.Object, d = n.RegExp, u = n.String, w = n.TypeError, i = C.prototype, m = _.prototype, x = y.prototype, b = u.prototype, o = g.prototype.toString, A = x.hasOwnProperty, a = 0, j = x.toString, f = Oa._, c = d("^" + o.call(A).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), l = n.ArrayBuffer, O = n.clearTimeout, s = n.parseFloat, p = e.pow, h = x.propertyIsEnumerable, v = zt(n, "Set"), I = n.setTimeout, k = i.splice, R = n.Uint8Array, E = zt(n, "WeakMap"), S = e.ceil, U = zt(y, "create"), $ = e.floor, F = zt(C, "isArray"), W = n.isFinite, L = zt(y, "keys"), N = e.max, T = e.min, P = zt(t, "now"), B = n.parseInt, z = e.random, D = r.NEGATIVE_INFINITY, q = r.POSITIVE_INFINITY, M = 4294967295, K = M - 1, V = M >>> 1, Y = 9007199254740991, G = E && new E(), J = {}, X = {};
-        X[Pi] = n.Float32Array, X[Bi] = n.Float64Array, X[zi] = n.Int8Array, X[Di] = n.Int16Array, 
-        X[qi] = n.Int32Array, X[Mi] = R, X[Ki] = n.Uint8ClampedArray, X[Vi] = n.Uint16Array, 
+        var C = (n = n ? Ka.defaults(Oa.Object(), n, Ka.pick(Oa, ma)) : Oa).Array, t = n.Date, _ = n.Error, g = n.Function, e = n.Math, r = n.Number, y = n.Object, d = n.RegExp, u = n.String, w = n.TypeError, i = C.prototype, m = _.prototype, x = y.prototype, b = u.prototype, o = g.prototype.toString, A = x.hasOwnProperty, a = 0, j = x.toString, f = Oa._, c = d("^" + o.call(A).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), l = n.ArrayBuffer, O = n.clearTimeout, s = n.parseFloat, p = e.pow, h = x.propertyIsEnumerable, v = Bt(n, "Set"), I = n.setTimeout, k = i.splice, R = n.Uint8Array, E = Bt(n, "WeakMap"), S = e.ceil, U = Bt(y, "create"), $ = e.floor, F = Bt(C, "isArray"), W = n.isFinite, L = Bt(y, "keys"), N = e.max, T = e.min, q = Bt(t, "now"), P = n.parseInt, B = e.random, z = r.NEGATIVE_INFINITY, D = r.POSITIVE_INFINITY, M = 4294967295, K = M - 1, V = M >>> 1, Y = 9007199254740991, G = E && new E(), J = {}, X = {};
+        X[qi] = n.Float32Array, X[Pi] = n.Float64Array, X[Bi] = n.Int8Array, X[zi] = n.Int16Array, 
+        X[Di] = n.Int32Array, X[Mi] = R, X[Ki] = n.Uint8ClampedArray, X[Vi] = n.Uint16Array, 
         X[Yi] = n.Uint32Array;
         var Z = {};
         function H(n) {
-            if (Ba(n) && !_e(n) && !(n instanceof rn)) {
+            if (Pa(n) && !_e(n) && !(n instanceof rn)) {
                 if (n instanceof nn) return n;
                 if (A.call(n, "__chain__") && A.call(n, "__wrapped__")) return or(n);
             }
@@ -13712,7 +13712,7 @@ try {
         var tn = H.support = {};
         function rn(n) {
             this.__wrapped__ = n, this.__actions__ = [], this.__dir__ = 1, this.__filtered__ = !1, 
-            this.__iteratees__ = [], this.__takeCount__ = q, this.__views__ = [];
+            this.__iteratees__ = [], this.__takeCount__ = D, this.__views__ = [];
         }
         function en() {
             this.__data__ = {};
@@ -13769,17 +13769,17 @@ try {
             return n !== fi && A.call(e, r) ? n : t;
         }
         function gn(n, t, r) {
-            for (var e = -1, u = Be(t), o = u.length; ++e < o; ) {
+            for (var e = -1, u = Pe(t), o = u.length; ++e < o; ) {
                 var i = u[e], a = n[i], f = r(a, t[i], i, n, t);
                 (f == f ? f === a : a != a) && (a !== fi || i in n) || (n[i] = f);
             }
             return n;
         }
         function yn(n, t) {
-            return null == t ? n : wn(t, Be(t), n);
+            return null == t ? n : wn(t, Pe(t), n);
         }
         function dn(n, t) {
-            for (var r = -1, e = null == n, u = !e && qt(n), o = u ? n.length : 0, i = t.length, a = C(i); ++r < i; ) {
+            for (var r = -1, e = null == n, u = !e && Dt(n), o = u ? n.length : 0, i = t.length, a = C(i); ++r < i; ) {
                 var f = t[r];
                 a[r] = u ? Mt(f, o) ? n[f] : fi : e ? fi : n[f];
             }
@@ -13795,7 +13795,7 @@ try {
         }
         function mn(n, t, r) {
             var e = typeof n;
-            return "function" == e ? t === fi ? n : ut(n, t, r) : null == n ? iu : "object" == e ? Dn(n) : t === fi ? pu(n) : qn(n, t);
+            return "function" == e ? t === fi ? n : ut(n, t, r) : null == n ? iu : "object" == e ? zn(n) : t === fi ? pu(n) : Dn(n, t);
         }
         function xn(r, e, u, n, t, o, i) {
             var a;
@@ -13820,11 +13820,11 @@ try {
                       case Si:
                         return new e(+n);
 
+                      case qi:
                       case Pi:
                       case Bi:
                       case zi:
                       case Di:
-                      case qi:
                       case Mi:
                       case Ki:
                       case Vi:
@@ -13843,7 +13843,7 @@ try {
                     }
                     return o;
                 }(r, c, e) : t ? r : {};
-                if (Pa(r)) return t ? r : {};
+                if (qa(r)) return t ? r : {};
                 if (a = function v(n) {
                     var t = n.constructor;
                     return "function" == typeof t && t instanceof t || (t = y), new t();
@@ -13930,19 +13930,19 @@ try {
             e = e || [];
             for (var u = -1, o = n.length; ++u < o; ) {
                 var i = n[u];
-                Ba(i) && qt(i) && (r || _e(i) || ve(i)) ? t ? Sn(i, t, r, e) : pn(e, i) : r || (e[e.length] = i);
+                Pa(i) && Dt(i) && (r || _e(i) || ve(i)) ? t ? Sn(i, t, r, e) : pn(e, i) : r || (e[e.length] = i);
             }
             return e;
         }
         var Un = st(), $n = st(!0);
         function Fn(n, t) {
-            return Un(n, t, ze);
-        }
-        function Wn(n, t) {
             return Un(n, t, Be);
         }
+        function Wn(n, t) {
+            return Un(n, t, Pe);
+        }
         function Ln(n, t) {
-            return $n(n, t, Be);
+            return $n(n, t, Pe);
         }
         function Nn(n, t) {
             for (var r = -1, e = t.length, u = -1, o = []; ++r < e; ) {
@@ -13958,11 +13958,11 @@ try {
                 return e && e == u ? n : fi;
             }
         }
-        function Pn(n, t, r, e, u, o) {
-            return n === t || (null == n || null == t || !we(n) && !Ba(t) ? n != n && t != t : function x(n, t, r, e, u, o, i) {
+        function qn(n, t, r, e, u, o) {
+            return n === t || (null == n || null == t || !we(n) && !Pa(t) ? n != n && t != t : function x(n, t, r, e, u, o, i) {
                 var a = _e(n), f = _e(t), c = Ei, l = Ei;
                 a || ((c = j.call(n)) == Ri ? c = Wi : c != Wi && (a = Oe(n))), f || ((l = j.call(t)) == Ri ? l = Wi : l != Wi && (f = Oe(t)));
-                var s = c == Wi && !Pa(n), p = l == Wi && !Pa(t), h = c == l;
+                var s = c == Wi && !qa(n), p = l == Wi && !qa(t), h = c == l;
                 if (h && !a && !s) return function d(n, t, r) {
                     switch (r) {
                       case Ci:
@@ -14006,7 +14006,7 @@ try {
                     }
                     return !0;
                 } : function m(n, t, r, e, u, o, i) {
-                    var a = Be(n), f = a.length, c = Be(t).length;
+                    var a = Pe(n), f = a.length, c = Pe(t).length;
                     if (f != c && !u) return !1;
                     for (var l = f; l--; ) {
                         var s = a[l];
@@ -14025,9 +14025,9 @@ try {
                     return !0;
                 })(n, t, r, e, u, o, i);
                 return o.pop(), i.pop(), y;
-            }(n, t, Pn, r, e, u, o));
+            }(n, t, qn, r, e, u, o));
         }
-        function Bn(n, t, r) {
+        function Pn(n, t, r) {
             var e = t.length, u = e, o = !r;
             if (null == n) return !u;
             for (n = er(n); e--; ) {
@@ -14040,19 +14040,19 @@ try {
                     if (f === fi && !(a in n)) return !1;
                 } else {
                     var l = r ? r(f, c, a) : fi;
-                    if (!(l === fi ? Pn(c, f, r, !0) : l)) return !1;
+                    if (!(l === fi ? qn(c, f, r, !0) : l)) return !1;
                 }
             }
             return !0;
         }
-        function zn(n, e) {
-            var u = -1, o = qt(n) ? C(n.length) : [];
+        function Bn(n, e) {
+            var u = -1, o = Dt(n) ? C(n.length) : [];
             return In(n, function(n, t, r) {
                 o[++u] = e(n, t, r);
             }), o;
         }
-        function Dn(n) {
-            var t = Bt(n);
+        function zn(n) {
+            var t = Pt(n);
             if (1 == t.length && t[0][2]) {
                 var r = t[0][0], e = t[0][1];
                 return function(n) {
@@ -14060,10 +14060,10 @@ try {
                 };
             }
             return function(n) {
-                return Bn(n, t);
+                return Pn(n, t);
             };
         }
-        function qn(r, e) {
+        function Dn(r, e) {
             var u = _e(r), o = Vt(r) && Jt(e), i = r + "";
             return r = ur(r), function(n) {
                 if (null == n) return !1;
@@ -14072,7 +14072,7 @@ try {
                     if (null == (n = 1 == r.length ? n : Tn(n, Gn(r, 0, -1)))) return !1;
                     t = vr(r), n = er(n);
                 }
-                return n[t] === e ? e !== fi || t in n : Pn(e, n[t], fi, !0);
+                return n[t] === e ? e !== fi || t in n : qn(e, n[t], fi, !0);
             };
         }
         function Mn(t) {
@@ -14091,7 +14091,7 @@ try {
             return n;
         }
         function Vn(n, t) {
-            return n + $(z() * (t - n + 1));
+            return n + $(B() * (t - n + 1));
         }
         var Yn = G ? function(n, t) {
             return G.set(n, t), n;
@@ -14118,7 +14118,7 @@ try {
             var t = Wt(), u = -1;
             return r = sn(r, function(n) {
                 return t(n);
-            }), Xn(zn(n, function(t) {
+            }), Xn(Bn(n, function(t) {
                 return {
                     criteria: sn(r, function(n) {
                         return n(t);
@@ -14258,7 +14258,7 @@ try {
         }
         function lt(o, i) {
             return function(n, t) {
-                var r = n ? Pt(n) : 0;
+                var r = n ? qt(n) : 0;
                 if (!Gt(r)) return o(n, t);
                 for (var e = i ? r : -1, u = er(n); (i ? e-- : ++e < r) && !1 !== t(u[e], e, u); ) ;
                 return n;
@@ -14393,7 +14393,7 @@ try {
         }
         function At(e) {
             return function(n, t, r) {
-                return "function" == typeof t && r === fi || (t = ut(t, r, 3)), e(n, t, ze);
+                return "function" == typeof t && r === fi || (t = ut(t, r, 3)), e(n, t, Be);
             };
         }
         function jt(e) {
@@ -14417,7 +14417,7 @@ try {
         }
         function kt(e) {
             var u = pe(function(n, t) {
-                var r = za(t, u.placeholder);
+                var r = Ba(t, u.placeholder);
                 return Ft(n, e, fi, t, r);
             });
             return u;
@@ -14437,7 +14437,7 @@ try {
             return function E() {
                 for (var n = arguments.length, t = n, r = C(n); t--; ) r[t] = arguments[t];
                 if (_ && (r = it(r, _, g)), y && (r = at(r, y, d)), O || k) {
-                    var e = E.placeholder, u = za(r, e);
+                    var e = E.placeholder, u = Ba(r, e);
                     if ((n -= u.length) < x) {
                         var o = w ? an(w) : fi, i = N(x - n, 0);
                         h |= O ? _i : gi, h &= ~(O ? gi : _i), I || (h &= ~(li | si));
@@ -14498,9 +14498,9 @@ try {
                 var a = t[3];
                 if (a) {
                     var f = n[3];
-                    n[3] = f ? it(f, a, t[4]) : an(a), n[4] = f ? za(n[3], ki) : an(t[4]);
+                    n[3] = f ? it(f, a, t[4]) : an(a), n[4] = f ? Ba(n[3], ki) : an(t[4]);
                 }
-                return (a = t[5]) && (f = n[5], n[5] = f ? at(f, a, t[6]) : an(a), n[6] = f ? za(n[5], ki) : an(t[6])), 
+                return (a = t[5]) && (f = n[5], n[5] = f ? at(f, a, t[6]) : an(a), n[6] = f ? Ba(n[5], ki) : an(t[6])), 
                 (a = t[7]) && (n[7] = an(a)), e & yi && (n[8] = null == n[8] ? t[8] : T(n[8], t[8])), 
                 null == n[9] && (n[9] = t[9]), n[0] = t[0], n[1] = u, n;
             }(h, p), t = h[1], a = h[9]), h[9] = null == a ? f ? 0 : n.length : N(a - c, 0) || 0, 
@@ -14530,23 +14530,23 @@ try {
             var e = H.indexOf || pr;
             return e = e === pr ? Ra : e, n ? e(n, t, r) : e;
         }
-        var Pt = Mn("length");
-        function Bt(n) {
+        var qt = Mn("length");
+        function Pt(n) {
             for (var t = Ke(n), r = t.length; r--; ) t[r][2] = Jt(t[r][1]);
             return t;
         }
-        function zt(n, t) {
+        function Bt(n, t) {
             var r = null == n ? fi : n[t];
             return me(r) ? r : fi;
         }
-        function Dt(n, t, r) {
+        function zt(n, t, r) {
             null == n || Vt(t, n) || (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1)), 
             t = vr(t));
             var e = null == n ? n : n[t];
             return null == e ? fi : e.apply(n, r);
         }
-        function qt(n) {
-            return null != n && Gt(Pt(n));
+        function Dt(n) {
+            return null != n && Gt(qt(n));
         }
         function Mt(n, t) {
             return n = "number" == typeof n || _a.test(n) ? +n : -1, t = null == t ? Y : t, 
@@ -14555,7 +14555,7 @@ try {
         function Kt(n, t, r) {
             if (we(r)) {
                 var e = typeof t;
-                if ("number" == e ? qt(r) && Mt(t, r.length) : "string" == e && t in r) {
+                if ("number" == e ? Dt(r) && Mt(t, r.length) : "string" == e && t in r) {
                     var u = r[t];
                     return n == n ? n === u : u != u;
                 }
@@ -14601,14 +14601,14 @@ try {
             return Yn(n, t);
         });
         function tr(n) {
-            for (var t = ze(n), r = t.length, e = r && n.length, u = !!e && Gt(e) && (_e(n) || ve(n) || je(n)), o = -1, i = []; ++o < r; ) {
+            for (var t = Be(n), r = t.length, e = r && n.length, u = !!e && Gt(e) && (_e(n) || ve(n) || je(n)), o = -1, i = []; ++o < r; ) {
                 var a = t[o];
                 (u && Mt(a, e) || A.call(n, a)) && i.push(a);
             }
             return i;
         }
         function rr(n) {
-            return null == n ? [] : qt(n) ? H.support.unindexedChars && je(n) ? n.split("") : we(n) ? n : y(n) : Ye(n);
+            return null == n ? [] : Dt(n) ? H.support.unindexedChars && je(n) ? n.split("") : we(n) ? n : y(n) : Ye(n);
         }
         function er(n) {
             if (H.support.unindexedChars && je(n)) {
@@ -14628,7 +14628,7 @@ try {
             return n instanceof rn ? n.clone() : new nn(n.__wrapped__, n.__chain__, an(n.__actions__));
         }
         var ir = pe(function(n, t) {
-            return Ba(n) && qt(n) ? On(n, Sn(t, !1, !0)) : [];
+            return Pa(n) && Dt(n) ? On(n, Sn(t, !1, !0)) : [];
         });
         function ar(n, t, r) {
             return n && n.length ? ((r ? Kt(n, t, r) : null == t) && (t = 1), Gn(n, t < 0 ? 0 : t)) : [];
@@ -14652,7 +14652,7 @@ try {
         }
         var hr = pe(function(n) {
             for (var t = n.length, r = t, e = C(l), u = Tt(), o = u === Ra, i = []; r--; ) {
-                var a = n[r] = qt(a = n[r]) ? a : [];
+                var a = n[r] = Dt(a = n[r]) ? a : [];
                 e[r] = o && 120 <= a.length ? pt(r && a) : null;
             }
             var f = n[0], c = -1, l = f ? f.length : 0, s = e[0];
@@ -14696,7 +14696,7 @@ try {
             if (!n || !n.length) return [];
             var t = -1, r = 0;
             n = ln(n, function(n) {
-                return qt(n) && (r = N(n.length, r), 1);
+                return Dt(n) && (r = N(n.length, r), 1);
             });
             for (var e = C(r); ++t < r; ) e[t] = sn(n, Mn(t));
             return e;
@@ -14709,7 +14709,7 @@ try {
             }));
         }
         var Ar = pe(function(n, t) {
-            return qt(n) ? On(n, t) : [];
+            return Dt(n) ? On(n, t) : [];
         });
         var jr = pe(xr);
         function Or(n, t) {
@@ -14742,7 +14742,7 @@ try {
             });
         });
         var Cr = pe(function(n, t) {
-            return qt(n) && (n = rr(n)), dn(n, Sn(t));
+            return Dt(n) && (n = rr(n)), dn(n, Sn(t));
         }), Sr = ft(function(n, t, r) {
             A.call(n, r) ? ++n[r] : n[r] = 1;
         });
@@ -14761,24 +14761,24 @@ try {
         }, kn), Tr = ft(function(n, t, r) {
             A.call(n, r) ? n[r].push(t) : n[r] = [ t ];
         });
-        function Pr(n, t, r, e) {
-            var u = n ? Pt(n) : 0;
+        function qr(n, t, r, e) {
+            var u = n ? qt(n) : 0;
             return Gt(u) || (u = (n = Ye(n)).length), r = "number" != typeof r || e && Kt(t, r, e) ? 0 : r < 0 ? N(u + r, 0) : r || 0, 
             "string" == typeof n || !_e(n) && je(n) ? r <= u && -1 < n.indexOf(t, r) : !!u && -1 < Tt(n, t, r);
         }
-        var Br = ft(function(n, t, r) {
+        var Pr = ft(function(n, t, r) {
             n[r] = t;
-        }), zr = pe(function(n, r, e) {
-            var u = -1, o = "function" == typeof r, i = Vt(r), a = qt(n) ? C(n.length) : [];
+        }), Br = pe(function(n, r, e) {
+            var u = -1, o = "function" == typeof r, i = Vt(r), a = Dt(n) ? C(n.length) : [];
             return In(n, function(n) {
                 var t = o ? r : i && null != n ? n[r] : fi;
-                a[++u] = t ? t.apply(n, e) : Dt(n, r, e);
+                a[++u] = t ? t.apply(n, e) : zt(n, r, e);
             }), a;
         });
-        function Dr(n, t, r) {
-            return (_e(n) ? sn : zn)(n, t = Wt(t, r, 3));
+        function zr(n, t, r) {
+            return (_e(n) ? sn : Bn)(n, t = Wt(t, r, 3));
         }
-        var qr = ft(function(n, t, r) {
+        var Dr = ft(function(n, t, r) {
             n[r ? 0 : 1].push(t);
         }, function() {
             return [ [], [] ];
@@ -14807,7 +14807,7 @@ try {
             var r = t[2];
             return r && Kt(t[0], t[1], r) && (t.length = 1), Zn(n, Sn(t), []);
         });
-        var Jr = P || function() {
+        var Jr = q || function() {
             return new t().getTime();
         };
         function Xr(n, t) {
@@ -14824,12 +14824,12 @@ try {
         var Zr = pe(function(n, t, r) {
             var e = li;
             if (r.length) {
-                var u = za(r, Zr.placeholder);
+                var u = Ba(r, Zr.placeholder);
                 e |= _i;
             }
             return Ft(n, e, t, r, u);
         }), Hr = pe(function(n, t) {
-            for (var r = -1, e = (t = t.length ? Sn(t) : Pe(n)).length; ++r < e; ) {
+            for (var r = -1, e = (t = t.length ? Sn(t) : qe(n)).length; ++r < e; ) {
                 var u = t[r];
                 n[u] = Ft(n[u], li, n);
             }
@@ -14837,7 +14837,7 @@ try {
         }), Qr = pe(function(n, t, r) {
             var e = li | si;
             if (r.length) {
-                var u = za(r, Qr.placeholder);
+                var u = Ba(r, Qr.placeholder);
                 e |= _i;
             }
             return Ft(t, e, n, r, u);
@@ -14921,17 +14921,17 @@ try {
             return t < n;
         }
         function ve(n) {
-            return Ba(n) && qt(n) && A.call(n, "callee") && !h.call(n, "callee");
+            return Pa(n) && Dt(n) && A.call(n, "callee") && !h.call(n, "callee");
         }
         var _e = F || function(n) {
-            return Ba(n) && Gt(n.length) && j.call(n) == Ei;
+            return Pa(n) && Gt(n.length) && j.call(n) == Ei;
         };
         function ge(n, t, r, e) {
             var u = (r = "function" == typeof r ? ut(r, e, 3) : fi) ? r(n, t) : fi;
-            return u === fi ? Pn(n, t, r) : !!u;
+            return u === fi ? qn(n, t, r) : !!u;
         }
         function ye(n) {
-            return Ba(n) && "string" == typeof n.message && j.call(n) == Ui;
+            return Pa(n) && "string" == typeof n.message && j.call(n) == Ui;
         }
         function de(n) {
             return we(n) && j.call(n) == $i;
@@ -14941,14 +14941,14 @@ try {
             return !!n && ("object" == t || "function" == t);
         }
         function me(n) {
-            return null != n && (de(n) ? c.test(o.call(n)) : Ba(n) && (Pa(n) ? c : va).test(n));
+            return null != n && (de(n) ? c.test(o.call(n)) : Pa(n) && (qa(n) ? c : va).test(n));
         }
         function xe(n) {
-            return "number" == typeof n || Ba(n) && j.call(n) == Fi;
+            return "number" == typeof n || Pa(n) && j.call(n) == Fi;
         }
         function be(n) {
             var t, e;
-            return !(!Ba(n) || j.call(n) != Wi || Pa(n) || ve(n) || !(A.call(n, "constructor") || "function" != typeof (t = n.constructor) || t instanceof t)) && (H.support.ownLast ? (Fn(n, function(n, t, r) {
+            return !(!Pa(n) || j.call(n) != Wi || qa(n) || ve(n) || !(A.call(n, "constructor") || "function" != typeof (t = n.constructor) || t instanceof t)) && (H.support.ownLast ? (Fn(n, function(n, t, r) {
                 return e = A.call(r, t), !1;
             }), !1 !== e) : (Fn(n, function(n, t) {
                 e = t;
@@ -14958,29 +14958,29 @@ try {
             return we(n) && j.call(n) == Li;
         }
         function je(n) {
-            return "string" == typeof n || Ba(n) && j.call(n) == Ni;
+            return "string" == typeof n || Pa(n) && j.call(n) == Ni;
         }
         function Oe(n) {
-            return Ba(n) && Gt(n.length) && !!Aa[j.call(n)];
+            return Pa(n) && Gt(n.length) && !!Aa[j.call(n)];
         }
         function Ie(n, t) {
             return n < t;
         }
         function ke(n) {
-            var t = n ? Pt(n) : 0;
+            var t = n ? qt(n) : 0;
             return Gt(t) ? t ? H.support.unindexedChars && je(n) ? n.split("") : an(n) : [] : Ye(n);
         }
         function Re(n) {
-            return wn(n, ze(n));
+            return wn(n, Be(n));
         }
         var Ee = ct(function xu(o, i, a, f, c) {
             if (!we(o)) return o;
-            var l = qt(i) && (_e(i) || Oe(i)), s = l ? fi : Be(i);
+            var l = Dt(i) && (_e(i) || Oe(i)), s = l ? fi : Pe(i);
             return fn(s || i, function(n, t) {
-                if (s && (n = i[t = n]), Ba(n)) !function p(n, t, r, e, u, o, i) {
+                if (s && (n = i[t = n]), Pa(n)) !function p(n, t, r, e, u, o, i) {
                     for (var a = o.length, f = t[r]; a--; ) if (o[a] == f) return void (n[r] = i[a]);
                     var c = n[r], l = u ? u(c, f, r, n, t) : fi, s = l === fi;
-                    s && (qt(l = f) && (_e(f) || Oe(f)) ? l = _e(c) ? c : qt(c) ? an(c) : [] : be(f) || ve(f) ? l = ve(c) ? Re(c) : be(c) ? c : {} : s = !1), 
+                    s && (Dt(l = f) && (_e(f) || Oe(f)) ? l = _e(c) ? c : Dt(c) ? an(c) : [] : be(f) || ve(f) ? l = ve(c) ? Re(c) : be(c) ? c : {} : s = !1), 
                     o.push(f), i.push(l), s ? n[r] = e(l, f, u, o, i) : (l == l ? l !== c : c == c) && (n[r] = l);
                 }(o, i, t, xu, a, f = f || [], c = c || []); else {
                     var r = o[t], e = a ? a(r, n, t, o, i) : fi, u = e === fi;
@@ -14995,14 +14995,14 @@ try {
         }), Ue = gt(Ee, function Au(n, t) {
             return n === fi ? t : Ee(n, t, Au);
         }), $e = mt(Wn), Fe = mt(Ln), We = At(Un), Le = At($n), Ne = jt(Wn), Te = jt(Ln);
-        function Pe(n) {
-            return Nn(n, ze(n));
+        function qe(n) {
+            return Nn(n, Be(n));
         }
-        var Be = L ? function(n) {
+        var Pe = L ? function(n) {
             var t = null == n ? fi : n.constructor;
-            return "function" == typeof t && t.prototype === n || ("function" == typeof n ? H.support.enumPrototypes : qt(n)) ? tr(n) : we(n) ? L(n) : [];
+            return "function" == typeof t && t.prototype === n || ("function" == typeof n ? H.support.enumPrototypes : Dt(n)) ? tr(n) : we(n) ? L(n) : [];
         } : tr;
-        function ze(n) {
+        function Be(n) {
             if (null == n) return [];
             we(n) || (n = y(n));
             var t = n.length, r = H.support;
@@ -15018,9 +15018,9 @@ try {
             }
             return a;
         }
-        var De = Ot(!0), qe = Ot(), Me = pe(function(n, t) {
+        var ze = Ot(!0), De = Ot(), Me = pe(function(n, t) {
             if (null == n) return {};
-            if ("function" != typeof t[0]) return t = sn(Sn(t), u), Xt(n, On(ze(n), t));
+            if ("function" != typeof t[0]) return t = sn(Sn(t), u), Xt(n, On(Be(n), t));
             var e = ut(t[0], t[1], 3);
             return Zt(n, function(n, t, r) {
                 return !e(n, t, r);
@@ -15028,7 +15028,7 @@ try {
         });
         function Ke(n) {
             n = er(n);
-            for (var t = -1, r = Be(n), e = r.length, u = C(e); ++t < e; ) {
+            for (var t = -1, r = Pe(n), e = r.length, u = C(e); ++t < e; ) {
                 var o = r[t];
                 u[t] = [ o, n[o] ];
             }
@@ -15038,7 +15038,7 @@ try {
             return null == n ? {} : "function" == typeof t[0] ? Zt(n, ut(t[0], t[1], 3)) : Xt(n, Sn(t));
         });
         function Ye(n) {
-            return Qn(n, Be(n));
+            return Qn(n, Pe(n));
         }
         var Ge = ht(function(n, t, r) {
             return t = t.toLowerCase(), n + (r ? t.charAt(0).toUpperCase() + t.slice(1) : t);
@@ -15063,7 +15063,7 @@ try {
         });
         function ru(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(Da(n), qa(n) + 1) : (t += "", 
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(za(n), Da(n) + 1) : (t += "", 
             n.slice(Sa(n, t), Ua(n, t) + 1)) : n;
         }
         function eu(n, t, r) {
@@ -15077,29 +15077,29 @@ try {
             }
         });
         function ou(n, t, r) {
-            return r && Kt(n, t, r) && (t = fi), Ba(n) ? au(n) : mn(n, t);
+            return r && Kt(n, t, r) && (t = fi), Pa(n) ? au(n) : mn(n, t);
         }
         function iu(n) {
             return n;
         }
         function au(n) {
-            return Dn(xn(n, !0));
+            return zn(xn(n, !0));
         }
         var fu = pe(function(t, r) {
             return function(n) {
-                return Dt(n, t, r);
+                return zt(n, t, r);
             };
         }), cu = pe(function(t, r) {
             return function(n) {
-                return Dt(t, n, r);
+                return zt(t, n, r);
             };
         });
         function lu(e, n, t) {
             if (null == t) {
-                var r = we(n), u = r ? Be(n) : fi, o = u && u.length ? Nn(n, u) : fi;
+                var r = we(n), u = r ? Pe(n) : fi, o = u && u.length ? Nn(n, u) : fi;
                 (o ? o.length : r) || (o = !1, t = n, n = e, e = this);
             }
-            o = o || Nn(n, Be(n));
+            o = o || Nn(n, Pe(n));
             var i = !0, a = -1, f = de(e), c = o.length;
             !1 === t ? i = !1 : we(t) && "chain" in t && (i = t.chain);
             for (;++a < c; ) {
@@ -15130,7 +15130,7 @@ try {
                 };
             })(n);
         }
-        var hu, vu = Ut("ceil"), _u = Ut("floor"), gu = yt(he, D), yu = yt(Ie, q), du = Ut("round");
+        var hu, vu = Ut("ceil"), _u = Ut("floor"), gu = yt(he, z), yu = yt(Ie, D), du = Ut("round");
         return H.prototype = Q.prototype, (nn.prototype = bn(Q.prototype)).constructor = nn, 
         (rn.prototype = bn(Q.prototype)).constructor = rn, en.prototype["delete"] = function ju(n) {
             return this.has(n) && delete this.__data__[n];
@@ -15189,33 +15189,33 @@ try {
         }, H.filter = $r, H.flatten = function Tu(n, t, r) {
             var e = n ? n.length : 0;
             return r && Kt(n, t, r) && (t = !1), e ? Sn(n, t) : [];
-        }, H.flattenDeep = function Pu(n) {
+        }, H.flattenDeep = function qu(n) {
             return n && n.length ? Sn(n, !0) : [];
         }, H.flow = oe, H.flowRight = ie, H.forEach = Lr, H.forEachRight = Nr, H.forIn = We, 
-        H.forInRight = Le, H.forOwn = Ne, H.forOwnRight = Te, H.functions = Pe, H.groupBy = Tr, 
-        H.indexBy = Br, H.initial = function Bu(n) {
+        H.forInRight = Le, H.forOwn = Ne, H.forOwnRight = Te, H.functions = qe, H.groupBy = Tr, 
+        H.indexBy = Pr, H.initial = function Pu(n) {
             return fr(n, 1);
-        }, H.intersection = hr, H.invert = function zu(n, t, r) {
+        }, H.intersection = hr, H.invert = function Bu(n, t, r) {
             r && Kt(n, t, r) && (t = fi);
-            for (var e = -1, u = Be(n), o = u.length, i = {}; ++e < o; ) {
+            for (var e = -1, u = Pe(n), o = u.length, i = {}; ++e < o; ) {
                 var a = u[e], f = n[a];
                 t ? A.call(i, f) ? i[f].push(a) : i[f] = [ a ] : i[f] = a;
             }
             return i;
-        }, H.invoke = zr, H.keys = Be, H.keysIn = ze, H.map = Dr, H.mapKeys = De, H.mapValues = qe, 
-        H.matches = au, H.matchesProperty = function Du(n, t) {
-            return qn(n, xn(t, !0));
+        }, H.invoke = Br, H.keys = Pe, H.keysIn = Be, H.map = zr, H.mapKeys = ze, H.mapValues = De, 
+        H.matches = au, H.matchesProperty = function zu(n, t) {
+            return Dn(n, xn(t, !0));
         }, H.memoize = ae, H.merge = Ee, H.method = fu, H.methodOf = cu, H.mixin = lu, H.modArgs = fe, 
-        H.negate = function qu(n) {
+        H.negate = function Du(n) {
             if ("function" != typeof n) throw new w(Ii);
             return function() {
                 return !n.apply(this, arguments);
             };
         }, H.omit = Me, H.once = function Mu(n) {
             return Xr(2, n);
-        }, H.pairs = Ke, H.partial = ce, H.partialRight = le, H.partition = qr, H.pick = Ve, 
+        }, H.pairs = Ke, H.partial = ce, H.partialRight = le, H.partition = Dr, H.pick = Ve, 
         H.pluck = function Ku(n, t) {
-            return Dr(n, pu(t));
+            return zr(n, pu(t));
         }, H.property = pu, H.propertyOf = function Vu(t) {
             return function(n) {
                 return Tn(t, ur(n), n + "");
@@ -15253,7 +15253,7 @@ try {
             }
             return n;
         }, H.shuffle = function Hu(n) {
-            return Vr(n, q);
+            return Vr(n, D);
         }, H.slice = function Qu(n, t, r) {
             var e = n ? n.length : 0;
             return e ? (r && "number" != typeof r && Kt(n, t, r) && (t = 0, r = e), Gn(n, t, r)) : [];
@@ -15261,7 +15261,7 @@ try {
             if (null == n) return [];
             t && Kt(n, e, t) && (e = fi);
             var u = -1;
-            return e = Wt(e, t, 3), Xn(zn(n, function(n, t, r) {
+            return e = Wt(e, t, 3), Xn(Bn(n, function(n, t, r) {
                 return {
                     criteria: e(n, t, r),
                     index: ++u,
@@ -15311,19 +15311,19 @@ try {
                 return e(u, n, t, r);
             }), u;
         }, H.union = wr, H.uniq = mr, H.unzip = xr, H.unzipWith = br, H.values = Ye, H.valuesIn = function so(n) {
-            return Qn(n, ze(n));
+            return Qn(n, Be(n));
         }, H.where = function po(n, t) {
-            return $r(n, Dn(t));
+            return $r(n, zn(t));
         }, H.without = Ar, H.wrap = function ho(n, t) {
             return Ft(t = null == t ? iu : t, _i, fi, [ n ], []);
         }, H.xor = function vo() {
             for (var n = -1, t = arguments.length; ++n < t; ) {
                 var r = arguments[n];
-                if (qt(r)) var e = e ? pn(On(e, r), On(r, e)) : r;
+                if (Dt(r)) var e = e ? pn(On(e, r), On(r, e)) : r;
             }
             return e ? Hn(e) : [];
-        }, H.zip = jr, H.zipObject = Or, H.zipWith = Ir, H.backflow = ie, H.collect = Dr, 
-        H.compose = ie, H.each = Lr, H.eachRight = Nr, H.extend = Ce, H.iteratee = ou, H.methods = Pe, 
+        }, H.zip = jr, H.zipObject = Or, H.zipWith = Ir, H.backflow = ie, H.collect = zr, 
+        H.compose = ie, H.each = Lr, H.eachRight = Nr, H.extend = Ce, H.iteratee = ou, H.methods = qe, 
         H.object = Or, H.select = $r, H.tail = gr, H.unique = mr, lu(H, H), H.add = function _o(n, t) {
             return (+n || 0) + (+t || 0);
         }, H.attempt = uu, H.camelCase = Ge, H.capitalize = function go(n) {
@@ -15343,7 +15343,7 @@ try {
             return (n = Ca(n)) && fa.test(n) ? n.replace(aa, La) : n || "(?:)";
         }, H.every = Ur, H.find = Fr, H.findIndex = cr, H.findKey = $e, H.findLast = Wr, 
         H.findLastIndex = lr, H.findLastKey = Fe, H.findWhere = function Ao(n, t) {
-            return Fr(n, Dn(t));
+            return Fr(n, zn(t));
         }, H.first = sr, H.floor = _u, H.get = function jo(n, t, r) {
             var e = null == n ? fi : Tn(n, ur(t), t + "");
             return e === fi ? r : e;
@@ -15357,20 +15357,20 @@ try {
                 t = vr(t), r = A.call(n, t);
             }
             return r || Gt(n.length) && Mt(t, n.length) && (_e(n) || ve(n) || je(n));
-        }, H.identity = iu, H.includes = Pr, H.indexOf = pr, H.inRange = function ko(n, t, r) {
+        }, H.identity = iu, H.includes = qr, H.indexOf = pr, H.inRange = function ko(n, t, r) {
             return t = +t || 0, r === fi ? (r = t, t = 0) : r = +r || 0, n >= T(t, r) && n < N(t, r);
         }, H.isArguments = ve, H.isArray = _e, H.isBoolean = function Ro(n) {
-            return !0 === n || !1 === n || Ba(n) && j.call(n) == Ci;
+            return !0 === n || !1 === n || Pa(n) && j.call(n) == Ci;
         }, H.isDate = function Eo(n) {
-            return Ba(n) && j.call(n) == Si;
+            return Pa(n) && j.call(n) == Si;
         }, H.isElement = function Co(n) {
-            return !!n && 1 === n.nodeType && Ba(n) && !be(n);
+            return !!n && 1 === n.nodeType && Pa(n) && !be(n);
         }, H.isEmpty = function So(n) {
-            return null == n || (qt(n) && (_e(n) || je(n) || ve(n) || Ba(n) && de(n.splice)) ? !n.length : !Be(n).length);
+            return null == n || (Dt(n) && (_e(n) || je(n) || ve(n) || Pa(n) && de(n.splice)) ? !n.length : !Pe(n).length);
         }, H.isEqual = ge, H.isError = ye, H.isFinite = function Uo(n) {
             return "number" == typeof n && W(n);
         }, H.isFunction = de, H.isMatch = function $o(n, t, r, e) {
-            return r = "function" == typeof r ? ut(r, e, 3) : fi, Bn(n, Bt(t), r);
+            return r = "function" == typeof r ? ut(r, e, 3) : fi, Pn(n, Pt(t), r);
         }, H.isNaN = function Fo(n) {
             return xe(n) && n != +n;
         }, H.isNative = me, H.isNull = function Wo(n) {
@@ -15391,33 +15391,33 @@ try {
             return -1;
         }, H.lt = Ie, H.lte = function To(n, t) {
             return n <= t;
-        }, H.max = gu, H.min = yu, H.noConflict = function Po() {
+        }, H.max = gu, H.min = yu, H.noConflict = function qo() {
             return Oa._ = f, this;
-        }, H.noop = su, H.now = Jr, H.pad = function Bo(n, t, r) {
+        }, H.noop = su, H.now = Jr, H.pad = function Po(n, t, r) {
             t = +t;
             var e = (n = Ca(n)).length;
             if (t <= e || !W(t)) return n;
             var u = (t - e) / 2, o = $(u);
             return (r = Ct("", S(u), r)).slice(0, o) + n + r;
-        }, H.padLeft = Ze, H.padRight = He, H.parseInt = function zo(n, t, r) {
-            return t = (r ? Kt(n, t, r) : null == t) ? 0 : t && +t, n = ru(n), B(n, t || (ha.test(n) ? 16 : 10));
-        }, H.random = function Do(n, t, r) {
+        }, H.padLeft = Ze, H.padRight = He, H.parseInt = function Bo(n, t, r) {
+            return t = (r ? Kt(n, t, r) : null == t) ? 0 : t && +t, n = ru(n), P(n, t || (ha.test(n) ? 16 : 10));
+        }, H.random = function zo(n, t, r) {
             r && Kt(n, t, r) && (t = r = fi);
             var e = null == n, u = null == t;
             if (null == r && (u && "boolean" == typeof n ? (r = n, n = 1) : "boolean" == typeof t && (r = t, 
             u = !0)), e && u && (u = !(t = 1)), n = +n || 0, u ? (t = n, n = 0) : t = +t || 0, 
             r || n % 1 || t % 1) {
-                var o = z();
+                var o = B();
                 return T(n + o * (t - n + s("1e-" + ((o + "").length - 1))), t);
             }
             return Vn(n, t);
-        }, H.reduce = Mr, H.reduceRight = Kr, H.repeat = Qe, H.result = function qo(n, t, r) {
+        }, H.reduce = Mr, H.reduceRight = Kr, H.repeat = Qe, H.result = function Do(n, t, r) {
             var e = null == n ? fi : er(n)[t];
             return e === fi && (null == n || Vt(t, n) || (e = null == (n = 1 == (t = ur(t)).length ? n : Tn(n, Gn(t, 0, -1))) ? fi : er(n)[vr(t)]), 
             e = e === fi ? r : e), de(e) ? e.call(n) : e;
         }, H.round = du, H.runInContext = Va, H.size = function Mo(n) {
-            var t = n ? Pt(n) : 0;
-            return Gt(t) ? t : Be(n).length;
+            var t = n ? qt(n) : 0;
+            return Gt(t) ? t : Pe(n).length;
         }, H.snakeCase = nu, H.some = Yr, H.sortedIndex = yr, H.sortedLastIndex = dr, H.startCase = tu, 
         H.startsWith = function Ko(n, t, r) {
             return n = Ca(n), r = null == r ? 0 : T(!(r < 0) && +r || 0, n.length), n.lastIndexOf(t, r) == r;
@@ -15434,7 +15434,7 @@ try {
         }, H.template = function Yo(i, n, t) {
             var r = H.templateSettings;
             t && Kt(i, n, t) && (n = t = fi), i = Ca(i), n = gn(yn({}, t || n), r, _n);
-            var a, f, e = gn(yn({}, n.imports), r.imports, _n), u = Be(e), o = Qn(e, u), c = 0, l = n.interpolate || ya, s = "__p += '", p = d((n.escape || ya).source + "|" + l.source + "|" + (l === ea ? sa : ya).source + "|" + (n.evaluate || ya).source + "|$", "g"), h = "//# sourceURL=" + ("sourceURL" in n ? n.sourceURL : "lodash.templateSources[" + ++ba + "]") + "\n";
+            var a, f, e = gn(yn({}, n.imports), r.imports, _n), u = Pe(e), o = Qn(e, u), c = 0, l = n.interpolate || ya, s = "__p += '", p = d((n.escape || ya).source + "|" + l.source + "|" + (l === ea ? sa : ya).source + "|" + (n.evaluate || ya).source + "|$", "g"), h = "//# sourceURL=" + ("sourceURL" in n ? n.sourceURL : "lodash.templateSources[" + ++ba + "]") + "\n";
             i.replace(p, function(n, t, r, e, u, o) {
                 return r = r || e, s += i.slice(c, o).replace(da, Na), t && (a = !0, s += "' +\n__e(" + t + ") +\n'"), 
                 u && (f = !0, s += "';\n" + u + ";\n__p += '"), r && (s += "' +\n((__t = (" + r + ")) == null ? '' : __t) +\n'"), 
@@ -15450,10 +15450,10 @@ try {
             return _;
         }, H.trim = ru, H.trimLeft = function Go(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(Da(n)) : n.slice(Sa(n, t + "")) : n;
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(za(n)) : n.slice(Sa(n, t + "")) : n;
         }, H.trimRight = function Jo(n, t, r) {
             var e = n;
-            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(0, qa(n) + 1) : n.slice(0, Ua(n, t + "") + 1) : n;
+            return (n = Ca(n)) ? (r ? Kt(e, t, r) : null == t) ? n.slice(0, Da(n) + 1) : n.slice(0, Ua(n, t + "") + 1) : n;
         }, H.trunc = function Xo(n, t, r) {
             r && Kt(n, t, r) && (t = fi);
             var e = wi, u = mi;
@@ -15482,8 +15482,8 @@ try {
         }, H.uniqueId = function Ho(n) {
             var t = ++a;
             return Ca(n) + t;
-        }, H.words = eu, H.all = Ur, H.any = Yr, H.contains = Pr, H.eq = ge, H.detect = Fr, 
-        H.foldl = Mr, H.foldr = Kr, H.head = sr, H.include = Pr, H.inject = Mr, lu(H, (hu = {}, 
+        }, H.words = eu, H.all = Ur, H.any = Yr, H.contains = qr, H.eq = ge, H.detect = Fr, 
+        H.foldl = Mr, H.foldr = Kr, H.head = sr, H.include = qr, H.inject = Mr, lu(H, (hu = {}, 
         Wn(H, function(n, t) {
             H.prototype[t] || (hu[t] = n);
         }), hu), !1), H.sample = Vr, H.prototype.sample = function(t) {
@@ -15525,7 +15525,7 @@ try {
                 return this.__filtered__ ? new rn(this) : this[r](1);
             };
         }), fn([ "pluck", "where" ], function(n, t) {
-            var r = t ? "filter" : "map", e = t ? Dn : pu;
+            var r = t ? "filter" : "map", e = t ? zn : pu;
             rn.prototype[n] = function(n) {
                 return this[r](e(n));
             };
@@ -15543,7 +15543,7 @@ try {
         }, rn.prototype.takeRightWhile = function(n, t) {
             return this.reverse().takeWhile(n, t).reverse();
         }, rn.prototype.toArray = function() {
-            return this.take(q);
+            return this.take(D);
         }, Wn(rn.prototype, function(s, n) {
             var p = /^(?:filter|map|reject)|While$/.test(n), h = /^(?:first|last)$/.test(n), v = H[h ? "take" + ("last" == n ? "Right" : "") : n];
             v && (H.prototype[n] = function() {
@@ -28040,6 +28040,7 @@ function I18n() {
             "settings#egress-region#select-ae": "የተባበሩት አረብ ኤምሬቶች",
             "settings#egress-region#select-ee": "ኤስቶኒያ",
             "settings#egress-region#select-lv": "ላትቪያ",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "ኢንዶኔዝያ",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -28128,7 +28129,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "የስፖንሰሮቻችንን ገጾች በመጎብኘት Psiphonን ከክፍያ ነጻ አድርገው ያቆዩት! ",
             "appbackend#minimized-to-systray-title": "Psiphon ወደ ማሳወቂያ ስፍራ አንሷል ",
             "appbackend#minimized-to-systray-body": "መተግበሪያውን ለመመለስ አዶው ላይ ጠቅ ያድርጉ",
-            "appbackend#os-unsupported": "Psiphonን በWindows XP እና VISTA መጠቀም አይችሉም። ለተጨማሪ መረጃ ድር ጣቢያችንን ይጎብኙ።",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "የPsiCash ግብይት ስህተት",
             "psicash#transaction-error-body": "የእርስዎ PsiCash ግብይት ሙከራ ባልተጠበቀ ሁኔታ ሳይሳካ ቀርቷል።",
             "psicash#transaction-ExistingTransaction-title": "የPsiCash ግዢ ቀድሞውኑ አለ",
@@ -28307,6 +28308,7 @@ function I18n() {
             "settings#egress-region#select-ae": "الإمارات العربية المتحدة",
             "settings#egress-region#select-ee": "استونيا",
             "settings#egress-region#select-lv": "لاتفيا",
+            "settings#egress-region#select-lt": "ليتوانيا",
             "settings#egress-region#select-id": "أندونيسيا",
             "settings#egress-region#select-nz": "نيوزيلندا",
             "settings#egress-region#select-gr": "اليونان",
@@ -28395,7 +28397,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "ساهم في إبقاء سايفون مجاني بزيارة مواقع داعمينا!",
             "appbackend#minimized-to-systray-title": "لقد تّم تصغير سايفون إلى منطقة الإعلام ",
             "appbackend#minimized-to-systray-body": "إضغط الأيقونة لإسترجاع التطبيق ",
-            "appbackend#os-unsupported": "Psiphon لم يعد يدعم نظام التشغيل Windows XP أو Vista.\nيرجى زيارة موقعنا على الانترنت لمزيد من المعلومات.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "خطأ في معاملة PsiCash",
             "psicash#transaction-error-body": "فشلت محاولة معاملة PsiCash الخاصة بك بشكل غير متوقع.",
             "psicash#transaction-ExistingTransaction-title": "شراء PsiCash موجود بالفعل",
@@ -28574,6 +28576,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -28662,7 +28665,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Sponsor səhifələrinə keçməklə Psiphonu pulsuz saxlamağa yardım edirsiniz!",
             "appbackend#minimized-to-systray-title": "Psiphon xəbərdarlıq bölgəsinə endirildi",
             "appbackend#minimized-to-systray-body": "Tətbiqetməni bərpa etmək üçün kliklə",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -28841,6 +28844,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Аб'яднаныя Арабскія Эміраты",
             "settings#egress-region#select-ee": "Эстонія",
             "settings#egress-region#select-lv": "Латвія",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -28929,7 +28933,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Захавайма бясплатнасць Psiphon, наведваючы старонкі нашых спонсараў!",
             "appbackend#minimized-to-systray-title": "Psiphon згорнуты да вобласці апавяшчэнняў (сістэмны латок)",
             "appbackend#minimized-to-systray-body": "Націснуць на значок, каб вярнуць праграму",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -29108,6 +29112,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -29196,7 +29201,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "আমাদের পৃষ্ঠপোষক পৃষ্ঠাগুলি পরিদর্শন করে সাইফন বিনামূল্যে রাখুন!",
             "appbackend#minimized-to-systray-title": "সাইফন বিজ্ঞপ্তি এলাকা থেকে ছোট করা হয়েছে",
             "appbackend#minimized-to-systray-body": "অ্যাপ্লিকেশন পুনরুদ্ধার- এ আইকনে ক্লিক করুন",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -29375,6 +29380,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -29463,7 +29469,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "ང་ཚོའི་སྦྱིན་བདག་ཁག་གི་དྲྭ་ངོས་གཟིགས་ན་སཡི་ཕོན་དྲ་ཚིགས་རིན་མེད་ཐོག་བཞག་རོགས།!",
             "appbackend#minimized-to-systray-title": "སཡི་ཕོན་དྲྭ་ཚིགས་འདི་བརྡ་གཏོང་སའི་གནས་སུ་ཆུང་དུ་བཏང་ནས་བཞག་ཡོད།",
             "appbackend#minimized-to-systray-body": "འདྲ་རྟགས་འདི་ལ་སྣོན་ནས་མཉེན་ཆས་སྐྱར་འཇུག་བྱེད།",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -29642,6 +29648,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Vereinigte Arabische Emirate",
             "settings#egress-region#select-ee": "Estland",
             "settings#egress-region#select-lv": "Lettland",
+            "settings#egress-region#select-lt": "Litauen",
             "settings#egress-region#select-id": "Indonesien",
             "settings#egress-region#select-nz": "Neuseeland",
             "settings#egress-region#select-gr": "Griechenland",
@@ -29730,7 +29737,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon wurde in das Benachrichtigungsfeld minimiert",
             "appbackend#minimized-to-systray-body": "Klicken Sie auf das Symbol, um die Anwendung wiederherzustellen",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -29909,6 +29916,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -29997,7 +30005,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon has been minimized to the notification area",
             "appbackend#minimized-to-systray-body": "Click the icon to restore the application",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -30444,6 +30452,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Emiratos Árabes Unidos",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Letonia",
+            "settings#egress-region#select-lt": "Lituania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "Nueva Zelanda",
             "settings#egress-region#select-gr": "Grecia",
@@ -30532,7 +30541,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "¡Contribuya que Psiphon siga siendo gratuito visitando las páginas de nuestros patrocinadores!",
             "appbackend#minimized-to-systray-title": "Psiphon se ha minimizado en el área de notificación",
             "appbackend#minimized-to-systray-body": "Haga clic en el icono para restaurar la aplicación",
-            "appbackend#os-unsupported": "Psiphon ya no soporta Windows XP o Vista.\nPor favor visita nuestro sitio web para más información.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "Error de transacción PsiCash",
             "psicash#transaction-error-body": "Su intento de transacción PsiCash falló inesperadamente.",
             "psicash#transaction-ExistingTransaction-title": "Ya compra de PsiCash ya existe",
@@ -30711,6 +30720,7 @@ function I18n() {
             "settings#egress-region#select-ae": "امارات متحده عربی",
             "settings#egress-region#select-ee": "استونی",
             "settings#egress-region#select-lv": "لاتیوا",
+            "settings#egress-region#select-lt": "لتونی",
             "settings#egress-region#select-id": "اندونزی",
             "settings#egress-region#select-nz": "نیوزلند",
             "settings#egress-region#select-gr": "یونان",
@@ -30799,7 +30809,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Psiphon را رایگان نگه دارید با بازدید از صفحه حامیان ما!",
             "appbackend#minimized-to-systray-title": "Psiphon مینیمایز شد و به نوار اعلان رفت",
             "appbackend#minimized-to-systray-body": "کلیک بر روی آیکون برای بازگرداندن نرم افزار",
-            "appbackend#os-unsupported": "Psiphon (Psiphon) دیگر از ویندوز XP و Vista پشتیبانی نمی‌کند.\nلطفا برای اطلاعات بیشتر به وبسایت ما مراجعه کنید.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "خطا در مبادله با PsiCash",
             "psicash#transaction-error-body": "تلاش شما برای مبادله با PsiCash با مشکل ناگهانی روبرو شد.",
             "psicash#transaction-ExistingTransaction-title": "خرید PsiCash از پیش وجود دارد. ",
@@ -30978,6 +30988,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -31066,7 +31077,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "با بازدید از صفحات حامی مالی ما سایفون را رایگان نگهدارید!",
             "appbackend#minimized-to-systray-title": "سایفون در ناحیه اعلان کوچک شده است",
             "appbackend#minimized-to-systray-body": "برای بازگرداندن برنامه روی آیکن آن کلیک کنید",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -31245,6 +31256,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -31333,7 +31345,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon has been minimized to the notification area",
             "appbackend#minimized-to-systray-body": "Click the icon to restore the application",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -31512,6 +31524,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Émirats arabes unis",
             "settings#egress-region#select-ee": "Estonie",
             "settings#egress-region#select-lv": "Lettonie",
+            "settings#egress-region#select-lt": "Lituanie",
             "settings#egress-region#select-id": "Indonésie",
             "settings#egress-region#select-nz": "Nouvelle Zélande",
             "settings#egress-region#select-gr": "Grèce",
@@ -31600,7 +31613,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Préservez la gratuité de Psiphon en visitant les pages de nos commanditaires.",
             "appbackend#minimized-to-systray-title": "Psiphon a été minimisé vers la zone de notification",
             "appbackend#minimized-to-systray-body": "Cliquez sur l’icône pour restaurer l’application",
-            "appbackend#os-unsupported": "Psiphon ne prend plus en charge ni Windows XP ni Vista. Veuillez visiter notre site Web pour plus de précisions.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "Erreur transactionnelle PsiCash",
             "psicash#transaction-error-body": "Votre tentative de transaction PsiCash a échoué de manière inattendue.",
             "psicash#transaction-ExistingTransaction-title": "L’achat PsiCash existe déjà",
@@ -32315,6 +32328,7 @@ function I18n() {
             "settings#egress-region#select-ae": "संयुक्त अरब अमीरात",
             "settings#egress-region#select-ee": "एस्तोनिया",
             "settings#egress-region#select-lv": "लाटविया",
+            "settings#egress-region#select-lt": "लिथुआनिया",
             "settings#egress-region#select-id": "इंडोनेशिया",
             "settings#egress-region#select-nz": "न्यूज़ीलैंड",
             "settings#egress-region#select-gr": "ग्रीस",
@@ -32403,7 +32417,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon has been minimized to the notification area",
             "appbackend#minimized-to-systray-body": "Click the icon to restore the application",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -32582,6 +32596,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Ujedinjeni Arapski Emirati",
             "settings#egress-region#select-ee": "Estonija",
             "settings#egress-region#select-lv": "Latvija",
+            "settings#egress-region#select-lt": "Litva",
             "settings#egress-region#select-id": "Indonezija",
             "settings#egress-region#select-nz": "Novi Zeland",
             "settings#egress-region#select-gr": "Grčka",
@@ -32670,7 +32685,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Održite Psiphon besplatnim posjećivanjem stranica naših sponzora!",
             "appbackend#minimized-to-systray-title": "Psiphon je smanjen u područje obavijesti",
             "appbackend#minimized-to-systray-body": "Kliknite ikonu da bi ponovno otvorili aplikaciju",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -32849,6 +32864,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Uni Emirat Arab",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "Selandia Baru",
             "settings#egress-region#select-gr": "Yunani",
@@ -32937,7 +32953,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Dukung agar Psiphon tetap gratis dengan mengunjungi halaman sponsor kami! ",
             "appbackend#minimized-to-systray-title": "Psiphon telah dikecilkan ke area notifikasi",
             "appbackend#minimized-to-systray-body": "Klik ikon untuk memunculkan kembali aplikasi",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -32979,7 +32995,7 @@ function I18n() {
             "psicash#pane-need-more-psicash-header": "You need more PsiCash!",
             "psicash#pane-need-more-psicash-body": "In order activate Speed Boost, you need to buy more PsiCash.",
             "psicash#pane-need-psicash-visit-store": "Need PsiCash? Visit our store to buy more!",
-            "psicash#overlay-logging-in": "Logging in…",
+            "psicash#overlay-logging-in": "Sedang masuk…",
             "psicash#overlay-logging-out": "Logging out…",
             "psicash#modal-create-psicash-account-header": "Create a PsiCash Account",
             "psicash#modal-create-psicash-account-body": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
@@ -33116,6 +33132,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Emirati Arabi Uniti",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Lettonia",
+            "settings#egress-region#select-lt": "Lituania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "Nuova Zelanda",
             "settings#egress-region#select-gr": "Grecia",
@@ -33204,7 +33221,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon has been minimized to the notification area",
             "appbackend#minimized-to-systray-body": "Click the icon to restore the application",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -33383,6 +33400,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -33471,7 +33489,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Біздің демеушііміздің беттеріне бару арқылы Psiphon қызметінің тегін қалуына көмектесіңіз!",
             "appbackend#minimized-to-systray-title": "Psiphon қолданбасы хабарламалар аймағына қайырылған",
             "appbackend#minimized-to-systray-body": "Қолданбаны қалпына келтіру үшін белгішені шертіңіз",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -33650,6 +33668,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -33738,7 +33757,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "រក្សា Psiphon ឲ្យនៅឥតគិតថ្លៃ តាមរយៈការចូលទៅកាន់ទំព័រម្ចាស់ឧបត្ថម្ភរបស់យើង!",
             "appbackend#minimized-to-systray-title": "Psiphon ត្រូវបានបង្រួមទៅកាន់តំបន់ជូនដំណឹង",
             "appbackend#minimized-to-systray-body": "ចុច លើរូបតំណាងដើម្បីស្តារកម្មវិធីវិញ",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -33768,7 +33787,7 @@ function I18n() {
             "psicash#pane-create-account": "Create an account to protect your PsiCash!",
             "psicash#pane-balance-header": "Balance:",
             "psicash#pane-log-in": "Log In!",
-            "psicash#pane-log-out": "Log Out",
+            "psicash#pane-log-out": "ចាកចេញ",
             "psicash#pane-manage-web": "Manage on the web",
             "psicash#pane-create-account-plea": 'Creating a PsiCash account will help preserve your PsiCash if you clear the app\'s storage or use Psiphon on another device. <a href="https://psiphon.ca/faq.html#psicash-account">Learn more.</a>',
             "psicash#pane-l2tp-incompatible": 'Speed Boost cannot be used while Psiphon is connected in <a href="#">L2TP/IPSec transport mode</a>.',
@@ -33780,7 +33799,7 @@ function I18n() {
             "psicash#pane-need-more-psicash-header": "You need more PsiCash!",
             "psicash#pane-need-more-psicash-body": "In order activate Speed Boost, you need to buy more PsiCash.",
             "psicash#pane-need-psicash-visit-store": "Need PsiCash? Visit our store to buy more!",
-            "psicash#overlay-logging-in": "Logging in…",
+            "psicash#overlay-logging-in": "កំពុងចូលប្រើ…",
             "psicash#overlay-logging-out": "Logging out…",
             "psicash#modal-create-psicash-account-header": "Create a PsiCash Account",
             "psicash#modal-create-psicash-account-body": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
@@ -33917,6 +33936,7 @@ function I18n() {
             "settings#egress-region#select-ae": "아랍 에미리트 연합",
             "settings#egress-region#select-ee": "에스토니아",
             "settings#egress-region#select-lv": "라트비아",
+            "settings#egress-region#select-lt": "리투아니아",
             "settings#egress-region#select-id": "인도네시아",
             "settings#egress-region#select-nz": "뉴 질랜드",
             "settings#egress-region#select-gr": "그리스",
@@ -34005,7 +34025,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon이 알림 영역에 최소화되었습니다",
             "appbackend#minimized-to-systray-body": "아이콘을 클릭하면 어플리케이션을 표시합니다",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -34184,6 +34204,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -34272,7 +34293,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Биздин демөөрчүлөрүбүздүн беттерине кирүү аркылуу Psiphon-ду эркин кармаңыз!",
             "appbackend#minimized-to-systray-title": "Psiphon билдирүүлөр аймагына кичирейтилди",
             "appbackend#minimized-to-systray-body": "Колдонмону калыбына келтирүү үчүн сүрөтчөнү басыңыз",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -34451,6 +34472,7 @@ function I18n() {
             "settings#egress-region#select-ae": "အာ​ရပ် စော်ဘွား​များ​ပြည်ထောင်စု",
             "settings#egress-region#select-ee": "အစ္စ​တိုး​နီး​ယား",
             "settings#egress-region#select-lv": "လတ်ဗီးယား",
+            "settings#egress-region#select-lt": "လစ်သူအေးနီးယား",
             "settings#egress-region#select-id": "အင်ဒိုနီးရှား",
             "settings#egress-region#select-nz": "နယူးဇီလန်",
             "settings#egress-region#select-gr": "ဂရိ",
@@ -34539,7 +34561,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "ကျွနု်ပ်တို့ကိုငွေကြေးထောက်ပံ့ပေးထားသူများ၏ စာမျက်နှာကို ဝင်ရောက်လည်ပါတ်ခြင်းဖြင့် Psiphon ကို အခမဲ့ဆက်လက်အသုံးပြုခွင့်ပေးပါ။",
             "appbackend#minimized-to-systray-title": "Psiphon ကို အချက်ပြဧရိယာအတွင်းသို့ ချုံ့ပြီးပါပြီ",
             "appbackend#minimized-to-systray-body": "Application ကိုပြန်လည်ရယူသိမ်းဆည်းရန်အတွက် ဤပုံကိုနှိပ်ပါ",
-            "appbackend#os-unsupported": "PsiCash သည် Windows XP နှင့် Vista တို့ကို မထောက်ပံ့တော့ပါ။\nပိုမိုသိရှိရန်အတွက် ကျွန်ုပ်တို့ ဝဘ်ဆိုက်တွင် ကြည့်ရှုပေးပါ။",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash ရောင်းဝယ်ခြင်း ချို့ယွင်းမှု",
             "psicash#transaction-error-body": "သင့် PsiCash ရောင်းဝယ်ကြိုးပမ်းမှုသည် မမျှော်လင့်ဘဲ အောင်မြင်သွားခြင်းမရှိပါ။",
             "psicash#transaction-ExistingTransaction-title": "PsiCash ဝယ်ယူမှု ရရှိပြီးပါပြီ",
@@ -34718,6 +34740,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -34806,7 +34829,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Behold Psiphon gratis ved å besøke våre sponsorsider.",
             "appbackend#minimized-to-systray-title": "Psiphon har blitt minimert til varslingsområdet",
             "appbackend#minimized-to-systray-body": "Klikk ikonet for å gjenopprette programmet",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -34985,6 +35008,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Verenigde Arabische Emiraten",
             "settings#egress-region#select-ee": "Estland",
             "settings#egress-region#select-lv": "Letland",
+            "settings#egress-region#select-lt": "Litouwen",
             "settings#egress-region#select-id": "Indonesië",
             "settings#egress-region#select-nz": "Nieuw Zeeland",
             "settings#egress-region#select-gr": "Griekenland",
@@ -35073,7 +35097,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Houd Psiphon gratis door onze sponsorpagina's te bezoeken! ",
             "appbackend#minimized-to-systray-title": "Psiphon is geminimaliseerd naar het systeemvak",
             "appbackend#minimized-to-systray-body": "Klik op het pictogram om de toepassing te herstellen",
-            "appbackend#os-unsupported": "Psiphon ondersteunt niet langer Windows XP or Vista.\nBezoek a.u.b. onze website voor meer informatie.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash-transactiefout",
             "psicash#transaction-error-body": "Uw PsiCash-transactiepoging is onverwacht mislukt.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash-aankoop bestaat al",
@@ -35252,6 +35276,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -35340,7 +35365,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Fuula Ispoonsera keenyaa daawwachuudhaan Psiphon tola ta'ee akka turu godhaa!",
             "appbackend#minimized-to-systray-title": "Psiphon gara naannoo beeksisaatti gad xiqqaateera",
             "appbackend#minimized-to-systray-body": "Appilikeeshinii bakkatti deebisuuf mallatticha cuqaasi",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -35519,6 +35544,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Emirados Árabes Unidos",
             "settings#egress-region#select-ee": "Estônia",
             "settings#egress-region#select-lv": "Letônia",
+            "settings#egress-region#select-lt": "Lituânia",
             "settings#egress-region#select-id": "Indonésia",
             "settings#egress-region#select-nz": "Nova Zelândia",
             "settings#egress-region#select-gr": "Grécia",
@@ -35607,7 +35633,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Mantenha Psiphon gratuito visitando nosso patrocinador!",
             "appbackend#minimized-to-systray-title": "Psiphon foi minimizado para a área de notificações",
             "appbackend#minimized-to-systray-body": "Clique no ícone para restaurar a aplicação",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -35786,6 +35812,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -35874,7 +35901,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon foi minimizado para a área de notificação",
             "appbackend#minimized-to-systray-body": "Clique no ícone para restaurar a aplicação",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -36053,6 +36080,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Объединенные Арабские Эмираты",
             "settings#egress-region#select-ee": "Эстония",
             "settings#egress-region#select-lv": "Латвия",
+            "settings#egress-region#select-lt": "Литва",
             "settings#egress-region#select-id": "Индонезия",
             "settings#egress-region#select-nz": "Новая Зеландия",
             "settings#egress-region#select-gr": "Греция",
@@ -36141,7 +36169,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Поддержите бесплатное использование Psiphon, посетив веб-страницу нашего спонсора!",
             "appbackend#minimized-to-systray-title": "Psiphon минимизирован в область уведомлений панели задач",
             "appbackend#minimized-to-systray-body": "Нажмите на иконку, чтобы развернуть приложение",
-            "appbackend#os-unsupported": "Psiphon больше не поддерживает Windows XP и Vista.\nПодробнее можно прочесть на нашем сайте.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "Ошибка транзакции PsiCash",
             "psicash#transaction-error-body": "Ваша транзакция PsiCash почему-то прервалась.",
             "psicash#transaction-ExistingTransaction-title": "Покупка PsiCash уже существует",
@@ -36241,267 +36269,268 @@ function I18n() {
     sw: {
         name: "Kiswahili",
         translation: {
-            "banner#long-connecting": '<strong>Oh hapana!</strong>Unaonekana kua na shida ya mtandao!<br>\nPakua toleo la hivi karibuni la Psiphon kutoka kwa <a class="NewVersionURL" href="#">pakua tovuti</a>\n au kwa kutuma barua pepe kwenda <a class="NewVersionEmail" href="#"></a>',
-            "nav#connection#starting": "Kuunganisha",
-            "nav#connection#connected": "Kushikamana",
-            "nav#connection#stopping": "Kutokuunganisha",
-            "nav#connection#stopped": "Tenganisha",
+            "banner#long-connecting": '<strong>Duu!</strong>Inaonekana unatatizika kuunganisha!<br>\nPakua toleo la hivi karibuni la Psiphon kutoka kwa <a class="NewVersionURL" href="#">tovuti ya upakuaji</a>\n au kwa kutuma barua pepe kwenda <a class="NewVersionEmail" href="#"></a>',
+            "nav#connection#starting": "Inaunganisha",
+            "nav#connection#connected": "Imeunganisha",
+            "nav#connection#stopping": "Inakatisha",
+            "nav#connection#stopped": "Imekatishwa",
             "nav#settings": "Mipangilio",
             "nav#feedback": "Mrejesho",
-            "nav#logs": "Ingia",
+            "nav#logs": "Kumbukumbu ",
             "nav#about": "Kuhusu",
-            "connection#starting-msg": 'Psiphon ni <span class="state-word">kuunganisha</span>...',
-            "connection#stop-btn": "Simama",
-            "connection#connected-msg": 'Psiphon ni <span class="state-word">imeunganishwa</span>',
-            "connection#disconnect-btn": "Haijaunganishwa",
-            "connection#stopping-msg": 'Psiphon ni <span class="state-word"> Haijaunganishwa</span>...',
-            "connection#wait-btn": "Tfadhali subiri...",
-            "connection#stopped-msg": 'Psiphon ni <span class="state-word">haijaunganishwa</span>',
+            "connection#starting-msg": 'Psiphon <span class="state-word">inaunganishwa</span>...',
+            "connection#stop-btn": "Simamisha",
+            "connection#connected-msg": 'Psiphon <span class="state-word">imeunganishwa</span>',
+            "connection#disconnect-btn": "Katisha",
+            "connection#stopping-msg": 'Psiphon <span class="state-word"> inakatishwa</span>...',
+            "connection#wait-btn": "Tafadhali subiri...",
+            "connection#stopped-msg": 'Psiphon<span class="state-word">imekatishwa</span>',
             "connection#connect-btn": "Unganisha",
             "connection#egress-region-combo-label": "Chagua eneo la seva",
-            "settings#error-alert": "<strong>Kosa! tafadhali rekebisha thamani kabla isiyosahihi kabla ya kuendelea.",
-            "settings#reset-button": "Kuweka upya kwa chaguo msingi",
-            "settings#apply-button": "Kuomba mabadiliko",
-            "settings#unapplied-changes-prompt#title": "Kuweka mabadiliko",
-            "settings#unapplied-changes-prompt#body": "Umefanya mabadiliko kwa mpangilio wako,lakini haujaomba mabadiliko.<br><br> unamatumaini ya kuomba mabadiliko sasa au waachie?",
-            "settings#unapplied-changes-prompt#apply-button": "Kuomba",
-            "settings#unapplied-changes-prompt#discard-button": "Kuacha",
-            "settings#vpn-incompatible-msg": "(Haifanyikazi na L2TP/IPMara mbili.)",
+            "settings#error-alert": "<strong>Hitilafu!  Tafadhali rekebisha thamani zisizo sahihi kabla ya kuendelea.",
+            "settings#reset-button": "Seti upya hadi Chaguomsingi",
+            "settings#apply-button": "Tekeleza mabadiliko",
+            "settings#unapplied-changes-prompt#title": "Mipangilio imebadilika",
+            "settings#unapplied-changes-prompt#body": "Umefanya mabadiliko kwenye mipangilio yako, lakini haujatekeleza mabadiliko.<br><br> Ungependa kuyatekeleza mabadiliko yako sasa au kuyapuuza?",
+            "settings#unapplied-changes-prompt#apply-button": "Tekeleza",
+            "settings#unapplied-changes-prompt#discard-button": "Puuza",
+            "settings#vpn-incompatible-msg": "(Haifanyi kazi na L2TP/IPSec mode.)",
             "settings#vpn-incompatible-label": "L2TP/IPSec",
-            "settings#split-tunnel#heading": "kugawa kwa Tunnel",
-            "settings#split-tunnel#help-text": "Kama ikiwezesha, fanya maombi kwa seva kwenye nyumba ya nchi yako haitakua tunnel kupitia Psiphon.",
-            "settings#split-tunnel#reason": "Tovuti katika nyumba ya nchi yako kwa ujumla haita zuiwa, kwahiyo chaguo hili litakufanya ufikie kwa haraka katika tovuti hizo na muda mwingine inaeza  kupunguza gharama za utumiaji wa ISP data.",
-            "settings#split-tunnel#enable-label": "Usi proxy tovuti ndani ya nchi yako",
-            "settings#split-tunnel-chinese-sites#enable-label": "Don't proxy Chinese websites",
-            "settings#split-tunnel-chinese-sites#note": "<strong>WARNING:</strong> This feature uses data which may not always be reliable. Use caution when enabling this feature as some censored websites may be unintentionally excluded from the proxy.",
-            "settings#disable-timeouts#heading": "Kulemaza mwisho wa muda kwa mitandao ya chini",
-            "settings#disable-timeouts#help-text": "Kama ikiwezesha, wasiliana na Psiphon seva hautamaliza muda.",
-            "settings#disable-timeouts#reason": "Wakati unawezesha hii kwa kuunganisha mtandao wa chini sana, unauwezekano mdogo wa kupata uzoefu wa uunganisho usiotarajiwa.",
-            "settings#disable-timeouts#enable-label": "Lemaza umalizikaji wa mtandao polepole",
-            "settings#egress-region#heading": "Maeneo ya Psiphon Seva",
-            "settings#egress-region#select-best-performance": "Utendaji Mzuri",
-            "settings#egress-region#select-us": "Umoja",
+            "settings#split-tunnel#heading": "Gawanya Tunnel",
+            "settings#split-tunnel#help-text": "Iwapo tawezeshwa, maombi yanayotumwa kwa seva ndani ya nchi yako hayatashughulikiwa kupitia Psiphon.",
+            "settings#split-tunnel#reason": "Tovuti ndani ya nchi yako kwa ujumla hazijazuiwa, kwa hivyo kuwasha chaguo hili kutakupa ufikiaji wa haraka wa tovuti hizo na wakati mwingine kunaweza kupunguza gharama za matumizi ya data ya ISP.",
+            "settings#split-tunnel#enable-label": "Usitumie proxy kwa tovuti ndani ya nchi yako",
+            "settings#split-tunnel-chinese-sites#enable-label": "Usitumie proksi kwenye tovuti za Kichina.",
+            "settings#split-tunnel-chinese-sites#note": "<strong>ONYO: </strong>Kipengele hiki kinatumia data ambayo huenda isiwe ya kuaminika kila wakati. Uwe makini unapowasha kipengele hiki, kwani baadhi ya tovuti zilizodhibitiwa zinaweza kutengwa na seva mbadala bila kutarajiwa.",
+            "settings#disable-timeouts#heading": "Lemaza muda wa Kuisha kwa Mitandao iliyo polepole",
+            "settings#disable-timeouts#help-text": "Ikiwezeshwa, mawasiliano na seva ya Psiphon hayataisha muda.",
+            "settings#disable-timeouts#reason": "Unapowezesha hii kwa muunganisho wa polepole sana wa mtandao, kuna uwezekano mdogo wa kushuhudia tukio la kukatishwa kwa muunganisho usiotarajiwa.",
+            "settings#disable-timeouts#enable-label": "Lemaza muda wa kuisha kwa mitandao ya polepole",
+            "settings#egress-region#heading": "Maeneo ya Seva ya Psiphon",
+            "settings#egress-region#select-best-performance": "Utendaji Bora",
+            "settings#egress-region#select-us": "Marekani",
             "settings#egress-region#select-ca": "Kanada",
-            "settings#egress-region#select-gb": "Umoja uingereza",
+            "settings#egress-region#select-gb": "Uingereza",
             "settings#egress-region#select-jp": "Japani",
             "settings#egress-region#select-sg": "Singapore",
             "settings#egress-region#select-sk": "Slovakia",
-            "settings#egress-region#select-nl": "Netherlands",
+            "settings#egress-region#select-nl": "Uholanzi",
             "settings#egress-region#select-de": "Ujerumani",
             "settings#egress-region#select-in": "India",
-            "settings#egress-region#select-es": "Hispania",
+            "settings#egress-region#select-es": "Uhispania",
             "settings#egress-region#select-hk": "Hong Kong",
             "settings#egress-region#select-at": "Austria",
             "settings#egress-region#select-be": "Ubelgiji",
             "settings#egress-region#select-bg": "Bulgaria",
-            "settings#egress-region#select-ch": "Switzerland",
-            "settings#egress-region#select-cz": "Czech Republic",
+            "settings#egress-region#select-ch": "Uswisi",
+            "settings#egress-region#select-cz": "Jamhuri ya Czech",
             "settings#egress-region#select-dk": "Denmark",
             "settings#egress-region#select-fr": "Ufaransa",
             "settings#egress-region#select-hu": "Hungary",
             "settings#egress-region#select-it": "Italia",
             "settings#egress-region#select-no": "Norway",
             "settings#egress-region#select-ro": "Romania",
-            "settings#egress-region#select-se": "Uswisi",
+            "settings#egress-region#select-se": "Uswidi",
             "settings#egress-region#select-pl": "Polandi",
             "settings#egress-region#select-rs": "Serbia",
             "settings#egress-region#select-au": "Australia",
-            "settings#egress-region#select-ar": "Ajentina",
-            "settings#egress-region#select-br": "Brazili",
+            "settings#egress-region#select-ar": "Argentina",
+            "settings#egress-region#select-br": "Brazil",
             "settings#egress-region#select-cl": "Chile",
-            "settings#egress-region#select-fi": "Finlandi",
+            "settings#egress-region#select-fi": "Finland",
             "settings#egress-region#select-is": "Iceland",
             "settings#egress-region#select-ie": "Ireland",
             "settings#egress-region#select-ke": "Kenya",
             "settings#egress-region#select-mx": "Mexico",
-            "settings#egress-region#select-za": "South Africa",
+            "settings#egress-region#select-za": "Afrika Kusini",
             "settings#egress-region#select-kr": "Korea",
-            "settings#egress-region#select-tw": "Taiwani",
+            "settings#egress-region#select-tw": "Taiwan",
             "settings#egress-region#select-ae": "Falme za Kiarabu",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
-            "settings#egress-region#select-gr": "Greece",
+            "settings#egress-region#select-gr": "Ugiriki",
             "settings#egress-region#select-hr": "Croatia",
-            "settings#egress-region#select-pt": "Portugal",
+            "settings#egress-region#select-pt": "Ureno",
             "settings#egress-region#select-ua": "Ukraine",
             "settings#egress-region#select-co": "Colombia",
             "settings#egress-region#select-my": "Malaysia",
-            "settings#egress-region#description": "Psiphon ina seva katika nchi nyingi tofauti tofauti na maeneo. Tumia Psiphon seva kwenye mkoa uliofungwa kwenye nchi ya nyuba yako kwa ujumla itatoamunganiko mzuri wa mtandao, lakini tumaini kufikia tovuti na huduma kama ukiwa karibu kwenye nchi maalumu au mkoa.",
-            "settings#egress-region#default": 'Chagua chaguo msingi <strong>"Utendaji Mzuri"</strong> ruhusu chaguo la Psiphonn kiautomatiki chaguaseva, ambayo kwa ujumla matokeo mazuri ya kuunganishwa kwa mtandao.',
-            "settings#egress-region#invalid-error-msg": "Chagua eneo la seva halali la Psiphon.",
+            "settings#egress-region#description": "Psiphon ina seva katika nchi nyingi na maeneo tofauti. Kutumia seva ya Psiphon katika eneo karibu na nchi yako kwa ujumla kutatoa muunganisho bora wa mtandao, lakini unaweza kutaka kufikia tovuti na huduma kama vile uko katika nchi au eneo fulani.",
+            "settings#egress-region#default": 'Kuchagua chaguo-msingi <strong>"Utendaji Bora"</strong> kunaruhusu Psiphon kuchagua seva kiotomatiki, ambayo kwa ujumla itasababisha muunganisho bora wa mtandao.',
+            "settings#egress-region#invalid-error-msg": "Chagua eneo halali la seva ya Psiphon.",
             "settings#egress-region#error-modal-title": "Eneo la seva halipatikani",
-            "settings#egress-region#error-modal-body-http": 'Umesadini Psiphon kwa kutumia seva kwenye mkoa maalumu.<br>\nHataivyo, mkoa huo haipatikani tena.<br>\nUnatakiwa kuchagua mkoa mpya au badili kwenye chaguo-msingi "Utendaji Mzuri" chaguo.',
-            "settings#local-proxy-ports#heading": "Vituo vya proxy ya ndani.",
-            "settings#local-proxy-ports#leave-blank": "Toka 1wazi1 kwa chaguo la kituo kiautomati (imependekezwa).",
-            "settings#local-proxy-ports#reason": "Kama unatumia zana kwenye kompyuta yako amabayo inahitaji usanidi kikuli kufanya kazi na Psiphon, utahitaji Psiphon kutumia kila mara namba zilezile za eneo la kituo. Kama hauna sababu ya kubainisha namba za kituo, unatakiwa kuruhusu Psiphon ichague namba hizo  kiatomati kusaidia kuepuka migogoro.",
+            "settings#egress-region#error-modal-body-http": 'Umesanidi Psiphon kutumia seva katika eneo maalum.<br>Hata hivyo, eneo hilo halipatikani tena.<br>\nNi lazima uchague eneo jipya au ubadilishe hadi chaguo-msingi la "Utendaji Bora".',
+            "settings#local-proxy-ports#heading": "Milango ya ndani ya Proxy",
+            "settings#local-proxy-ports#leave-blank": "Acha<strong>wazi</strong>kwa uteuzi wa mlango kiotomatiki (inapendekezwa)",
+            "settings#local-proxy-ports#reason": "Ikiwa unatumia zana kwenye kompyuta yako ambazo zinahitaji usanidi wa mwongozo ili kufanya kazi na Psiphon, utahitaji Psiphon kutumia mara kwa mara nambari sawa za milango. Iwapo huna sababu ya kubaini nambari za mlango, unapaswa kuruhusu Psiphon kuzichagua kiotomatiki ili kusaidia kuepuka migongano.",
             "settings#local-proxy-ports#http-label": "HTTP/HTTPS",
-            "settings#port-value-error-msg": "Lazima kua kati ya 1 na 65535.",
-            "settings#local-proxy-ports#socks-label": "SOCKS",
-            "settings#local-proxy-ports#unique-error-msg": "Vituo vya ndani ni lazima vitofautiane kimoja na kingine.",
-            "settings#local-proxy-ports#error-modal-title": "Mgogoro wa Proxy ya kituo cha ndani.",
-            "settings#local-proxy-ports#error-modal-body-http": "<p>\nUna Psiphon iliyo sanidiwa kutumia kituo cha ndani maaulumu kwa HTTP proxy yake.<br>\nHata hivyo, kituo hicho kina onekana kuwa kimeshatumika kwahiyo Psiphon haiwezaki kutumia.\n</p>\n<p>\nTafadhali badili hadhi ya kituo cha HTTP proxy iliyosanidiwa na ujaribu tena. Tunapendekeza kuwa usafishe hadhi ili Psiphon iweze kuchukua kituo kinacho patikana kiatomati.\n</p>",
-            "settings#local-proxy-ports#error-modal-body-socks": "<p>\nUna Psiphon iliyo sanidiwa  kutumia kituo cha ndani maalumu cha SOCKS proxy.<br>\nHata hivyo, kituo kicho kinaonekana kimeshatumika hivyo Psiphon haiwezi kutumia.\n</p>\n<p>\nTafadhali badili  hadhi ya kituo cha SOCKS proxy na ujaribu tena. Tunapendekeza kuwa usafishe hadhi ili Psiphon iweze kuchukua kituo kinacho patikana kiatomati.\n</p>",
-            "settings#expose-local-proxies-to-lan#help-text": "If you have other devices on your network, such as a smart TV or gaming console, you can allow them to use these HTTP and SOCKS proxies while Psiphon is connected.",
-            "settings#expose-local-proxies-to-lan#hint": "<strong>HINT:</strong> You should specify at least one of the port numbers above in order to use this feature. The addresses of the local proxies will be displayed in the logs.",
-            "settings#expose-local-proxies-to-lan#enable-label": "Allow other devices on your network to use the local Psiphon proxies",
-            "settings#upstream-proxy#heading": "Proxy ya juu zaidi.",
-            "settings#upstream-proxy#by-default": 'Kama kompyuta yako tayari ina proxy iliyo sanidiwa, kwa kaida ya Psiphon itatumia proxy hiyo kipindi cha kuanzisha handaki. Unaweza kuiendesha zaidi hiyo tabia kwa kubainisha proxy ya kutumia, au kwa kubainisha kuwa hakuna "proxy ya juu zaidi" inatakiwa kutumika.',
-            "settings#upstream-proxy#reason": "Proxies za juu zaidi muda mwingine zinahitajika na shule, vyuo, au biashara. Kama mtoa mtandao wako amekupa mpangilio wa proxy ya juu zaidi, hivyo mpangilio wa kikuli hapa unahitaji kuunganishwa.",
-            "settings#upstream-proxy#proxy-reqs": "HTTP proxies pekee zinazo saidia HTTPs zinaruhusiwa.",
+            "settings#port-value-error-msg": "Lazima iwe kati ya 1 na 65535.",
+            "settings#local-proxy-ports#socks-label": "SOKETI",
+            "settings#local-proxy-ports#unique-error-msg": "Milango ya ndani lazima iwe tofauti na kila mmoja.",
+            "settings#local-proxy-ports#error-modal-title": "Mgogoro wa Proxy wa mlango wa ndani.",
+            "settings#local-proxy-ports#error-modal-body-http": "<p>\nUna Psiphon iliyo sanidiwa kutumia mlango wa ndani maaulumu kwa HTTP proxy yake.<br>\nHata hivyo, mlango huo unaonekana kuwa umeshatumika kwa hiyo Psiphon haiwezi kuuHTTPtumia.\n</p>\n<p>\nTafadhali badilisha thamani ya mlango wa Seva mbadala wa HTTP iliyosanidiwa na ujaribu tena. Tulipendekeza kwamba ufute thamani ili Psiphon iweze kuchagua kiotomatiki mlango unaopatikana\n</p>",
+            "settings#local-proxy-ports#error-modal-body-socks": "<p>\nUmesanidi Psiphon kutumia lango mahususi la ndani kwa proksi yake ya SOKETI<br>\nHata hivyo, lango linaonekana linatumika na hivyo basi Psiphon haiwezi kulitumia.\n</p>\n<p>\nTafadhali badilisha thamani ya lango la proksi ya SOKETI iliyosanidiwa na ujaribu tena. Tulipendekeza kwamba ufute thamani ili Psiphon iweze kuchagua kiotomatiki mlango unaopatikana.\n</p>",
+            "settings#expose-local-proxies-to-lan#help-text": "Ikiwa una vifaa vingine kwenye mtandao wako, kama vile TV mahiri au dashibodi ya michezo, unaweza kuviruhusu vitumie seva mbadala hizi za HTTP na SOKETI Psiphon ikiwa imeunganishwa.",
+            "settings#expose-local-proxies-to-lan#hint": "<strong>KIDOKEZO:</strong> Unahitaji kubainisha angalau nambari moja ya lango iliyo hapo juu ili kutumia kipengele hiki. Anwani za proksi za ndani zitaonyeshwa kwenye kumbukumbu.",
+            "settings#expose-local-proxies-to-lan#enable-label": "Ruhusu vifaa vingine kwenye mtandao wako kutumia proksi za Psiphon zilizoko karibu nawe.",
+            "settings#upstream-proxy#heading": "Proxy ya mkondo wa juu",
+            "settings#upstream-proxy#by-default": 'Ikiwa kompyuta yako tayari ina proksi iliyosanidiwa, kwa chaguomsingi Psiphon itatumia proksi hiyo wakati wa kuanzisha njia. Unaweza kubatilisha mwenendo huo kwa kubainisha seva mbadala ya kutumia, au kwa kubainisha kuwa hakuna "proksi ya mkondo wa juu" inapaswa kutumika.',
+            "settings#upstream-proxy#reason": "Proksi ya mkondo wa juu wakati mwingine huhitajika na shule, vyuo vikuu au biashara. Ikiwa mtoa huduma wako wa mtandao amekupa mipangilio ya seva mbadala, basi kuiweka mwenyewe hapa kunaweza kuhitajika ili kuunganisha.",
+            "settings#upstream-proxy#proxy-reqs": "Proksi za HTTP zinazotumia HTTPS pekee ndizo zinazoruhusiwa.",
             "settings#upstream-proxy#hostname-label": "Jina la mwenyeji",
-            "settings#upstream-proxy#port-label": "Bandari",
+            "settings#upstream-proxy#port-label": "Lango",
             "settings#upstream-proxy#username-label": "Jina la mtumiaji",
-            "settings#upstream-proxy#password-label": "nywila/ neno siri",
+            "settings#upstream-proxy#password-label": "Nywila",
             "settings#upstream-proxy#domain-label": "Kikoa",
-            "settings#upstream-proxy#skip-label": "Usitumie proxy ya juu zaidi",
-            "settings#upstream-proxy#set-hostname-error-msg": "Wewe lazima utoe hostname au uache wakala mto mashamba matupu kwaajili ya uteuzi wa kiautomatic.",
-            "settings#upstream-proxy#set-username-error-msg": "Wewe lazima kutoa jina la utumiaji kama unaweka nywila au kikoa; au acha mashamba uthibitisho wazi kwaajili ya kutokua na uthibitishaji.",
-            "settings#upstream-proxy#error-modal-title": "Kosa katika proxy ya juu zaidi",
-            "settings#upstream-proxy#error-modal-body-default": "Psiphon iliyosanidi kwa sasa kutumia mfumo wako wa proksi kama ilivyo “proksi iliyo juu”.<br>\nWalakini, Tunaonekana kuwezesha kuunganisha kwa Psiphon seva kupitia proksi hiyo.<br>\nTafadhali wezesha “Usitumie proksi ya juu” na jaribu tena.",
-            "settings#upstream-proxy#error-modal-body-configured": "Tuna proksi iliyoundwa kwa kutumia “proksi ya juu”.<br>\nWalakini, Tunaona kua tunawezesha kuunganisha kwa Psiphon seva kupitia proksi hiyo. <br>\nTafadhali rekebishamfumo na jaribu tena.",
-            "settings#transport-mode#heading": "Hali ya usafiri",
-            "settings#transport-mode#check-label": "Tumia hali ya L2TP/IPSec ",
-            "settings#transport-mode#help-text": "Hutumia windows L2P/IPSec mitandao halisi. Hali hii itafunga programu zako zote. lakini haiwezi  kutoa obfuscation na kwahiyo haina nguvu ya mzunguko wa uwezo wa uthibiti. Ni<strong>haipelekei</strong> kwa kupitia moto zaidi.",
-            "settings#systray-minimize#heading": "Punguza kwa eneo Alifu (Tray ya mfumo)",
-            "settings#systray-minimize#help-text": "Kama ikiweseshwa, Wakati unapunguza maombi ya Psiphon dirisha litajificha kwenye eneo la arifu (pia jua kua“tray ya mfumo” au “systray”, iko karibu na saa kwenye kazi ya madirisha  yako ya bar).",
-            "settings#systray-minimize#reason": 'Kupunguza Psiphon kwa eneo la arifu ("mfumo wa tray") nafasi ya bure katika kazi ya bar. Hii ni kwaajili ya kusaidia kama mara nyingi inaendesha Psiphon yako kwa kipindi cha mda mrefu.',
-            "settings#systray-minimize#enable-label": "Punguza kwenye maeneo ya arifu (mfumo wa tray)",
-            "settings#applying-message": "Unganisha tena kuweza kutekeleza mfumo wako.",
-            "settings#saved-message": "Mifumo imehifadhiwa.",
-            "settings#error-modal#title": "Kosa la mifumo",
-            "settings#error-modal#body": "Kuna makosa katika mpangilio wako wa dhamani. Tafadhali zisahihishe kabla ya mchakato. ",
+            "settings#upstream-proxy#skip-label": "Usitumie proksi ya mkondo wa juu",
+            "settings#upstream-proxy#set-hostname-error-msg": "Lazima uondoe jina la Mwenyeji, au uache sehemu zote za Proksi ya mkondo wa Juu zikiwa wazi kwa uteuzi wa kiotomatiki.",
+            "settings#upstream-proxy#set-username-error-msg": "Lazima uondoe Jina la Mtumiaji ikiwa unaseti Nenosiri au Kikoa; au uache sehemu zote za uthibitishaji zikiwa wazi kwa ajili ya kutokuwa na uthibitishaji.",
+            "settings#upstream-proxy#error-modal-title": "Hitilafu ya Proksi ya Mkondo wa Juu",
+            "settings#upstream-proxy#error-modal-body-default": 'Kwa sasa Psiphon imesanidiwa kutumia seva mbadala ya mfumo wako kama "proksi ya mkondo juu".<br>\nHata hivyo, inaonekana hatuwezi kuunganisha kwenye seva ya Psiphon kupitia proksi hiyo.<br>\nTafadhali washa "Usitumie seva mbadala ya mkondo wa Juu" na ujaribu tena.',
+            "settings#upstream-proxy#error-modal-body-configured": 'Umesanidi Psiphon kutumia "proksi ya mkondo wa juu".<br>\nHata hivyo, inaonekana hatuwezi kuunganisha kwenye seva ya Psiphon kupitia proksi hiyo. <br>\nTafadhali rekebisha mipangilio na ujaribu tena.',
+            "settings#transport-mode#heading": "Mbinu ya usafiri",
+            "settings#transport-mode#check-label": "Tumia hali ya L2TP/IPSec",
+            "settings#transport-mode#help-text": "Inatumia mtandao pepe wa Windows L2TP/IPSec. Hali hii itapunguza programu zako zote, lakini haitoi mkanganyiko na hivyo haina uwezo mkubwa wa kuzuia udhibiti. <strong>Haipendekezwi</strong> kwa kukwepa ngome nyingi.",
+            "settings#systray-minimize#heading": "Punguza hadi Eneo la Arifa (Tray ya Mfumo)",
+            "settings#systray-minimize#help-text": 'Ikiwashwa, ikifinywa, dirisha la programu ya Psiphon litafichwa katika eneo la arifa (pia linajulikana kama "trei ya mfumo" au "systray", iliyo karibu na saa kwenye upau wako wa kazi wa Windows).',
+            "settings#systray-minimize#reason": 'Kufinya Psiphon kwenye eneo la arifa ("trei ya mfumo") hutoa nafasi kwenye upau wako wa kazi. Hii inasaidia sana ikiwa mara nyingi unaendesha Psiphon kwa muda mrefu.',
+            "settings#systray-minimize#enable-label": "Finya hadi eneo la arifa (trei ya mfumo)",
+            "settings#applying-message": "Inaunganisha tena ili kuweza kutekeleza mipangilio yako.",
+            "settings#saved-message": "Mipangilio imehifadhiwa.",
+            "settings#error-modal#title": "Hitilafu ya Mipangilio",
+            "settings#error-modal#body": "Kuna hitilafu katika thamani za mipangilio yako. Tafadhali zirekebishe kabla ya kuendelea.",
             "feedback#top_content_title": "Tupatie mrejesho wako",
-            "feedback#top_para_2": 'Matatizo mengi yanaweza kurekebishika kwa kupakua toleo la mwisho. Unaweza <a class="NewVersionURL" href="#"> pakua toleo la mwisho kwa kubonyeza hapa</a>, au  unaweza kutuma kwa barua pepe kwa <a class="NewVersionEmail" href="#"></a>.',
-            "feedback#top_para_3": 'Pia unaweza kutafuta njia katika matatizo ya kawaida kwetu <a class="FaqURL" href="#">Maswali  Yaulizwayo Marakwamara</a>.',
-            "feedback#smiley_happy": "Psiphon inaunganisha na kutenda vile ninavyo taka iwe",
-            "feedback#smiley_sad": "Psiphon mara nyingi inashindwa kuunganisha au haifanyi vizuri vya kutosha.",
+            "feedback#top_para_2": 'Matatizo mengi yanaweza kusuluhishwa kwa kupakua toleo la hivi karibuni. Unaweza <a class="NewVersionURL" href="#"> kupakua toleo la hivi karibuni kwa kubonyeza hapa</a>, au  unaweza kutuma barua pepe kwa <a class="NewVersionEmail" href="#"></a>.',
+            "feedback#top_para_3": 'Unaweza pia kupata suluhisho kwa matatizo mengi ya kawaida katika <a class="FaqURL" href="#">Maswali yetu Yanayoulizwa Mara kwa Mara</a>.',
+            "feedback#smiley_happy": "Psiphon inaunganisha na kutenda jinsi ninavyotaka",
+            "feedback#smiley_sad": "Psiphon mara nyingi inashindwa kuunganisha au haifanyi kazi vizuri vya kutosha.",
             "feedback#text_feedback_prompt": "Tafadhali ingiza maoni yako hapa:",
-            "feedback#text_feedback_email_prompt": "Kama ungependa kwetu kukujibu, Tafadhali ingiza barua pepe yako:",
-            "feedback#diagnostic_check": 'Pakia uchunguzi wa data. Tafadhali nakili kwamba uchunguzi huu wa data haukutambulishi wewe, na itatusaidia kuhifadhi uendeshaji mzuri wa Psiphon. <a class="DataCollectionInfoURL" href="#">Bonyeza hapa kuona data gani tunakusanya.</a>',
+            "feedback#text_feedback_email_prompt": "Kama ungependa tukujibu, tafadhali ingiza barua pepe yako: ",
+            "feedback#diagnostic_check": 'Pakia data ya uchunguzi. Tafadhali kumbuka kuwa data hii ya uchunguzi haikutambulishi, na itatusaidia kuweka Psiphon kufanya kazi vizuri. <a class="DataCollectionInfoURL" href="#">Bofya hapa ili kuona data tunayokusanya.</a>',
             "feedback#submit_button": "Wasilisha",
-            "feedback#text_feedback_bottom_para": 'Kama fomu hapo juu haifanyi kazi, au ungependa kutma skrini, tafadhali tutumie barua pepe kwa <a id="FeedbackEmailAddress" href="mailto:feedback@psiphon.ca">maoni@psiphon.ca </a>.',
+            "feedback#text_feedback_bottom_para": 'Iwapo fomu iliyo hapo juu haifanyi kazi, au ungependa kutuma picha za skrini, tafadhali tutumie barua pepe kwa<a id="FeedbackEmailAddress" href="mailto:feedback@psiphon.ca">feedback@psiphon.ca</a>.',
             "feedback#success-message": "<strong>Ahsante!</strong> Maoni yako yameshatumwa.",
-            "logs#show-debug-label": "Onyesha kumbukumbu ya ukarabati",
+            "logs#show-debug-label": "Onyesha kumbukumbu ya euo",
             "logs#placeholder": "Hakuna kumbukumbu bado",
-            "language#success-message": "<strong>Hello!</strong> Karibu Psiphon.",
-            "about#wordart-tag": "Zaidi ya mipaka",
-            "about#description": "Psiphon ni <strong>uthibitisho wa kifaa cha mzunguko</strong>  — imeundwa kutoa ufikio kwenye  mtandao ulio wazi,sensa z zamani na firewall. Ni <strong>chanzo wazi</strong> na kukuza kwenye Toronto, Canada.",
-            "about#visit-download-site": 'Tafadhali tembele wovuti yetu kwa <strong><a class="NewVersionURL" href="#">pakua tolea jipya</a></strong> au kwa <strong><a class="InfoURL" href="#">pata msaada na taarifa</a></strong>. Psiphon inapatikana kwa Admin na madirisha.',
-            "about#get-by-email": "<strong>Kama tovuti haiwezi kufikiwa</strong>,unaeza kupata toleo jipya la Psiphon kwa kutuma barua pepe kwa:",
-            "about#license-agree": 'By using Psiphon you signal that you agree to the terms of the <a href="https://psiphon.ca/license.html">End-User License</a> and <a href="https://psiphon.ca/privacy.html">Privacy Policy</a>.',
-            "about#client-version": "Psiphon kwa madirisha ya toleo la mteja:",
+            "language#success-message": "<strong>Habari!</strong> Karibu Psiphon.",
+            "about#wordart-tag": "Nje ya mipaka",
+            "about#description": "Psiphon ni <strong>zana ya kuzuia udhibiti</strong>  — imeundwa ili kutoa ufikiaji wa Mtandao wazi, kukwepa vidhibiti na ngome. Ni<strong>programu huria</strong> na imekuzwa huko Toronto, Kanada.",
+            "about#visit-download-site": 'Tafadhali tembelea tovuti kwa <strong><a class="NewVersionURL" href="#">pakua tolea jipya</a></strong> au kwa <strong><a class="InfoURL" href="#">pata msaada na taarifa</a></strong>. Psiphon inapatikana kwa Android na Windows.',
+            "about#get-by-email": "<strong>Kama tovuti haiwezi kufikiwa</strong>,unaweza kupata toleo jipya la Psiphon kwa kutuma barua pepe kwa:",
+            "about#license-agree": 'Kwa kutumia Psiphon, unaonyesha kuwa umekubali masharti ya <a href="https://psiphon.ca/license.html">Leseni ya Mtumiaji</a> wa Mwisho na <a href="https://psiphon.ca/privacy.html">Sera ya Faragha</a>.',
+            "about#client-version": "Toleo la Psiphon kwa kiteja cha Windows",
             "general#modal-close-button": "Funga",
             "general#modal-feedback-button": "Tuma mrejesho",
-            "general#notice-modal-tech-preamble": "Hizi ni taarifa za kimakosa ya ufundi:",
-            "notice#systemproxysettings-setproxy-error-title": "Kosa la mfumo wa Proksi",
-            "notice#systemproxysettings-setproxy-error-body": "<p>Psiphon imeshindwa kuweka mpangilio wa mfumo wa proksi.</p>\n<p>Hii inaweza kua kupitia kwenye migogoro kwenye programu yako ya antivirusi. Unaweza kuhitaji kusanidi matumizi yako mwenyewe au mipangilio ya mfumo wa proksi kwa kutumia proksi za mtaa za Psiphon. ",
-            "notice#systemproxysettings-setproxy-warning-template": 'Psiphon imeshindwa ku seti mfumo wa mpangilio wa proksi kwa kunganisha jina la mtandao "<%- data%>". Hii inaweza kuwa kwa sababu ya migogoro kwenye programu yako ya antivirus. Unaweza kuhitaji kusanidi atumizi yako wenyewe au mfumo wa mpangilio wa proksi kwa kutumia proksi za mtaa za Psiphon.',
-            "appbackend#state-stopped-title": "Psiphon haikuunganishwa",
+            "general#notice-modal-tech-preamble": "Hizi ni taarifa ya hitilafu ya kiufundi:",
+            "notice#systemproxysettings-setproxy-error-title": "Hitilafu ya mfumo wa Proksi",
+            "notice#systemproxysettings-setproxy-error-body": "<p>Psiphon imeshindwa kuweka mipangilio ya mfumo wa proksi.</p>\n<p>Hii inaweza kutokana na mgongano na programu yako ya kukinga virusi. Huenda ukahitaji kusanidi programu yako au mipangilio ya seva mbadala wewe mwenyewe ili kutumia seva mbadala za Psiphon za ndani\n",
+            "notice#systemproxysettings-setproxy-warning-template": 'PsiphonPsiphon imeshindwa kuseti mipangilio ya mfumo ya proksi kwa mtandao uliotajwa "<%- data%>". Hii inaweza kutokana na migogoro kwenye programu yako ya kukinga virusi. Huenda ukahitaji kusanidi programu yako mwenyewe au mfumo wa mipangilio ya proksi kwa kutumia proksi za ndani za Psiphon.',
+            "appbackend#state-stopped-title": "Psiphon imekatishwa ",
             "appbackend#state-starting-title": "Psiphon inaunganishwa",
             "appbackend#state-starting-body": "Tafadhali subiri...",
             "appbackend#state-connected-title": "Psiphon imeunganishwa",
             "appbackend#state-connected-body": "Chunguza zaidi mipaka yako!",
-            "appbackend#state-connected-reminder-title": "Psiphon inakuweka kwa kuunganishwa",
-            "appbackend#state-connected-reminder-body": "Weka Psiphon wazi.bonyeza hapa kwa kutembelea kurasa zetu za wadhamini",
-            "appbackend#state-connected-reminder-body-2": "Weka Psiphon wazi kwa kutembelea kurasa yetu ya wadhamini ",
-            "appbackend#minimized-to-systray-title": "Psiphon imeweza kupunguza kwenye eneo la arifu",
+            "appbackend#state-connected-reminder-title": "Psiphon inakuwezesha kuwasiliana",
+            "appbackend#state-connected-reminder-body": "Ifanye Psiphon bila malipo. Bofya hapa ili kutembelea kurasa zetu za wadhamini!",
+            "appbackend#state-connected-reminder-body-2": "Ifanye Psiphon bila malipo kwa kutembelea kurasa yetu ya wadhamini ",
+            "appbackend#minimized-to-systray-title": "Psiphon imeweza kufinywa hadi eneo la arifu",
             "appbackend#minimized-to-systray-body": "Bonyeza ikoni ili kurejesha programu",
-            "appbackend#os-unsupported": "Psiphon haisaidii tena madirisha ya XP or Vista.\nTafadhali tembelea tovuti yetu kwa taarifa zaidi. ",
-            "psicash#transaction-error-title": "PsiCash kosa la ununuzi",
-            "psicash#transaction-error-body": "PsiCash yako kushindwa kwa jaribio la shughuli isiyotarajiwa.",
+            "appbackend#os-unsupported": "Psiphon inahimili Windows 10 na matoleo mapya zaidi pekee.\nTafadhali tembelea tovuti yetu kwa maelezo zaidi.",
+            "psicash#transaction-error-title": "Hitilafu ya muamala wa PsiCash",
+            "psicash#transaction-error-body": "Jaribio lako la muamala wa PsiCash limefeli bila kutarajiwa.",
             "psicash#transaction-ExistingTransaction-title": "Manunuzi ya PsiCash tayari yapo",
-            "psicash#transaction-ExistingTransaction-body": "Unayo kwa sasa manunuzi ya PsiCash ya aina hii. Aina ya manunuzi mengine hayajaruhusiwa mpaka moja kumalizika kwa muda.",
-            "psicash#transaction-InsufficientBalance-title": "Usawa wa PsiCash sio wa kutosha",
-            "psicash#transaction-InsufficientBalance-body": "Haitatosha kua na usawa wa PsiCash kwa manunuzi haya.",
-            "psicash#transaction-TransactionAmountMismatch-title": "Bei ya manunuzi ya PsiCash mismatch",
-            "psicash#transaction-TransactionAmountMismatch-body": "Bei ya manunuzi ya PsiCash imeoita muda wake. hali ya PsiCash yako itakua imerudishwa sasa.",
-            "psicash#transaction-TransactionTypeNotFound-title": "Aina ya manunuzi ya PsiCash hayafanyi kazi.",
-            "psicash#transaction-TransactionTypeNotFound-body": "Bidhaa uliyojaribu kununua haipo tena. Unatakiwa kusasisha au kuweka tena programu-tumizi. ",
-            "psicash#transaction-InvalidTokens-title-tracker": "Hali ya PsiCash ni batili",
-            "psicash#transaction-InvalidTokens-body-tracker": 'Your PsiCash state is invalid. Try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
-            "psicash#transaction-InvalidTokens-title-account": "PsiCash login expired",
-            "psicash#transaction-InvalidTokens-body-account": "Your PsiCash login has expired. Log into your account and try again.",
-            "psicash#transaction-ServerError-title": "Kosa la PsiCash seva",
-            "psicash#transaction-ServerError-body": "Psiphon seva ilijibu makosa wakati inajaribu kuweka manunuzi. Tafadhali jaribu tena manunuzi yako badae. ",
-            "psicash#ui-speedboost-active": "Kasi&nbsp;kuongeza utendaji kwa %s",
+            "psicash#transaction-ExistingTransaction-body": "Una ununuzi uliopo wa PsiCash wa aina hii. Ununuzi mwingine wa aina hii hauruhusiwi hadi ule uliopita uishe. Hali yako ya PsiCash itaonyeshwa upya sasa.",
+            "psicash#transaction-InsufficientBalance-title": "Salio la PsiCash halitoshi",
+            "psicash#transaction-InsufficientBalance-body": "Huna salio la kutosha la PsiCash kwa ununuzi huu.",
+            "psicash#transaction-TransactionAmountMismatch-title": "Bei ya ununuzi ya PsiCash hailingani",
+            "psicash#transaction-TransactionAmountMismatch-body": "Bei za ununuzi wa PsiCash zimepitwa na wakati. Hali yako ya PsiCash itaonyeshwa upya sasa.",
+            "psicash#transaction-TransactionTypeNotFound-title": "Aina ya ununuzi wa PsiCash haijapatikana",
+            "psicash#transaction-TransactionTypeNotFound-body": "Bidhaa unayojaribu kununua haipo tena. Huenda ukahitaji kusasisha au kusakinisha upya programu.",
+            "psicash#transaction-InvalidTokens-title-tracker": " Hali batili ya PsiCash",
+            "psicash#transaction-InvalidTokens-body-tracker": 'Hali yako ya PsiCash ni batili. Jaribu kuanzisha upya programu. Ikiwa hiyo haitafanya kazi, utatakiwa<a href="https://psiphon3.com/faq.html#clear-windows-data">kufuta hifadhi yako ya ndani</a>.',
+            "psicash#transaction-InvalidTokens-title-account": "Muda wa kuingia kwa PsiCash umekwisha",
+            "psicash#transaction-InvalidTokens-body-account": "Muda wako wa kuingia kwenye PsiCash umekwisha. Ingia katika akaunti yako na ujaribu tena.",
+            "psicash#transaction-ServerError-title": "Hitilafu ya seva ya PsiCash",
+            "psicash#transaction-ServerError-body": "Seva ya PsiCash ilijibu na hitilafu ilipokuwa ikijaribu kufanya ununuzi. Tafadhali jaribu tena ununuzi wako baadaye.",
+            "psicash#ui-speedboost-active": "Kasi&nbsp; Imeongezwa kwa %s",
             "psicash#ui-buypsi": "Nunua PsiCash",
-            "psicash#ui-buymorepsi": "Nunua zaidi PsiCash",
-            "psicash#ui-nsfbalance-buttontext": "Imehitaji kasi&nbsp;Kuongeza",
-            "psicash#ui-speedboost-button": "Kuongeza kasi",
+            "psicash#ui-buymorepsi": "Nunua PsiCash zaidi",
+            "psicash#ui-nsfbalance-buttontext": "Inahitaji kwa kasi&nbsp;Ongeza",
+            "psicash#ui-speedboost-button": "Ongeza kasi",
             "psicash#1-hour": "Lisaa1",
             "psicash#1-day": "Siku1",
             "psicash#1-week": "Wiki 1",
             "psicash#1-month": "Mwezi 1",
-            "psicash#ui-buyingboost-buttontext": "Anza kwa kasi&nbsp;Ongeza!",
+            "psicash#ui-buyingboost-buttontext": "Kasi ya Kuanza&nbsp;Ongeza!",
             "psicash#pane-create-account": "Unda akaunti kulinda PsiCash yako!",
-            "psicash#pane-balance-header": "Usawa",
+            "psicash#pane-balance-header": "Salio:",
             "psicash#pane-log-in": "Ingia",
             "psicash#pane-log-out": "Ondoka",
-            "psicash#pane-manage-web": "Kusimamia kwenye wavuti",
-            "psicash#pane-create-account-plea": 'Creating a PsiCash account will help preserve your PsiCash if you clear the app\'s storage or use Psiphon on another device. <a href="https://psiphon.ca/faq.html#psicash-account">Learn more.</a>',
-            "psicash#pane-l2tp-incompatible": 'Speed Boost cannot be used while Psiphon is connected in <a href="#">L2TP/IPSec transport mode</a>.',
+            "psicash#pane-manage-web": "Simamia kwenye wavuti",
+            "psicash#pane-create-account-plea": 'Kufungua akaunti ya PsiCash kutasaidia kuhifadhi PsiCash yako ikiwa utafuta hifadhi ya programu au kutumia Psiphon kwenye kifaa kingine. <a href="https://psiphon.ca/faq.html#psicash-account">Jifunze zaidi.</a>',
+            "psicash#pane-l2tp-incompatible": 'Kiongeza Kasi hakiwezi kutumika wakati Psiphon imeunganishwa katika modi ya usafirishaji ya <a href="#">L2TP/IPSec</a>.',
             "psicash#pane-must-log-in": "Unatakiwa kuingia ili utumie PsiCash.",
-            "psicash#pane-create-new-account": "Unda Akaunti",
-            "psicash#pane-speed-port-limits-head": "Speed and Port Limits",
-            "psicash#pane-speed-port-limits-body": "Without active Speed Boost, your speed is limited and some internet traffic is not supported. Activate Speed Boost with PsiCash to unlock the full potential of your Psiphon experience.",
-            "psicash#pane-speed-boost-cta": "Unleash the full potential of Psiphon with Speed&nbsp;Boost!",
-            "psicash#pane-need-more-psicash-header": "Unahitaji zaidi PsiCash!",
-            "psicash#pane-need-more-psicash-body": "In order activate Speed Boost, you need to buy more PsiCash.",
-            "psicash#pane-need-psicash-visit-store": "Unahitaji PsiCash? tembelea kununua zaidi!",
-            "psicash#overlay-logging-in": "Kuingia",
-            "psicash#overlay-logging-out": "Kutoka",
+            "psicash#pane-create-new-account": "Unda Akaunti Mpya",
+            "psicash#pane-speed-port-limits-head": "Kasi na Mipaka ya Lango",
+            "psicash#pane-speed-port-limits-body": "Bila kutumia Speed Boost, kasi yako itakuwa mdogo na baadhi ya trafiki ya mtandao haitahimiliwa. Washa Speed Boost kwa kutumia PsiCash ili kufungua uwezo kamili wa uzoefu wako wa Psiphon.",
+            "psicash#pane-speed-boost-cta": "Fungua uwezo kamili wa Psiphon kwa kutumia Speed Boost!",
+            "psicash#pane-need-more-psicash-header": "Unahitaji PsiCash zaidi!",
+            "psicash#pane-need-more-psicash-body": "Ili kuwezesha tena Speed Boost, unahitaji kununua PsiCash zaidi.",
+            "psicash#pane-need-psicash-visit-store": "Unahitaji PsiCash? Tembelea duka letu kununua zaidi!",
+            "psicash#overlay-logging-in": "Inaingia...",
+            "psicash#overlay-logging-out": "Unaondoka...",
             "psicash#modal-create-psicash-account-header": "Unda akaunti ya PsiCash",
-            "psicash#modal-create-psicash-account-body": "We strongly encourage you to create a PsiCash account before buying PsiCash. Having an account allows you to share your balance between devices and protect your purchases.",
+            "psicash#modal-create-psicash-account-body": "Tunashauri kwa dhati kufungua akaunti ya PsiCash kabla ya kununua PsiCash. Akaunti itakusaidia ushiriki wa salio lako kwenye vifaa tofauti tofauti na kulinda manunuzi yako.",
             "psicash#modal-create-psicash-account-create-button": "Unda au ingia kwenye akaunti",
             "psicash#modal-create-psicash-account-continue-button": "Endelea bila akaunti",
             "psicash#modal-psicash-logout-offline-header": "ondoka kwenye akaunti ya PsiCash",
-            "psicash#modal-psicash-logout-offline-body": "Being connected to the Psiphon network enables a more secure PsiCash logout. Would you like to connect before logging out?",
+            "psicash#modal-psicash-logout-offline-body": "Kuunganishwa kwenye mtandao wa Psiphon kunahakikisha kufunga salama kwa PsiCash. Je, ungependa kuunganishwa kabla ya kutoka?",
             "psicash#modal-psicash-logout-offline-connect-button": "Unganisha",
             "psicash#modal-psicash-logout-offline-logout-anyway-button": "Ondoka hata ivyo",
-            "psicash#modal-psicash-logout-offline-cancel-button": "futa",
+            "psicash#modal-psicash-logout-offline-cancel-button": "Ghairi",
             "psicash#modal-login-header": "Akaunti ya PsiCash",
-            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Unda akaunti mpya </a> au ingia hapa chini.',
-            "psicash#modal-login-username-field": "Jina la mtumiaji PsiCash",
-            "psicash#modal-login-password-field": "Neno la siri",
+            "psicash#modal-login-body": '<a class="js-psicash-account-signup" href="#">Unda akaunti mpya </a> au ingia hapo chini.',
+            "psicash#modal-login-username-field": "Jina la mtumiaji wa PsiCash",
+            "psicash#modal-login-password-field": "Nywila",
             "psicash#modal-login-forgot-password-link": "Umesahau nywila au jina la mtumiaji?",
             "psicash#modal-login-submit-button": "Wasilisha",
-            "psicash#modal-login-cancel-button": "futa",
-            "psicash#alert#buyspeedboost-purchase-complete": "Speed Boost started!",
-            "psicash#modal-logout-header": "ondoka kwenye akaunti ya PsiCash",
-            "psicash#modal-logout-error-body": 'You logout attempt failed unexpectedly. Please try restarting the application. If that doesn\'t work, you will need to <a href="https://psiphon3.com/faq.html#clear-windows-data">clear your local storage</a>.',
+            "psicash#modal-login-cancel-button": "Ghairi",
+            "psicash#alert#buyspeedboost-purchase-complete": "Speed Boost imeanza!",
+            "psicash#modal-logout-header": "Ondoka kwenye akaunti ya PsiCash",
+            "psicash#modal-logout-error-body": 'Jaribio lako la kujitoa ghafla limeshindwa . Tafadhali jaribu kuanzisha upya programu. Ikiwa haitafanya kazi, utahitaji <a href="https://psiphon3.com/faq.html#clear-windows-data">kufuta hifadhi yako ya ndani</a>.',
             "positive-value-indicator": "+%d",
-            "psicash#mustconnect-modal#title": "Psiphon inahitaji kuunganishwa",
-            "psicash#mustconnect-modal#body": "Kwaajili ya kutumia PsiCash, Nilazima kunganisha na mtandao wa Psiphon.",
-            "psicash#init-error-title": "PsiCash uanzishwaji wa kosa",
-            "psicash#init-error-body-unrecovered": "PsiCash ilishindwa kuanzisha.Hii inaweza kua tatizo la mfumo wa faili, kama vile kua nje ya nafasi ya diski. Usawa wako na hali nyingine zimepotea. PsiCash haitatumika. Unaweza kujaribu kuanzisha maombi kwa kunusuru tatizo.",
-            "psicash#init-error-body-recovered": "PsiCash ilishindwa kuanzisha. hii inaweza kua tatizo la mfumo wa faili, kama vile kua nje ya nafasi ya diski. Usawa wako na hali nyingine zimewekwa upya.",
-            "psicash#psiphon-speed": "Psiphon<br>Spidi",
-            "psicash#psiphon-speed-nobreak": "Psiphon Speed",
-            "psicash#corner-logged-out": "Umetoka kwenye PsiCash",
+            "psicash#mustconnect-modal#title": " Muunganisho wa Psiphon unahitajika",
+            "psicash#mustconnect-modal#body": "Ili kutumia PsiCash, ni lazima uunganishe na mtandao wa Psiphon.",
+            "psicash#init-error-title": " Hitilafu ya uanzishaji wa PsiCash",
+            "psicash#init-error-body-unrecovered": "PsiCash imeshindwa kuanza. Labda hii ni kwa sababu ya tatizo la mfumo wa faili, kama vile ukosefu wa nafasi ya diski. Salio lako na hali nyingine zimepotea. PsiCash haitatumika. Unaweza kujaribu kuanzisha upya programu ili kutatua tatizo.",
+            "psicash#init-error-body-recovered": "PsiCash imeshindwa kuanzisha. Labda hii ni kwa sababu ya shida ya mfumo wa faili, kama vile ukosefu wa nafasi ya diski. Salio lako na hali nyingine zimeanzishwa upya.",
+            "psicash#psiphon-speed": "Kasi ya<br>Psiphon",
+            "psicash#psiphon-speed-nobreak": "Kasi ya Psiphon",
+            "psicash#corner-logged-out": "Umeondoka kwenye PsiCash",
             "psicash#more-ellipsis": "Zaidi...",
-            "psicash#login#failure-modal-title": "PsiCash Login Failed",
-            "psicash#login#catastrophic-error-body": "Your PsiCash login attempt failed unexpectedly.",
+            "psicash#login#failure-modal-title": "Kuingia kwenye PsiCash kumeshindikana.",
+            "psicash#login#catastrophic-error-body": "Jaribio lako la kuingia kwenye PsiCash limeshindikana ghafla.",
             "psicash#login#invalid-credentials-body": "Jina la mtumiaji au nywila uliyoingiza haikua sahihi.",
-            "psicash#login#invalid-credentials-body-multiple-attempts": 'Would you instead like to <a class="js-psicash-account-signup" href="#">create an account</a> or <a class="js-psicash-forgot-account" href="#">recover your account</a>?',
-            "psicash#login#server-error-body": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
-            "psicash#login#badrequest-error-body": "The PsiCash server indicated that the login request was invalid. Please re-enter your login information and try again.",
-            "psicash#login#success-modal-title": "PsiCash Login Success",
-            "psicash#login#last-tracker-merge-body": "You are logged into your PsiCash account. The preexisting balance from this device has been transferred into your account, but this is the last time a balance merge will occur.",
-            "psicash#alert#tokens-expired": "PsiCash login expired. Please log back in.",
+            "psicash#login#invalid-credentials-body-multiple-attempts": 'Je, ungependa <a class="js-psicash-account-signup" href="#">kuunda akaunti mpya </a>au <a class="js-psicash-forgot-account" href="#">kurejesha akaunti yako?</a>',
+            "psicash#login#server-error-body": "Seva ya PsiCash ilijibu na hitilafu wakati wa jaribio lako la kuingia. Tafadhali jaribu tena baadaye.",
+            "psicash#login#badrequest-error-body": "Seva ya PsiCash ilionesha kuwa ombi la kuingia halikuwa sahihi. Tafadhali ingiza tena maelezo yako ya kuingia na jaribu tena.",
+            "psicash#login#success-modal-title": "Mafanikio ya Kuingia kwa PsiCash",
+            "psicash#login#last-tracker-merge-body": "Umeingia kwenye akaunti yako ya PsiCash. Salio lililokuwepo awali kutoka kwenye kifaa hiki limehamishiwa kwenye akaunti yako, lakini hii ndiyo mara ya mwisho salio litaunganishwa tena.",
+            "psicash#alert#tokens-expired": "Muda wa kuingia kwenye PsiCash umekwisha. Tafadhali ingia tena.",
             "psicash#alert#logged-out": "Kutoka kwenye akaunti ya PsiCash kumekamilika.",
-            "notice#disallowed-traffic-alert-title": "Kuboresha Psiphon yako kuunganishwa",
-            "notice#disallowed-traffic-alert-body": "<p>Programu haifanyikazi?</p>\n<p>Wavuti nyingine hazina msaada bila kuongeza kasi ya utendaji. Kuongeza kasi ya kufanya kazi na PsiCash kwa kufungua uwezo mzima wa uzoefu wa Psiphon yako.</p> ",
+            "notice#disallowed-traffic-alert-title": "Boresha muunganisho wako wa Psiphon",
+            "notice#disallowed-traffic-alert-body": "<p>Programu haifanyi kazi?</p>\n<p>Baadhi ya trafiki ya mtandao haitumiki bila Kiongeza Kasi kilichowezeshwa. Wezesha Kiongeza Kasi na PsiCash ili kufungua uwezo kamili wa matumizi yako ya Psiphon.\n </p> ",
             "appbackend#disallowed-traffic-notification-title": "Programu haifanyi kazi?",
-            "appbackend#disallowed-traffic-notification-body": "Kuongeza kasi ya kazi kwa kufungua uwezo kamili wa uzoefu wa Psiphon yako.",
-            "settings#disallowed-traffic-alert#heading": "Hairuhusiwi ku arifu traffic",
-            "settings#disallowed-traffic-alert#help-text": "Baadhi ya aina ya mtandao wa traffic haiungi mkono bila kuaongeza kasi ya utendaji. Wakati kama traffic hairuhusiwi, itaonesha arifu. (Kuwezesha tena kutahitajika kuunganisha tena.)",
-            "settings#disallowed-traffic-alert#disable-label": "Lemaza hairuhusu ku arifu traffic",
-            "ui#alert#url-copied-to-clipboard": "URL copied to clipboard.<br>If browser fails to open, paste the URL into the browser address bar.",
+            "appbackend#disallowed-traffic-notification-body": "Washa Kiongeza Kasi ili kufungua uwezo kamili wa matumizi yako ya Psiphon.",
+            "settings#disallowed-traffic-alert#heading": "Arifu ya Trafiki Isiyoruhusiwa",
+            "settings#disallowed-traffic-alert#help-text": "Baadhi ya aina za trafiki ya mtandao hazitumiki bila Kiongeza Kasi kilichowezeshwa. Wakati trafiki kama hiyo imekataliwa, arifa huonyeshwa. (Kuwasha upya kutahitaji muunganisho upya.)",
+            "settings#disallowed-traffic-alert#disable-label": "Lemaza arifa za trafiki zisizoruhusiwa",
+            "ui#alert#url-copied-to-clipboard": "URL imenakiliwa kwenye ubao wa kunakili.<br> Ikiwa kivinjari hakiwezi kufungua, bandika URL hiyo kwenye sehemu ya anwani ya kivinjari.",
             "notice#psiphonui-fileerror-error-title": "Hitilafu ya kufikia faili",
-            "notice#psiphonui-fileerror-error-body": "<p>Psiphon haiwezi kufikia faili inahitaji kufanya kazi  kiufasaha.</p>\n<p>Funga programu ya Psiphon, futa faili iliyoorodheshwa hapo chini, na jaribu kuifanyia kazi Psiphon tena.</p>",
-            "notice#psiphonui-fileerror-detail-preamble": "Jina la faili na ujumbe mfupi wa makosa:",
+            "notice#psiphonui-fileerror-error-body": "<p>Psiphon haiwezi kufikia faili inayohitaji kufanya kazi  kiufasaha.</p>\n<p>Funga programu ya Psiphon, futa faili iliyoorodheshwa hapo chini, na jaribu kuifanyia kazi Psiphon tena.</p>",
+            "notice#psiphonui-fileerror-detail-preamble": "Jina la faili na ujumbe mfupi wa hitilafu:",
             "banner#sponsored-by": "Imedhaminiwa na"
         }
     },
@@ -36587,6 +36616,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -36675,7 +36705,7 @@ function I18n() {
       "appbackend#state-connected-reminder-body-2": "Саҳифаҳои парасторони моро аз назар гузаронда, барои ройгон мондани Psiphon мусоидат кунед.",
       "appbackend#minimized-to-systray-title": "Psiphon ба қитъаи огоҳиҳо печонда шуд",
       "appbackend#minimized-to-systray-body": "Барои барномаро барқарор кардан, нишонаро зер кунед",
-      "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+      "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
       "psicash#transaction-error-title": "PsiCash transaction error",
       "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
       "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -36854,6 +36884,7 @@ function I18n() {
       "settings#egress-region#select-ae": "สหรัฐอาหรับเอมิเรสต์",
       "settings#egress-region#select-ee": "Estonia",
       "settings#egress-region#select-lv": "Latvia",
+      "settings#egress-region#select-lt": "Lithuania",
       "settings#egress-region#select-id": "อินโดนีเซีย",
       "settings#egress-region#select-nz": "New Zealand",
       "settings#egress-region#select-gr": "กรีซ",
@@ -36942,7 +36973,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Keep Psiphon free by visiting our sponsor pages!",
             "appbackend#minimized-to-systray-title": "Psiphon has been minimized to the notification area",
             "appbackend#minimized-to-systray-body": "Click the icon to restore the application",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -37121,6 +37152,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -37209,7 +37241,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "ሳይፎን (Psiphon)  ናጻ ግደፎ-ናብ መዋሊና ገጻት ብምብጻሕ!",
             "appbackend#minimized-to-systray-title": "ሳይፎን (Psiphon) ናብ መዘኻኸሪ ከባቢ ንኢሱ`ሎ",
             "appbackend#minimized-to-systray-body": "መተግበሪ ናብ ዝነበሮ ንምምላስ ነዚ ኣይከን ጠውቕ",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -37388,6 +37420,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Birleşen Arap Emirlikleri",
             "settings#egress-region#select-ee": "Estoniýa",
             "settings#egress-region#select-lv": "Latwiýa",
+            "settings#egress-region#select-lt": "Litwa",
             "settings#egress-region#select-id": "Indoneziýa",
             "settings#egress-region#select-nz": "Täze Zelandiýa",
             "settings#egress-region#select-gr": "Gresiýa",
@@ -37476,7 +37509,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Psiphon-y mugt saklamak üçin, hemayatkär sahypalara geç! ",
             "appbackend#minimized-to-systray-title": " Duýduryş meýdana göra Psiphon kiçeldildi",
             "appbackend#minimized-to-systray-body": "Programmany dikeltmek üçin şu şekiljige bas",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -37655,6 +37688,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Birleşik Arap Emirlikleri",
             "settings#egress-region#select-ee": "Estonya",
             "settings#egress-region#select-lv": "Letonya",
+            "settings#egress-region#select-lt": "Litvanya",
             "settings#egress-region#select-id": "Endonezya",
             "settings#egress-region#select-nz": "Yeni Zelanda",
             "settings#egress-region#select-gr": "Yunanistan",
@@ -37743,7 +37777,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Destekçi sayfalarımızı açarak Pshiphon uygulamasının ücretsiz kalmasını sağlayın!",
             "appbackend#minimized-to-systray-title": "Psiphon bildirim alanına küçültüldü",
             "appbackend#minimized-to-systray-body": "Uygulamayı açmak için simgeye tıklayın",
-            "appbackend#os-unsupported": "Psiphon artık Windows XP ya da Vista desteği vermiyor.\nAyrıntılı bilgi almak için sitemize bakabilirsiniz.",
+            "appbackend#os-unsupported": "Psiphon yalnızca Windows 10 ve üzerindeki sürümleri destekler.\nAyrıntılı bilgi almak için sitemize bakabilirsiniz.",
             "psicash#transaction-error-title": "PsiCash işleminde sorun",
             "psicash#transaction-error-body": "PsiCash işleminiz beklenmedik şekilde tamamlanamadı.",
             "psicash#transaction-ExistingTransaction-title": "Zaten PsiCash satın alınmış",
@@ -37912,7 +37946,7 @@ function I18n() {
             "settings#egress-region#select-br": "Бразилія",
             "settings#egress-region#select-cl": "Чилі",
             "settings#egress-region#select-fi": "Фінляндія",
-            "settings#egress-region#select-is": "Ісляндія",
+            "settings#egress-region#select-is": "Ісландія",
             "settings#egress-region#select-ie": "Ірландія",
             "settings#egress-region#select-ke": "Кенія",
             "settings#egress-region#select-mx": "Мексика",
@@ -37922,6 +37956,7 @@ function I18n() {
             "settings#egress-region#select-ae": "Об'єднані Арабські Емірати",
             "settings#egress-region#select-ee": "Естонія",
             "settings#egress-region#select-lv": "Латвія",
+            "settings#egress-region#select-lt": "Литва",
             "settings#egress-region#select-id": "Індонезія",
             "settings#egress-region#select-nz": "Нова Зеландія",
             "settings#egress-region#select-gr": "Греція",
@@ -38010,8 +38045,8 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Користуйтесь Psiphon безкоштовно, відвідавши наші спонсорські сторінки!",
             "appbackend#minimized-to-systray-title": "Psiphon згорнено до зони сповіщення",
             "appbackend#minimized-to-systray-body": "Натисніть піктограму, щоб відновити програму",
-            "appbackend#os-unsupported": "Psiphon більше не підтримує Windows XP та Vista.\nДокладніше можна прочитати на нашому сайті.",
-            "psicash#transaction-error-title": "PsiCash помилка передачі",
+            "appbackend#os-unsupported": "Psiphon підтримує лише Windows 10 та новіші версії.\nБудь ласка, відвідайте на вебсайт для додаткової інформації.",
+            "psicash#transaction-error-title": "PsiCash помилка транзакції",
             "psicash#transaction-error-body": "Ваша транзакція PsiCash чомусь перервалася.",
             "psicash#transaction-ExistingTransaction-title": "Покупка PsiCash вже існує",
             "psicash#transaction-ExistingTransaction-body": "Ви вже маєте покупку PsiCash цього типу. Інша покупка такого ж типу неможлива, доки не скінчиться поточна. Ваш статус PsiCash зараз буде оновлено.",
@@ -38189,6 +38224,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -38277,7 +38313,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "ہمارے اسپانسر صفحات ملاحظہ کرکے Psiphon (سائفن) کو مفت رکھیں!",
             "appbackend#minimized-to-systray-title": "Psiphon (سائفن) کو نوٹیفکیشن ایریا میں کم سے کم کردیا گیا ہے",
             "appbackend#minimized-to-systray-body": "ایپلیکشن کو بحال کرنے کے لئے آئکن پر کلک کریں",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash ٹرانزیکشن میں خرابی۔",
             "psicash#transaction-error-body": " آپ کے PsiCash ٹرانزیکشن کی کوشش غیر متوقع طور پر ناکام ہوگئی ہے۔",
             "psicash#transaction-ExistingTransaction-title": "PsiCash خریداری پہلے سے موجود ہے",
@@ -38456,6 +38492,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Greece",
@@ -38544,7 +38581,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Psiphonning bepul bo‘lishiga hissa qo‘shing. Homiy sahifalariga o‘tish uchun bu yerga bosing!",
             "appbackend#minimized-to-systray-title": "Psiphon bildirishnomalar paneliga yig‘ildi",
             "appbackend#minimized-to-systray-body": "Dasturni yoyish uchun ikonkasi ustiga bosing",
-            "appbackend#os-unsupported": "Psiphon no longer supports Windows XP or Vista.\nPlease visit our website for more information.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash transaction error",
             "psicash#transaction-error-body": "Your PsiCash transaction attempt failed unexpectedly.",
             "psicash#transaction-ExistingTransaction-title": "PsiCash purchase already exists",
@@ -38723,6 +38760,7 @@ function I18n() {
             "settings#egress-region#select-ae": "United Arab Emirates",
             "settings#egress-region#select-ee": "Estonia",
             "settings#egress-region#select-lv": "Latvia",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "Indonesia",
             "settings#egress-region#select-nz": "New Zealand",
             "settings#egress-region#select-gr": "Hy Lạp",
@@ -38811,7 +38849,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "Giữ Pisphon miễn phí bằng cách vào thăm trang của các nhà bảo trợ!",
             "appbackend#minimized-to-systray-title": "Psiphon đã được thu nhỏ vào vùng thông báo",
             "appbackend#minimized-to-systray-body": "Bấm vào biểu tượng để phục hồi ứng dụng",
-            "appbackend#os-unsupported": "Psiphon không còn hỗ trợ cho Windows XP hay Vista\nXin xem trang web chúng tôi để biết thêm thông tin.",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "Lỗi giao dịch PsiCash",
             "psicash#transaction-error-body": "Giao dịch PsiCash có lỗi bất ngờ.",
             "psicash#transaction-ExistingTransaction-title": "Hàng mua bằng PsiCash đã có rồi",
@@ -38990,6 +39028,7 @@ function I18n() {
             "settings#egress-region#select-ae": "阿拉伯联合酋长国",
             "settings#egress-region#select-ee": "爱沙尼亚",
             "settings#egress-region#select-lv": "拉脱维亚",
+            "settings#egress-region#select-lt": "Lithuania",
             "settings#egress-region#select-id": "印度尼西亚",
             "settings#egress-region#select-nz": "新西兰",
             "settings#egress-region#select-gr": "希腊",
@@ -39078,7 +39117,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "通过访问我们的赞助商页面来维持赛风免费！",
             "appbackend#minimized-to-systray-title": "Psiphon 已最小化到通知区域",
             "appbackend#minimized-to-systray-body": "点击图标恢复应用程序",
-            "appbackend#os-unsupported": "赛风不再支持Windows XP或者Vista。\n详情请访问赛风的网站。",
+            "appbackend#os-unsupported": "Psiphon只支持 Windows10 及更新的系统。请访问我们的网站以获取更多信息。",
             "psicash#transaction-error-title": "PsiCash交易错误",
             "psicash#transaction-error-body": "您的PsiCash交易尝试意外失败",
             "psicash#transaction-ExistingTransaction-title": "PsiCash购买已经存在",
@@ -39257,6 +39296,7 @@ function I18n() {
             "settings#egress-region#select-ae": "阿拉伯聯合大公國",
             "settings#egress-region#select-ee": "愛沙尼亞",
             "settings#egress-region#select-lv": "拉托維亞",
+            "settings#egress-region#select-lt": "立陶宛",
             "settings#egress-region#select-id": "印度尼西亞",
             "settings#egress-region#select-nz": "紐西蘭",
             "settings#egress-region#select-gr": "希臘",
@@ -39345,7 +39385,7 @@ function I18n() {
             "appbackend#state-connected-reminder-body-2": "透過訪問點擊贊助者頁面來維持免費的賽風。",
             "appbackend#minimized-to-systray-title": "Psiphon 已最小化到通知區域",
             "appbackend#minimized-to-systray-body": "點擊圖標恢復應用程式",
-            "appbackend#os-unsupported": "Psiphon 不再支援 Windows XP 或 Vista。\n請訪問我們的網站了解更多資訊。",
+            "appbackend#os-unsupported": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
             "psicash#transaction-error-title": "PsiCash 交易出錯",
             "psicash#transaction-error-body": "PsiCash 交易發生無預警錯誤。",
             "psicash#transaction-ExistingTransaction-title": "PsiCash 購買已存在。",

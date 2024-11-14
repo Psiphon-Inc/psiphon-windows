@@ -315,6 +315,10 @@
         "message": "拉托維亞",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
     },
+    "settings#egress-region#select-lt": {
+        "message": "立陶宛",
+        "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Lithuania will be used."
+    },
     "settings#egress-region#select-id": {
         "message": "印度尼西亞",
         "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Indonesia will be used."
@@ -668,8 +672,8 @@
         "description": "Appears in the notification area balloon when Psiphon has been minimized to the Windows' notification area (aka 'system tray' aka 'systray', the area of the taskbar with the clock, battery indicator, and other icons)."
     },
     "appbackend#os-unsupported": {
-        "message": "Psiphon 不再支援 Windows XP 或 Vista。\n請訪問我們的網站了解更多資訊。",
-        "description": "Appears in a message box when Psiphon is run on an unsuppoted version of Windows. Is followed by a URL."
+        "message": "Psiphon only supports Windows 10 and newer.\nPlease visit our website for more information.",
+        "description": "Appears in a message box when Psiphon is run on an unsupported version of Windows. Is followed by a URL."
     },
     "psicash#transaction-error-title": {
         "message": "PsiCash 交易出錯",
