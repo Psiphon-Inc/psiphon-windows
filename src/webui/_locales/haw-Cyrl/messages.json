@@ -767,6 +767,10 @@
     "message": "[Ķǿǿřḗḗȧȧ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Korea will be used."
   },
+  "settings#egress-region#select-lt": {
+    "message": "[Ŀīīŧħŭŭȧȧƞīīȧȧ]",
+    "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Lithuania will be used."
+  },
   "settings#egress-region#select-lv": {
     "message": "[Ŀȧȧŧṽīīȧȧ]",
     "description": "One of the choices in the 'Psiphon Server Region' combo box. If selected, a Psiphon server in Latvia will be used."
