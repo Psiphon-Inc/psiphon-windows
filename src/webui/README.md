@@ -1,6 +1,3 @@
-
-## PsiCash
-
 ## Design
 
 Communication in both directions is enabled by the [`mctrl`](https://github.com/Psiphon-Inc/mctrl) HTML control that we are using (and some changes we have made to it).
