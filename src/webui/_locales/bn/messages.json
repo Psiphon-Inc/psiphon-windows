@@ -764,11 +764,11 @@
         "description": "Label on a button. Clicking this button will buy 1 hour of Speed Boost."
     },
     "psicash#1-day": {
-        "message": "1 day",
+        "message": "১ দিন",
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
     },
     "psicash#1-week": {
-        "message": "1 week",
+        "message": "১ সপ্তাহ",
         "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
     },
     "psicash#1-month": {

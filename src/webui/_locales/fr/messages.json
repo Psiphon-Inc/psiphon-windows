@@ -600,7 +600,7 @@
         "description": "Paragraph on the 'About' page telling users that they can also get a new version of Psiphon via email. The text in this resource is then followed by an email address. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#license-agree": {
-        "message": "En utilisant Psiphon, vous indiquez que vous acceptez les conditions de la <a href=\"https://psiphon.ca/fr/license.html\">Licence d’utilisateur final</a> ainsi que la <a href=\"https://psiphon.ca/fr/privacy.html\">Politique de confidentialité</a>.",
+        "message": "En utilisant Psiphon, vous indiquez que vous acceptez les conditions de la <a href=\"https://psiphon.ca/fr/license.html\">Licence d’utilisateur final</a> ainsi que la <a href=\"https://psiphon.ca/fr/privacy.html\">Politique de protection des renseignements personnels</a>.",
         "description": "Paragraph on the 'About' page telling users that they agreeing to Psiphon's End-User License Agreement and Privacy Policy. The link URLs must not be modified. The word 'Psiphon' must not be translated or transliterated."
     },
     "about#client-version": {
