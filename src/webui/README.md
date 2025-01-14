@@ -1,6 +1,3 @@
-
-## PsiCash
-
 ## Design
 
 Communication in both directions is enabled by the [`mctrl`](https://github.com/Psiphon-Inc/mctrl) HTML control that we are using (and some changes we have made to it).
@@ -22,8 +19,8 @@ $ npm ci
 
 ## Developing
 
-This is what I use for quickly showing the UI in a browser. It just grabs the source from Bitbucket and returns it with appropriate Content-Types to display it.
-https://bb.githack.com/psiphon/psiphon-circumvention-system/raw/default/Client/psiclient/webui/main.html
+This is what I use for quickly showing the UI in a browser. It just grabs the source from GitHub and returns it with appropriate Content-Types to display it.
+https://githubraw.com/Psiphon-Inc/psiphon-windows/master/src/webui/main-inline.html
 
 You can serve it locally with:
 ```
@@ -38,7 +35,7 @@ $ python -m http.server
 # then go to http://hostvmip:8000/main-inline.html
 ```
 
-The UI "web site" is in the [webui](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/default/Client/psiclient/webui/) directory. [main.html](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/default/Client/psiclient/webui/main.html) is the... main HTML. You'll see main-inline.html as well; that's the file that's actually used in the app and is generated from main.html by the [Gruntfile](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/default/Client/psiclient/webui/Gruntfile.js).
+The UI "web site" is in the [webui](https://github.com/Psiphon-Inc/psiphon-windows/tree/master/src/webui) directory. [main.html](https://github.com/Psiphon-Inc/psiphon-windows/blob/master/src/webui/main.html) is the... main HTML. You'll see main-inline.html as well; that's the file that's actually used in the app and is generated from main.html by the [Gruntfile](https://github.com/Psiphon-Inc/psiphon-windows/blob/master/src/webui/Gruntfile.js).
 
 The UI uses jQuery, lodash, Bootstrap, and a few other libs. App executable size is very important, so don't get crazy with new libs, but a tiny bit of bloat might be okay.
 
@@ -46,9 +43,9 @@ You'll notice that old versions of Bootstrap and jQuery are being used. We NEED 
 
 If we end up feeling that functional old IE support is untenable, then we may come to the decision to just hide the UI for them.
 
-The UI logic is all in main.js. For example, [here's the code](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/e36a48574442c739ea68e72f253c1eea73d5f559/Client/psiclient/webui/js/main.js?at=default&fileviewer=file-view-default#main.js-2456) that triggers the tunnel to stop (after the user clicks the button). It basically makes a request for `psi:stop`.
+The UI logic is all in main.js. For example, [here's the code](https://github.com/Psiphon-Inc/psiphon-windows/blob/54fe95362be84ef7e169548712ee64dedf3c20c5/src/webui/js/main.js#L4666) that triggers the tunnel to stop (after the user clicks the button). It basically makes a request for `psi:stop`.
 
-The other important part of this is the C++ code that talks to the UI. The [`HTMLUI_BeforeNavigateHandler`](https://bitbucket.org/psiphon/psiphon-circumvention-system/src/7b94cbff1644bf93edce4f7088f4b73d8d58e60e/Client/psiclient/psiclient.cpp?at=default&fileviewer=file-view-default#psiclient.cpp-769) function watches for our special command URLs and takes the appropriate action (like stopping the tunnel).
+The other important part of this is the C++ code that talks to the UI. The [`HTMLUI_BeforeNavigateHandler`](https://github.com/Psiphon-Inc/psiphon-windows/blob/54fe95362be84ef7e169548712ee64dedf3c20c5/src/psiclient_ui.cpp#L647) function watches for our special command URLs and takes the appropriate action (like stopping the tunnel).
 
 There are lots more UI communications helper functions here. In order to push info into the UI they call JS functions (via the HTML control).
 

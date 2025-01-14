@@ -1260,7 +1260,7 @@ string CryptBinaryToStringWrapper(const unsigned char* input, size_t length, DWO
     if (!CryptBinaryToStringA(
         input,
         length,
-        flags | CRYPT_STRING_NOCR,
+        flags | CRYPT_STRING_NOCRLF,
         NULL,
         &outsize))
     {
@@ -1273,14 +1273,12 @@ string CryptBinaryToStringWrapper(const unsigned char* input, size_t length, DWO
     if (!CryptBinaryToStringA(
         input,
         length,
-        flags | CRYPT_STRING_NOCR,
+        flags | CRYPT_STRING_NOCRLF,
         (LPSTR)output.c_str(),
         &outsize))
     {
         return "";
     }
-
-    ((LPSTR)output.c_str())[outsize] = '\0';
 
     return output;
 }

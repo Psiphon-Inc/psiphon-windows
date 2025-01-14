@@ -48,7 +48,7 @@
         "description": "Message in the big connection status box telling the user that Psiphon is currently connected to the network. The word 'Psiphon' must not be translated or transliterated."
     },
     "connection#disconnect-btn": {
-        "message": "Disconnect",
+        "message": "डिस्कनेक्ट करें",
         "description": "Text on the big connection button telling the user that if they click it, they will be disconnected from the network. This is shown when the user is currently connected."
     },
     "connection#stopping-msg": {
@@ -728,7 +728,7 @@
         "description": "Title of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-InvalidTokens-body-account": {
-        "message": "Your PsiCash login has expired. Log into your account and try again.",
+        "message": "आपका PsiCash लॉगिन समाप्त हो गया है। अपने अकाउंट में लॉग इन करें और पुनःप्रयास करें।",
         "description": "Body text of a modal dialog shown when a PsiCash transaction (like Speed Boost purchase) fails. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#transaction-ServerError-title": {
@@ -756,7 +756,7 @@
         "description": "Label on a disabled button, followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. When the user has enough PsiCash, the button will be enabled and the text will change. You may use `&nbsp;`, `<br>`, `<wbr>`, `&shy;`, etc. to control word wrap. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#ui-speedboost-button": {
-        "message": "Speed Boost",
+        "message": "अप्रतिबंधित गति (स्पीड बूस्ट)",
         "description": "Label on a button. The text is followed by a value in PsiCash indicating how much it costs to buy an hour of Speed Boost. Clicking the button will buy Speed Boost. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#1-hour": {
@@ -768,11 +768,11 @@
         "description": "Label on a button. Clicking this button will buy 1 day (24 hours) of Speed Boost."
     },
     "psicash#1-week": {
-        "message": "1 week",
+        "message": "1 सप्ताह",
         "description": "Label on a button. Clicking this button will buy 1 week (7 days) of Speed Boost."
     },
     "psicash#1-month": {
-        "message": "1 month",
+        "message": "1 महीना",
         "description": "Label on a button. Clicking this button will buy 1 month (31 days) of Speed Boost."
     },
     "psicash#ui-buyingboost-buttontext": {
@@ -860,7 +860,7 @@
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will be taken to a screen where they can create an account or log into an existing one."
     },
     "psicash#modal-create-psicash-account-continue-button": {
-        "message": "Continue without account",
+        "message": "अकाउंट के बिना जारी रखें",
         "description": "Button in the modal dialog encouraging users to create an account when they attempt to buy PsiCash with real money without one. If they click this button, they will continue on to the PsiCash store."
     },
     "psicash#modal-psicash-logout-offline-header": {
@@ -884,7 +884,7 @@
         "description": "Button in the modal dialog shown to users when they attempt to log out of their PsiCash account with no active Psiphon tunnel. Clicking this button will cancel the attempt."
     },
     "psicash#modal-login-header": {
-        "message": "PsiCash Account",
+        "message": "PsiCash अकाउंट",
         "description": "Header of modal dialog in which the user can log in to an existing account or click a link to create a new one. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#modal-login-body": {
@@ -892,7 +892,7 @@
         "description": "Body of modal dialog in which the user can log in to an existing account or click a link to create a new one."
     },
     "psicash#modal-login-username-field": {
-        "message": "PsiCash username",
+        "message": "PsiCash उपयोगकर्ता नाम",
         "description": "Label for a username field in the PsiCash account login modal dialog."
     },
     "psicash#modal-login-password-field": {
@@ -964,7 +964,7 @@
         "description": "Label for a button that leads to more Speed Boost purchase choices. The translation can be like 'More options' or 'More choices' or 'See more'. Only use an ellipsis if it makes sense in your language."
     },
     "psicash#login#failure-modal-title": {
-        "message": "PsiCash Login Failed",
+        "message": "PsiCash लॉगिन विफल हो गया",
         "description": "Title of modal dialog shown when the PsiCash account login attempt fails for some reason. Text within the modal will explain why. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#catastrophic-error-body": {
@@ -980,7 +980,7 @@
         "description": "Body text of a modal dialog shown when a PsiCash login fails due to bad username or password."
     },
     "psicash#login#server-error-body": {
-        "message": "The PsiCash server responded with an error while trying to log you in. Please try again later.",
+        "message": "आपको लॉग इन करने का प्रयास करते समय PsiCash सर्वर ने एक त्रुटि के साथ प्रतिक्रिया दी। कृपया बाद में पुन:प्रयास करें।",
         "description": "Body text of a modal dialog shown when a PsiCash account login fails due to a server error. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#badrequest-error-body": {
@@ -992,7 +992,7 @@
         "description": "Title of modal dialog shown when the PsiCash account login attempt succeeds, if additional information needs to be conveyed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#login#last-tracker-merge-body": {
-        "message": "You are logged into your PsiCash account. The preexisting balance from this device has been transferred into your account, but this is the last time a balance merge will occur.",
+        "message": "आप अपने PsiCash अकाउंट में लॉग इन हैं। इस डिवाइस से पहले से मौजूद बैलेंस आपके खाते में ट्रान्सफर कर दिया गया है, लेकिन यह आखिरी बार है जब बैलेंस का विलय होगा।",
         "description": "Body text of a modal dialog shown when a PsiCash login succeeds. There is a fixed number of times that a user can merge a pre-account balance into a PsiCash account. This message indicates that the user has hit that limit and the merge that occurred is the last one allowed. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#alert#tokens-expired": {

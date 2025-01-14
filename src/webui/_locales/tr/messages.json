@@ -820,7 +820,7 @@
         "description": "Heading for an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active."
     },
     "psicash#pane-speed-port-limits-body": {
-        "message": "Speed Boost etkinleştirilmediğinde hızınız sınırlı olur ve bazı İnternet trafiği türlerini de kullanamazsınız. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.",
+        "message": "Speed Boost açılmadığında hızınız sınırlı olur ve bazı İnternet trafiği türlerini de kullanamazsınız. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini açın.",
         "description": "Body of an information section explaining that there are port and speed restrictions when the user doesn't have Speed Boost active. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-speed-boost-cta": {
@@ -832,7 +832,7 @@
         "description": "Header for a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated."
     },
     "psicash#pane-need-more-psicash-body": {
-        "message": "Speed Boost özelliğini etkinleştirmek için daha fazla PsiCash satın almalısınız.",
+        "message": "Speed Boost özelliğini açmak için daha fazla PsiCash satın almalısınız.",
         "description": "Body of a section telling the user that they don't have enough PsiCash to buy any Speed Boost and need to buy more. The word 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "psicash#pane-need-psicash-visit-store": {
@@ -1008,7 +1008,7 @@
         "description": "Title of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user will be told to 'upgrade' their connection with Speed Boost (giving more speed and app compatibility). The word 'Psiphon' must not be translated or transliterated."
     },
     "notice#disallowed-traffic-alert-body": {
-        "message": "<p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği etkinleştirilmeden kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.</p>",
+        "message": "<p>Çalışmayan uygulamalar mı var?</p>\n<p>İnternet trafiğinin bir kısmı Speed Boost özelliği açılmadan kullanılamaz. Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini açın.</p>",
         "description": "Body text of modal error message shown to user when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. The words 'Psiphon' and 'PsiCash' must not be translated or transliterated. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "appbackend#disallowed-traffic-notification-title": {
@@ -1016,7 +1016,7 @@
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed."
     },
     "appbackend#disallowed-traffic-notification-body": {
-        "message": "Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini etkinleştirin.",
+        "message": "Psiphon deneyimini tam olarak yaşamak için PsiCash kullanarak Speed Boost özelliğini açın.",
         "description": "Appears in the notification area balloon when Psiphon disallows some non-web internet traffic. The user needs to purchase Speed Boost in order to full app compatibilty and more speed. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#heading": {
@@ -1024,7 +1024,7 @@
         "description": "Settings section heading. In this section the user can choose to enable or disable alerts telling the user when app traffic has been disallowed and they need to get Speed Boost."
     },
     "settings#disallowed-traffic-alert#help-text": {
-        "message": "İnternet trafiğinin bir kısmı Speed Boost özelliği etkinleştirilmeden kullanılamaz. Böyle bir trafik engellendiğinde bir uyarı görüntülenir (yeniden etkinleştirmek için yeniden bağlanmak gerekir).",
+        "message": "İnternet trafiğinin bir kısmı Speed Boost özelliği açılmadan kullanılamaz. Böyle bir trafik engellendiğinde bir uyarı görüntülenir (yeniden açmak için yeniden bağlanmak gerekir).",
         "description": "Text explaining to the user what the 'Disallowed Traffic Alert' setting does if enabled. 'Speed Boost' is a reward that can be purchased with PsiCash credit. It provides unlimited network connection speed through Psiphon. Other words that can be used to help with translation are: 'turbo' (like cars), 'accelerate', 'warp speed', 'blast off', or anything that indicates a fast or unrestricted speed."
     },
     "settings#disallowed-traffic-alert#disable-label": {
