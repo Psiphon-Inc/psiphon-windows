@@ -2268,6 +2268,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
 
     PsiCashStore.set('uiState', state);
+    PsiCashStore.set('isRetired', isRetired);
     /**
      * Update relevant parts of the UI, depending on state and data
      * @param {!PsiCashRefreshData} psicashData
@@ -3082,6 +3083,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
   function handleDisallowedTrafficNotice() {
+    // RETIRE PSICASH
+    // Without PsiCash, there is no way to mitigate disallowed traffic.
+    if (PsiCashStore.data.isRetired) {
+      DEBUG_LOG('handleDisallowedTrafficNotice: PsiCash retired');
+      return;
+    }
+
     if (PsiCashStore.data.uiState === PsiCashUIState.ACTIVE_BOOST) {
       // If we're boosting, then any disallowed traffic is something that won't
       // be let through by purchasing speed boost, so logging, etc., is pointless.
