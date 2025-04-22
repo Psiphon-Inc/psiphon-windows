@@ -2321,6 +2321,20 @@
       }
     }
 
+    // RETIRE PSICASH
+    // We will only show the PsiCash UI in the following states:
+    // 1. We have a balance sufficient to buy at least one level of Speed Boost
+    // 2. We have an active Speed Boost
+    // 3. We are in the process of buying a Speed Boost
+    // 4. We are in an account-logged-out state and the previous balance was sufficient to
+    //    buy at least one level of Speed Boost (or previous balance is not known). (This
+    //    is somewhat complicated because we don't want the UI popping back when the
+    //    user's tokens expired in <= 1 year, but we also don't to prevent
+    //    users-with-balance from being unable to access their PsiCash.)
+    // We need to a separate state variable to track whether we are retired or not,
+    // as it doesn't match the UI state.
+    let isRetired = true;
+
     let state = PsiCashUIState.NSF_BALANCE;
     // DO NOT return early from this point. state must be updated in PsiCashStore.uiState.
 
@@ -2330,9 +2344,17 @@
         if (pp['class'] === 'speed-boost' && pp.price <= psicashData.balance) {
           // We can afford at least one level of Speed Boost
           state = PsiCashUIState.ENOUGH_BALANCE;
+          isRetired = false;
           break;
         }
       }
+    }
+
+    // If we're in a logged-in state, update our PsiCashSufficientForBoost cookie.
+    // If we're not, we have to rely on the previous value.
+    if (psicashData.has_tokens) {
+      // The isRetired flag is true if we _don't_ have sufficient balance for Boost
+      setCookie('PsiCashSufficientForBoost', !isRetired);
     }
 
     let millisOfSpeedBoostRemaining = 0;
@@ -2355,6 +2377,7 @@
           const localTimeExpiry = moment(psicashData.purchases[i].localTimeExpiry);
           if (g_lastState === 'connected' || localTimeExpiry.isAfter(moment())) {
             state = PsiCashUIState.ACTIVE_BOOST;
+            isRetired = false;
 
             millisOfSpeedBoostRemaining = localTimeExpiry.diff(moment());
             // Clock skew (between client<->PsiCash server<->psiphond) could result in a
@@ -2370,12 +2393,15 @@
     if (PsiCashStore.data.purchaseInProgress) {
       // We are waiting for a purchase request to complete
       state = PsiCashUIState.BUYING_BOOST;
+      isRetired = false;
     }
 
     if (psicashData.is_account && !psicashData.has_tokens) {
       // If we're in an account-logged-out state, PsiCash functionality is disabled until
       // the user logs back in (or resets data).
       state = PsiCashUIState.ACCOUNT_LOGGED_OUT;
+
+      isRetired = (getCookie('PsiCashSufficientForBoost') === false);
     }
 
     // If we are newly transitioning into a logged out state, let the user know
@@ -2446,6 +2472,7 @@
     }
 
     PsiCashStore.set('uiState', state);
+    PsiCashStore.set('isRetired', isRetired);
 
     /**
      * Update relevant parts of the UI, depending on state and data
@@ -2523,13 +2550,20 @@
       $('.js-show-if-vpn-mode').toggleClass('hidden', !vpnMode);
       $('.js-hide-if-vpn-mode').toggleClass('hidden', vpnMode);
 
-      // Show the whole corner block, if it's hidden.
-      if ($('#psicash-block, #psicash-tab').hasClass('hidden')) {
-        $('#psicash-block, #psicash-tab').removeClass('hidden');
-
-        // Some layout actions like height-matching won't have succeeded while the
-        // UI was hidden. So do a content-resize with the newly visible content.
+      if (isRetired) {
+        // Hide the UI
+        $('#psicash-block, #psicash-tab').addClass('hidden');
         nextTick(resizeContent);
+      }
+      else {
+        // Show the whole corner block, if it's hidden.
+        if ($('#psicash-block, #psicash-tab').hasClass('hidden')) {
+          $('#psicash-block, #psicash-tab').removeClass('hidden');
+
+          // Some layout actions like height-matching won't have succeeded while the
+          // UI was hidden. So do a content-resize with the newly visible content.
+          nextTick(resizeContent);
+        }
       }
     }
   }
@@ -3360,6 +3394,13 @@
    * encourage the user to buy Speed Boost.
    */
   function handleDisallowedTrafficNotice() {
+    // RETIRE PSICASH
+    // Without PsiCash, there is no way to mitigate disallowed traffic.
+    if (PsiCashStore.data.isRetired) {
+      DEBUG_LOG('handleDisallowedTrafficNotice: PsiCash retired');
+      return;
+    }
+
     if (PsiCashStore.data.uiState === PsiCashUIState.ACTIVE_BOOST) {
       // If we're boosting, then any disallowed traffic is something that won't
       // be let through by purchasing speed boost, so logging, etc., is pointless.
