@@ -118,8 +118,6 @@ HWND GetHTMLControl() {
 // These deeplinks should make the list in https://github.com/Psiphon-Inc/psiphon-issues/wiki/Supported-Psiphon-client-deep-links
 static const wstring DEEPLINK_PROTOCOL_SCHEME = L"psiphon";
 static const vector<wstring> ALLOWED_DEEPLINKS = {
-    DEEPLINK_PROTOCOL_SCHEME + L"://psicash",
-    DEEPLINK_PROTOCOL_SCHEME + L"://psicash/buy",
     DEEPLINK_PROTOCOL_SCHEME + L"://feedback",
     DEEPLINK_PROTOCOL_SCHEME + L"://subscribe",
     DEEPLINK_PROTOCOL_SCHEME + L"://settings",

@@ -101,23 +101,12 @@ void PsiphonTunnelCore::HandleSubprocessOutputLine(const string& line)
             UI_Notice(line);
         }
 
-        // Ensure any sensitive notices are not logged.
-        if (noticeType == "ClientUpgradeDownloaded")
+        // Ensure any sensitive or spammy notices are not logged.
+        if (noticeType == "ClientUpgradeDownloaded" // filename field is private user data
+            || noticeType == "Untunneled"           // address field is private user data
+            || noticeType == "UpstreamProxyError"   // message field may contain private user data
+            || noticeType == "BytesTransferred")    // spammy and doesn't help diagnostics
         {
-            // Don't include in diagnostics as "filename" field in notice data
-            // is private user data
-            logOutputToDiagnostics = false;
-        }
-        else if (noticeType == "Untunneled")
-        {
-            // Don't include in diagnostics as "address" field in notice data
-            // is private user data
-            logOutputToDiagnostics = false;
-        }
-        else if (noticeType == "UpstreamProxyError")
-        {
-            // Don't include in diagnostics as "message" field in notice data
-            // may contain private user data
             logOutputToDiagnostics = false;
         }
 
