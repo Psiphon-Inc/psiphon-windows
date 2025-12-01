@@ -80,7 +80,7 @@
         "description": "Text on the button that resets the Psiphon settings values to default. This will typically be pressed if the user has configured something incorrectly and needs to get back to the default state."
     },
     "settings#apply-button": {
-        "message": "تغغیرات را اعمال کن",
+        "message": "تغییرات را اعمال کن",
         "description": "Text on the button that applies (saves and makes active) the changes that the user has made to their settings. It is only enabled when changes have been made. The text is effectively an abbreviation of 'Apply the changes you have made to your settings'."
     },
     "settings#unapplied-changes-prompt#title": {
