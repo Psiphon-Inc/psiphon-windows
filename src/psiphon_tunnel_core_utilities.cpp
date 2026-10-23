@@ -128,9 +128,9 @@ bool WriteParameterFiles(const WriteParameterFilesIn& in, WriteParameterFilesOut
         config["Authorizations"] = in.encodedAuthorizations;
     }
 
-    // TODO: Use a real network IDs
-    // See https://github.com/Psiphon-Inc/psiphon-issues/issues/404
-    config["NetworkID"] = "949F2E962ED7A9165B81E977A3B4758B";
+    // Ensure NetworkID is set to "" so tunnel-core uses common/networkid. See
+    // change in https://github.com/Psiphon-Labs/psiphon-tunnel-core/commit/281c0ea8f752907075eb2d7a1e703f1ab148bee1.
+    config["NetworkID"] = "";
 
     // Feedback
     config["FeedbackUploadURLs"] = LoadJSONArray(FEEDBACK_UPLOAD_URLS_JSON);
